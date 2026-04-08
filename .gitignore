@@ -55,6 +55,9 @@ mcp-servers/*
 !mcp-servers/ipfix-mcp/
 !mcp-servers/gns3-mcp-server/
 !mcp-servers/prisma-sdwan-mcp/
+!mcp-servers/pfsense-mcp/
+!mcp-servers/convergence-mcp/
+!mcp-servers/netclaw-proxy/
 
 # Traces
 trace.json
