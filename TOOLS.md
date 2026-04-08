@@ -4,150 +4,95 @@ Skills define *how* tools work. This file is for *your* specifics — the enviro
 
 ## Network Devices
 
-Devices are defined in `testbed/testbed.yaml`. Update that file with your SSH-accessible Cisco devices.
+Devices are defined in `testbed/testbed.yaml`. These are the SSH-accessible Cisco switches:
 
 ```
-### Example Device Map
-- R1 → 10.1.1.1, Core Router, IOS-XE 17.9
-- R2 → 10.1.1.2, Distribution Router, IOS-XE 17.9
-- SW1 → 10.1.2.1, Access Switch, IOS-XE 17.9
-- SW2 → 10.1.2.2, Access Switch, IOS-XE 17.9
+### Device Map
+- HomeSwitch01 → 192.168.3.2, Access Switch, Cisco WS-C3850-48P, IOS-XE
+- HomeSwitch02 → 192.168.3.3, Access Switch, Cisco WS-C3850-48P, IOS-XE
+- pfSense-FW01 → 192.168.3.1:440, Netgate pfSense Plus 25.11 (XML-RPC, not SSH)
+- SynologyNAS01 → 192.168.100.22, Synology NAS (SNMP only, no SSH)
+- SynologyNAS02 → 192.168.100.23, Synology NAS (SNMP only, no SSH)
 ```
+
+### WS-C3850-48P Hardware Notes
+
+- 48x GigabitEthernet1/0/1-48 access ports (1G PoE+)
+- 4x TenGigabitEthernet1/1/1-4 uplink ports (10G SFP+)
+- 4x GigabitEthernet1/1/1-4 combo ports — **shared with Te1/1/1-4**
+  - When SFP+ is inserted and Te1/1/x is active, Gi1/1/x is automatically disabled by IOS
+  - This is expected hardware behavior, NOT a fault
+- StackWise ports: StackPort1, StackPort2 — ignore in inventory reconciliation
 
 ## Platform Credentials
 
-All credentials are in `~/.openclaw/.env`. Never put credentials in skill files or this document.
+All credentials are in `.env` at the project root. Never put credentials in skill files or this document.
 
 ```
-### Batfish Configuration Analysis (reference only — actual values in .env)
-- Batfish Host        → BATFISH_HOST (default: localhost)
-- Batfish Port        → BATFISH_PORT (default: 9997)
-- Batfish Network     → BATFISH_NETWORK (default: netclaw)
-- Docker Container    → batfish/batfish (ports 9997, 9996)
-
 ### Connection Details (reference only — actual values in .env)
-- pyATS Testbed       → PYATS_TESTBED_PATH
-- NetBox              → NETBOX_URL, NETBOX_TOKEN
-- ServiceNow          → SERVICENOW_INSTANCE_URL, SERVICENOW_USERNAME, SERVICENOW_PASSWORD
-- Cisco APIC          → APIC_URL, APIC_USERNAME, APIC_PASSWORD
-- Cisco ISE           → ISE_BASE, ISE_USERNAME, ISE_PASSWORD
-- NVD API             → NVD_API_KEY
-- F5 BIG-IP           → F5_IP_ADDRESS, F5_AUTH_STRING
-- Catalyst Center     → CCC_HOST, CCC_USER, CCC_PWD
-- Microsoft Graph     → AZURE_TENANT_ID, AZURE_CLIENT_ID, AZURE_CLIENT_SECRET
-- SuzieQ              → SUZIEQ_API_URL, SUZIEQ_API_KEY
-- gNMI Telemetry      → GNMI_TARGETS (JSON), GNMI_TLS_CA_CERT, GNMI_TLS_CLIENT_CERT, GNMI_TLS_CLIENT_KEY
-- Azure Network MCP   → AZURE_TENANT_ID, AZURE_CLIENT_ID, AZURE_CLIENT_SECRET, AZURE_SUBSCRIPTION_ID
-- Canvas/A2UI Viz     → No new credentials (uses existing MCP server connections)
-- Token Optimization  → ANTHROPIC_API_KEY (reused), NETCLAW_TOKEN_PRICING_OVERRIDE (optional)
-- GitLab MCP          → GITLAB_PERSONAL_ACCESS_TOKEN, GITLAB_API_URL (default: gitlab.com)
-- Jenkins MCP         → JENKINS_URL, JENKINS_AUTH_BASE64 (remote HTTP, Basic Auth)
+- pyATS Testbed       → PYATS_TESTBED_PATH (default: testbed/testbed.yaml)
+- Nautobot            → NAUTOBOT_URL, NAUTOBOT_TOKEN
+- pfSense XML-RPC     → PFSENSE_HOST, PFSENSE_XMLRPC_USER, PFSENSE_XMLRPC_PASS
+- Switch SSH          → SWITCH_SSH_USER, SWITCH_SSH_PASS, SWITCH_SSH_ENABLE_PASS
+- Discord             → DISCORD_WEBHOOK_URL, DISCORD_BOT_TOKEN
+- Threat Intel APIs   → ABUSEIPDB_API_KEY, GREYNOISE_API_KEY, OTX_API_KEY, IPINFO_TOKEN
+- LLM Provider        → OLLAMA_API_KEY (Ollama Cloud via openai-completions)
 ```
 
-## GitLab MCP Server
+## Convergence Telemetry Stack (Docker on this host)
 
-The GitLab MCP server (`@zereight/mcp-gitlab`) provides 98+ tools for GitLab operations via stdio transport:
-- **Issues**: list_issues, get_issue, create_issue, update_issue, add_issue_comment, list_issue_comments
-- **Merge Requests**: list_merge_requests, get_merge_request, create_merge_request, update_merge_request, merge_merge_request, add_merge_request_comment
-- **Pipelines**: list_pipelines, get_pipeline, get_pipeline_jobs, get_pipeline_job_log, create_pipeline, retry_pipeline, cancel_pipeline
-- **Repository**: list_repository_tree, get_file_content, list_commits, get_commit, compare_branches
-- **Projects**: list_projects, get_project, search_projects
-- **Labels**: list_labels, create_label, update_label, delete_label
-- **Milestones**: list_milestones, create_milestone, update_milestone
-- **Releases**: list_releases, get_release, create_release
-- **Wiki**: list_wiki_pages, get_wiki_page, create_wiki_page, update_wiki_page, delete_wiki_page
-- Supports gitlab.com and self-hosted instances via `GITLAB_API_URL`
-- Read-only mode available via `GITLAB_READ_ONLY_MODE=true`
-
-## Jenkins MCP Server
-
-The Jenkins MCP server (official Jenkins plugin) provides 16 tools via Streamable HTTP transport:
-- **Job Management**: getJob, getJobs, triggerBuild, getQueueItem
-- **Build Operations**: getBuild, updateBuild, getBuildLog, searchBuildLog
-- **SCM Integration**: getJobScm, getBuildScm, getBuildChangeSets, findJobsWithScmUrl
-- **System**: whoAmI, getStatus
-- **Pipeline**: getPipelineRuns, getPipelineRunLog
-- Remote HTTP server running inside Jenkins (Streamable HTTP at `/mcp-server/mcp`)
-- Auth: HTTP Basic with Jenkins API token (Base64-encoded username:token)
-- Requires Jenkins 2.533+ with MCP Server plugin v0.158+
-
-## Atlassian MCP Server
-
-The Atlassian MCP server (community mcp-atlassian by sooperset) provides 72 tools via stdio transport:
-- **Jira Issues**: jira_search, jira_get_issue, jira_create_issue, jira_update_issue, jira_delete_issue, jira_add_comment, jira_batch_create_issues
-- **Jira Transitions**: jira_get_transitions, jira_transition_issue
-- **Jira Projects/Fields**: jira_get_projects, jira_get_project, jira_get_fields, jira_get_issue_types
-- **Jira Links**: jira_link_issues, jira_get_issue_links, jira_get_link_types
-- **Confluence Pages**: confluence_search, confluence_get_page, confluence_create_page, confluence_update_page, confluence_delete_page
-- **Confluence Comments**: confluence_get_page_comments, confluence_add_comment
-- **Confluence Spaces**: confluence_get_spaces, confluence_get_space
-- Supports Atlassian Cloud and Server/Data Center deployments
-- Auth: API token (Cloud) or Personal Access Token (Server/DC)
-- Runs via `uvx mcp-atlassian`
-
-## Token Optimization Infrastructure
-
-The `netclaw_tokens` shared library (`src/netclaw_tokens/`) provides token counting, TOON serialization, and cost tracking:
-- **counter.py** — Token counting via Anthropic `count_tokens()` API with `len/4` fallback
-- **toon_serializer.py** — TOON format serialization for MCP responses (40-60% savings on tabular data)
-- **cost_calculator.py** — Model-aware pricing: Opus ($5/$25), Sonnet ($3/$15), Haiku ($1/$5) per 1M tokens
-- **session_ledger.py** — Thread-safe cumulative session tracking with per-tool breakdown
-- **footer.py** — Mandatory token/cost footer formatter for every interaction
-- **toon_wrapper.py** — TOON conversion wrapper for community/remote MCP servers
-- Pricing override via `NETCLAW_TOKEN_PRICING_OVERRIDE` env var (JSON format)
-- Prompt caching discount: 90% off cached input tokens
-
-## gNMI Infrastructure
-
-The gNMI MCP server provides 10 tools for streaming telemetry and model-driven configuration:
-- **gnmi_get** / **gnmi_set** / **gnmi_subscribe** / **gnmi_unsubscribe** / **gnmi_get_subscriptions** / **gnmi_get_subscription_updates** / **gnmi_capabilities** / **gnmi_browse_yang_paths** / **gnmi_compare_with_cli** / **gnmi_list_targets**
-- Supported vendors: Cisco IOS-XR (port 57400), Juniper (32767), Arista (6030), Nokia SR OS (57400)
-- YANG models: OpenConfig and vendor-native
-- TLS mandatory, mTLS supported, max 50 concurrent subscriptions
-
-## Slack Integration
+All services run via `docker compose up -d` from the project root.
 
 ```
-### Channels
-- #netclaw-alerts     → P1/P2 critical alerts
-- #netclaw-reports    → Scheduled health reports, audit results
-- #netclaw-general    → General queries, P3/P4 notifications
-- #incidents          → Active incident threads
+### Service Map (all on localhost)
+- VictoriaMetrics     → http://localhost:8428  (metrics storage, 90d retention)
+- Grafana             → http://localhost:3000  (9 dashboards)
+- Loki                → http://localhost:3100  (log aggregation)
+- OTEL Collector      → ports 514/udp (syslog), 2055/udp (NetFlow), 4317 (OTLP gRPC)
+- Alertmanager        → http://localhost:9093
+- Redis               → localhost:6379
+- threat-intel        → http://localhost:8001  (IP enrichment + AI narratives)
+- automation-agent    → http://localhost:8002  (pfSense blocking, execute-only)
+- convergence-scheduler → http://localhost:8004 (cron + Discord notifications)
 ```
 
-## Microsoft Teams Integration
+## Grafana Dashboards
 
-```
-### Teams Channels (if using Microsoft Graph for Teams delivery)
-- #netclaw-alerts     → P1/P2 critical alerts, CVE exposure
-- #netclaw-reports    → Health reports, audit results, reconciliation
-- #netclaw-changes    → Change request updates, completion notices
-- #network-general    → P3/P4 notifications, topology updates
+9 pre-built dashboards provisioned automatically:
 
-### SharePoint Sites
-- Network Engineering → Topology diagrams, audit reports, config backups
-```
+| Dashboard | UID | What It Shows |
+|-----------|-----|---------------|
+| Network Overview | convergence-network-overview | Device uptime, reachability, SNMP health |
+| Interface Utilization | convergence-interface-utilization | Per-port bandwidth, top talkers |
+| Interface Errors | convergence-interface-errors | CRC, drops, discards by interface |
+| Device Health | net-device-health | CPU, memory, environment per device |
+| Platform Health | convergence-platform-health | Stack, power, fan status |
+| pfSense Firewall Security | pfsense-firewall-security | Block rates, top attackers, GeoIP map |
+| Threat Analysis | security-threat-analysis | Enriched threat intel, composite scores |
+| Threat Intelligence | convergence-threat-intelligence | AbuseIPDB, GreyNoise, OTX feeds |
+| NAS Health | convergence-nas-health | Synology disk, RAID, temperature |
+| Automation Agent | convergence-automation-agent | Block actions, approval status, GAIT |
 
-## SSH Access
+## MCP Servers for This Deployment
 
-```
-### Jump Hosts / Bastion
-- (your bastion host, if applicable)
+These are the MCP servers that should be registered via `openclaw mcp set`:
 
-### Console Servers
-- (your console server, if applicable)
-```
+| MCP Server | What It Does | Env Vars Needed |
+|------------|-------------|-----------------|
+| pfsense-mcp | pfSense XML-RPC (DHCP, ARP, interfaces, rules, gateways) | PFSENSE_HOST, PFSENSE_XMLRPC_USER, PFSENSE_XMLRPC_PASS |
+| convergence-mcp | Convergence services (threat-intel, automation-agent, metrics, logs) | THREAT_INTEL_URL, AUTOMATION_AGENT_URL, VICTORIAMETRICS_URL, LOKI_URL |
+| grafana-mcp | Grafana (75+ tools: PromQL, LogQL, dashboards, alerts) | GRAFANA_URL, GRAFANA_SERVICE_ACCOUNT_TOKEN |
+| prometheus-mcp | Prometheus/VictoriaMetrics (PromQL queries, metric discovery) | PROMETHEUS_URL |
+| nautobot-mcp | Nautobot IPAM (IP addresses, prefixes, VRF) | NAUTOBOT_URL, NAUTOBOT_TOKEN |
+| pyats-mcp | pyATS (SSH, show commands, Genie parsers) | PYATS_TESTBED_PATH |
+| nmap-mcp | nmap (network scanning, service detection) | — |
+| gait-mcp | GAIT (audit trail for all AI decisions) | — |
 
-## Site Information
+## Known Behaviors (Do NOT Alert On)
 
-```
-### Sites
-- Site-A → Primary data center
-- Site-B → DR site
-- Lab    → Non-production test environment (relaxed change control)
-```
-
-## Notes
-
-- Add whatever helps NetClaw do its job — device nicknames, maintenance windows, ISP circuit IDs, TAC case numbers, anything environment-specific.
-- This file is yours. Skills are shared. Keeping them apart means you can update skills without losing your notes.
+- Blocked firewall scans are normal — pfSense blocks thousands of probes daily
+- NAS devices talking to multiple VLANs is normal (backups, media, cameras)
+- IoT devices on mDNS/AirPlay ports (5353, 7000, 7100) is normal
+- Gi1/1/1-4 down when Te1/1/1-4 active is normal (combo uplinks)
+- Storage Pool showing 0 free bytes in Synology SNMP is normal (capacity allocated to Volumes)
+- Empty SNMP metric results = SNMP not configured on that device, not a failure

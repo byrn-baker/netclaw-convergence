@@ -1,160 +1,42 @@
 ---
+# Convergence Home Lab — pyATS Testbed
+# Credentials loaded from environment variables via %ENV{}
+
 devices:
-  R1:
-    alias: "Sandbox Router01"
-    type: "router"
-    os: "iosxe"
-    platform: CSR1kv
+  HomeSwitch01:
+    alias: "Home Switch 01"
+    type: switch
+    os: iosxe
+    platform: cat3850
     credentials:
       default:
-        username: cisco
-        password: cisco
+        username: "%ENV{SWITCH_SSH_USER}"
+        password: "%ENV{SWITCH_SSH_PASS}"
       enable:
-        password: cisco
+        password: "%ENV{SWITCH_SSH_ENABLE_PASS}"
     connections:
       cli:
         protocol: ssh
-        ip: 10.10.20.171
+        ip: 192.168.3.2
         port: 22
         arguments:
-          connection_timeout: 360
-  R2:
-    alias: "Sandbox Router02"
-    type: "router"
-    os: "iosxe"
-    platform: CSR1kv
-    credentials:
-      default:
-        username: cisco
-        password: cisco
-      enable:
-        password: cisco
-    connections:
-      cli:
-        protocol: ssh
-        ip: 10.10.20.172
-        port: 22
-        arguments:
-          connection_timeout: 360
-  SW1:
-    alias: "Sandbox Switch01"
-    type: "switch"
-    os: "iosxe"
-    platform: CSR1kv
-    credentials:
-      default:
-        username: cisco
-        password: cisco
-      enable:
-        password: cisco
-    connections:
-      cli:
-        protocol: ssh
-        ip: 10.10.20.173
-        port: 22
-        arguments:
-          connection_timeout: 360
-  SW2:
-    alias: "Sandbox Switch02"
-    type: "switch"
-    os: "iosxe"
-    platform: CSR1kv
-    credentials:
-      default:
-        username: cisco
-        password: cisco
-      enable:
-        password: cisco
-    connections:
-      cli:
-        protocol: ssh
-        ip: 10.10.20.174
-        port: 22
-        arguments:
-          connection_timeout: 360                  
-  PC1:
-    alias: "CML-PC1-Alpine"
-    type: "linux"
-    os: "linux"
-    platform: alpine
-    credentials:
-      default:
-        username: cisco
-        password: cisco
-    connections:
-      cli:
-        protocol: ssh
-        ip: "fd00:10:0:10::100"
-        port: 22
-        arguments:
-          connection_timeout: 30
+          connection_timeout: 60
 
-  PC2:
-    alias: "CML-PC2-Alpine"
-    type: "linux"
-    os: "linux"
-    platform: alpine
+  HomeSwitch02:
+    alias: "Home Switch 02"
+    type: switch
+    os: iosxe
+    platform: cat3850
     credentials:
       default:
-        username: cisco
-        password: cisco
-    connections:
-      cli:
-        protocol: ssh
-        ip: "fd00:10:0:20::100"
-        port: 22
-        arguments:
-          connection_timeout: 30
-
-  Server1:
-    alias: "CML-Server1-TinyCore"
-    type: "linux"
-    os: "linux"
-    platform: tinycore
-    credentials:
-      default:
-        username: cisco
-        password: cisco
-    connections:
-      cli:
-        protocol: ssh
-        ip: "fd00:10:0:30::100"
-        port: 22
-        arguments:
-          connection_timeout: 30
-
-  Server2:
-    alias: "CML-Server2-TinyCore"
-    type: "linux"
-    os: "linux"
-    platform: tinycore
-    credentials:
-      default:
-        username: cisco
-        password: cisco
-    connections:
-      cli:
-        protocol: ssh
-        ip: "fd00:10:0:40::100"
-        port: 22
-        arguments:
-          connection_timeout: 30
-
-  DevNetSandbox:
-    alias: "DevNet Sandbox Catalyst 9000"
-    type: "switch"
-    os: "iosxe"
-    platform: cat9k
-    credentials:
-      default:
-        username: ptcapo
-        password: "P2jA4_dU_3hi"
+        username: "%ENV{SWITCH_SSH_USER}"
+        password: "%ENV{SWITCH_SSH_PASS}"
       enable:
-        password: "P2jA4_dU_3hi"
+        password: "%ENV{SWITCH_SSH_ENABLE_PASS}"
     connections:
       cli:
         protocol: ssh
-        ip: devnetsandboxiosxec9k.cisco.com
+        ip: 192.168.3.3
         port: 22
         arguments:
           connection_timeout: 60
