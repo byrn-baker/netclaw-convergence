@@ -1,0 +1,6 @@
+# Grafana alert rules — intentionally empty.
+# All monitoring and alerting is handled by the NET-OPS agent team.
+# Agents post findings directly to Discord via the discord_reporter tool.
+# Grafana is used for visualization only — see dashboards/ for panels.
+apiVersion: 1
+groups: []

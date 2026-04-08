@@ -1,0 +1,11 @@
+# Notification policies — all alerts suppressed.
+# No Grafana alert rules are active; this is here to prevent Grafana from
+# sending anything if a rule is accidentally re-added.
+apiVersion: 1
+
+policies:
+  - orgId: 1
+    receiver: "Do Nothing"
+    group_by: [alertname]
+    group_wait: 1h
+    repeat_interval: 24h

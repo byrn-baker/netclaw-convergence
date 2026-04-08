@@ -1,0 +1,96 @@
+# Grafana Dashboard Provisioning Configuration
+apiVersion: 1
+
+providers:
+  # Network monitoring dashboards (SNMP, interfaces, device health)
+  - name: 'Network'
+    orgId: 1
+    folder: 'Network'
+    type: file
+    disableDeletion: false
+    updateIntervalSeconds: 30
+    allowUiUpdates: true
+    options:
+      path: /var/lib/grafana/dashboards/network
+      foldersFromFilesStructure: false
+
+  # Security & Firewall dashboards (pfSense, threat analysis, GeoIP)
+  - name: 'Security'
+    orgId: 1
+    folder: 'Security'
+    type: file
+    disableDeletion: false
+    updateIntervalSeconds: 30
+    allowUiUpdates: true
+    options:
+      path: /var/lib/grafana/dashboards/security
+      foldersFromFilesStructure: false
+
+  # Vendor-specific dashboards (placeholders for future expansion)
+  - name: 'Convergence Cisco'
+    orgId: 1
+    folder: 'Vendor - Cisco'
+    type: file
+    disableDeletion: false
+    updateIntervalSeconds: 30
+    allowUiUpdates: true
+    options:
+      path: /var/lib/grafana/dashboards/cisco
+      foldersFromFilesStructure: false
+
+  - name: 'Convergence Juniper'
+    orgId: 1
+    folder: 'Vendor - Juniper'
+    type: file
+    disableDeletion: false
+    updateIntervalSeconds: 30
+    allowUiUpdates: true
+    options:
+      path: /var/lib/grafana/dashboards/juniper
+      foldersFromFilesStructure: false
+
+  - name: 'Convergence Arista'
+    orgId: 1
+    folder: 'Vendor - Arista'
+    type: file
+    disableDeletion: false
+    updateIntervalSeconds: 30
+    allowUiUpdates: true
+    options:
+      path: /var/lib/grafana/dashboards/arista
+      foldersFromFilesStructure: false
+
+  # Threat Intelligence dashboards (Phase 4)
+  - name: 'Threat Intelligence'
+    orgId: 1
+    folder: 'Threat Intelligence'
+    type: file
+    disableDeletion: false
+    updateIntervalSeconds: 30
+    allowUiUpdates: true
+    options:
+      path: /var/lib/grafana/dashboards/threat-intel
+      foldersFromFilesStructure: false
+
+  # Automation Agent dashboards (Phase 5)
+  - name: 'Automation'
+    orgId: 1
+    folder: 'Automation'
+    type: file
+    disableDeletion: false
+    updateIntervalSeconds: 30
+    allowUiUpdates: true
+    options:
+      path: /var/lib/grafana/dashboards/automation
+
+  # Synology NAS dashboards (Phase 7)
+  - name: 'NAS'
+    orgId: 1
+    folder: 'NAS'
+    type: file
+    disableDeletion: false
+    updateIntervalSeconds: 30
+    allowUiUpdates: true
+    options:
+      path: /var/lib/grafana/dashboards/nas
+      foldersFromFilesStructure: false

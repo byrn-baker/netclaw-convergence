@@ -1,0 +1,66 @@
+auth_enabled: false
+
+server:
+  http_listen_port: 3100
+  grpc_listen_port: 9096
+
+common:
+  path_prefix: /loki
+  storage:
+    filesystem:
+      chunks_directory: /loki/chunks
+      rules_directory: /etc/loki/rules
+  replication_factor: 1
+  ring:
+    instance_addr: 127.0.0.1
+    kvstore:
+      store: inmemory
+
+query_range:
+  results_cache:
+    cache:
+      embedded_cache:
+        enabled: true
+        max_size_mb: 100
+
+schema_config:
+  configs:
+    - from: 2020-10-24
+      store: tsdb
+      object_store: filesystem
+      schema: v13
+      index:
+        prefix: index_
+        period: 24h
+
+# ---------------------------------------------------------------------------
+# Ruler — evaluates LogQL alerting and recording rules on a schedule.
+# Rules live in /loki/rules/<tenant>/ (tenant = "fake" when auth disabled).
+# Alerts are forwarded to Alertmanager; recording rules write metric series
+# back into Loki for efficient re-use in dashboards and further rules.
+# ---------------------------------------------------------------------------
+ruler:
+  storage:
+    type: local
+    local:
+      # Rules are bind-mounted from ./config/loki/rules → /etc/loki/rules
+      # (via the ./config/loki:/etc/loki:ro volume in docker-compose)
+      directory: /etc/loki/rules
+  rule_path: /loki/rules-temp   # scratch dir for rule evaluation (inside named volume)
+  alertmanager_url: http://alertmanager:9093
+  ring:
+    kvstore:
+      store: inmemory
+  enable_api: true
+  # Poll interval for rule evaluation
+  evaluation_interval: 1m
+  poll_interval: 1m
+
+limits_config:
+  max_query_length: 721h  # 30 days
+  reject_old_samples: true
+  reject_old_samples_max_age: 168h  # 1 week
+
+compactor:
+  working_directory: /loki/compactor
+  compaction_interval: 10m

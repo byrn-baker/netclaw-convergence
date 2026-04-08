@@ -1,0 +1,130 @@
+server:
+  http_listen_port: 9080
+  grpc_listen_port: 0
+
+positions:
+  filename: /tmp/positions.yaml
+
+clients:
+  - url: http://loki:3100/loki/api/v1/push
+
+scrape_configs:
+  # Tail syslog logs from OTEL Collector (OTLP JSON format)
+  # OTEL file exporter writes one ExportLogsServiceRequest JSON per line.
+  # Attributes are serialized as: {"key":"NAME","value":{"stringValue":"VALUE"}}
+  - job_name: otel-syslog
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: syslog
+          __path__: /data/syslog/*.jsonl
+
+    pipeline_stages:
+      # -----------------------------------------------------------------------
+      # Stage 1: Extract the log body (human-readable syslog message) from the
+      # OTLP JSON envelope so Loki stores it as the log line, not raw JSON.
+      # -----------------------------------------------------------------------
+      - regex:
+          # Extract the syslog message body from the OTLP stringValue
+          expression: '"body":\{"stringValue":"(?P<log_body>[^"\\\\]*)(?:\\\\.[^"\\\\]*)*"'
+      - template:
+          source: log_body
+          template: '{{ Replace .Value "\\n" " " -1 }}'
+      - output:
+          source: log_body
+
+      # -----------------------------------------------------------------------
+      # Stage 2: Extract structured labels from the OTLP attribute array.
+      # Each attribute looks like: "key":"NAME","value":{"stringValue":"VALUE"}
+      # We extract only low-cardinality fields suitable as Loki labels.
+      # -----------------------------------------------------------------------
+
+      # appname: e.g. "filterlog", "kernel", "dhcpd"
+      - regex:
+          expression: '"key":"appname","value":\{"stringValue":"(?P<appname>[^"]+)"'
+
+      # log_type: "firewall" (set by OTEL transform processor for filterlog entries)
+      - regex:
+          expression: '"key":"log_type","value":\{"stringValue":"(?P<log_type>[^"]+)"'
+
+      # action: "block" or "pass" (extracted from pfSense filterlog by OTEL)
+      - regex:
+          expression: '"key":"action","value":\{"stringValue":"(?P<action>[^"]+)"'
+
+      # interface: pfSense interface name, e.g. "igc0", "igc0.201", "lo0"
+      - regex:
+          expression: '"key":"interface","value":\{"stringValue":"(?P<interface>[^"]+)"'
+
+      # src_country: GeoIP-enriched country name, e.g. "China", "United States"
+      # ~250 possible values — acceptable label cardinality for Loki
+      - regex:
+          expression: '"key":"src_country","value":\{"stringValue":"(?P<src_country>[^"]+)"'
+
+      # src_country_code: ISO 3166-1 alpha-2, e.g. "CN", "US", "RU"
+      - regex:
+          expression: '"key":"src_country_code","value":\{"stringValue":"(?P<src_country_code>[^"]+)"'
+
+      # protocol from syslog transport (udp/tcp) — already parsed by OTEL
+      - regex:
+          expression: '"key":"protocol","value":\{"stringValue":"(?P<protocol>[^"]+)"'
+
+      # facility from syslog header
+      - regex:
+          expression: '"key":"facility","value":\{"stringValue":"(?P<facility>[^"]+)"'
+
+      # -----------------------------------------------------------------------
+      # Stage 3: Promote extracted values to Loki index labels.
+      # Only low-cardinality values become labels; high-cardinality values
+      # (src_ip, src_city, ports) remain as log line content searchable via
+      # LogQL line filters or JSON parsing in queries.
+      # -----------------------------------------------------------------------
+      - labels:
+          appname:
+          log_type:
+          action:
+          interface:
+          src_country:
+          src_country_code:
+          protocol:
+          facility:
+
+  # Tail NetFlow logs from OTEL Collector
+  # Records are OTLP JSON with attributes: source.address, destination.address,
+  # network.transport, flow.io.bytes, flow.io.packets, flow.type, etc.
+  - job_name: otel-netflow
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: netflow
+          __path__: /data/netflow/*.jsonl
+
+    pipeline_stages:
+      # Extract transport protocol (tcp/udp) as label
+      - regex:
+          expression: '"key":"network\.transport","value":\{"stringValue":"(?P<transport>[^"]+)"'
+
+      # Extract flow type (netflow_v5, netflow_v9, ipfix) as label
+      - regex:
+          expression: '"key":"flow\.type","value":\{"stringValue":"(?P<flow_type>[^"]+)"'
+
+      # Extract source address for log line content
+      - regex:
+          expression: '"key":"source\.address","value":\{"stringValue":"(?P<src_addr>[^"]+)"'
+
+      # Extract destination address for log line content
+      - regex:
+          expression: '"key":"destination\.address","value":\{"stringValue":"(?P<dst_addr>[^"]+)"'
+
+      # Build a readable log line from the flow record
+      - template:
+          source: log_line
+          template: 'netflow src={{ .src_addr }} dst={{ .dst_addr }} proto={{ .transport }}'
+
+      - output:
+          source: log_line
+
+      - labels:
+          transport:
+          flow_type:

@@ -1,0 +1,845 @@
+# Convergence OpenTelemetry Collector Configuration
+# Simplified version - tested format from official docs
+
+extensions:
+  health_check:
+    endpoint: 0.0.0.0:13133
+
+  pprof:
+    endpoint: 0.0.0.0:1777
+
+  zpages:
+    endpoint: 0.0.0.0:55679
+
+receivers:
+  # OpenTelemetry Protocol receivers
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+
+  # Prometheus receiver for self-monitoring
+  prometheus:
+    config:
+      scrape_configs:
+        - job_name: 'otel-collector'
+          scrape_interval: 30s
+          static_configs:
+            - targets: ['localhost:8888']
+              labels:
+                service: 'otel-collector'
+
+  # Syslog receivers for network devices (RFC 3164 BSD format)
+  syslog/udp:
+    udp:
+      listen_address: "0.0.0.0:514"
+    protocol: rfc3164
+    location: America/Denver
+    attributes:
+      protocol: udp
+    operators:
+      # Parse pfSense filterlog format (only for filterlog entries)
+      - type: regex_parser
+        if: 'attributes.appname == "filterlog"'
+        regex: '^(?P<rule_num>\d+),[^,]*,[^,]*,(?P<tracker>\d+),(?P<interface>[^,]+),(?P<reason>[^,]+),(?P<action>pass|block),(?P<direction>in|out),(?P<ip_version>\d),[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,(?P<proto_id>\d+),(?P<proto_name>\w+),[^,]*,(?P<src_ip>[\d\.]+),(?P<dst_ip>[\d\.]+)'
+        parse_from: attributes.message
+        parse_to: attributes
+        on_error: send
+      - type: add
+        if: 'attributes.appname == "filterlog"'
+        field: attributes.log_type
+        value: "firewall"
+
+  syslog/tcp:
+    tcp:
+      listen_address: "0.0.0.0:514"
+    protocol: rfc3164
+    location: America/Denver
+    attributes:
+      protocol: tcp
+    operators:
+      # Parse pfSense filterlog format (only for filterlog entries)
+      - type: regex_parser
+        if: 'attributes.appname == "filterlog"'
+        regex: '^(?P<rule_num>\d+),[^,]*,[^,]*,(?P<tracker>\d+),(?P<interface>[^,]+),(?P<reason>[^,]+),(?P<action>pass|block),(?P<direction>in|out),(?P<ip_version>\d),[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,(?P<proto_id>\d+),(?P<proto_name>\w+),[^,]*,(?P<src_ip>[\d\.]+),(?P<dst_ip>[\d\.]+)'
+        parse_from: attributes.message
+        parse_to: attributes
+        on_error: send
+      - type: add
+        if: 'attributes.appname == "filterlog"'
+        field: attributes.log_type
+        value: "firewall"
+
+  # SNMP receivers - Auto-generated from Nautobot
+  # Device metadata (hostname, site, vendor, model, role) added via attributes processors
+
+  # HomeSwitch01 - 192.168.3.2
+  snmp/homeswitch01:
+    collection_interval: 60s
+    endpoint: "udp://192.168.3.2:161"
+    version: v2c
+    community: ${env:SNMP_COMMUNITY}
+    attributes:
+      interface.name:
+        oid: "1.3.6.1.2.1.2.2.1.2"
+        indexed_value_prefix: ""
+      interface.description:
+        oid: "1.3.6.1.2.1.31.1.1.1.18"
+        indexed_value_prefix: ""
+    metrics:
+      system.uptime:
+        unit: "s"
+        gauge:
+          value_type: int
+        scalar_oids:
+          - oid: "1.3.6.1.2.1.1.3.0"
+      interface.in.octets:
+        unit: "By"
+        sum:
+          aggregation: cumulative
+          monotonic: true
+          value_type: int
+        column_oids:
+          - oid: "1.3.6.1.2.1.2.2.1.10"
+            attributes:
+              - name: interface.name
+      interface.out.octets:
+        unit: "By"
+        sum:
+          aggregation: cumulative
+          monotonic: true
+          value_type: int
+        column_oids:
+          - oid: "1.3.6.1.2.1.2.2.1.16"
+            attributes:
+              - name: interface.name
+      interface.in.errors:
+        unit: "1"
+        sum:
+          aggregation: cumulative
+          monotonic: true
+          value_type: int
+        column_oids:
+          - oid: "1.3.6.1.2.1.2.2.1.14"
+            attributes:
+              - name: interface.name
+
+  # HomeSwitch02 - 192.168.3.3
+  snmp/homeswitch02:
+    collection_interval: 60s
+    endpoint: "udp://192.168.3.3:161"
+    version: v2c
+    community: ${env:SNMP_COMMUNITY}
+    attributes:
+      interface.name:
+        oid: "1.3.6.1.2.1.2.2.1.2"
+        indexed_value_prefix: ""
+      interface.description:
+        oid: "1.3.6.1.2.1.31.1.1.1.18"
+        indexed_value_prefix: ""
+    metrics:
+      system.uptime:
+        unit: "s"
+        gauge:
+          value_type: int
+        scalar_oids:
+          - oid: "1.3.6.1.2.1.1.3.0"
+      interface.in.octets:
+        unit: "By"
+        sum:
+          aggregation: cumulative
+          monotonic: true
+          value_type: int
+        column_oids:
+          - oid: "1.3.6.1.2.1.2.2.1.10"
+            attributes:
+              - name: interface.name
+      interface.out.octets:
+        unit: "By"
+        sum:
+          aggregation: cumulative
+          monotonic: true
+          value_type: int
+        column_oids:
+          - oid: "1.3.6.1.2.1.2.2.1.16"
+            attributes:
+              - name: interface.name
+      interface.in.errors:
+        unit: "1"
+        sum:
+          aggregation: cumulative
+          monotonic: true
+          value_type: int
+        column_oids:
+          - oid: "1.3.6.1.2.1.2.2.1.14"
+            attributes:
+              - name: interface.name
+
+  # Synology NAS01 - 192.168.100.22
+  snmp/nas01:
+    collection_interval: 60s
+    endpoint: "udp://192.168.100.22:161"
+    version: v2c
+    community: ${env:SNMP_COMMUNITY}
+    timeout: 10s
+    attributes:
+      # Standard IF-MIB
+      interface.name:
+        oid: "1.3.6.1.2.1.2.2.1.2"
+        indexed_value_prefix: ""
+      # SYNOLOGY-DISK-MIB disk slot identifier
+      disk.id:
+        oid: "1.3.6.1.4.1.6574.2.1.1.2"
+        indexed_value_prefix: ""
+      # SYNOLOGY-RAID-MIB volume name
+      raid.name:
+        oid: "1.3.6.1.4.1.6574.3.1.1.2"
+        indexed_value_prefix: ""
+    metrics:
+      system.uptime:
+        unit: "s"
+        gauge:
+          value_type: int
+        scalar_oids:
+          - oid: "1.3.6.1.2.1.1.3.0"
+      # SYNOLOGY-SYSTEM-MIB
+      nas.system.temperature:
+        unit: "Cel"
+        gauge:
+          value_type: int
+        scalar_oids:
+          - oid: "1.3.6.1.4.1.6574.1.2.0"
+      nas.power.status:
+        unit: "1"
+        gauge:
+          value_type: int
+        scalar_oids:
+          - oid: "1.3.6.1.4.1.6574.1.3.0"
+      # SYNOLOGY-DISK-MIB (1=Normal, 2=Initialized, 3=NotInitialized, 4=SystemPartitionFailed, 5=Crashed)
+      nas.disk.status:
+        unit: "1"
+        gauge:
+          value_type: int
+        column_oids:
+          - oid: "1.3.6.1.4.1.6574.2.1.1.5"
+            attributes:
+              - name: disk.id
+      nas.disk.temperature:
+        unit: "Cel"
+        gauge:
+          value_type: int
+        column_oids:
+          - oid: "1.3.6.1.4.1.6574.2.1.1.6"
+            attributes:
+              - name: disk.id
+      # SYNOLOGY-RAID-MIB (1=Normal, 11=Degrade, 12=Crashed)
+      nas.raid.status:
+        unit: "1"
+        gauge:
+          value_type: int
+        column_oids:
+          - oid: "1.3.6.1.4.1.6574.3.1.1.3"
+            attributes:
+              - name: raid.name
+      nas.raid.free_bytes:
+        unit: "By"
+        gauge:
+          value_type: int
+        column_oids:
+          - oid: "1.3.6.1.4.1.6574.3.1.1.4"
+            attributes:
+              - name: raid.name
+      nas.raid.total_bytes:
+        unit: "By"
+        gauge:
+          value_type: int
+        column_oids:
+          - oid: "1.3.6.1.4.1.6574.3.1.1.5"
+            attributes:
+              - name: raid.name
+      # IF-MIB network I/O
+      interface.in.octets:
+        unit: "By"
+        sum:
+          aggregation: cumulative
+          monotonic: true
+          value_type: int
+        column_oids:
+          - oid: "1.3.6.1.2.1.2.2.1.10"
+            attributes:
+              - name: interface.name
+      interface.out.octets:
+        unit: "By"
+        sum:
+          aggregation: cumulative
+          monotonic: true
+          value_type: int
+        column_oids:
+          - oid: "1.3.6.1.2.1.2.2.1.16"
+            attributes:
+              - name: interface.name
+
+  # Synology NAS02 - 192.168.100.23
+  snmp/nas02:
+    collection_interval: 60s
+    endpoint: "udp://192.168.100.23:161"
+    version: v2c
+    community: ${env:SNMP_COMMUNITY}
+    timeout: 10s
+    attributes:
+      interface.name:
+        oid: "1.3.6.1.2.1.2.2.1.2"
+        indexed_value_prefix: ""
+      disk.id:
+        oid: "1.3.6.1.4.1.6574.2.1.1.2"
+        indexed_value_prefix: ""
+      raid.name:
+        oid: "1.3.6.1.4.1.6574.3.1.1.2"
+        indexed_value_prefix: ""
+    metrics:
+      system.uptime:
+        unit: "s"
+        gauge:
+          value_type: int
+        scalar_oids:
+          - oid: "1.3.6.1.2.1.1.3.0"
+      nas.system.temperature:
+        unit: "Cel"
+        gauge:
+          value_type: int
+        scalar_oids:
+          - oid: "1.3.6.1.4.1.6574.1.2.0"
+      nas.power.status:
+        unit: "1"
+        gauge:
+          value_type: int
+        scalar_oids:
+          - oid: "1.3.6.1.4.1.6574.1.3.0"
+      nas.disk.status:
+        unit: "1"
+        gauge:
+          value_type: int
+        column_oids:
+          - oid: "1.3.6.1.4.1.6574.2.1.1.5"
+            attributes:
+              - name: disk.id
+      nas.disk.temperature:
+        unit: "Cel"
+        gauge:
+          value_type: int
+        column_oids:
+          - oid: "1.3.6.1.4.1.6574.2.1.1.6"
+            attributes:
+              - name: disk.id
+      nas.raid.status:
+        unit: "1"
+        gauge:
+          value_type: int
+        column_oids:
+          - oid: "1.3.6.1.4.1.6574.3.1.1.3"
+            attributes:
+              - name: raid.name
+      nas.raid.free_bytes:
+        unit: "By"
+        gauge:
+          value_type: int
+        column_oids:
+          - oid: "1.3.6.1.4.1.6574.3.1.1.4"
+            attributes:
+              - name: raid.name
+      nas.raid.total_bytes:
+        unit: "By"
+        gauge:
+          value_type: int
+        column_oids:
+          - oid: "1.3.6.1.4.1.6574.3.1.1.5"
+            attributes:
+              - name: raid.name
+      interface.in.octets:
+        unit: "By"
+        sum:
+          aggregation: cumulative
+          monotonic: true
+          value_type: int
+        column_oids:
+          - oid: "1.3.6.1.2.1.2.2.1.10"
+            attributes:
+              - name: interface.name
+      interface.out.octets:
+        unit: "By"
+        sum:
+          aggregation: cumulative
+          monotonic: true
+          value_type: int
+        column_oids:
+          - oid: "1.3.6.1.2.1.2.2.1.16"
+            attributes:
+              - name: interface.name
+
+  # NetFlow/IPFIX receiver - for pfSense packet flow data
+  # Listens on UDP 2055 (NetFlow v5/v9)
+  netflow:
+    scheme: netflow
+    hostname: "0.0.0.0"
+    port: 2055
+
+  # pfSense-FW01 - 192.168.100.1
+  snmp/pfsense-fw01:
+    collection_interval: 60s
+    endpoint: "udp://192.168.100.1:161"
+    version: v2c
+    community: ${env:SNMP_COMMUNITY}
+    attributes:
+      # IF-MIB interface attributes (indexed by ifIndex)
+      interface.name:
+        oid: "1.3.6.1.2.1.2.2.1.2"       # ifDescr
+        indexed_value_prefix: ""
+      interface.description:
+        oid: "1.3.6.1.2.1.31.1.1.1.18"   # ifAlias (friendly name)
+        indexed_value_prefix: ""
+      # NOTE: interface.mac (ifPhysAddress 1.3.6.1.2.1.2.2.1.6) intentionally
+      # omitted — bsnmpd returns raw 6-byte binary (PhysAddress type) which
+      # causes the OTEL SNMP receiver to silently drop entire metrics that
+      # reference it.
+      # HOST-RESOURCES-MIB processor attributes (indexed by hrDeviceIndex)
+      # Requires hostres.so module loaded in pfSense SNMP service
+      cpu.description:
+        oid: "1.3.6.1.2.1.25.3.2.1.3"    # hrDeviceDescr
+        indexed_value_prefix: ""
+      # HOST-RESOURCES-MIB storage attributes (indexed by hrStorageIndex)
+      storage.description:
+        oid: "1.3.6.1.2.1.25.2.3.1.3"    # hrStorageDescr
+        indexed_value_prefix: ""
+      # IP-MIB attributes (indexed by ipAdEntAddr = the IP address itself)
+      ip.address:
+        oid: "1.3.6.1.2.1.4.20.1.1"      # ipAdEntAddr
+        indexed_value_prefix: ""
+      ip.netmask:
+        oid: "1.3.6.1.2.1.4.20.1.3"      # ipAdEntNetMask
+        indexed_value_prefix: ""
+    metrics:
+      system.uptime:
+        unit: "s"
+        gauge:
+          value_type: int
+        scalar_oids:
+          - oid: "1.3.6.1.2.1.1.3.0"
+      interface.in.octets:
+        unit: "By"
+        sum:
+          aggregation: cumulative
+          monotonic: true
+          value_type: int
+        column_oids:
+          - oid: "1.3.6.1.2.1.2.2.1.10"
+            attributes:
+              - name: interface.name
+      interface.out.octets:
+        unit: "By"
+        sum:
+          aggregation: cumulative
+          monotonic: true
+          value_type: int
+        column_oids:
+          - oid: "1.3.6.1.2.1.2.2.1.16"
+            attributes:
+              - name: interface.name
+      interface.in.errors:
+        unit: "1"
+        sum:
+          aggregation: cumulative
+          monotonic: true
+          value_type: int
+        column_oids:
+          - oid: "1.3.6.1.2.1.2.2.1.14"
+            attributes:
+              - name: interface.name
+      # IF-MIB interface operational status (1=up 2=down 3=testing)
+      interface.operational.status:
+        unit: "1"
+        gauge:
+          value_type: int
+        column_oids:
+          - oid: "1.3.6.1.2.1.2.2.1.8"   # ifOperStatus
+            attributes:
+              - name: interface.name
+      # IP-MIB: IP address → ifIndex mapping for Interface Summary table
+      interface.ip.ifindex:
+        unit: "1"
+        gauge:
+          value_type: int
+        column_oids:
+          - oid: "1.3.6.1.2.1.4.20.1.2"  # ipAdEntIfIndex
+            attributes:
+              - name: ip.address
+              - name: ip.netmask
+      # HOST-RESOURCES-MIB CPU load per core (requires hostres.so in pfSense)
+      system.cpu.load:
+        unit: "1"
+        gauge:
+          value_type: int
+        column_oids:
+          - oid: "1.3.6.1.2.1.25.3.3.1.2"  # hrProcessorLoad (0-100 %)
+            attributes:
+              - name: cpu.description
+      # HOST-RESOURCES-MIB storage (requires hostres.so in pfSense)
+      # Bytes used = hrStorageUsed * hrStorageAllocationUnits
+      system.storage.size:
+        unit: "{blocks}"
+        gauge:
+          value_type: int
+        column_oids:
+          - oid: "1.3.6.1.2.1.25.2.3.1.5"  # hrStorageSize (blocks)
+            attributes:
+              - name: storage.description
+      system.storage.used:
+        unit: "{blocks}"
+        gauge:
+          value_type: int
+        column_oids:
+          - oid: "1.3.6.1.2.1.25.2.3.1.6"  # hrStorageUsed (blocks)
+            attributes:
+              - name: storage.description
+      system.storage.allocation_units:
+        unit: "By"
+        gauge:
+          value_type: int
+        column_oids:
+          - oid: "1.3.6.1.2.1.25.2.3.1.4"  # hrStorageAllocationUnits (bytes/block)
+            attributes:
+              - name: storage.description
+
+processors:
+  # Memory limiter prevents OOM
+  memory_limiter:
+    check_interval: 1s
+    limit_mib: 512
+    spike_limit_mib: 128
+
+  # Batch processor for efficiency
+  batch:
+    send_batch_size: 1024
+    timeout: 10s
+    send_batch_max_size: 2048
+
+  # Add platform and device labels to metrics
+  resource:
+    attributes:
+      - key: platform
+        value: "convergence"
+        action: insert
+
+  # Convert Delta to Cumulative for Prometheus compatibility
+  deltatocumulative/firewall:
+    max_stale: 5m
+
+  # Add Nautobot device metadata to SNMP metrics
+  # HomeSwitch01 metadata
+  attributes/homeswitch01:
+    actions:
+      - key: device.name
+        value: "HomeSwitch01"
+        action: insert
+      - key: device.ip
+        value: "192.168.3.2"
+        action: insert
+      - key: device.vendor
+        value: "Cisco"
+        action: insert
+      - key: device.model
+        value: "WS-C3850-48P"
+        action: insert
+      - key: device.role
+        value: "home_switch"
+        action: insert
+      - key: device.site
+        value: "House"
+        action: insert
+
+  # HomeSwitch02 metadata
+  attributes/homeswitch02:
+    actions:
+      - key: device.name
+        value: "HomeSwitch02"
+        action: insert
+      - key: device.ip
+        value: "192.168.3.3"
+        action: insert
+      - key: device.vendor
+        value: "Cisco"
+        action: insert
+      - key: device.model
+        value: "WS-C3850-48P"
+        action: insert
+      - key: device.role
+        value: "home_switch"
+        action: insert
+      - key: device.site
+        value: "House"
+        action: insert
+
+  # Synology NAS01 metadata
+  attributes/nas01:
+    actions:
+      - key: device.name
+        value: "SynologyNAS01"
+        action: insert
+      - key: device.ip
+        value: "192.168.100.22"
+        action: insert
+      - key: device.vendor
+        value: "Synology"
+        action: insert
+      - key: device.role
+        value: "nas"
+        action: insert
+      - key: device.site
+        value: "House"
+        action: insert
+
+  # Synology NAS02 metadata
+  attributes/nas02:
+    actions:
+      - key: device.name
+        value: "SynologyNAS02"
+        action: insert
+      - key: device.ip
+        value: "192.168.100.23"
+        action: insert
+      - key: device.vendor
+        value: "Synology"
+        action: insert
+      - key: device.role
+        value: "nas"
+        action: insert
+      - key: device.site
+        value: "House"
+        action: insert
+
+  # pfSense-FW01 metadata
+  attributes/pfsense-fw01:
+    actions:
+      - key: device.name
+        value: "pfSense-FW01"
+        action: insert
+      - key: device.ip
+        value: "192.168.100.1"
+        action: insert
+      - key: device.vendor
+        value: "Netgate"
+        action: insert
+      - key: device.model
+        value: "8200 Max PFSense+ Security Gateway"
+        action: insert
+      - key: device.role
+        value: "firewall"
+        action: insert
+      - key: device.site
+        value: "House"
+        action: insert
+
+  # Enrich syslog logs with device metadata from Nautobot
+  transform/syslog_enrichment:
+    error_mode: ignore
+    log_statements:
+      - context: log
+        conditions:
+          - attributes["appname"] == "filterlog"
+        statements:
+          - set(attributes["device.name"], "pfSense-FW01")
+          - set(attributes["device.vendor"], "Netgate")
+          - set(attributes["device.role"], "firewall")
+          - set(attributes["device.site"], "House")
+
+  # Enrich NetFlow records with device metadata
+  transform/netflow_enrichment:
+    error_mode: ignore
+    log_statements:
+      - context: log
+        statements:
+          - set(attributes["device.name"], "pfSense-FW01")
+          - set(attributes["device.role"], "firewall")
+          - set(attributes["log_type"], "netflow")
+
+  # GeoIP enrichment for source IPs
+  # Process source IP and rename fields
+  geoip/src:
+    context: record
+    providers:
+      maxmind:
+        database_path: /var/lib/geoip/GeoLite2-City.mmdb
+    attributes: [src_ip]
+
+  # Rename source geo fields
+  transform/geoip_src:
+    error_mode: ignore
+    log_statements:
+      - context: log
+        statements:
+          - set(attributes["src_lat"], attributes["geo.location.lat"]) where attributes["geo.location.lat"] != nil
+          - set(attributes["src_lon"], attributes["geo.location.lon"]) where attributes["geo.location.lon"] != nil
+          - set(attributes["src_city"], attributes["geo.city_name"]) where attributes["geo.city_name"] != nil
+          - set(attributes["src_country"], attributes["geo.country_name"]) where attributes["geo.country_name"] != nil
+          - set(attributes["src_country_code"], attributes["geo.country.iso_code"]) where attributes["geo.country.iso_code"] != nil
+          - delete_matching_keys(attributes, "geo.*")
+
+  # GeoIP enrichment for destination IPs
+  geoip/dst:
+    context: record
+    providers:
+      maxmind:
+        database_path: /var/lib/geoip/GeoLite2-City.mmdb
+    attributes: [dst_ip]
+
+  # Rename destination geo fields
+  transform/geoip_dst:
+    error_mode: ignore
+    log_statements:
+      - context: log
+        statements:
+          - set(attributes["dst_lat"], attributes["geo.location.lat"]) where attributes["geo.location.lat"] != nil
+          - set(attributes["dst_lon"], attributes["geo.location.lon"]) where attributes["geo.location.lon"] != nil
+          - set(attributes["dst_city"], attributes["geo.city_name"]) where attributes["geo.city_name"] != nil
+          - set(attributes["dst_country"], attributes["geo.country_name"]) where attributes["geo.country_name"] != nil
+          - set(attributes["dst_country_code"], attributes["geo.country.iso_code"]) where attributes["geo.country.iso_code"] != nil
+          - delete_matching_keys(attributes, "geo.*")
+
+exporters:
+  # Prometheus Remote Write to VictoriaMetrics
+  prometheusremotewrite:
+    endpoint: "http://victoriametrics:8428/api/v1/write"
+    tls:
+      insecure: true
+
+  # File exporter for syslog logs (Promtail will tail these)
+  file/syslog:
+    path: /data/syslog/syslog.jsonl
+    rotation:
+      max_megabytes: 100
+      max_days: 3
+      max_backups: 3
+    format: json
+
+  # File exporter for NetFlow logs (Promtail will tail this)
+  file/netflow:
+    path: /data/netflow/netflow.jsonl
+    rotation:
+      max_megabytes: 100
+      max_days: 3
+      max_backups: 3
+    format: json
+
+  # Debug exporter for troubleshooting
+  debug:
+    verbosity: detailed
+    sampling_initial: 5
+    sampling_thereafter: 200
+
+connectors:
+  # Convert pfSense firewall logs to metrics
+  count/firewall:
+    logs:
+      firewall_events:
+        description: "Count of firewall events"
+        conditions:
+          - 'attributes["log_type"] == "firewall"'
+        attributes:
+          - key: action
+          - key: direction
+          - key: interface
+          - key: proto_name
+          - key: src_ip
+          - key: dst_ip
+          - key: src_lat
+          - key: src_lon
+          - key: src_country
+          - key: dst_lat
+          - key: dst_lon
+          - key: dst_country
+
+service:
+  extensions: [health_check, pprof, zpages]
+
+  pipelines:
+    # Metrics pipeline - HomeSwitch01
+    metrics/homeswitch01:
+      receivers: [snmp/homeswitch01]
+      processors: [memory_limiter, attributes/homeswitch01, resource, batch]
+      exporters: [prometheusremotewrite, debug]
+
+    # Metrics pipeline - HomeSwitch02
+    metrics/homeswitch02:
+      receivers: [snmp/homeswitch02]
+      processors: [memory_limiter, attributes/homeswitch02, resource, batch]
+      exporters: [prometheusremotewrite, debug]
+
+    # Metrics pipeline - Synology NAS01
+    metrics/nas01:
+      receivers: [snmp/nas01]
+      processors: [memory_limiter, attributes/nas01, resource, batch]
+      exporters: [prometheusremotewrite, debug]
+
+    # Metrics pipeline - Synology NAS02
+    metrics/nas02:
+      receivers: [snmp/nas02]
+      processors: [memory_limiter, attributes/nas02, resource, batch]
+      exporters: [prometheusremotewrite, debug]
+
+    # Metrics pipeline - pfSense
+    metrics/pfsense-fw01:
+      receivers: [snmp/pfsense-fw01]
+      processors: [memory_limiter, attributes/pfsense-fw01, resource, batch]
+      exporters: [prometheusremotewrite, debug]
+
+    # Metrics pipeline - General (OTLP and Prometheus)
+    metrics:
+      receivers: [otlp, prometheus]
+      processors: [memory_limiter, resource, batch]
+      exporters: [prometheusremotewrite, debug]
+
+    # Logs pipeline - OTLP
+    logs:
+      receivers: [otlp]
+      processors: [memory_limiter, batch]
+      exporters: [debug]
+
+    # Syslog pipeline - Network devices (RFC 3164 BSD format from Cisco/pfSense)
+    # Writes to file (for Loki via Promtail) and converts to metrics
+    logs/syslog:
+      receivers: [syslog/udp, syslog/tcp]
+      processors: [memory_limiter, transform/syslog_enrichment, geoip/src, transform/geoip_src, geoip/dst, transform/geoip_dst, resource, batch]
+      exporters: [file/syslog, count/firewall, debug]
+
+    # Firewall metrics pipeline - Converts parsed firewall logs to metrics
+    metrics/firewall:
+      receivers: [count/firewall]
+      processors: [memory_limiter, deltatocumulative/firewall, resource, batch]
+      exporters: [prometheusremotewrite, debug]
+
+    # NetFlow/IPFIX pipeline - pfSense packet flow data
+    logs/netflow:
+      receivers: [netflow]
+      processors: [memory_limiter, transform/netflow_enrichment, resource, batch]
+      exporters: [file/netflow, debug]
+
+    # Traces pipeline (minimal)
+    traces:
+      receivers: [otlp]
+      processors: [memory_limiter, batch]
+      exporters: [debug]
+
+  # Self-monitoring configuration
+  telemetry:
+    logs:
+      level: info
+      encoding: json
+    metrics:
+      level: detailed
+      readers:
+        - pull:
+            exporter:
+              prometheus:
+                host: "0.0.0.0"
+                port: 8888

@@ -1,0 +1,162 @@
+{
+  "21": {
+    "service": "FTP",
+    "risk_level": "high",
+    "description": "File Transfer Protocol — plaintext credentials, common attack vector"
+  },
+  "22": {
+    "service": "SSH",
+    "risk_level": "high",
+    "description": "Secure Shell — brute-force and credential stuffing target"
+  },
+  "23": {
+    "service": "Telnet",
+    "risk_level": "critical",
+    "description": "Plaintext remote access — should never be exposed to internet"
+  },
+  "25": {
+    "service": "SMTP",
+    "risk_level": "medium",
+    "description": "Simple Mail Transfer Protocol — spam relay abuse"
+  },
+  "53": {
+    "service": "DNS",
+    "risk_level": "medium",
+    "description": "Domain Name System — amplification DDoS and exfiltration"
+  },
+  "80": {
+    "service": "HTTP",
+    "risk_level": "medium",
+    "description": "Hypertext Transfer Protocol — web application attacks"
+  },
+  "110": {
+    "service": "POP3",
+    "risk_level": "medium",
+    "description": "Post Office Protocol — email credential harvesting"
+  },
+  "111": {
+    "service": "RPC",
+    "risk_level": "high",
+    "description": "Remote Procedure Call — exploitation target for privilege escalation"
+  },
+  "135": {
+    "service": "MS-RPC",
+    "risk_level": "critical",
+    "description": "Microsoft RPC — worm propagation vector (e.g. MS08-067)"
+  },
+  "137": {
+    "service": "NetBIOS-NS",
+    "risk_level": "high",
+    "description": "NetBIOS Name Service — network enumeration and reconnaissance"
+  },
+  "138": {
+    "service": "NetBIOS-DGM",
+    "risk_level": "high",
+    "description": "NetBIOS Datagram Service — network enumeration"
+  },
+  "139": {
+    "service": "NetBIOS",
+    "risk_level": "critical",
+    "description": "NetBIOS Session Service — SMB relay and lateral movement"
+  },
+  "143": {
+    "service": "IMAP",
+    "risk_level": "medium",
+    "description": "Internet Message Access Protocol — email credential brute-force"
+  },
+  "161": {
+    "service": "SNMP",
+    "risk_level": "high",
+    "description": "Simple Network Management Protocol — information disclosure"
+  },
+  "389": {
+    "service": "LDAP",
+    "risk_level": "high",
+    "description": "Lightweight Directory Access Protocol — directory enumeration"
+  },
+  "443": {
+    "service": "HTTPS",
+    "risk_level": "low",
+    "description": "HTTPS web traffic — typically legitimate but can carry C2"
+  },
+  "445": {
+    "service": "SMB",
+    "risk_level": "critical",
+    "description": "Server Message Block — EternalBlue, ransomware propagation"
+  },
+  "1433": {
+    "service": "MSSQL",
+    "risk_level": "critical",
+    "description": "Microsoft SQL Server — database credential brute-force"
+  },
+  "1521": {
+    "service": "Oracle DB",
+    "risk_level": "critical",
+    "description": "Oracle Database — credential brute-force and SQL injection"
+  },
+  "3306": {
+    "service": "MySQL",
+    "risk_level": "high",
+    "description": "MySQL database — credential brute-force"
+  },
+  "3389": {
+    "service": "RDP",
+    "risk_level": "critical",
+    "description": "Remote Desktop Protocol — BlueKeep and brute-force attacks"
+  },
+  "3390": {
+    "service": "RDP-Alt",
+    "risk_level": "critical",
+    "description": "RDP alternate port — used to evade standard RDP firewall rules"
+  },
+  "4444": {
+    "service": "Metasploit",
+    "risk_level": "critical",
+    "description": "Default Metasploit reverse shell port — active exploitation"
+  },
+  "4899": {
+    "service": "Radmin",
+    "risk_level": "high",
+    "description": "Radmin remote administration — targeted by botnets"
+  },
+  "5432": {
+    "service": "PostgreSQL",
+    "risk_level": "high",
+    "description": "PostgreSQL database — credential brute-force"
+  },
+  "5900": {
+    "service": "VNC",
+    "risk_level": "critical",
+    "description": "Virtual Network Computing — weak auth, remote desktop takeover"
+  },
+  "6379": {
+    "service": "Redis",
+    "risk_level": "critical",
+    "description": "Redis — unauthenticated access leads to RCE"
+  },
+  "8080": {
+    "service": "HTTP-Alt",
+    "risk_level": "medium",
+    "description": "Alternative HTTP port — web app attacks and proxy abuse"
+  },
+  "8443": {
+    "service": "HTTPS-Alt",
+    "risk_level": "low",
+    "description": "Alternative HTTPS — often C2 traffic"
+  },
+  "9200": {
+    "service": "Elasticsearch",
+    "risk_level": "critical",
+    "description": "Elasticsearch — unauthenticated data exposure"
+  },
+  "27017": {
+    "service": "MongoDB",
+    "risk_level": "critical",
+    "description": "MongoDB — unauthenticated access and ransom attacks"
+  },
+  "50000": {
+    "service": "SAP",
+    "risk_level": "high",
+    "description": "SAP application server — targeted by industrial espionage"
+  }
+}
