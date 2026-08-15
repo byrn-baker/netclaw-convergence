@@ -59,132 +59,10 @@ input {
   background-size: 180px 180px, 220px 220px;
 }
 
-/* The rolling CRT sweep is gone in BOTH themes: a full-screen bar cycling every
-   few seconds read as a hardware fault ("videotaping a tube TV"), and it moved
-   continuously over a chart operators are trying to read. The element stays in
-   the DOM so nothing that queries it breaks. */
 .scan-beam {
-  display: none;
-}
-
-/* ── H005 Stale / offline graph banner ──────────────────────────── */
-.stale-banner {
-  position: fixed;
-  top: max(10px, env(safe-area-inset-top, 0px));
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 60;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  max-width: min(720px, calc(100vw - 24px));
-  padding: 10px 12px;
-  border-radius: 14px;
-  border: 1px solid rgba(255, 123, 84, 0.45);
-  background: rgba(28, 14, 10, 0.94);
-  box-shadow: var(--shadow);
-  backdrop-filter: blur(12px);
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 11px;
-  color: var(--text);
-}
-
-.stale-banner.hidden {
-  display: none !important;
-}
-
-.stale-banner-badge {
-  flex: none;
-  padding: 3px 8px;
-  border-radius: 999px;
-  letter-spacing: 0.12em;
-  font-weight: 700;
-  font-size: 10px;
-  color: #041018;
-  background: linear-gradient(180deg, #ff9a6b, var(--accent-warm));
-}
-
-.stale-banner-text {
-  flex: 1;
-  min-width: 0;
-  line-height: 1.35;
-  color: rgba(231, 241, 255, 0.88);
-}
-
-.stale-banner-retry {
-  flex: none;
-  appearance: none;
-  border: 1px solid var(--line-strong);
-  background: rgba(101, 195, 255, 0.12);
-  color: var(--accent);
-  border-radius: 999px;
-  padding: 8px 12px;
-  min-height: 36px;
-  font: inherit;
-  font-size: 10px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  cursor: pointer;
-}
-
-.stale-banner-retry:hover {
-  border-color: var(--accent);
-  color: var(--text);
-}
-
-.stale-banner-retry:disabled {
-  opacity: 0.5;
-  cursor: wait;
-}
-
-.stale-banner-dismiss {
-  flex: none;
-  appearance: none;
-  border: 0;
-  background: transparent;
-  color: var(--muted);
-  width: 32px;
-  height: 32px;
-  font-size: 18px;
-  line-height: 1;
-  cursor: pointer;
-  border-radius: 8px;
-}
-
-.stale-banner-dismiss:hover {
-  color: var(--text);
-  background: rgba(255, 255, 255, 0.06);
-}
-
-#app.has-stale-banner .topbar {
-  /* keep topbar clear of the banner on mobile */
-  margin-top: 0;
-}
-
-@media (max-width: 720px) {
-  .stale-banner {
-    top: max(8px, env(safe-area-inset-top, 0px));
-    left: max(8px, env(safe-area-inset-left, 0px));
-    right: max(8px, env(safe-area-inset-right, 0px));
-    transform: none;
-    max-width: none;
-    flex-wrap: wrap;
-  }
-}
-
-/* H002 — OS reduce motion: freeze continuous full-screen scan */
-#app.reduced-motion .scan-beam,
-html.reduced-motion .scan-beam {
-  animation: none;
-  opacity: 0.04;
-  transform: none;
-}
-
-#app.reduced-motion .sidebar,
-#app.reduced-motion .footer,
-#app.reduced-motion .chat-drawer,
-#app.reduced-motion .panel-reopen {
-  transition-duration: 0.01ms !important;
+  pointer-events: none;
+  background: linear-gradient(180deg, transparent 0%, rgba(101, 195, 255, 0.04) 46%, rgba(255, 123, 84, 0.08) 50%, transparent 56%);
+  animation: sweep 8s linear infinite;
 }
 
 @keyframes sweep {
@@ -193,13 +71,6 @@ html.reduced-motion .scan-beam {
   }
   to {
     transform: translateY(100%);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .scan-beam {
-    animation: none;
-    opacity: 0.04;
   }
 }
 
@@ -222,11 +93,6 @@ html.reduced-motion .scan-beam {
   justify-content: space-between;
   padding: 16px 20px;
   border-radius: 22px;
-  z-index: 40;
-}
-
-.topbar-stats.hidden {
-  display: none;
 }
 
 .eyebrow {
@@ -275,36 +141,12 @@ html.reduced-motion .scan-beam {
 }
 
 .sidebar {
-  /* H008 — --topbar-height from ResizeObserver; fallback for first paint */
-  top: calc(var(--topbar-height, 140px) + 18px);
+  top: 118px;
   bottom: 102px;
   width: min(24vw, 330px);
   border-radius: 24px;
-  padding: 0;
-  overflow: hidden;
-  z-index: 35;
-  display: flex;
-  flex-direction: column;
-  isolation: isolate;
-}
-
-.sidebar > .panel-toggle {
-  position: absolute;
-  z-index: 6;
-  flex: none;
-}
-
-.sidebar > section {
   padding: 18px;
   overflow: auto;
-  min-height: 0;
-  flex: 1 1 auto;
-}
-
-.sidebar > section.sidebar-section {
-  flex: 0 1 auto;
-  max-height: 40%;
-  border-top: 1px solid rgba(255, 255, 255, 0.04);
 }
 
 .sidebar.left {
@@ -468,7 +310,6 @@ html.reduced-motion .scan-beam {
   bottom: 18px;
   padding: 14px 18px;
   border-radius: 20px;
-  z-index: 35;
 }
 
 .footer-row {
@@ -571,55 +412,24 @@ html.reduced-motion .scan-beam {
   transform: translate(-50%, -120%);
 }
 
-/* ── Chat Drawer (floating, draggable, resizable, collapsible) ─── */
+/* ── Chat Drawer ─────────────────────────────────────────────────── */
 .chat-drawer {
   position: fixed;
-  /* Default docked position; JS may override with left/top after drag */
   bottom: 84px;
   left: 50%;
   transform: translateX(-50%);
   width: min(620px, calc(100vw - 40px));
-  height: 320px;
-  max-width: calc(100vw - 24px);
-  max-height: calc(100vh - 24px);
-  min-width: 320px;
-  min-height: 42px;
+  max-height: 320px;
   border-radius: 18px;
   display: flex;
   flex-direction: column;
-  z-index: 45;
-  transition: max-height 300ms ease, opacity 200ms ease, box-shadow 180ms ease;
-  overflow: hidden;
-}
-
-.chat-drawer.chat-positioned {
-  /* After first drag/resize: use explicit left/top, drop centering transform */
-  transform: none;
-  bottom: auto;
+  z-index: 40;
+  transition: max-height 300ms ease, opacity 200ms ease;
 }
 
 .chat-drawer.collapsed {
-  height: 48px !important;
-  min-height: 48px;
-  max-height: 48px;
+  max-height: 42px;
   overflow: hidden;
-  resize: none;
-}
-
-/* H010 snap affordance */
-.chat-drawer[data-snap='peek'] {
-  box-shadow: var(--shadow), 0 0 0 1px rgba(101, 195, 255, 0.12);
-}
-
-.chat-drawer[data-snap='expanded'] .chat-messages {
-  min-height: 80px;
-}
-
-.chat-drawer.dragging,
-.chat-drawer.resizing {
-  transition: none;
-  user-select: none;
-  box-shadow: 0 22px 70px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(101, 195, 255, 0.25);
 }
 
 .chat-header {
@@ -628,50 +438,6 @@ html.reduced-motion .scan-beam {
   align-items: center;
   padding: 8px 14px 4px;
   flex: none;
-  cursor: grab;
-  touch-action: none;
-  user-select: none;
-}
-
-.chat-header:active {
-  cursor: grabbing;
-}
-
-.chat-header .chat-header-actions,
-.chat-header .chat-header-actions * {
-  cursor: pointer;
-  user-select: auto;
-}
-
-.chat-resize-handle {
-  position: absolute;
-  right: 4px;
-  bottom: 4px;
-  width: 16px;
-  height: 16px;
-  cursor: nwse-resize;
-  z-index: 3;
-  touch-action: none;
-  opacity: 0.55;
-  background:
-    linear-gradient(135deg, transparent 50%, rgba(101, 195, 255, 0.15) 50%),
-    repeating-linear-gradient(
-      -45deg,
-      transparent,
-      transparent 2px,
-      rgba(101, 195, 255, 0.55) 2px,
-      rgba(101, 195, 255, 0.55) 3px
-    );
-  border-radius: 0 0 12px 0;
-  clip-path: polygon(100% 0, 100% 100%, 0 100%);
-}
-
-.chat-drawer.collapsed .chat-resize-handle {
-  display: none;
-}
-
-.chat-resize-handle:hover {
-  opacity: 1;
 }
 
 .chat-header .eyebrow {
@@ -745,9 +511,8 @@ html.reduced-motion .scan-beam {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  min-height: 0;
-  /* Grow/shrink with floating window height instead of fixed max */
-  max-height: none;
+  min-height: 80px;
+  max-height: 200px;
 }
 
 .chat-messages::-webkit-scrollbar { width: 4px; }
@@ -794,24 +559,6 @@ html.reduced-motion .scan-beam {
   background: rgba(104, 245, 178, 0.14);
   border-color: rgba(104, 245, 178, 0.25);
   color: var(--ok);
-}
-
-.footer-tokens {
-  font-variant-numeric: tabular-nums;
-  gap: 1rem;
-}
-.footer-tokens strong {
-  color: #7dd3fc;
-  font-weight: 600;
-}
-.token-footer {
-  display: block;
-  margin-top: 8px;
-  font-size: 10px;
-  letter-spacing: 0.02em;
-  color: #7dd3fc;
-  opacity: 0.9;
-  font-family: 'IBM Plex Mono', ui-monospace, monospace;
 }
 
 .chat-badge {
@@ -1166,32 +913,28 @@ html.reduced-motion .scan-beam {
 /* ── Collapsible Panels ─────────────────────────────────────────── */
 .panel-toggle {
   position: absolute;
-  z-index: 6;
-  width: 28px;
-  height: 28px;
-  border-radius: 8px;
-  border: 1px solid var(--line-strong);
-  background: rgba(5, 12, 24, 0.92);
-  color: var(--text);
+  z-index: 2;
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  border: 1px solid var(--line);
+  background: rgba(0, 0, 0, 0.4);
+  color: var(--muted);
   cursor: pointer;
-  font-size: 14px;
-  line-height: 1;
+  font-size: 12px;
   display: grid;
   place-items: center;
-  transition: color 180ms ease, border-color 180ms ease, background 180ms ease, box-shadow 180ms ease;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+  transition: color 180ms ease, border-color 180ms ease;
 }
 
 .panel-toggle:hover {
-  color: #041018;
+  color: var(--text);
   border-color: var(--accent);
-  background: linear-gradient(180deg, var(--accent), #3a9ad4);
-  box-shadow: 0 0 16px rgba(101, 195, 255, 0.35);
 }
 
-.sidebar.left .panel-toggle { top: 10px; right: 10px; }
-.sidebar.right .panel-toggle { top: 10px; left: 10px; }
-.footer .panel-toggle { top: -30px; right: 12px; }
+.sidebar.left .panel-toggle { top: 8px; right: 8px; }
+.sidebar.right .panel-toggle { top: 8px; left: 8px; }
+.footer .panel-toggle { top: -28px; right: 12px; }
 
 .sidebar.left {
   transition: transform 350ms cubic-bezier(.4, 0, .2, 1), opacity 250ms ease;
@@ -1223,7 +966,7 @@ html.reduced-motion .scan-beam {
 
 .panel-reopen {
   position: fixed;
-  z-index: 50;
+  z-index: 30;
   background: var(--bg-strong);
   border: 1px solid var(--line);
   color: var(--muted);
@@ -1329,7 +1072,6 @@ html.reduced-motion .scan-beam {
     top: auto;
     bottom: 102px;
     height: 280px;
-    z-index: 35;
   }
 
   .sidebar.left {
@@ -1341,422 +1083,32 @@ html.reduced-motion .scan-beam {
   }
 }
 
-/* ── Mobile layout (driven by JS: #app.mobile-layout) ───────────── */
-
-#app.mobile-layout {
-  /* iOS notch / home indicator tokens */
-  --safe-top: env(safe-area-inset-top, 0px);
-  --safe-right: env(safe-area-inset-right, 0px);
-  --safe-bottom: env(safe-area-inset-bottom, 0px);
-  --safe-left: env(safe-area-inset-left, 0px);
-}
-
-#app.mobile-layout .topbar {
-  top: max(10px, env(safe-area-inset-top, 0px));
-  left: max(10px, env(safe-area-inset-left, 0px));
-  right: max(10px, env(safe-area-inset-right, 0px));
-  padding: 10px 12px;
-  border-radius: 16px;
-  gap: 10px;
-  flex-direction: column;
-  align-items: stretch;
-  z-index: 48;
-}
-
-#app.mobile-layout .brand {
-  font-size: clamp(22px, 7vw, 30px);
-  letter-spacing: 0.1em;
-}
-
-#app.mobile-layout .eyebrow {
-  font-size: 10px;
-  letter-spacing: 0.14em;
-}
-
-#app.mobile-layout .app-tabs {
-  width: 100%;
-  justify-content: stretch;
-}
-
-#app.mobile-layout .app-tab {
-  flex: 1;
-  text-align: center;
-  padding: 10px 12px;
-  min-height: 44px;
-}
-
-#app.mobile-layout .topbar-stats {
-  width: 100%;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 6px;
-}
-
-#app.mobile-layout .metric {
-  min-width: 0;
-  padding: 8px 6px;
-  border-radius: 12px;
-}
-
-#app.mobile-layout .metric-value {
-  font-size: 16px;
-}
-
-#app.mobile-layout .metric-label {
-  font-size: 8px;
-  letter-spacing: 0.04em;
-}
-
-/* Bottom sheets instead of side rails — both Filters AND Detail stay available */
-#app.mobile-layout .sidebar {
-  position: fixed;
-  left: max(10px, env(safe-area-inset-left, 0px));
-  right: max(10px, env(safe-area-inset-right, 0px));
-  top: auto;
-  bottom: max(72px, calc(env(safe-area-inset-bottom, 0px) + 64px));
-  width: auto;
-  height: min(52vh, 420px);
-  max-height: calc(100dvh - 160px);
-  border-radius: 18px 18px 14px 14px;
-  z-index: 46;
-  display: flex;
-  /* override old 720px display:none on left */
-}
-
-#app.mobile-layout .sidebar.left,
-#app.mobile-layout .sidebar.right {
-  left: max(10px, env(safe-area-inset-left, 0px));
-  right: max(10px, env(safe-area-inset-right, 0px));
-  transform: none;
-}
-
-#app.mobile-layout .sidebar.left.collapsed,
-#app.mobile-layout .sidebar.right.collapsed {
-  transform: translateY(calc(100% + 48px));
-  opacity: 0;
-  pointer-events: none;
-}
-
-#app.mobile-layout .sidebar .panel-toggle {
-  width: 40px;
-  height: 40px;
-  font-size: 18px;
-  top: 8px;
-}
-
-#app.mobile-layout .sidebar.left .panel-toggle { right: 8px; left: auto; }
-#app.mobile-layout .sidebar.right .panel-toggle { right: 8px; left: auto; }
-
-#app.mobile-layout .footer {
-  left: max(10px, env(safe-area-inset-left, 0px));
-  right: max(10px, env(safe-area-inset-right, 0px));
-  bottom: max(10px, env(safe-area-inset-bottom, 0px));
-  padding: 10px 12px;
-  border-radius: 14px;
-  z-index: 44;
-}
-
-#app.mobile-layout .footer .panel-toggle {
-  width: 36px;
-  height: 36px;
-  top: -34px;
-}
-
-#app.mobile-layout .footer-row {
-  gap: 8px;
-}
-
-#app.mobile-layout .footer-row span {
-  font-size: 10px;
-}
-
-/* Edge reopen chips → bottom dock (easy thumbs) */
-#app.mobile-layout .panel-reopen {
-  z-index: 47;
-  opacity: 0;
-  font-size: 10px;
-  letter-spacing: 0.12em;
-  min-height: 40px;
-  padding: 10px 14px;
-  border-radius: 999px;
-  writing-mode: horizontal-tb;
-  text-orientation: mixed;
-  border: 1px solid var(--line-strong);
-  background: rgba(5, 12, 24, 0.94);
-  box-shadow: var(--shadow);
-}
-
-#app.mobile-layout .panel-reopen.visible {
-  opacity: 1;
-}
-
-#app.mobile-layout .reopen-left {
-  left: max(12px, env(safe-area-inset-left, 0px));
-  right: auto;
-  top: auto;
-  bottom: max(14px, calc(env(safe-area-inset-bottom, 0px) + 10px));
-  transform: none;
-  border-radius: 999px;
-  border-left: 1px solid var(--line-strong);
-}
-
-#app.mobile-layout .reopen-right {
-  right: max(12px, env(safe-area-inset-right, 0px));
-  left: auto;
-  top: auto;
-  bottom: max(14px, calc(env(safe-area-inset-bottom, 0px) + 10px));
-  transform: none;
-  border-radius: 999px;
-  border-right: 1px solid var(--line-strong);
-}
-
-#app.mobile-layout .reopen-footer {
-  left: 50%;
-  right: auto;
-  bottom: max(14px, calc(env(safe-area-inset-bottom, 0px) + 10px));
-  transform: translateX(-50%);
-  border-radius: 999px;
-  border-bottom: 1px solid var(--line-strong);
-}
-
-/* Terminal: bottom sheet feel, larger controls */
-#app.mobile-layout .chat-drawer {
-  z-index: 49;
-  border-radius: 16px;
-  min-width: 0;
-  max-width: none;
-}
-
-#app.mobile-layout .chat-header {
-  padding: 10px 12px 8px;
-  min-height: 48px;
-}
-
-#app.mobile-layout .chat-toggle-btn,
-#app.mobile-layout .new-session-btn {
-  min-height: 40px;
-  min-width: 40px;
-  padding: 8px 12px;
-  font-size: 12px;
-}
-
-#app.mobile-layout .chat-input {
-  min-height: 44px;
-  font-size: 16px; /* prevents iOS zoom-on-focus */
-  padding: 10px 12px;
-}
-
-#app.mobile-layout .chat-send {
-  min-height: 44px;
-  min-width: 64px;
-  font-size: 12px;
-}
-
-#app.mobile-layout .chat-resize-handle {
-  width: 28px;
-  height: 28px;
-  right: 6px;
-  bottom: 6px;
-  opacity: 0.75;
-}
-
-#app.mobile-layout .chat-msg {
-  font-size: 12px;
-  max-width: 96%;
-}
-
-/* Knowledge panel mobile rules live in panels/KnowledgePanel.css (H007) */
-
-/* ── H001 Landscape chrome (short height + landscape) ───────────── */
-/* Goal: ≥50% of the short axis free for the graph / Home content */
-
-#app.landscape-layout .topbar {
-  top: max(6px, env(safe-area-inset-top, 0px));
-  left: max(8px, env(safe-area-inset-left, 0px));
-  right: max(8px, env(safe-area-inset-right, 0px));
-  padding: 6px 10px;
-  border-radius: 12px;
-  gap: 8px;
-  flex-direction: row;
-  flex-wrap: wrap;
-  align-items: center;
-  z-index: 48;
-}
-
-#app.landscape-layout .topbar-brand-block {
-  flex-direction: row;
-  align-items: center;
-  gap: 10px;
-  flex: 1 1 auto;
-  min-width: 0;
-}
-
-#app.landscape-layout .topbar-brand-block > .eyebrow {
-  display: none; /* free vertical space */
-}
-
-#app.landscape-layout .brand {
-  font-size: clamp(16px, 3.2vh, 22px);
-  letter-spacing: 0.08em;
-  line-height: 1;
-}
-
-#app.landscape-layout .app-tabs {
-  width: auto;
-}
-
-#app.landscape-layout .app-tab {
-  padding: 8px 12px;
-  min-height: 36px;
-  font-size: 10px;
-}
-
-#app.landscape-layout .topbar-stats {
-  width: auto;
-  flex: 0 1 auto;
-  grid-template-columns: repeat(4, minmax(52px, 1fr));
-  gap: 6px;
-}
-
-#app.landscape-layout .metric {
-  padding: 6px 8px;
-  border-radius: 10px;
-}
-
-#app.landscape-layout .metric-value {
-  font-size: 14px;
-}
-
-#app.landscape-layout .metric-label {
-  font-size: 8px;
-}
-
-/* Side sheets use less vertical share in landscape */
-#app.landscape-layout .sidebar {
-  position: fixed;
-  left: max(8px, env(safe-area-inset-left, 0px));
-  right: max(8px, env(safe-area-inset-right, 0px));
-  top: auto;
-  bottom: max(48px, calc(env(safe-area-inset-bottom, 0px) + 40px));
-  width: auto;
-  height: min(48vh, 280px);
-  max-height: calc(100dvh - 100px);
-  border-radius: 14px;
-  z-index: 46;
-}
-
-#app.landscape-layout .sidebar.left.collapsed,
-#app.landscape-layout .sidebar.right.collapsed {
-  transform: translateY(calc(100% + 40px));
-  opacity: 0;
-  pointer-events: none;
-}
-
-#app.landscape-layout .footer {
-  left: max(8px, env(safe-area-inset-left, 0px));
-  right: max(8px, env(safe-area-inset-right, 0px));
-  bottom: max(6px, env(safe-area-inset-bottom, 0px));
-  padding: 6px 10px;
-  border-radius: 12px;
-}
-
-#app.landscape-layout .footer-row span {
-  font-size: 9px;
-}
-
-#app.landscape-layout .panel-reopen {
-  z-index: 47;
-  min-height: 34px;
-  padding: 8px 12px;
-  font-size: 9px;
-  writing-mode: horizontal-tb;
-  border-radius: 999px;
-}
-
-#app.landscape-layout .reopen-left {
-  left: max(10px, env(safe-area-inset-left, 0px));
-  top: auto;
-  bottom: max(8px, env(safe-area-inset-bottom, 0px));
-  transform: none;
-}
-
-#app.landscape-layout .reopen-right {
-  right: max(10px, env(safe-area-inset-right, 0px));
-  top: auto;
-  bottom: max(8px, env(safe-area-inset-bottom, 0px));
-  transform: none;
-}
-
-#app.landscape-layout .reopen-footer {
-  left: 50%;
-  bottom: max(8px, env(safe-area-inset-bottom, 0px));
-  transform: translateX(-50%);
-}
-
-#app.landscape-layout .chat-drawer {
-  z-index: 49;
-  border-radius: 12px;
-}
-
-#app.landscape-layout .chat-header {
-  min-height: 40px;
-  padding: 6px 10px;
-}
-
-#app.landscape-layout.home-mode .home-root {
-  top: calc(var(--topbar-height, 72px) + 8px);
-  bottom: max(8px, env(safe-area-inset-bottom, 0px));
-  left: max(8px, env(safe-area-inset-left, 0px));
-  right: max(8px, env(safe-area-inset-right, 0px));
-}
-
-#app.landscape-layout .home-kpi-grid {
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 6px;
-}
-
-#app.landscape-layout .home-kpi {
-  padding: 8px 6px;
-}
-
-#app.landscape-layout .home-kpi-value {
-  font-size: clamp(14px, 3.5vh, 20px);
-}
-
-/* Pure CSS fallback when JS class not yet applied */
 @media (max-width: 720px) {
-  .topbar {
-    left: 10px;
-    right: 10px;
-    top: 10px;
-    padding: 10px 12px;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 10px;
-  }
-
-  .topbar-stats {
-    width: 100%;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 6px;
-  }
-
-  .metric {
-    min-width: 0;
-    padding: 8px 6px;
-  }
-
-  .metric-value {
-    font-size: 16px;
-  }
-
+  .topbar,
   .footer {
     left: 10px;
     right: 10px;
   }
 
-  /* Do NOT display:none the left sidebar — mobile-layout JS collapses it */
+  .sidebar {
+    position: absolute;
+    width: calc(100% - 20px);
+    height: 210px;
+    left: 10px;
+    right: 10px;
+    bottom: 84px;
+  }
+
   .sidebar.left {
-    display: flex;
+    display: none;
+  }
+
+  .sidebar.right {
+    top: auto;
+  }
+
+  .metric {
+    min-width: 0;
   }
 }
 
@@ -1863,14 +1215,6 @@ html.reduced-motion .scan-beam {
 
 /* ── HUD 2.0: top-down trust org chart (feature 072) ───────────────────── */
 
-/* Sidebar taxonomy now reflects real member departments, not the retired
-   integration-orbit catalogue. */
-.category-toggle { gap: 9px; padding: 10px 11px; }
-.category-toggle > span:nth-child(2) { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
-.category-toggle .toggle-meta { font-size: 9px; white-space: nowrap; }
-.category-swatch { color: #65c3ff; background: #65c3ff; }
-.category-swatch.has-attention { color: #ff7a7a; background: #ff7a7a; }
-
 /* Legend (FR-009c). Shapes carry the distinction alongside colour so the
    encoding survives greyscale (SC-007). */
 .legend-list { list-style: none; margin: 0; padding: 0; font-size: 11px; line-height: 1.9; }
@@ -1881,40 +1225,13 @@ html.reduced-motion .scan-beam {
 .legend-cold  { color: #5f6d80; }
 .legend-fault { color: #ff7a7a; }
 
-/* Department headers make the green elbow routes explain themselves. */
-.category-label {
-  padding: 4px 9px; border-radius: 4px;
-  border: 1px solid rgba(101, 195, 255, 0.28);
-  border-left: 3px solid rgba(101, 195, 255, 0.82);
-  background: rgba(5, 12, 24, 0.92); color: #cfe6ff;
-  font-size: 11px; font-weight: 700; letter-spacing: 0.07em;
-  text-transform: uppercase; white-space: nowrap; pointer-events: none;
-}
-.category-label-attention { border-left-color: #ff7a7a; color: #ffd1d1; }
-
-/* Node labels carry a stronger hierarchy than generic scene pills. */
-.org-node-label {
-  padding: 5px 9px; border-radius: 5px;
-  background: rgba(5, 12, 24, 0.88); border-color: rgba(150, 190, 230, 0.2);
-  font-size: 11px; font-weight: 600; letter-spacing: 0.04em;
-  transition: opacity 140ms ease, border-color 140ms ease, background 140ms ease;
-}
-.org-node-border { color: #ffe8a6; font-size: 12px; }
-.org-node-peer { color: #c6eaff; }
-.org-node-label-hovered { border-color: #65c3ff; background: rgba(10, 27, 48, 0.98); }
-.org-node-label-selected {
-  border-color: #ffd97a; background: rgba(35, 29, 12, 0.98);
-  box-shadow: 0 0 0 2px rgba(255, 217, 122, 0.18);
-}
-.org-node-fault { border-color: rgba(255, 122, 122, 0.48); }
-
-/* Band labels stay prominent, but subordinate to department headers. */
+/* Band and boundary labels drawn into the scene via CSS2D. */
 .band-label {
-  font-size: 11px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase;
-  color: rgba(190, 215, 240, 0.68); white-space: nowrap; pointer-events: none;
+  font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
+  color: rgba(180, 205, 235, 0.55); white-space: nowrap; pointer-events: none;
 }
-.band-label-boundary { color: rgba(255, 200, 87, 0.95); font-weight: 700; letter-spacing: 0.24em; }
-.band-label-edge { color: rgba(242, 112, 79, 0.92); }
+.band-label-boundary { color: rgba(255, 200, 87, 0.9); font-weight: 600; letter-spacing: 0.26em; }
+.band-label-edge { color: rgba(230, 87, 51, 0.85); }
 
 /* Empty-band copy (FR-033a): must read as "nothing here yet", never as a
    failed load. */
@@ -1971,36 +1288,35 @@ html.reduced-motion .scan-beam {
   font-size: 12px; z-index: 60;
 }
 
-/* COMMAND layout: readable department cards and direct-manipulation feedback. */
-.category-label {
-  width: min(150px, 18vw);
-  max-width: 150px;
-  box-sizing: border-box;
-  white-space: pre-line;
-  text-align: center;
-  line-height: 1.35;
+/* ── Budget indicator (spec 109) ──────────────────────────────────── */
+.budget-indicator {
+  cursor: pointer;
+  transition: color 0.3s ease, text-shadow 0.3s ease;
+  border-radius: 4px;
+  padding: 0 4px;
 }
-#scene-root canvas.orgchart-drag-hover { cursor: grab; }
-#scene-root canvas.orgchart-dragging { cursor: grabbing; }
 
-/* Right rail order: Focus, Selection, then docked Knowledge.
-   Selection OWNS the free space and scrolls internally; Knowledge is capped and
-   never squeezes it. Capping Selection instead just clipped the detail card,
-   which reads as Knowledge covering it. */
-#sidebar-right > section:first-of-type {
-  flex: 0 0 auto;
-  overflow: visible;
-  padding-bottom: 10px;
+.budget-indicator.budget-ok {
+  color: #4cc9f0; /* Cyan — matches HUD palette */
 }
-#sidebar-right > section.sidebar-section {
-  flex: 1 1 auto;
-  max-height: none;
-  min-height: 120px;
-  margin-top: 0;
-  padding-top: 12px;
-  overflow: auto;
+
+.budget-indicator.budget-warning {
+  color: #f8961e; /* Amber */
+  text-shadow: 0 0 6px rgba(248, 150, 30, 0.4);
 }
-#sidebar-right .detail-panel {
-  min-height: 0;
-  margin-top: 10px;
+
+.budget-indicator.budget-critical {
+  color: #ef476f; /* Red */
+  text-shadow: 0 0 8px rgba(239, 71, 111, 0.5);
+}
+
+.budget-indicator.budget-halted {
+  color: #ef476f;
+  text-shadow: 0 0 12px rgba(239, 71, 111, 0.7);
+  animation: budget-pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes budget-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
 }
