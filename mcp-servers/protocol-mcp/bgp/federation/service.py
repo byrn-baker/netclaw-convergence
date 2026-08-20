@@ -218,6 +218,8 @@ class FederationService:
             # feature 068: biometric-gated approvals + capability advertisement.
             "n2n/edge/register_capabilities": self._edge_on_register_capabilities,
             "n2n/edge/approval_resolve": self._edge_on_approval_resolve,
+            # spec 111, US2: PendingApprovalsIntent's live count.
+            "n2n/edge/approvals_list": self._edge_on_approvals_list,
         }
 
     def notify_approval(self, invocation_id, peer, target_type, target_name):
@@ -1661,6 +1663,22 @@ class FederationService:
             "already_resolved": result["already_resolved"],
         }
 
+    async def _edge_on_approvals_list(self, channel, params):
+        """Live count of currently-pending approvals for `PendingApprovalsIntent`
+        (spec 111, US2, research.md R3). Calls the EXISTING
+        `Authorizer.pending_approvals()` unchanged — risk-wide, not filtered by
+        `channel.member_id`, matching this system's existing single-approver-
+        per-risk model (the same assumption `push_to_edge` already makes for
+        approval delivery). Deliberately NOT served from `EdgeQueue` replay or
+        any push-accumulated cache: an approval already delivered once to an
+        earlier connection but still unresolved would silently be missed by
+        either, which would violate FR-006's "live... not a stale/cached
+        value" requirement (research.md R3)."""
+        from .edge import RpcError
+        if not channel.trusted or not channel.member_id:
+            raise RpcError(-32023, "edge node not authenticated")
+        return {"count": len(self.authz.pending_approvals())}
+
     async def _edge_on_ask(self, channel, params):
         """Phone asks the Border something (feature 067, US1/US2/US3): create
         a delegated_task (feature 053, TaskManager) and run a real agent turn
@@ -1686,6 +1704,12 @@ class FederationService:
         # accompanying text (FR-005) -- text is required only in the
         # ABSENCE of an attachment.
         attachment = params.get("attachment")
+        # spec 117 (Pass 3, FR-003): an optional marker, currently only ever
+        # sent as "voice" by the phone's Siri headless path. Forwarded
+        # as-is to run_agent_turn() below -- no validation needed here,
+        # since run_agent_turn's own _normalize_origin() (spec 116) already
+        # treats anything it doesn't recognize as None.
+        origin = params.get("origin")
         if not text and not attachment:
             raise RpcError(-32602, "text or attachment required")
         member_id = channel.member_id
@@ -1752,7 +1776,8 @@ class FederationService:
                 output, tokens = await run_agent_turn(
                     prompt, session_key=session_key, untrusted=False,
                     message_file=message_file,
-                    timeout_s=timeout_s, on_stall=on_stall)
+                    timeout_s=timeout_s, on_stall=on_stall,
+                    origin=origin)
             finally:
                 if message_file:
                     try:

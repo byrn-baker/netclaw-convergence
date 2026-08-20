@@ -8,7 +8,11 @@ import 'package:path_provider/path_provider.dart';
 
 import 'ncfed/app_lock.dart';
 import 'ncfed/approval_client.dart';
+// ignore: unused_import
+import 'ncfed/ask_border_headless.dart';
 import 'ncfed/background_refresh.dart';
+// ignore: unused_import
+import 'ncfed/border_health_headless.dart';
 import 'ncfed/badge_lifecycle.dart';
 import 'ncfed/capability_registration.dart';
 import 'ncfed/capture_client.dart';
@@ -23,14 +27,19 @@ import 'ncfed/enrollment_qr_payload.dart';
 import 'ncfed/enrollment_store.dart';
 import 'ncfed/haptics.dart';
 import 'ncfed/heartbeat.dart';
+import 'ncfed/ask_live_activity.dart';
 import 'ncfed/live_activity.dart';
+import 'ncfed/widget_data.dart';
 import 'ncfed/local_notifications.dart';
 import 'ncfed/message_feed.dart';
 import 'ncfed/notification_deep_link.dart';
 import 'ncfed/pending_approval_store.dart';
+// ignore: unused_import
+import 'ncfed/pending_approvals_headless.dart';
 import 'ncfed/push_message_ingest.dart';
 import 'ncfed/push_registration.dart';
 import 'ncfed/reconnect_supervisor.dart';
+import 'ncfed/theme_preference.dart';
 import 'ncfed/turn_reconciler.dart';
 import 'ncfed/watch_relay.dart';
 import 'screens/approvals_screen.dart';
@@ -51,21 +60,37 @@ import 'theme.dart';
 /// ncfed/background_refresh.dart.
 final backgroundRefreshEntryPointKeepAlive = backgroundRefreshMain;
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  NetClawMobileApp.themeMode.value = await ThemePreference().load();
   runApp(const NetClawMobileApp());
 }
 
+/// 115/FR-008-FR-010: [themeMode] is the single app-wide source of truth for
+/// the operator's Light/Dark/System choice. A static `ValueNotifier` (rather
+/// than threading a constructor parameter through every intermediate widget
+/// down to the Settings screen) since this app has no existing
+/// Provider/Riverpod/Bloc dependency to build on (research.md R6) -- loaded
+/// once from [ThemePreference] before the first frame (so there's no flash
+/// of the wrong appearance), and updated directly by the Settings screen so
+/// the whole app re-themes immediately, with no restart needed.
 class NetClawMobileApp extends StatelessWidget {
+  static final themeMode = ValueNotifier<ThemeMode>(ThemeMode.system);
+
   const NetClawMobileApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'NetClaw Mobile',
-      theme: netclawTheme,
-      darkTheme: netclawDarkTheme,
-      themeMode: ThemeMode.system,
-      home: AppLockGate(child: EnrollmentGate()),
+    return ValueListenableBuilder<ThemeMode>(
+      valueListenable: themeMode,
+      builder: (context, mode, _) => MaterialApp(
+        title: 'NetClaw Mobile',
+        debugShowCheckedModeBanner: false,
+        theme: netclawTheme,
+        darkTheme: netclawDarkTheme,
+        themeMode: mode,
+        home: AppLockGate(child: EnrollmentGate()),
+      ),
     );
   }
 }
@@ -428,13 +453,29 @@ class _HomeShellState extends State<HomeShell> {
       // so the Live Activity starts/ends correctly no matter which one
       // acted. Aggregate, not per-approval: shows the first pending one.
       final liveActivity = LiveActivity();
+      // 113/US2/FR-003: whatever approval id(s) drop out of the pending set
+      // between one emission and the next were resolved (through ANY
+      // surface -- in-app, notification, or watch) -- tell the activity so
+      // it reflects that and dismisses, instead of only ever calling the
+      // blunt `end()` when the whole list happens to empty out.
+      var previousPendingIds = <int>{};
       approvalClient.pending.listen((pending) {
+        final currentIds = pending.map((p) => p.approvalId).toSet();
+        for (final resolvedId in previousPendingIds.difference(currentIds)) {
+          liveActivity.update(approvalId: resolvedId, status: 'resolved');
+        }
+        previousPendingIds = currentIds;
+        mirrorPendingCount(pending.length); // 114/FR-001
         if (pending.isNotEmpty) {
           liveActivity.start(approvalId: pending.first.approvalId, targetName: pending.first.targetName);
         } else {
           liveActivity.end();
         }
       });
+      // 113/US3: the in-flight query Live Activity's full lifecycle, wired
+      // here (not inside chat_screen.dart) for the same reason the approval
+      // listener above is -- it must keep working while Chat isn't mounted.
+      wireAskLiveActivity(store: conversationStore, askClient: askClient, liveActivity: liveActivity);
 
       // 073: real local notifications while the app process is alive,
       // distinct from feature 066's credential-blocked remote FCM/APNs path
@@ -482,7 +523,9 @@ class _HomeShellState extends State<HomeShell> {
           // must not be skipped just because the app happens to be
           // backgrounded when a heartbeat lands.
           if (looksLikeDeviceHeartbeat(message)) {
-            DeviceHeartbeatStore(dir).save(DeviceHeartbeatStatus.fromMessage(message));
+            final status = DeviceHeartbeatStatus.fromMessage(message);
+            DeviceHeartbeatStore(dir).save(status);
+            mirrorHealth(status); // 114/FR-001
           }
           // Spec 107/US1: the feed just gained a message, so a notification tap
           // still waiting for one may now be satisfiable. This is the signal that
@@ -608,6 +651,33 @@ class _HomeShellState extends State<HomeShell> {
           await conversationStore.addPending(taskId, text);
           if (mounted) setState(() => _tab = 1); // Chat (099/FR-012: shifted by Dashboard at index 0)
         },
+        // 113/FR-001: the pending-approval Live Activity's Approve/Deny
+        // buttons open this exact link (research.md R2) -- foregrounds to
+        // Approvals only, never resolves anything itself.
+        onOpenApprovals: () {
+          if (mounted) _selectTab(3);
+        },
+        // 113/FR-008: the in-flight query Live Activity's tap target
+        // (research.md R3) -- mirrors NotificationDeepLink's own
+        // openChatTurn wiring above exactly.
+        onOpenChatTask: (taskId) {
+          if (!mounted) return;
+          final turn = findTurnForIdentifier(conversationStore.turns, taskId);
+          if (turn == null) return;
+          setState(() {
+            _tab = 1; // Chat (099/FR-012: shifted by Dashboard at index 0)
+            _highlightTaskId = turn.taskId;
+          });
+        },
+        // 114/US2: a health-related widget tap (research.md R3).
+        onOpenDashboard: () {
+          if (mounted) _selectTab(0);
+        },
+        // 114/US3: the Control Center control's tap target (research.md
+        // R2) -- opens Chat with no specific turn highlighted.
+        onOpenChat: () {
+          if (mounted) _selectTab(1);
+        },
       );
       _deepLinkListener!.start();
       _wireReconnect();
@@ -634,6 +704,7 @@ class _HomeShellState extends State<HomeShell> {
         unreadChat: conversationStore.unreadCount,
       ),
     );
+    mirrorUnreadCount(feedStore.unreadCount); // 114/FR-001
   }
 
   /// Auto-redials on a dropped connection (068 polish, ports 066's

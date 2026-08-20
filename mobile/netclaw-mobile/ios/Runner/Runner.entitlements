@@ -2,35 +2,15 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<!--
-	  APNs entitlement for NetClaw Mobile's push channel.
-
-	  109/spec pre-flight P1 (2026-08-14): this comment previously claimed
-	  `CODE_SIGN_ENTITLEMENTS` was "deliberately not set in project.pbxproj"
-	  because a free "Personal Team" cannot sign Push Notifications. That is
-	  now confirmed FALSE -- `project.pbxproj` sets
-	  `CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;` on all three
-	  Runner build configurations (lines 772/1054/1081), and this app is
-	  already live in TestFlight (which requires the paid Apple Developer
-	  Program), so this file has been signed into every build for some time
-	  -- the comment was simply never updated after that migration happened.
-
-	  Value is "development" for debug/TestFlight-from-Xcode builds; Xcode
-	  rewrites it to "production" for App Store distribution automatically.
-	-->
 	<key>aps-environment</key>
 	<string>development</string>
-	<!--
-	  109/FR-007: required for `interruptionLevel: InterruptionLevel
-	  .timeSensitive` (lib/ncfed/local_notifications.dart) to actually have
-	  any effect on-device -- without this entitlement, iOS silently treats
-	  the Dart-side setting as a no-op rather than erroring, so its absence
-	  is easy to miss until a real Focus-mode device test (still open, see
-	  README.md's platform-notes for spec 109). Available automatically
-	  under a paid Program membership; unlike Critical Alerts, it needs no
-	  separate written approval from Apple.
-	-->
 	<key>com.apple.developer.usernotifications.time-sensitive</key>
 	<true/>
+	<key>com.apple.developer.siri</key>
+	<true/>
+	<key>com.apple.security.application-groups</key>
+	<array>
+		<string>group.ca.automateyournetwork.netclaw.mobile.ios</string>
+	</array>
 </dict>
 </plist>
