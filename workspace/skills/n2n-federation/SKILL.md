@@ -56,6 +56,18 @@ Both operators must consent before ANY capability information flows.
   Stops all federation with that peer and purges their cached inventory
   immediately. The BGP session is untouched — routes keep flowing.
 
+**When to propose `n2n_kill`**:
+1. A peer is actively sending malicious or corrupted data (observed in logs)
+2. The operator explicitly requests severance
+3. A peer's credential has been revoked AND they continue attempting connections
+
+Do NOT propose `n2n_kill` for:
+- Temporary connectivity issues (use `n2n_forget_endpoint` instead)
+- A peer being slow to respond
+- An operator casually asking "what can we do about peer X"
+
+Always confirm with the operator before executing. State: which peer, what evidence, and that the action severs federation (requires re-consent to restore).
+
 ## Guardrails
 
 - Federation requires **mutual consent** per peer; a peer merely present on the

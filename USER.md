@@ -1,3 +1,5 @@
+> **Agent fallback**: If any field below contains placeholder text (e.g., "(your name here)"), treat that field as unset. Do not guess values. On first session, ask the user to provide their name, timezone, and platform preferences. Until confirmed, use UTC and apply the most restrictive change-control posture.
+
 # User Profile
 
 ## About You

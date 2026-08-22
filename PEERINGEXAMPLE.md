@@ -1,3 +1,7 @@
+# eN2N Peering Setup Example
+
+> **Audience**: This document is for human operators setting up peering between two NetClaw instances. It is NOT an agent-executable procedure — do not attempt to run these steps autonomously.
+
 Step 1: Bring up the 3 FRR routers                                                                                                                                                                                
   cd lab/frr-testbed                                                                                                                                                                                                
   docker compose up -d                                                                                                                                                                                              
@@ -26,7 +30,7 @@ Step 1: Bring up the 3 FRR routers
   Enable protocol participation? [y/N]                                                                                                                                                                              
                                                                                                                                                                                                                     
   Say y, and accept the defaults:                                                                                                                                                                                   
-  - Router ID: 4.4.4. 4                                                                                                                                                                                              
+  - Router ID: 4.4.4.4                                                                                                                                                                                              
   - Local AS: 65001                                                                                                                                                                                                 
   - BGP peer IP: 172.16.0.1                                                                                                                                                                                         
   - BGP peer AS: 65000                                                                                                                                                                                              
@@ -104,4 +108,4 @@ tcp://0.tcp.ngrok.io:14027
   2. Your AS number (65001)                                                                                                                                                                                         
   3. These instructions                                                                                                                                                                                             
                                                                                                                                                                                                                     
-  Want to start ngrok now?                            
+  Start ngrok to expose the eN2N listener.                            

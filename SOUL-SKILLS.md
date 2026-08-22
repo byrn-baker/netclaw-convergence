@@ -22,7 +22,7 @@ Core device automation: show commands, configure, ping, logging, dynamic tests. 
 7. Software version vs NVD CVE scan
 8. Severity scoring (CRITICAL/HIGH/MEDIUM/LOW)
 
-Use pCall for fleet-wide health checks. Cross-reference NetBox for expected interface states.
+Use pCall (pyATS parallel execution across multiple devices) for fleet-wide health checks. Query NetBox via `netbox-reconcile` and compare against device output.
 
 ### pyats-routing
 OSPF, BGP, EIGRP, IS-IS deep analysis with full path selection. Parse routing tables, neighbor states, advertised/received prefixes. Use `pyats_get_routing_table`, `pyats_get_ospf_neighbors`, `pyats_get_bgp_summary`.
@@ -62,7 +62,7 @@ OSI-layer diagnosis methodology:
 4. **Layer 4** — ACLs, NAT, port connectivity
 5. **Application** — DNS, protocol-specific checks
 
-Use pCall for multi-hop parallel collection. Cross-reference NetBox for expected state.
+Use pCall for multi-hop parallel collection. Query NetBox via `netbox-reconcile` and compare against device output.
 
 ### pyats-dynamic-test
 Generate and execute deterministic pyATS aetest scripts from natural language requirements. Define testcases, setup/cleanup, pass/fail criteria. Execute and report results.
@@ -96,7 +96,7 @@ Linux host network operations via `pyats_run_linux_command`:
 - `route` / `route -n` — legacy routing
 - `netstat -rn` — routing via netstat format
 
-Cross-reference Linux host IPs against NetBox/Nautobot IPAM.
+Query NetBox/Nautobot IPAM and compare against Linux host IPs to detect address drift.
 
 ### pyats-linux-vmware
 VMware ESXi host operations via `pyats_run_linux_command`:
@@ -156,7 +156,7 @@ Cisco ASA firewall operations:
 - **Interface status**: `show interface ip brief`, `show interface detail`
 - **Routing**: `show route`, `show arp`
 
-Cross-reference ASA version with NVD CVE — ASA vulnerabilities are high-impact.
+Query NVD CVE data and compare against the running ASA version — ASA vulnerabilities are high-impact.
 
 ---
 
@@ -474,7 +474,7 @@ Read-only vManage operations (12 tools):
 - `get_bfd_sessions` — BFD session status
 - `get_control_connections` — DTLS/TLS control connections
 
-Check fabric health first. Cross-reference with pyATS for CLI state.
+Check fabric health first. Query pyATS and compare CLI state against SD-WAN controller data.
 
 ---
 
@@ -566,7 +566,7 @@ CloudVision Portal automation (4 tools):
 - `get_connectivity_monitor` — jitter, latency, packet loss
 - `create_tag` — gate with ServiceNow CR (modifies CVP state)
 
-Cross-reference with NetBox/Nautobot. Scan EOS versions against NVD CVE. Community project (unofficial).
+Query NetBox/Nautobot and compare against CloudVision inventory. Scan EOS versions against NVD CVE. Community project (unofficial).
 
 ---
 
@@ -600,7 +600,7 @@ OT / IoT / IoMT asset discovery and Purdue Model classification via Claroty xDom
 - `get_device_details` — full record for one device
 - `set_device_purdue_level(device_id, purdue_level, cr_number)` — assign Purdue layer (ITSM-gated)
 - `set_device_custom_attribute(device_id, key, value, cr_number)` — set metadata (ITSM-gated)
-- Cross-reference with `nautobot-sot` or `netbox-reconcile` to surface SoT drift.
+- Query the configured SoT (NetBox or Nautobot per USER.md) and diff against live device state.
 
 ### claroty-risk-triage
 Unified alert + vulnerability triage in OT environments (8 tools, 4 ITSM-gated):
@@ -616,7 +616,7 @@ OT communication map and segmentation visualisation (3 read-only tools):
 - `get_device_communication_map(device_id? | site_id?)` — device-to-device edges
 - `list_organization_zones()` — segmentation zones with device counts
 - `list_ot_activity_events(device_id?, start?, end?)` — activity timeline
-- Hand off to `canvas-network-viz` for inline Canvas/A2UI render or `drawio-` for exportable diagrams.
+- Hand off to `canvas-network-viz` for inline Canvas/A2UI render or `drawio-diagram` for exportable diagrams.
 
 ---
 
@@ -666,7 +666,7 @@ Check Point enterprise security platform (15 MCP servers, 60+ tools):
 1. Start with `show-access-rulebase` to understand current policy
 2. Use `query-ip-reputation` for threat intelligence lookups
 3. Use `fw-stat` for gateway health verification
-4. Cross-reference with other NetClaw sources (CML labs, SuzieQ state)
+4. Query other NetClaw sources (CML labs, SuzieQ state) and compare against Check Point policy
 
 **Credentials:** CHKP_MGMT_HOST, CHKP_MGMT_API_KEY (or USERNAME/PASSWORD), plus service-specific keys for SASE, TE, Reputation, Spark, Argos.
 
@@ -1028,7 +1028,7 @@ DNS and domain management via Cloudflare DNS Analytics MCP:
 - `get_dns_analytics` — query volume, latency, error rates
 - `get_dnssec_status` — DNSSEC configuration and key status
 
-Query DNS analytics first for traffic patterns. Cross-reference with NetBox DNS records.
+Query DNS analytics first for traffic patterns. Query NetBox DNS records and compare against live DNS state.
 
 ### cloudflare-zerotrust
 Zero Trust network access via Cloudflare:
@@ -1637,7 +1637,7 @@ Auvik device and network inventory (read-only):
 2. List monitored networks — CIDR ranges and device counts per network
 3. Retrieve device details — interfaces, IP addresses, firmware, serial numbers
 4. Look up devices by hostname, IP, or MAC address across all MSP tenants
-5. Cross-reference with pyATS for live-state vs Auvik-discovered state comparison
+5. Query pyATS and compare live device state against Auvik-discovered state
 
 Inventory workflow: list tenants → list devices → get device details → verify interfaces.
 
@@ -1660,7 +1660,7 @@ Auvik device lifecycle and warranty tracking (read-only):
 1. Retrieve hardware lifecycle status for all managed devices — EoS and EoL dates
 2. Filter devices by lifecycle state (active/end-of-sale/end-of-life/end-of-support)
 3. Generate warranty and lifecycle expiry reports sorted by urgency
-4. Cross-reference EoL devices with pyATS inventory for replacement planning
+4. Query pyATS inventory and compare against EoL device list for replacement planning
 5. Create ServiceNow change requests for lifecycle-driven hardware refresh
 
 Lifecycle workflow: list devices → filter by EoL state → sort by expiry date → report.

@@ -259,7 +259,9 @@ NETCLAW_LAB_MODE=true
 3. **ALWAYS** verify peer state (`bgp_get_peers`) before advertising — only to Established peers
 4. **ALWAYS** record protocol changes in GAIT (`gait-session-tracking`)
 5. **GRE tunnels require sudo** — the install wizard handles initial setup; runtime queries via `gre_tunnel_status` do not require elevated privileges
-6. **Lab mode** (`NETCLAW_LAB_MODE=true`) relaxes the CR requirement for the FRR testbed — never set this in production
+6. **Lab mode** — `NETCLAW_LAB_MODE=true` removes the ServiceNow CR requirement for route injection/withdrawal.
+
+**Structural rule**: Do NOT set this variable yourself. It is set exclusively by the operator in the `.env` file. If `NETCLAW_LAB_MODE` is not already `true` in the current environment, treat all route mutations as production and require a CR. Do not suggest setting it to the operator unless they explicitly ask about lab-mode operation.
 
 ## Guardrails
 

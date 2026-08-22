@@ -297,6 +297,17 @@ python3 $MCP_CALL "python3 -u $SERVICENOW_MCP_SCRIPT" update_change_request '{"c
 ### Emergency Changes
 
 For emergency changes (network outage, security incident):
+
+**Emergency qualification** (ALL must be true):
+1. A P1 outage is actively affecting production traffic NOW (not predicted)
+2. The human operator is aware and has verbally confirmed urgency
+3. The fix is a single, reversible configuration line (not a multi-step procedure)
+
+If all three conditions are met, proceed with the change. Record the justification in GAIT. A retroactive CR must be submitted within 24 hours.
+
+If ANY condition is not met, follow the standard CR workflow — no exceptions.
+
+Steps:
 1. Notify human immediately
 2. Create CR with category "Emergency"
 3. Proceed with change (approval gate bypassed)

@@ -1,6 +1,6 @@
 # TOOLS.md — Local Infrastructure Notes
 
-Skills define *how* tools work. This file is for *your* specifics — the environment details that are unique to your deployment.
+SOUL-SKILLS.md defines tool procedures. This file defines environment-specific configuration: endpoints, credentials, channels, and operational context.
 
 ## Network Devices
 
@@ -238,7 +238,7 @@ The Claroty xDome MCP server provides 21 tools (15 read-only + 6 ITSM-gated writ
 
 ## Notes
 
-- Add whatever helps NetClaw do its job — device nicknames, maintenance windows, ISP circuit IDs, TAC case numbers, anything environment-specific.
+- Record environment-specific facts here: device nicknames, maintenance windows, ISP circuit IDs, TAC case numbers, and channel IDs.
 - This file is yours. Skills are shared. Keeping them apart means you can update skills without losing your notes.
 
 ## Globalping External Checks (`globalping-mcp`, remote)
