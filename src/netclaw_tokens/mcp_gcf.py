@@ -178,13 +178,17 @@ def _install_via_middleware(mcp: Any, label: str | None) -> int | None:
                         new_blocks.append(block)
                 if not changed:
                     return result
-                # Rebuild ToolResult preserving structured_content/meta when present
+                # Rebuild ToolResult preserving structured_content/meta when present.
+                # IMPORTANT: keep the original structured_content (do NOT null it out).
+                # GCF only re-encodes the human-readable text copy; tools that declare an
+                # output schema require their structuredContent twin to remain intact or
+                # the MCP client reports "outputSchema defined but no structured output".
                 try:
                     from fastmcp.tools.base import ToolResult
 
                     return ToolResult(
                         content=new_blocks,
-                        structured_content=None,  # GCF is text; drop JSON structured twin
+                        structured_content=getattr(result, "structured_content", None),
                         meta=getattr(result, "meta", None),
                     )
                 except Exception:

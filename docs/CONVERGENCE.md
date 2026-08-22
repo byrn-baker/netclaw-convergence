@@ -6,7 +6,7 @@ Alertmanager → alert-receiver → guardian-claw loop.
 
 | Spec | Code | Deploy |
 |------|------|--------|
-| [`specs/080-convergence/`](../specs/080-convergence/) | [`ui/convergence-api/`](../ui/convergence-api/) · HUD HOME | [`deploy/convergence/`](../deploy/convergence/) |
+| [`specs/1001–1008`](../specs/1000-convergence-architecture-review/plan.md) | [`ui/convergence-api/`](../ui/convergence-api/) · HUD HOME | [`deploy/convergence/`](../deploy/convergence/) |
 | Tasks | T070–T073 complete (SoT, SNMP wireless, full OBS, k8s components) | [quickstart](../specs/080-convergence/quickstart.md) |
 
 **Not renamed:** `guardian-claw` (iN2N investigator identity).  
