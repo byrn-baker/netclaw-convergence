@@ -17,7 +17,7 @@
       }
     }
   },
-  "_comment_tokenOptimization": "Do NOT put tokenOptimization in live ~/.openclaw/openclaw.json — OpenClaw schema rejects it (gateway exit 78). Use ~/.openclaw/netclaw-token-optimization.json instead. See docs/TOKEN-OPTIMIZATION.md.",
+  "_comment_tokenOptimization": "Do NOT put tokenOptimization in live ~/.openclaw/openclaw.json \u2014 OpenClaw schema rejects it (gateway exit 78). Use ~/.openclaw/netclaw-token-optimization.json instead. See docs/TOKEN-OPTIMIZATION.md.",
   "commands": {
     "native": "auto",
     "nativeSkills": "auto",
@@ -974,17 +974,6 @@
         "NETCLAW_GRE_TUNNELS": "${NETCLAW_GRE_TUNNELS:-[]}",
         "NETCLAW_LAB_MODE": "${NETCLAW_LAB_MODE:-false}",
         "BGP_DAEMON_API": "${BGP_DAEMON_API:-http://127.0.0.1:8179}"
-      }
-    },
-    "ollama-mcp": {
-      "command": "python3",
-      "args": [
-        "-u",
-        "mcp-servers/ollama-mcp/server.py"
-      ],
-      "env": {
-        "OLLAMA_BASE_URL": "${OLLAMA_BASE_URL:-http://localhost:11434}",
-        "OLLAMA_TIMEOUT": "${OLLAMA_TIMEOUT:-120}"
       }
     },
     "fwrule-mcp": {

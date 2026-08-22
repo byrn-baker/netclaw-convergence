@@ -200,21 +200,23 @@ def env_slice_keys(profile, env_keys):
 MCP_SERVERS = {
     "ipfabric": ["ipfabric-mcp"], "suzieq": ["suzieq-mcp"], "batfish": ["batfish-mcp"],
     "forward": ["forward-mcp"], "gns3": ["gns3-mcp"], "azure": ["azure-network-mcp"],
-    "sdwan": ["prisma-sdwan-mcp"], "splunk": ["splunk-mcp"], "github": ["gitlab-mcp"],
+    "sdwan": ["prisma-sdwan-mcp"], "splunk": ["splunk-mcp"],
+    "github": ["github-mcp"],
     "gnmi": ["gnmi-mcp"], "checkpoint": ["chkp-management", "chkp-management-logs",
         "chkp-policy-insights", "chkp-threat-prevention", "chkp-quantum-gaia"],
+    "pyats": ["pyats-mcp"],
+    "cml": ["cml-mcp"],
+    "nautobot": ["nautobot-mcp"],
     "network-guardian": [
         "prometheus-mcp", "grafana-mcp", "pfsense-mcp", "pyats-mcp",
-        "greynoise-community-mcp", "threatintel-mcp", "rag-mcp", "ollama-mcp",
+        "greynoise-community-mcp", "rag-mcp",
     ],
     # Live member name alias (Risk uses guardian-claw; profile id is network-guardian)
     "guardian-claw": [
         "prometheus-mcp", "grafana-mcp", "pfsense-mcp", "pyats-mcp",
-        "greynoise-community-mcp", "threatintel-mcp", "rag-mcp", "ollama-mcp",
+        "greynoise-community-mcp", "rag-mcp",
     ],
     "viz": ["blender-mcp", "sketchfab-mcp"],
-    # skill-driven (no dedicated MCP server): cml, pyats, aci, catalyst-center,
-    # f5, ise, nso, netbox, infoblox, nmap, gtrace, itential, aap, packet, etc.
 }
 
 # Model tier per member (interview: Border=Opus; heavy members=Sonnet; trivial=Haiku).
