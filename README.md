@@ -4,7 +4,7 @@
 
 # NetClaw
 
-A CCIE-level AI network engineering coworker. Built on [OpenClaw](https://github.com/openclaw/openclaw) with Anthropic Claude, 222 skills, and 165 MCP integrations for complete network automation with ITSM gating, source-of-truth reconciliation, immutable audit trails, gNMI streaming telemetry, NetFlow/IPFIX flow telemetry, Canvas/A2UI inline network visualizations, packet capture analysis, GitHub config-as-code, GitLab DevOps (issues, merge requests, pipelines, repositories, wikis), Jenkins CI/CD (job monitoring, build triggering, log analysis, SCM tracking), Chrome DevTools browser automation (visualization render QA, controller GUI gap-filling, undocumented API discovery, headless or watchable-headed), Computer Use full-desktop automation (legacy desktop-only tools with no browser or API path, virtual XFCE desktop with VNC/noVNC Watch Mode), Cisco CML lab simulation, ContainerLab containerized network labs, Cisco NSO orchestration, Cisco SD-WAN vManage monitoring, Grafana observability (dashboards, Prometheus, Loki, alerting, incidents), Prometheus direct PromQL monitoring, Kubeshark Kubernetes traffic analysis, Cisco Meraki Dashboard management, Cisco ThousandEyes network intelligence, AWS and Azure cloud networking, Cisco Secure Firewall policy auditing, Check Point Security (15 MCPs: policy, threat intel, gateway, SASE, malware), Itential network orchestration, Juniper JunOS device automation, Arista CloudVision Portal monitoring, F5 BIG-IP pyATS iControl REST coverage, Infoblox DDI, Palo Alto Panorama, FortiManager, Batfish offline configuration analysis, UML diagram generation, EVPN/VXLAN fabric workflows, live BGP/OSPF control-plane participation, nmap network scanning, gtrace path analysis and IP enrichment, Slack-native operations, Cisco WebEx-native operations, Microsoft 365 integration, Twilio voice/SMS, Twitter/X integration, Claroty OT/IoT asset management, Forward Networks digital twin, Ollama local LLM routing, an offline agentic RAG document knowledge base (cited answers from user-uploaded vendor guides and standards), layered Memory MCP, MemPalace persistent AI memory, and Lantronix Percepxion/SLC out-of-band console-server management (fleet-wide and direct single-device).
+A CCIE-level AI network engineering coworker. Built on [OpenClaw](https://github.com/openclaw/openclaw) with Anthropic Claude, 224 skills, and 168 MCP integrations for complete network automation with ITSM gating, source-of-truth reconciliation, immutable audit trails, gNMI streaming telemetry, NetFlow/IPFIX flow telemetry, Canvas/A2UI inline network visualizations, packet capture analysis, GitHub config-as-code, GitLab DevOps (issues, merge requests, pipelines, repositories, wikis), Jenkins CI/CD (job monitoring, build triggering, log analysis, SCM tracking), Chrome DevTools browser automation (visualization render QA, controller GUI gap-filling, undocumented API discovery, headless or watchable-headed), Computer Use full-desktop automation (legacy desktop-only tools with no browser or API path, virtual XFCE desktop with VNC/noVNC Watch Mode), Cisco CML lab simulation, ContainerLab containerized network labs, Cisco NSO orchestration, Cisco SD-WAN vManage monitoring, Grafana observability (dashboards, Prometheus, Loki, alerting, incidents), Prometheus direct PromQL monitoring, Kubeshark Kubernetes traffic analysis, Cisco Meraki Dashboard management, Cisco ThousandEyes network intelligence, AWS and Azure cloud networking, Cisco Secure Firewall policy auditing, Check Point Security (15 MCPs: policy, threat intel, gateway, SASE, malware), Itential network orchestration, Juniper JunOS device automation, Arista CloudVision Portal monitoring, F5 BIG-IP pyATS iControl REST coverage, Infoblox DDI, Palo Alto Panorama, FortiManager, Batfish offline configuration analysis, UML diagram generation, EVPN/VXLAN fabric workflows, live BGP/OSPF control-plane participation, nmap network scanning, gtrace path analysis and IP enrichment, Slack-native operations, Cisco WebEx-native operations, Microsoft 365 integration, Twilio voice/SMS, Twitter/X integration, Claroty OT/IoT asset management, Forward Networks digital twin, Ollama local LLM routing, an offline agentic RAG document knowledge base (cited answers from user-uploaded vendor guides and standards), layered Memory MCP, MemPalace persistent AI memory, and Lantronix Percepxion/SLC out-of-band console-server management (fleet-wide and direct single-device).
 
 ## Resources
 
@@ -257,7 +257,7 @@ claw
   <img src="ui/netclaw-visual/logos/netclawvisualhud.png" alt="NetClaw Visual HUD — 3D Network Operations Dashboard" width="800">
 </p>
 
-NetClaw includes a Three.js 3D operations dashboard that computes its integration and skill inventory live from the codebase (currently 165 MCP integrations and 222 skills) each time it's opened, alongside your device fleet and live BGP peering topology — so the dashboard never drifts out of sync with what's actually installed. Chat with NetClaw directly from the browser, watch integrations light up as tools execute, and inspect every node in the graph. The Canvas/A2UI visualization skill renders inline topology maps, health dashboards, alert cards, change timelines, config diffs, path traces, and health scorecards directly in the chat interface.
+NetClaw includes a Three.js 3D operations dashboard that computes its integration and skill inventory live from the codebase (currently 168 MCP integrations and 224 skills) each time it's opened, alongside your device fleet and live BGP peering topology — so the dashboard never drifts out of sync with what's actually installed. Chat with NetClaw directly from the browser, watch integrations light up as tools execute, and inspect every node in the graph. The Canvas/A2UI visualization skill renders inline topology maps, health dashboards, alert cards, change timelines, config diffs, path traces, and health scorecards directly in the chat interface.
 
 ```bash
 cd ui/netclaw-visual
@@ -536,7 +536,7 @@ NetClaw ships with the full set of OpenClaw workspace markdown files. These are 
 
 ---
 
-## MCP Servers (165)
+## MCP Servers (168)
 
 > Adding one? Follow **[docs/ADDING-AN-MCP.md](docs/ADDING-AN-MCP.md)** and run
 > `python3 scripts/reconcile-mcp.py` before pushing — CI enforces it.
@@ -656,6 +656,7 @@ NetClaw ships with the full set of OpenClaw workspace markdown files. These are 
 | 126 | Redfish BMC | NetClaw-authored (`mcp-servers/redfish-mcp`) | stdio (Python) | **Out-of-band hardware visibility, read-only** — power state, component health, thermal and power, BMC firmware, SEL logs across iDRAC/iLO/XClarity/Supermicro. 6 tools / 728 tokens. Answers "is the box dead or is it the network": every response carries a verdict stating what the reading establishes, and an unreachable BMC can never be reported as a downed host. No power control — `#ComputerSystem.Reset` is deliberately unimplemented |
 | 127 | Lantronix Percepxion | [Lantronix/percepxion-mcp-server](https://github.com/Lantronix/percepxion-mcp-server) | stdio (Python, dedicated venv) | **Fleet-wide OOB console-server management, external/on-demand** — device inventory, firmware compliance/rollout, config mgmt, Smart Groups, security audit, async CLI dispatch with output retrieval across the Percepxion SaaS platform (37 tools). Actively co-developed by Lantronix, not vendored — see [spec 104](specs/104-percepxion-oob-integration/spec.md) |
 | 128 | Lantronix SLC direct | [Lantronix/slc-mcp-server](https://github.com/Lantronix/slc-mcp-server) | stdio (Python, dedicated venv) | **Direct, synchronous single-device OOB console-server access, external/on-demand** — port status, session management, synchronous CLI output, cellular status against individual SLC9000/SLC8000 console servers (37 tools). Same repo family and venv reasoning as Percepxion above — see [spec 104](specs/104-percepxion-oob-integration/spec.md) |
+| 129 | ComfyUI | [shawnrushefsky/comfyui-mcp](https://github.com/shawnrushefsky/comfyui-mcp) | stdio (Node.js) | AI image generation backend for the `comfyui-topology-viz` skill — model discovery, built-in text-to-image template selection, async workflow submission and polling against a self-hosted ComfyUI instance (41 tools; this skill uses a subset: `get_status`, `list_models`, `search_templates`, `get_template`, `run_workflow`, `get_task_result`) |
 ### Additional Server Notes
 
 All MCP servers communicate via stdio (JSON-RPC 2.0) through `scripts/mcp-call.py`, except where noted below (HTTP/remote endpoints).
@@ -689,10 +690,11 @@ All MCP servers communicate via stdio (JSON-RPC 2.0) through `scripts/mcp-call.p
 - **SuzieQ** — stdio (5 read-only tools for network state queries, assertions, summaries, unique value discovery, and path tracing across 20+ network tables via the SuzieQ REST API)
 - **GNS3** — FastMCP stdio (26 tools for GNS3 network lab management — projects, nodes, links, packet capture, and snapshots via REST API v3). No persistent connections, no port management
 - **RAG Knowledge Base** — FastMCP stdio (10 tools for the offline document knowledge base: multi-format ingestion via Slack/HUD/URL, hybrid dense+BM25 retrieval with local reranking and mandatory citations, HIIL-gated corpus management, opt-in secret-scrubbed snapshots). Data at `~/.openclaw/rag/`, fully offline after install, strictly separate from Memory MCP
+- **Zoom RTMS** (`zoom-rtms-mcp`) — FastMCP stdio, 9 tools (see [spec 118](specs/118-zoom-meeting-intelligence/spec.md)). Ingests live meeting transcript/chat/active-speaker/screen-share signals via Zoom's Realtime Media Streams (no Meeting SDK bot — Zoom reserves that for human participants), recognizes network-investigation questions with a deterministic extractor, and routes them into the existing Border/NCFED routing path via a new loopback-only `bgp/federation/zoom_channel.py` channel. Feeds a Zoom App side panel (avatar + live status + evidence) with an optional Layers API camera overlay. Pairs with the official Zoom Meetings MCP (remote/OAuth, historical meeting search) via the `zoom-meeting-context` skill. No new device-write approval mechanism — reuses NetClaw's existing gate unchanged for anything a meeting participant asks that would change configuration.
 
 ---
 
-## Skills (222)
+## Skills (224)
 
 ### pyATS Device Skills (9)
 
@@ -954,6 +956,7 @@ All MCP servers communicate via stdio (JSON-RPC 2.0) through `scripts/mcp-call.p
 | Skill | What It Does |
 |-------|-------------|
 | **suzieq-observability** | SuzieQ network observability (5 read-only tools): query current and historical network state from 20+ tables (`suzieq_show`), get aggregated statistics and summary views (`suzieq_summarize`), run validation assertions for BGP/OSPF/interface/EVPN health (`suzieq_assert`), discover distinct values and distributions for any column (`suzieq_unique`), trace hop-by-hop forwarding paths between endpoints (`suzieq_path`). Supports time-travel queries via start_time/end_time for historical analysis. Wraps SuzieQ REST API via async httpx client with stdio transport. GAIT audit trail. |
+| **zoom-meeting-context** | Zoom meeting historical correlation (spec 118): searches the official Zoom Meetings MCP for a prior, real meeting referenced during a live call ("didn't we see this before?"), states plainly when nothing relevant is found, and compares what was discussed then against the network's current actual state via NetClaw's existing routing. Read-only — any configuration-change request, however it arrives, still goes through NetClaw's existing device-write approval gate unchanged. |
 
 ### Lantronix OOB Skills (1)
 
@@ -1077,6 +1080,7 @@ All MCP servers communicate via stdio (JSON-RPC 2.0) through `scripts/mcp-call.p
 | **uml-diagram** | [UML MCP](https://github.com/antoinebou12/uml-mcp) (stdio) | 27+ UML/diagram types via Kroki — class, sequence, nwdiag, rackdiag, packetdiag, C4, Mermaid, D2, Graphviz, ERD, BPMN |
 | **blender-3d-viz** | [blender-mcp](https://github.com/ahujasid/blender-mcp) (uvx) | 3D network topology visualization — draw CDP/LLDP topologies in Blender, color by device type (router=blue, switch=green, firewall=red), add labels, export PNG/video |
 | **threejs-network-viz** | Vendored Three.js r147 + [gregkop/sketchfab-mcp-server](https://github.com/gregkop/sketchfab-mcp-server) (optional) | Browser-based 3D network topology visualization — the recommended alternative to `blender-3d-viz`/`ue5-network-viz` when you don't want a desktop engine: single self-contained HTML file, no build/server/GPU required. True interface-as-child-of-device scene graph, interface-to-interface link cables, role/state color legend, composes any of 8 topology-source integrations or a freeform description, optional CC0-verified real-3D-model stencils |
+| **comfyui-topology-viz** | [shawnrushefsky/comfyui-mcp](https://github.com/shawnrushefsky/comfyui-mcp) (Node) | AI-generated stylized still images of a network topology via a self-hosted ComfyUI instance — one flat "flashy" illustration per request, reusing the same 8-source-plus-freeform topology model as `threejs-network-viz`. Checks installed checkpoints before generating and reports distinctly when none are usable; no NetClaw-imposed generation timeout; one job in flight at a time. Stills only in v1 — video/animation is a likely follow-on |
 
 ### Auvik Network Monitoring Skills (4)
 
@@ -2376,7 +2380,7 @@ netclaw/
 ├── MISSION01.md                          # Completed — core pyATS + 11 skills
 ├── MISSION02.md                          # Completed — full platform, 78 skills, 32 MCP
 ├── workspace/
-│   └── skills/                           # 82 skill definitions (source of truth)
+│   └── skills/                           # 223 skill definitions (source of truth)
 │       ├── pyats-network/                # Core device automation (8 MCP tools)
 │       ├── pyats-health-check/           # Health + NetBox cross-ref + pCall
 │       ├── pyats-routing/                # OSPF, BGP, EIGRP, IS-IS analysis
@@ -2528,6 +2532,7 @@ netclaw/
 | `workspace/personality/IDENTITY.md` | Agent identity card. Name, creature type, vibe, emoji |
 | `workspace/user/USER.md` | About you. Preferences, timezone, role, network details. **Edit this.** |
 | `workspace/user/TOOLS.md` | Local infrastructure. Device IPs, SSH hosts, Slack channels. **Edit this.** |
+| `HEARTBEAT.md` | Periodic checks. Device reachability, OSPF/BGP state, CPU/memory, syslog. |
 | `testbed/testbed.yaml` | pyATS device inventory. **Edit this.** |
 | `workspace/skills/` | 159 skill definitions. Deployed to OpenClaw workspace at boot |
 | `config/openclaw.json` | MCP server definitions + model config. Authoritative source merged at boot |

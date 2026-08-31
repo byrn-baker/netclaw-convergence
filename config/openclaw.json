@@ -59,6 +59,24 @@
         "SUZIEQ_MAX_RESPONSE_BYTES": "${SUZIEQ_MAX_RESPONSE_BYTES:-131072}"
       }
     },
+    "zoom-rtms-mcp": {
+      "command": "mcp-servers/zoom-rtms-mcp/.venv/bin/python",
+      "args": [
+        "-u",
+        "mcp-servers/zoom-rtms-mcp/server.py"
+      ],
+      "env": {
+        "ZOOM_CLIENT_ID": "${ZOOM_CLIENT_ID}",
+        "ZOOM_CLIENT_SECRET": "${ZOOM_CLIENT_SECRET}",
+        "ZOOM_ACCOUNT_ID": "${ZOOM_ACCOUNT_ID}",
+        "ZOOM_RTMS_WEBHOOK_SECRET": "${ZOOM_RTMS_WEBHOOK_SECRET}",
+        "ZOOM_RTMS_WEBHOOK_PORT": "${ZOOM_RTMS_WEBHOOK_PORT:-8899}",
+        "ZOOM_PANEL_FEED_PORT": "${ZOOM_PANEL_FEED_PORT:-8900}",
+        "N2N_ZOOM_CHANNEL_HOST": "${N2N_ZOOM_CHANNEL_HOST:-127.0.0.1}",
+        "N2N_ZOOM_CHANNEL_PORT": "${N2N_ZOOM_CHANNEL_PORT}",
+        "N2N_ZOOM_CHANNEL_SECRET": "${N2N_ZOOM_CHANNEL_SECRET}"
+      }
+    },
     "batfish-mcp": {
       "command": "python3",
       "args": [
@@ -676,6 +694,15 @@
         "UNIFI_API_KEY": "${UNIFI_API_KEY}",
         "UNIFI_SITE": "${UNIFI_SITE:-default}",
         "UNIFI_VERIFY_SSL": "${UNIFI_VERIFY_SSL:-false}"
+      }
+    },
+    "comfyui-mcp": {
+      "command": "node",
+      "args": [
+        "mcp-servers/comfyui-mcp/dist/index.js"
+      ],
+      "env": {
+        "COMFYUI_URL": "${COMFYUI_URL}"
       }
     },
     "n2n-mcp": {

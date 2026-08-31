@@ -3681,6 +3681,39 @@ fi
 echo ""
 }
 
+# ── ComfyUI Topology Visualization: AI-generated stylized stills (spec 120) ──
+component_install_comfyui_viz() {
+log_step "Configuring ComfyUI Topology Visualization..."
+echo "  Source: https://github.com/shawnrushefsky/comfyui-mcp"
+echo "  Turns a network topology into one stylized AI-generated still image via your own"
+echo "  already-running ComfyUI instance. Requires ComfyUI to be installed and running"
+echo "  separately — this does not install or manage ComfyUI itself."
+
+read -r -p "Enable ComfyUI Topology Visualization? [y/N] " enable_comfyui_viz
+if [[ "$enable_comfyui_viz" =~ ^[Yy]$ ]]; then
+    COMFYUI_MCP_DIR="$MCP_DIR/comfyui-mcp"
+    clone_or_pull "$COMFYUI_MCP_DIR" "https://github.com/shawnrushefsky/comfyui-mcp.git"
+
+    log_info "Building ComfyUI MCP server..."
+    cd "$COMFYUI_MCP_DIR"
+    npm install 2>/dev/null || log_warn "npm install failed for ComfyUI MCP"
+    npm run build 2>/dev/null || log_warn "npm run build failed for ComfyUI MCP"
+    cd "$NETCLAW_DIR"
+
+    echo ""
+    echo "  Configure in $RUNTIME_ENV:"
+    echo "    COMFYUI_URL=http://127.0.0.1:8000   # your own ComfyUI instance's endpoint"
+    echo ""
+    echo "  If NetClaw cannot reach that URL (common when ComfyUI runs on a separate Windows"
+    echo "  host from a WSL2 NetClaw install), see specs/120-comfyui-topology-viz/quickstart.md"
+    echo "  for the WSL2 mirrored-networking check and the --listen fallback."
+else
+    log_info "Skipping ComfyUI Topology Visualization — install it later with this same prompt."
+fi
+
+echo ""
+}
+
 # ── Chrome DevTools MCP: headless + Watch Mode (spec 048) ───────
 component_install_chrome_devtools() {
 log_step "Configuring Chrome DevTools MCP (headless + Watch Mode)..."
@@ -4270,6 +4303,34 @@ fi
 # percepxion-mcp-server above (spec 104).
 log_info "Not auto-registered in openclaw.json — see workspace/skills/percepxion-oob/SKILL.md"
 log_info "  to register (stdio, runs from the venv above) and for required env vars (SLC_{KEY}_*)."
+
+echo ""
+}
+
+# ── Zoom RTMS MCP Server (Meeting Intelligence, spec 118) ───────
+component_install_zoom_rtms() {
+log_step "Installing Zoom RTMS MCP Server..."
+echo "  Built-in MCP server: mcp-servers/zoom-rtms-mcp/"
+echo "  NetClaw for Zoom — Meeting Intelligence (spec 118): RTMS live listener,"
+echo "  investigation routing, Zoom App panel feed (9 tools)"
+
+ZOOM_RTMS_MCP_DIR="$MCP_DIR/zoom-rtms-mcp"
+if [ -d "$NETCLAW_DIR/mcp-servers/zoom-rtms-mcp" ]; then
+    ZOOM_RTMS_MCP_DIR="$NETCLAW_DIR/mcp-servers/zoom-rtms-mcp"
+fi
+
+if [ -f "$ZOOM_RTMS_MCP_DIR/requirements.txt" ]; then
+    log_info "Installing Zoom RTMS MCP dependencies..."
+    netclaw_pip_install -r "$ZOOM_RTMS_MCP_DIR/requirements.txt" || {
+            log_warn "Zoom RTMS MCP pip install failed — dependencies may need manual installation"
+        }
+    log_info "Zoom RTMS MCP ready: $ZOOM_RTMS_MCP_DIR"
+    log_info "Zoom's official RTMS SDK is not bundled — install it separately per Zoom's"
+    log_info "  distribution instructions before live meeting signals will flow (see README.md)."
+    log_info "See docs/ZOOM-MEETING-INTELLIGENCE.md for Zoom Marketplace app setup."
+else
+    log_warn "Zoom RTMS MCP requirements.txt not found at $ZOOM_RTMS_MCP_DIR"
+fi
 
 echo ""
 }
