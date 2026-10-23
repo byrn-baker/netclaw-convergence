@@ -1,6 +1,6 @@
 ---
 name: pyats-network
-description: "Network device automation via pyATS - run show commands, ping, apply config, learn config/logging, list devices, run Linux commands, execute dynamic tests on Cisco IOS-XE/NX-OS devices. Use when running CLI commands on routers or switches, checking interface status, applying configuration changes, or collecting device data via pyATS."
+description: "Network device automation via pyATS - run show commands, ping, apply config, learn config/logging, list devices, run Linux commands on Cisco IOS-XE/NX-OS devices. Use when running CLI commands on routers or switches, checking interface status, applying configuration changes, or collecting device data via pyATS. To author or design a new aetest validation script (rather than execute an existing one), use `pyats-dynamic-test` instead."
 license: Apache-2.0
 user-invocable: true
 metadata:
@@ -8,6 +8,8 @@ metadata:
 ---
 
 # pyATS Network Device Tool
+
+Installer note: native registration and the documented MCP_CALL invocation share the installed component launcher. Check `readiness.json` before first use; failed discovery is not device state. Existing write approvals still apply.
 
 ## Server & Testbed
 
@@ -17,7 +19,10 @@ metadata:
 
 ## Available Devices
 
-- **R1** (devnetsandboxiosxec8k.cisco.com) — Cisco IOS-XE, C8000v/CSR1kv
+Devices are defined in `$PYATS_TESTBED_PATH` and vary per installation — run `pyats_list_devices`
+first to see the actual device names, aliases, and platforms available in this testbed (e.g. `R1`
+on Cisco IOS-XE). Examples below use `R1` as a placeholder device name; substitute the real device
+name(s) returned by `pyats_list_devices`.
 
 ## How to Call Tools
 
@@ -259,3 +264,13 @@ diff = Diff(before.info, after.info)
 diff.findDiff()
 print(diff)  # Shows + additions and - deletions
 ```
+
+## Failure Behavior
+
+- If a tool call fails with an authentication or connection error, check that `PYATS_MCP_SCRIPT`, `PYATS_TESTBED_PATH` are set and valid before assuming a data or device problem.
+- On a tool error (timeout, unreachable host, malformed response), report the failure and its error message directly to the user rather than fabricating or guessing at results.
+- For a confirmed read-only call, check connectivity and retry once if appropriate. For any call that changes state or sends a message, a timeout does not prove the action failed: inspect current state or delivery status before retrying, preserve the required approval/change gates, and do not repeat an action whose outcome is unknown.
+
+## MCP Tasks
+
+For eligible tools, a client declaring the current Tasks extension may receive a task handle. Retain it and poll for the terminal result; do not resubmit pending work. Ordinary clients continue receiving foreground results. A handle is not execution success or approval: preserve required baseline/change-control checks before invocation and verify the completed result afterward. Cancellation cannot undo commands already sent. Investigate unknown outcomes before retrying. pyATS retains completed results in SQLite and lets started work finish; other FastMCP tools default to ephemeral state and cooperative cancellation. See `docs/MCP-TASKS.md`.

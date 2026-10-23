@@ -201,7 +201,8 @@ def test_enroll_maps_member_id_taken_to_32022():
         def is_border(self):
             return True
 
-        def verify_possession(self, cert, nonce, sig):
+        def verify_possession(self, cert, nonce, sig, binding=b""):
+            assert binding == b""
             return True
 
         def consume_token(self, *a, **kw):
@@ -227,7 +228,8 @@ def test_enroll_maps_spent_token_to_32021():
         def is_border(self):
             return True
 
-        def verify_possession(self, cert, nonce, sig):
+        def verify_possession(self, cert, nonce, sig, binding=b""):
+            assert binding == b""
             return True
 
         def consume_token(self, *a, **kw):

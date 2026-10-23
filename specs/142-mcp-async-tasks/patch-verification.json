@@ -1,0 +1,58 @@
+[
+  {
+    "component": "wikipedia",
+    "source": "pristine-reviewed",
+    "changed_files": 2,
+    "idempotent": true,
+    "status": "pass"
+  },
+  {
+    "component": "wikipedia",
+    "source": "spec141-patched",
+    "changed_files": 2,
+    "idempotent": true,
+    "status": "pass"
+  },
+  {
+    "component": "nvd-cve",
+    "source": "pristine-reviewed",
+    "changed_files": 3,
+    "idempotent": true,
+    "status": "pass"
+  },
+  {
+    "component": "nvd-cve",
+    "source": "spec141-patched",
+    "changed_files": 2,
+    "idempotent": true,
+    "status": "pass"
+  },
+  {
+    "component": "sdwan",
+    "source": "pristine-reviewed",
+    "changed_files": 1,
+    "idempotent": true,
+    "status": "pass"
+  },
+  {
+    "component": "sdwan",
+    "source": "spec141-patched",
+    "changed_files": 1,
+    "idempotent": true,
+    "status": "pass"
+  },
+  {
+    "component": "netbox",
+    "source": "pristine-reviewed",
+    "changed_files": 2,
+    "idempotent": true,
+    "status": "pass"
+  },
+  {
+    "component": "netbox",
+    "source": "spec141-patched",
+    "changed_files": 2,
+    "idempotent": true,
+    "status": "pass"
+  }
+]

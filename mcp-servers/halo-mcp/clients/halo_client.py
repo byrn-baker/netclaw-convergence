@@ -291,7 +291,11 @@ class HaloClient:
                     "error": result["error"],
                 }
 
-            page_items, record_count = extract_list(result["data"] or {})
+            try:
+                page_items, record_count = extract_list(result["data"])
+            except ValueError as exc:
+                return {"items": items, "page_count": page_count, "truncated": True,
+                        "next_page": page_no, "error": str(exc)}
             items.extend(page_items)
             page_count += 1
 

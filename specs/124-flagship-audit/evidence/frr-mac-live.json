@@ -1,0 +1,17 @@
+[
+  {
+    "command": "vtysh -c \"show version\"",
+    "status": "ok",
+    "has_output": true,
+    "error": null
+  },
+  {
+    "command": "vtysh -c \"show ip route\"",
+    "status": "ok",
+    "has_output": true,
+    "error": null
+  },
+  {
+    "offline_policy_denial": true
+  }
+]

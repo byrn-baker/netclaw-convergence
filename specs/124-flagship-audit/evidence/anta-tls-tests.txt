@@ -1,0 +1,1 @@
+PASS: ANTA certificate and hostname enforcement, explicit override, device cleanup

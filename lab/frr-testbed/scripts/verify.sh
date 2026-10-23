@@ -37,7 +37,7 @@ else
 fi
 
 CORE_OSPF=$(docker exec netclaw-core vtysh -c "show ipv6 ospf6 neighbor" 2>/dev/null || echo "")
-CORE_FULL=$(echo "$CORE_OSPF" | grep -c "Full" || echo "0")
+CORE_FULL=$(echo "$CORE_OSPF" | grep -c "Full" || true)
 if [ "$CORE_FULL" -ge 2 ]; then
   pass "Core has $CORE_FULL OSPFv3 Full adjacencies (Edge1 + Edge2)"
 else
@@ -73,19 +73,19 @@ echo ""
 # When not Established, Up/Down shows "never" and State/PfxRcd shows text (Active, Idle, etc.)
 echo "--- MP-BGP IPv6 Unicast Sessions ---"
 CORE_BGP=$(docker exec netclaw-core vtysh -c "show bgp ipv6 unicast summary" 2>/dev/null || echo "")
-if echo "$CORE_BGP" | grep "fd00::1" | grep -qvE "Active|Idle|Connect|OpenSent|never"; then
+if echo "$CORE_BGP" | grep "fd00::1" | grep -qvE "Active|Idle|Connect|OpenSent|OpenConfirm|Clearing|Deleted|never"; then
   pass "Core iBGP → Edge1 (fd00::1) Established"
 else
   fail "Core missing iBGP session to Edge1 (fd00::1)"
 fi
-if echo "$CORE_BGP" | grep "fd00::3" | grep -qvE "Active|Idle|Connect|OpenSent|never"; then
+if echo "$CORE_BGP" | grep "fd00::3" | grep -qvE "Active|Idle|Connect|OpenSent|OpenConfirm|Clearing|Deleted|never"; then
   pass "Core iBGP → Edge2 (fd00::3) Established"
 else
   fail "Core missing iBGP session to Edge2 (fd00::3)"
 fi
 
 EDGE1_BGP=$(docker exec netclaw-edge1 vtysh -c "show bgp ipv6 unicast summary" 2>/dev/null || echo "")
-if echo "$EDGE1_BGP" | grep "fd00::2" | grep -qvE "Active|Idle|Connect|OpenSent|never"; then
+if echo "$EDGE1_BGP" | grep "fd00::2" | grep -qvE "Active|Idle|Connect|OpenSent|OpenConfirm|Clearing|Deleted|never"; then
   pass "Edge1 iBGP → Core (fd00::2) Established"
 else
   fail "Edge1 missing iBGP session to Core (fd00::2)"
@@ -108,7 +108,7 @@ echo ""
 
 # --- GRE tunnel + eBGP to WSL NetClaw (optional) ---
 echo "--- GRE Tunnel (host side) ---"
-if ip tunnel show gre-netclaw &>/dev/null; then
+if ip -6 tunnel show gre-netclaw &>/dev/null; then
   pass "GRE tunnel gre-netclaw exists"
   if ping6 -c 1 -W 2 fd00:ee::0 &>/dev/null; then
     pass "GRE inner reachable (fd00:ee::0 — Edge1 side)"
@@ -128,7 +128,7 @@ echo ""
 # --- eBGP to WSL NetClaw ---
 echo "--- eBGP to WSL NetClaw ---"
 EDGE1_NETCLAW=$(docker exec netclaw-edge1 vtysh -c "show bgp ipv6 unicast summary" 2>/dev/null || echo "")
-if echo "$EDGE1_NETCLAW" | grep "fd00:ee::1" | grep -qvE "Active|Idle|Connect|OpenSent|never"; then
+if echo "$EDGE1_NETCLAW" | grep "fd00:ee::1" | grep -qvE "Active|Idle|Connect|OpenSent|OpenConfirm|Clearing|Deleted|never"; then
   pass "Edge1 eBGP → WSL NetClaw (fd00:ee::1) Established"
 else
   warn "WSL NetClaw eBGP not Established (BGP daemon IPv6 peer required)"

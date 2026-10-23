@@ -124,17 +124,19 @@ class PoliteClient:
         the weaker "minimum gap" property that lets a burst of five slip into one
         second.
         """
-        limit = int(_max_rps())
+        rate = _max_rps()
+        limit = max(1, int(rate))
+        window = max(1.0, 1.0 / rate)
         recent = self._recent.setdefault(source_key, [])
         while True:
             now = time.monotonic()
             # Drop anything older than the window; it no longer constrains us.
-            recent[:] = [t for t in recent if now - t < 1.0]
+            recent[:] = [t for t in recent if now - t < window]
             if len(recent) < limit:
                 recent.append(now)
                 return
             # Wait until the oldest request falls out of the window.
-            await asyncio.sleep(max(0.0, 1.0 - (now - recent[0])) + 0.001)
+            await asyncio.sleep(max(0.0, window - (now - recent[0])) + 0.001)
 
     def cached_age(self, source_key: str, url: str) -> float | None:
         entry = self._cache.get((source_key, url))

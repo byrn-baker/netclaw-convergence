@@ -1,0 +1,16 @@
+{
+  "platform": "WSL2",
+  "mode": "full installer with isolated HOME and foreground gateway; operator systemd service untouched",
+  "kernel": "6.18.33.2-microsoft-standard-WSL2",
+  "fresh_exit": 0,
+  "upgrade_exit": 0,
+  "preserved": {
+    "USER.md": true,
+    "testbed.yaml": true,
+    "openclaw.json": true,
+    "custom-knowledge": true
+  },
+  "skill_original_retained": true,
+  "gateway_health": true,
+  "passed": true
+}

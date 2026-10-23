@@ -79,3 +79,65 @@ README.md                             # PR #96's rewritten Quick Start, reconcil
 ## Complexity Tracking
 
 > No constitution violations requiring justification. The one principle worth calling out explicitly: XIV (Human-in-the-Loop) — pushing to a third-party contributor's fork and any decision to close/supersede their PR are both actions visible to someone outside this session, and were explicitly discussed and confirmed with the operator before this plan was written, not assumed.
+
+## macOS keyboard follow-up plan (2026-10-09)
+
+1. Add dependency-free Python unittest PTY regressions under `tests/unit`
+   (also collected by the existing pytest unit suite). Synchronize input with
+   the terminal entering character-read mode to avoid racing Bash's read.
+2. Fix the shared escape reader, abort failed menu/checklist reads, and make
+   runtime cancellation terminate the installer. Keep non-interactive defaults.
+3. Test the real installer only through cancelled prompts; successful selection
+   tests stop before any installation side effect. Check shell syntax and
+   repository artifact/catalog validation. Record platform and coverage limits.
+
+This is a small correction within spec 049's modular TUI scope, following its
+existing macOS support commitment. No slash-command integration is available;
+the specification, research, plan and task updates precede implementation.
+
+## Python prerequisites follow-up plan (2026-10-09)
+
+1. Add a shared Python minimum-version predicate and check both installer
+   python3 and NETCLAW_PY in core_prereqs; check uv for selected pyATS/GAIT.
+2. Enforce the minimum when creating and using component runtimes. Retain an
+   unsupported automatic runtime and create a version-suffixed environment
+   from the compatible base. Reject unmanaged/symlink targets; never recreate
+   an explicit operator virtualenv. Preserve existing component constraints.
+3. Add offline regressions for false prerequisite success, uv selection, base
+   override, supported runtime reuse and preservation/recovery on retry.
+4. Document Homebrew Python 3.12/uv setup and rerun behavior; run focused
+   installer regressions, syntax, spec and declaration checks. No global
+   installation or full fleet deployment during validation.
+
+## Full-log follow-up plan (2026-10-09)
+
+1. Add safe component-specific venv selection and obsolete-pip refresh inside
+   virtualenvs; use it for ANTA, Jev, Zabbix, Percepxion, SLC and multivendor.
+2. Bind only canonical repository `.venv/bin/python` template commands to
+   recorded successful runtimes; keep custom/uvx/Node launches unchanged.
+3. Install bounded cryptography for claw-certs, run issuance with its recorded
+   Python and propagate failures; replace the nonexistent success logger.
+4. Replace gtrace GNU grep parsing with portable parsing and verify binary
+   placement; test failures without sudo/network/system changes.
+5. Extend focused tests and operator/evidence docs; update existing draft PR285
+   around final installer scope. No private logs committed or external services
+   operated. Full optional-component fleet coverage remains unverified.
+
+## Platform and selection preflight plan (2026-10-09)
+
+1. Add tracked host/component policy plus a stdlib read-only checker and Bash
+   platform/default-Python adapter. Probe bounded local version commands only;
+   no package downloads, secrets, installation or network-device tool calls
+   in preflight. Docker daemon readiness uses a bounded read-only probe.
+2. Run platform reporting before menus and component checks after selection,
+   before any install side effects. Add --preflight; disable known unsupported
+   custom choices and fail explicit unsupported or missing-prerequisite requests.
+3. Use policy Python ranges in pip helper recovery and selected-interpreter gates;
+   restore Zabbix cwd. Add fresh per-run log directories and report their path.
+4. Test Linux/macOS/unsupported OS fixtures, architecture/native SDK support,
+   Python min/max/explicit/recovery, command/Go/CGO/compiler readiness, selection
+   isolation and a no-mutation installer entrypoint. Real Zabbix install/discovery
+   uses temporary runtime/config only. Document installation and service gaps.
+5. PR285 merged; base new codex/fix-installer-preflight on aa90e7d and publish a
+   follow-up PR linked to 285, with current spec artifacts and verification.
+   Keep release metadata for maintainer coordination while this PR is draft.

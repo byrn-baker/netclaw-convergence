@@ -1,0 +1,198 @@
+FFF                                                                      [100%]
+=================================== FAILURES ===================================
+______________ test_malformed_list_is_not_successful_empty[auvik] ______________
+
+vendor = 'auvik'
+
+    @pytest.mark.parametrize('vendor', ['auvik','halo','claroty'])
+    def test_malformed_list_is_not_successful_empty(vendor):
+        code = r'''
+    import asyncio
+    VENDOR = '__VENDOR__'
+    async def run():
+        if VENDOR == 'claroty':
+            from clients.claroty_client import ClarotyClient
+            client = ClarotyClient()
+            for bad in [{}, {'error':'upstream shape changed'}, 'html']:
+                async def post(*a, **kw): return bad
+                client.post = post
+                try: await client.collect('/fixture', items_key='devices')
+                except ValueError: pass
+                else: raise AssertionError('malformed list reported as empty')
+            async def post(*a, **kw): return {'devices': []}
+            client.post = post
+            assert await client.collect('/fixture', items_key='devices') == []
+        else:
+            if VENDOR == 'halo':
+                from clients.halo_client import HaloClient
+                client = HaloClient("https://fixture.invalid", "fixture", "fixture")
+            else:
+                from clients.auvik_client import AuvikClient
+                client = AuvikClient("https://fixture.invalid", "fixture", "fixture")
+            async def bad(*a, **kw): return {'success':True,'data':{'error':'shape changed'},'error':None}
+            client.get = bad
+            result = await client.get_all('/fixture')
+            assert result.get('error') and result['truncated'] is True, result
+            async def empty(*a, **kw): return {'success':True,'data':[] if VENDOR=='halo' else {'data':[]},'error':None}
+            client.get = empty
+            result = await client.get_all('/fixture')
+            assert not result.get('error') and not result['truncated'], result
+    asyncio.run(run())
+    '''.replace('__VENDOR__', vendor)
+        result = subprocess.run([sys.executable,'-c',code],env={**os.environ,'PYTHONPATH':str(ROOT/'mcp-servers'/f'{vendor}-mcp')},capture_output=True,text=True)
+>       assert result.returncode == 0, result.stderr
+E       AssertionError: Traceback (most recent call last):
+E           File "<string>", line 32, in <module>
+E             asyncio.run(run())
+E             ~~~~~~~~~~~^^^^^^^
+E           File "/usr/lib/python3.14/asyncio/runners.py", line 204, in run
+E             return runner.run(main)
+E                    ~~~~~~~~~~^^^^^^
+E           File "/usr/lib/python3.14/asyncio/runners.py", line 127, in run
+E             return self._loop.run_until_complete(task)
+E                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+E           File "/usr/lib/python3.14/asyncio/base_events.py", line 719, in run_until_complete
+E             return future.result()
+E                    ~~~~~~~~~~~~~^^
+E           File "<string>", line 27, in run
+E             assert result.get('error') and result['truncated'] is True, result
+E                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E         AssertionError: {'items': [], 'page_count': 1, 'truncated': False, 'next_cursor': None}
+E
+E       assert 1 == 0
+E        +  where 1 = CompletedProcess(args=['/usr/bin/python3', '-c', '\nimport asyncio\nVENDOR = \'auvik\'\nasync def run():\n    if VENDO...^^^^^^^^^^^^^^^^^^\nAssertionError: {\'items\': [], \'page_count\': 1, \'truncated\': False, \'next_cursor\': None}\n').returncode
+
+tests/unit/test_vendor_list_failures.py:46: AssertionError
+______________ test_malformed_list_is_not_successful_empty[halo] _______________
+
+vendor = 'halo'
+
+    @pytest.mark.parametrize('vendor', ['auvik','halo','claroty'])
+    def test_malformed_list_is_not_successful_empty(vendor):
+        code = r'''
+    import asyncio
+    VENDOR = '__VENDOR__'
+    async def run():
+        if VENDOR == 'claroty':
+            from clients.claroty_client import ClarotyClient
+            client = ClarotyClient()
+            for bad in [{}, {'error':'upstream shape changed'}, 'html']:
+                async def post(*a, **kw): return bad
+                client.post = post
+                try: await client.collect('/fixture', items_key='devices')
+                except ValueError: pass
+                else: raise AssertionError('malformed list reported as empty')
+            async def post(*a, **kw): return {'devices': []}
+            client.post = post
+            assert await client.collect('/fixture', items_key='devices') == []
+        else:
+            if VENDOR == 'halo':
+                from clients.halo_client import HaloClient
+                client = HaloClient("https://fixture.invalid", "fixture", "fixture")
+            else:
+                from clients.auvik_client import AuvikClient
+                client = AuvikClient("https://fixture.invalid", "fixture", "fixture")
+            async def bad(*a, **kw): return {'success':True,'data':{'error':'shape changed'},'error':None}
+            client.get = bad
+            result = await client.get_all('/fixture')
+            assert result.get('error') and result['truncated'] is True, result
+            async def empty(*a, **kw): return {'success':True,'data':[] if VENDOR=='halo' else {'data':[]},'error':None}
+            client.get = empty
+            result = await client.get_all('/fixture')
+            assert not result.get('error') and not result['truncated'], result
+    asyncio.run(run())
+    '''.replace('__VENDOR__', vendor)
+        result = subprocess.run([sys.executable,'-c',code],env={**os.environ,'PYTHONPATH':str(ROOT/'mcp-servers'/f'{vendor}-mcp')},capture_output=True,text=True)
+>       assert result.returncode == 0, result.stderr
+E       AssertionError: Traceback (most recent call last):
+E           File "<string>", line 32, in <module>
+E             asyncio.run(run())
+E             ~~~~~~~~~~~^^^^^^^
+E           File "/usr/lib/python3.14/asyncio/runners.py", line 204, in run
+E             return runner.run(main)
+E                    ~~~~~~~~~~^^^^^^
+E           File "/usr/lib/python3.14/asyncio/runners.py", line 127, in run
+E             return self._loop.run_until_complete(task)
+E                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+E           File "/usr/lib/python3.14/asyncio/base_events.py", line 719, in run_until_complete
+E             return future.result()
+E                    ~~~~~~~~~~~~~^^
+E           File "<string>", line 27, in run
+E             assert result.get('error') and result['truncated'] is True, result
+E                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E         AssertionError: {'items': [], 'page_count': 1, 'truncated': False, 'next_page': None, 'record_count': None}
+E
+E       assert 1 == 0
+E        +  where 1 = CompletedProcess(args=['/usr/bin/python3', '-c', '\nimport asyncio\nVENDOR = \'halo\'\nasync def run():\n    if VENDOR...sertionError: {\'items\': [], \'page_count\': 1, \'truncated\': False, \'next_page\': None, \'record_count\': None}\n').returncode
+
+tests/unit/test_vendor_list_failures.py:46: AssertionError
+_____________ test_malformed_list_is_not_successful_empty[claroty] _____________
+
+vendor = 'claroty'
+
+    @pytest.mark.parametrize('vendor', ['auvik','halo','claroty'])
+    def test_malformed_list_is_not_successful_empty(vendor):
+        code = r'''
+    import asyncio
+    VENDOR = '__VENDOR__'
+    async def run():
+        if VENDOR == 'claroty':
+            from clients.claroty_client import ClarotyClient
+            client = ClarotyClient()
+            for bad in [{}, {'error':'upstream shape changed'}, 'html']:
+                async def post(*a, **kw): return bad
+                client.post = post
+                try: await client.collect('/fixture', items_key='devices')
+                except ValueError: pass
+                else: raise AssertionError('malformed list reported as empty')
+            async def post(*a, **kw): return {'devices': []}
+            client.post = post
+            assert await client.collect('/fixture', items_key='devices') == []
+        else:
+            if VENDOR == 'halo':
+                from clients.halo_client import HaloClient
+                client = HaloClient("https://fixture.invalid", "fixture", "fixture")
+            else:
+                from clients.auvik_client import AuvikClient
+                client = AuvikClient("https://fixture.invalid", "fixture", "fixture")
+            async def bad(*a, **kw): return {'success':True,'data':{'error':'shape changed'},'error':None}
+            client.get = bad
+            result = await client.get_all('/fixture')
+            assert result.get('error') and result['truncated'] is True, result
+            async def empty(*a, **kw): return {'success':True,'data':[] if VENDOR=='halo' else {'data':[]},'error':None}
+            client.get = empty
+            result = await client.get_all('/fixture')
+            assert not result.get('error') and not result['truncated'], result
+    asyncio.run(run())
+    '''.replace('__VENDOR__', vendor)
+        result = subprocess.run([sys.executable,'-c',code],env={**os.environ,'PYTHONPATH':str(ROOT/'mcp-servers'/f'{vendor}-mcp')},capture_output=True,text=True)
+>       assert result.returncode == 0, result.stderr
+E       AssertionError: /fixture response missing expected items key 'devices'; response keys=[]
+E         /fixture: no recognised items list in response; keys=[], items_key='devices'
+E         Traceback (most recent call last):
+E           File "<string>", line 32, in <module>
+E             asyncio.run(run())
+E             ~~~~~~~~~~~^^^^^^^
+E           File "/usr/lib/python3.14/asyncio/runners.py", line 204, in run
+E             return runner.run(main)
+E                    ~~~~~~~~~~^^^^^^
+E           File "/usr/lib/python3.14/asyncio/runners.py", line 127, in run
+E             return self._loop.run_until_complete(task)
+E                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+E           File "/usr/lib/python3.14/asyncio/base_events.py", line 719, in run_until_complete
+E             return future.result()
+E                    ~~~~~~~~~~~~~^^
+E           File "<string>", line 13, in run
+E             else: raise AssertionError('malformed list reported as empty')
+E                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E         AssertionError: malformed list reported as empty
+E
+E       assert 1 == 0
+E        +  where 1 = CompletedProcess(args=['/usr/bin/python3', '-c', '\nimport asyncio\nVENDOR = \'claroty\'\nasync def run():\n    if VEN...         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: malformed list reported as empty\n').returncode
+
+tests/unit/test_vendor_list_failures.py:46: AssertionError
+=========================== short test summary info ============================
+FAILED tests/unit/test_vendor_list_failures.py::test_malformed_list_is_not_successful_empty[auvik]
+FAILED tests/unit/test_vendor_list_failures.py::test_malformed_list_is_not_successful_empty[halo]
+FAILED tests/unit/test_vendor_list_failures.py::test_malformed_list_is_not_successful_empty[claroty]
+3 failed in 0.76s

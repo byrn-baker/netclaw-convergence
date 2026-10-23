@@ -34,17 +34,19 @@ NETCLAW_ROOT="$(cd "$(dirname "$SCRIPT_PATH")/.." && pwd)"
 # shellcheck source=lib/tui.sh
 source "$NETCLAW_ROOT/scripts/lib/tui.sh"
 
-# Agent runtime (openclaw default | hermes). The n2n federation subsystem
-# is OpenClaw-native; only the runtime binary and state-dir base are switched
-# here so `netclaw tui` and .env reads follow the chosen runtime.
-NETCLAW_RUNTIME="${NETCLAW_RUNTIME:-openclaw}"
-if [ "$NETCLAW_RUNTIME" = "hermes" ]; then
-    RUNTIME_CMD="hermes"; RUNTIME_HOME="${HERMES_HOME:-$HOME/.hermes}"; RUNTIME_TUI=(hermes --tui)
-else
-    RUNTIME_CMD="openclaw"; RUNTIME_HOME="$HOME/.openclaw"; RUNTIME_TUI=(openclaw tui)
+if [ "${1:-}" = "hud" ]; then
+    shift
+    exec node "$NETCLAW_ROOT/scripts/hud-launch.mjs" "$@"
 fi
 
-BGP_API="${NETCLAW_BGP_API:-http://127.0.0.1:8179}"
+# Resolve the same persisted installation as the HUD and federation daemon.
+eval "$(python3 "$NETCLAW_ROOT/scripts/federation-control.py" env)"
+if [ "$NETCLAW_RUNTIME" = "hermes" ]; then
+    RUNTIME_CMD="hermes"; RUNTIME_TUI=(hermes --tui)
+else
+    RUNTIME_CMD="openclaw"; RUNTIME_TUI=(openclaw tui)
+fi
+
 NGROK_API="${NETCLAW_NGROK_API:-http://127.0.0.1:4040}"
 CHATS_DIR="${NETCLAW_N2N_CHATS:-$RUNTIME_HOME/n2n/chats}"
 RENDER_MD="$NETCLAW_ROOT/scripts/lib/render_md.py"
@@ -70,15 +72,16 @@ ngrok_get() { curl -s --max-time 3 "$NGROK_API$1" 2>/dev/null || true; }
 
 daemon_up() { api_get /status | grep -q '"running"'; }
 
-# Reads a setting from the runtime env. Checks .env first, then
+# Reads a setting from the runtime env. Checks mesh.systemd.env first, then
 # mesh.systemd.env: the durable mesh units (features 056/057) keep daemon-only
 # settings such as N2N_EDGE_WS_PORT in the systemd env file rather than .env,
 # and looking at only the first file made `netclaw risk token --edge` fail with
 # no output on a correctly-configured Border.
 env_get() {
     local f v
-    for f in "$RUNTIME_HOME/.env" "$RUNTIME_HOME/mesh.systemd.env"; do
-        v="$(grep -m1 "^${1}=" "$f" 2>/dev/null | cut -d= -f2-)"
+    for f in "$RUNTIME_HOME/mesh.systemd.env" "$RUNTIME_HOME/.env"; do
+        [ -f "$f" ] || continue
+        v="$(python3 "$NETCLAW_ROOT/scripts/write-env.py" --get "$f" "$1")" || return 1
         [ -n "$v" ] && { printf '%s\n' "$v"; return 0; }
     done
     return 0
@@ -97,11 +100,10 @@ env_set() {
     local key="$1" val="$2" f
     f="$RUNTIME_HOME/mesh.systemd.env"
     [ -f "$f" ] || f="$RUNTIME_HOME/.env"
-    touch "$f"
-    if grep -q "^${key}=" "$f" 2>/dev/null; then
-        sed -i.bak "s|^${key}=.*|${key}=${val}|" "$f" && rm -f "$f.bak"
+    if [ "$f" = "$RUNTIME_HOME/mesh.systemd.env" ]; then
+        printf '%s' "$val" | python3 "$NETCLAW_ROOT/scripts/write-env.py" --systemd "$f" "$key"
     else
-        echo "${key}=${val}" >> "$f"
+        printf '%s' "$val" | python3 "$NETCLAW_ROOT/scripts/write-env.py" "$f" "$key"
     fi
 }
 

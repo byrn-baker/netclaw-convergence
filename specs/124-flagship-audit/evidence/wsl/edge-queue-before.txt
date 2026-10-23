@@ -1,0 +1,28 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_________ test_expiry_enforced_on_replay_and_counts_without_new_write __________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x73ae7b9ef820>
+
+    def test_expiry_enforced_on_replay_and_counts_without_new_write(monkeypatch):
+        clock = [1000.0]
+        monkeypatch.setattr(edge_queue.time, 'time', lambda: clock[0])
+        conn = sqlite3.connect(':memory:')
+        try:
+            queue = edge_queue.EdgeQueue(SimpleNamespace(_conn=conn))
+            queue.ttl_seconds = 10
+            queue.enqueue('phone', {'message': 'expired'})
+            clock[0] += 8
+            queue.enqueue('phone', {'message': 'current'})
+            clock[0] += 3
+>           assert [row['payload']['message'] for row in queue.pending('phone')] == ['current']
+E           AssertionError: assert ['expired', 'current'] == ['current']
+E
+E             At index 0 diff: 'expired' != 'current'
+E             Left contains one more item: 'current'
+E             Use -v to get more diff
+
+tests/n2n/test_edge_queue_expiry.py:18: AssertionError
+=========================== short test summary info ============================
+FAILED tests/n2n/test_edge_queue_expiry.py::test_expiry_enforced_on_replay_and_counts_without_new_write
+1 failed in 0.06s

@@ -109,10 +109,8 @@ class TestChromaStore:
             store._available = False
 
             result = store.semantic_search("test query")
-            # Should return success with empty results
-            assert result["success"] is True
-            assert result["data"]["count"] == 0
-            assert "note" in result["data"]
+            assert result["success"] is False
+            assert result["error"]["code"] == "EMBEDDING_FAILED"
 
 
 class TestChromaStoreIntegration:
@@ -148,3 +146,43 @@ class TestChromaStoreIntegration:
         search_result = real_store.semantic_search("BGP problem")
         assert search_result["success"] is True
         # Results depend on similarity calculation
+
+
+@pytest.fixture
+def persistent_store(tmp_path):
+    embedder=MagicMock(available=True)
+    embedder.embed.return_value=[1.,0.,0.]
+    store=ChromaStore(str(tmp_path),embedder)
+    assert store.store_session("Routing session",topics=["bgp","routing"],session_id="routing")["success"]
+    return store
+
+
+def test_existing_date_and_any_topic_filters(persistent_store):
+    result=persistent_store.semantic_search("routing",after="2020-01-01T00:00:00Z",topics=["ospf","BGP"])
+    assert result["success"] and result["data"]["count"] == 1
+    assert result["data"]["partial"] is False
+    assert persistent_store.semantic_search("routing",topics=["gp"])["data"]["count"] == 0
+    assert persistent_store.semantic_search("routing",after="2999-01-01")["data"]["count"] == 0
+
+
+def test_storage_and_embedding_failures_are_not_empty_success(persistent_store,monkeypatch):
+    monkeypatch.setattr(persistent_store._collection,"query",MagicMock(side_effect=RuntimeError("private path")))
+    result=persistent_store.semantic_search("routing")
+    assert not result["success"] and result["error"]["code"] == "SEARCH_FAILED"
+    assert "private path" not in str(result)
+    persistent_store.embedder.embed.side_effect=RuntimeError("unavailable")
+    assert persistent_store.semantic_search("routing")["error"]["code"] == "EMBEDDING_FAILED"
+
+
+def test_filtered_truncation_is_explicit(persistent_store):
+    collection=persistent_store._collection
+    collection.add(ids=[f"s{i}" for i in range(201)],embeddings=[[1.,0.,0.]]*201,
+                   documents=["session"]*201,metadatas=[{"topics":"bgp","created_at":"2026-01-01T00:00:00Z"}]*201)
+    result=persistent_store.semantic_search("routing",topics=["absent"])
+    assert result["success"] and result["data"]["partial"] is True
+    assert result["data"]["candidates_examined"] == 200
+
+
+def test_invalid_date_reports_invalid_filter(persistent_store):
+    result=persistent_store.semantic_search("routing",after="yesterday")
+    assert result["error"]["code"] == "INVALID_FILTER"

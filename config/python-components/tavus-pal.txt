@@ -1,0 +1,5 @@
+# Optional isolated Pal runtime. Never install into NetClaw's shared environment.
+fastmcp==4.0.11
+fastmcp-tasks==4.0.11
+fastmcp-slim==4.0.11
+mcp==2.3.0

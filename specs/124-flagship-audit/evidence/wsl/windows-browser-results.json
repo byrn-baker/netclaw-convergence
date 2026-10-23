@@ -1,0 +1,18 @@
+[
+  {
+    "browser": "Windows Edge",
+    "kind": "hud",
+    "health": 200,
+    "websocket": true,
+    "chatFixtureResponse": true,
+    "errors": []
+  },
+  {
+    "browser": "Windows Edge",
+    "kind": "canvas",
+    "health": 200,
+    "websocket": true,
+    "chatFixtureResponse": true,
+    "errors": []
+  }
+]

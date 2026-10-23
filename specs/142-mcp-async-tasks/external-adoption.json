@@ -1,0 +1,68 @@
+[
+  {
+    "component": "wikipedia",
+    "directory": "Wikipedia_MCP",
+    "reviewed_commit": "0cd4b24e92419d03e6999d23e776c2826d75b7cd",
+    "tools": [
+      "check_page_exists",
+      "disambiguation_options",
+      "get_categories",
+      "get_content",
+      "get_html",
+      "get_images",
+      "get_links",
+      "get_page_id",
+      "get_references",
+      "get_summary",
+      "get_title",
+      "get_url",
+      "search_pages"
+    ],
+    "status": "pass: real catalogs in both protocol modes; no live vendor invocation"
+  },
+  {
+    "component": "nvd-cve",
+    "directory": "mcp-nvd",
+    "reviewed_commit": "568a603946715b7b3d520556841d826d2f73a222",
+    "tools": [
+      "get_cve",
+      "search_cve"
+    ],
+    "status": "pass: real catalogs in both protocol modes; no live vendor invocation"
+  },
+  {
+    "component": "sdwan",
+    "directory": "cisco-sdwan-mcp",
+    "reviewed_commit": "fe2fdf6d0dae4bfde37f7e00176a9fbda63645a7",
+    "tools": [
+      "get_alarms",
+      "get_bfd_sessions",
+      "get_centralized_policies",
+      "get_control_connections",
+      "get_device_template_details",
+      "get_device_templates",
+      "get_devices",
+      "get_events",
+      "get_feature_template_details",
+      "get_feature_templates",
+      "get_interface_stats",
+      "get_omp_routes",
+      "get_running_config",
+      "get_template_variables",
+      "get_wan_edge_inventory"
+    ],
+    "status": "pass: real catalogs in both protocol modes; no live vendor invocation"
+  },
+  {
+    "component": "netbox",
+    "directory": "netbox-mcp-server",
+    "reviewed_commit": "14ec2fe7fb7d1f998eb2bfc50aaa67382447cdd5",
+    "tools": [
+      "netbox_get_changelogs",
+      "netbox_get_object_by_id",
+      "netbox_get_objects",
+      "netbox_search_objects"
+    ],
+    "status": "pass: real catalogs in both protocol modes; no live vendor invocation"
+  }
+]

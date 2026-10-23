@@ -7,7 +7,7 @@ Environment Variables:
     NAUTOBOT_URL          — Nautobot instance URL (required)
     NAUTOBOT_TOKEN        — Nautobot API token (required)
     NAUTOBOT_TIMEOUT      — API request timeout in seconds (default: 60)
-    NAUTOBOT_VERIFY_SSL   — Verify SSL certificates (default: false)
+    NAUTOBOT_VERIFY_SSL   — Verify SSL certificates (default: true)
     ITSM_ENABLED          — Require ServiceNow CR for write ops (default: false)
     ITSM_LAB_MODE         — Bypass ITSM in lab mode (default: true)
 """
@@ -22,7 +22,8 @@ from typing import Optional
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from mcp.server.fastmcp import FastMCP
+from fastmcp_tasks import TasksExtension
+from fastmcp import FastMCP
 
 from nautobot_client import NautobotClient, NautobotError
 from bgp_helpers import (
@@ -48,6 +49,7 @@ for var in ("NAUTOBOT_URL", "NAUTOBOT_TOKEN"):
         sys.exit(1)
 
 mcp = FastMCP("nautobot-routing-mcp")
+mcp.add_extension(TasksExtension(name="netclaw-nautobot-routing-mcp", concurrency=1))
 client = NautobotClient()
 
 ITSM_ENABLED = os.environ.get("ITSM_ENABLED", "false").lower() == "true"
@@ -66,7 +68,7 @@ def _check_itsm(cr_number: Optional[str]) -> Optional[str]:
 # ═══════════════════════════════════════════════════════════════════════
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def routing_get_bgp_summary(device: Optional[str] = None) -> str:
     """Get the full BGP topology for a device: routing instance, ASN, peers, groups, address families.
 
@@ -133,7 +135,7 @@ async def routing_get_bgp_summary(device: Optional[str] = None) -> str:
         return json.dumps({"error": str(e)})
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def routing_get_bgp_peers(device: str) -> str:
     """List all BGP peers for a device with remote AS, local/remote IP, peer group, and enabled state.
 
@@ -189,7 +191,7 @@ async def routing_get_bgp_peers(device: str) -> str:
         return json.dumps({"error": str(e)})
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def routing_get_bgp_peer_detail(device: str, peer_ip: str) -> str:
     """Get full detail of a specific BGP peering: both endpoints, address families, peer group.
 
@@ -233,7 +235,7 @@ async def routing_get_bgp_peer_detail(device: str, peer_ip: str) -> str:
         return json.dumps({"error": str(e)})
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def routing_get_peer_groups(device: Optional[str] = None) -> str:
     """List BGP peer groups with member count and address families.
 
@@ -285,7 +287,7 @@ async def routing_get_peer_groups(device: Optional[str] = None) -> str:
         return json.dumps({"error": str(e)})
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def routing_get_autonomous_systems() -> str:
     """List all autonomous systems registered in the Nautobot BGP model."""
     logger.info("routing_get_autonomous_systems")
@@ -720,7 +722,7 @@ async def routing_remove_peer_from_group(
 # ═══════════════════════════════════════════════════════════════════════
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def routing_reconcile_bgp(device: str, live_peers: str) -> str:
     """Compare Nautobot BGP model vs live peer data from pyATS. Returns drift report.
 

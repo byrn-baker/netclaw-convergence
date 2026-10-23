@@ -1,0 +1,32 @@
+{
+  "date": "2026-10-09",
+  "method": "GET",
+  "host": "https://tavusapi.com",
+  "credential_source": "repository .env; value not logged",
+  "redirects_followed": false,
+  "results": [
+    {
+      "path": "/v2/faces?face_type=system&limit=100",
+      "http_status": 200,
+      "returned_count": 100,
+      "total_count": 150
+    },
+    {
+      "path": "/v2/pals?pal_type=system&limit=10",
+      "http_status": 200,
+      "returned_count": 10,
+      "total_count": 31
+    },
+    {
+      "path": "/v2/conversations?limit=1",
+      "http_status": 200,
+      "returned_count": 0,
+      "total_count": 0
+    }
+  ],
+  "provider_mutations_performed": false,
+  "conversations_created": 0,
+  "balance_verified": false,
+  "creation_entitlements_verified": false,
+  "integration_tested": false
+}

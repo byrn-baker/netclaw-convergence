@@ -1,0 +1,24 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+____________ test_setup_prompts_never_evaluate_and_env_round_trips _____________
+
+tmp_path = PosixPath('/tmp/pytest-of-johncapobianco/pytest-179/test_setup_prompts_never_evalu0')
+
+    def test_setup_prompts_never_evaluate_and_env_round_trips(tmp_path):
+        source = (ROOT / 'scripts/setup.sh').read_text()
+        helpers = source[source.index('prompt() {'):source.index('section() {')]
+        sentinel = tmp_path / 'executed'
+        value = f'literal $(touch {sentinel}) & pipe| apostrophe\' quote"x" dollar$ slash\\ tail'
+        envfile = tmp_path / '.env'
+        envfile.write_text('TEST_TOKEN=previous\nUNRELATED=keep\n')
+        script = 'set -eu\nsource scripts/lib/common.sh\nRUNTIME_ENV="$FIXTURE_ENV"\nOPENCLAW_ENV="$FIXTURE_ENV"\n' + helpers + '\nprompt_secret TOKEN label\nset_env TEST_TOKEN "$TOKEN"\n'
+        proc = subprocess.run(['bash', '-c', script], cwd=ROOT, env={**os.environ,'FIXTURE_ENV':str(envfile)}, input=value+'\n',text=True,capture_output=True)
+>       assert not sentinel.exists()
+E       AssertionError: assert not True
+E        +  where True = exists()
+E        +    where exists = PosixPath('/tmp/pytest-of-johncapobianco/pytest-179/test_setup_prompts_never_evalu0/executed').exists
+
+tests/unit/test_setup_literal_credentials.py:21: AssertionError
+=========================== short test summary info ============================
+FAILED tests/unit/test_setup_literal_credentials.py::test_setup_prompts_never_evaluate_and_env_round_trips
+1 failed in 0.11s

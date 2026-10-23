@@ -216,15 +216,14 @@ class TestMemoryRecallContract:
         assert result["success"] is False
         assert result["error"]["code"] == "INVALID_QUERY"
 
-    def test_graceful_degradation(self, chroma_store):
-        """Should return success with empty results when unavailable."""
-        chroma_store._available = False
+    def test_graceful_degradation(self, chroma_store, monkeypatch):
+        """An unavailable backend must not report a successful empty search."""
+        monkeypatch.setattr(chroma_store, '_init_client', lambda: False)
 
         result = chroma_store.semantic_search("test query")
 
-        # Should succeed but with empty results
-        assert result["success"] is True
-        assert result["data"]["count"] == 0
+        assert result["success"] is False
+        assert result["error"]["code"] == "CHROMA_UNAVAILABLE"
 
 
 # =============================================================================

@@ -65,6 +65,7 @@ class Outcome(str, Enum):
 
     # The appliance did not answer. MUST NOT be filled in from another plane.
     PLANE_UNREACHABLE = "plane_unreachable"
+    REQUEST_FAILED = "request_failed"
 
     # An expired session reported as "no policies exist" would be a silent,
     # plausible, wrong answer. It is an authentication condition.
@@ -136,7 +137,7 @@ def emit(
     """
     notes = list(notes or [])
 
-    if outcome in (Outcome.AUTH_MISSING, Outcome.PLANE_UNREACHABLE, Outcome.AUTH_EXPIRED):
+    if outcome in (Outcome.AUTH_MISSING, Outcome.PLANE_UNREACHABLE, Outcome.AUTH_EXPIRED, Outcome.REQUEST_FAILED):
         # These fail before a query runs, so there is no scope to report and
         # demanding one would turn a clear diagnosis into a confusing one.
         validated: dict[str, Any] = dict(scope or {})

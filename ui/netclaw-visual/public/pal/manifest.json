@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "rig": "netclaw-pal-nodes-v1",
+  "avatars": [
+    {
+      "id": "john",
+      "name": "John",
+      "file": "john.glb",
+      "preview": "john.png",
+      "description": "Stylized John; AI avatar, not a live person."
+    },
+    {
+      "id": "lobster",
+      "name": "Lobster",
+      "file": "lobster.glb",
+      "preview": "lobster.png",
+      "description": "NetClaw lobster companion."
+    }
+  ]
+}

@@ -42,7 +42,10 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from mcp.server.fastmcp import FastMCP  # noqa: E402
+from functools import wraps
+from fastmcp.utilities.async_utils import call_sync_fn_in_threadpool
+from fastmcp_tasks import TasksExtension
+from fastmcp import FastMCP  # noqa: E402
 
 import routing  # noqa: E402
 from credentials import CredentialError, resolve as resolve_credential  # noqa: E402
@@ -62,6 +65,17 @@ SERVER_NAME = "multivendor-cli"          # the `server` field in every result (F
 SERVER_VERSION = "0.1.0"
 
 mcp = FastMCP("multivendor-cli-mcp")
+mcp.add_extension(TasksExtension(name="netclaw-multivendor-cli-mcp", concurrency=1))
+
+
+def _task_tool(fn):
+    """Register a threaded MCP task while preserving the direct Python callable."""
+    @wraps(fn)
+    async def run(*args, **kwargs):
+        return await call_sync_fn_in_threadpool(fn, *args, **kwargs)
+    mcp.tool(task=True)(run)
+    return fn
+
 
 
 def write_enabled() -> bool:
@@ -134,7 +148,7 @@ def check_command_policy(command: str, platform: str | None = None) -> dict:
     }
 
 
-@mcp.tool()
+@_task_tool
 def list_devices(group: str | None = None, platform: str | None = None) -> dict:
     """List devices from the configured inventory, with source attribution.
 
@@ -205,7 +219,7 @@ def check_device_readiness(device: str) -> dict:
     }
 
 
-@mcp.tool()
+@_task_tool
 def run_command(device: str, command: str, timeout_s: int | None = None) -> dict:
     """Execute a read-only command on a device and return its output.
 
@@ -220,7 +234,7 @@ def run_command(device: str, command: str, timeout_s: int | None = None) -> dict
     return raw_tools.run_command(device, command, timeout_s)
 
 
-@mcp.tool()
+@_task_tool
 def check_reachability(device: str) -> dict:
     """Probe a device, separating unreachable from auth-failed from wrong-platform.
 
@@ -230,7 +244,7 @@ def check_reachability(device: str) -> dict:
     return raw_tools.check_reachability(device)
 
 
-@mcp.tool()
+@_task_tool
 def get_facts(device: str, getters: list[str] | None = None,
               timeout_s: int | None = None) -> dict:
     """Retrieve normalized operational facts in one shape across vendors.
@@ -249,7 +263,7 @@ def get_facts(device: str, getters: list[str] | None = None,
     return fact_tools.get_facts(device, getters, timeout_s)
 
 
-@mcp.tool()
+@_task_tool
 def run_fleet(target: str, command: str | None = None,
               getters: list[str] | None = None,
               max_workers: int | None = None,

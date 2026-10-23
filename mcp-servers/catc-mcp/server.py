@@ -33,9 +33,12 @@ from typing import Any
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 import httpx
-from mcp.server.fastmcp import FastMCP
+from fastmcp_tasks import TasksExtension
+from fastmcp.utilities.async_utils import call_sync_fn_in_threadpool
+from fastmcp import FastMCP
 
 mcp = FastMCP("catc-mcp")
+mcp.add_extension(TasksExtension(name="netclaw-catc-mcp", concurrency=1))
 CATALOG = Path(__file__).resolve().parent / "catalog"
 GROUPS = ["devices", "sites", "wireless", "health", "compliance", "software", "events", "other"]
 _TOKEN: dict[str, Any] = {"value": None, "acquired": 0.0}
@@ -134,7 +137,7 @@ def _call(group: str, operation: str, params: dict | None) -> dict:
                         "not_configured")
     spec = ops[operation]
     uri = spec["uri"]
-    verify = (os.environ.get("CATALYST_CENTER_VERIFY_SSL", "true").lower() == "true")
+    verify = (os.environ.get("CATALYST_CENTER_VERIFY_SSL", "true").strip().lower() not in ("false", "0", "no"))
     caveats = []
     if not verify:
         caveats.append("TLS verification is DISABLED for this appliance.")
@@ -219,7 +222,7 @@ def _call(group: str, operation: str, params: dict | None) -> dict:
 
 def _mk(group: str, blurb: str):
     async def tool(operation: str, params: dict | None = None) -> dict:
-        return _call(group, operation, params)
+        return await call_sync_fn_in_threadpool(_call, group, operation, params)
     tool.__name__ = f"catc_{group}"
     tool.__doc__ = (
         f"{blurb}\n\n"
@@ -245,7 +248,7 @@ BLURBS = {
     "other":      "Everything else in the catalogue — fabric, templates, policy, licensing, energy.",
 }
 for _g in GROUPS:
-    mcp.tool()(_mk(_g, BLURBS[_g]))
+    mcp.tool(task=True)(_mk(_g, BLURBS[_g]))
 
 
 @mcp.tool()

@@ -1,0 +1,128 @@
+{
+  "upstream_commit": "d4971436328369ef0a581ca5359dc8700fb2939b",
+  "transport": "streamable-http",
+  "transport_mode": "stateless",
+  "sdk": "mcp 2.2.0",
+  "bind": "loopback",
+  "checks": [
+    {
+      "check": "version",
+      "summary": {
+        "total": 4,
+        "success": 4,
+        "failed": 0
+      },
+      "concurrency": "pcall (process per device)",
+      "results": [
+        {
+          "device": "R1",
+          "status": "completed",
+          "parsed": true
+        },
+        {
+          "device": "R2",
+          "status": "completed",
+          "parsed": true
+        },
+        {
+          "device": "SW1",
+          "status": "completed",
+          "parsed": true
+        },
+        {
+          "device": "SW2",
+          "status": "completed",
+          "parsed": true
+        }
+      ]
+    },
+    {
+      "check": "interfaces",
+      "summary": {
+        "total": 4,
+        "success": 4,
+        "failed": 0
+      },
+      "concurrency": "pcall (process per device)",
+      "results": [
+        {
+          "device": "R1",
+          "status": "completed",
+          "parsed": true
+        },
+        {
+          "device": "R2",
+          "status": "completed",
+          "parsed": true
+        },
+        {
+          "device": "SW1",
+          "status": "completed",
+          "parsed": true
+        },
+        {
+          "device": "SW2",
+          "status": "completed",
+          "parsed": true
+        }
+      ]
+    },
+    {
+      "check": "cpu",
+      "summary": {
+        "total": 4,
+        "success": 4,
+        "failed": 0
+      },
+      "concurrency": "pcall (process per device)",
+      "results": [
+        {
+          "device": "R1",
+          "status": "completed",
+          "parsed": true,
+          "cpu_percent": {
+            "five_sec_cpu_total": 1,
+            "one_min_cpu": 0,
+            "five_min_cpu": 0
+          }
+        },
+        {
+          "device": "R2",
+          "status": "completed",
+          "parsed": true,
+          "cpu_percent": {
+            "five_sec_cpu_total": 0,
+            "one_min_cpu": 0,
+            "five_min_cpu": 0
+          }
+        },
+        {
+          "device": "SW1",
+          "status": "completed",
+          "parsed": true,
+          "cpu_percent": {
+            "five_sec_cpu_total": 0,
+            "one_min_cpu": 0,
+            "five_min_cpu": 0
+          }
+        },
+        {
+          "device": "SW2",
+          "status": "completed",
+          "parsed": true,
+          "cpu_percent": {
+            "five_sec_cpu_total": 0,
+            "one_min_cpu": 0,
+            "five_min_cpu": 0
+          }
+        }
+      ]
+    }
+  ],
+  "limitations": [
+    "Only four IOS-XE nodes checked; no full fleet health certification.",
+    "Initial router metadata credentials stale; selected configured credentials before successful rerun.",
+    "Tracked install/runtime migration remains open A124-021."
+  ],
+  "configuration_changes": false
+}

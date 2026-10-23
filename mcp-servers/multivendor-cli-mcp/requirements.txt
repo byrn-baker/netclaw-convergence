@@ -1,3 +1,7 @@
+# FastMCP 4 / MCP 2 tested runtime (spec 141); install in an isolated environment.
+fastmcp==4.0.11
+fastmcp-tasks==4.0.11
+mcp==2.3.0
 # Multivendor CLI Driver — spec 076 (roadmap R1)
 #
 # INSTALL INTO A DEDICATED VIRTUALENV ONLY. Never into the shared environment.
@@ -17,17 +21,6 @@
 #
 # Verified to resolve on Python 3.14.4 (68 packages total).
 
-# --- MCP framework (Constitution Principle V: FastMCP or the official SDK) ---
-# Matches the convention in suzieq-mcp / gnmi-mcp, which import
-# `from mcp.server.fastmcp import ...`. Brings pydantic, which FR-030's input
-# validation relies on.
-#
-# UPPER BOUND IS LOAD-BEARING. mcp 2.0.0 removed `mcp.server.fastmcp` (FastMCP
-# moved out to the separate `fastmcp` distribution), so an unbounded `mcp>=1.2.0`
-# resolves 2.x and breaks the import used by ten other NetClaw servers. Ten of
-# them declare an unbounded `mcp>=1.0.0` and would hit this on a fresh install
-# today — flagged in spec 076 research as a repo-wide latent breakage.
-mcp>=1.2.0,<2
 
 # --- Orchestration: inventory, concurrency, task composition ---
 nornir==3.5.0

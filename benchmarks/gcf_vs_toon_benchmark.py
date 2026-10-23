@@ -4,7 +4,7 @@ Generates realistic network data matching NetClaw's actual MCP server payloads
 and measures token counts across all three formats.
 
 Usage:
-    pip install gcf toon-format tiktoken
+    pip install gcf-python toon-format tiktoken
     python benchmarks/gcf_vs_toon_benchmark.py
 """
 

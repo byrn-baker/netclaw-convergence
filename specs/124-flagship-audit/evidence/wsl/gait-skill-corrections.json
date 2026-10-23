@@ -1,0 +1,70 @@
+[
+  {
+    "path": "workspace/skills/aci-change-deploy/SKILL.md",
+    "corrected_examples": 2
+  },
+  {
+    "path": "workspace/skills/aci-fabric-audit/SKILL.md",
+    "corrected_examples": 1
+  },
+  {
+    "path": "workspace/skills/catc-client-ops/SKILL.md",
+    "corrected_examples": 1
+  },
+  {
+    "path": "workspace/skills/catc-inventory/SKILL.md",
+    "corrected_examples": 1
+  },
+  {
+    "path": "workspace/skills/catc-troubleshoot/SKILL.md",
+    "corrected_examples": 1
+  },
+  {
+    "path": "workspace/skills/ise-incident-response/SKILL.md",
+    "corrected_examples": 1
+  },
+  {
+    "path": "workspace/skills/ise-posture-audit/SKILL.md",
+    "corrected_examples": 1
+  },
+  {
+    "path": "workspace/skills/nvd-cve/SKILL.md",
+    "corrected_examples": 1
+  },
+  {
+    "path": "workspace/skills/pyats-config-mgmt/SKILL.md",
+    "corrected_examples": 1
+  },
+  {
+    "path": "workspace/skills/pyats-health-check/SKILL.md",
+    "corrected_examples": 1
+  },
+  {
+    "path": "workspace/skills/pyats-security/SKILL.md",
+    "corrected_examples": 1
+  },
+  {
+    "path": "workspace/skills/pyats-topology/SKILL.md",
+    "corrected_examples": 1
+  },
+  {
+    "path": "workspace/skills/pyats-troubleshoot/SKILL.md",
+    "corrected_examples": 1
+  },
+  {
+    "path": "workspace/skills/mempalace/SKILL.md",
+    "corrected_examples": 1
+  },
+  {
+    "path": "workspace/skills/f5-health-check/SKILL.md",
+    "corrected_examples": 1
+  },
+  {
+    "path": "workspace/skills/f5-config-mgmt/SKILL.md",
+    "corrected_examples": 1
+  },
+  {
+    "path": "workspace/skills/f5-troubleshoot/SKILL.md",
+    "corrected_examples": 1
+  }
+]

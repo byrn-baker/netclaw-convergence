@@ -1,0 +1,170 @@
+FFFFFF..FF..                                                             [100%]
+=================================== FAILURES ===================================
+_________ test_anta_does_not_hide_genuine_or_mixed_failures[messages0] _________
+
+messages = ['Interface Ethernet1 is inactive, expected active']
+
+    @pytest.mark.parametrize('messages',[
+     ['Interface Ethernet1 is inactive, expected active'],
+     ['BGP peer is not configured, expected established'],
+     ['Feature is not inactive'],
+     ['Unsupported transceiver detected'],
+     ['BGP inactive','NTP synchronization failed'],
+     ['Expected invalid input rejection, command was accepted'],
+    ])
+    def test_anta_does_not_hide_genuine_or_mixed_failures(messages):
+>       obj=load('anta-mcp');assert obj.classify('failure',messages)[0]==obj.FAIL
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: assert 'not_applicable' == 'fail'
+E
+E         - fail
+E         + not_applicable
+
+tests/unit/test_verdict_qualifiers.py:20: AssertionError
+_________ test_anta_does_not_hide_genuine_or_mixed_failures[messages1] _________
+
+messages = ['BGP peer is not configured, expected established']
+
+    @pytest.mark.parametrize('messages',[
+     ['Interface Ethernet1 is inactive, expected active'],
+     ['BGP peer is not configured, expected established'],
+     ['Feature is not inactive'],
+     ['Unsupported transceiver detected'],
+     ['BGP inactive','NTP synchronization failed'],
+     ['Expected invalid input rejection, command was accepted'],
+    ])
+    def test_anta_does_not_hide_genuine_or_mixed_failures(messages):
+>       obj=load('anta-mcp');assert obj.classify('failure',messages)[0]==obj.FAIL
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: assert 'not_applicable' == 'fail'
+E
+E         - fail
+E         + not_applicable
+
+tests/unit/test_verdict_qualifiers.py:20: AssertionError
+_________ test_anta_does_not_hide_genuine_or_mixed_failures[messages2] _________
+
+messages = ['Feature is not inactive']
+
+    @pytest.mark.parametrize('messages',[
+     ['Interface Ethernet1 is inactive, expected active'],
+     ['BGP peer is not configured, expected established'],
+     ['Feature is not inactive'],
+     ['Unsupported transceiver detected'],
+     ['BGP inactive','NTP synchronization failed'],
+     ['Expected invalid input rejection, command was accepted'],
+    ])
+    def test_anta_does_not_hide_genuine_or_mixed_failures(messages):
+>       obj=load('anta-mcp');assert obj.classify('failure',messages)[0]==obj.FAIL
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: assert 'not_applicable' == 'fail'
+E
+E         - fail
+E         + not_applicable
+
+tests/unit/test_verdict_qualifiers.py:20: AssertionError
+_________ test_anta_does_not_hide_genuine_or_mixed_failures[messages3] _________
+
+messages = ['Unsupported transceiver detected']
+
+    @pytest.mark.parametrize('messages',[
+     ['Interface Ethernet1 is inactive, expected active'],
+     ['BGP peer is not configured, expected established'],
+     ['Feature is not inactive'],
+     ['Unsupported transceiver detected'],
+     ['BGP inactive','NTP synchronization failed'],
+     ['Expected invalid input rejection, command was accepted'],
+    ])
+    def test_anta_does_not_hide_genuine_or_mixed_failures(messages):
+>       obj=load('anta-mcp');assert obj.classify('failure',messages)[0]==obj.FAIL
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: assert 'not_applicable' == 'fail'
+E
+E         - fail
+E         + not_applicable
+
+tests/unit/test_verdict_qualifiers.py:20: AssertionError
+_________ test_anta_does_not_hide_genuine_or_mixed_failures[messages4] _________
+
+messages = ['BGP inactive', 'NTP synchronization failed']
+
+    @pytest.mark.parametrize('messages',[
+     ['Interface Ethernet1 is inactive, expected active'],
+     ['BGP peer is not configured, expected established'],
+     ['Feature is not inactive'],
+     ['Unsupported transceiver detected'],
+     ['BGP inactive','NTP synchronization failed'],
+     ['Expected invalid input rejection, command was accepted'],
+    ])
+    def test_anta_does_not_hide_genuine_or_mixed_failures(messages):
+>       obj=load('anta-mcp');assert obj.classify('failure',messages)[0]==obj.FAIL
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: assert 'not_applicable' == 'fail'
+E
+E         - fail
+E         + not_applicable
+
+tests/unit/test_verdict_qualifiers.py:20: AssertionError
+_________ test_anta_does_not_hide_genuine_or_mixed_failures[messages5] _________
+
+messages = ['Expected invalid input rejection, command was accepted']
+
+    @pytest.mark.parametrize('messages',[
+     ['Interface Ethernet1 is inactive, expected active'],
+     ['BGP peer is not configured, expected established'],
+     ['Feature is not inactive'],
+     ['Unsupported transceiver detected'],
+     ['BGP inactive','NTP synchronization failed'],
+     ['Expected invalid input rejection, command was accepted'],
+    ])
+    def test_anta_does_not_hide_genuine_or_mixed_failures(messages):
+>       obj=load('anta-mcp');assert obj.classify('failure',messages)[0]==obj.FAIL
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: assert 'not_applicable' == 'fail'
+E
+E         - fail
+E         + not_applicable
+
+tests/unit/test_verdict_qualifiers.py:20: AssertionError
+___ test_redfish_transitions_are_not_finished_states[PoweringOn-POWERING_ON] ___
+
+power = 'PoweringOn', state = 'POWERING_ON'
+
+    @pytest.mark.parametrize('power,state',[('PoweringOn','POWERING_ON'),('PoweringOff','POWERING_OFF'),('On','POWERED_ON'),('Off','POWERED_OFF')])
+    def test_redfish_transitions_are_not_finished_states(power,state):
+        result=load('redfish-mcp').host_verdict(power,'OK')
+>       assert result['host_state']==state
+E       AssertionError: assert 'POWERED_ON' == 'POWERING_ON'
+E
+E         - POWERING_ON
+E         ?      ^^^
+E         + POWERED_ON
+E         ?      ^^
+
+tests/unit/test_verdict_qualifiers.py:31: AssertionError
+__ test_redfish_transitions_are_not_finished_states[PoweringOff-POWERING_OFF] __
+
+power = 'PoweringOff', state = 'POWERING_OFF'
+
+    @pytest.mark.parametrize('power,state',[('PoweringOn','POWERING_ON'),('PoweringOff','POWERING_OFF'),('On','POWERED_ON'),('Off','POWERED_OFF')])
+    def test_redfish_transitions_are_not_finished_states(power,state):
+        result=load('redfish-mcp').host_verdict(power,'OK')
+>       assert result['host_state']==state
+E       AssertionError: assert 'POWERED_OFF' == 'POWERING_OFF'
+E
+E         - POWERING_OFF
+E         ?      ^^^
+E         + POWERED_OFF
+E         ?      ^^
+
+tests/unit/test_verdict_qualifiers.py:31: AssertionError
+=========================== short test summary info ============================
+FAILED tests/unit/test_verdict_qualifiers.py::test_anta_does_not_hide_genuine_or_mixed_failures[messages0]
+FAILED tests/unit/test_verdict_qualifiers.py::test_anta_does_not_hide_genuine_or_mixed_failures[messages1]
+FAILED tests/unit/test_verdict_qualifiers.py::test_anta_does_not_hide_genuine_or_mixed_failures[messages2]
+FAILED tests/unit/test_verdict_qualifiers.py::test_anta_does_not_hide_genuine_or_mixed_failures[messages3]
+FAILED tests/unit/test_verdict_qualifiers.py::test_anta_does_not_hide_genuine_or_mixed_failures[messages4]
+FAILED tests/unit/test_verdict_qualifiers.py::test_anta_does_not_hide_genuine_or_mixed_failures[messages5]
+FAILED tests/unit/test_verdict_qualifiers.py::test_redfish_transitions_are_not_finished_states[PoweringOn-POWERING_ON]
+FAILED tests/unit/test_verdict_qualifiers.py::test_redfish_transitions_are_not_finished_states[PoweringOff-POWERING_OFF]
+8 failed, 4 passed in 0.07s

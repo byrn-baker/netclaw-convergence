@@ -32,6 +32,7 @@ Nokia SR Linux (no driver, gap reported explicitly).
 from __future__ import annotations
 
 import os
+from ssh_security import options as ssh_options, secure_napalm_connection, strict as ssh_strict
 
 import routing
 from credentials import CredentialError, resolve as resolve_credential
@@ -107,6 +108,7 @@ def get_facts(device: str, getters: list[str] | None = None,
         "platform": dev.platform,
         "source": res.source.value,
         "owning_server": routing.owner_of(dev.platform),
+        "ssh_host_key_checking": ssh_strict(),
     }
 
     # FR-008: normalized reads are permitted even on platforms another server
@@ -141,16 +143,27 @@ def get_facts(device: str, getters: list[str] | None = None,
     from napalm import get_network_driver
 
     driver = get_network_driver(driver_name)
+    try:
+        connection_options = ssh_options(device, cred)
+        if driver_name == 'eos':
+            connection_options['transport'] = 'ssh'
+    except (OSError, ValueError) as exc:
+        return {**base, 'status': 'unreachable', 'error': str(exc)}
     conn = driver(
         hostname=dev.hostname,
         username=cred.username,
         password=cred.password or "",
-        optional_args={"secret": cred.enable or "", "conn_timeout": min(timeout_s, 30)},
+        optional_args={"secret": cred.enable or "", "conn_timeout": min(timeout_s, 30), **connection_options},
         timeout=timeout_s,
     )
     try:
+        secure_napalm_connection(conn, driver_name)
         conn.open()
     except Exception as exc:  # noqa: BLE001
+        try:
+            conn.close()
+        except Exception:
+            pass
         return {**base, "status": "unreachable", "napalm_driver": driver_name,
                 "error": f"{type(exc).__name__}: {str(exc)[:260]}"}
 

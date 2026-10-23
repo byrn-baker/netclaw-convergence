@@ -1,0 +1,31 @@
+{
+  "counts": {
+    "BLOCKED_DEPENDENCY": 0,
+    "ERROR": 0,
+    "FAIL": 0,
+    "NEEDS_DOCKER": 0,
+    "NEEDS_LIVE_CREDENTIALS": 0,
+    "PASS": 1
+  },
+  "exit_code": 0,
+  "generated_at": "2026-09-26T19:51:46.483326+00:00",
+  "results": [
+    {
+      "capabilities": [],
+      "command": [
+        "bash",
+        "tests/bgp-intel/run-tests.sh"
+      ],
+      "detail": "offline contracts passed",
+      "duration_seconds": 4.355864417000703,
+      "environment": {
+        "fingerprint": "f3937f07dbc393453fb878327eab087802aeb8cf6da20962e0be1f01c50474b4",
+        "path": ".contract-test-envs/bgp-intel"
+      },
+      "exit_code": 0,
+      "status": "PASS",
+      "suite": "bgp-intel"
+    }
+  ],
+  "schema_version": 1
+}

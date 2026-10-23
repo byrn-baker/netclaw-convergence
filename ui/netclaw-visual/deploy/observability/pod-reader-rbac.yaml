@@ -1,0 +1,32 @@
+# Example only. Change all three namespace values to your authorized namespace.
+# Applying this grants list-only access to pods, not secrets or exec.
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: netclaw-pod-reader
+  namespace: default
+automountServiceAccountToken: false
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: netclaw-pod-reader
+  namespace: default
+rules:
+  - apiGroups: [""]
+    resources: [pods]
+    verbs: [list]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: netclaw-pod-reader
+  namespace: default
+subjects:
+  - kind: ServiceAccount
+    name: netclaw-pod-reader
+    namespace: default
+roleRef:
+  kind: Role
+  name: netclaw-pod-reader
+  apiGroup: rbac.authorization.k8s.io

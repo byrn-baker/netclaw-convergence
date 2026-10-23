@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:netclaw_mobile/ncfed/ask_border_headless.dart';
@@ -32,6 +33,18 @@ class _FakeRpc implements EdgeRpcSource {
   }
 }
 
+class _ReadyStore extends ConversationStore {
+  final pendingSaved = Completer<void>();
+  _ReadyStore(super.directory);
+
+  @override
+  Future<void> addPending(String taskId, String requestText,
+      {String origin = 'phone', List<int>? photoBytes}) async {
+    await super.addPending(taskId, requestText, origin: origin, photoBytes: photoBytes);
+    if (!pendingSaved.isCompleted) pendingSaved.complete();
+  }
+}
+
 class _RecordedNotification {
   final String identifier;
   final String preview;
@@ -41,7 +54,7 @@ class _RecordedNotification {
 
 void main() {
   late Directory dir;
-  late ConversationStore store;
+  late _ReadyStore store;
   late _FakeRpc rpc;
   final notifications = <_RecordedNotification>[];
   var finishedCalls = 0;
@@ -49,7 +62,7 @@ void main() {
 
   setUp(() async {
     dir = await Directory.systemTemp.createTemp('ask_border_headless_test');
-    store = ConversationStore(dir);
+    store = _ReadyStore(dir);
     rpc = _FakeRpc('task-1');
     notifications.clear();
     finishedCalls = 0;
@@ -170,7 +183,8 @@ void main() {
     );
     // Delivered while phase 1 is still listening -- simulates a fast agent
     // reply, distinct from the other tests' zero-fastWindow "slow path".
-    await Future<void>.delayed(const Duration(milliseconds: 10));
+    await store.pendingSaved.future;
+    await Future<void>.delayed(Duration.zero);
     await rpc.deliverAskResult(
         {'task_id': 'task-1', 'state': 'completed', 'output_text': 'Yes, BGP is up.'});
 
@@ -199,7 +213,8 @@ void main() {
       onFinished: () => finishedCalls++,
       fastWindow: const Duration(seconds: 5),
     );
-    await Future<void>.delayed(const Duration(milliseconds: 10));
+    await store.pendingSaved.future;
+    await Future<void>.delayed(Duration.zero);
     await rpc.deliverAskResult({'task_id': 'task-1', 'state': 'completed', 'output_text': raw});
 
     final spoken = await resultFuture;

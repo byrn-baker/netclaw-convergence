@@ -1,0 +1,115 @@
+FFF                                                                      [100%]
+=================================== FAILURES ===================================
+______________ test_approval_cannot_restore_revoked_grant[False] _______________
+
+tmp_path = PosixPath('/tmp/pytest-of-johncapobianco/pytest-173/test_approval_cannot_restore_r0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x727b7b941f30>
+replace = False
+
+    @pytest.mark.parametrize('replace', [False, True])
+    def test_approval_cannot_restore_revoked_grant(tmp_path, monkeypatch, replace):
+        svc, channel = service(tmp_path, monkeypatch)
+        grant = svc.authz.grant(channel.peer_identity, 'tool', 'fixture/read', requires_approval=True)
+        executed = []
+        async def approve(_):
+            svc.authz.revoke(grant)
+            if replace: svc.authz.grant(channel.peer_identity, 'tool', 'fixture/read')
+            return True
+        async def execute(*args): executed.append(args); return {}
+        svc.invoker._await_approval = approve
+        svc.invoker._exec_tool_stdio = execute
+        try:
+>           with pytest.raises(RpcError):
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+E           Failed: DID NOT RAISE RpcError
+
+tests/n2n/test_invocation_readmission.py:32: Failed
+_______________ test_approval_cannot_restore_revoked_grant[True] _______________
+
+tmp_path = PosixPath('/tmp/pytest-of-johncapobianco/pytest-173/test_approval_cannot_restore_r1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x727b7b941810>
+replace = True
+
+    @pytest.mark.parametrize('replace', [False, True])
+    def test_approval_cannot_restore_revoked_grant(tmp_path, monkeypatch, replace):
+        svc, channel = service(tmp_path, monkeypatch)
+        grant = svc.authz.grant(channel.peer_identity, 'tool', 'fixture/read', requires_approval=True)
+        executed = []
+        async def approve(_):
+            svc.authz.revoke(grant)
+            if replace: svc.authz.grant(channel.peer_identity, 'tool', 'fixture/read')
+            return True
+        async def execute(*args): executed.append(args); return {}
+        svc.invoker._await_approval = approve
+        svc.invoker._exec_tool_stdio = execute
+        try:
+>           with pytest.raises(RpcError):
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+E           Failed: DID NOT RAISE RpcError
+
+tests/n2n/test_invocation_readmission.py:32: Failed
+_____________ test_pending_skills_reserve_budget_before_execution ______________
+
+tmp_path = PosixPath('/tmp/pytest-of-johncapobianco/pytest-173/test_pending_skills_reserve_bu0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x727b7b10bd10>
+
+    def test_pending_skills_reserve_budget_before_execution(tmp_path, monkeypatch):
+        svc, channel = service(tmp_path, monkeypatch)
+        svc.authz.daily_requests = 1
+        svc.authz.grant(channel.peer_identity, 'skill', 'fixture-skill')
+        executed = []
+        async def run():
+            release = asyncio.Event()
+            async def execute(*args, **kwargs):
+                executed.append(args)
+                await release.wait()
+                return 'done', 3
+            svc.invoker._exec_skill_gateway = execute
+            one = await svc.invoker.handle_task_submit(channel, {'skill':'fixture-skill'})
+            two = await svc.invoker.handle_task_submit(channel, {'skill':'fixture-skill'})
+            workers = list(svc.tasks._workers.values())
+            await asyncio.sleep(0)
+            release.set()
+            await asyncio.gather(*workers)
+            assert len(executed) == 1
+            assert sorted(svc.tasks.status(t['task_id'])['state'] for t in [one,two]) == ['completed','failed']
+            assert svc.authz.budget_status(channel.peer_identity)['requests_used'] == 1
+>       try: asyncio.run(run())
+             ^^^^^^^^^^^^^^^^^^
+
+tests/n2n/test_invocation_readmission.py:60:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+/usr/lib/python3.14/asyncio/runners.py:204: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/usr/lib/python3.14/asyncio/runners.py:127: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.14/asyncio/base_events.py:719: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    async def run():
+        release = asyncio.Event()
+        async def execute(*args, **kwargs):
+            executed.append(args)
+            await release.wait()
+            return 'done', 3
+        svc.invoker._exec_skill_gateway = execute
+        one = await svc.invoker.handle_task_submit(channel, {'skill':'fixture-skill'})
+        two = await svc.invoker.handle_task_submit(channel, {'skill':'fixture-skill'})
+        workers = list(svc.tasks._workers.values())
+        await asyncio.sleep(0)
+        release.set()
+        await asyncio.gather(*workers)
+>       assert len(executed) == 1
+E       AssertionError: assert 2 == 1
+E        +  where 2 = len([('fixture-skill', ''), ('fixture-skill', '')])
+
+tests/n2n/test_invocation_readmission.py:57: AssertionError
+=========================== short test summary info ============================
+FAILED tests/n2n/test_invocation_readmission.py::test_approval_cannot_restore_revoked_grant[False]
+FAILED tests/n2n/test_invocation_readmission.py::test_approval_cannot_restore_revoked_grant[True]
+FAILED tests/n2n/test_invocation_readmission.py::test_pending_skills_reserve_budget_before_execution
+3 failed in 0.24s

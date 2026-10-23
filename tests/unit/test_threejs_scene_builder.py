@@ -119,3 +119,10 @@ def test_link_falls_back_to_device_level_when_no_interface_data():
     link = payload["links"][0]
     assert link["endpoint_a"]["interface_name"] is None
     assert link["endpoint_b"]["interface_name"] is None
+
+
+def test_clipped_integer_boundaries_serialize_as_float_vectors():
+    from topology_model import Vector3
+    result = Vector3(-40, 40, 0).to_list()
+    assert result == [-40.0, 40.0, 0.0]
+    assert all(isinstance(value, float) for value in result)

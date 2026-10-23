@@ -45,13 +45,19 @@ OUTCOMES = (PASS, FAIL, NOT_APPLICABLE, SKIPPED, ERROR)
 # Narrow by design. Each pattern means "the box does not run this", never "the box is broken".
 # Anything not matched stays a failure -- a missed reclassification is a cosmetic problem, a
 # wrong one hides a fault.
-_NOT_APPLICABLE_PATTERNS = (
-    re.compile(r"\b(?:is\s+)?(?:not\s+)?(?:inactive|not\s+configured|not\s+enabled)\b", re.I),
-    re.compile(r"\binvalid input\b", re.I),
-    re.compile(r"\bnot supported\b", re.I),
-    re.compile(r"\bunsupported\b", re.I),
-    re.compile(r"\bno such (?:command|feature)\b", re.I),
+_COMMAND_PREFIX = re.compile(r"^'show [^'\r\n]+' failed on [^:\r\n]+:\s*", re.I)
+_UNAVAILABLE = re.compile(
+    r"(?:BGP inactive|Invalid input(?: detected at ['\"]?\^['\"]? marker)?[.!]?|"
+    r"(?:Command (?:not supported|unsupported)|Unsupported command|No such command)[.!]?)",
+    re.I,
 )
+
+
+def _command_unavailable(message: str) -> bool:
+    # A substring match can suppress a real expectation or a hardware fault.
+    diagnostic = _COMMAND_PREFIX.sub('', message.strip(), count=1)
+    return _UNAVAILABLE.fullmatch(diagnostic) is not None
+
 
 
 class VerdictError(RuntimeError):
@@ -63,7 +69,6 @@ def classify(anta_status: str, messages: list[str] | None) -> tuple[str, str | N
 
     Returns (outcome, note). `note` explains a reclassification and is None otherwise.
     """
-    text = " ".join(messages or [])
     status = (anta_status or "").lower()
 
     if status == "success":
@@ -73,13 +78,11 @@ def classify(anta_status: str, messages: list[str] | None) -> tuple[str, str | N
     if status == "error":
         return ERROR, None
     if status == "failure":
-        for pat in _NOT_APPLICABLE_PATTERNS:
-            if pat.search(text):
-                return (
-                    NOT_APPLICABLE,
-                    "feature not configured or command unsupported on this device - "
-                    "nothing was tested",
-                )
+        if messages and all(_command_unavailable(message) for message in messages):
+            return (
+                NOT_APPLICABLE,
+                "recognized command-unavailable diagnostic; nothing was tested",
+            )
         return FAIL, None
     # 'unset' or anything unrecognised: do not guess a healthy answer.
     return ERROR, f"unrecognised ANTA status {anta_status!r}"

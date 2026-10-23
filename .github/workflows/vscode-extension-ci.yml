@@ -1,0 +1,66 @@
+name: VS Code extension checks
+
+on:
+  pull_request:
+    paths:
+      - 'extensions/netclaw-vscode/**'
+      - 'ui/netclaw-visual/**'
+      - 'scripts/*mcp*'
+      - '.github/workflows/vscode-extension-ci.yml'
+  push:
+    branches: [main, prod-ready]
+    paths:
+      - 'extensions/netclaw-vscode/**'
+      - 'ui/netclaw-visual/**'
+      - '.github/workflows/vscode-extension-ci.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  candidate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: extensions/netclaw-vscode
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.19.0'
+          cache: npm
+          cache-dependency-path: |
+            extensions/netclaw-vscode/package-lock.json
+            ui/netclaw-visual/package-lock.json
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Use a private native runtime for ownership-sensitive acceptance
+        # The hosted tool-cache ancestors can be world-writable. Keep production
+        # executable ownership checks intact and copy this exact Node binary into
+        # the runner's private temporary directory for native helper fixtures.
+        shell: bash
+        run: |
+          netclaw_node_dir=$(mktemp -d "$RUNNER_TEMP/netclaw-node.XXXXXX")
+          chmod 700 "$netclaw_node_dir"
+          cp "$(command -v node)" "$netclaw_node_dir/node"
+          chmod 755 "$netclaw_node_dir/node"
+          echo "$netclaw_node_dir" >> "$GITHUB_PATH"
+      - run: npm ci
+      - run: npm --prefix ../../ui/netclaw-visual ci
+      - run: npm run check
+      - run: npm run build
+      - run: npm test
+      - run: npm --prefix ../../ui/netclaw-visual run test:experience
+      - run: npm audit --audit-level=high
+      - name: Package committed candidate and verify runtime assets
+        run: npm run package
+      - uses: actions/upload-artifact@v4
+        with:
+          name: netclaw-vscode-candidate
+          path: |
+            extensions/netclaw-vscode/*.vsix
+            extensions/netclaw-vscode/out/package.json
+          if-no-files-found: error

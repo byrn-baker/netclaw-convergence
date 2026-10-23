@@ -1,0 +1,24 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+__ test_checkpoint_pruning_decodes_empty_values_and_retains_private_original ___
+
+tmp_path = PosixPath('/tmp/pytest-of-johncapobianco/pytest-266/test_checkpoint_pruning_decode0')
+
+    def test_checkpoint_pruning_decodes_empty_values_and_retains_private_original(tmp_path):
+        import json
+        source=(ROOT/'scripts/checkpoint-enable.sh').read_text()
+        match=re.search(r"CHKP_PRUNE_ENV=.*? <<'PY'\n(.*?)\nPY",source,re.S)
+        assert match
+        config=tmp_path/'openclaw.json'
+        data={'mcp':{'servers':{'chkp-management':{'env':{'API_KEY':'${CHKP_MGMT_API_KEY}','S1C_URL':'${CHKP_S1C_URL}'}}}},'private_fixture':'preserve'}
+        config.write_text(json.dumps(data));original=config.read_bytes()
+        envpath=tmp_path/'.env';writer.update(envpath,'CHKP_MGMT_API_KEY','fixture-key');writer.update(envpath,'CHKP_S1C_URL','')
+        proc=subprocess.run(['python3','-',str(config)],input=match[1],env={**os.environ,'CHKP_PRUNE_ENV':str(envpath),'CHKP_SCRIPT_DIR':str(ROOT/'scripts')},capture_output=True,text=True)
+        assert proc.returncode==0,proc.stderr
+>       assert 'S1C_URL' not in json.loads(config.read_text())['mcp']['servers']['chkp-management']['env']
+E       AssertionError: assert 'S1C_URL' not in {'API_KEY': '${CHKP_MGMT_API_KEY}', 'S1C_URL': '${CHKP_S1C_URL}'}
+
+tests/unit/test_standalone_enable_credentials.py:108: AssertionError
+=========================== short test summary info ============================
+FAILED tests/unit/test_standalone_enable_credentials.py::test_checkpoint_pruning_decodes_empty_values_and_retains_private_original
+1 failed, 9 deselected in 0.08s

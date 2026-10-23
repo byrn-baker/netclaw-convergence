@@ -12,6 +12,7 @@ Run under /usr/bin/python3 (3.14.4) — the interpreter netclaw-mesh.service exe
 """
 
 import os
+import errno
 
 import pytest
 
@@ -122,19 +123,19 @@ def test_cause_sig_ignores_addresses_and_ordering():
     Verbatim comparison of the real cause strings reported a changed cause on nearly
     every attempt, which would defeat collapsing entirely (baseline.md).
     """
-    a = OSError(111, "Connect call failed ('52.9.84.44', 24781)")
-    b = OSError(111, "Connect call failed ('13.52.204.76', 24781)")
-    # Note: CPython auto-specializes OSError(111, ...) to ConnectionRefusedError, so
+    a = OSError(errno.ECONNREFUSED, "Connect call failed ('52.9.84.44', 24781)")
+    b = OSError(errno.ECONNREFUSED, "Connect call failed ('13.52.204.76', 24781)")
+    # Note: CPython auto-specializes OSError(errno.ECONNREFUSED, ...) to ConnectionRefusedError, so
     # the class half of the signature is already more discriminating than OSError.
     # What FR-015 requires is that these two COLLAPSE, which is what is asserted.
     assert _cause_sig(a) == _cause_sig(b)
-    assert _cause_sig(a) == "ConnectionRefusedError:111"
+    assert _cause_sig(a) == f"ConnectionRefusedError:{errno.ECONNREFUSED}"
 
 
 def test_cause_sig_distinguishes_materially_different_causes():
     """FR-015: differing causes must NOT collapse into one another."""
-    refused = OSError(111, "Connection refused")
-    unreachable = OSError(113, "No route to host")
+    refused = OSError(errno.ECONNREFUSED, "Connection refused")
+    unreachable = OSError(errno.EHOSTUNREACH, "No route to host")
     assert _cause_sig(refused) != _cause_sig(unreachable)
     assert _cause_sig(TimeoutError()) != _cause_sig(refused)
 
@@ -144,14 +145,14 @@ def test_cause_sig_reaches_into_multiple_exceptions():
     its own; the signature must still discriminate rather than collapsing every
     multi-address failure to one opaque value."""
     grouped = OSError("Multiple exceptions: [Errno 111] ...")
-    grouped.exceptions = (OSError(111, "refused"), OSError(111, "refused"))
-    assert _cause_sig(grouped).endswith(":111")
+    grouped.exceptions = (OSError(errno.ECONNREFUSED, "refused"), OSError(errno.ECONNREFUSED, "refused"))
+    assert _cause_sig(grouped).endswith(f":{errno.ECONNREFUSED}")
 
 
 def test_cause_sig_never_leaks_addresses():
     """FR-007-adjacent: the signature lands in logs, so it must carry no endpoint
     detail that a normalized signature has no business exposing."""
-    exc = OSError(111, "Connect call failed ('52.9.84.44', 24781)")
+    exc = OSError(errno.ECONNREFUSED, "Connect call failed ('52.9.84.44', 24781)")
     sig = _cause_sig(exc)
     assert "52.9.84.44" not in sig and "24781" not in sig
 

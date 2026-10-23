@@ -20,10 +20,11 @@ import os
 import sys
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-DEFAULT_SKILLS_DIRS = [
-    os.path.join(REPO, "workspace", "skills"),
-    os.path.expanduser("~/.openclaw/workspace/skills"),
-]
+sys.path.insert(0,os.path.join(REPO,'mcp-servers/protocol-mcp'))
+from bgp.federation.runtime import selected
+_RUNTIME=selected()
+DEFAULT_SKILLS_DIRS = [str(_RUNTIME.skills)] if _RUNTIME.kind=='hermes' else [os.path.join(REPO,'workspace','skills'),str(_RUNTIME.skills)]
+
 
 # The mandatory base floor every member carries (mirror of bgp/federation/risk.py
 # BASE_FLOOR — kept here so the installer/profile tool has no cross-import).
@@ -34,7 +35,7 @@ BASE_FLOOR = [
     {"name": "member_report_audit","type": "tool",  "tier": "base"},
 ]
 
-ENV_FILE = os.path.expanduser("~/.openclaw/.env")
+ENV_FILE = str(_RUNTIME.env_file)
 
 # Profile definitions: skills (prefixes/exact) + `requires_env` (any-of). A
 # profile is offered ONLY when its skills are installed AND its backend is
@@ -43,6 +44,7 @@ ENV_FILE = os.path.expanduser("~/.openclaw/.env")
 # Granularity principle (interview): ONE claw per vendor/platform/tool. Real
 # integrations each get a dedicated, env-gated member; only UTILITIES stay grouped.
 PROFILE_MATCHERS = {
+    "subnet": {"exact": ["subnet-calculator"], "desc": "Qualified read-only IPv4 subnet calculation"},
     # ── virtual environments / labs (each dedicated) ──
     "cml":          {"prefixes": ["cml-"], "requires_env": ["CML_URL"],
                      "desc": "Cisco Modeling Labs"},
@@ -112,6 +114,8 @@ PROFILE_MATCHERS = {
     "fwrule":      {"exact": ["fwrule-analyzer"], "requires_env": ["FWRULE_MCP_DIR"],
                     "desc": "Firewall-rule analysis"},
     # ── clouds (each dedicated) ──
+    "equinix": {"prefixes": ["equinix-"], "requires_env": ["EQUINIX_ENABLED"],
+                "desc": "Equinix Fabric + Network Edge; OAuth and gated operations"},
     "aws":      {"prefixes": ["aws-"], "requires_env": ["AWS_ACCESS_KEY_ID"],
                  "desc": "AWS network/security/cost/architecture"},
     "azure":    {"prefixes": ["azure-"], "requires_env": ["AZURE_CLIENT_ID"],
@@ -155,6 +159,7 @@ SECURITY_POSTURE = {
 # A member receives ONLY its integration's secrets + the base-member keys below +
 # its iN2N/model vars. The Border gets comms secrets and ZERO device creds.
 ENV_PREFIXES = {
+    "equinix": ["EQUINIX_"],
     "cml": ["CML_"], "containerlab": ["CLAB_"], "pyats": ["PYATS_"],
     "ipfabric": ["IPFABRIC_"], "suzieq": ["SUZIEQ_"], "batfish": ["BATFISH_"],
     "forward": ["FORWARD_"], "gtrace": ["GTRACE_"],
@@ -198,6 +203,8 @@ def env_slice_keys(profile, env_keys):
 # the member still gets its workspace skills + .env creds). memory-mcp is always
 # added as base floor by the provisioner.
 MCP_SERVERS = {
+    "subnet": ["subnet-calc-mcp"],
+    "equinix": ["equinix-mcp"],
     "ipfabric": ["ipfabric-mcp"], "suzieq": ["suzieq-mcp"], "batfish": ["batfish-mcp"],
     "forward": ["forward-mcp"], "gns3": ["gns3-mcp"], "azure": ["azure-network-mcp"],
     "sdwan": ["prisma-sdwan-mcp"], "splunk": ["splunk-mcp"],
@@ -220,7 +227,7 @@ MCP_SERVERS = {
 }
 
 # Model tier per member (interview: Border=Opus; heavy members=Sonnet; trivial=Haiku).
-_HEAVY = {"cml", "pyats", "itential", "aap", "nso", "aci", "catalyst-center", "f5",
+_HEAVY = {"equinix", "cml", "pyats", "itential", "aap", "nso", "aci", "catalyst-center", "f5",
           "paloalto", "ise", "forward", "ipfabric", "sdwan", "azure", "netbox",
           "checkpoint", "fortimanager", "batfish", "network-guardian"}
 def model_tier(profile: str) -> str:
@@ -270,6 +277,21 @@ def _match_profile(profile_id, installed):
             if s in exact or (prefixes and s.startswith(prefixes))]
 
 
+def _equinix_enabled():
+    """An example .env containing false must not advertise an enabled member."""
+    value = os.environ.get("EQUINIX_ENABLED")
+    if value is None:
+        try:
+            with open(ENV_FILE) as handle:
+                for line in handle:
+                    key, sep, val = line.strip().partition("=")
+                    if sep and key == "EQUINIX_ENABLED":
+                        value = val.strip().strip("\"'")
+        except OSError:
+            pass
+    return str(value).lower() == "true"
+
+
 def profiles(skills_dir=None, include_unconfigured=False):
     """Profiles whose skills are installed AND whose backend is configured.
 
@@ -280,10 +302,13 @@ def profiles(skills_dir=None, include_unconfigured=False):
     env_keys = _configured_env()
     out = {}
     for pid, meta in PROFILE_MATCHERS.items():
+        if _RUNTIME.kind == "hermes" and pid != "subnet":continue
         skills = _match_profile(pid, installed)
         if not skills:
             continue
         configured = _env_satisfied(meta, env_keys)
+        if pid == "equinix":
+            configured = configured and _equinix_enabled()
         if configured or include_unconfigured:
             out[pid] = {"description": meta["desc"], "skills": skills,
                         "configured": configured,

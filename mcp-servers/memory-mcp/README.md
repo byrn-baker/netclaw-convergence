@@ -45,6 +45,21 @@ Add to your MCP configuration (e.g., `~/.openclaw/mcp.json`):
 |----------|---------|-------------|
 | `MEMORY_DATA_DIR` | `~/.openclaw/memory` | Data directory for SQLite and ChromaDB |
 
+`~` is expanded against the server process's home directory before either
+backend starts. Border and members that should share memory must use the same
+absolute directory (and have local filesystem access); different operator homes
+are not implicitly federated. Memory records provide evidence, not independent
+authorization or a substitute for the applicable change policy.
+
+Older versions treated an explicitly configured `~` literally and could create
+`<working-directory>/~/.openclaw/memory`. Before upgrading an affected installation,
+back up SQLite through its backup API and preserve both Chroma directories. Compare
+and reconcile all stores into the intended directory; never overwrite an existing
+database or discard duplicate/conflicting facts merely to fix the path. Preserve
+record IDs, timestamps and provenance. Chroma session data requires its own merge
+if present. Pin the same absolute `MEMORY_DATA_DIR` in participating local processes,
+restart them, and verify an existing record through each member's actual tools.
+
 ## MCP Tools
 
 ### Facts (User Story 1)
@@ -236,5 +251,17 @@ By default, data older than 1 year is automatically pruned. Use the `prune_old_d
 
 If sentence-transformers is unavailable:
 - `memory_store_session` will fail with `EMBEDDINGS_UNAVAILABLE` error
-- `memory_recall` returns empty results with a note explaining unavailability
+- `memory_recall` returns `success: false` with `CHROMA_UNAVAILABLE`,
+  `EMBEDDING_FAILED` or `SEARCH_FAILED`; unavailable retrieval is not empty memory.
+- Date and any-topic filters apply to up to 200 nearest candidates. A larger
+  corpus sets `data.partial: true`; additional matches may exist, including when
+  the returned filtered list is empty. Existing stored metadata needs no reindex.
 - All SQLite-based tools (facts, decisions, links) continue to work normally
+
+## Mutation audit status
+
+Mutation responses now include an `audit` object: `recorded` with a GAIT commit
+reference, or `unavailable` with a warning. An unavailable audit does not undo a
+completed data write; do not repeat the write solely to retry logging. These
+components declare `gait-ai` in their own runtime and require an initialized
+GAIT repository discoverable from the server working directory.

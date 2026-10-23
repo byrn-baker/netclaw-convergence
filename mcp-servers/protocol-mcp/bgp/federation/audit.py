@@ -8,6 +8,8 @@ reconciliation.
 
 import json
 import logging
+import os
+import tempfile
 import time
 from pathlib import Path
 from typing import Optional
@@ -39,13 +41,19 @@ class Auditor:
 
     def store_result(self, request_id: str, payload) -> str:
         """Persist a result payload, return its file reference."""
-        safe = request_id.replace("/", "_").replace(":", "_")
-        path = self.results_dir / f"{safe}.json"
+        # Request ids belong to peers and are not globally unique. Never use
+        # one as a shared result filename or overwrite an earlier reference.
+        data = json.dumps(payload, default=str, indent=2)
+        fd, name = tempfile.mkstemp(prefix="result-", suffix=".json", dir=self.results_dir)
         try:
-            path.write_text(json.dumps(payload, default=str, indent=2))
-        except Exception as e:
-            logger.warning("Could not store result %s: %s", request_id, e)
-        return str(path)
+            with os.fdopen(fd, "w") as stream:
+                stream.write(data)
+                stream.flush()
+                os.fsync(stream.fileno())
+        except Exception:
+            Path(name).unlink(missing_ok=True)
+            raise
+        return name
 
     def record(self, *, direction: str, peer_identity: str, target_type: Optional[str],
                target_name: Optional[str], request_id: Optional[str] = None, decision: str,

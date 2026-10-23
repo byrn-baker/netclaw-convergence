@@ -28,6 +28,7 @@ that cannot tell *which* gate blocked it cannot fix the right thing.
 from __future__ import annotations
 
 import os
+import re
 from dataclasses import dataclass
 from typing import Any
 
@@ -37,7 +38,7 @@ from credentials import writes_allowed
 from envelope import Outcome
 
 #: ServiceNow states that count as approved for execution. Matches spec 076.
-APPROVED_CR_STATES = {"implement", "scheduled", "-1", "-2"}
+APPROVED_CR_STATES = {"implement", "-1"}
 
 
 @dataclass(frozen=True)
@@ -65,8 +66,11 @@ async def check_change_request(cr_number: str | None) -> GateResult:
         return GateResult(False, Outcome.REFUSED_NO_CHANGE_RECORD,
                           "No ServiceNow change record supplied.")
 
+    if not isinstance(cr_number, str) or not re.fullmatch(r"CHG[0-9]+", cr_number):
+        return GateResult(False, Outcome.REFUSED_NO_CHANGE_RECORD, "Invalid change request number")
+
     url, user, password = _sn_env()
-    if not (url and user and password):
+    if not (url and url.startswith("https://") and user and password):
         return GateResult(
             False, Outcome.REFUSED_NO_CHANGE_RECORD,
             "ServiceNow is not configured (SERVICENOW_INSTANCE_URL / "
@@ -80,13 +84,13 @@ async def check_change_request(cr_number: str | None) -> GateResult:
             response = await client.get(
                 endpoint,
                 params={"sysparm_query": f"number={cr_number}",
-                        "sysparm_fields": "number,state,short_description,approval"},
+                        "sysparm_fields": "number,state,short_description,approval", "sysparm_limit": 2},
                 auth=(user, password),
                 headers={"Accept": "application/json"},
             )
         response.raise_for_status()
         records = response.json().get("result") or []
-    except httpx.HTTPError as exc:
+    except (httpx.HTTPError, ValueError, TypeError, AttributeError) as exc:
         return GateResult(
             False, Outcome.REFUSED_NO_CHANGE_RECORD,
             f"Could not reach ServiceNow to verify {cr_number} "
@@ -97,10 +101,12 @@ async def check_change_request(cr_number: str | None) -> GateResult:
         return GateResult(False, Outcome.REFUSED_NO_CHANGE_RECORD,
                           f"Change record {cr_number} was not found in ServiceNow.")
 
+    if not isinstance(records, list) or len(records) != 1 or not isinstance(records[0], dict) or records[0].get("number") != cr_number:
+        return GateResult(False, Outcome.REFUSED_NO_CHANGE_RECORD, "ServiceNow did not return the exact requested change")
     cr = records[0]
     approval = str(cr.get("approval", "")).strip().lower()
     state = str(cr.get("state", "")).strip().lower()
-    if approval == "approved" or state in APPROVED_CR_STATES:
+    if approval == "approved" and state in APPROVED_CR_STATES:
         return GateResult(True, Outcome.OK,
                           f"Change record {cr_number} is approved (state={state!r}).")
     return GateResult(

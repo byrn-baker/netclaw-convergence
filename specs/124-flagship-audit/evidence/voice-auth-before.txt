@@ -1,0 +1,128 @@
+FFFFFF                                                                   [100%]
+=================================== FAILURES ===================================
+________________ test_unsigned_callbacks_reject_before_dispatch ________________
+
+server = <module 'webhook_server' from '/Users/john.capobianco/netclaw/mcp-servers/twilio-voice-mcp/webhook_server.py'>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x106958050>
+
+    def test_unsigned_callbacks_reject_before_dispatch(server, monkeypatch):
+        dispatched = []
+        monkeypatch.setattr(server, 'start_async_processing', lambda *args: dispatched.append(args))
+        client = server.app.test_client()
+        response = client.post(BASE+'/process-command', data={'CallSid':'synthetic-call','From':'+15555550101','SpeechResult':'show status'})
+>       assert response.status_code == 403
+E       assert 200 == 403
+E        +  where 200 = <WrapperTestResponse streamed [200 OK]>.status_code
+
+tests/unit/test_twilio_webhook_security.py:31: AssertionError
+________________ test_unauthenticated_alert_rejects_before_call ________________
+
+server = <module 'webhook_server' from '/Users/john.capobianco/netclaw/mcp-servers/twilio-voice-mcp/webhook_server.py'>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x107606f00>
+
+    def test_unauthenticated_alert_rejects_before_call(server, monkeypatch):
+        dispatched = []
+        async def fake(*args):
+            dispatched.append(args)
+            return []
+        monkeypatch.setattr(server, 'process_event_for_alerts', fake)
+        response = server.app.test_client().post(BASE+'/trigger-alert', json={'event_source':'test','event_data':{}})
+>       assert response.status_code == 403
+E       assert 200 == 403
+E        +  where 200 = <WrapperTestResponse streamed [200 OK]>.status_code
+
+tests/unit/test_twilio_webhook_security.py:43: AssertionError
+_____ test_signed_status_uses_configured_public_url_not_forwarded_headers ______
+
+server = <module 'webhook_server' from '/Users/john.capobianco/netclaw/mcp-servers/twilio-voice-mcp/webhook_server.py'>
+
+    def test_signed_status_uses_configured_public_url_not_forwarded_headers(server):
+        path=BASE+'/status?event=1'
+        data={'CallSid':'synthetic-call','CallStatus':'completed'}
+        headers=signed_headers(path,data)
+        headers.update({'X-Forwarded-Host':'untrusted.example','X-Forwarded-Proto':'http'})
+        client=server.app.test_client()
+        assert client.post(path, data=data, headers=headers, base_url='http://internal.local').status_code == 200
+>       assert client.post(path, data={**data,'CallStatus':'changed'}, headers=headers).status_code == 403
+E       AssertionError: assert 200 == 403
+E        +  where 200 = <WrapperTestResponse streamed [200 OK]>.status_code
+E        +    where <WrapperTestResponse streamed [200 OK]> = post('/webhooks/twilio/voice/status?event=1', data={'CallSid': 'synthetic-call', 'CallStatus': 'changed'}, headers={'X-Forwarded-Host': 'untrusted.example', 'X-Forwarded-Proto': 'http', 'X-Twilio-Signature': 'yuyy+tDypdbZLRY/jCMHUAti5s8='})
+E        +      where post = <FlaskClient <Flask 'webhook_server'>>.post
+
+tests/unit/test_twilio_webhook_security.py:58: AssertionError
+_____________________ test_missing_auth_token_fails_closed _____________________
+
+server = <module 'webhook_server' from '/Users/john.capobianco/netclaw/mcp-servers/twilio-voice-mcp/webhook_server.py'>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10760c5f0>
+
+    def test_missing_auth_token_fails_closed(server, monkeypatch):
+        monkeypatch.setattr(server, 'validator', None)
+>       assert server.app.test_client().post(BASE+'/status', data={}).status_code == 503
+E       AssertionError: assert 200 == 503
+E        +  where 200 = <WrapperTestResponse streamed [200 OK]>.status_code
+E        +    where <WrapperTestResponse streamed [200 OK]> = post(('/webhooks/twilio/voice' + '/status'), data={})
+E        +      where post = <FlaskClient <Flask 'webhook_server'>>.post
+E        +        where <FlaskClient <Flask 'webhook_server'>> = test_client()
+E        +          where test_client = <Flask 'webhook_server'>.test_client
+E        +            where <Flask 'webhook_server'> = <module 'webhook_server' from '/Users/john.capobianco/netclaw/mcp-servers/twilio-voice-mcp/webhook_server.py'>.app
+
+tests/unit/test_twilio_webhook_security.py:63: AssertionError
+______ test_signed_interactive_request_still_requires_allowlisted_caller _______
+
+server = <module 'webhook_server' from '/Users/john.capobianco/netclaw/mcp-servers/twilio-voice-mcp/webhook_server.py'>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10760cef0>
+
+    def test_signed_interactive_request_still_requires_allowlisted_caller(server, monkeypatch):
+        monkeypatch.setattr(server, 'is_whitelisted', lambda *args, **kwargs: (False, None))
+        data={'CallSid':'synthetic-call','From':'+15555550101','SpeechResult':'show status'}
+        path=BASE+'/process-command'
+>       assert server.app.test_client().post(path,data=data,headers=signed_headers(path,data)).status_code == 403
+E       AssertionError: assert 200 == 403
+E        +  where 200 = <WrapperTestResponse streamed [200 OK]>.status_code
+E        +    where <WrapperTestResponse streamed [200 OK]> = post('/webhooks/twilio/voice/process-command', data={'CallSid': 'synthetic-call', 'From': '+15555550101', 'SpeechResult': 'show status'}, headers={'X-Twilio-Signature': 'xf7ejRA0pH2gflW1GNg2/Ss8aZA='})
+E        +      where post = <FlaskClient <Flask 'webhook_server'>>.post
+E        +        where <FlaskClient <Flask 'webhook_server'>> = test_client()
+E        +          where test_client = <Flask 'webhook_server'>.test_client
+E        +            where <Flask 'webhook_server'> = <module 'webhook_server' from '/Users/john.capobianco/netclaw/mcp-servers/twilio-voice-mcp/webhook_server.py'>.app
+E        +      and   {'X-Twilio-Signature': 'xf7ejRA0pH2gflW1GNg2/Ss8aZA='} = signed_headers('/webhooks/twilio/voice/process-command', {'CallSid': 'synthetic-call', 'From': '+15555550101', 'SpeechResult': 'show status'})
+
+tests/unit/test_twilio_webhook_security.py:70: AssertionError
+___________ test_authenticated_alert_and_outbound_callback_preserved ___________
+
+server = <module 'webhook_server' from '/Users/john.capobianco/netclaw/mcp-servers/twilio-voice-mcp/webhook_server.py'>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10760f410>
+
+    def test_authenticated_alert_and_outbound_callback_preserved(server, monkeypatch):
+        dispatched=[]
+        async def fake(*args): dispatched.append(args);return []
+        monkeypatch.setattr(server,'process_event_for_alerts',fake)
+        client=server.app.test_client()
+        assert client.post(BASE+'/trigger-alert',json={'event_source':'fixture'},headers={'Authorization':'Bearer synthetic-alert-token'}).status_code == 200
+        assert len(dispatched)==1
+        checked=[]
+        monkeypatch.setattr(server,'is_whitelisted',lambda number,direction: checked.append((number,direction)) or (True,{}))
+        data={'CallSid':'synthetic-call','From':'+15555550000','To':'+15555550101','Direction':'outbound-api','SpeechResult':'goodbye'}
+        path=BASE+'/process-command'
+        assert client.post(path,data=data,headers=signed_headers(path,data)).status_code == 200
+>       assert checked == [('+15555550101','outbound')]
+E       AssertionError: assert [] == [('+15555550101', 'outbound')]
+E
+E         Right contains one more item: ('+15555550101', 'outbound')
+E         Use -v to get more diff
+
+tests/unit/test_twilio_webhook_security.py:85: AssertionError
+=============================== warnings summary ===============================
+tests/unit/test_twilio_webhook_security.py::test_signed_interactive_request_still_requires_allowlisted_caller
+  /Users/john.capobianco/netclaw/mcp-servers/twilio-voice-mcp/webhook_server.py:122: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    "started": datetime.utcnow()
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/unit/test_twilio_webhook_security.py::test_unsigned_callbacks_reject_before_dispatch
+FAILED tests/unit/test_twilio_webhook_security.py::test_unauthenticated_alert_rejects_before_call
+FAILED tests/unit/test_twilio_webhook_security.py::test_signed_status_uses_configured_public_url_not_forwarded_headers
+FAILED tests/unit/test_twilio_webhook_security.py::test_missing_auth_token_fails_closed
+FAILED tests/unit/test_twilio_webhook_security.py::test_signed_interactive_request_still_requires_allowlisted_caller
+FAILED tests/unit/test_twilio_webhook_security.py::test_authenticated_alert_and_outbound_callback_preserved
+6 failed, 1 warning in 0.46s
+Gateway connection error: cannot schedule new futures after interpreter shutdown

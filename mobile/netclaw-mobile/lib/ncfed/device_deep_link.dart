@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:app_links/app_links.dart';
 import 'package:flutter/foundation.dart';
 
@@ -8,10 +9,23 @@ import 'edge_ask_client.dart';
 /// encodes for this feature (research D8) — a raw scanned string is passed
 /// through this same parser, not a separate JSON shape.
 String? parseDeviceDeepLink(String raw) {
+  if (raw.length > 1024) return null;
   final uri = Uri.tryParse(raw);
-  if (uri == null || uri.scheme != 'netclaw' || uri.host != 'device') return null;
-  final id = uri.pathSegments.isNotEmpty ? uri.pathSegments.first : null;
-  if (id == null || id.isEmpty) return null;
+  if (uri == null ||
+      uri.scheme != 'netclaw' ||
+      uri.host != 'device' ||
+      uri.userInfo.isNotEmpty ||
+      uri.hasPort ||
+      uri.hasQuery ||
+      uri.hasFragment ||
+      uri.pathSegments.length != 1) {
+    return null;
+  }
+  final id = uri.pathSegments.single;
+  // A QR/link supplies an identifier, never free-form instructions for the
+  // automatically submitted agent request. Preserve ordinary inventory names.
+  final match = RegExp(r'[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}').matchAsPrefix(id);
+  if (match == null || match.end != id.length) return null;
   return id;
 }
 
@@ -59,7 +73,10 @@ bool isDashboardDeepLink(String raw) {
 /// segment is present.
 bool isPlainChatDeepLink(String raw) {
   final uri = Uri.tryParse(raw);
-  return uri != null && uri.scheme == 'netclaw' && uri.host == 'chat' && uri.pathSegments.isEmpty;
+  return uri != null &&
+      uri.scheme == 'netclaw' &&
+      uri.host == 'chat' &&
+      uri.pathSegments.isEmpty;
 }
 
 /// Resolves a device deep link (URI or QR) into an automatically-submitted
@@ -105,6 +122,8 @@ class DeviceDeepLinkListener {
   // owner doesn't wire a UI-visible handler.
   final void Function(Object error) onError;
   final AppLinks _appLinks;
+  StreamSubscription<Uri>? _subscription;
+  bool _disposed = false;
 
   DeviceDeepLinkListener({
     required this.handler,
@@ -115,16 +134,25 @@ class DeviceDeepLinkListener {
     this.onOpenChat,
     void Function(Object error)? onError,
     AppLinks? appLinks,
-  })  : onError = onError ?? ((e) => debugPrint('device deep link failed: $e')),
-        _appLinks = appLinks ?? AppLinks();
+  }) : onError = onError ?? ((e) => debugPrint('device deep link failed: $e')),
+       _appLinks = appLinks ?? AppLinks();
 
   Future<void> start() async {
-    _appLinks.uriLinkStream.listen(_handleUri);
+    if (_disposed) return;
+    await _subscription?.cancel();
+    if (_disposed) return;
+    _subscription = _appLinks.uriLinkStream.listen(_handleUri);
     final initial = await _appLinks.getInitialLink();
     if (initial != null) await _handleUri(initial);
   }
 
+  void dispose() {
+    _disposed = true;
+    _subscription?.cancel();
+  }
+
   Future<void> _handleUri(Uri uri) async {
+    if (_disposed) return;
     final raw = uri.toString();
     if (isApprovalsDeepLink(raw)) {
       onOpenApprovals?.call();
@@ -148,9 +176,9 @@ class DeviceDeepLinkListener {
     final text = deviceStatusRequestText(deviceId);
     try {
       final taskId = await handler.askClient.ask(text);
-      onSubmitted(taskId, text);
+      if (!_disposed) onSubmitted(taskId, text);
     } catch (e) {
-      onError(e);
+      if (!_disposed) onError(e);
     }
   }
 }

@@ -1,0 +1,172 @@
+{
+  "ok": true,
+  "branch": "spec150-qualification-unblock-plan-20261011",
+  "commits": [
+    {
+      "commit": "14507b33",
+      "id": "14507b33085a56dd798e698e34c60b8fd1de410517b46f537ed2cbe1369e5e52",
+      "created_at": "2026-10-11T12:10:38",
+      "kind": "auto",
+      "message": "vscode-copilot",
+      "parents": [
+        "9fe859f9"
+      ],
+      "turns": 1,
+      "merge": false
+    },
+    {
+      "commit": "9fe859f9",
+      "id": "9fe859f9e2aa7598ba1a15886511e4c0f174e7bc768035539c07e9cd1330bd17",
+      "created_at": "2026-10-11T11:36:58",
+      "kind": "auto",
+      "message": "vscode-copilot",
+      "parents": [
+        "b0726e0c"
+      ],
+      "turns": 1,
+      "merge": false
+    },
+    {
+      "commit": "b0726e0c",
+      "id": "b0726e0cb3d2de5caa135fede40947a6177d9288ca2e94b88b31174eab1fd27a",
+      "created_at": "2026-10-11T11:19:50",
+      "kind": "auto",
+      "message": "vscode-copilot",
+      "parents": [
+        "2f646369"
+      ],
+      "turns": 1,
+      "merge": false
+    },
+    {
+      "commit": "2f646369",
+      "id": "2f646369bf9f5eab8f7181ae6124bb0f1392de25c1146d6269a58c74b008e46f",
+      "created_at": "2026-10-11T11:07:57",
+      "kind": "auto",
+      "message": "confirmed-webview-return-defect-and-interactive-progress",
+      "parents": [
+        "e975de0e"
+      ],
+      "turns": 1,
+      "merge": false
+    },
+    {
+      "commit": "e975de0e",
+      "id": "e975de0e842fd30394aa9858b1a7634cfb281d2e9aaef1fa3c93aa0a92a5a22e",
+      "created_at": "2026-10-11T10:45:30",
+      "kind": "auto",
+      "message": "real-rag-upload-and-copilot-native-consent-pending",
+      "parents": [
+        "f2969ada"
+      ],
+      "turns": 1,
+      "merge": false
+    },
+    {
+      "commit": "f2969ada",
+      "id": "f2969adae71df7e5a6f0c9850d14b2766380a8e0162e9e0a6ec5ede98d8a659f",
+      "created_at": "2026-10-11T10:32:53",
+      "kind": "auto",
+      "message": "rag-only-repair-verified-and-live-ui-progress",
+      "parents": [
+        "c775f650"
+      ],
+      "turns": 1,
+      "merge": false
+    },
+    {
+      "commit": "c775f650",
+      "id": "c775f6501a0e0020c4427bd7f52ba0c8040c81bce25cba390b3a184424a4a866",
+      "created_at": "2026-10-11T10:29:16",
+      "kind": "auto",
+      "message": "approved-rag-only-prechange",
+      "parents": [
+        "a2df172b"
+      ],
+      "turns": 1,
+      "merge": false
+    },
+    {
+      "commit": "a2df172b",
+      "id": "a2df172b2b7e79da6d3ce29fb3c90da5965e9bef10bcde12e981fbd40ee902da",
+      "created_at": "2026-10-11T10:21:06",
+      "kind": "auto",
+      "message": "rag_ingest",
+      "parents": [
+        "2fac6b7e"
+      ],
+      "turns": 1,
+      "merge": false
+    },
+    {
+      "commit": "2fac6b7e",
+      "id": "2fac6b7ed678932e74ce61942d13d645d9b7f171e34de9008f2ff86413d38eb7",
+      "created_at": "2026-10-11T10:05:34",
+      "kind": "auto",
+      "message": "unblock-plan-start",
+      "parents": [
+        "df888ccd"
+      ],
+      "turns": 1,
+      "merge": false
+    },
+    {
+      "commit": "df888ccd",
+      "id": "df888ccd99c227296a172102d6dd6f3ad3034ae287138e69a45d4e78fd42c538",
+      "created_at": "2026-10-11T08:26:55",
+      "kind": "auto",
+      "message": "session-summary",
+      "parents": [
+        "82d8b900"
+      ],
+      "turns": 1,
+      "merge": false
+    },
+    {
+      "commit": "82d8b900",
+      "id": "82d8b90029fd63b20b0c5afff4e6f3abeadec3906b9ad484c60a85e8c64702fb",
+      "created_at": "2026-10-11T08:20:41",
+      "kind": "auto",
+      "message": "prerequisite-followup-and-editor-blocker",
+      "parents": [
+        "c909efc7"
+      ],
+      "turns": 1,
+      "merge": false
+    },
+    {
+      "commit": "c909efc7",
+      "id": "c909efc7319d893260b100a951c96738fbbf79cf97e87427f47e5e1be5923a99",
+      "created_at": "2026-10-11T08:11:32",
+      "kind": "auto",
+      "message": "hud-only-repair-verified",
+      "parents": [
+        "8ea7cb80"
+      ],
+      "turns": 1,
+      "merge": false
+    },
+    {
+      "commit": "8ea7cb80",
+      "id": "8ea7cb8046d361c5620631f7e2f02a18b13be0b0445e36df3673cefd0a84dd6a",
+      "created_at": "2026-10-11T08:09:46",
+      "kind": "auto",
+      "message": "prechange-baseline-approved-hud-only",
+      "parents": [
+        "a55e3a31"
+      ],
+      "turns": 1,
+      "merge": false
+    },
+    {
+      "commit": "a55e3a31",
+      "id": "a55e3a31aefa64048e4b9869f79ff9e0aa9a9fa38e07eabade16500e40a43813",
+      "created_at": "2026-10-11T08:05:51",
+      "kind": "auto",
+      "message": "authorized-hud-only-followup-start",
+      "parents": [],
+      "turns": 1,
+      "merge": false
+    }
+  ]
+}

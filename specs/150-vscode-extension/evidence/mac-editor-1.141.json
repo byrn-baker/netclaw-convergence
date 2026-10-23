@@ -1,0 +1,27 @@
+{
+  "editor": "1.141.0",
+  "checks": [
+    "actual extension activation",
+    "saved host-local profile",
+    "unchanged HUD identity binding",
+    "mismatched identity rejected",
+    "actual VS Code MCP definition launches bundled adapter with Electron; cached disable enforced (not Copilot inference)",
+    "actual overview rendering in dark/light/high contrast",
+    "actual composer -> unchanged HUD -> synthetic gateway -> rendered reply",
+    "Canvas branch without dispatch",
+    "actual integrated RAG search and rendered citation",
+    "integrated RAG panel; backend may be unavailable in fixture",
+    "bundled local Avatar",
+    "target switch invalidates webview"
+  ],
+  "screenshots": [
+    "<mac-temp>/netclaw150-client-editor-DigDub/Default-Dark-Modern.png",
+    "<mac-temp>/netclaw150-client-editor-DigDub/Default-Light-Modern.png",
+    "<mac-temp>/netclaw150-client-editor-DigDub/Default-High-Contrast.png",
+    "<mac-temp>/netclaw150-client-editor-DigDub/chat.png",
+    "<mac-temp>/netclaw150-client-editor-DigDub/canvas.png",
+    "<mac-temp>/netclaw150-client-editor-DigDub/rag.png",
+    "<mac-temp>/netclaw150-client-editor-DigDub/avatar.png"
+  ],
+  "scope": "Actual desktop extension against unchanged HUD with synthetic local gateway; no real provider/device/WSL claim."
+}

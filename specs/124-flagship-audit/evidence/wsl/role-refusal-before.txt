@@ -1,0 +1,25 @@
+....F.                                                                   [100%]
+=================================== FAILURES ===================================
+____________ test_unavailable_role_refuses_both_external_directions ____________
+
+tmp_path = PosixPath('/tmp/pytest-of-johncapobianco/pytest-96/test_unavailable_role_refuses_0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x78c854e19d30>
+
+    def test_unavailable_role_refuses_both_external_directions(tmp_path, monkeypatch):
+        import asyncio
+        from unittest.mock import AsyncMock, MagicMock
+        svc = _svc(tmp_path/'unavailable')
+        monkeypatch.setattr(svc.risk, 'role', MagicMock(side_effect=RuntimeError('role store unavailable')))
+        dial = AsyncMock()
+        monkeypatch.setattr(asyncio, 'open_connection', dial)
+        writer = MagicMock()
+        try:
+>           assert not svc._en2n_allowed()
+E           assert not True
+E            +  where True = _en2n_allowed()
+E            +    where _en2n_allowed = <bgp.federation.service.FederationService object at 0x78c854e19cd0>._en2n_allowed
+
+tests/n2n/test_en2n_regression.py:70: AssertionError
+=========================== short test summary info ============================
+FAILED tests/n2n/test_en2n_regression.py::test_unavailable_role_refuses_both_external_directions
+1 failed, 5 passed in 0.25s

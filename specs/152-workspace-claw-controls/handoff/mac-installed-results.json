@@ -1,0 +1,66 @@
+{
+  "complete": true,
+  "editor": "1.141.0",
+  "platform": "macOS arm64",
+  "mode": "Installed VSIX with isolated synthetic runtime/process fixtures and source HUDs",
+  "vsixSha256": "0f8ac4bd8bd9bd64c9198ea66ec501a81c1f8b17c02f736ab0e5dd613b28b75d",
+  "extensionBundleSha256": "c262b80dbc146ca0aef6735c0cadb8393b6858aaf9c1bb498741bf7adfeb4a0f",
+  "verifiedInstalledPayloadFiles": 34,
+  "checks": [
+    "Native local-source binding dialog accepted and same identity verified.",
+    "Six workspace files visible in the real VS Code panel.",
+    "openclaw SOUL.md: native read/edit/review/save verified.",
+    "openclaw AGENTS.md: native read/edit/review/save verified.",
+    "openclaw IDENTITY.md: native read/edit/review/save verified.",
+    "openclaw USER.md: native read/edit/review/save verified.",
+    "openclaw TOOLS.md: native read/edit/review/save verified.",
+    "openclaw HEARTBEAT.md: native read/edit/review/save verified.",
+    "hermes SOUL.md: native read/edit/review/save verified.",
+    "hermes AGENTS.md: native read/edit/review/save verified.",
+    "hermes IDENTITY.md: native read/edit/review/save verified.",
+    "hermes USER.md: native read/edit/review/save verified.",
+    "hermes TOOLS.md: native read/edit/review/save verified.",
+    "hermes HEARTBEAT.md: native read/edit/review/save verified.",
+    "openclaw native upload SOUL.md preserves BOM/CRLF/Unicode bytes.",
+    "openclaw native upload AGENTS.md preserves BOM/CRLF/Unicode bytes.",
+    "openclaw native upload IDENTITY.md preserves BOM/CRLF/Unicode bytes.",
+    "openclaw native upload USER.md preserves BOM/CRLF/Unicode bytes.",
+    "openclaw native upload TOOLS.md preserves BOM/CRLF/Unicode bytes.",
+    "openclaw native upload HEARTBEAT.md preserves BOM/CRLF/Unicode bytes.",
+    "hermes native upload SOUL.md preserves BOM/CRLF/Unicode bytes.",
+    "hermes native upload AGENTS.md preserves BOM/CRLF/Unicode bytes.",
+    "hermes native upload IDENTITY.md preserves BOM/CRLF/Unicode bytes.",
+    "hermes native upload USER.md preserves BOM/CRLF/Unicode bytes.",
+    "hermes native upload TOOLS.md preserves BOM/CRLF/Unicode bytes.",
+    "hermes native upload HEARTBEAT.md preserves BOM/CRLF/Unicode bytes.",
+    "Continuous real keyboard input and Undo retain every character without refocusing.",
+    "Native dirty-close Cancel preserves the draft.",
+    "Light/dark/high-contrast, narrow panel and 200% zoom preserve draft and layout.",
+    "Cancelled save leaves disk unchanged and draft dirty.",
+    "Save and Restart verified persisted bytes before a real full service restart.",
+    "openclaw: full Stop removes HUD; offline Start restores same installation.",
+    "hermes: full Stop removes HUD; offline Start restores same installation.",
+    "Stopped installation before reloading the actual extension host.",
+    "Offline binding survives real VS Code reload; Start restores the identical installation."
+  ],
+  "matrix": [
+    {
+      "theme": "Default Light Modern",
+      "width": 350,
+      "scroll": 350,
+      "client": 350
+    },
+    {
+      "theme": "Default Dark Modern",
+      "width": 892,
+      "scroll": 892,
+      "client": 892
+    },
+    {
+      "theme": "Default High Contrast",
+      "width": 1222,
+      "scroll": 1222,
+      "client": 1222
+    }
+  ]
+}

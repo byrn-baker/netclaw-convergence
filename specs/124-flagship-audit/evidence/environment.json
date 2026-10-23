@@ -1,0 +1,17 @@
+{
+  "platform": "macOS-26.5.2-arm64-arm-64bit",
+  "architecture": "arm64",
+  "python": "3.10.14",
+  "tools": {
+    "python3": "/Users/john.capobianco/.pyenv/versions/3.10.14/bin/python3",
+    "uv": "/Users/john.capobianco/.local/bin/uv",
+    "node": "/Users/john.capobianco/.flutter-config/nvm/versions/node/v24.19.0/bin/node",
+    "npm": "/Users/john.capobianco/.flutter-config/nvm/versions/node/v24.19.0/bin/npm",
+    "docker": "/usr/local/bin/docker",
+    "flutter": "/opt/homebrew/bin/flutter",
+    "dart": "/opt/homebrew/bin/dart",
+    "xcodebuild": "/usr/bin/xcodebuild",
+    "bash": "/opt/homebrew/bin/bash",
+    "shellcheck": null
+  }
+}

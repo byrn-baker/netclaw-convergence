@@ -1,0 +1,150 @@
+Installed 5 packages in 36ms
+FF                                                                       [100%]
+=================================== FAILURES ===================================
+___________ test_real_deploy_literal_private_environment_and_repeat ____________
+
+tmp_path = PosixPath('/tmp/pytest-of-johncapobianco/pytest-0/test_real_deploy_literal_priva0')
+
+    def test_real_deploy_literal_private_environment_and_repeat(tmp_path):
+        repo, runtime = deploy(tmp_path)
+        env = runtime / '.env'
+        for _ in range(2):
+>           values = writer.values(env.read_text())
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/unit/test_core_deploy_preservation.py:46: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+scripts/write-env.py:44: in values
+    result[match[1]] = ' '.join(shlex.split(raw, comments=True))
+                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../.local/share/uv/python/cpython-3.12.10-linux-x86_64-gnu/lib/python3.12/shlex.py:313: in split
+    return list(lex)
+           ^^^^^^^^^
+../.local/share/uv/python/cpython-3.12.10-linux-x86_64-gnu/lib/python3.12/shlex.py:300: in __next__
+    token = self.get_token()
+            ^^^^^^^^^^^^^^^^
+../.local/share/uv/python/cpython-3.12.10-linux-x86_64-gnu/lib/python3.12/shlex.py:109: in get_token
+    raw = self.read_token()
+          ^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <shlex.shlex object at 0x77c1e198eff0>
+
+    def read_token(self):
+        quoted = False
+        escapedstate = ' '
+        while True:
+            if self.punctuation_chars and self._pushback_chars:
+                nextchar = self._pushback_chars.pop()
+            else:
+                nextchar = self.instream.read(1)
+            if nextchar == '\n':
+                self.lineno += 1
+            if self.debug >= 3:
+                print("shlex: in state %r I see character: %r" % (self.state,
+                                                                  nextchar))
+            if self.state is None:
+                self.token = ''        # past end of file
+                break
+            elif self.state == ' ':
+                if not nextchar:
+                    self.state = None  # end of file
+                    break
+                elif nextchar in self.whitespace:
+                    if self.debug >= 2:
+                        print("shlex: I see whitespace in whitespace state")
+                    if self.token or (self.posix and quoted):
+                        break   # emit current token
+                    else:
+                        continue
+                elif nextchar in self.commenters:
+                    self.instream.readline()
+                    self.lineno += 1
+                elif self.posix and nextchar in self.escape:
+                    escapedstate = 'a'
+                    self.state = nextchar
+                elif nextchar in self.wordchars:
+                    self.token = nextchar
+                    self.state = 'a'
+                elif nextchar in self.punctuation_chars:
+                    self.token = nextchar
+                    self.state = 'c'
+                elif nextchar in self.quotes:
+                    if not self.posix:
+                        self.token = nextchar
+                    self.state = nextchar
+                elif self.whitespace_split:
+                    self.token = nextchar
+                    self.state = 'a'
+                else:
+                    self.token = nextchar
+                    if self.token or (self.posix and quoted):
+                        break   # emit current token
+                    else:
+                        continue
+            elif self.state in self.quotes:
+                quoted = True
+                if not nextchar:      # end of file
+                    if self.debug >= 2:
+                        print("shlex: I see EOF in quotes state")
+                    # XXX what error should be raised here?
+>                   raise ValueError("No closing quotation")
+E                   ValueError: No closing quotation
+
+../.local/share/uv/python/cpython-3.12.10-linux-x86_64-gnu/lib/python3.12/shlex.py:191: ValueError
+___________ test_upgrade_preserves_persona_testbed_and_custom_stores ___________
+
+tmp_path = PosixPath('/tmp/pytest-of-johncapobianco/pytest-0/test_upgrade_preserves_persona0')
+
+    def test_upgrade_preserves_persona_testbed_and_custom_stores(tmp_path):
+        runtime = tmp_path / '.openclaw'
+        workspace = runtime / 'workspace'
+        (workspace / 'testbed').mkdir(parents=True)
+        for name in ('SOUL.md', 'USER.md', 'TOOLS.md'):
+            (workspace / name).write_text('operator notes\n')
+        testbed = workspace / 'testbed/testbed.yaml'
+        testbed.write_text('operator testbed\n')
+        (runtime / '.env').write_text('RAG_DATA_DIR=/custom/rag\nMEMORY_DATA_DIR=/custom/memory\nPYATS_TESTBED_PATH=/custom/testbed.yaml\n')
+>       deploy(tmp_path)
+
+tests/unit/test_core_deploy_preservation.py:61: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+tmp_path = PosixPath('/tmp/pytest-of-johncapobianco/pytest-0/test_upgrade_preserves_persona0')
+
+    def deploy(tmp_path):
+        repo = tmp_path / "checkout & pipe|quote' space"
+        repo.mkdir(exist_ok=True)
+        (repo / 'workspace/skills/example').mkdir(parents=True, exist_ok=True)
+        (repo / 'workspace/skills/example/SKILL.md').write_text('new skill\n')
+        (repo / 'testbed').mkdir(exist_ok=True)
+        (repo / 'testbed/testbed.yaml').write_text('devices: {}\n')
+        for name in ('SOUL.md', 'USER.md', 'TOOLS.md'):
+            (repo / name).write_text('repository default\n')
+        runtime = tmp_path / '.openclaw'
+        script = '''
+    set -eu
+    source scripts/lib/common.sh
+    source scripts/lib/install-steps.sh
+    NETCLAW_DIR="$FIXTURE_REPO"
+    define_paths
+    RUNTIME_HOME="$FIXTURE_RUNTIME"
+    RUNTIME_WORKSPACE="$RUNTIME_HOME/workspace"
+    RUNTIME_SKILLS="$RUNTIME_WORKSPACE/skills"
+    RUNTIME_ENV="$RUNTIME_HOME/.env"
+    core_deploy
+    '''
+        result = subprocess.run(['bash', '-c', script], cwd=ROOT,
+            env={**os.environ, 'FIXTURE_REPO': str(repo), 'FIXTURE_RUNTIME': str(runtime)},
+            capture_output=True, text=True, timeout=30)
+>       assert result.returncode == 0, result.stderr
+E       AssertionError: sed: -e expression #1, char 132: unknown option to `s'
+E         
+E       assert 1 == 0
+E        +  where 1 = CompletedProcess(args=['bash', '-c', '\nset -eu\nsource scripts/lib/common.sh\nsource scripts/lib/install-steps.sh\nNE..._preserves_persona0/.openclaw/workspace/testbed/\n', stderr="sed: -e expression #1, char 132: unknown option to `s'\n").returncode
+
+tests/unit/test_core_deploy_preservation.py:38: AssertionError
+=========================== short test summary info ============================
+FAILED tests/unit/test_core_deploy_preservation.py::test_real_deploy_literal_private_environment_and_repeat
+FAILED tests/unit/test_core_deploy_preservation.py::test_upgrade_preserves_persona_testbed_and_custom_stores
+2 failed in 0.39s

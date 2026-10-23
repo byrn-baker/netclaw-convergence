@@ -82,7 +82,7 @@ async def build_manifest() -> tuple[str, int, list[str]]:
         {
             "name": t.name,
             "description": t.description or "",
-            "inputSchema": t.inputSchema,
+            "inputSchema": t.parameters,
         }
         for t in tools
     ]

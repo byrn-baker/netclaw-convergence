@@ -103,7 +103,11 @@
         "GNMI_TLS_SKIP_VERIFY": "${GNMI_TLS_SKIP_VERIFY:-false}",
         "GNMI_DEFAULT_PORT": "${GNMI_DEFAULT_PORT:-6030}",
         "GNMI_MAX_RESPONSE_SIZE": "${GNMI_MAX_RESPONSE_SIZE:-1048576}",
-        "GNMI_MAX_SUBSCRIPTIONS": "${GNMI_MAX_SUBSCRIPTIONS:-50}"
+        "GNMI_MAX_SUBSCRIPTIONS": "${GNMI_MAX_SUBSCRIPTIONS:-50}",
+        "SERVICENOW_INSTANCE_URL": "${SERVICENOW_INSTANCE_URL}",
+        "SERVICENOW_USERNAME": "${SERVICENOW_USERNAME}",
+        "SERVICENOW_PASSWORD": "${SERVICENOW_PASSWORD}",
+        "NETCLAW_LAB_MODE": "${NETCLAW_LAB_MODE:-false}"
       }
     },
     "azure-network-mcp": {
@@ -206,7 +210,7 @@
         "REDFISH_URL": "${REDFISH_URL:-}",
         "REDFISH_USERNAME": "${REDFISH_USERNAME:-}",
         "REDFISH_PASSWORD": "${REDFISH_PASSWORD:-}",
-        "REDFISH_VERIFY_TLS": "${REDFISH_VERIFY_TLS:-false}",
+        "REDFISH_VERIFY_TLS": "${REDFISH_VERIFY_TLS:-true}",
         "REDFISH_TIMEOUT": "${REDFISH_TIMEOUT:-15}"
       }
     },
@@ -241,10 +245,8 @@
       }
     },
     "infrahub-mcp": {
-      "command": "uvx",
-      "args": [
-        "infrahub-mcp"
-      ],
+      "command": "infrahub-mcp",
+      "args": [],
       "env": {
         "INFRAHUB_ADDRESS": "${INFRAHUB_ADDRESS}",
         "INFRAHUB_API_TOKEN": "${INFRAHUB_API_TOKEN}"
@@ -345,7 +347,8 @@
       "env": {
         "NAUTOBOT_URL": "${NAUTOBOT_URL}",
         "NAUTOBOT_TOKEN": "${NAUTOBOT_TOKEN}",
-        "NAUTOBOT_VERIFY_SSL": "${NAUTOBOT_VERIFY_SSL:-false}",
+        "NAUTOBOT_VERIFY_SSL": "${NAUTOBOT_VERIFY_SSL:-true}",
+        "NAUTOBOT_CA_BUNDLE": "${NAUTOBOT_CA_BUNDLE}",
         "NAUTOBOT_TIMEOUT": "${NAUTOBOT_TIMEOUT:-60}",
         "ITSM_ENABLED": "${ITSM_ENABLED:-false}",
         "ITSM_LAB_MODE": "${ITSM_LAB_MODE:-true}"
@@ -360,7 +363,8 @@
       "env": {
         "NAUTOBOT_URL": "${NAUTOBOT_URL}",
         "NAUTOBOT_TOKEN": "${NAUTOBOT_TOKEN}",
-        "NAUTOBOT_VERIFY_SSL": "${NAUTOBOT_VERIFY_SSL:-false}",
+        "NAUTOBOT_VERIFY_SSL": "${NAUTOBOT_VERIFY_SSL:-true}",
+        "NAUTOBOT_CA_BUNDLE": "${NAUTOBOT_CA_BUNDLE}",
         "NAUTOBOT_TIMEOUT": "${NAUTOBOT_TIMEOUT:-60}",
         "GOLDEN_CONFIG_POLL_INTERVAL": "${GOLDEN_CONFIG_POLL_INTERVAL:-5}",
         "GOLDEN_CONFIG_JOB_TIMEOUT": "${GOLDEN_CONFIG_JOB_TIMEOUT:-300}",
@@ -377,7 +381,8 @@
       "env": {
         "NAUTOBOT_URL": "${NAUTOBOT_URL}",
         "NAUTOBOT_TOKEN": "${NAUTOBOT_TOKEN}",
-        "NAUTOBOT_VERIFY_SSL": "${NAUTOBOT_VERIFY_SSL:-false}",
+        "NAUTOBOT_VERIFY_SSL": "${NAUTOBOT_VERIFY_SSL:-true}",
+        "NAUTOBOT_CA_BUNDLE": "${NAUTOBOT_CA_BUNDLE}",
         "NAUTOBOT_TIMEOUT": "${NAUTOBOT_TIMEOUT:-60}",
         "ITSM_ENABLED": "${ITSM_ENABLED:-false}",
         "ITSM_LAB_MODE": "${ITSM_LAB_MODE:-true}"
@@ -603,7 +608,10 @@
         "CLAROTY_VERIFY_SSL": "${CLAROTY_VERIFY_SSL:-true}",
         "CLAROTY_TIMEOUT": "${CLAROTY_TIMEOUT:-30}",
         "CLAROTY_RATE_LIMIT_PER_MIN": "${CLAROTY_RATE_LIMIT_PER_MIN:-2000}",
-        "NETCLAW_LAB_MODE": "${NETCLAW_LAB_MODE:-false}"
+        "NETCLAW_LAB_MODE": "${NETCLAW_LAB_MODE:-false}",
+        "SERVICENOW_INSTANCE_URL": "${SERVICENOW_INSTANCE_URL}",
+        "SERVICENOW_USERNAME": "${SERVICENOW_USERNAME}",
+        "SERVICENOW_PASSWORD": "${SERVICENOW_PASSWORD}"
       }
     },
     "twitter-mcp": {
@@ -706,13 +714,44 @@
       }
     },
     "n2n-mcp": {
+      "transport": "stdio",
       "command": "python3",
       "args": [
         "-u",
-        "mcp-servers/n2n-mcp/server.py"
+        "scripts/component-launch.py",
+        "n2n",
+        "--server",
+        "n2n-mcp"
       ],
       "env": {
         "BGP_DAEMON_API": "${BGP_DAEMON_API:-http://127.0.0.1:8179}"
+      }
+    },
+    "topology-diagram-mcp": {
+      "command": "python3",
+      "args": [
+        "-u",
+        "mcp-servers/topology-diagram-mcp/server.py"
+      ]
+    },
+    "image-style-mcp": {
+      "command": "python3",
+      "args": [
+        "-u",
+        "mcp-servers/image-style-mcp/server.py"
+      ],
+      "env": {
+        "COMFYUI_URL": "${COMFYUI_URL}"
+      }
+    },
+    "worldlabs-marble-mcp": {
+      "command": "python3",
+      "args": [
+        "-u",
+        "mcp-servers/worldlabs-marble-mcp/server.py"
+      ],
+      "env": {
+        "WLT_API_KEY": "${WLT_API_KEY}"
       }
     },
     "rag-mcp": {
@@ -740,7 +779,7 @@
         "CML_URL": "${CML_URL}",
         "CML_USERNAME": "${CML_USERNAME}",
         "CML_PASSWORD": "${CML_PASSWORD}",
-        "CML_VERIFY_SSL": "${CML_VERIFY_SSL:-false}"
+        "CML_VERIFY_SSL": "${CML_VERIFY_SSL:-true}"
       },
       "args": [
         "-m",
@@ -821,22 +860,12 @@
       }
     },
     "arista-cvp-mcp": {
-      "command": "uv",
+      "command": "fastmcp",
       "args": [
         "run",
-        "--directory",
-        "mcp-servers/mcp-cvp-fun",
-        "--with",
-        "fastmcp",
-        "--with",
-        "urllib3",
-        "--with",
-        "python-dotenv",
-        "fastmcp",
-        "run",
+        "mcp-servers/mcp-cvp-fun/mcp_server_rest.py",
         "--transport",
-        "stdio",
-        "mcp_server_rest.py"
+        "stdio"
       ],
       "env": {
         "CVP": "${CVP}",
@@ -873,7 +902,11 @@
     "aws-network-mcp": {
       "command": "uvx",
       "args": [
-        "awslabs.aws-network-mcp-server@latest"
+        "--with",
+        "fastmcp==4.0.11",
+        "--with",
+        "mcp==2.3.0",
+        "awslabs.aws-network-mcp-server==0.0.17"
       ],
       "env": {
         "AWS_ACCESS_KEY_ID": "${AWS_ACCESS_KEY_ID}",
@@ -1105,7 +1138,14 @@
       "args": [
         "-u",
         "mcp-servers/multivendor-cli-mcp/server.py"
-      ]
+      ],
+      "env": {
+        "SERVICENOW_INSTANCE_URL": "${SERVICENOW_INSTANCE_URL}",
+        "SERVICENOW_USERNAME": "${SERVICENOW_USERNAME}",
+        "SERVICENOW_PASSWORD": "${SERVICENOW_PASSWORD}",
+        "MULTIVENDOR_SSH_STRICT": "${MULTIVENDOR_SSH_STRICT:-true}",
+        "MULTIVENDOR_KNOWN_HOSTS": "${MULTIVENDOR_KNOWN_HOSTS}"
+      }
     },
     "cisco-psirt-mcp": {
       "command": "python3",
@@ -1123,6 +1163,15 @@
         "GLOBALPING_TOKEN": "${GLOBALPING_TOKEN}"
       }
     },
+    "topolograph-mcp": {
+      "url": "${TOPOLOGRAPH_MCP_URL:-https://topolograph.com/mcp}",
+      "headers": {
+        "Authorization": "Bearer ${TOPOLOGRAPH_API_TOKEN}"
+      },
+      "env": {
+        "TOPOLOGRAPH_API_TOKEN": "${TOPOLOGRAPH_API_TOKEN}"
+      }
+    },
     "fortinet-mcp": {
       "command": "python3",
       "args": [
@@ -1137,7 +1186,10 @@
         "FORTIANALYZER_HOST": "${FORTIANALYZER_HOST}",
         "FORTIANALYZER_API_TOKEN": "${FORTIANALYZER_API_TOKEN}",
         "FORTINET_VERIFY_SSL": "${FORTINET_VERIFY_SSL}",
-        "FORTINET_ALLOW_WRITES": "${FORTINET_ALLOW_WRITES}"
+        "FORTINET_ALLOW_WRITES": "${FORTINET_ALLOW_WRITES}",
+        "SERVICENOW_INSTANCE_URL": "${SERVICENOW_INSTANCE_URL}",
+        "SERVICENOW_USERNAME": "${SERVICENOW_USERNAME}",
+        "SERVICENOW_PASSWORD": "${SERVICENOW_PASSWORD}"
       }
     },
     "bgp-intel-mcp": {
@@ -1161,7 +1213,8 @@
         "ANTA_USERNAME": "${ANTA_USERNAME}",
         "ANTA_PASSWORD": "${ANTA_PASSWORD}",
         "ANTA_ENABLE_PASSWORD": "${ANTA_ENABLE_PASSWORD}",
-        "ANTA_VERIFY_TLS": "${ANTA_VERIFY_TLS:-false}",
+        "ANTA_VERIFY_TLS": "${ANTA_VERIFY_TLS:-true}",
+        "ANTA_CA_BUNDLE": "${ANTA_CA_BUNDLE}",
         "ANTA_TIMEOUT": "${ANTA_TIMEOUT:-30}"
       }
     },
@@ -1232,8 +1285,8 @@
     "zabbix-mcp": {
       "command": "mcp-servers/zabbix-mcp/.venv/bin/python",
       "args": [
-        "-m",
-        "zabbix_mcp_server.server"
+        "-u",
+        "scripts/zabbix-stdio.py"
       ],
       "env": {
         "ZABBIX_URL": "${ZABBIX_URL}",
@@ -1265,6 +1318,186 @@
         "ANALYSIS_MAX_RESULT_ROWS": "${ANALYSIS_MAX_RESULT_ROWS:-500}",
         "ANALYSIS_EXTRA_ROOTS": "${ANALYSIS_EXTRA_ROOTS:-}"
       }
+    },
+    "jev-mcp": {
+      "command": "mcp-servers/jev-mcp/.venv/bin/python",
+      "args": [
+        "-u",
+        "mcp-servers/jev-mcp/server.py"
+      ],
+      "env": {
+        "JEV_ENABLED": "${JEV_ENABLED:-false}",
+        "TYPESAFE_API_KEY": "${TYPESAFE_API_KEY:-}",
+        "JEV_API_KEY": "${JEV_API_KEY:-}",
+        "JEV_BASE_URL": "${JEV_BASE_URL:-https://api.typesafe.ai}",
+        "JEV_MODEL": "${JEV_MODEL:-jev-1.13.0}",
+        "JEV_DAILY_LIMIT_USD": "${JEV_DAILY_LIMIT_USD:-5}",
+        "JEV_CASE_LIMIT_USD": "${JEV_CASE_LIMIT_USD:-0.25}",
+        "JEV_INPUT_PRICE_PER_MILLION": "${JEV_INPUT_PRICE_PER_MILLION:-}",
+        "JEV_DATA_DIR": "${JEV_DATA_DIR:-~/.openclaw/jev}",
+        "JEV_TIMEOUT_SECONDS": "${JEV_TIMEOUT_SECONDS:-5}",
+        "JEV_TASK_ID": "${JEV_TASK_ID:-}",
+        "JEV_COMPATIBLE_API_KEY": "${JEV_COMPATIBLE_API_KEY:-}",
+        "JEV_COMPATIBLE_KEY_ENDPOINT": "${JEV_COMPATIBLE_KEY_ENDPOINT:-}"
+      }
+    },
+    "equinix-mcp": {
+      "command": "python3",
+      "args": [
+        "-u",
+        "scripts/equinix-stdio.py"
+      ],
+      "env": {
+        "EQUINIX_ENABLED": "${EQUINIX_ENABLED:-false}",
+        "EQUINIX_ALLOW_WRITES": "${EQUINIX_ALLOW_WRITES:-false}",
+        "EQUINIX_AUTH_DIR": "${EQUINIX_AUTH_DIR:-}",
+        "EQUINIX_SERVICENOW_URL": "${EQUINIX_SERVICENOW_URL:-}",
+        "EQUINIX_SERVICENOW_USERNAME": "${EQUINIX_SERVICENOW_USERNAME:-}",
+        "EQUINIX_SERVICENOW_PASSWORD": "${EQUINIX_SERVICENOW_PASSWORD:-}"
+      }
+    },
+    "pyats-mcp": {
+      "command": "python3",
+      "args": [
+        "-u",
+        "scripts/component-launch.py",
+        "pyats",
+        "--server",
+        "pyats-mcp"
+      ],
+      "transport": "stdio"
+    },
+    "netbox-mcp": {
+      "command": "python3",
+      "args": [
+        "-u",
+        "scripts/component-launch.py",
+        "netbox",
+        "--server",
+        "netbox-mcp"
+      ],
+      "transport": "stdio"
+    },
+    "servicenow-mcp": {
+      "command": "python3",
+      "args": [
+        "-u",
+        "scripts/component-launch.py",
+        "servicenow",
+        "--server",
+        "servicenow-mcp"
+      ],
+      "transport": "stdio"
+    },
+    "nvd-cve-mcp": {
+      "command": "python3",
+      "args": [
+        "-u",
+        "scripts/component-launch.py",
+        "nvd-cve",
+        "--server",
+        "nvd-cve-mcp"
+      ],
+      "transport": "stdio"
+    },
+    "subnet-calc-mcp": {
+      "command": "python3",
+      "args": [
+        "-u",
+        "scripts/component-launch.py",
+        "subnet-calc",
+        "--server",
+        "subnet-calc-mcp"
+      ],
+      "transport": "stdio"
+    },
+    "wikipedia-mcp": {
+      "command": "python3",
+      "args": [
+        "-u",
+        "scripts/component-launch.py",
+        "wikipedia",
+        "--server",
+        "wikipedia-mcp"
+      ],
+      "transport": "stdio"
+    },
+    "markmap-mcp": {
+      "command": "python3",
+      "args": [
+        "-u",
+        "scripts/component-launch.py",
+        "markmap",
+        "--server",
+        "markmap-mcp"
+      ],
+      "transport": "stdio"
+    },
+    "drawio-mcp": {
+      "command": "python3",
+      "args": [
+        "-u",
+        "scripts/component-launch.py",
+        "drawio-rfc",
+        "--server",
+        "drawio-mcp"
+      ],
+      "transport": "stdio"
+    },
+    "rfc-mcp": {
+      "command": "python3",
+      "args": [
+        "-u",
+        "scripts/component-launch.py",
+        "drawio-rfc",
+        "--server",
+        "rfc-mcp"
+      ],
+      "transport": "stdio"
+    },
+    "packet-buddy-mcp": {
+      "command": "python3",
+      "args": [
+        "-u",
+        "scripts/component-launch.py",
+        "packet-buddy",
+        "--server",
+        "packet-buddy-mcp"
+      ],
+      "transport": "stdio"
+    },
+    "nmap-mcp": {
+      "command": "python3",
+      "args": [
+        "-u",
+        "scripts/component-launch.py",
+        "nmap",
+        "--server",
+        "nmap-mcp"
+      ],
+      "transport": "stdio"
+    },
+    "gtrace-mcp": {
+      "command": "python3",
+      "args": [
+        "-u",
+        "scripts/component-launch.py",
+        "gtrace",
+        "--server",
+        "gtrace-mcp"
+      ],
+      "transport": "stdio"
+    },
+    "tts-mcp": {
+      "command": "python3",
+      "args": [
+        "-u",
+        "scripts/component-launch.py",
+        "tts",
+        "--server",
+        "tts-mcp"
+      ],
+      "transport": "stdio"
     }
   },
   "models": {

@@ -1,0 +1,34 @@
+................FF.                                                      [100%]
+=================================== FAILURES ===================================
+___________ test_graph_preserves_operational_attributes_and_envelope ___________
+
+    def test_graph_preserves_operational_attributes_and_envelope():
+        gs = reload_serializer()
+        data = {
+            "devices": [{"hostname": "r1", "role": "spine", "cpu_percent": 99, "software": "fixture-1"}],
+            "links": [{"source": "r1", "target": "r1", "state": "up", "packet_loss": 80}],
+            "error": "PARTIAL_RESULTS", "observed_at": "fixture-timestamp",
+        }
+        result = gs.serialize_response(data)
+        for field in ("cpu_percent", "software", "packet_loss", "PARTIAL_RESULTS", "fixture-timestamp"):
+>           assert field in result["encoded_data"]
+E           AssertionError: assert 'cpu_percent' in 'GCF profile=graph tool=network_topology budget=0 tokens=0 symbols=1 edges=1\n## targets\n@0 svc r1 0.00 network\n## edges [1]\n@0<@0 up\n'
+
+tests/test_gcf_serializer.py:234: AssertionError
+___________ test_delta_preserves_changed_attributes_and_full_context ___________
+
+    def test_delta_preserves_changed_attributes_and_full_context():
+        gs = reload_serializer()
+        data = {"devices": [{"hostname": "r1", "cpu_percent": 1}],
+                "links": [{"source": "r1", "target": "r1", "state": "up"}]}
+        gs.serialize_response(data, use_session=True, use_delta=True)
+        data["devices"][0]["cpu_percent"] = 99
+        result = gs.serialize_response(data, use_session=True, use_delta=True)
+>       assert "cpu_percent" in result["encoded_data"]
+E       AssertionError: assert 'cpu_percent' in 'GCF profile=graph tool=network_topology delta=true base_root= new_root= tokens=0 savings=0%\n'
+
+tests/test_gcf_serializer.py:244: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_gcf_serializer.py::test_graph_preserves_operational_attributes_and_envelope
+FAILED tests/test_gcf_serializer.py::test_delta_preserves_changed_attributes_and_full_context
+2 failed, 17 passed in 0.04s

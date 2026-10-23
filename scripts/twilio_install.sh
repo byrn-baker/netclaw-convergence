@@ -21,6 +21,10 @@ TWILIO_MCP_DIR="$NETCLAW_DIR/mcp-servers/twilio-voice-mcp"
 ENV_FILE="${HOME}/.openclaw/.env"
 CONFIG_FILE="$NETCLAW_DIR/config/twilio-voice.json"
 
+set_env() {
+    printf '%s' "$2" | python3 "$NETCLAW_DIR/scripts/write-env.py" "$ENV_FILE" "$1"
+}
+
 echo "========================================="
 echo "  NetClaw Twilio Voice Integration"
 echo "========================================="
@@ -67,20 +71,12 @@ log_info "Twilio Voice MCP found: $TWILIO_MCP_DIR"
 
 log_step "2/5 Installing Python dependencies..."
 
-if [ -f "$TWILIO_MCP_DIR/requirements.txt" ]; then
-    pip3 install -r "$TWILIO_MCP_DIR/requirements.txt" 2>/dev/null || \
-        pip3 install --break-system-packages -r "$TWILIO_MCP_DIR/requirements.txt" 2>/dev/null || {
-            log_warn "pip install failed — trying individual packages"
-            pip3 install twilio flask mcp pytz 2>/dev/null || \
-                pip3 install --break-system-packages twilio flask mcp pytz 2>/dev/null || \
-                log_error "Failed to install Twilio MCP dependencies"
-        }
-    log_info "Dependencies installed"
-else
-    log_warn "requirements.txt not found — installing core packages"
-    pip3 install twilio flask mcp pytz 2>/dev/null || \
-        pip3 install --break-system-packages twilio flask mcp pytz 2>/dev/null
-fi
+source "$NETCLAW_DIR/scripts/lib/pip-helper.sh"
+netclaw_pip_install -r "$TWILIO_MCP_DIR/requirements.txt" || {
+    log_error "Dependency installation failed; setup stopped before configuration."
+    exit 1
+}
+log_info "Dependencies installed"
 
 # ═══════════════════════════════════════════
 # Step 3: Configure Twilio credentials
@@ -112,10 +108,10 @@ if grep -q "TWILIO_ACCOUNT_SID=" "$ENV_FILE" 2>/dev/null; then
         echo ""
         read -r -p "Twilio Phone Number (+1XXXXXXXXXX): " phone_number
 
-        sed -i "s|^TWILIO_ACCOUNT_SID=.*|TWILIO_ACCOUNT_SID=$account_sid|" "$ENV_FILE"
-        sed -i "s|^TWILIO_API_KEY_SID=.*|TWILIO_API_KEY_SID=$api_key_sid|" "$ENV_FILE"
-        sed -i "s|^TWILIO_API_SECRET=.*|TWILIO_API_SECRET=$api_secret|" "$ENV_FILE"
-        sed -i "s|^TWILIO_PHONE_NUMBER=.*|TWILIO_PHONE_NUMBER=$phone_number|" "$ENV_FILE"
+        set_env "TWILIO_ACCOUNT_SID" "$account_sid"
+        set_env "TWILIO_API_KEY_SID" "$api_key_sid"
+        set_env "TWILIO_API_SECRET" "$api_secret"
+        set_env "TWILIO_PHONE_NUMBER" "$phone_number"
         log_info "Twilio credentials updated"
     fi
 else
@@ -129,15 +125,11 @@ else
         echo ""
         read -r -p "Twilio Phone Number (+1XXXXXXXXXX): " phone_number
 
-        {
-            echo ""
-            echo "# Twilio Voice Integration"
-            echo "TWILIO_ACCOUNT_SID=$account_sid"
-            echo "TWILIO_API_KEY_SID=$api_key_sid"
-            echo "TWILIO_API_SECRET=$api_secret"
-            echo "TWILIO_PHONE_NUMBER=$phone_number"
-            echo "TWILIO_WEBHOOK_URL="
-        } >> "$ENV_FILE"
+        set_env "TWILIO_ACCOUNT_SID" "$account_sid"
+        set_env "TWILIO_API_KEY_SID" "$api_key_sid"
+        set_env "TWILIO_API_SECRET" "$api_secret"
+        set_env "TWILIO_PHONE_NUMBER" "$phone_number"
+        set_env "TWILIO_WEBHOOK_URL" ""
         log_info "Twilio credentials saved to $ENV_FILE"
     fi
 fi
@@ -171,52 +163,7 @@ fi
 # Create/update config file
 if [ -n "${whitelist_phone:-}" ]; then
     mkdir -p "$(dirname "$CONFIG_FILE")"
-    cat > "$CONFIG_FILE" << CONFIGEOF
-{
-  "whitelist": [
-    {
-      "phone_number": "$whitelist_phone",
-      "label": "$whitelist_label",
-      "can_receive_calls": true,
-      "can_initiate_calls": true,
-      "added_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
-      "added_by": "twilio_install.sh"
-    }
-  ],
-  "quiet_hours": [
-    {
-      "id": "default",
-      "start_time": "22:00",
-      "end_time": "07:00",
-      "timezone": "America/Toronto",
-      "days_of_week": [],
-      "p1_override": true,
-      "enabled": true
-    }
-  ],
-  "emergency_categories": [
-    {
-      "category_name": "pagerduty_p1",
-      "description": "PagerDuty P1 Critical Incidents",
-      "source": "pagerduty",
-      "match_pattern": "severity:P1",
-      "enabled": true
-    },
-    {
-      "category_name": "core_device_down",
-      "description": "Core router, firewall, or WAN link failure",
-      "source": "netclaw_monitoring",
-      "match_pattern": "device_type:(core_router|firewall|wan_link) AND status:down",
-      "enabled": true
-    }
-  ],
-  "rate_limits": {
-    "hourly_max": 3,
-    "daily_max": 10
-  },
-  "voice": "Polly.Matthew"
-}
-CONFIGEOF
+    printf '%s\0%s\0' "$whitelist_phone" "$whitelist_label" | python3 "$NETCLAW_DIR/scripts/setup-profile.py" voice "$CONFIG_FILE" --template "$NETCLAW_DIR/config/twilio-voice.json.example"
     log_info "Whitelist configured: $whitelist_label ($whitelist_phone)"
 fi
 
@@ -236,9 +183,9 @@ if [[ "$configure_webhook" =~ ^[Yy] ]]; then
     read -r -p "Webhook URL (e.g. https://abc123.ngrok-free.app/webhooks/twilio/voice): " webhook_url
     if [ -n "$webhook_url" ]; then
         if grep -q "^TWILIO_WEBHOOK_URL=" "$ENV_FILE" 2>/dev/null; then
-            sed -i "s|^TWILIO_WEBHOOK_URL=.*|TWILIO_WEBHOOK_URL=$webhook_url|" "$ENV_FILE"
+            set_env "TWILIO_WEBHOOK_URL" "$webhook_url"
         else
-            echo "TWILIO_WEBHOOK_URL=$webhook_url" >> "$ENV_FILE"
+            set_env "TWILIO_WEBHOOK_URL" "$webhook_url"
         fi
         log_info "Webhook URL configured"
         echo ""

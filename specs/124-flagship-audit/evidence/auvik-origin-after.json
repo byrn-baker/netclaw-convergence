@@ -1,0 +1,45 @@
+{
+  "counts": {
+    "BLOCKED_DEPENDENCY": 0,
+    "ERROR": 0,
+    "FAIL": 0,
+    "NEEDS_DOCKER": 0,
+    "NEEDS_LIVE_CREDENTIALS": 0,
+    "PASS": 1
+  },
+  "exit_code": 0,
+  "generated_at": "2026-09-26T23:40:40.742751+00:00",
+  "results": [
+    {
+      "capabilities": [],
+      "command": [
+        "/Users/john.capobianco/netclaw/.contract-test-envs/auvik-mcp/bin/python",
+        "-m",
+        "pytest",
+        "tests/auvik-mcp"
+      ],
+      "detail": "offline contracts passed",
+      "duration_seconds": 7.320210041998507,
+      "environment": {
+        "fingerprint": "18edcc310c90449758a3a1d26fc52cf90acb32d8213ab8ab6f6d10486c16e737",
+        "path": ".contract-test-envs/auvik-mcp"
+      },
+      "exit_code": 0,
+      "status": "PASS",
+      "suite": "auvik-mcp",
+      "test_runs": [
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/auvik-mcp/bin/python",
+            "-m",
+            "pytest",
+            "tests/auvik-mcp"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw/tests/auvik-mcp\nconfigfile: pytest.ini\nplugins: platformdirs-4.12.0, asyncio-0.26.0, anyio-4.15.1\nasyncio: mode=Mode.AUTO, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function\ncollected 387 items\n\ntests/auvik-mcp/test_alerts.py ......................                    [  5%]\ntests/auvik-mcp/test_client_429.py .....                                 [  6%]\ntests/auvik-mcp/test_client_get.py ............                          [ 10%]\ntests/auvik-mcp/test_client_get_all.py .......                           [ 11%]\ntests/auvik-mcp/test_constants.py ..................                     [ 16%]\ntests/auvik-mcp/test_inventory.py ...................................... [ 26%]\n................................                                         [ 34%]\ntests/auvik-mcp/test_lifecycle.py .....................................  [ 44%]\ntests/auvik-mcp/test_models.py ......................................... [ 54%]\n................                                                         [ 58%]\ntests/auvik-mcp/test_pagination.py ..........                            [ 61%]\ntests/auvik-mcp/test_pagination_origin.py ......                         [ 63%]\ntests/auvik-mcp/test_performance.py .................................... [ 72%]\n.....................                                                    [ 77%]\ntests/auvik-mcp/test_rate_limiter.py .......                             [ 79%]\ntests/auvik-mcp/test_resolve_or_error.py ...........                     [ 82%]\ntests/auvik-mcp/test_resolve_tenants.py ..............                   [ 86%]\ntests/auvik-mcp/test_resolver.py ..............                          [ 89%]\ntests/auvik-mcp/test_resolver_network_tenant.py ............             [ 92%]\ntests/auvik-mcp/test_server_registration.py .................            [ 97%]\ntests/auvik-mcp/test_tenant_resolution_integration.py ........           [ 99%]\ntests/auvik-mcp/test_toon_helper.py ...                                  [100%]\n\n============================= 387 passed in 7.04s =============================="
+        }
+      ]
+    }
+  ],
+  "schema_version": 1
+}

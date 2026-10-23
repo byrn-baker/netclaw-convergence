@@ -1,0 +1,108 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_______________ test_gateway_stall_extends_window_and_completes ________________
+
+    async def result():
+>       await asyncio.sleep(0.15)
+
+tests/n2n/test_delegation_bypass_guard.py:91:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+delay = 0.15, result = None
+
+    async def sleep(delay, result=None):
+        """Coroutine that completes after a given time (in seconds)."""
+        if delay <= 0:
+            await __sleep0()
+            return result
+
+        loop = events.get_running_loop()
+        future = loop.create_future()
+        h = loop.call_later(delay,
+                            futures._set_result_unless_cancelled,
+                            future, result)
+        try:
+>           return await future
+                   ^^^^^^^^^^^^
+E           asyncio.exceptions.CancelledError
+
+/opt/homebrew/Cellar/python@3.12/3.12.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/tasks.py:665: CancelledError
+
+The above exception was the direct cause of the following exception:
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x1065f8c20>
+tmp_path = PosixPath('/private/var/folders/ln/99pzcfd950j6vxf7gbfjjm5w0000gq/T/pytest-of-john.capobianco/pytest-5/test_gateway_stall_extends_win0')
+
+    def test_gateway_stall_extends_window_and_completes(monkeypatch, tmp_path):
+        """A turn silent past stall_after_s gets the on_stall extension and can
+        still complete (previously it died on the hard timeout)."""
+        import bgp.federation.gateway as gw
+
+        class Client:
+            async def call(self, method, params, timeout_s):
+                async def result():
+                    await asyncio.sleep(0.15)
+                    return {"result": {"payloads": [{"text": "late-ok"}]}}
+                return await asyncio.wait_for(result(), timeout=timeout_s)
+
+        async def client():
+            return Client()
+        monkeypatch.setattr(gw.gateway_ws, "get_gateway_ws_client", client)
+        stalls = []
+        def on_stall(waited):
+            stalls.append(waited)
+            return 1
+>       reply, _ = asyncio.run(gw.run_agent_turn(
+            "hi", timeout_s=0.1, on_stall=on_stall, stall_after_s=0.03))
+
+tests/n2n/test_delegation_bypass_guard.py:102:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+/opt/homebrew/Cellar/python@3.12/3.12.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/runners.py:195: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.12/3.12.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.12/3.12.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/base_events.py:691: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+mcp-servers/protocol-mcp/bgp/federation/gateway.py:428: in run_agent_turn
+    payload = await call_future
+              ^^^^^^^^^^^^^^^^^
+tests/n2n/test_delegation_bypass_guard.py:93: in call
+    return await asyncio.wait_for(result(), timeout=timeout_s)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.12/3.12.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/tasks.py:519: in wait_for
+    async with timeouts.timeout(timeout):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <Timeout [expired]>
+exc_type = <class 'asyncio.exceptions.CancelledError'>
+exc_val = CancelledError(), exc_tb = <traceback object at 0x106d9abc0>
+
+    async def __aexit__(
+        self,
+        exc_type: Optional[Type[BaseException]],
+        exc_val: Optional[BaseException],
+        exc_tb: Optional[TracebackType],
+    ) -> Optional[bool]:
+        assert self._state in (_State.ENTERED, _State.EXPIRING)
+
+        if self._timeout_handler is not None:
+            self._timeout_handler.cancel()
+            self._timeout_handler = None
+
+        if self._state is _State.EXPIRING:
+            self._state = _State.EXPIRED
+
+            if self._task.uncancel() <= self._cancelling and exc_type is exceptions.CancelledError:
+                # Since there are no new cancel requests, we're
+                # handling this.
+>               raise TimeoutError from exc_val
+E               TimeoutError
+
+/opt/homebrew/Cellar/python@3.12/3.12.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/timeouts.py:115: TimeoutError
+=========================== short test summary info ============================
+FAILED tests/n2n/test_delegation_bypass_guard.py::test_gateway_stall_extends_window_and_completes
+1 failed in 0.17s

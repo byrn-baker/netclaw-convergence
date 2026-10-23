@@ -1,3 +1,8 @@
+---
+name: multivendor-raw-cli
+description: "Check reachability and run operational CLI on platforms owned by multivendor-cli-mcp. Use after confirming device ownership; Cisco and Juniper use their dedicated servers."
+---
+
 # Multivendor Raw CLI
 
 Run a command on a device whose platform has no dedicated NetClaw server, and get its real output.
@@ -52,3 +57,15 @@ reach to them today. That is **not** equivalent to their dedicated API integrati
 
 Roadmap items **R3** (Fortinet) and **R4** (Palo Alto) are still needed. Do not treat CLI reach as
 completing them.
+
+## SSH trust and write boundary
+
+SSH host keys are verified by default. If an unknown or changed key is refused,
+verify the identity through a trusted console/administrator and follow
+`docs/MULTIVENDOR-SSH-MIGRATION.md`; never disable checking as an automatic retry.
+Raw commands remain read-only even when write tools are enabled. Configuration
+must use the gated `apply_config` path with the required approvals and baseline.
+
+## MCP Tasks
+
+For eligible tools, a client declaring the current Tasks extension may receive a task handle. Retain it and poll for the terminal result; do not resubmit pending work. Ordinary clients continue receiving foreground results. A handle is not execution success or approval: preserve required baseline/change-control checks before invocation and verify the completed result afterward. Cancellation cannot undo commands already sent. Investigate unknown outcomes before retrying. pyATS retains completed results in SQLite and lets started work finish; other FastMCP tools default to ephemeral state and cooperative cancellation. See `docs/MCP-TASKS.md`.

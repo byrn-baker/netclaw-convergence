@@ -217,12 +217,50 @@ def _imported_modules(server_dir: str) -> tuple[set[str], set[str]]:
     return top, submodule
 
 
+def shared_constraints() -> dict[str, str]:
+    """Read effective shared bounds only when the installer actually enforces them.
+
+    Dedicated runtimes are not covered by these constraints. The external-clone
+    map below is limited to components installed through the shared pip helper.
+    Tests verify removing helper enforcement restores the original findings.
+    """
+    helper = os.path.join(REPO_ROOT, "scripts", "lib", "pip-helper.sh")
+    path = os.path.join(REPO_ROOT, "config", "python-shared-constraints.txt")
+    try:
+        source = open(helper).read()
+        if 'set -- -c "$NETCLAW_SHARED_CONSTRAINTS" "$@"' not in source:
+            return {}
+        return dict(pin for line in open(path) if (pin := _parse_pin(line.strip())))
+    except OSError:
+        return {}
+
+
+SHARED_EXTERNAL_COMPONENTS = {
+    "CiscoFMC-MCP-server-community": "fmc", "ISE_MCP": "ise",
+    "Wikipedia_MCP": "wikipedia", "thousandeyes-mcp-community": "te_community",
+    "uml-mcp": "uml",
+}
+
+
+def _shared_component(entry: str) -> bool:
+    component = SHARED_EXTERNAL_COMPONENTS.get(entry)
+    if not component:
+        return False
+    try:
+        source = open(INSTALL_STEPS).read()
+        body = source.split(f"component_install_{component}() {{", 1)[1].split("\n}\n", 1)[0]
+        return "netclaw_pip_install" in body and "NETCLAW_VENV" not in body
+    except (OSError, IndexError):
+        return False
+
+
 def scan_pins() -> tuple[list[str], list[str]]:
     """Scan 1 + 4: unbounded submodule-imported pins, and unused declarations."""
     failures: list[str] = []
     warnings: list[str] = []
     if not os.path.isdir(SERVERS_DIR):
         return failures, warnings
+    effective = shared_constraints()
     for entry in sorted(os.listdir(SERVERS_DIR)):
         sdir = os.path.join(SERVERS_DIR, entry)
         if not os.path.isdir(sdir):
@@ -239,6 +277,8 @@ def scan_pins() -> tuple[list[str], list[str]]:
             key = f"{entry}:{name}"
             if key in PIN_EXCEPTIONS:
                 continue
+            if _shared_component(entry) and name in effective and _is_bounded(effective[name]):
+                spec = effective[name]
             module = _module_for(name)
             if module in submodule and not _is_bounded(spec):
                 rename = f" (imported as {module!r})" if module != name else ""

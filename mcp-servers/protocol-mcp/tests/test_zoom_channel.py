@@ -36,7 +36,7 @@ async def test_investigate_accepts_immediately_and_pushes_result_async(monkeypat
     manager = zoom_channel.ZoomInvestigationManager(fake_service)
 
     async def fake_run_agent_turn(prompt, session_key, timeout_s=300):
-        assert "Toronto" in prompt or "toronto" in prompt.lower() or True
+        assert "toronto" in prompt.lower()
         return ("EDGE-TOR-01 peer 203.0.113.2 is Established.", 42)
 
     monkeypatch.setattr("bgp.federation.gateway.run_agent_turn", fake_run_agent_turn)
@@ -54,8 +54,9 @@ async def test_investigate_accepts_immediately_and_pushes_result_async(monkeypat
     # The result push happens asynchronously (research.md R1) — give the
     # created task a moment to run.
     await asyncio.sleep(0.05)
-    assert len(channel.calls) == 1
-    method, params = channel.calls[0]
+    assert len(channel.calls) == 2
+    assert channel.calls[0][1]["routing_outcome"] == "in_progress"
+    method, params = channel.calls[1]
     assert method == "n2n/zoom/investigate_result"
     assert params["routing_outcome"] == "answered"
     assert "EDGE-TOR-01" in params["answer_summary"]

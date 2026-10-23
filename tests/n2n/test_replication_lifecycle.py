@@ -116,10 +116,13 @@ def test_zero_embedder_calls_during_successful_replication(manager, monkeypatch,
         embedder_calls["n"] += 1
         raise AssertionError("embedder must never be invoked during replication import")
 
-    # Poison the two real embedder entry points a mistaken re-embed would hit.
-    monkeypatch.setattr("sentence_transformers.SentenceTransformer",
-                        lambda *a, **k: (_ for _ in ()).throw(AssertionError("no embedder")),
-                        raising=False)
+    # A poisoned module proves no model is constructed, even when the optional
+    # heavyweight ML package is absent. No model download belongs in this test.
+    import sys
+    import types
+    poisoned_module = types.ModuleType("sentence_transformers")
+    poisoned_module.SentenceTransformer = poisoned_embedder
+    monkeypatch.setitem(sys.modules, "sentence_transformers", poisoned_module)
 
     async def manifest(ident, cid):
         return {"collection_id": cid, "embedding_model": "BAAI/bge-small-en-v1.5", "chunk_count": 2}

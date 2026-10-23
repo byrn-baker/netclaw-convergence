@@ -1,0 +1,2 @@
+# Chat context and provider quota indicators
+Show current-chat context occupancy and provider/account quota windows in the bottom composer toolbar. User explicitly selected provider/account quotas, not spending budgets. Use OpenClaw's reported metrics, never guessed capacity or remaining quota. Context is the latest recorded session snapshot, not draft tokenization or billing totals. Show unavailable/stale data honestly. Only the browser-owned chat's context may be returned. Do not expose emails, credentials, raw transcripts or other sessions.

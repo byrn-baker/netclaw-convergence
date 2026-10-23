@@ -3,7 +3,7 @@
 Twitter OAuth 2.0 Setup Script
 
 This script helps you get OAuth 2.0 tokens with refresh capability.
-Run once, then the tokens auto-refresh forever.
+Run again if authorization is revoked or refresh credentials expire.
 
 Usage:
     python3 scripts/twitter_oauth2_setup.py
@@ -14,6 +14,9 @@ Requirements:
 """
 
 import os
+import importlib.util
+from pathlib import Path
+import time
 import sys
 import base64
 import hashlib
@@ -43,10 +46,16 @@ def generate_code_challenge(verifier):
 class CallbackHandler(BaseHTTPRequestHandler):
     """Handle the OAuth callback."""
     code = None
+    expected_state = None
 
     def do_GET(self):
-        query = parse_qs(urlparse(self.path).query)
-        if 'code' in query:
+        parsed = urlparse(self.path)
+        query = parse_qs(parsed.query)
+        state = query.get('state', [])
+        code = query.get('code', [])
+        expected = CallbackHandler.expected_state
+        if (parsed.path == '/callback' and len(state) == 1 and len(code) == 1
+                and expected and secrets.compare_digest(state[0], expected)):
             CallbackHandler.code = query['code'][0]
             self.send_response(200)
             self.send_header('Content-type', 'text/html')
@@ -55,16 +64,23 @@ class CallbackHandler(BaseHTTPRequestHandler):
                 <html><body style="font-family: sans-serif; text-align: center; padding: 50px;">
                 <h1>Success!</h1>
                 <p>Authorization code received. You can close this window.</p>
-                <p>Return to your terminal to see the tokens.</p>
+                <p>Return to your terminal to finish setup.</p>
                 </body></html>
             """)
         else:
             self.send_response(400)
             self.end_headers()
-            self.wfile.write(b"Error: No code received")
+            self.wfile.write(b"Error: Invalid callback or state")
 
     def log_message(self, format, *args):
         pass  # Suppress logging
+
+class CallbackServer(HTTPServer):
+    def get_request(self):
+        connection, address = super().get_request()
+        connection.settimeout(5)
+        return connection, address
+
 
 def main():
     if not CLIENT_ID:
@@ -101,7 +117,10 @@ def main():
     print(f"   If browser doesn't open, visit:\n   {auth_url}\n")
 
     # Start callback server
-    server = HTTPServer(('127.0.0.1', 8000), CallbackHandler)
+    CallbackHandler.code = None
+    CallbackHandler.expected_state = state
+    server = CallbackServer(('127.0.0.1', 8000), CallbackHandler)
+    server.timeout = 1
 
     # Open browser
     webbrowser.open(auth_url)
@@ -109,8 +128,15 @@ def main():
     print("2. Waiting for authorization callback...")
 
     # Wait for callback
-    while CallbackHandler.code is None:
-        server.handle_request()
+    deadline = time.monotonic() + 300
+    try:
+        while CallbackHandler.code is None and time.monotonic() < deadline:
+            server.handle_request()
+    finally:
+        server.server_close()
+        CallbackHandler.expected_state = None
+    if CallbackHandler.code is None:
+        sys.exit('Authorization callback timed out; no tokens saved.')
 
     code = CallbackHandler.code
     print(f"\n3. ✅ Authorization code received!")
@@ -137,11 +163,12 @@ def main():
         "https://api.twitter.com/2/oauth2/token",
         data=token_data,
         auth=auth,
-        headers={"Content-Type": "application/x-www-form-urlencoded"}
+        headers={"Content-Type": "application/x-www-form-urlencoded"},
+        timeout=30
     )
 
     if response.status_code != 200:
-        print(f"\n❌ Error getting tokens: {response.text}")
+        print(f"Token exchange failed (HTTP {response.status_code}); no tokens saved.")
         sys.exit(1)
 
     tokens = response.json()
@@ -150,54 +177,39 @@ def main():
     refresh_token = tokens.get("refresh_token")
     expires_in = tokens.get("expires_in", 7200)
 
-    print("\n" + "=" * 50)
-    print("✅ SUCCESS! Here are your tokens:")
-    print("=" * 50)
+    if not isinstance(access_token, str) or not access_token:
+        sys.exit('Token response missing access token; no tokens saved.')
+    if refresh_token is not None and not isinstance(refresh_token, str):
+        sys.exit('Token response has invalid refresh token; no tokens saved.')
+    env_path = Path.home() / '.openclaw/.env'
+    save_tokens(env_path, access_token, refresh_token)
+    print(f"Tokens saved privately to {env_path}; access token lifetime {expires_in}s.")
+    if not refresh_token:
+        print("No refresh token received; offline refresh is unavailable.")
 
-    print(f"\nAccess Token (expires in {expires_in}s):")
-    print(f"TWITTER_OAUTH2_ACCESS_TOKEN={access_token}")
 
+def save_tokens(path, access_token, refresh_token):
+    spec = importlib.util.spec_from_file_location('env_writer', Path(__file__).with_name('write-env.py'))
+    writer = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(writer)
+    # Validate both before changing any assignment.
+    writer.quote(access_token)
     if refresh_token:
-        print(f"\nRefresh Token (use this to auto-refresh):")
-        print(f"TWITTER_OAUTH2_REFRESH_TOKEN={refresh_token}")
-    else:
-        print("\n⚠️  No refresh token received. Make sure 'offline.access' scope is enabled.")
-
-    # Update .env file
-    env_path = os.path.expanduser("~/.openclaw/.env")
-    print(f"\n5. Updating {env_path}...")
-
-    with open(env_path, 'r') as f:
-        env_content = f.read()
-
-    # Update or add tokens
-    import re
-
-    if "TWITTER_OAUTH2_ACCESS_TOKEN=" in env_content:
-        env_content = re.sub(
-            r'TWITTER_OAUTH2_ACCESS_TOKEN=.*',
-            f'TWITTER_OAUTH2_ACCESS_TOKEN={access_token}',
-            env_content
-        )
-    else:
-        env_content += f"\nTWITTER_OAUTH2_ACCESS_TOKEN={access_token}"
-
+        writer.quote(refresh_token)
+    updates = {'TWITTER_OAUTH2_ACCESS_TOKEN': access_token}
     if refresh_token:
-        if "TWITTER_OAUTH2_REFRESH_TOKEN=" in env_content:
-            env_content = re.sub(
-                r'TWITTER_OAUTH2_REFRESH_TOKEN=.*',
-                f'TWITTER_OAUTH2_REFRESH_TOKEN={refresh_token}',
-                env_content
-            )
-        else:
-            env_content += f"\nTWITTER_OAUTH2_REFRESH_TOKEN={refresh_token}"
-
-    with open(env_path, 'w') as f:
-        f.write(env_content)
-
-    print("\n✅ Tokens saved to .env file!")
-    print("\nThe twitter-mcp server will now auto-refresh tokens when they expire.")
-    print("You should never need to run this script again.")
+        updates['TWITTER_OAUTH2_REFRESH_TOKEN'] = refresh_token
+    path = Path(path)
+    if path.is_symlink():
+        raise ValueError('Refusing linked environment path')
+    original = path.read_text() if path.exists() else ''
+    lines = []
+    for line in original.splitlines():
+        match = writer.ASSIGNMENT.match(line.strip())
+        if not match or match[1] not in updates:
+            lines.append(line)
+    lines.extend(key + '=' + writer.quote(value) for key, value in updates.items())
+    writer.write_private(path, '\n'.join(lines) + '\n')
 
 if __name__ == "__main__":
     main()

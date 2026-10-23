@@ -1,0 +1,335 @@
+{
+  "counts": {
+    "BLOCKED_DEPENDENCY": 0,
+    "ERROR": 0,
+    "FAIL": 0,
+    "NEEDS_DOCKER": 0,
+    "NEEDS_LIVE_CREDENTIALS": 0,
+    "PASS": 1
+  },
+  "exit_code": 0,
+  "generated_at": "2026-09-26T19:55:48.492364+00:00",
+  "results": [
+    {
+      "capabilities": [],
+      "command": [
+        "/Users/john.capobianco/netclaw/.contract-test-envs/unit/bin/python",
+        "-m",
+        "pytest",
+        "tests/unit"
+      ],
+      "detail": "offline contracts passed",
+      "duration_seconds": 16.824028458999237,
+      "environment": {
+        "fingerprint": "fee21888b37ffa4da4b3c279df6b3a21579b9d767298e5506224a457d9d27227",
+        "path": ".contract-test-envs/unit"
+      },
+      "exit_code": 0,
+      "status": "PASS",
+      "suite": "unit",
+      "test_runs": [
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/unit/bin/python",
+            "-m",
+            "pytest",
+            "tests/unit/test_chroma_store.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\nplugins: anyio-4.15.1\ncollected 10 items\n\ntests/unit/test_chroma_store.py ......s...                               [100%]\n\n========================= 9 passed, 1 skipped in 3.52s ========================="
+        },
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/unit/bin/python",
+            "-m",
+            "pytest",
+            "tests/unit/test_comfyui_concurrency_guard.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\nplugins: anyio-4.15.1\ncollected 2 items\n\ntests/unit/test_comfyui_concurrency_guard.py ..                          [100%]\n\n============================== 2 passed in 2.40s ==============================="
+        },
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/unit/bin/python",
+            "-m",
+            "pytest",
+            "tests/unit/test_comfyui_empty_topology.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\nplugins: anyio-4.15.1\ncollected 1 item\n\ntests/unit/test_comfyui_empty_topology.py .                              [100%]\n\n============================== 1 passed in 0.23s ==============================="
+        },
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/unit/bin/python",
+            "-m",
+            "pytest",
+            "tests/unit/test_comfyui_failure_classification.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\nplugins: anyio-4.15.1\ncollected 5 items\n\ntests/unit/test_comfyui_failure_classification.py .....                  [100%]\n\n============================== 5 passed in 0.23s ==============================="
+        },
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/unit/bin/python",
+            "-m",
+            "pytest",
+            "tests/unit/test_comfyui_freeform_link_parsing.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\nplugins: anyio-4.15.1\ncollected 2 items\n\ntests/unit/test_comfyui_freeform_link_parsing.py ..                      [100%]\n\n============================== 2 passed in 0.01s ==============================="
+        },
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/unit/bin/python",
+            "-m",
+            "pytest",
+            "tests/unit/test_comfyui_generation_contract.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\nplugins: anyio-4.15.1\ncollected 2 items\n\ntests/unit/test_comfyui_generation_contract.py ..                        [100%]\n\n============================== 2 passed in 0.27s ==============================="
+        },
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/unit/bin/python",
+            "-m",
+            "pytest",
+            "tests/unit/test_comfyui_model_selection.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\nplugins: anyio-4.15.1\ncollected 3 items\n\ntests/unit/test_comfyui_model_selection.py ...                           [100%]\n\n============================== 3 passed in 0.20s ==============================="
+        },
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/unit/bin/python",
+            "-m",
+            "pytest",
+            "tests/unit/test_comfyui_prompt_builder.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\nplugins: anyio-4.15.1\ncollected 5 items\n\ntests/unit/test_comfyui_prompt_builder.py .....                          [100%]\n\n============================== 5 passed in 0.01s ==============================="
+        },
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/unit/bin/python",
+            "-m",
+            "pytest",
+            "tests/unit/test_comfyui_source_failures.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\nplugins: anyio-4.15.1\ncollected 2 items\n\ntests/unit/test_comfyui_source_failures.py ..                            [100%]\n\n============================== 2 passed in 0.26s ==============================="
+        },
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/unit/bin/python",
+            "-m",
+            "pytest",
+            "tests/unit/test_decorative_labeling.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\nplugins: anyio-4.15.1\ncollected 4 items\n\ntests/unit/test_decorative_labeling.py ....                              [100%]\n\n============================== 4 passed in 0.01s ==============================="
+        },
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/unit/bin/python",
+            "-m",
+            "pytest",
+            "tests/unit/test_embedder.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\nplugins: anyio-4.15.1\ncollected 13 items\n\ntests/unit/test_embedder.py ............s                                [100%]\n\n======================== 12 passed, 1 skipped in 0.04s ========================="
+        },
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/unit/bin/python",
+            "-m",
+            "pytest",
+            "tests/unit/test_fantastical_prompt_builder.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\nplugins: anyio-4.15.1\ncollected 10 items\n\ntests/unit/test_fantastical_prompt_builder.py ..........                 [100%]\n\n============================== 10 passed in 0.01s =============================="
+        },
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/unit/bin/python",
+            "-m",
+            "pytest",
+            "tests/unit/test_federated_generation_routing.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\nplugins: anyio-4.15.1\ncollected 9 items\n\ntests/unit/test_federated_generation_routing.py .........                [100%]\n\n============================== 9 passed in 0.27s ==============================="
+        },
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/unit/bin/python",
+            "-m",
+            "pytest",
+            "tests/unit/test_hud_access_migration.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\nplugins: anyio-4.15.1\ncollected 13 items\n\ntests/unit/test_hud_access_migration.py .............                    [100%]\n\n============================== 13 passed in 0.02s =============================="
+        },
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/unit/bin/python",
+            "-m",
+            "pytest",
+            "tests/unit/test_image_style_mcp.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\nplugins: anyio-4.15.1\ncollected 7 items\n\ntests/unit/test_image_style_mcp.py .......                               [100%]\n\n============================== 7 passed in 0.21s ==============================="
+        },
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/unit/bin/python",
+            "-m",
+            "pytest",
+            "tests/unit/test_rag_chunker.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\nplugins: anyio-4.15.1\ncollected 8 items\n\ntests/unit/test_rag_chunker.py ........                                  [100%]\n\n============================== 8 passed in 0.02s ==============================="
+        },
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/unit/bin/python",
+            "-m",
+            "pytest",
+            "tests/unit/test_rag_hybrid.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\nplugins: anyio-4.15.1\ncollected 8 items\n\ntests/unit/test_rag_hybrid.py ........                                   [100%]\n\n============================== 8 passed in 0.04s ==============================="
+        },
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/unit/bin/python",
+            "-m",
+            "pytest",
+            "tests/unit/test_rag_parsers.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\nplugins: anyio-4.15.1\ncollected 9 items\n\ntests/unit/test_rag_parsers.py .........                                 [100%]\n\n============================== 9 passed in 1.21s ==============================="
+        },
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/unit/bin/python",
+            "-m",
+            "pytest",
+            "tests/unit/test_rag_registry.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\nplugins: anyio-4.15.1\ncollected 10 items\n\ntests/unit/test_rag_registry.py ..........                               [100%]\n\n============================== 10 passed in 0.04s =============================="
+        },
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/unit/bin/python",
+            "-m",
+            "pytest",
+            "tests/unit/test_rag_scrubber.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\nplugins: anyio-4.15.1\ncollected 6 items\n\ntests/unit/test_rag_scrubber.py ......                                   [100%]\n\n============================== 6 passed in 0.01s ==============================="
+        },
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/unit/bin/python",
+            "-m",
+            "pytest",
+            "tests/unit/test_rag_url.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\nplugins: anyio-4.15.1\ncollected 5 items\n\ntests/unit/test_rag_url.py .....                                         [100%]\n\n============================== 5 passed in 0.04s ==============================="
+        },
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/unit/bin/python",
+            "-m",
+            "pytest",
+            "tests/unit/test_sqlite_store.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\nplugins: anyio-4.15.1\ncollected 37 items\n\ntests/unit/test_sqlite_store.py .....................................    [100%]\n\n============================== 37 passed in 0.05s =============================="
+        },
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/unit/bin/python",
+            "-m",
+            "pytest",
+            "tests/unit/test_threejs_assets.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\nplugins: anyio-4.15.1\ncollected 10 items\n\ntests/unit/test_threejs_assets.py ..........                             [100%]\n\n============================== 10 passed in 0.19s =============================="
+        },
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/unit/bin/python",
+            "-m",
+            "pytest",
+            "tests/unit/test_threejs_freeform.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\nplugins: anyio-4.15.1\ncollected 6 items\n\ntests/unit/test_threejs_freeform.py ......                               [100%]\n\n============================== 6 passed in 0.01s ==============================="
+        },
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/unit/bin/python",
+            "-m",
+            "pytest",
+            "tests/unit/test_threejs_layout.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\nplugins: anyio-4.15.1\ncollected 5 items\n\ntests/unit/test_threejs_layout.py .....                                  [100%]\n\n============================== 5 passed in 0.08s ==============================="
+        },
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/unit/bin/python",
+            "-m",
+            "pytest",
+            "tests/unit/test_threejs_materials.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\nplugins: anyio-4.15.1\ncollected 4 items\n\ntests/unit/test_threejs_materials.py ....                                [100%]\n\n============================== 4 passed in 0.01s ==============================="
+        },
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/unit/bin/python",
+            "-m",
+            "pytest",
+            "tests/unit/test_threejs_scene_builder.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\nplugins: anyio-4.15.1\ncollected 8 items\n\ntests/unit/test_threejs_scene_builder.py ........                        [100%]\n\n============================== 8 passed in 0.02s ==============================="
+        },
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/unit/bin/python",
+            "-m",
+            "pytest",
+            "tests/unit/test_threejs_sources.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\nplugins: anyio-4.15.1\ncollected 6 items\n\ntests/unit/test_threejs_sources.py ......                                [100%]\n\n============================== 6 passed in 0.01s ==============================="
+        },
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/unit/bin/python",
+            "-m",
+            "pytest",
+            "tests/unit/test_topology_diagram_mcp.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\nplugins: anyio-4.15.1\ncollected 6 items\n\ntests/unit/test_topology_diagram_mcp.py ......                           [100%]\n\n============================== 6 passed in 1.56s ==============================="
+        },
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/unit/bin/python",
+            "-m",
+            "pytest",
+            "tests/unit/test_worldlabs_marble_mcp.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\nplugins: anyio-4.15.1\ncollected 21 items\n\ntests/unit/test_worldlabs_marble_mcp.py .....................            [100%]\n\n============================== 21 passed in 0.20s =============================="
+        }
+      ]
+    }
+  ],
+  "schema_version": 1
+}

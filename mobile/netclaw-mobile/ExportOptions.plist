@@ -1,19 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<!--
-  099/FR-008 (Story 3). Export options for `xcodebuild -exportArchive`,
-  consumed by scripts/mobile-release-archive.sh.
-
-  teamID below is a PLACEHOLDER -- fill in the real paid Apple Developer
-  Program team ID (found at developer.apple.com/account under Membership)
-  once that account exists. Until then this file is inert: nothing in this
-  feature's CI or build path invokes -exportArchive automatically (see
-  docs/MOBILE-RELEASE.md).
--->
+<!-- Local archive export only; scripts/mobile-release-archive.sh does not upload. -->
 <plist version="1.0">
 <dict>
 	<key>method</key>
-	<string>app-store</string>
+	<string>app-store-connect</string>
 	<key>teamID</key>
 	<string>A49777FMJG</string>
 	<key>signingStyle</key>

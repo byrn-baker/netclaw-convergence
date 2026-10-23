@@ -14,6 +14,8 @@ import subprocess
 import tempfile
 from pathlib import Path
 
+from fastmcp_tasks import TasksExtension
+from fastmcp.utilities.async_utils import call_sync_fn_in_threadpool
 from fastmcp import FastMCP
 
 PCAP_DIR = Path(os.environ.get("PCAP_UPLOAD_DIR", "/tmp/netclaw-pcaps"))
@@ -27,6 +29,7 @@ mcp = FastMCP(
         "extract conversations, filter by protocol, and inspect individual packets."
     ),
 )
+mcp.add_extension(TasksExtension(name="netclaw-packet-buddy-mcp", concurrency=1))
 
 
 def _run_tshark(pcap_path: str, args: list[str], max_lines: int = 500) -> str:
@@ -70,7 +73,7 @@ async def list_pcaps() -> str:
     return "\n".join(lines)
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def pcap_summary(pcap_file: str) -> str:
     """Get a high-level summary of a pcap file: packet count, duration, protocols.
 
@@ -79,16 +82,16 @@ async def pcap_summary(pcap_file: str) -> str:
     """
     pcap_path = _resolve_pcap(pcap_file)
 
-    capinfos = subprocess.run(
+    capinfos = await call_sync_fn_in_threadpool(subprocess.run,
         ["capinfos", pcap_path], capture_output=True, text=True, timeout=30
     )
     if capinfos.returncode == 0:
         return capinfos.stdout.strip()
 
-    return _run_tshark(pcap_path, ["-qz", "io,stat,0"])
+    return await call_sync_fn_in_threadpool(_run_tshark,pcap_path, ["-qz", "io,stat,0"])
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def pcap_protocol_hierarchy(pcap_file: str) -> str:
     """Show the protocol hierarchy (breakdown by protocol) in a pcap.
 
@@ -96,10 +99,10 @@ async def pcap_protocol_hierarchy(pcap_file: str) -> str:
         pcap_file: filename or absolute path to pcap
     """
     pcap_path = _resolve_pcap(pcap_file)
-    return _run_tshark(pcap_path, ["-qz", "io,phs"])
+    return await call_sync_fn_in_threadpool(_run_tshark,pcap_path, ["-qz", "io,phs"])
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def pcap_conversations(pcap_file: str, layer: str = "ip") -> str:
     """Show network conversations (who talked to whom).
 
@@ -111,10 +114,10 @@ async def pcap_conversations(pcap_file: str, layer: str = "ip") -> str:
     valid_layers = ["eth", "ip", "ipv6", "tcp", "udp"]
     if layer not in valid_layers:
         return f"Invalid layer '{layer}'. Use one of: {', '.join(valid_layers)}"
-    return _run_tshark(pcap_path, ["-qz", f"conv,{layer}"])
+    return await call_sync_fn_in_threadpool(_run_tshark,pcap_path, ["-qz", f"conv,{layer}"])
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def pcap_endpoints(pcap_file: str, layer: str = "ip") -> str:
     """Show top endpoints by traffic volume.
 
@@ -126,10 +129,10 @@ async def pcap_endpoints(pcap_file: str, layer: str = "ip") -> str:
     valid_layers = ["eth", "ip", "ipv6", "tcp", "udp"]
     if layer not in valid_layers:
         return f"Invalid layer '{layer}'. Use one of: {', '.join(valid_layers)}"
-    return _run_tshark(pcap_path, ["-qz", f"endpoints,{layer}"])
+    return await call_sync_fn_in_threadpool(_run_tshark,pcap_path, ["-qz", f"endpoints,{layer}"])
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def pcap_filter(
     pcap_file: str, display_filter: str, max_packets: int = 100
 ) -> str:
@@ -141,12 +144,12 @@ async def pcap_filter(
         max_packets: max packets to return (default 100)
     """
     pcap_path = _resolve_pcap(pcap_file)
-    return _run_tshark(
+    return await call_sync_fn_in_threadpool(_run_tshark,
         pcap_path, ["-Y", display_filter, "-c", str(max_packets)]
     )
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def pcap_packet_detail(
     pcap_file: str, packet_number: int
 ) -> str:
@@ -158,13 +161,13 @@ async def pcap_packet_detail(
     """
     pcap_path = _resolve_pcap(pcap_file)
     # Jump to the specific frame
-    return _run_tshark(
+    return await call_sync_fn_in_threadpool(_run_tshark,
         pcap_path,
         ["-Y", f"frame.number=={packet_number}", "-V", "-c", "1"],
     )
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def pcap_dns_queries(pcap_file: str) -> str:
     """Extract all DNS queries and responses from a pcap.
 
@@ -172,7 +175,7 @@ async def pcap_dns_queries(pcap_file: str) -> str:
         pcap_file: filename or absolute path to pcap
     """
     pcap_path = _resolve_pcap(pcap_file)
-    return _run_tshark(
+    return await call_sync_fn_in_threadpool(_run_tshark,
         pcap_path,
         ["-Y", "dns", "-T", "fields",
          "-e", "frame.number",
@@ -182,7 +185,7 @@ async def pcap_dns_queries(pcap_file: str) -> str:
     )
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def pcap_http_requests(pcap_file: str) -> str:
     """Extract HTTP request methods, URIs, and hosts from a pcap.
 
@@ -190,7 +193,7 @@ async def pcap_http_requests(pcap_file: str) -> str:
         pcap_file: filename or absolute path to pcap
     """
     pcap_path = _resolve_pcap(pcap_file)
-    return _run_tshark(
+    return await call_sync_fn_in_threadpool(_run_tshark,
         pcap_path,
         ["-Y", "http.request", "-T", "fields",
          "-e", "frame.number",
@@ -202,7 +205,7 @@ async def pcap_http_requests(pcap_file: str) -> str:
     )
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def pcap_to_json(
     pcap_file: str, display_filter: str = "", max_packets: int = 20
 ) -> str:
@@ -217,10 +220,10 @@ async def pcap_to_json(
     args = ["-T", "json", "-c", str(max_packets)]
     if display_filter:
         args = ["-Y", display_filter] + args
-    return _run_tshark(pcap_path, args, max_lines=2000)
+    return await call_sync_fn_in_threadpool(_run_tshark,pcap_path, args, max_lines=2000)
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def pcap_expert_info(pcap_file: str) -> str:
     """Show tshark expert info — warnings, errors, notes about the capture.
 
@@ -228,7 +231,7 @@ async def pcap_expert_info(pcap_file: str) -> str:
         pcap_file: filename or absolute path to pcap
     """
     pcap_path = _resolve_pcap(pcap_file)
-    return _run_tshark(pcap_path, ["-qz", "expert"])
+    return await call_sync_fn_in_threadpool(_run_tshark,pcap_path, ["-qz", "expert"])
 
 
 @mcp.tool()

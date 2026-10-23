@@ -1,0 +1,125 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import fs from "node:fs";
+import { createRequire } from "node:module";
+import { load } from "./load.mjs";
+const require = createRequire(
+  new URL("../../../ui/netclaw-visual/package.json", import.meta.url),
+);
+const { JSDOM } = require("jsdom");
+test("shell escapes identity, uses shared semantic purpose and fixed action names", async () => {
+  const { pageHeader, viewPurpose, actionCommand } = await load(
+    "src/webview/shell.ts",
+  );
+  const html = pageHeader("overview", "<Overview>", "<lab>", "hermes");
+  assert.ok(html.includes("&lt;lab&gt;"));
+  assert.ok(!html.includes("<lab>"));
+  assert.ok(html.includes(viewPurpose("overview")));
+  assert.equal(actionCommand("testbed"), "netclaw.openNetwork");
+  assert.equal(actionCommand("workbench.action.terminal.new"), undefined);
+});
+test("all domain presenters supply useful sections and distinguish unknown/false/zero", () => {
+  const dom = new JSDOM("", { runScripts: "outside-only" });
+  dom.window.eval(fs.readFileSync("resources/presenters.js", "utf8"));
+  const { present, definitions } = dom.window.netclawPresenters;
+  assert.equal(Object.keys(definitions).length, 23);
+  for (const kind of Object.keys(definitions)) {
+    const model = present(kind, { data: {}, source: "/fixture" });
+    assert.ok(model.description, kind);
+    assert.ok(model.sections.length, kind);
+  }
+  const overview = present("overview", {
+    data: {
+      kind: "hermes",
+      readiness: false,
+      installationId: "fixture",
+      capabilities: { writes: false },
+    },
+  });
+  assert.ok(JSON.stringify(overview).includes("false"));
+  const tokenomics = present("tokenomics", {
+    data: { groups: [{ model: "fixture", input: 0, output: 2 }] },
+  });
+  assert.ok(JSON.stringify(tokenomics).includes("0"));
+  assert.ok(
+    !JSON.stringify(
+      present("integrations", {
+        data: { integrations: [{ id: "x", name: "Example", active: true }] },
+      }),
+    ).includes("Online"),
+  );
+  dom.window.close();
+});
+
+test("500 cards filter and paginate with distinct empty states and literal markup", async () => {
+  const dom = new JSDOM(
+    '<body data-kind="integrations" data-view-id="v"><input id="filter"><button id="refresh"></button><div id="status"></div><main><div id="content"></div></main></body>',
+    { runScripts: "outside-only" },
+  );
+  const w = dom.window;
+  w.TextEncoder = TextEncoder;
+  let state;
+  w.acquireVsCodeApi = () => ({
+    getState: () => state,
+    setState: (x) => (state = x),
+    postMessage: () => {},
+  });
+  for (const file of ["messaging.js", "presenters.js", "data.js"])
+    w.eval(fs.readFileSync("resources/" + file, "utf8"));
+  const data = {
+    source: "/fixture",
+    data: {
+      integrations: Array.from({ length: 500 }, (_, i) => ({
+        id: "entry-" + i,
+        name: "Integration " + i,
+        description:
+          i === 499
+            ? "<script>privateMarkup()</script>"
+            : "Synthetic integration",
+        active: false,
+      })),
+    },
+  };
+  w.dispatchEvent(
+    new w.MessageEvent("message", { data: { viewId: "v", data } }),
+  );
+  assert.equal(w.document.querySelectorAll("article").length, 50);
+  const filter = w.document.getElementById("filter"),
+    start = performance.now();
+  filter.value = "entry-499";
+  filter.dispatchEvent(new w.Event("input"));
+  await new Promise((r) => setTimeout(r, 110));
+  const elapsed = performance.now() - start - 80;
+  assert.equal(w.document.querySelectorAll("article").length, 1);
+  assert.ok(
+    w.document
+      .getElementById("content")
+      .textContent.includes("<script>privateMarkup()</script>"),
+  );
+  assert.equal(w.document.querySelectorAll("script").length, 0);
+  assert.ok(elapsed < 250);
+  console.log(
+    JSON.stringify({
+      measurement: "500-card filter settled-to-render upper bound",
+      ms: Math.round(elapsed),
+      host: process.platform + " " + process.arch,
+      node: process.version,
+      renderer: "JSDOM; actual editor measured separately",
+    }),
+  );
+  filter.value = "absent";
+  filter.dispatchEvent(new w.Event("input"));
+  await new Promise((r) => setTimeout(r, 110));
+  assert.match(
+    w.document.getElementById("content").textContent,
+    /No loaded entries match/,
+  );
+  w.dispatchEvent(
+    new w.MessageEvent("message", {
+      data: { viewId: "v", error: "Connection changed", invalidated: true },
+    }),
+  );
+  assert.equal(filter.disabled, true);
+  assert.equal(w.document.getElementById("content").textContent, "");
+  dom.window.close();
+});

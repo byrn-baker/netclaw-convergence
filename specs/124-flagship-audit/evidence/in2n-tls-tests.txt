@@ -1,0 +1,13 @@
+.......                                                                  [100%]
+=============================== warnings summary ===============================
+tests/n2n/test_internal_tls_security.py::test_real_tls_enrollment_reconnect_and_altered_binding
+tests/n2n/test_internal_transport.py::test_enroll_then_reconnect_over_loopback
+tests/n2n/test_internal_transport.py::test_enroll_then_reconnect_over_loopback
+tests/n2n/test_internal_transport.py::test_wrong_key_reconnect_refused
+tests/n2n/test_internal_transport.py::test_wrong_key_reconnect_refused
+tests/n2n/test_hub_attestation_060.py::test_hub_attestation_verified
+  /Users/john.capobianco/netclaw/mcp-servers/protocol-mcp/bgp/federation/risk.py:114: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    now = datetime.datetime.utcnow()
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+7 passed, 6 warnings in 2.30s

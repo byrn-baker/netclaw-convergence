@@ -1,0 +1,35 @@
+{
+  "bundles": [
+    {
+      "bundle": "Runner.app",
+      "identifier": "ca.automateyournetwork.netclaw.mobile",
+      "version": "1.0.1",
+      "build": "3"
+    },
+    {
+      "bundle": "LiveActivityWidget.appex",
+      "identifier": "ca.automateyournetwork.netclaw.mobile.liveactivitywidget",
+      "version": "1.0.1",
+      "build": "3"
+    },
+    {
+      "bundle": "NetClawWidgetExtension.appex",
+      "identifier": "ca.automateyournetwork.netclaw.mobile.netclawwidget",
+      "version": "1.0.1",
+      "build": "3"
+    },
+    {
+      "bundle": "WatchApp.app",
+      "identifier": "ca.automateyournetwork.netclaw.mobile.watchapp",
+      "version": "1.0.1",
+      "build": "3"
+    },
+    {
+      "bundle": "WatchComplication.appex",
+      "identifier": "ca.automateyournetwork.netclaw.mobile.watchapp.wcomplication",
+      "version": "1.0.1",
+      "build": "3"
+    }
+  ],
+  "errors": []
+}

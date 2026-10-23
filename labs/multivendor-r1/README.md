@@ -7,33 +7,48 @@ devices, which are precisely the platforms FR-009 routes *away* from this server
 
 ---
 
-## Option 1 — FRR over SSH (no containerlab, no downloads)
+## Option 1 — FRR over SSH
 
-**This is the zero-friction option and it is already verified working.**
+This read-only path was verified on Docker Desktop for Mac during spec 124.
 
 The repo's existing `netclaw-core` / `netclaw-edge1` / `netclaw-edge2` FRR
 containers **cannot** be used: they ship `vtysh` but no `sshd`, and netmiko needs
 SSH. They are also live BGP peers for the `frr-testbed` stack, so they must not be
 modified.
 
-This builds a *separate* FRR container with `sshd` added, using the already-cached
-`frrouting/frr` image.
+This builds a separate disposable FRR container with SSH. Docker may download
+the base image and packages. The fixture uses publicly documented test credentials,
+so publish its port on loopback only. Run these commands from the repository root.
 
 ```bash
-cd labs/multivendor-r1/frr-ssh
-docker build -t netclaw-frr-ssh:test .
-docker run -d --name netclaw-r1-frr --privileged -p 2222:22 netclaw-frr-ssh:test
+docker build --platform linux/amd64 -t netclaw-frr-ssh:test labs/multivendor-r1/frr-ssh
+docker run -d --platform linux/amd64 --name netclaw-r1-frr --cap-add NET_ADMIN --cap-add NET_RAW -p 127.0.0.1:2222:22 netclaw-frr-ssh:test
 ```
 
 Then point the server at it:
 
 ```bash
 export MULTIVENDOR_INVENTORY_SOURCE=operator
-export MULTIVENDOR_INVENTORY_PATH=$PWD/labs/multivendor-r1/frr-inventory.yaml
+export MULTIVENDOR_INVENTORY_PATH=$PWD/labs/multivendor-r1/frr-inventory.example.json
 export MULTIVENDOR_FRRLAB_USERNAME=netops
 export MULTIVENDOR_FRRLAB_PASSWORD=netops123
 export MULTIVENDOR_FRR_LAB_01_PORT=2222
 ```
+
+Install the fixture's public host key through the trusted Docker control path
+before connecting (do not trust a network keyscan automatically):
+
+```bash
+umask 077
+mkdir -p ~/.openclaw/audit124-frr
+printf '[127.0.0.1]:2222 ' > ~/.openclaw/audit124-frr/known_hosts
+docker exec netclaw-r1-frr cat /etc/ssh/ssh_host_ed25519_key.pub >> ~/.openclaw/audit124-frr/known_hosts
+export MULTIVENDOR_KNOWN_HOSTS="$HOME/.openclaw/audit124-frr/known_hosts"
+export MULTIVENDOR_SSH_STRICT=true
+```
+
+Stop only this owned fixture when finished: `docker stop netclaw-r1-frr`.
+Existing operator containers must be preserved.
 
 **What this exercises**, verified end to end:
 

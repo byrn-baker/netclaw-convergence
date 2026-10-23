@@ -28,6 +28,7 @@ import sys
 from typing import Optional
 
 from dotenv import load_dotenv
+from fastmcp_tasks import TasksExtension
 from fastmcp import FastMCP
 
 # ---------------------------------------------------------------------------
@@ -60,7 +61,7 @@ HALO_CLIENT_ID: str = os.getenv("HALO_CLIENT_ID", "")
 HALO_CLIENT_SECRET: str = os.getenv("HALO_CLIENT_SECRET", "")
 HALO_SCOPE: str = os.getenv("HALO_SCOPE", DEFAULT_SCOPE)
 HALO_AUTH_URL: str = os.getenv("HALO_AUTH_URL", "")  # override for self-hosted layouts
-HALO_VERIFY_SSL: bool = os.getenv("HALO_VERIFY_SSL", "true").lower() == "true"
+HALO_VERIFY_SSL: bool = os.getenv("HALO_VERIFY_SSL", "true").strip().lower() not in ("false", "0", "no")
 HALO_TIMEOUT: int = int(os.getenv("HALO_TIMEOUT", str(DEFAULT_TIMEOUT)))
 HALO_PAGE_SIZE: int = int(os.getenv("HALO_PAGE_SIZE", str(DEFAULT_PAGE_SIZE)))
 HALO_MAX_PAGES: int = int(os.getenv("HALO_MAX_PAGES", str(DEFAULT_MAX_PAGES)))
@@ -166,11 +167,12 @@ def get_client() -> HaloClient:
 # ---------------------------------------------------------------------------
 
 mcp = FastMCP("halo-mcp")
+mcp.add_extension(TasksExtension(name="netclaw-halo-mcp", concurrency=1))
 
 # ── Ticket types (2) — "Request Types" in Halo ──────────────────────────────
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def halo_list_ticket_types(
     can_create_only: Optional[bool] = None,
     customer: Optional[str] = None,
@@ -194,7 +196,7 @@ async def halo_list_ticket_types(
     )
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def halo_get_ticket_type(ticket_type: str, raw: bool = False) -> str:
     """Get a ticket type's full field SCHEMA (authoritative field discovery).
 
@@ -211,7 +213,7 @@ async def halo_get_ticket_type(ticket_type: str, raw: bool = False) -> str:
 # ── Fields (2) — FieldInfo catalog ──────────────────────────────────────────
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def halo_list_fields(custom_only: Optional[bool] = None, raw: bool = False) -> str:
     """List Halo field definitions (FieldInfo) with dropdown values.
 
@@ -223,7 +225,7 @@ async def halo_list_fields(custom_only: Optional[bool] = None, raw: bool = False
     return await _list_fields(get_client(), custom_only=custom_only, raw=raw)
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def halo_get_field(field: str, raw: bool = False) -> str:
     """Get a single field definition (FieldInfo) by numeric id, with lookup values."""
     return await _get_field(get_client(), field=field, raw=raw)
@@ -232,7 +234,7 @@ async def halo_get_field(field: str, raw: bool = False) -> str:
 # ── Tickets (4 read + 1 gated write) — "Faults" in Halo ─────────────────────
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def halo_get_ticket(ticket: str, raw: bool = False) -> str:
     """Read a single ticket by numeric id — full detail + linked assets/customfields.
 
@@ -243,7 +245,7 @@ async def halo_get_ticket(ticket: str, raw: bool = False) -> str:
     return await _get_ticket(get_client(), ticket=ticket, raw=raw)
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def halo_list_tickets(
     ticket_type: Optional[str] = None,
     customer: Optional[str] = None,
@@ -271,13 +273,13 @@ async def halo_list_tickets(
     )
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def halo_get_ticket_actions(ticket: str, raw: bool = False) -> str:
     """List a ticket's actions/notes history (by numeric ticket id)."""
     return await _get_ticket_actions(get_client(), ticket=ticket, raw=raw)
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def halo_get_asset_tickets(
     asset: str, open_only: Optional[bool] = None, raw: bool = False
 ) -> str:
@@ -334,13 +336,13 @@ async def halo_create_change_request(
 # ── Assets (3) — "Devices" in Halo ──────────────────────────────────────────
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def halo_get_asset(asset: str, raw: bool = False) -> str:
     """Read a single asset by name/inventory-number/id — detail + fields + ticket counts."""
     return await _get_asset(get_client(), asset=asset, raw=raw)
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def halo_list_assets(
     customer: Optional[str] = None,
     assettype_id: Optional[int] = None,
@@ -353,7 +355,7 @@ async def halo_list_assets(
     )
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def halo_get_asset_relationships(asset: str, raw: bool = False) -> str:
     """Get an asset's CMDB/CI hierarchy and relationship context (by name or id)."""
     return await _get_asset_relationships(get_client(), asset=asset, raw=raw)
@@ -362,13 +364,13 @@ async def halo_get_asset_relationships(asset: str, raw: bool = False) -> str:
 # ── Context (4) — clients / sites / users / contracts ───────────────────────
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def halo_list_clients(search: Optional[str] = None, raw: bool = False) -> str:
     """List/search Halo clients (customers). Use to resolve a client name to its id."""
     return await _list_clients(get_client(), search=search, raw=raw)
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def halo_list_sites(
     customer: Optional[str] = None, search: Optional[str] = None, raw: bool = False
 ) -> str:
@@ -376,7 +378,7 @@ async def halo_list_sites(
     return await _list_sites(get_client(), customer=customer, search=search, raw=raw)
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def halo_list_users(
     customer: Optional[str] = None,
     site_id: Optional[int] = None,
@@ -389,7 +391,7 @@ async def halo_list_users(
     )
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def halo_list_contracts(customer: Optional[str] = None, raw: bool = False) -> str:
     """List client contracts/agreements, optionally scoped to a customer."""
     return await _list_contracts(get_client(), customer=customer, raw=raw)
@@ -398,13 +400,13 @@ async def halo_list_contracts(customer: Optional[str] = None, raw: bool = False)
 # ── Knowledge (2) — KB articles ─────────────────────────────────────────────
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def halo_list_kb_articles(search: Optional[str] = None, raw: bool = False) -> str:
     """Search the Halo knowledge base for articles (resolution/runbook context)."""
     return await _list_kb_articles(get_client(), search=search, raw=raw)
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def halo_get_kb_article(article: str, raw: bool = False) -> str:
     """Get a single KB article by numeric id, including its body."""
     return await _get_kb_article(get_client(), article=article, raw=raw)

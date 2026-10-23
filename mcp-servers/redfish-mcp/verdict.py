@@ -37,8 +37,8 @@ import datetime
 from typing import Any
 
 # Redfish PowerState values that mean "the host has power applied".
-_POWERED = {"On", "PoweringOn"}
-_UNPOWERED = {"Off", "PoweringOff"}
+_POWERED = {"On"}
+_UNPOWERED = {"Off"}
 
 
 class VerdictError(RuntimeError):
@@ -74,7 +74,12 @@ def host_verdict(power_state: str | None, health: str | None,
             "refusing to derive a host state from an unreachable BMC. A failed BMC reach "
             "establishes nothing about the host; use unreachable_verdict().")
 
-    if power_state in _UNPOWERED:
+    if power_state in ("PoweringOn", "PoweringOff"):
+        state = "POWERING_ON" if power_state == "PoweringOn" else "POWERING_OFF"
+        means = (f"The BMC reports a power transition ({power_state}); completion has not "
+                 "been established. Read the BMC again before claiming the host is on or off.")
+        caveat = "a transition is not a completed power state"
+    elif power_state in _UNPOWERED:
         state = "POWERED_OFF"
         means = ("The host is powered off. This is a fact reported by the BMC, not an "
                  "inference — which is precisely what out-of-band access is for.")

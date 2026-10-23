@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import logging
 import os
+import ssl
 from typing import Any
 
 # Guarded so the pure-logic parts of this module -- endpoint refusal and the TLS disclosure --
@@ -34,11 +35,9 @@ if httpx is not None:
     logging.getLogger("httpx").setLevel(logging.WARNING)
     logging.getLogger("httpcore").setLevel(logging.WARNING)
 
-# BMCs ship self-signed certificates almost universally, and an operator cannot fix that from
-# here. Verification is therefore OFF by default but the choice is reported in every response's
-# gaps, so it is a visible decision rather than a silent one. Set REDFISH_VERIFY_TLS=true where
-# the BMC has a real certificate.
-VERIFY_TLS = os.environ.get("REDFISH_VERIFY_TLS", "false").lower() in ("1", "true", "yes")
+# Private PKI/self-signed BMCs require an explicitly trusted CA bundle. A lab
+# override remains visible in every result, never inferred from certificate errors.
+VERIFY_TLS = os.environ.get("REDFISH_VERIFY_TLS", "true").lower() not in ("0", "false", "no")
 TIMEOUT = float(os.environ.get("REDFISH_TIMEOUT", "15"))
 
 
@@ -68,8 +67,10 @@ class RedfishClient:
                 "the httpx package is not installed; install "
                 "mcp-servers/redfish-mcp/requirements.txt")
         auth = (self.user, self.password) if self.user else None
+        ca_bundle = os.environ.get("REDFISH_CA_BUNDLE")
+        verification = ssl.create_default_context(cafile=ca_bundle) if VERIFY_TLS and ca_bundle else VERIFY_TLS
         return httpx.Client(base_url=self.base, auth=auth, timeout=TIMEOUT,
-                            verify=VERIFY_TLS, follow_redirects=True)
+                            verify=verification, follow_redirects=False)
 
     def get(self, path: str) -> Any:
         """GET one Redfish resource. The only verb this client implements."""
@@ -95,6 +96,8 @@ class RedfishClient:
         if resp.status_code == 404:
             raise BmcUnreachable(f"the BMC has no resource at {path} (HTTP 404). "
                                  "Vendors implement different subsets of Redfish.")
+        if 300 <= resp.status_code < 400:
+            raise BmcUnreachable('BMC redirected the request; configure its final trusted URL explicitly')
         if resp.status_code >= 400:
             raise BmcUnreachable(f"HTTP {resp.status_code} from {path}")
         try:
@@ -109,8 +112,7 @@ class RedfishClient:
 
     def tls_note(self) -> str | None:
         if not VERIFY_TLS:
-            return ("TLS certificate verification is DISABLED (REDFISH_VERIFY_TLS is not set). "
-                    "BMCs almost always ship self-signed certificates, so this is the workable "
-                    "default — but the transport is not authenticated, and on an untrusted "
-                    "network the answers could be forged.")
+            return ("TLS certificate verification is DISABLED by explicit REDFISH_VERIFY_TLS override. "
+                    "The transport is not authenticated; credentials and answers can be intercepted. "
+                    "Use REDFISH_CA_BUNDLE for a trusted private BMC certificate.")
         return None

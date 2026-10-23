@@ -15,6 +15,8 @@ at ~/.openclaw/memory/ (GP-7 / FR-030). Transport: stdio (FastMCP).
 import json
 import logging
 import sys
+import tempfile
+import uuid
 from pathlib import Path
 from typing import Any, Dict, Optional
 
@@ -43,39 +45,61 @@ bm25 = BM25Store(config.BM25_DIR)
 # Startup integrity sweep: purge partial index entries of interrupted ingests.
 for _row in registry.sweep_interrupted():
     log.warning(f"Sweeping interrupted ingestion: {_row['id']} ({_row['title']})")
-    chroma.delete_document(_row["collection"], _row["id"])
     try:
         bm25_chunks = chroma.get_document_chunks(_row["collection"], _row["id"])
         bm25.remove_chunks(_row["collection"], [c["chunk_id"] for c in bm25_chunks])
     except Exception:
-        pass
+        log.exception("Could not purge interrupted BM25 entries for %s", _row["id"])
+    chroma.delete_document(_row["collection"], _row["id"])
 
+from functools import wraps
+from fastmcp.utilities.async_utils import call_sync_fn_in_threadpool
+from fastmcp_tasks import TasksExtension
 from fastmcp import FastMCP  # noqa: E402
 
 mcp = FastMCP("rag-mcp")
+mcp.add_extension(TasksExtension(name="netclaw-rag-mcp", concurrency=1))
+
+
+def _task_tool(fn):
+    """Register a threaded MCP task while preserving the direct Python callable."""
+    @wraps(fn)
+    async def run(*args, **kwargs):
+        return await call_sync_fn_in_threadpool(fn, *args, **kwargs)
+    mcp.tool(task=True)(run)
+    return fn
+
 
 
 # ---------------------------------------------------------------------
 # Response helpers (memory-mcp envelope convention)
 # ---------------------------------------------------------------------
-def success_response(data: Any) -> Dict[str, Any]:
-    return {"success": True, "data": data, "error": None}
+def success_response(data: Any, audit=None) -> Dict[str, Any]:
+    result = {"success": True, "data": data, "error": None}
+    if audit is not None:
+        result["audit"] = audit
+    return result
 
 
 def error_response(code: str, message: str) -> Dict[str, Any]:
     return {"success": False, "data": None, "error": {"code": code, "message": message}}
 
 
-def gait_log(operation: str, detail: str) -> None:
-    """Record the decision in GAIT; degrade gracefully when GAIT is absent."""
+def gait_log(operation: str, detail: str) -> Dict[str, Any]:
+    """Record through the supported SDK; never imply an unavailable audit succeeded."""
     try:
         from gait.repo import GaitRepo
+        from gait.schema import Turn
 
-        repo = GaitRepo.open_cwd()
-        if repo:
-            repo.log_event(f"rag_{operation}: {detail}")
-    except Exception:
-        log.debug(f"GAIT unavailable — rag_{operation}: {detail}")
+        repo = GaitRepo.discover()
+        turn = Turn.v0(user_text=f"rag_{operation}",
+                       assistant_text=detail, visibility="private")
+        _, commit_id = repo.record_turn(turn, message=f"rag_{operation}")
+        return {"status": "recorded", "commit": commit_id}
+    except Exception as exc:
+        log.warning("GAIT audit unavailable for rag_%s (%s)", operation, type(exc).__name__)
+        return {"status": "unavailable", "reason": type(exc).__name__,
+                "warning": "The data operation completed, but its GAIT event was not recorded. Do not repeat the data write solely to retry audit logging."}
 
 
 # ---------------------------------------------------------------------
@@ -157,12 +181,23 @@ def _remove_document_from_indexes(doc_row: Dict[str, Any]) -> int:
     return chroma.delete_document(collection, doc_row["id"])
 
 
+def _failed_ingest(doc_id: str, code: str, message: str) -> Dict[str, Any]:
+    try:
+        _remove_document_from_indexes(registry.get(doc_id))
+    except Exception:
+        log.exception("Could not purge failed ingest indexes for %s", doc_id)
+    registry.set_status(doc_id, "error", error=message)
+    return error_response(code, message)
+
+
 def _do_ingest(
     file_path: str,
     doc_type: str = "other",
     title: Optional[str] = None,
     version: Optional[str] = None,
     source: Optional[str] = None,
+    *,
+    _replace_id: Optional[str] = None,
 ) -> Dict[str, Any]:
     path = Path(file_path).expanduser()
     if doc_type not in config.DOC_TYPES:
@@ -178,7 +213,7 @@ def _do_ingest(
 
     # Dedupe: identical content hash is a no-op (FR-007)
     existing = registry.find_by_hash(parsed.content_hash)
-    if existing and existing["ingest_status"] == "ready":
+    if existing and existing["ingest_status"] == "ready" and _replace_id is None:
         return success_response(
             {
                 "document_id": existing["id"],
@@ -195,22 +230,19 @@ def _do_ingest(
             }
         )
 
-    # Same title, different hash: replace the prior version (FR-007)
-    reindexed = False
-    prior = registry.find_by_title(parsed.title)
-    if prior and prior["content_hash"] != parsed.content_hash:
-        _remove_document_from_indexes(prior)
-        if prior.get("source_path"):
-            shutil.rmtree(Path(prior["source_path"]).parent, ignore_errors=True)
-        registry.delete(prior["id"])
-        reindexed = True
+    # Stage replacements under a new ID. The last ready version must remain
+    # available if parsing, embedding, copying or index persistence fails.
+    prior = registry.get(_replace_id) if _replace_id else registry.find_by_title(parsed.title)
+    reindexed = bool(prior and (_replace_id or prior["content_hash"] != parsed.content_hash))
+    retiring = {row['id']: row for row in (prior if reindexed else None, existing)
+                if row is not None}
 
     doc_id = registry.new_document(
         kind="document",
         title=parsed.title,
         source=src,
         doc_type=doc_type,
-        content_hash=parsed.content_hash,
+        content_hash="staging:" + uuid.uuid4().hex,
         collection=config.DOCUMENTS_COLLECTION,
         version=version,
     )
@@ -226,19 +258,27 @@ def _do_ingest(
         chunk_count = _index_parsed_document(
             doc_id, parsed, config.DOCUMENTS_COLLECTION, doc_type, src
         )
-        registry.finalize(doc_id, chunk_count=chunk_count, page_count=parsed.page_count)
+        registry.finalize(doc_id, chunk_count=chunk_count, page_count=parsed.page_count,
+                          content_hash=parsed.content_hash, replace_ids=tuple(retiring))
     except ModelsNotCachedError as exc:
-        registry.set_status(doc_id, "error", error=str(exc))
-        return error_response("MODELS_NOT_CACHED", str(exc))
+        return _failed_ingest(doc_id, "MODELS_NOT_CACHED", str(exc))
     except IngestError as exc:
-        registry.set_status(doc_id, "error", error=exc.message)
-        return error_response(exc.code, exc.message)
+        return _failed_ingest(doc_id, exc.code, exc.message)
     except Exception as exc:
-        registry.set_status(doc_id, "error", error=str(exc))
-        return error_response("PARSE_FAILED", str(exc))
+        return _failed_ingest(doc_id, "PARSE_FAILED", str(exc))
+
+    cleanup_pending = []
+    for old in retiring.values():
+        try:
+            _remove_document_from_indexes(old)
+            if old.get("source_path"):
+                shutil.rmtree(Path(old["source_path"]).parent, ignore_errors=True)
+        except Exception:
+            cleanup_pending.append(old['id'])
+            log.exception("Replacement ready; prior index cleanup pending for %s", old['id'])
 
     action = "re-indexed (replaced prior version)" if reindexed else "ingested"
-    gait_log(
+    audit = gait_log(
         "ingest",
         f"{action} '{parsed.title}' ({doc_type}, {chunk_count} chunks) from {src} "
         f"— user-supplied knowledge for the RAG store",
@@ -246,6 +286,7 @@ def _do_ingest(
     return success_response(
         {
             "document_id": doc_id,
+            "cleanup_pending": cleanup_pending,
             "title": parsed.title,
             "doc_type": doc_type,
             "source": src,
@@ -256,7 +297,8 @@ def _do_ingest(
             "deduplicated": False,
             "reindexed": reindexed,
             "example_question": _example_question(parsed.title, doc_type),
-        }
+        },
+        audit=audit,
     )
 
 
@@ -285,14 +327,23 @@ def _do_ingest_base64(
     version: Optional[str] = None,
 ) -> Dict[str, Any]:
     safe_name = Path(filename).name
-    intake_path = config.INTAKE_DIR / safe_name
+    if not safe_name or safe_name in (".", "..") or "\x00" in safe_name:
+        return error_response("PARSE_FAILED", "A document filename is required")
+    max_bytes = int(config.MAX_DOC_MB * 1024 * 1024)
+    if len(content_base64) > 4 * ((max_bytes + 2) // 3):
+        return error_response("DOC_TOO_LARGE", "Attachment exceeds the document size limit")
     try:
-        intake_path.write_bytes(base64.b64decode(content_base64))
-    except Exception as exc:
-        return error_response("PARSE_FAILED", f"Could not decode base64 content: {exc}")
-    return _do_ingest(
-        str(intake_path), doc_type, title, version, source="slack:attachment"
-    )
+        content = base64.b64decode(content_base64, validate=True)
+    except (ValueError, TypeError):
+        return error_response("PARSE_FAILED", "Invalid base64 attachment")
+    if len(content) > max_bytes:
+        return error_response("DOC_TOO_LARGE", "Attachment exceeds the document size limit")
+    with tempfile.TemporaryDirectory(prefix="attachment-", dir=config.INTAKE_DIR) as staging:
+        intake_path = Path(staging) / safe_name
+        intake_path.write_bytes(content)
+        return _do_ingest(
+            str(intake_path), doc_type, title, version, source="slack:attachment"
+        )
 
 
 @mcp.tool(output_schema=None)
@@ -339,7 +390,7 @@ def _do_ingest_url(
     verify_ssl: Optional[bool] = None,
 ) -> Dict[str, Any]:
     try:
-        content, content_type = fetch(url, verify_ssl=verify_ssl)
+        content, content_type = fetch(url, max_bytes=config.MAX_DOC_MB * 1024 * 1024, verify_ssl=verify_ssl)
     except FetchError as exc:
         return error_response("FETCH_FAILED", exc.message)
 
@@ -386,8 +437,7 @@ def _do_ingest_url(
     if mode != "ingest":
         return error_response("PARSE_FAILED", f"Unknown mode '{mode}' — use preview|ingest.")
 
-    results = [_ingest_fetched(url, content, content_type, doc_type, title)]
-
+    linked_urls = []
     if include_linked:
         if not is_html:
             return error_response(
@@ -403,22 +453,24 @@ def _do_ingest_url(
                 "preview of this exact URL (confirm scope with the user, then echo "
                 "the token). Run mode='preview' first.",
             )
-        for page_url in linked_urls:
-            try:
-                page_content, page_type = fetch(page_url, verify_ssl=verify_ssl)
-                results.append(
-                    _ingest_fetched(page_url, page_content, page_type, doc_type, None)
-                )
-            except FetchError as exc:
-                results.append(error_response("FETCH_FAILED", exc.message))
+    # No persistent ingestion may precede successful scope validation.
+    results = [_ingest_fetched(url, content, content_type, doc_type, title)]
+    for page_url in linked_urls:
+        try:
+            page_content, page_type = fetch(page_url, max_bytes=config.MAX_DOC_MB * 1024 * 1024, verify_ssl=verify_ssl)
+            results.append(
+                _ingest_fetched(page_url, page_content, page_type, doc_type, None)
+            )
+        except FetchError as exc:
+            results.append(error_response("FETCH_FAILED", exc.message))
 
     ok = sum(1 for r in results if r.get("success"))
-    gait_log(
+    audit = gait_log(
         "ingest_url",
         f"ingested {ok}/{len(results)} page(s) from {url} "
         f"(depth-1={'yes' if include_linked else 'no'}, user-confirmed scope)",
     )
-    return success_response({"pages": results, "ingested": ok, "failed": len(results) - ok})
+    return success_response({"pages": results, "ingested": ok, "failed": len(results) - ok}, audit=audit)
 
 
 @mcp.tool(output_schema=None)
@@ -568,6 +620,9 @@ def _do_search(
 
     try:
         nonempty = [c for c in collections if chroma.count(c) > 0]
+    except Exception:
+        return error_response("STORAGE_UNAVAILABLE", "Cannot read the collection index; corpus contents are unknown.")
+    try:
         if not nonempty:
             registry.log_retrieval(query, collection, filters, k, [], [], 0, 0, round, sub_query_id)
             return success_response(
@@ -644,7 +699,7 @@ def _do_search(
     )
 
 
-@mcp.tool(output_schema=None)
+@_task_tool
 def rag_search(
     query: str,
     k: int = 5,
@@ -808,8 +863,8 @@ def _do_update_metadata(
     chroma.update_document_metadata(
         row["collection"], document_id, {"doc_type": doc_type, "title": title}
     )
-    gait_log("update_metadata", f"{document_id}: doc_type={doc_type} title={title} version={version}")
-    return success_response(_doc_public(updated))
+    audit = gait_log("update_metadata", f"{document_id}: doc_type={doc_type} title={title} version={version}")
+    return success_response(_doc_public(updated), audit=audit)
 
 
 @mcp.tool(output_schema=None)
@@ -846,8 +901,8 @@ def _do_delete(document_id: str, confirmed: bool = False) -> Dict[str, Any]:
         chroma.delete_collection(row["collection"])
         bm25.delete_collection(row["collection"])
     registry.delete(document_id)
-    gait_log("delete", f"deleted '{row['title']}' ({document_id}, {removed} chunks) — user-confirmed")
-    return success_response({"deleted": True, "chunks_removed": removed, "title": row["title"]})
+    audit = gait_log("delete", f"deleted '{row['title']}' ({document_id}, {removed} chunks) — user-confirmed")
+    return success_response({"deleted": True, "chunks_removed": removed, "title": row["title"]}, audit=audit)
 
 
 @mcp.tool(output_schema=None)
@@ -873,11 +928,9 @@ def _do_reindex(document_id: str, confirmed: bool = False) -> Dict[str, Any]:
         )
     source_path = row["source_path"]
     doc_type, title, version, source = row["doc_type"], row["title"], row["version"], row["source"]
-    _remove_document_from_indexes(row)
-    registry.delete(document_id)
-    result = _do_ingest(source_path, doc_type, title, version, source)
+    result = _do_ingest(source_path, doc_type, title, version, source, _replace_id=document_id)
     if result.get("success"):
-        gait_log("reindex", f"re-indexed '{title}' under current chunking/embedding config — user-confirmed")
+        result["audit"] = gait_log("reindex", f"re-indexed '{title}' under current chunking/embedding config — user-confirmed")
     return result
 
 
@@ -963,7 +1016,7 @@ def _do_snapshot(
         return error_response(exc.code, exc.message)
 
     total_redactions = sum(redaction_counts.values())
-    gait_log(
+    audit = gait_log(
         "snapshot",
         f"snapshot '{slug}' -> {collection} ({chunk_count} chunks, "
         f"{total_redactions} redactions, devices={devices}, commands={commands}) "
@@ -982,7 +1035,8 @@ def _do_snapshot(
                 + ", ".join(f"{k}: {v}" for k, v in redaction_counts.items() if v)
                 + (" (none found — 0 redactions)" if total_redactions == 0 else "")
             ),
-        }
+        },
+        audit=audit,
     )
 
 

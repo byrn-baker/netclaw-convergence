@@ -9,7 +9,9 @@ has this been down.
 ## Adopted, not authored
 
 See [NOTICE.md](./NOTICE.md). `mpeirone/zabbix-mcp-server`, pinned `0722f48`, **GPL-3.0**, vendored
-unmodified, invoked over stdio as a separate program.
+unmodified, invoked over stdio as a separate program. The NetClaw-owned
+`scripts/zabbix-stdio.py` launcher normalizes blank/unresolved TLS settings to verified
+transport before starting upstream; only explicit `false`, `0` or `no` disables it.
 
 ### Why adopt, with the numbers
 
@@ -32,10 +34,8 @@ it avoided rebuilding a solved problem.
 
 ## Why it runs in its own virtualenv
 
-**Not optional.** It requires **fastmcp 3.x**; five NetClaw servers pin `fastmcp<3` —
-`netbox-mcp-server`, `CiscoFMC-MCP-server-community`, `Wikipedia_MCP`, `rag-mcp`, `ISE_MCP`. A shared
-install breaks all five. Same class of conflict that gave `multivendor-cli-mcp` its own venv (spec 076's
-`cryptography` incident).
+Uses standalone `fastmcp==4.0.11` with `mcp==2.3.0` in an isolated runtime (spec 141).
+See [the migration and rollback guide](../../docs/FASTMCP-UPGRADE.md).
 
 The venv is created with `netclaw_venv_create`/`uv` — **never bare `python3 -m venv`**, which fails on hosts
 without `ensurepip` (measured on this one).
@@ -69,7 +69,7 @@ else. **This is the first NetClaw integration where a core distinction is enforc
 structure** — a deliberate trade for the smallest surface and upstream maintenance.
 
 **2. No per-call GAIT audit.** The upstream has no audit concept, and there is no platform-level MCP audit.
-Acceptable only because this is strictly read-only: there is no operation to record.
+Read-only calls still need a session audit record: record the request, observations and failures with GAIT separately. This integration does not provide automatic per-call persistence.
 
 ## The two traps
 

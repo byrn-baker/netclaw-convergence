@@ -1,0 +1,55 @@
+{
+  "counts": {
+    "BLOCKED_DEPENDENCY": 0,
+    "ERROR": 0,
+    "FAIL": 0,
+    "NEEDS_DOCKER": 0,
+    "NEEDS_LIVE_CREDENTIALS": 1,
+    "PASS": 1
+  },
+  "exit_code": 0,
+  "generated_at": "2026-09-26T23:10:49.344571+00:00",
+  "results": [
+    {
+      "capabilities": [
+        {
+          "detail": "missing: FORTIANALYZER_API_TOKEN, FORTIANALYZER_HOST, FORTIGATE_API_TOKEN, FORTIGATE_HOST, FORTIMANAGER_API_TOKEN, FORTIMANAGER_HOST",
+          "kind": "live",
+          "names": [
+            "FORTIANALYZER_API_TOKEN",
+            "FORTIANALYZER_HOST",
+            "FORTIGATE_API_TOKEN",
+            "FORTIGATE_HOST",
+            "FORTIMANAGER_API_TOKEN",
+            "FORTIMANAGER_HOST"
+          ],
+          "status": "NEEDS_LIVE_CREDENTIALS"
+        }
+      ],
+      "command": [
+        "bash",
+        "tests/fortinet/run-tests.sh"
+      ],
+      "detail": "offline contracts passed",
+      "duration_seconds": 0.20742245899964473,
+      "environment": {
+        "fingerprint": "e502f785ac6bf37e010ac4bda356ce78126909c0dff6d8e26fe26943c3c50975",
+        "path": ".contract-test-envs/fortinet"
+      },
+      "exit_code": 0,
+      "status": "PASS",
+      "suite": "fortinet",
+      "test_runs": [
+        {
+          "command": [
+            "bash",
+            "tests/fortinet/run-tests.sh"
+          ],
+          "exit_code": 0,
+          "output": "==============================================================\n  envelope    \u2014 plane/scope attribution (FR-005/009, SC-002a)\n==============================================================\nenvelope contract tests (no appliance required)\n\ntest_every_response_carries_plane_and_scope\n  PASS  manager response carries plane\n  PASS  manager response carries adom\n  PASS  response carries a timestamp\n  PASS  response carries its source\n\ntest_missing_scope_is_an_error_not_an_unqualified_result\n  PASS  manager without adom -> scope_indeterminate\n  PASS  indeterminate scope drops the data\n  PASS  device without vdom -> scope_indeterminate\n  PASS  analyzer without a full window -> scope_indeterminate\n\ntest_each_plane_requires_its_own_scope\n  PASS  device with device+vdom is ok\n  PASS  analyzer with a window is ok\n\ntest_unreachable_plane_is_named_and_carries_no_data\n  PASS  unreachable -> plane_unreachable\n  PASS  unreachable names the plane\n  PASS  unreachable carries no data\n  PASS  unreachable leaves a note\n\ntest_the_two_write_gates_are_distinct_values\n  PASS  approval and change-record refusals differ\n  PASS  read-only refusal is distinct from both\n\ntest_no_logs_is_not_the_same_as_unused\n  PASS  no_logs_in_window is its own outcome\n\ntest_plane_cannot_be_spoofed_by_a_caller\n  PASS  Plane is a closed enum\n\nall envelope contract tests passed\n\n==============================================================\n  audit       \u2014 GAIT trail (FR-023, Principle IV, SC-011)\n==============================================================\nGAIT audit contract tests (no appliance required)\n\ntest_every_response_emits_exactly_one_record\n  PASS  one response -> one record\n  PASS  record names the tool\n  PASS  record names the plane\n  PASS  record carries the outcome\n  PASS  record carries a timestamp\n  PASS  record identifies the component\n\ntest_refusals_are_audited_too\n  PASS  both refusals audited\n  PASS  refusal outcomes recorded distinctly\n\ntest_unreachable_plane_is_audited\n  PASS  unreachable audited\n  PASS  outcome recorded\n\ntest_no_credential_reaches_the_audit_trail\n  PASS  token value absent from trail\n  PASS  scope secret redacted\n  PASS  payload not written to the trail at all\n\ntest_scope_and_source_are_recorded\n  PASS  record written\n  PASS  source recorded\n  PASS  window recorded in scope\n  PASS  no_logs_in_window preserved, not flattened to ok\n\nall audit contract tests passed\n\n==============================================================\n  credentials \u2014 by-name-only disclosure (FR-029, SC-012)\n==============================================================\ncredential contract tests (no appliance required)\n\ntest_missing_credential_names_the_variable\n  PASS  names the host variable\n  PASS  names the token variable\n  PASS  names the plane\n\ntest_no_secret_value_appears_in_any_error\n  PASS  token value absent from error\n  PASS  still names the missing host var\n\ntest_repr_does_not_leak_the_token\n  PASS  repr redacts the token\n  PASS  str redacts the token\n  PASS  f-string redacts the token\n  PASS  host is still visible\n  PASS  bare host gains https scheme\n\ntest_tls_verification_defaults_on\n  PASS  verify_ssl defaults True\n  PASS  verify_ssl honours 'false'\n  PASS  verify_ssl honours 'FALSE'\n  PASS  verify_ssl honours '0'\n  PASS  verify_ssl honours 'no'\n  PASS  verify_ssl honours 'off'\n  PASS  verify_ssl back on when true\n\ntest_writes_default_off\n  PASS  writes_allowed defaults False\n  PASS  writes_allowed honours true\n  PASS  writes_allowed('yes') == True\n  PASS  writes_allowed('maybe') == False\n  PASS  writes_allowed('') == False\n  PASS  writes_allowed('1 ') == True\n\ntest_absent_plane_is_a_deployment_fact_not_a_failure\n  PASS  no planes configured -> empty list\n  PASS  only the configured plane is reported\n\nall credential contract tests passed\n\n==============================================================\n  device plane \u2014 admin vs link, VPN phase 1 vs 2 (FR-015/016)\n==============================================================\ndevice-plane distinction tests (no appliance required)\n\ntest_admin_down_is_not_link_down\n  PASS  admin-up + link-up reads healthy\n  PASS  admin-DOWN with live carrier is reported admin_status=down\n  PASS  that interface still shows link=True (why monitor alone misleads)\n  PASS  admin-up + link-down is flagged\n  PASS  admin-down interfaces are named in notes\n  PASS  role is populated from config\n\ntest_missing_config_does_not_imply_enabled\n  PASS  admin_status is None, not 'up'\n  PASS  notes say admin status is unknown, not assumed\n\ntest_vpn_phases_reported_separately\n  PASS  phase1 and phase2 are separate fields\n  PASS  phase1 up while phase2 down is representable\n  PASS  per-selector detail is preserved\n  PASS  no single collapsed 'status' field exists\n\ntest_no_tunnels_is_none_defined_not_all_down\n  PASS  empty tunnel list is 'none defined'\n  PASS  and explicitly not 'all down'\n\nall device-plane distinction tests passed\n\n==============================================================\n  ALL SUITES PASSED"
+        }
+      ]
+    }
+  ],
+  "schema_version": 1
+}

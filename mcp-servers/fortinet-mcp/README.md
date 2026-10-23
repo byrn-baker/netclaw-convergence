@@ -137,9 +137,8 @@ usually leak.
 netclaw_pip_install -r mcp-servers/fortinet-mcp/requirements.txt
 ```
 
-Two dependencies: `mcp>=1.2.0,<2` and `httpx>=0.27.0,<1`. The `mcp` upper bound is
-**load-bearing** — 2.0.0 removed `mcp.server.fastmcp`, which this server imports
-(spec 077).
+Uses standalone `fastmcp==4.0.11` with `mcp==2.3.0` in an isolated runtime (spec 141).
+See [the migration and rollback guide](../../docs/FASTMCP-UPGRADE.md).
 
 No Fortinet SDK. `pyFMG`, `fortiosapi` and `fortigate-api` were all evaluated and
 rejected: JSON-RPC here is a POST with `method`/`params`/`session`, and an SDK would
@@ -185,3 +184,7 @@ Measured against a live FortiGate-VM, FortiOS **7.6.7**, 2026-08-01:
 `workspace/skills/fortianalyzer-ops` · `fwrule-analyzer` (FortiOS parser, consumes
 policy from here) · `multivendor-cli-mcp` (spec 076 — FortiOS **CLI**, a different
 plane)
+
+## Spec124 production authorization update
+
+Production writes now require the exact ServiceNow CR to be approved and in Implement state. Missing or failed verification blocks writes. See [change-gate migration](../../docs/CHANGE-GATE-MIGRATION.md) for private configuration, preflight, backup and recovery. No ServiceNow record is created or approved automatically.

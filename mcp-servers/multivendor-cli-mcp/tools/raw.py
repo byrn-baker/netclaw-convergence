@@ -30,6 +30,7 @@ device being contacted.
 from __future__ import annotations
 
 import os
+from ssh_security import options as ssh_options, strict as ssh_strict
 
 import routing
 from credentials import CredentialError, resolve as resolve_credential
@@ -72,6 +73,7 @@ def _result(device: str, platform: str | None, command: str, status: str, **extr
         "platform": platform,
         "command": command,
         "status": status,
+        "ssh_host_key_checking": ssh_strict(),
     }
     out.update(extra)
     return out
@@ -80,8 +82,9 @@ def _result(device: str, platform: str | None, command: str, status: str, **extr
 def run_command(device: str, command: str, timeout_s: int | None = None) -> dict:
     """Execute one command on one device, or explain precisely why not."""
     timeout_s = timeout_s or DEFAULT_TIMEOUT
-    write_mode = os.environ.get("MULTIVENDOR_WRITE_ENABLED", "").lower() in ("1", "true", "yes")
-    mode = Mode.WRITE_ENABLED if write_mode else Mode.READ_ONLY
+    # Enabling separate write tools must never bypass their approval/baseline
+    # gates through this raw-read endpoint.
+    mode = Mode.READ_ONLY
 
     # --- inventory ---
     try:
@@ -141,11 +144,8 @@ def run_command(device: str, command: str, timeout_s: int | None = None) -> dict
         "auth_timeout": min(timeout_s, 30),
         "fast_cli": False,
     }
-    port = os.environ.get(f"MULTIVENDOR_{device.replace('-', '_').upper()}_PORT")
-    if port:
-        params["port"] = int(port)
-
     try:
+        params.update(ssh_options(device, cred))
         conn = ConnectHandler(**params)
     except NetmikoAuthenticationException as exc:
         return _result(device, dev.platform, command, "auth_failed",
@@ -162,12 +162,14 @@ def run_command(device: str, command: str, timeout_s: int | None = None) -> dict
     try:
         output = conn.send_command(command, read_timeout=timeout_s)
     except Exception as exc:  # noqa: BLE001
-        conn.disconnect()
         return _result(device, dev.platform, command, "timeout",
                        source=res.source.value,
                        error=f"{type(exc).__name__}: {str(exc)[:260]}")
-
-    conn.disconnect()
+    finally:
+        try:
+            conn.disconnect()
+        except Exception:
+            pass
     return _result(
         device, dev.platform, command, "ok",
         source=res.source.value,

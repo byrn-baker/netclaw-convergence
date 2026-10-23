@@ -1,0 +1,21 @@
+
+> netclaw-hud@1.0.0 build
+> vite build
+
+vite v6.4.3 building for production...
+transforming...
+✓ 81 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/canvas.html                                  0.77 kB │ gzip:   0.44 kB
+dist/index.html                                   7.22 kB │ gzip:   2.32 kB
+dist/assets/hud-CIYztu53.css                     25.76 kB │ gzip:   6.06 kB
+dist/assets/modulepreload-polyfill-B5Qt9EMX.js    0.71 kB │ gzip:   0.40 kB
+dist/assets/canvas-CFuV2alN.js                  261.60 kB │ gzip:  80.72 kB
+dist/assets/hud-BxFbwMsS.js                     820.88 kB │ gzip: 245.22 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 869ms

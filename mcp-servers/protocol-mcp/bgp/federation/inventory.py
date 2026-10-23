@@ -8,6 +8,8 @@ Remote inventories are cached per peer with received-at metadata for staleness
 """
 
 import json
+import calendar
+import shlex
 import logging
 import os
 import re
@@ -55,24 +57,40 @@ class InventoryBuilder:
         self.manager = manager
         # protocol-mcp/bgp/federation/inventory.py → repo root is 4 levels up
         self.repo_root = Path(repo_root or Path(__file__).resolve().parents[4])
-        self.config_path = Path(openclaw_config or (self.repo_root / "config" / "openclaw.json"))
-        self.skills_dir = self.repo_root / "workspace" / "skills"
-        self.env_path = Path(env_path or os.path.expanduser("~/.openclaw/.env"))
+        from .runtime import selected
+        self.runtime=selected()
+        self.config_path = Path(openclaw_config or (self.repo_root/'config/openclaw.json' if repo_root else self.runtime.config))
+        self.skills_dir = self.repo_root/'workspace/skills' if repo_root else self.runtime.skills
+        self.env_path = Path(env_path or self.runtime.env_file)
         self._version = 0
 
     # ---- build --------------------------------------------------------
 
     def _load_mcp_servers(self) -> list:
         try:
-            cfg = json.loads(self.config_path.read_text())
+            if self.runtime.kind=='hermes':
+                import yaml
+                cfg=yaml.safe_load(self.config_path.read_text()) or {}
+            else:cfg = json.loads(self.config_path.read_text())
         except Exception as e:
             logger.warning("Cannot read openclaw.json: %s", e)
             return []
-        servers = cfg.get("mcpServers") or {}
+        servers = cfg.get('mcp_servers') if self.runtime.kind=='hermes' else (cfg.get('mcp') or {}).get('servers') or cfg.get("mcpServers")
+        servers=servers or {}
+        qualified={}
+        if self.runtime.kind=='hermes':
+            from .runtime import ROOT
+            import sys
+            sys.path.insert(0,str(ROOT/'mcp-servers/hermes-hud-mcp'))
+            from policy import qualified_servers
+            qualified,_=qualified_servers(cfg,home=self.runtime.home)
         out = []
         for name, spec in servers.items():
             tools = spec.get("tools") if isinstance(spec, dict) else None
-            out.append({"name": name, "tools": tools or []})
+            if isinstance(tools,dict):tools=tools.get('include',[])
+            approved=(qualified.get(name,{}).get('tools') or {}).get('include',[])
+            out.append({"name": name, "tools": tools or approved or [],'invocable_tools':approved if self.runtime.kind=='hermes' else tools or [],
+                        'qualification':'source-reviewed' if name in qualified else 'configured'})
         return out
 
     def _load_skills(self) -> list:
@@ -156,7 +174,7 @@ class InventoryBuilder:
                         names.add(name)
             except (ValueError, TypeError):
                 continue
-        return [{"name": n, "invocable": True, "risk_aggregate": True} for n in sorted(names)]
+        return [{"name": n, "invocable": self.runtime.kind!='hermes' or n=='subnet-calculator', "risk_aggregate": True} for n in sorted(names)]
 
     def build(self, peer_identity: str, posture: Optional[dict] = None) -> dict:
         """Build the inventory (A2A capability card) to advertise to a peer.
@@ -166,13 +184,23 @@ class InventoryBuilder:
         + model-guard + immutable audit) or degraded/testing — visibility applied
         to capabilities as before, no secrets ever."""
         self._version += 1
+        all_servers = self._load_mcp_servers()
         skills = [s for s in self._load_skills()
                   if self._visibility("skill", s["name"], peer_identity)]
         for s in skills:
-            s["invocable"] = True
+            s["invocable"] = self.runtime.kind!='hermes'
+            if self.runtime.kind=='hermes' and s['name']=='subnet-calculator':
+                from .runtime import ROOT
+                import sys
+                sys.path.insert(0,str(ROOT/'mcp-servers/hermes-hud-mcp'))
+                from policy import qualified_skills
+                record=self.runtime.home/'python-runtimes/records/subnet-calc'
+                interpreter=Path(record.read_text().strip()) if record.is_file() else None
+                dependency=any(server['name']=='subnet-calc-mcp' and 'subnet_calculator' in server.get('invocable_tools',[]) for server in all_servers)
+                s['invocable']=bool(dependency and interpreter and interpreter.is_file() and qualified_skills(self.runtime.home))
         # Border: fold in member specialties as risk-level capabilities (FR-016).
-        skills += self._member_aggregate_skills({s["name"] for s in skills})
-        all_servers = self._load_mcp_servers()
+        skills += [s for s in self._member_aggregate_skills({s["name"] for s in skills})
+                   if self._visibility("skill", s["name"], peer_identity)]
         servers = [s for s in all_servers
                    if self._visibility("mcp_server", s["name"], peer_identity)]
         badges = _derive_badges([s["name"] for s in servers])
@@ -187,14 +215,19 @@ class InventoryBuilder:
             "version": self._version,
             "skills": skills,
             "mcp_servers": [{"name": s["name"], "tools": s["tools"],
-                             "invocable_tools": s["tools"]} for s in servers],
+                             "invocable_tools": s['invocable_tools'],'qualification':s['qualification']} for s in servers],
             "knowledge": knowledge,
             "badges": badges,
             "posture": self._posture_card(posture),
             "llm": self._llm_card(),
+            'harness':self._harness_card(),
         }
         self._assert_no_secrets(inv)
         return inv
+
+    def _harness_card(self):
+        from .runtime import local_harness
+        return {**local_harness(self.runtime),'observed_at':_now()}
 
     def _load_knowledge(self, peer_identity: str) -> list:
         """Build the per-peer visible knowledge entries (feature 064). The
@@ -250,7 +283,13 @@ class InventoryBuilder:
     def _local_primary_model(self) -> str:
         """Read this claw's primary model from the OpenClaw config (no secrets)."""
         import json as _json
-        for p in (Path(os.path.expanduser("~/.openclaw/openclaw.json")),):
+        if self.runtime.kind=='hermes':
+            try:
+                import yaml
+                value=(yaml.safe_load(self.config_path.read_text()) or {}).get('model')
+                return (value.get('default') or value.get('model') or '') if isinstance(value,dict) else value or ''
+            except (OSError,ValueError):return ''
+        for p in (self.config_path,):
             try:
                 cfg = _json.loads(p.read_text())
                 ag = (cfg.get("agents") or {}).get("defaults") or {}
@@ -278,37 +317,75 @@ class InventoryBuilder:
 
     def _load_secret_values(self) -> set:
         secrets = set()
+        values = dict(os.environ)
         try:
-            for line in self.env_path.read_text().splitlines():
-                line = line.strip()
-                if not line or line.startswith("#") or "=" not in line:
-                    continue
-                key, val = line.split("=", 1)
-                val = val.strip().strip('"').strip("'")
-                # Scan only secret-named keys, and only non-trivial values.
-                if self._SECRET_KEY_RE.search(key) and len(val) >= 8:
-                    secrets.add(val)
-        except Exception:
-            pass
+            text = self.env_path.read_text()
+        except FileNotFoundError:
+            text = ""
+        except OSError as error:
+            raise ValueError("Inventory secret source is unreadable") from error
+        for line in text.splitlines():
+            match = re.match(r'^(?:export\s+)?([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.*)$', line.strip())
+            if not match or not self._SECRET_KEY_RE.search(match[1]):
+                continue
+            raw = match[2]
+            try:
+                try:
+                    val = json.loads(raw) if raw.startswith('"') else None
+                except ValueError:
+                    val = None
+                if not isinstance(val, str):
+                    val = ' '.join(shlex.split(raw, comments=True))
+            except ValueError as error:
+                raise ValueError("Inventory secret source is malformed") from error
+            # Scan both configured and effective values if they differ.
+            if len(val) >= 8:
+                secrets.add(val)
+        for key, val in values.items():
+            if self._SECRET_KEY_RE.search(key) and len(val) >= 8:
+                secrets.add(val)
         return secrets
 
     def _assert_no_secrets(self, inv: dict):
-        blob = json.dumps(inv)
+        def strings(value):
+            if isinstance(value, str):
+                yield value
+            elif isinstance(value, dict):
+                for key, item in value.items():
+                    yield str(key)
+                    yield from strings(item)
+            elif isinstance(value, (list, tuple)):
+                for item in value:
+                    yield from strings(item)
+        contents = list(strings(inv))
         for secret in self._load_secret_values():
-            if secret in blob:
-                raise ValueError("Inventory build aborted: a secret value from .env "
+            if any(secret in value for value in contents):
+                raise ValueError("Inventory build aborted: a secret value "
                                  "appeared in the advertised inventory (FR-007)")
 
     # ---- remote cache (FR-008/FR-009) ----------------------------------
 
-    def cache_remote(self, peer_identity: str, inventory: dict):
+    def _cache_base(self, peer_identity):
+        if not isinstance(peer_identity, str) or not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.:-]{0,199}", peer_identity):
+            raise ValueError("Invalid inventory peer identity")
         base = self.manager.base_dir / "inventories"
-        (base / f"{peer_identity}.json").write_text(json.dumps(inventory, indent=2))
-        (base / f"{peer_identity}.meta.json").write_text(
+        if base.is_symlink():
+            raise ValueError("Inventory cache directory must not be a symlink")
+        for suffix in (".json", ".meta.json"):
+            path = base / (peer_identity + suffix)
+            if path.is_symlink() or (path.exists() and not path.is_file()):
+                raise ValueError("Inventory cache must be a regular file")
+        return base
+
+    def cache_remote(self, peer_identity: str, inventory: dict):
+        from .certs import _write_secret
+        base = self._cache_base(peer_identity)
+        _write_secret(base / f"{peer_identity}.json", json.dumps(inventory, indent=2))
+        _write_secret(base / f"{peer_identity}.meta.json",
             json.dumps({"received_at": _now(), "version": inventory.get("version")}))
 
     def load_remote(self, peer_identity: str, refresh_s: int = 21600) -> Optional[dict]:
-        base = self.manager.base_dir / "inventories"
+        base = self._cache_base(peer_identity)
         inv_path = base / f"{peer_identity}.json"
         if not inv_path.is_file():
             return None
@@ -318,11 +395,13 @@ class InventoryBuilder:
             received_at = json.loads((base / f"{peer_identity}.meta.json").read_text()).get("received_at")
         except Exception:
             pass
-        stale = False
+        stale = True
         if received_at:
             try:
-                age = time.time() - time.mktime(time.strptime(received_at, "%Y-%m-%dT%H:%M:%SZ"))
-                stale = age > (2 * refresh_s)
+                age = time.time() - calendar.timegm(time.strptime(received_at, "%Y-%m-%dT%H:%M:%SZ"))
+                stale = age < 0 or age > (2 * refresh_s)
             except Exception:
                 pass
+        from .runtime import project_harness
+        inv['harness']=project_harness(inv.get('harness'),observed_at=received_at)
         return {"inventory": inv, "received_at": received_at, "stale": stale}

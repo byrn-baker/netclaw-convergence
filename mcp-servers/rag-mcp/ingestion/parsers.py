@@ -18,6 +18,7 @@ import re
 import shutil
 import subprocess
 import tempfile
+import zipfile
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import List, Optional, Tuple
@@ -377,13 +378,16 @@ def _parse_docx(path: Path) -> ParsedDocument:
     return ParsedDocument(title=title, sections=sections, page_count=None, content_hash="")
 
 
-def _parse_xlsx(path: Path) -> ParsedDocument:
+def _parse_xlsx(path: Path, max_pages: int = 1000) -> ParsedDocument:
     try:
         import openpyxl
     except ImportError as exc:
         raise IngestError("PARSE_FAILED", f"openpyxl not installed: {exc}")
 
     wb = openpyxl.load_workbook(str(path), read_only=True, data_only=True)
+    if len(wb.sheetnames) > max_pages:
+        wb.close()
+        raise IngestError('SIZE_LIMIT_EXCEEDED', 'Workbook exceeds the configured sheet/page cap.')
     sections: List[Section] = []
     for sheet in wb.worksheets:
         rows = []
@@ -400,13 +404,15 @@ def _parse_xlsx(path: Path) -> ParsedDocument:
     return ParsedDocument(title=path.stem, sections=sections, page_count=len(sections), content_hash="")
 
 
-def _parse_pptx(path: Path) -> ParsedDocument:
+def _parse_pptx(path: Path, max_pages: int = 1000) -> ParsedDocument:
     try:
         from pptx import Presentation
     except ImportError as exc:
         raise IngestError("PARSE_FAILED", f"python-pptx not installed: {exc}")
 
     prs = Presentation(str(path))
+    if len(prs.slides) > max_pages:
+        raise IngestError('SIZE_LIMIT_EXCEEDED', 'Presentation exceeds the configured slide/page cap.')
     sections: List[Section] = []
     slide_count = 0
     for idx, slide in enumerate(prs.slides, start=1):
@@ -435,7 +441,7 @@ def _parse_pptx(path: Path) -> ParsedDocument:
     return ParsedDocument(title=path.stem, sections=sections, page_count=slide_count, content_hash="")
 
 
-def _parse_vsdx(path: Path) -> ParsedDocument:
+def _parse_vsdx(path: Path, max_pages: int = 1000) -> ParsedDocument:
     try:
         from vsdx import VisioFile
     except ImportError as exc:
@@ -443,6 +449,8 @@ def _parse_vsdx(path: Path) -> ParsedDocument:
 
     sections: List[Section] = []
     with VisioFile(str(path)) as vis:
+        if len(vis.pages) > max_pages:
+            raise IngestError('SIZE_LIMIT_EXCEEDED', 'Drawing exceeds the configured page cap.')
         for idx, page in enumerate(vis.pages, start=1):
             texts = []
             for shape in page.all_shapes:
@@ -646,6 +654,14 @@ def parse_file(path: Path, max_mb: int = 100, max_pages: int = 1000) -> ParsedDo
         )
 
     check_size_cap(path, max_mb, max_pages)
+    if ext in MODERN_OFFICE_EXTENSIONS:
+        try:
+            with zipfile.ZipFile(path) as archive:
+                expanded_bytes = sum(member.file_size for member in archive.infolist())
+                if expanded_bytes > max_mb * 1024 * 1024:
+                    raise IngestError('SIZE_LIMIT_EXCEEDED', 'Expanded Office content exceeds the configured document cap.')
+        except zipfile.BadZipFile as exc:
+            raise IngestError('PARSE_FAILED', 'Invalid Office archive.') from exc
     content_hash = sha256_file(path)
 
     if ext == ".pdf":
@@ -661,13 +677,14 @@ def parse_file(path: Path, max_mb: int = 100, max_pages: int = 1000) -> ParsedDo
     elif ext == ".docx":
         parsed = _parse_docx(path)
     elif ext == ".xlsx":
-        parsed = _parse_xlsx(path)
+        parsed = _parse_xlsx(path, max_pages)
     elif ext == ".pptx":
-        parsed = _parse_pptx(path)
+        parsed = _parse_pptx(path, max_pages)
     elif ext == ".vsdx":
-        parsed = _parse_vsdx(path)
+        parsed = _parse_vsdx(path, max_pages)
     else:  # legacy: .doc, .xls, .ppt, .vsd
         parsed = _convert_legacy(path, max_pages)
 
+    check_size_cap(path, max_mb, max_pages, parsed.page_count)
     parsed.content_hash = content_hash
     return parsed

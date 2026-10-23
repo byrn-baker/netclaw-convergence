@@ -1,0 +1,48 @@
+{
+  "counts": {
+    "BLOCKED_DEPENDENCY": 0,
+    "ERROR": 0,
+    "FAIL": 0,
+    "NEEDS_DOCKER": 0,
+    "NEEDS_LIVE_CREDENTIALS": 0,
+    "PASS": 1
+  },
+  "exit_code": 0,
+  "generated_at": "2026-09-26T22:44:38.384636+00:00",
+  "results": [
+    {
+      "capabilities": [
+        {
+          "detail": "docker daemon is available",
+          "kind": "docker-daemon",
+          "names": [],
+          "status": "AVAILABLE"
+        }
+      ],
+      "command": [
+        "bash",
+        "tests/nsm/run-tests.sh"
+      ],
+      "detail": "offline contracts passed",
+      "duration_seconds": 3.846232667001459,
+      "environment": {
+        "fingerprint": "105ed9737cd65bc0f8406162653095d18928a63cd798e32f65b64aed49830af7",
+        "path": ".contract-test-envs/nsm"
+      },
+      "exit_code": 0,
+      "status": "PASS",
+      "suite": "nsm",
+      "test_runs": [
+        {
+          "command": [
+            "bash",
+            "tests/nsm/run-tests.sh"
+          ],
+          "exit_code": 0,
+          "output": "=== Chokepoint: a finding cannot travel without its posture ===\n  ok   an alert verdict without Suricata posture is refused\n  ok   Zeek findings without checksum posture are refused\n  ok   an alert verdict WITH posture is allowed\n\n=== Inert detector: 0 alerts must not read as clean ===\n  ok   0 signatures yields state INERT\n  ok   an empty alert list from an INERT detector is wrapped with NOT_A_CLEAN_RESULT\n  ok   0 (integer) from an INERT detector is also wrapped\n  ok   an ARMED detector reporting no alerts is NOT wrapped\n  ok   INERT posture carries a remedy\n\n=== Zeek checksum posture ===\n  ok   validation on + invalid checksums seen yields PACKETS_DISCARDED\n  ok   PACKETS_DISCARDED carries a remedy\n  ok   validation off yields IGNORING_CHECKSUMS and no remedy\n\n=== Input validation: an empty capture must not read as empty traffic ===\n  ok   a missing capture raises rather than returning nothing\n  ok   a zero-byte capture is refused explicitly\n  ok   a directory is refused explicitly\n\n=== Pinning: images must be digest-pinned, never floating tags ===\n  ok   both images are pinned by sha256 digest\n  ok   no :latest tag anywhere in the runner\n\n=== Tool surface stays under the manifest ceiling ===\n  ok   6 tools, manifest under 2000 tokens\n\n=== Live analysis against the committed fixture (needs docker) ===\n  ok   ignore_checksums=true sees http.log and 2 connections\n  ok   Zeek's own default LOSES http.log and miscounts connections (3 not 2)\n\n=== Summary ===\n  passed: 19\n  failed: 0\n  skipped: 0\n  all nsm-mcp contract tests passed"
+        }
+      ]
+    }
+  ],
+  "schema_version": 1
+}

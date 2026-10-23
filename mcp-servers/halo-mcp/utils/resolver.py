@@ -31,6 +31,7 @@ class Resolution:
     id: Optional[str] = None
     ambiguous: bool = False
     candidates: list = field(default_factory=list)
+    error: Optional[str] = None
 
 
 def resolve_or_error(resolution: Resolution, label: str):
@@ -39,6 +40,8 @@ def resolve_or_error(resolution: Resolution, label: str):
     On success -> ``(id, None)``. On ambiguity -> ``(None, {error: Ambiguous, ...})``
     with candidates. On no match -> ``(None, {error: NotFound, ...})``.
     """
+    if resolution.error:
+        return None, {"error": {"code": "UpstreamError", "message": resolution.error, "details": None}}
     if resolution.ambiguous:
         return None, {
             "error": {
@@ -90,8 +93,8 @@ async def _resolve(client, path: str, value, name_keys, params: Optional[dict] =
     if looks_like_id(value):
         return Resolution(id=str(value))
     page = await client.get_all(path, params={**(params or {}), "search": value})
-    if page.get("error"):
-        return Resolution()
+    if page.get("error") or page.get("truncated"):
+        return Resolution(error=str(page.get("error") or "Inventory is incomplete; resolve by explicit id"))
     return _match(page.get("items", []), value, name_keys)
 
 
@@ -100,8 +103,8 @@ async def resolve_ticket_type(client, value) -> Resolution:
     if looks_like_id(value):
         return Resolution(id=str(value))
     page = await client.get_all("/TicketType", params={})
-    if page.get("error"):
-        return Resolution()
+    if page.get("error") or page.get("truncated"):
+        return Resolution(error=str(page.get("error") or "Inventory is incomplete; resolve by explicit id"))
     return _match(page.get("items", []), value, ("name",))
 
 

@@ -1,0 +1,114 @@
+{
+  "observedOn": "2026-10-11",
+  "status": "partial-blocked",
+  "incomingCommit": "c21b4f802ee7909bfb9ee1e258b0e5c668702f0d",
+  "validationBranch": "150-vscode-extension-wsl-20261011",
+  "artifact": {
+    "sha256": "71694842db407dbb28ed695a31ca583a892d2c2bc0903c04829514b123fec005",
+    "bytes": 2220783,
+    "zipEntries": 24,
+    "installedPayloadFilesExact": 21,
+    "manifestMatchesExceptEditorMetadata": true,
+    "extensionId": "NetClaw.netclaw",
+    "version": "0.1.0"
+  },
+  "windows": {
+    "displayVersion": "26H2",
+    "build": "26300.9550",
+    "vscode": "1.140.0",
+    "remoteWsl": "0.104.3"
+  },
+  "wsl": {
+    "version": "3.0.1.0",
+    "kernel": "6.18.40.1-microsoft-standard-WSL2",
+    "distributionOs": "Ubuntu 26.04 LTS",
+    "architecture": "x86_64",
+    "checkoutFilesystem": "ext4"
+  },
+  "development": {
+    "node": "24.19.0",
+    "checkExit": 0,
+    "buildExit": 0,
+    "npmTestExit": 0,
+    "tests": 17,
+    "passed": 16,
+    "failed": 0,
+    "skipped": 1,
+    "skippedCheck": "opt-in local RAG indexing and retrieval",
+    "scope": "isolated unchanged-HUD and controlled/synthetic runtime fixtures; zero external provider/network-device calls"
+  },
+  "realEditor": {
+    "installExit": 0,
+    "inventoryVersion": "netclaw.netclaw@0.1.0",
+    "remoteActivationObserved": true,
+    "activationEvent": "onWalkthrough:netclaw.getStarted",
+    "visualRunningExtensionsCheck": "not-run",
+    "isolatedLaunchExit": 1,
+    "isolatedLaunchFailure": "vscode-updating mutex held after 30776ms",
+    "driverRan": false,
+    "upgradeDisableReenableUninstall": "blocked"
+  },
+  "liveInstallation": {
+    "runtimeIdentity": "unavailable",
+    "hudApiConnection": "refused",
+    "hudApiFailure": "ERR_MODULE_NOT_FOUND: @modelcontextprotocol/client",
+    "ownerNode": "25.1.0",
+    "providerChat": "blocked",
+    "rag": "blocked",
+    "copilot": "blocked",
+    "claudeCode": "blocked",
+    "codex": "blocked",
+    "backendRepairsPerformed": false,
+    "approvalChangesPerformed": false,
+    "providerRequestsSubmitted": 0
+  },
+  "clients": {
+    "claude": {
+      "exit": 0,
+      "version": "2.1.288 (Claude Code)",
+      "mcpHelpExit": 0
+    },
+    "codex": {
+      "exit": 0,
+      "version": "codex-cli 0.162.1",
+      "mcpHelpExit": 0
+    },
+    "buildNode": {
+      "exit": 0,
+      "version": "v24.19.0"
+    },
+    "interactive": "BLOCKED: designated existing HUD API unavailable; no registrations/provider calls attempted"
+  },
+  "preservation": {
+    "sampledFileObservations": 8,
+    "unchangedFileObservations": 8,
+    "sampledServices": 15,
+    "servicesUnchangedSinceResume": 11,
+    "sameBootSinceResume": true,
+    "initialToFinalContinuousUptimeVerified": false,
+    "sessionIssuedRestartCommands": false,
+    "privateInitialSnapshotSha256": "5e2c87170c5950df229e22b8303f0caab9a5d68a56326bc09fdc653780e5d350",
+    "privateFinalSnapshotSha256": "2a4ad3d9d51fd7d81346d0a3095fd744b474ce059e9121e29b180b2e4e4e1c2e"
+  },
+  "gait": {
+    "branch": "spec150-exact-vsix-wsl-20261011",
+    "startupRecord": "fbce5945",
+    "milestoneRecords": [
+      "6a9a24b9",
+      "da2ea403"
+    ],
+    "rawTrail": "private local audit only"
+  },
+  "startupInventory": {
+    "tool": "pyats_list_devices",
+    "status": "completed",
+    "entryCount": 5,
+    "deviceHealthVerified": false
+  },
+  "release": {
+    "T022": "open",
+    "T023": "open",
+    "merged": false,
+    "published": false
+  }
+}

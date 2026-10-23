@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Azure Network MCP Server - FastMCP entry point with GAIT audit logging."""
+"""Azure Network MCP Server - FastMCP entry point with operation logging."""
 
 from __future__ import annotations
 
@@ -7,6 +7,8 @@ import json
 import logging
 import os
 import sys
+import asyncio
+from fastmcp.utilities.async_utils import call_sync_fn_in_threadpool
 import functools
 from datetime import datetime, timezone
 from typing import Optional
@@ -14,7 +16,8 @@ from typing import Optional
 # Add the server directory to the path for local imports
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from mcp.server.fastmcp import FastMCP
+from fastmcp_tasks import TasksExtension
+from fastmcp import FastMCP
 
 from clients.azure_client import azure_client_factory
 from utils.rate_limiter import format_error_response
@@ -38,13 +41,14 @@ logger = logging.getLogger("azure-network-mcp")
 
 # Initialize FastMCP server
 mcp = FastMCP("azure-network-mcp")
+mcp.add_extension(TasksExtension(name="netclaw-azure-network-mcp", concurrency=1))
 
 
-# --- GAIT Audit Logging ---
+# --- Operation Logging (session GAIT recording is separate) ---
 
-def gait_audit_log(operation: str, target: str, subscription_id: Optional[str] = None,
+def log_operation(operation: str, target: str, subscription_id: Optional[str] = None,
                    status: str = "success", details: Optional[str] = None) -> None:
-    """Log a GAIT audit entry for an MCP tool operation."""
+    """Emit an ordinary operation log, not a persisted GAIT commit."""
     entry = {
         "timestamp": datetime.now(timezone.utc).isoformat(),
         "operation": operation,
@@ -54,11 +58,11 @@ def gait_audit_log(operation: str, target: str, subscription_id: Optional[str] =
     }
     if details:
         entry["details"] = details
-    logger.info(f"GAIT: {json.dumps(entry)}")
+    logger.info(f"OPERATION: {json.dumps(entry)}")
 
 
-def with_gait_logging(tool_name: str):
-    """Decorator to wrap MCP tool functions with GAIT audit logging."""
+def with_operation_logging(tool_name: str):
+    """Decorator to wrap MCP tool functions with operation logging."""
     def decorator(func):
         @functools.wraps(func)
         async def wrapper(*args, **kwargs):
@@ -68,13 +72,13 @@ def with_gait_logging(tool_name: str):
                 "policy_name") or kwargs.get("lb_name") or kwargs.get(
                 "nic_name") or kwargs.get("zone_name") or kwargs.get(
                 "resource_group") or "all"
-            gait_audit_log(tool_name, target, subscription_id, "started")
+            log_operation(tool_name, target, subscription_id, "started")
             try:
-                result = await func(*args, **kwargs)
-                gait_audit_log(tool_name, target, subscription_id, "success")
+                result = await call_sync_fn_in_threadpool(asyncio.run, func(*args, **kwargs))
+                log_operation(tool_name, target, subscription_id, "returned")
                 return result
             except Exception as e:
-                gait_audit_log(tool_name, target, subscription_id, "error", str(e))
+                log_operation(tool_name, target, subscription_id, "error", str(e))
                 return format_error_response(e)
         return wrapper
     return decorator
@@ -154,7 +158,7 @@ tools_to_register = [
 ]
 
 for tool in tools_to_register:
-    mcp.tool()(with_gait_logging(tool.__name__)(tool))
+    mcp.tool(task=True)(with_operation_logging(tool.__name__)(tool))
 
 
 def main():

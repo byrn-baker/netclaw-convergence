@@ -1,0 +1,31 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_______________ test_failed_chroma_count_is_not_an_empty_corpus ________________
+
+server = <module 'rag_mcp_server' from '$HOME/netclaw/mcp-servers/rag-mcp/rag_mcp_server.py'>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x71fd3afbedb0>
+
+    def test_failed_chroma_count_is_not_an_empty_corpus(server, monkeypatch):
+        def unavailable(*args):
+            raise OSError('synthetic private storage details')
+        monkeypatch.setattr(server.chroma, '_collection', unavailable)
+        result = server._do_search('route evidence')
+>       assert result['error']['code'] == 'STORAGE_UNAVAILABLE'
+               ^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: 'NoneType' object is not subscriptable
+
+tests/unit/test_rag_ingest_guards.py:34: TypeError
+=============================== warnings summary ===============================
+tests/unit/test_rag_ingest_guards.py::test_failed_chroma_count_is_not_an_empty_corpus
+  $HOME/netclaw/.contract-test-envs/unit/lib/python3.12/site-packages/fastmcp/server/auth/providers/jwt.py:10: AuthlibDeprecationWarning: authlib.jose module is deprecated, please use joserfc instead.
+  It will be compatible before version 2.0.0.
+    from authlib.jose import JsonWebKey, JsonWebToken
+
+tests/unit/test_rag_ingest_guards.py::test_failed_chroma_count_is_not_an_empty_corpus
+  $HOME/netclaw/.contract-test-envs/unit/lib/python3.12/site-packages/authlib/integrations/httpx_client/assertion_client.py:5: AuthlibDeprecationWarning: The httpx module is deprecated; please use httpx2 instead.
+    from ._compat import httpx2
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/unit/test_rag_ingest_guards.py::test_failed_chroma_count_is_not_an_empty_corpus
+1 failed, 9 deselected, 2 warnings in 3.00s

@@ -1,0 +1,13 @@
+{
+  "mcp_python_files": 356,
+  "static_tool_names": 395,
+  "skills": 227,
+  "python_parse_errors": [],
+  "frontmatter_errors": [],
+  "schema_candidates": [],
+  "security_candidate_rules": {
+    "CG-SQL-001": 9,
+    "CG-EXEC-003": 2,
+    "CG-TLS-001": 2
+  }
+}

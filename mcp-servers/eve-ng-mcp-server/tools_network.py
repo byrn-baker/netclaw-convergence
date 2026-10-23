@@ -1,6 +1,6 @@
 """Network / topology (7) + node-types (1) = 8 MCP tools."""
 
-from mcp_init import mcp
+from mcp_init import mcp, _task_tool
 from eve_client import (
     get_client, EVEError, handle_eve_response, success_response, error_response,
     with_gait_logging, paginate_sequence,
@@ -9,7 +9,7 @@ from eve_client import (
 )
 
 
-@mcp.tool()
+@_task_tool
 @with_gait_logging("eve_get_topology")
 def eve_get_topology(lab_path: str) -> str:
     """
@@ -27,7 +27,7 @@ def eve_get_topology(lab_path: str) -> str:
         return error_response(e)
 
 
-@mcp.tool()
+@_task_tool
 @with_gait_logging("eve_list_networks")
 def eve_list_networks(lab_path: str, page: int = 1, page_size: int = 50) -> str:
     """
@@ -140,7 +140,7 @@ def eve_delete_network(lab_path: str, network: str) -> str:
         return error_response(e)
 
 
-@mcp.tool()
+@_task_tool
 @with_gait_logging("eve_list_node_interfaces")
 def eve_list_node_interfaces(lab_path: str, node: str) -> str:
     """
@@ -216,7 +216,7 @@ def eve_connect_interface(
         return error_response(e)
 
 
-@mcp.tool()
+@_task_tool
 @with_gait_logging("eve_list_node_types")
 def eve_list_node_types(page: int = 1, page_size: int = 50) -> str:
     """List available node types (templates) installed on the EVE-NG server."""

@@ -65,10 +65,16 @@ GROUPED_CONFIG_PREFIXES = {
 # clean prefix/suffix relationship to the id itself (pre-existing naming
 # conventions that predate this feature, plus this feature's own additions).
 GROUPED_CONFIG_EXACT = {
+    "drawio-mcp": "drawio-rfc",
+    "rfc-mcp": "drawio-rfc",
     "sketchfab-mcp": "threejs-viz",
     "comfyui-mcp": "comfyui-viz",
+    "topology-diagram-mcp": "comfyui-viz",  # spec 121 federated pipeline, Stage A
+    "image-style-mcp": "comfyui-viz",  # spec 121 federated pipeline, Stage B
     "azure-network-mcp": "azure",
     "unreal-mcp": "ue5",
+    "pfsense-mcp": "convergence-pfsense",
+    "unifi-network": "convergence-unifi",
     "rag-mcp": "rag-mcp",
     # Added by spec 075 -- server keys whose catalog component exists but whose
     # name does not reduce to the catalog id by stripping "-mcp".
@@ -91,6 +97,8 @@ GROUPED_CONFIG_EXACT = {
 # in the same PR, or this script will silently miss it -- same discipline
 # verify-inventory-counts.py already asks of EXTERNAL_INTEGRATIONS itself.
 GROUPED_EXTERNAL_COVERAGE = {
+    "tavus-pal": ["Tavus Pal"],
+    "hermes-hud": ["Hermes HUD private bridge"],
     "memory-mcp": ["Memory MCP"],
     "ollama": ["Ollama"],
     "telemetry-receivers": ["IPFIX/NetFlow", "SNMP Trap Receiver", "Syslog Receiver"],
@@ -112,16 +120,20 @@ GROUPED_EXTERNAL_COVERAGE = {
 # the only way to silence it is to state why -- which is human knowledge that
 # cannot be inferred from the source.
 VENDORED_STATE_REASONS = {
+    "greynoise-community-mcp": "fork optional community alternative; greynoise-mcp is the registered integration",
+    "hermes-hud-mcp": "HUD-private eight-tool bridge; never agent-native to prevent recursive conversation dispatch (spec 148)",
+    "tavus-pal-mcp": "optional HUD-invoked stdio facade; deliberately absent from the main agent registry to prevent recursive agent dispatch (spec 144)",
+    "netclaw-dot-mcp": "operator-run HTTP service (netclaw-dot.service) that ChatGPT Dots call over OAuth; deliberately NOT registered as an agent MCP (spec 134)",
     "gait_mcp": "registered as 'gait-mcp'; underscore/hyphen naming mismatch",
-    "pyATS_MCP": "external — installed on demand via pip (EXTERNAL_INTEGRATIONS: pyATS)",
+    "pyATS_MCP": "registered pyats-mcp uses the managed-source stdio bridge (spec 147)",
     "ISE_MCP": "external — installed on demand (EXTERNAL_INTEGRATIONS: Cisco ISE)",
     "ACI_MCP": "external — installed on demand (EXTERNAL_INTEGRATIONS: Cisco ACI)",
-    "Wikipedia_MCP": "external — installed on demand (EXTERNAL_INTEGRATIONS: Wikipedia)",
-    "markmap_mcp": "external — installed on demand (EXTERNAL_INTEGRATIONS: Markmap)",
-    "mcp-nvd": "external — installed on demand (EXTERNAL_INTEGRATIONS: NVD CVE)",
+    "Wikipedia_MCP": "registered wikipedia-mcp uses the installed component launcher (spec 147)",
+    "markmap_mcp": "registered markmap-mcp uses the installed component launcher (spec 147)",
+    "mcp-nvd": "registered nvd-cve-mcp uses the installed component launcher (spec 147)",
     "mcp-nautobot": "external community alternative (EXTERNAL_INTEGRATIONS: Nautobot community)",
-    "packet-buddy-mcp": "external — installed on demand (EXTERNAL_INTEGRATIONS: Packet Buddy)",
-    "subnet-calculator-mcp": "external — bundled (EXTERNAL_INTEGRATIONS: Subnet Calculator)",
+    "packet-buddy-mcp": "registered packet-buddy-mcp uses its isolated runtime (spec 147)",
+    "subnet-calculator-mcp": "registered subnet-calc-mcp uses the installed component launcher (spec 147)",
     "CiscoFMC-MCP-server-community": "community source for the 'fmc' component; registered as 'cisco-fmc-mcp'",
     "nautobot-mcp-v2": "backs the registered 'nautobot-mcp' entry (directory name differs from key)",
     "AAP-Enterprise-MCP-Server": "single source backing all four registered aap-* entries",
@@ -141,10 +153,16 @@ VENDORED_STATE_REASONS = {
 }
 
 
+def load_catalog_text():
+    """Include fork catalog fragments sourced by the installer."""
+    from pathlib import Path
+    catalog = Path(CATALOG_SH)
+    return "\n".join(p.read_text() for p in [catalog, *sorted(catalog.with_name("catalog.d").glob("*.sh"))])
+
+
 def load_catalog_ids():
     """Parse the CATALOG array's "id|Category|Name|Description" lines."""
-    with open(CATALOG_SH) as f:
-        text = f.read()
+    text = load_catalog_text()
     ids = []
     for match in re.finditer(r'"([a-z0-9-]+)\|[^"]*"', text):
         ids.append(match.group(1))
@@ -309,8 +327,7 @@ def check_vendored_state(registered, external_names):
 
 def main():
     catalog_ids = load_catalog_ids()
-    with open(CATALOG_SH) as f:
-        catalog_text = f.read()
+    catalog_text = load_catalog_text()
 
     registered = load_registered_servers()
     external_names = load_external_integrations()

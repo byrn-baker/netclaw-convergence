@@ -1,0 +1,8 @@
+{
+  "frr-lab-01": {
+    "hostname": "127.0.0.1",
+    "platform": "frr",
+    "groups": ["lab", "frr"],
+    "credential_ref": "frrlab"
+  }
+}

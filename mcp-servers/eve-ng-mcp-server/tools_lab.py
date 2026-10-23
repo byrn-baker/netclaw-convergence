@@ -3,7 +3,7 @@
 import os
 from typing import Optional
 
-from mcp_init import mcp
+from mcp_init import mcp, _task_tool
 from eve_client import (
     get_client, EVEError, handle_eve_response, success_response, error_response,
     with_gait_logging, paginate_sequence,
@@ -18,7 +18,7 @@ import io
 # System Tools
 # =============================================================================
 
-@mcp.tool()
+@_task_tool
 @with_gait_logging("eve_status")
 def eve_status() -> str:
     """Get EVE-NG system status including version, CPU, memory, and disk."""
@@ -44,7 +44,7 @@ def eve_auth() -> str:
         return error_response(e)
 
 
-@mcp.tool()
+@_task_tool
 @with_gait_logging("eve_list_images")
 def eve_list_images(node_type: Optional[str] = None, page: int = 1, page_size: int = 50) -> str:
     """
@@ -100,7 +100,7 @@ def eve_list_images(node_type: Optional[str] = None, page: int = 1, page_size: i
 # Lab Lifecycle Tools
 # =============================================================================
 
-@mcp.tool()
+@_task_tool
 @with_gait_logging("eve_list_labs")
 def eve_list_labs(folder: str = "/", page: int = 1, page_size: int = 50) -> str:
     """
@@ -127,7 +127,7 @@ def eve_list_labs(folder: str = "/", page: int = 1, page_size: int = 50) -> str:
         return error_response(e)
 
 
-@mcp.tool()
+@_task_tool
 @with_gait_logging("eve_get_lab")
 def eve_get_lab(lab_path: str) -> str:
     """

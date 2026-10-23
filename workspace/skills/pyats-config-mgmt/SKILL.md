@@ -1,6 +1,6 @@
 ---
 name: pyats-config-mgmt
-description: "Network change management - pre-change baselines, configuration deployment, post-change verification, rollback procedures, and compliance validation. Use when pushing config to a device, planning a network change, rolling back a configuration, or running compliance checks."
+description: "Direct, pyATS-based network change management - pre-change baselines, configuration deployment, post-change verification, rollback procedures, and compliance validation. Use when pushing config to a device, planning a network change, rolling back a configuration, or running compliance checks outside of a governed workflow platform. When the change should go through Itential's golden-config/compliance engine instead, use `itential-automation`."
 license: Apache-2.0
 user-invocable: true
 metadata:
@@ -246,6 +246,14 @@ Rollback Required: No
 
 ## ServiceNow Change Request Integration (MISSION02 Enhancement)
 
+Policy selection comes from AGENTS.md: an API-created Terminal Intent Local/Lab
+record for explicitly authorized lab endpoints uses local approval/audit instead
+of ServiceNow/mandatory GAIT. This exception is not inferred from an environment
+variable or missing credentials. Read-only preparation, real baseline and rollback
+artifacts, an API APPLY PHASE and verification remain required. Never evade an
+actual tool-level denial with another transport. All other requests follow the
+production change policy below.
+
 When ServiceNow is available ($SERVICENOW_MCP_SCRIPT is set), every configuration change MUST be gated by an approved Change Request.
 
 ### Pre-Change: Create CR
@@ -318,7 +326,7 @@ Steps:
 Record every phase of the change in GAIT:
 
 ```bash
-python3 $MCP_CALL "python3 -u $GAIT_MCP_SCRIPT" gait_record_turn '{"input":{"role":"assistant","content":"Config change on R1: Phase 1 baseline captured. Phase 2 plan approved. Phase 3 config applied. Phase 4 verification PASSED. ServiceNow CR CHG0012345 closed successful.","artifacts":[]}}'
+python3 $MCP_CALL "python3 -u $GAIT_MCP_SCRIPT" gait_record_turn '{"user_text":"Example only: replace with the actual authorized request.","assistant_text":"Config change on R1: Phase 1 baseline captured. Phase 2 plan approved. Phase 3 config applied. Phase 4 verification PASSED. ServiceNow CR CHG0012345 closed successful.","artifacts":[]}'
 ```
 
 The 5-phase workflow with GAIT creates an immutable record:
@@ -327,3 +335,8 @@ The 5-phase workflow with GAIT creates an immutable record:
 3. **Apply** → GAIT commit with exact commands pushed
 4. **Verify** → GAIT commit with post-change state and diff
 5. **Document** → GAIT commit with final summary and CR closure
+
+Audit examples are illustrative. Replace request, outcomes, identifiers and counts
+with observed session evidence; do not record these example results as facts.
+Inspect MCP `isError`, returned `ok`, and the recorded turn with `gait_show` when
+validating a new client/schema. Follow gait-session-tracking for branch checkout.

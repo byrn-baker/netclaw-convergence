@@ -166,11 +166,10 @@ class TestSemanticSearchFlow:
         store = ChromaStore(temp_data_dir, embedder)
         store._available = False
 
-        # Search should succeed with empty results
+        # Unavailable model is a failure, not a finding of no matching memory.
         result = store.semantic_search("BGP troubleshooting")
-        assert result["success"] is True
-        assert result["data"]["count"] == 0
-        assert "unavailable" in result["data"].get("note", "").lower()
+        assert result["success"] is False
+        assert result["error"]["code"] == "EMBEDDING_FAILED"
 
 
 # =============================================================================

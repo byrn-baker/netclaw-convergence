@@ -18,6 +18,7 @@
 set -uo pipefail
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 SRV="$REPO_ROOT/mcp-servers/redfish-mcp"
+export REDFISH_TEST_URL="${REDFISH_TEST_URL:-http://127.0.0.1:8000}"
 PASS=0; FAIL=0; SKIP=0
 ok()   { printf '  ok   %s\n' "$1"; PASS=$((PASS+1)); }
 bad()  { printf '  FAIL %s\n' "$1"; FAIL=$((FAIL+1)); }
@@ -101,12 +102,12 @@ echo "=== Live against the DMTF mockup (needs httpx + container) ==="
 if ! (cd "$SRV" && python3 -c 'import httpx' 2>/dev/null); then
     skip "live mockup assertions (httpx is not installed here)"
     skip "reachable-BMC verdict against real Redfish"
-elif ! curl -s -m 3 http://127.0.0.1:8000/redfish/v1 >/dev/null 2>&1; then
-    skip "live mockup assertions (no Redfish mock on :8000)"
+elif ! curl -fsS -m 3 "$REDFISH_TEST_URL/redfish/v1" >/dev/null 2>&1; then
+    skip "live mockup assertions (no Redfish mock at configured test URL)"
     skip "reachable-BMC verdict against real Redfish"
 else
     py "systems are read from a real Redfish service with a verdict attached" '
-import os; os.environ["REDFISH_URL"] = "http://127.0.0.1:8000"
+import os; os.environ["REDFISH_URL"] = os.environ["REDFISH_TEST_URL"]
 import server
 r = server.redfish_systems()
 h = r["host"][0]
@@ -125,7 +126,7 @@ echo "=== Empty results must not read as good news ==="
 
 py "TLS verification being off is disclosed, not silent" '
 import os; os.environ["REDFISH_URL"] = "http://x"
-os.environ.pop("REDFISH_VERIFY_TLS", None)
+os.environ["REDFISH_VERIFY_TLS"] = "false"
 import importlib, client; importlib.reload(client)
 n = client.RedfishClient().tls_note()
 print("PASS" if n and "DISABLED" in n else n)'

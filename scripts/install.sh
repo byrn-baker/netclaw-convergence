@@ -23,11 +23,14 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 NETCLAW_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+NETCLAW_PY_EXPLICIT=0
+[ -z "${NETCLAW_PY:-}" ] || NETCLAW_PY_EXPLICIT=1
 
 source "$SCRIPT_DIR/lib/common.sh"
 source "$SCRIPT_DIR/lib/tui.sh"
 source "$SCRIPT_DIR/lib/catalog.sh"
 source "$SCRIPT_DIR/lib/install-steps.sh"
+source "$SCRIPT_DIR/lib/preflight.sh"
 
 define_paths
 
@@ -35,7 +38,7 @@ define_paths
 # `netclaw` launcher inherit the same choice. --runtime / the TUI can change it.
 # If it was set in the environment, treat it as explicit (skip the TUI prompt).
 [ -n "${NETCLAW_RUNTIME:-}" ] && NETCLAW_RUNTIME_EXPLICIT=1
-export NETCLAW_RUNTIME="${NETCLAW_RUNTIME:-openclaw}"
+export NETCLAW_RUNTIME="${NETCLAW_RUNTIME:-$RUNTIME}"
 
 TOTAL_COMPONENTS=$(catalog_ids | wc -l | tr -d ' ')
 
@@ -56,6 +59,7 @@ usage() {
     echo "  --add \"id id ...\"         install components on top of an existing install;"
     echo "                            merges into the recorded component set"
     echo "  --all                     install everything ($TOTAL_COMPONENTS components)"
+    echo "  --preflight               check the selection without installing anything"
     echo "  --list                    list all components and profiles, then exit"
     echo "  --help                    this help"
 }
@@ -84,6 +88,7 @@ list_components() {
 SELECTED=""
 CLI_MODE=0
 ADD_MODE=0
+PREFLIGHT_ONLY=0
 
 while [ $# -gt 0 ]; do
     case "$1" in
@@ -116,11 +121,18 @@ while [ $# -gt 0 ]; do
         --all|--full)
             SELECTED="$(profile_components full)"
             CLI_MODE=1; shift ;;
+        --preflight) PREFLIGHT_ONLY=1; shift ;;
         --list)  list_components; exit 0 ;;
         --help|-h) usage; exit 0 ;;
         *) log_error "Unknown option: $1"; usage; exit 1 ;;
     esac
 done
+
+netclaw_detect_platform
+netclaw_choose_component_python
+netclaw_platform_banner
+NETCLAW_UNSUPPORTED_COMPONENTS="$(python3 "$SCRIPT_DIR/installer-preflight.py" \
+    --os "$NETCLAW_OS" --arch "$NETCLAW_ARCH" --platform-only)" || exit 1
 
 # ═══════════════════════════════════════════
 # Refuse to run under sudo
@@ -202,7 +214,7 @@ detect_banner() {
     echo ""
 }
 
-detect_existing
+[ "$PREFLIGHT_ONLY" -eq 1 ] || detect_existing
 
 # ═══════════════════════════════════════════
 # Component selection (TUI)
@@ -211,7 +223,7 @@ detect_existing
 # Fill CL_IDS/CL_LABELS/CL_ON from the catalog with category headers.
 # $1 = space-separated ids to preselect.
 build_checklist() {
-    local preselect=" $1 " entry id cat name desc last_cat="" label maxw
+    local preselect=" $1 " entry id cat name desc last_cat="" label maxw reason
     maxw=$(( $(tput cols 2>/dev/null || echo 100) - 12 ))
     CL_IDS=(); CL_LABELS=(); CL_ON=()
     for entry in "${CATALOG[@]}"; do
@@ -219,6 +231,11 @@ build_checklist() {
         if [ "$cat" != "$last_cat" ]; then
             CL_IDS+=(""); CL_LABELS+=("── $cat ──"); CL_ON+=(0)
             last_cat="$cat"
+        fi
+        reason="$(netclaw_platform_reason "$id")"
+        if [ -n "$reason" ]; then
+            CL_IDS+=(""); CL_LABELS+=("$name — unavailable: $reason"); CL_ON+=(0)
+            continue
         fi
         label="$(printf '%-26s %s' "$name" "$desc")"
         CL_IDS+=("$id")
@@ -236,7 +253,7 @@ select_runtime() {
         "OpenClaw   — default NetClaw runtime (npm), fully integrated"
         "Hermes     — Nous Research agent (installed via its own installer)"
     )
-    tui_menu "Which agent runtime should NetClaw run on?" "${rt_opts[@]}" || return 0
+    tui_menu "Which agent runtime should NetClaw run on?" "${rt_opts[@]}" || { log_warn "Install cancelled."; exit 1; }
     case "$TUI_CHOICE" in
         0) NETCLAW_RUNTIME="openclaw" ;;
         1) NETCLAW_RUNTIME="hermes" ;;
@@ -330,9 +347,8 @@ if [ "$CLI_MODE" -eq 0 ]; then
     if tui_is_tty; then
         select_components
         show_selection
-        tui_yesno "Install these now?" "y" || { log_warn "Install cancelled."; exit 1; }
     else
-        # Piped / CI with no flags: don't guess — a full 72-component install
+        # Piped / CI with no flags: don't guess — a full catalog install
         # is far too big to start implicitly.
         log_error "No TTY and no selection flags — refusing to guess what to install."
         log_info "Scripted installs must pick explicitly:"
@@ -344,8 +360,22 @@ if [ "$CLI_MODE" -eq 0 ]; then
     fi
 else
     echo ""
-    detect_banner
+    [ "$PREFLIGHT_ONLY" -eq 1 ] || detect_banner
     show_selection
+fi
+
+# The private bridge belongs only to Hermes; omit it from OpenClaw
+# selections. Install it explicitly with --runtime hermes --add hermes-hud.
+if [ "$RUNTIME" != "hermes" ]; then
+    SELECTED="$(printf '%s\n' $SELECTED | awk '$0 != "hermes-hud"')"
+fi
+if ! netclaw_component_preflight; then
+    log_error "Preflight blocked this selection. Resolve the reported prerequisites or choose fewer components."
+    exit 1
+fi
+[ "$PREFLIGHT_ONLY" -eq 0 ] || exit 0
+if [ "$CLI_MODE" -eq 0 ]; then
+    tui_yesno "Install these now?" "y" || { log_warn "Install cancelled."; exit 1; }
 fi
 
 SELECTED_COUNT=$(echo $SELECTED | wc -w | tr -d ' ')
@@ -377,24 +407,47 @@ core_mcpdir
 # terminal scrollback. NETCLAW_VERBOSE=1 streams everything like before.
 # Components whose installers prompt for input keep the terminal.
 
-INSTALL_LOG_DIR="$RUNTIME_HOME/logs/install"
-mkdir -p "$INSTALL_LOG_DIR"
-INTERACTIVE_COMPONENTS=" checkpoint forward ipfabric threejs-viz "
+INSTALL_LOG_ROOT="$RUNTIME_HOME/logs/install"
+mkdir -p "$INSTALL_LOG_ROOT"
+INSTALL_LOG_DIR="$(mktemp -d "$INSTALL_LOG_ROOT/run-$(date -u +%Y%m%dT%H%M%SZ)-XXXXXX")"
+log_info "Logs for this run: $INSTALL_LOG_DIR"
+printf 'Host: %s %s / %s\nBash: %s\nComponent Python: %s\nSelected: %s\n' \
+    "$NETCLAW_OS" "$NETCLAW_OS_VERSION" "$NETCLAW_ARCH" "$BASH_VERSION" "$NETCLAW_PY" "$SELECTED" \
+    > "$INSTALL_LOG_DIR/run-info.txt"
+NETCLAW_RUNTIME_ROOT="$RUNTIME_HOME/python-runtimes"
+export NETCLAW_RUNTIME_ROOT
+INTERACTIVE_COMPONENTS=" checkpoint forward ipfabric threejs-viz jev "
 
 run_component() {
     # $1 = component id, $2 = function name, $3 = display name
     local id="$1" fn="$2" name="$3" logf="$INSTALL_LOG_DIR/$1.log"
+    local NETCLAW_INSTALL_COMPONENT="$id"
+    local PATH="${NETCLAW_VENV:-$NETCLAW_RUNTIME_ROOT/$id}/bin:$PATH"
+    export PATH
+    local NETCLAW_INSTALL_FAILURE_FILE
+    NETCLAW_INSTALL_FAILURE_FILE="$(mktemp "$INSTALL_LOG_DIR/.failure.XXXXXX")"
+    export NETCLAW_INSTALL_COMPONENT NETCLAW_INSTALL_FAILURE_FILE
+    local rc=0 interactive=0
     if [ "${NETCLAW_VERBOSE:-0}" = "1" ] || [[ "$INTERACTIVE_COMPONENTS" == *" $id "* ]]; then
-        if ! "$fn"; then
-            log_warn "$name install reported an error — continuing."
-            return 1
-        fi
-        return 0
+        interactive=1
+        "$fn" || rc=$?
+    else
+        "$fn" > "$logf" 2>&1 || rc=$?
     fi
-    if "$fn" > "$logf" 2>&1; then
+    if [ -s "$NETCLAW_INSTALL_FAILURE_FILE" ]; then
+        cat "$NETCLAW_INSTALL_FAILURE_FILE" >> "$logf"
+        [ "$interactive" -eq 0 ] || cat "$NETCLAW_INSTALL_FAILURE_FILE" >&2
+        rc=1
+    fi
+    rm -f "$NETCLAW_INSTALL_FAILURE_FILE"
+    if [ "$interactive" -eq 1 ]; then
+        [ "$rc" -eq 0 ] || log_error "$name install failed; review the output above."
+        return "$rc"
+    fi
+    if [ "$rc" -eq 0 ]; then
         # Safety net for installers that log [ERROR] but still return 0 —
         # don't let a component claim success with errors in its log.
-        if grep -aq "\[ERROR\]" "$logf"; then
+        if [ -f "$logf" ] && grep -aq "\[ERROR\]" "$logf"; then
             log_error "$name reported errors despite finishing — last 15 log lines:"
             tail -15 "$logf" | sed -e 's/\x1b\[[0-9;]*m//g' -e 's/^/    /'
             log_warn "Full log: $logf — continuing."
@@ -404,7 +457,7 @@ run_component() {
         return 0
     fi
     log_error "$name install failed — last 15 log lines:"
-    tail -15 "$logf" | sed -e 's/\x1b\[[0-9;]*m//g' -e 's/^/    /'
+    [ ! -f "$logf" ] || tail -15 "$logf" | sed -e 's/\x1b\[[0-9;]*m//g' -e 's/^/    /'
     log_warn "Full log: $logf — continuing."
     return 1
 }
@@ -420,20 +473,24 @@ for id in $SELECTED; do
             FAILED_COMPONENTS="$FAILED_COMPONENTS $id"
     else
         log_warn "No installer found for '$id' — skipping."
+        FAILED_COMPONENTS="$FAILED_COMPONENTS $id"
     fi
 done
 
+CORE_FAILED=0
+export NETCLAW_INSTALL_COMPONENT=core-tokens
 if [ "${NETCLAW_VERBOSE:-0}" = "1" ]; then
-    core_tokens
+    core_tokens || CORE_FAILED=1
 else
     if core_tokens > "$INSTALL_LOG_DIR/core-tokens.log" 2>&1; then
         log_info "Token optimization library installed  ${DIM}(log: $INSTALL_LOG_DIR/core-tokens.log)${NC}"
     else
+        CORE_FAILED=1
         log_warn "Token optimization install reported an error — last 10 log lines:"
         tail -10 "$INSTALL_LOG_DIR/core-tokens.log" | sed 's/^/    /'
     fi
 fi
-core_deploy
+unset NETCLAW_INSTALL_COMPONENT
 
 # Record the selection so setup.sh only prompts for what's installed.
 # --add merges into the existing manifest; every other path records the
@@ -455,7 +512,7 @@ echo ""
 # Verify installation (selected components only)
 # ═══════════════════════════════════════════
 
-log_step "Verifying installation..."
+log_step "Checking installed artifacts (tool discovery follows setup)..."
 
 SERVERS_OK=0
 SERVERS_FAIL=0
@@ -463,7 +520,7 @@ SERVERS_FAIL=0
 verify_file() {
     local name="$1" path="$2"
     if [ -f "$path" ]; then
-        log_info "$name: OK"
+        log_info "$name: artifact present (discovery pending)"
         SERVERS_OK=$((SERVERS_OK + 1))
     else
         log_error "$name: MISSING ($path)"
@@ -474,7 +531,7 @@ verify_file() {
 verify_dir() {
     local name="$1" path="$2"
     if [ -d "$path" ]; then
-        log_info "$name: OK"
+        log_info "$name: directory present (discovery pending)"
         SERVERS_OK=$((SERVERS_OK + 1))
     else
         log_warn "$name: NOT INSTALLED ($path missing)"
@@ -485,7 +542,7 @@ verify_dir() {
 verify_cmd_or_module() {
     local name="$1" cmd="$2" module="$3" hint="$4"
     if command -v "$cmd" &> /dev/null || python3 -c "import $module" 2>/dev/null; then
-        log_info "$name: OK"
+        log_info "$name: executable/module present (discovery pending)"
         SERVERS_OK=$((SERVERS_OK + 1))
     else
         log_warn "$name: NOT INSTALLED ($hint)"
@@ -496,7 +553,7 @@ verify_cmd_or_module() {
 verify_runner() {
     local name="$1" cmd="$2" note="$3"
     if command -v "$cmd" &> /dev/null; then
-        log_info "$name: OK ($note)"
+        log_info "$name: launcher present ($note; discovery pending)"
         SERVERS_OK=$((SERVERS_OK + 1))
     else
         log_warn "$name: NOT AVAILABLE ($cmd not installed)"
@@ -505,12 +562,18 @@ verify_runner() {
 }
 
 verify_remote() {
-    log_info "$1: OK (remote server — no local install)"
+    log_info "$1: remote declaration present (connectivity unverified)"
     SERVERS_OK=$((SERVERS_OK + 1))
 }
 
 verify_component() {
     local id="$1" name
+    local PATH="$PATH" runtime_python
+    if [ -f "$NETCLAW_RUNTIME_ROOT/records/$id" ]; then
+        read -r runtime_python < "$NETCLAW_RUNTIME_ROOT/records/$id"
+        PATH="$(dirname "$runtime_python"):$PATH"
+    fi
+    export PATH
     name="$(catalog_field "$id" 3)"
     case "$id" in
         pyats)           verify_file "$name" "$PYATS_MCP_DIR/pyats_mcp_server.py" ;;
@@ -570,7 +633,7 @@ verify_component() {
         twitter)         verify_file "$name" "$TWITTER_MCP_DIR/server.py" ;;
         twilio)          verify_file "$name" "$TWILIO_MCP_DIR/server.py" ;;
         gait)            verify_file "$name" "$GAIT_MCP_DIR/gait_mcp.py" ;;
-        mempalace)       verify_file "$name" "$MEMPALACE_MCP_DIR/mempalace/mcp_server.py" ;;
+        mempalace)       verify_cmd_or_module "$name" mempalace-mcp mempalace.mcp_server "MemPalace module or console entry point missing" ;;
         humanrail)       verify_file "$name" "$HUMANRAIL_MCP_DIR/server.py" ;;
         *)               log_info "$name: configured (no local artifact to check)"
                          SERVERS_OK=$((SERVERS_OK + 1)) ;;
@@ -579,6 +642,12 @@ verify_component() {
 
 VERIFY_FAILED_COMPONENTS=""
 for id in $SELECTED; do
+    if [[ " $FAILED_COMPONENTS " == *" $id "* ]]; then
+        log_error "$(catalog_field "$id" 3): installation failed; artifact verification skipped"
+        SERVERS_FAIL=$((SERVERS_FAIL + 1))
+        VERIFY_FAILED_COMPONENTS="$VERIFY_FAILED_COMPONENTS $id"
+        continue
+    fi
     FAILS_BEFORE=$SERVERS_FAIL
     verify_component "$id"
     if [ "$SERVERS_FAIL" -gt "$FAILS_BEFORE" ]; then
@@ -588,7 +657,15 @@ done
 verify_file "MCP Call Script" "$NETCLAW_DIR/scripts/mcp-call.py"
 
 echo ""
-log_info "Verification: $SERVERS_OK OK, $SERVERS_FAIL FAILED"
+log_info "Artifacts: $SERVERS_OK present/deferred, $SERVERS_FAIL FAILED; this is not tool readiness."
+
+SUCCESSFUL_COMPONENTS=""
+for id in $SELECTED; do
+    [[ " $FAILED_COMPONENTS $VERIFY_FAILED_COMPONENTS " == *" $id "* ]] || SUCCESSFUL_COMPONENTS="$SUCCESSFUL_COMPONENTS $id"
+done
+export SUCCESSFUL_COMPONENTS
+core_deploy || CORE_FAILED=1
+
 echo ""
 
 # ═══════════════════════════════════════════
@@ -598,13 +675,13 @@ echo ""
 log_step "Installation Summary"
 echo ""
 echo "========================================="
-echo "  NetClaw Installation Complete"
+echo "  NetClaw Installation Results"
 echo "========================================="
 echo ""
 
 SKILL_COUNT=$(ls -d "$NETCLAW_DIR/workspace/skills/"*/ 2>/dev/null | wc -l | tr -d ' ')
 
-echo "Installed MCP components ($SELECTED_COUNT of $TOTAL_COMPONENTS):"
+echo "Selected MCP components ($SELECTED_COUNT of $TOTAL_COMPONENTS):"
 SEL=" $SELECTED "
 LAST_CAT=""
 for entry in "${CATALOG[@]}"; do
@@ -619,7 +696,7 @@ for entry in "${CATALOG[@]}"; do
 done
 echo ""
 
-echo "Skills deployed: $SKILL_COUNT → ~/.openclaw/workspace/skills/"
+echo "Skills deployed: $SKILL_COUNT → ${RUNTIME_WORKSPACE:-$RUNTIME_HOME/workspace}/skills/"
 echo "Component manifest: $NETCLAW_MANIFEST"
 echo "  (setup.sh only asks about platforms you installed — re-run install.sh to add more)"
 echo ""
@@ -656,6 +733,15 @@ if [ -f "$SETUP_SCRIPT" ] && tui_is_tty; then
     fi
 fi
 
+# Check the actual registered commands after credentials/setup are available.
+# Missing credentials are configuration-required; failed discovery is a failure.
+READINESS_FAILED=0
+log_step "Checking selected MCP discovery and provider readiness..."
+python3 "$SCRIPT_DIR/installer-readiness.py" --runtime "$RUNTIME" \
+    --runtime-root "$NETCLAW_RUNTIME_ROOT" --config "$RUNTIME_CONFIG" \
+    --components "$SELECTED" --failed-components "$FAILED_COMPONENTS $VERIFY_FAILED_COMPONENTS" \
+    --output "$INSTALL_LOG_DIR/readiness.json" --probe --check-provider || READINESS_FAILED=1
+
 echo ""
 echo "========================================="
 echo "  Next Steps"
@@ -665,6 +751,7 @@ if [ "$RUNTIME" = "hermes" ]; then
     echo "  1. nano testbed/testbed.yaml        # Add your network devices"
     echo "  2. hermes gateway start             # Start the gateway (or: hermes gateway run)"
     echo "  3. hermes chat                      # Talk to NetClaw (or: hermes --tui)"
+    echo "  4. netclaw hud                      # Shared HUD; install --add hermes-hud first"
     echo ""
     echo "  Re-run setup anytime:"
     echo "    hermes setup                       # AI provider, gateway, channels"
@@ -710,8 +797,19 @@ if [ -n "$PROBLEM_COMPONENTS" ]; then
         fi
     done
     echo ""
-    echo "  Everything else installed fine. Retry just these with:"
+    echo "  Retry these installation failures with:"
     echo ""
     echo "    ./scripts/install.sh --add \"$(echo $PROBLEM_COMPONENTS | tr '\n' ' ' | sed 's/ $//')\""
     echo ""
 fi
+
+if [ "$CORE_FAILED" -ne 0 ]; then
+    log_error "Core installation or configuration deployment failed. Review the errors above and $INSTALL_LOG_DIR/core-tokens.log before retrying."
+fi
+if [ "$READINESS_FAILED" -ne 0 ]; then
+    log_error "Tool/provider readiness failed. Inspect $INSTALL_LOG_DIR/readiness.json; installation is incomplete."
+fi
+if [ -n "$PROBLEM_COMPONENTS" ] || [ "$SERVERS_FAIL" -ne 0 ] || [ "$CORE_FAILED" -ne 0 ] || [ "$READINESS_FAILED" -ne 0 ]; then
+    exit 1
+fi
+log_info "Installation steps finished. Review readiness.json for configuration-required/unverified checks before using tools."

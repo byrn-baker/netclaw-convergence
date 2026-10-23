@@ -1,0 +1,106 @@
+[
+  {
+    "path": "mcp-servers/analysis-mcp/server.py",
+    "line": 76,
+    "rule": "CG-SQL-001",
+    "candidate_severity": "HIGH",
+    "disposition": "reviewed; not a confirmed defect at this location",
+    "reason": "Dataset table identifiers come from loader.table_name (alphanumeric/underscore). Zeek output names are sanitized. Reviewed alongside actual discovery path boundary; separate symlink defect A124-042 fixed."
+  },
+  {
+    "path": "mcp-servers/analysis-mcp/server.py",
+    "line": 82,
+    "rule": "CG-SQL-001",
+    "candidate_severity": "HIGH",
+    "disposition": "reviewed; not a confirmed defect at this location",
+    "reason": "Dataset table identifiers come from loader.table_name (alphanumeric/underscore). Zeek output names are sanitized. Reviewed alongside actual discovery path boundary; separate symlink defect A124-042 fixed."
+  },
+  {
+    "path": "mcp-servers/analysis-mcp/server.py",
+    "line": 133,
+    "rule": "CG-SQL-001",
+    "candidate_severity": "HIGH",
+    "disposition": "reviewed; not a confirmed defect at this location",
+    "reason": "Dataset table identifiers come from loader.table_name (alphanumeric/underscore). Zeek output names are sanitized. Reviewed alongside actual discovery path boundary; separate symlink defect A124-042 fixed."
+  },
+  {
+    "path": "mcp-servers/eve-ng-mcp-server/eve_ng_mcp_server.py",
+    "line": 10,
+    "rule": "CG-EXEC-003",
+    "candidate_severity": "HIGH",
+    "disposition": "reviewed; not a confirmed defect at this location",
+    "reason": "Text matches occur in module documentation or the tools_console_exec import, not dynamic Python execution."
+  },
+  {
+    "path": "mcp-servers/eve-ng-mcp-server/eve_ng_mcp_server.py",
+    "line": 35,
+    "rule": "CG-EXEC-003",
+    "candidate_severity": "HIGH",
+    "disposition": "reviewed; not a confirmed defect at this location",
+    "reason": "Text matches occur in module documentation or the tools_console_exec import, not dynamic Python execution."
+  },
+  {
+    "path": "mcp-servers/protocol-mcp/bgp/federation/manager.py",
+    "line": 315,
+    "rule": "CG-SQL-001",
+    "candidate_severity": "HIGH",
+    "disposition": "reviewed; not a confirmed defect at this location",
+    "reason": "SQL fragments select literal internal column names; all peer-supplied values use bound placeholders."
+  },
+  {
+    "path": "mcp-servers/protocol-mcp/bgp/federation/manager.py",
+    "line": 388,
+    "rule": "CG-SQL-001",
+    "candidate_severity": "HIGH",
+    "disposition": "reviewed; not a confirmed defect at this location",
+    "reason": "SQL fragments select literal internal column names; all peer-supplied values use bound placeholders."
+  },
+  {
+    "path": "mcp-servers/protocol-mcp/bgp/federation/manager.py",
+    "line": 404,
+    "rule": "CG-SQL-001",
+    "candidate_severity": "HIGH",
+    "disposition": "reviewed; not a confirmed defect at this location",
+    "reason": "SQL fragments select literal internal column names; all peer-supplied values use bound placeholders."
+  },
+  {
+    "path": "mcp-servers/protocol-mcp/bgp/federation/tasks.py",
+    "line": 174,
+    "rule": "CG-SQL-001",
+    "candidate_severity": "HIGH",
+    "disposition": "reviewed; not a confirmed defect at this location",
+    "reason": "Private _set is called only with literal keyword field names at reviewed call sites; task data/identifiers are bound parameters. Not a public arbitrary-field SQL endpoint."
+  },
+  {
+    "path": "mcp-servers/protocol-mcp/bgp/federation/tls.py",
+    "line": 84,
+    "rule": "CG-TLS-001",
+    "candidate_severity": "MEDIUM",
+    "disposition": "reviewed; not a confirmed defect at this location",
+    "reason": "Pinned eN2N mode verifies listener key fingerprint in service._secure_dial before sensitive exchange, with signed possession/channel binding. First contact is explicit TOFU, not public-PKI assurance; the second hit is documentation. Domain-verified mode uses normal verified TLS. Internal TLS is separately fixed under A124-022."
+  },
+  {
+    "path": "mcp-servers/protocol-mcp/bgp/federation/tls.py",
+    "line": 216,
+    "rule": "CG-TLS-001",
+    "candidate_severity": "MEDIUM",
+    "disposition": "reviewed; not a confirmed defect at this location",
+    "reason": "Pinned eN2N mode verifies listener key fingerprint in service._secure_dial before sensitive exchange, with signed possession/channel binding. First contact is explicit TOFU, not public-PKI assurance; the second hit is documentation. Domain-verified mode uses normal verified TLS. Internal TLS is separately fixed under A124-022."
+  },
+  {
+    "path": "mcp-servers/rag-mcp/storage/registry.py",
+    "line": 285,
+    "rule": "CG-SQL-001",
+    "candidate_severity": "HIGH",
+    "disposition": "reviewed; not a confirmed defect at this location",
+    "reason": "Metadata column choices are a fixed tuple; status query interpolates only a generated list of question-mark placeholders, with values bound."
+  },
+  {
+    "path": "mcp-servers/rag-mcp/storage/registry.py",
+    "line": 299,
+    "rule": "CG-SQL-001",
+    "candidate_severity": "HIGH",
+    "disposition": "reviewed; not a confirmed defect at this location",
+    "reason": "Metadata column choices are a fixed tuple; status query interpolates only a generated list of question-mark placeholders, with values bound."
+  }
+]

@@ -1,0 +1,16 @@
+[
+  {
+    "page": "hud",
+    "title": "NetClaw Visual",
+    "canvas": 1,
+    "executed": false,
+    "activeAttributes": 0,
+    "chatFormatting": "safe formatting",
+    "errors": []
+  },
+  {
+    "page": "canvas",
+    "title": "NetClaw Canvas Chat",
+    "errors": []
+  }
+]

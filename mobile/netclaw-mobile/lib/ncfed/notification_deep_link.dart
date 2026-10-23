@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:async';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -48,7 +49,10 @@ Map<String, String>? parseLocalNotificationPayload(String? payload) {
 /// Finds the conversation turn a chat notification's identifier (a
 /// `taskId`) refers to -- the chat counterpart to
 /// [findMessageForNotificationData].
-ConversationTurn? findTurnForIdentifier(List<ConversationTurn> turns, String taskId) {
+ConversationTurn? findTurnForIdentifier(
+  List<ConversationTurn> turns,
+  String taskId,
+) {
   for (final t in turns) {
     if (t.taskId == taskId) return t;
   }
@@ -71,6 +75,8 @@ class NotificationDeepLink {
   final void Function()? onOpenTimedOut;
 
   late final PendingOpenIntent _intent;
+  StreamSubscription<RemoteMessage>? _subscription;
+  bool _disposed = false;
 
   NotificationDeepLink({
     required this.store,
@@ -81,7 +87,8 @@ class NotificationDeepLink {
     Duration? intentTimeout,
     PendingOpenIntent? intent,
   }) {
-    _intent = intent ??
+    _intent =
+        intent ??
         PendingOpenIntent(
           onOpen: openMessage,
           onExpire: onOpenTimedOut,
@@ -93,7 +100,10 @@ class NotificationDeepLink {
   PendingOpenIntent get intent => _intent;
 
   Future<void> wire() async {
-    FirebaseMessaging.onMessageOpenedApp.listen(_handleRemote);
+    if (_disposed) return;
+    await _subscription?.cancel();
+    if (_disposed) return;
+    _subscription = FirebaseMessaging.onMessageOpenedApp.listen(_handleRemote);
     final initial = await FirebaseMessaging.instance.getInitialMessage();
     if (initial != null) await _handleRemote(initial);
   }
@@ -117,17 +127,21 @@ class NotificationDeepLink {
   /// A tap that names nothing records nothing — opening the app without a tap
   /// must never force a message open (FR-011).
   Future<void> recordTap(String? pushedAt) async {
-    if (pushedAt == null || pushedAt.isEmpty) return;
+    if (_disposed || pushedAt == null || pushedAt.isEmpty) return;
     _intent.record(pushedAt);
     await store.load();
-    _intent.tryResolve(store.messages);
+    if (!_disposed) _intent.tryResolve(store.messages);
   }
 
   /// Call whenever the feed gains a message, from any delivery path. Resolves a
   /// pending tap if this is the message it was waiting for; otherwise a no-op.
   void messageArrived() => _intent.tryResolve(store.messages);
 
-  void dispose() => _intent.dispose();
+  void dispose() {
+    _disposed = true;
+    _subscription?.cancel();
+    _intent.dispose();
+  }
 
   /// Handles a tap on a locally-posted notification -- the counterpart to
   /// [wire]'s Firebase remote-tap handling, fed by
@@ -137,6 +151,7 @@ class NotificationDeepLink {
   /// live list with no per-item "open" concept (FR-006 covers Feed/Chat
   /// only).
   Future<void> handleLocalNotificationTap(String? payload) async {
+    if (_disposed) return;
     final parsed = parseLocalNotificationPayload(payload);
     if (parsed == null) return;
     switch (parsed['type']) {
@@ -153,8 +168,11 @@ class NotificationDeepLink {
         final convoStore = conversationStore;
         if (convoStore == null) return;
         await convoStore.load();
-        final turn = findTurnForIdentifier(convoStore.turns, parsed['identifier']!);
-        if (turn != null) openChatTurn?.call(turn);
+        final turn = findTurnForIdentifier(
+          convoStore.turns,
+          parsed['identifier']!,
+        );
+        if (!_disposed && turn != null) openChatTurn?.call(turn);
     }
   }
 }
@@ -184,9 +202,12 @@ Future<void> handleNotificationResponse(
     if (identifier == null) return;
     final approvalId = int.tryParse(identifier);
     if (approvalId == null) return;
-    final approval =
-        approvalClient.currentPending.where((a) => a.approvalId == approvalId).toList();
-    final targetName = approval.isNotEmpty ? approval.single.targetName : 'this request';
+    final approval = approvalClient.currentPending
+        .where((a) => a.approvalId == approvalId)
+        .toList();
+    final targetName = approval.isNotEmpty
+        ? approval.single.targetName
+        : 'this request';
     await confirmAndResolve(
       client: approvalClient,
       approvalId: approvalId,

@@ -19,6 +19,10 @@ NETCLAW_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 TWITTER_MCP_DIR="$NETCLAW_DIR/mcp-servers/twitter-mcp"
 ENV_FILE="${HOME}/.openclaw/.env"
 
+set_env() {
+    printf '%s' "$2" | python3 "$NETCLAW_DIR/scripts/write-env.py" "$ENV_FILE" "$1"
+}
+
 echo "========================================="
 echo "  NetClaw Twitter/X Integration Setup"
 echo "========================================="
@@ -63,20 +67,12 @@ log_info "Twitter MCP found: $TWITTER_MCP_DIR"
 
 log_step "2/4 Installing Python dependencies..."
 
-if [ -f "$TWITTER_MCP_DIR/requirements.txt" ]; then
-    pip3 install -r "$TWITTER_MCP_DIR/requirements.txt" 2>/dev/null || \
-        pip3 install --break-system-packages -r "$TWITTER_MCP_DIR/requirements.txt" 2>/dev/null || {
-            log_warn "pip install failed — trying individual packages"
-            pip3 install tweepy mcp python-dotenv 2>/dev/null || \
-                pip3 install --break-system-packages tweepy mcp python-dotenv 2>/dev/null || \
-                log_error "Failed to install Twitter MCP dependencies"
-        }
-    log_info "Dependencies installed"
-else
-    log_warn "requirements.txt not found — installing core packages"
-    pip3 install tweepy mcp python-dotenv 2>/dev/null || \
-        pip3 install --break-system-packages tweepy mcp python-dotenv 2>/dev/null
-fi
+source "$NETCLAW_DIR/scripts/lib/pip-helper.sh"
+netclaw_pip_install -r "$TWITTER_MCP_DIR/requirements.txt" || {
+    log_error "Dependency installation failed; setup stopped before configuration."
+    exit 1
+}
+log_info "Dependencies installed"
 
 # ═══════════════════════════════════════════
 # Step 3: Configure credentials
@@ -108,10 +104,10 @@ if grep -q "TWITTER_API_KEY=" "$ENV_FILE" 2>/dev/null; then
         read -r -p "Twitter Access Secret: " access_secret
 
         # Update existing values
-        sed -i "s|^TWITTER_API_KEY=.*|TWITTER_API_KEY=$api_key|" "$ENV_FILE"
-        sed -i "s|^TWITTER_API_SECRET=.*|TWITTER_API_SECRET=$api_secret|" "$ENV_FILE"
-        sed -i "s|^TWITTER_ACCESS_TOKEN=.*|TWITTER_ACCESS_TOKEN=$access_token|" "$ENV_FILE"
-        sed -i "s|^TWITTER_ACCESS_SECRET=.*|TWITTER_ACCESS_SECRET=$access_secret|" "$ENV_FILE"
+        set_env "TWITTER_API_KEY" "$api_key"
+        set_env "TWITTER_API_SECRET" "$api_secret"
+        set_env "TWITTER_ACCESS_TOKEN" "$access_token"
+        set_env "TWITTER_ACCESS_SECRET" "$access_secret"
         log_info "Twitter credentials updated"
     fi
 else
@@ -125,16 +121,12 @@ else
         read -r -p "Twitter Access Secret: " access_secret
 
         # Append to .env
-        {
-            echo ""
-            echo "# Twitter/X Integration"
-            echo "TWITTER_API_KEY=$api_key"
-            echo "TWITTER_API_SECRET=$api_secret"
-            echo "TWITTER_ACCESS_TOKEN=$access_token"
-            echo "TWITTER_ACCESS_SECRET=$access_secret"
-            echo "TWITTER_HEARTBEAT_ENABLED=false"
-            echo "TWITTER_HEARTBEAT_INTERVAL=14400"
-        } >> "$ENV_FILE"
+        set_env "TWITTER_API_KEY" "$api_key"
+        set_env "TWITTER_API_SECRET" "$api_secret"
+        set_env "TWITTER_ACCESS_TOKEN" "$access_token"
+        set_env "TWITTER_ACCESS_SECRET" "$access_secret"
+        set_env "TWITTER_HEARTBEAT_ENABLED" "false"
+        set_env "TWITTER_HEARTBEAT_INTERVAL" "14400"
         log_info "Twitter credentials saved to $ENV_FILE"
     fi
 fi
@@ -154,18 +146,18 @@ echo ""
 read -r -p "Enable heartbeat tweets? [y/N]: " enable_heartbeat
 if [[ "$enable_heartbeat" =~ ^[Yy] ]]; then
     if grep -q "TWITTER_HEARTBEAT_ENABLED=" "$ENV_FILE" 2>/dev/null; then
-        sed -i "s|^TWITTER_HEARTBEAT_ENABLED=.*|TWITTER_HEARTBEAT_ENABLED=true|" "$ENV_FILE"
+        set_env "TWITTER_HEARTBEAT_ENABLED" "true"
     else
-        echo "TWITTER_HEARTBEAT_ENABLED=true" >> "$ENV_FILE"
+        set_env "TWITTER_HEARTBEAT_ENABLED" "true"
     fi
     log_info "Heartbeat enabled — NetClaw will tweet every 4 hours"
 
     read -r -p "Custom interval in seconds? [14400]: " interval
     if [ -n "$interval" ]; then
         if grep -q "TWITTER_HEARTBEAT_INTERVAL=" "$ENV_FILE" 2>/dev/null; then
-            sed -i "s|^TWITTER_HEARTBEAT_INTERVAL=.*|TWITTER_HEARTBEAT_INTERVAL=$interval|" "$ENV_FILE"
+            set_env "TWITTER_HEARTBEAT_INTERVAL" "$interval"
         else
-            echo "TWITTER_HEARTBEAT_INTERVAL=$interval" >> "$ENV_FILE"
+            set_env "TWITTER_HEARTBEAT_INTERVAL" "$interval"
         fi
         log_info "Heartbeat interval set to $interval seconds"
     fi

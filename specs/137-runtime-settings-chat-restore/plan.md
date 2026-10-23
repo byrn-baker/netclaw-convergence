@@ -1,0 +1,2 @@
+# Plan
+Add pure runtime-settings projection and safe compatibility config, read OPENCLAW_CONFIG for graph settings, and update runtimeInventory for selected modern/legacy agent and disabled MCP state. Add bounded, validated per-tab chat storage, initial restoration, synchronous pre-request snapshot, draft/model persistence and new-chat replacement. Surface storage failures and interrupted outcomes. Verify privacy, modern configuration, reload behavior, draft/model/thread identity and no auto replay in a browser with synthetic requests.

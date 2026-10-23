@@ -1,0 +1,1 @@
+Baseline actual shell execution with command recorders fails scope assertion: unrelated bridge mutation / route removal without interface binding. No real network commands executed.

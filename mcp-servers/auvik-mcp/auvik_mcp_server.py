@@ -20,6 +20,7 @@ import sys
 from typing import Optional
 
 from dotenv import load_dotenv
+from fastmcp_tasks import TasksExtension
 from fastmcp import FastMCP
 
 # ---------------------------------------------------------------------------
@@ -41,7 +42,7 @@ logger = logging.getLogger("auvik-mcp")
 
 AUVIK_USERNAME: str = os.getenv("AUVIK_USERNAME", "")
 AUVIK_API_KEY: str = os.getenv("AUVIK_API_KEY", "")
-AUVIK_VERIFY_SSL: bool = os.getenv("AUVIK_VERIFY_SSL", "true").lower() == "true"
+AUVIK_VERIFY_SSL: bool = os.getenv("AUVIK_VERIFY_SSL", "true").strip().lower() not in ("false", "0", "no")
 AUVIK_TIMEOUT: int = int(os.getenv("AUVIK_TIMEOUT", "30"))
 AUVIK_RATE_LIMIT: int = int(os.getenv("AUVIK_RATE_LIMIT", "600"))  # calls per 60 s
 AUVIK_MAX_PAGES: int = int(os.getenv("AUVIK_MAX_PAGES", "50"))
@@ -136,13 +137,14 @@ def get_client() -> AuvikClient:
 # ---------------------------------------------------------------------------
 
 mcp = FastMCP("auvik-mcp")
+mcp.add_extension(TasksExtension(name="netclaw-auvik-mcp", concurrency=1))
 
 # ---------------------------------------------------------------------------
 # Inventory tools (9)
 # ---------------------------------------------------------------------------
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def auvik_list_devices(
     detail_level: str = "info",
     device: Optional[str] = None,
@@ -191,7 +193,7 @@ async def auvik_list_devices(
     )
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def auvik_list_networks(
     detail_level: str = "info",
     network: Optional[str] = None,
@@ -229,7 +231,7 @@ async def auvik_list_networks(
     )
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def auvik_list_interfaces(
     interface: Optional[str] = None,
     parent_device: Optional[str] = None,
@@ -265,7 +267,7 @@ async def auvik_list_interfaces(
     )
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def auvik_list_components(
     component: Optional[str] = None,
     device: Optional[str] = None,
@@ -296,7 +298,7 @@ async def auvik_list_components(
     )
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def auvik_list_tenants(
     detail: bool = False,
     tenant_domain_prefix: Optional[str] = None,
@@ -320,7 +322,7 @@ async def auvik_list_tenants(
     )
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def auvik_list_entity_notes(
     entity: Optional[str] = None,
     entity_type: Optional[str] = None,
@@ -352,7 +354,7 @@ async def auvik_list_entity_notes(
     )
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def auvik_list_entity_audits(
     audit_id: Optional[str] = None,
     user: Optional[str] = None,
@@ -385,7 +387,7 @@ async def auvik_list_entity_audits(
     )
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def auvik_get_usage(
     scope: str = "client",
     device: Optional[str] = None,
@@ -413,7 +415,7 @@ async def auvik_get_usage(
     )
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def auvik_verify_credentials() -> str:
     """Verify that the configured Auvik API credentials are valid.
 
@@ -429,7 +431,7 @@ async def auvik_verify_credentials() -> str:
 # ---------------------------------------------------------------------------
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def auvik_list_alerts(
     alert_id: Optional[str] = None,
     entity: Optional[str] = None,
@@ -480,7 +482,7 @@ async def auvik_list_alerts(
 # ---------------------------------------------------------------------------
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def auvik_list_device_lifecycle(
     device: Optional[str] = None,
     sales_availability: Optional[str] = None,
@@ -515,7 +517,7 @@ async def auvik_list_device_lifecycle(
     )
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def auvik_list_device_warranty(
     device: Optional[str] = None,
     covered_under_warranty: Optional[bool] = None,
@@ -544,7 +546,7 @@ async def auvik_list_device_warranty(
     )
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def auvik_list_configurations(
     config_id: Optional[str] = None,
     device: Optional[str] = None,
@@ -583,7 +585,7 @@ async def auvik_list_configurations(
 # ---------------------------------------------------------------------------
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def auvik_get_device_statistics(
     stat_id: str,
     availability: bool = False,
@@ -631,7 +633,7 @@ async def auvik_get_device_statistics(
     )
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def auvik_get_interface_statistics(
     stat_id: str,
     from_time: Optional[str] = None,
@@ -670,7 +672,7 @@ async def auvik_get_interface_statistics(
     )
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def auvik_get_service_statistics(
     stat_id: str,
     from_time: Optional[str] = None,
@@ -704,7 +706,7 @@ async def auvik_get_service_statistics(
     )
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def auvik_get_component_statistics(
     component_type: str,
     stat_id: str,
@@ -747,7 +749,7 @@ async def auvik_get_component_statistics(
     )
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def auvik_get_oid_statistics(
     device: Optional[str] = None,
     device_type: Optional[str] = None,
@@ -776,7 +778,7 @@ async def auvik_get_oid_statistics(
     )
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def auvik_list_snmp_poller_settings(
     tenants: Optional[str] = None,
     poller_id: Optional[str] = None,
@@ -821,7 +823,7 @@ async def auvik_list_snmp_poller_settings(
     )
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def auvik_get_snmp_poller_history(
     value_type: str = "int",
     tenants: Optional[str] = None,

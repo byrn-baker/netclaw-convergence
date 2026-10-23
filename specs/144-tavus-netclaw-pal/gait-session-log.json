@@ -1,0 +1,65 @@
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "{\n  \"ok\": true,\n  \"branch\": \"tavus-pal-exploration-2026-10-09\",\n  \"commits\": [\n    {\n      \"commit\": \"d647a24e\",\n      \"id\": \"d647a24e8a3852908bf5a59eeb03f46809ee117f07e05a53859b71b75ee38bdf\",\n      \"created_at\": \"2026-10-09T09:35:03\",\n      \"kind\": \"auto\",\n      \"message\": \"session-summary\",\n      \"parents\": [\n        \"15de426d\"\n      ],\n      \"turns\": 1,\n      \"merge\": false\n    },\n    {\n      \"commit\": \"15de426d\",\n      \"id\": \"15de426dd4f5a19cdf65aab3d8af3f6fb7c0095d124313c10337646d33e5ae1f\",\n      \"created_at\": \"2026-10-09T09:34:17\",\n      \"kind\": \"auto\",\n      \"message\": \"research-and-spec\",\n      \"parents\": [\n        \"74559686\"\n      ],\n      \"turns\": 1,\n      \"merge\": false\n    },\n    {\n      \"commit\": \"74559686\",\n      \"id\": \"7455968650f779a009179347b810978c5b656624711193fca5cfcd5268ea7af7\",\n      \"created_at\": \"2026-10-09T09:28:30\",\n      \"kind\": \"auto\",\n      \"message\": \"main-restored\",\n      \"parents\": [\n        \"7b565501\"\n      ],\n      \"turns\": 1,\n      \"merge\": false\n    },\n    {\n      \"commit\": \"7b565501\",\n      \"id\": \"7b56550116d24be44e79b861bed1f1c5d17b65fa9b4584a81fccf28af6bf8132\",\n      \"created_at\": \"2026-10-09T09:27:37\",\n      \"kind\": \"auto\",\n      \"message\": \"session-start\",\n      \"parents\": [\n        \"6b6e48e2\"\n      ],\n      \"turns\": 1,\n      \"merge\": false\n    }\n  ]\n}"
+    }
+  ],
+  "structuredContent": {
+    "result": {
+      "ok": true,
+      "branch": "tavus-pal-exploration-2026-10-09",
+      "commits": [
+        {
+          "commit": "d647a24e",
+          "id": "d647a24e8a3852908bf5a59eeb03f46809ee117f07e05a53859b71b75ee38bdf",
+          "created_at": "2026-10-09T09:35:03",
+          "kind": "auto",
+          "message": "session-summary",
+          "parents": [
+            "15de426d"
+          ],
+          "turns": 1,
+          "merge": false
+        },
+        {
+          "commit": "15de426d",
+          "id": "15de426dd4f5a19cdf65aab3d8af3f6fb7c0095d124313c10337646d33e5ae1f",
+          "created_at": "2026-10-09T09:34:17",
+          "kind": "auto",
+          "message": "research-and-spec",
+          "parents": [
+            "74559686"
+          ],
+          "turns": 1,
+          "merge": false
+        },
+        {
+          "commit": "74559686",
+          "id": "7455968650f779a009179347b810978c5b656624711193fca5cfcd5268ea7af7",
+          "created_at": "2026-10-09T09:28:30",
+          "kind": "auto",
+          "message": "main-restored",
+          "parents": [
+            "7b565501"
+          ],
+          "turns": 1,
+          "merge": false
+        },
+        {
+          "commit": "7b565501",
+          "id": "7b56550116d24be44e79b861bed1f1c5d17b65fa9b4584a81fccf28af6bf8132",
+          "created_at": "2026-10-09T09:27:37",
+          "kind": "auto",
+          "message": "session-start",
+          "parents": [
+            "6b6e48e2"
+          ],
+          "turns": 1,
+          "merge": false
+        }
+      ]
+    }
+  },
+  "isError": false
+}

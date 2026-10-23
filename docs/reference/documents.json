@@ -1,0 +1,2030 @@
+[
+  {
+    "id": "eca12c0a30e25b4b",
+    "path": "CONTRIBUTING.md",
+    "title": "Contributing to NetClaw",
+    "category": "Guides"
+  },
+  {
+    "id": "b647344ecdb5abef",
+    "path": "N2N-PEERING-NETCLAWS.md",
+    "title": "N2N \u2014 Peering NetClaws",
+    "category": "Guides"
+  },
+  {
+    "id": "b335630551682c19",
+    "path": "README.md",
+    "title": "NetClaw",
+    "category": "Guides"
+  },
+  {
+    "id": "7c8118e5bf7d27ec",
+    "path": "TOOLS-REFERENCE.md",
+    "title": "TOOLS-REFERENCE.md \u2014 Detailed Per-Integration Infrastructure Notes",
+    "category": "Guides"
+  },
+  {
+    "id": "7b38acb6fb27d5cb",
+    "path": "docs/ADDING-AN-MCP.md",
+    "title": "Adding an MCP Integration",
+    "category": "Guides"
+  },
+  {
+    "id": "d52900f27a57b8dd",
+    "path": "docs/APP-REVIEW-NOTES-DRAFT.md",
+    "title": "App Review Notes \u2014 Draft for \"Please provide instructions to use your app\"",
+    "category": "Guides"
+  },
+  {
+    "id": "4421b81bbd27b268",
+    "path": "docs/APP-REVIEW-REPLY-5.1-DRAFT.md",
+    "title": "Reply draft \u2014 Guidelines 5.1.1(i) / 5.1.2(i)",
+    "category": "Guides"
+  },
+  {
+    "id": "753932c54f6f39d0",
+    "path": "docs/APP-STORE-LISTING-DRAFT.md",
+    "title": "App Store Connect Listing \u2014 Draft Copy",
+    "category": "Guides"
+  },
+  {
+    "id": "b462b43df9341d33",
+    "path": "docs/AUDIT124-MIGRATIONS.md",
+    "title": "Installer state preservation (spec 124)",
+    "category": "Guides"
+  },
+  {
+    "id": "7ce8042d9da70c87",
+    "path": "docs/CHANGE-GATE-MIGRATION.md",
+    "title": "Production change verification",
+    "category": "Guides"
+  },
+  {
+    "id": "e1813c8549074247",
+    "path": "docs/CHECKPOINT.md",
+    "title": "Check Point Security Integration",
+    "category": "Guides"
+  },
+  {
+    "id": "76b0aed077cb8b5b",
+    "path": "docs/COVERAGE-ROADMAP.md",
+    "title": "NetClaw Coverage Roadmap",
+    "category": "Guides"
+  },
+  {
+    "id": "fa4fa2e5661c589f",
+    "path": "docs/DEFENSECLAW.md",
+    "title": "DefenseClaw + OpenShell Enterprise Security Guide",
+    "category": "Guides"
+  },
+  {
+    "id": "6b413c531e903dce",
+    "path": "docs/ENVIRONMENT-FILES.md",
+    "title": "Environment files are configuration data",
+    "category": "Guides"
+  },
+  {
+    "id": "fdbd821f01e52666",
+    "path": "docs/EQUINIX.md",
+    "title": "Equinix Fabric + Network Edge",
+    "category": "Guides"
+  },
+  {
+    "id": "d886be7921a0df05",
+    "path": "docs/FASTMCP-4-WRITEUP.md",
+    "title": "NetClaw 1.5.0: FastMCP migration writeup",
+    "category": "Guides"
+  },
+  {
+    "id": "943558116ac3c358",
+    "path": "docs/FASTMCP-UPGRADE.md",
+    "title": "FastMCP 4 migration (spec 141)",
+    "category": "Guides"
+  },
+  {
+    "id": "57be8789304d4ccf",
+    "path": "docs/FORWARD.md",
+    "title": "Forward MCP Integration Guide",
+    "category": "Guides"
+  },
+  {
+    "id": "5a30910bcd000c78",
+    "path": "docs/GAIT-RUNTIME-MIGRATION.md",
+    "title": "GAIT runtime migration and recovery",
+    "category": "Guides"
+  },
+  {
+    "id": "f39d5e5090772346",
+    "path": "docs/GENIE-RUNTIME-SETUP.md",
+    "title": "Automated pyATS / Genie runtime setup",
+    "category": "Guides"
+  },
+  {
+    "id": "bd78fc952591e6d3",
+    "path": "docs/HERMES-HUD.md",
+    "title": "Hermes in the NetClaw HUD",
+    "category": "Guides"
+  },
+  {
+    "id": "a87a5b7148db3cee",
+    "path": "docs/HUD-ACCESS.md",
+    "title": "Local and remote HUD access",
+    "category": "Guides"
+  },
+  {
+    "id": "3a14669b95781005",
+    "path": "docs/HUD-FUNCTION-FIRST.md",
+    "title": "Function-first HUD (specs 127 and 130)",
+    "category": "Guides"
+  },
+  {
+    "id": "be356393d29107e3",
+    "path": "docs/IN2N-TRANSPORT-MIGRATION.md",
+    "title": "Secure internal federation transport",
+    "category": "Guides"
+  },
+  {
+    "id": "c1e051aa0fad011f",
+    "path": "docs/INSTALLER-READINESS.md",
+    "title": "Install and first-use readiness",
+    "category": "Guides"
+  },
+  {
+    "id": "b82ba408e8282b0e",
+    "path": "docs/INTEGRATION-TLS-MIGRATION.md",
+    "title": "Verified integration transport",
+    "category": "Guides"
+  },
+  {
+    "id": "6f4b2fa58ca72ce1",
+    "path": "docs/IPFABRIC.md",
+    "title": "IP Fabric MCP Integration Guide",
+    "category": "Guides"
+  },
+  {
+    "id": "e2d92237bf18a156",
+    "path": "docs/JEV-SCIENCE-OFFICER.md",
+    "title": "Jev Science Officer",
+    "category": "Guides"
+  },
+  {
+    "id": "e6551474e8ae44d6",
+    "path": "docs/LINKEDIN-ARTICLE-DRAFT.md",
+    "title": "Agentic Operations Goes Mobile",
+    "category": "Guides"
+  },
+  {
+    "id": "37d00f0d0c91224e",
+    "path": "docs/LINKEDIN-HYPE-POST-DRAFT.md",
+    "title": "LINKEDIN-HYPE-POST-DRAFT",
+    "category": "Guides"
+  },
+  {
+    "id": "da208a7056820a07",
+    "path": "docs/LOGGING-GUIDE.md",
+    "title": "Logging and troubleshooting",
+    "category": "Guides"
+  },
+  {
+    "id": "a1a14f6817ad6cc4",
+    "path": "docs/MCP-TASKS.md",
+    "title": "Asynchronous MCP Tasks",
+    "category": "Guides"
+  },
+  {
+    "id": "90ed1ae0630c71c4",
+    "path": "docs/MOBILE-RELEASE.md",
+    "title": "Mobile release workflow",
+    "category": "Guides"
+  },
+  {
+    "id": "2148e57ba834b379",
+    "path": "docs/MULTIVENDOR-SSH-MIGRATION.md",
+    "title": "Multivendor SSH identity migration",
+    "category": "Guides"
+  },
+  {
+    "id": "2d52de47d65fcccb",
+    "path": "docs/N2N-FEDERATION-GUIDE.md",
+    "title": "Federating with a NetClaw \u2014 onboarding guide",
+    "category": "Guides"
+  },
+  {
+    "id": "3dad505ca5218e39",
+    "path": "docs/N2N-RISK-MIGRATION-FOR-PEERS.md",
+    "title": "N2N Risk model \u2014 technical readout for federated peers (Nick, Byrn)",
+    "category": "Guides"
+  },
+  {
+    "id": "0f73072a6e80a25b",
+    "path": "docs/N2N-RISK.md",
+    "title": "A Risk of NetClaws \u2014 Internal Federation (iN2N)",
+    "category": "Guides"
+  },
+  {
+    "id": "41f8d651cd66e8db",
+    "path": "docs/NETCLAW-CANVAS-PR.md",
+    "title": "Canvas terminal integration \u2014 PR scope and validation",
+    "category": "Guides"
+  },
+  {
+    "id": "13ede7d8f1ebbfae",
+    "path": "docs/NETCLAW-DOT.md",
+    "title": "Using NetClaw as a Dot",
+    "category": "Guides"
+  },
+  {
+    "id": "c5a418aaaea59e22",
+    "path": "docs/PYATS-HTTP-MIGRATION.md",
+    "title": "Upgrade pyATS to stateless HTTP",
+    "category": "Guides"
+  },
+  {
+    "id": "98ef06bb15fcb6fd",
+    "path": "docs/PYTHON-RUNTIME-MIGRATION.md",
+    "title": "Python installation compatibility",
+    "category": "Guides"
+  },
+  {
+    "id": "fe69db7c99496002",
+    "path": "docs/REDFISH-TLS-MIGRATION.md",
+    "title": "Redfish certificate verification",
+    "category": "Guides"
+  },
+  {
+    "id": "8936340d2e7844f9",
+    "path": "docs/RELEASING.md",
+    "title": "Releasing NetClaw",
+    "category": "Guides"
+  },
+  {
+    "id": "db7f342b9af138e1",
+    "path": "docs/SECURITY-MODES.md",
+    "title": "Security modes, DefenseClaw and OpenShell",
+    "category": "Guides"
+  },
+  {
+    "id": "d87d48c2df168f7e",
+    "path": "docs/SOUL-DEFENSE.md",
+    "title": "SOUL-DEFENSE: Security Principles for NetClaw",
+    "category": "Guides"
+  },
+  {
+    "id": "000634614a4b22ff",
+    "path": "docs/TAVUS-PAL.md",
+    "title": "NetClaw Pal \u2014 local avatars and optional Tavus",
+    "category": "Guides"
+  },
+  {
+    "id": "198e765cea06959b",
+    "path": "docs/UPGRADE-TO-DEFENSECLAW.md",
+    "title": "Upgrading to DefenseClaw",
+    "category": "Guides"
+  },
+  {
+    "id": "ec7c3160adadd84d",
+    "path": "docs/VOICE-SECURITY.md",
+    "title": "Upgrade the voice webhook service",
+    "category": "Guides"
+  },
+  {
+    "id": "2c7e176c1c2fdf02",
+    "path": "docs/ZOOM-MEETING-INTELLIGENCE.md",
+    "title": "NetClaw for Zoom \u2014 Meeting Intelligence",
+    "category": "Guides"
+  },
+  {
+    "id": "e6db1746162b6110",
+    "path": "docs/ZOOM-SECURITY-MIGRATION.md",
+    "title": "Zoom security upgrade",
+    "category": "Guides"
+  },
+  {
+    "id": "c7deb343205217fa",
+    "path": "docs/blog/2026-04-18-enterprise-security-3-rings.md",
+    "title": "Running NetClaw with Enterprise Security: A 3-Ring Architecture",
+    "category": "Guides"
+  },
+  {
+    "id": "777012656dd970f8",
+    "path": "docs/blog/2026-06-08-claroty-mcp.md",
+    "title": "Claroty xDome joins NetClaw \u2014 OT visibility lands as MCP #74",
+    "category": "Guides"
+  },
+  {
+    "id": "22fd073c81da7884",
+    "path": "docs/blog/2026-07-10-n2n-federation.md",
+    "title": "NetClaws, Assemble: introducing N2N Federation and the NCFED protocol",
+    "category": "Guides"
+  },
+  {
+    "id": "c9984905e6e3f67d",
+    "path": "docs/blog/2026-07-11-n2n-reliability.md",
+    "title": "Making the mesh hold: N2N federation grows up",
+    "category": "Guides"
+  },
+  {
+    "id": "f498ad59c6ea5caa",
+    "path": "docs/blog/2026-07-12-in2n-risk.md",
+    "title": "A Risk of NetClaws",
+    "category": "Guides"
+  },
+  {
+    "id": "fcaa3eee13db0125",
+    "path": "docs/blog/2026-07-13-in2n-production.md",
+    "title": "Make It Mean It",
+    "category": "Guides"
+  },
+  {
+    "id": "0655e648ad30a160",
+    "path": "docs/blog/2026-07-15-claw-certification.md",
+    "title": "Draft blog post \u2014 for John's review before publishing (Constitution XVII)",
+    "category": "Guides"
+  },
+  {
+    "id": "2e0ae268f6c04c01",
+    "path": "docs/blog/2026-07-17-rag-mcp.md",
+    "title": "Published blog post (Constitution XVII \u2014 approved by John 2026-07-18)",
+    "category": "Guides"
+  },
+  {
+    "id": "19f43cc149b8c5ba",
+    "path": "docs/blog/2026-07-23-auvik-mcp.md",
+    "title": "Teaching NetClaw to Speak Auvik \u2014 A Read-Only MSP Monitoring MCP",
+    "category": "Guides"
+  },
+  {
+    "id": "54ff65faaa28cb05",
+    "path": "docs/blog/2026-07-24-halo-mcp.md",
+    "title": "Teaching NetClaw to Open Change Requests \u2014 a HaloPSA / HaloITSM MCP",
+    "category": "Guides"
+  },
+  {
+    "id": "20fbbbccd1f7c5c2",
+    "path": "docs/blog/2026-07-31-r1-multivendor-cli-driver.md",
+    "title": "Ninety Platforms, Two Bugs, and Why We Didn't Adopt Either Candidate",
+    "category": "Guides"
+  },
+  {
+    "id": "e74a65dff825605e",
+    "path": "docs/blog/2026-07-31-r2-cisco-psirt.md",
+    "title": "Eight API Families, One That Answers, and a Regex That Lied",
+    "category": "Guides"
+  },
+  {
+    "id": "595cdc96e4a42779",
+    "path": "docs/blog/2026-07-31-r8-globalping.md",
+    "title": "Looking At Ourselves From Outside, And The Billing Model I Got Backwards",
+    "category": "Guides"
+  },
+  {
+    "id": "dce49f87a2c38d2d",
+    "path": "docs/blog/2026-08-06-mobile-prerelease-sweep.md",
+    "title": "A Stuck Badge, a Feature We'd Already Built, and a Bug Only a Cold Cache Could Hide",
+    "category": "Guides"
+  },
+  {
+    "id": "f8a64c099639fa3b",
+    "path": "docs/blog/2026-08-14-mobile-polish-pass.md",
+    "title": "Seven Small Fixes, One Bug Only a Tester Could Have Found",
+    "category": "Guides"
+  },
+  {
+    "id": "9ab51f288fd02a95",
+    "path": "docs/blog/2026-08-15-live-activity-interactive-inflight.md",
+    "title": "The Feature the Brief Asked For Doesn't Exist \u2014 Here's What Does",
+    "category": "Guides"
+  },
+  {
+    "id": "d80b17fb94f22b40",
+    "path": "docs/blog/2026-08-15-siri-app-intents.md",
+    "title": "Three Things You Can Ask NetClaw Without Touching Your Phone",
+    "category": "Guides"
+  },
+  {
+    "id": "a98801d6fa3dd748",
+    "path": "docs/blog/2026-08-15-watch-double-tap-corner-complication.md",
+    "title": "The Safest Feature Is the One That Reuses a Safety Check It Didn't Build",
+    "category": "Guides"
+  },
+  {
+    "id": "a320ef35e49f54c5",
+    "path": "docs/blog/2026-08-15-widgets-controlwidget.md",
+    "title": "The Wizard Got the Address Wrong",
+    "category": "Guides"
+  },
+  {
+    "id": "eea620a3db9578e5",
+    "path": "docs/blog/2026-09-29-equinix-composable-operations.md",
+    "title": "From an Equinix question to an approved network operation",
+    "category": "Guides"
+  },
+  {
+    "id": "fa6efa114997f417",
+    "path": "docs/blog/2026-09-29-equinix-editorial-handoff.md",
+    "title": "Editorial handoff \u2014 Equinix",
+    "category": "Guides"
+  },
+  {
+    "id": "e6f9ef762fc62a0a",
+    "path": "docs/ietf/AGENTPROTO-POSITIONING.md",
+    "title": "Socializing `draft-capobianco-ncfed-00` at IETF `agentproto`",
+    "category": "Guides"
+  },
+  {
+    "id": "7ab004b6ea092f8a",
+    "path": "docs/ietf/IETF-MCP-LANDSCAPE-2026-08.md",
+    "title": "IETF MCP / agent-protocol landscape \u2192 NCFED `-01` input",
+    "category": "Guides"
+  },
+  {
+    "id": "0060ade678d09686",
+    "path": "docs/ietf/MILESTONE-NOTE.md",
+    "title": "Milestone note (draft for John \u2014 Constitution XVII)",
+    "category": "Guides"
+  },
+  {
+    "id": "42f8821031dbc93d",
+    "path": "docs/ietf/NCFED-HARDENING-BACKLOG.md",
+    "title": "NCFED Hardening Backlog \u2014 seed for a future spec (060+) and draft `-01`",
+    "category": "Guides"
+  },
+  {
+    "id": "cf144245e76fc907",
+    "path": "docs/ietf/README.md",
+    "title": "NCFED Internet-Draft \u2014 file map",
+    "category": "Guides"
+  },
+  {
+    "id": "e02812b12471496c",
+    "path": "docs/ietf/SUBMISSION-CHECKLIST.md",
+    "title": "Submission Checklist \u2014 `draft-capobianco-ncfed-00`",
+    "category": "Guides"
+  },
+  {
+    "id": "9472f00f56ad8344",
+    "path": "docs/ietf/archive/draft-capobianco-ncfed-01.md",
+    "title": "Introduction",
+    "category": "Guides"
+  },
+  {
+    "id": "8b5aa04e76838b4a",
+    "path": "docs/ietf/archive/draft-capobianco-ncfed-02.md",
+    "title": "Introduction",
+    "category": "Guides"
+  },
+  {
+    "id": "cd5ef59afc31e119",
+    "path": "docs/ietf/draft-capobianco-ncfed-00.md",
+    "title": "Introduction",
+    "category": "Guides"
+  },
+  {
+    "id": "73f3fd0ca56b157a",
+    "path": "docs/jev-audit/findings.md",
+    "title": "Jev audit findings",
+    "category": "Guides"
+  },
+  {
+    "id": "3e501b81a30ae5e1",
+    "path": "docs/lab-report-2026-02-23.md",
+    "title": "\ud83e\udd9e NetClaw Lab Network \u2014 Status Report",
+    "category": "Guides"
+  },
+  {
+    "id": "823a04c4151155e8",
+    "path": "docs/reference/CLI-REFERENCE.md",
+    "title": "NetClaw CLI and interface reference",
+    "category": "Reference"
+  },
+  {
+    "id": "59df957457368eaa",
+    "path": "docs/reference/hud-openapi.json",
+    "title": "hud-openapi",
+    "category": "Reference"
+  },
+  {
+    "id": "aeb6d330190eeca9",
+    "path": "docs/reference/interfaces.json",
+    "title": "interfaces",
+    "category": "Reference"
+  },
+  {
+    "id": "47b55c54fbc2b632",
+    "path": "docs/releases/1.0.0-announcement.md",
+    "title": "Announcement draft \u2014 NetClaw 1.0.0",
+    "category": "Guides"
+  },
+  {
+    "id": "c6791b70d399988a",
+    "path": "docs/releases/1.0.0-content-handoff.md",
+    "title": "Content-agent handoff: NetClaw 1.0.0 official release",
+    "category": "Guides"
+  },
+  {
+    "id": "c45fbfd040e60d25",
+    "path": "docs/releases/1.0.0.md",
+    "title": "NetClaw 1.0.0 \u2014 the network engineering workspace",
+    "category": "Guides"
+  },
+  {
+    "id": "5d38896f0e84438f",
+    "path": "docs/releases/1.1.0-content-handoff.md",
+    "title": "Content-agent addendum: NetClaw 1.1.0",
+    "category": "Guides"
+  },
+  {
+    "id": "6f88cec3ef10650a",
+    "path": "docs/releases/1.1.0.md",
+    "title": "NetClaw 1.1.0 \u2014 choose your conversation workspace",
+    "category": "Guides"
+  },
+  {
+    "id": "20c09b9ec7f1dc91",
+    "path": "docs/releases/1.2.0.md",
+    "title": "NetClaw 1.2.0",
+    "category": "Guides"
+  },
+  {
+    "id": "83d5560103dc774a",
+    "path": "docs/releases/1.2.1.md",
+    "title": "NetClaw 1.2.1",
+    "category": "Guides"
+  },
+  {
+    "id": "b40c5e426bb6a8eb",
+    "path": "docs/releases/1.3.0.md",
+    "title": "NetClaw 1.3.0",
+    "category": "Guides"
+  },
+  {
+    "id": "ae2c7c182c711796",
+    "path": "docs/releases/1.4.0.md",
+    "title": "NetClaw 1.4.0",
+    "category": "Guides"
+  },
+  {
+    "id": "a731bf22e00379e5",
+    "path": "docs/releases/1.5.0.md",
+    "title": "NetClaw 1.5.0",
+    "category": "Guides"
+  },
+  {
+    "id": "5d0a81428e54d217",
+    "path": "docs/releases/1.6.0.md",
+    "title": "NetClaw 1.6.0",
+    "category": "Guides"
+  },
+  {
+    "id": "3e4e88ea8fc3ceb4",
+    "path": "docs/releases/1.6.1.md",
+    "title": "NetClaw 1.6.1",
+    "category": "Guides"
+  },
+  {
+    "id": "3982fb29e11eabaa",
+    "path": "docs/releases/1.6.2.md",
+    "title": "NetClaw 1.6.2",
+    "category": "Guides"
+  },
+  {
+    "id": "fa1356e6b564b90c",
+    "path": "docs/releases/1.7.0.md",
+    "title": "NetClaw 1.7.0 \u2014 Hermes joins the shared HUD",
+    "category": "Guides"
+  },
+  {
+    "id": "460a0c09b3013aa9",
+    "path": "docs/social/MCP-TASKS-POST.md",
+    "title": "Adding asynchronous MCP Tasks to pyATS\u2014and across NetClaw",
+    "category": "Guides"
+  },
+  {
+    "id": "402d1bf13daa564f",
+    "path": "mobile/netclaw-mobile/MOBILE-ONBOARDING.md",
+    "title": "Securely onboarding a mobile Claw",
+    "category": "Guides"
+  },
+  {
+    "id": "eadba9bef30876f4",
+    "path": "workspace/skills/aap-automation/SKILL.md",
+    "title": "Ansible Automation Platform Operations",
+    "category": "Skills"
+  },
+  {
+    "id": "abb5ee2ad394bffd",
+    "path": "workspace/skills/aap-eda/SKILL.md",
+    "title": "Event-Driven Ansible (EDA) Operations",
+    "category": "Skills"
+  },
+  {
+    "id": "c3c341eed1d53ee4",
+    "path": "workspace/skills/aap-lint/SKILL.md",
+    "title": "Ansible Lint Operations",
+    "category": "Skills"
+  },
+  {
+    "id": "4edec40b949e0f0a",
+    "path": "workspace/skills/aci-change-deploy/SKILL.md",
+    "title": "ACI Change Deployment",
+    "category": "Skills"
+  },
+  {
+    "id": "1c256e5059d740e7",
+    "path": "workspace/skills/aci-fabric-audit/SKILL.md",
+    "title": "ACI Fabric Health Audit",
+    "category": "Skills"
+  },
+  {
+    "id": "bd436ff75fec4b30",
+    "path": "workspace/skills/anta-validation/SKILL.md",
+    "title": "ANTA validation \u2014 the assertion layer",
+    "category": "Skills"
+  },
+  {
+    "id": "af4c2bb0fbc46753",
+    "path": "workspace/skills/arista-cvp/SKILL.md",
+    "title": "Arista CloudVision Portal (CVP) Automation",
+    "category": "Skills"
+  },
+  {
+    "id": "a248e3436f245bf8",
+    "path": "workspace/skills/aruba-cx-config/SKILL.md",
+    "title": "Aruba CX Configuration Management",
+    "category": "Skills"
+  },
+  {
+    "id": "c51c9799ba1a9741",
+    "path": "workspace/skills/aruba-cx-interfaces/SKILL.md",
+    "title": "Aruba CX Interface Monitoring",
+    "category": "Skills"
+  },
+  {
+    "id": "8028991ddd4808ac",
+    "path": "workspace/skills/aruba-cx-switching/SKILL.md",
+    "title": "Aruba CX Switching Operations",
+    "category": "Skills"
+  },
+  {
+    "id": "4c31a36cbff5f006",
+    "path": "workspace/skills/aruba-cx-system/SKILL.md",
+    "title": "Aruba CX System Discovery",
+    "category": "Skills"
+  },
+  {
+    "id": "c6b1c2e87fdbb44d",
+    "path": "workspace/skills/atlassian-itsm/SKILL.md",
+    "title": "Atlassian ITSM Skill",
+    "category": "Skills"
+  },
+  {
+    "id": "8184a39b984749fc",
+    "path": "workspace/skills/auvik-inventory/SKILL.md",
+    "title": "Auvik Inventory",
+    "category": "Skills"
+  },
+  {
+    "id": "d8c6733382580997",
+    "path": "workspace/skills/auvik-lifecycle/SKILL.md",
+    "title": "Auvik Device Lifecycle",
+    "category": "Skills"
+  },
+  {
+    "id": "f42b241ee3845bdb",
+    "path": "workspace/skills/auvik-network-alerts/SKILL.md",
+    "title": "Auvik Network Alerts",
+    "category": "Skills"
+  },
+  {
+    "id": "43b25eb242046100",
+    "path": "workspace/skills/auvik-performance/SKILL.md",
+    "title": "Auvik Performance",
+    "category": "Skills"
+  },
+  {
+    "id": "a43c96b9dd997fcc",
+    "path": "workspace/skills/aws-architecture-diagram/SKILL.md",
+    "title": "AWS Architecture Diagram",
+    "category": "Skills"
+  },
+  {
+    "id": "6b3167b00130785a",
+    "path": "workspace/skills/aws-cloud-monitoring/SKILL.md",
+    "title": "AWS Cloud Monitoring",
+    "category": "Skills"
+  },
+  {
+    "id": "e549e6dee474fda7",
+    "path": "workspace/skills/aws-cost-ops/SKILL.md",
+    "title": "AWS Cost Operations",
+    "category": "Skills"
+  },
+  {
+    "id": "ba76afc716a7358f",
+    "path": "workspace/skills/aws-network-ops/SKILL.md",
+    "title": "AWS Network Operations",
+    "category": "Skills"
+  },
+  {
+    "id": "bf3ea43acab34d94",
+    "path": "workspace/skills/aws-security-audit/SKILL.md",
+    "title": "AWS Security Audit",
+    "category": "Skills"
+  },
+  {
+    "id": "ecf5294d857ff476",
+    "path": "workspace/skills/azure-network-ops/SKILL.md",
+    "title": "Azure Network Operations",
+    "category": "Skills"
+  },
+  {
+    "id": "acea3b1c5f797d5f",
+    "path": "workspace/skills/azure-security-audit/SKILL.md",
+    "title": "Azure Security Audit",
+    "category": "Skills"
+  },
+  {
+    "id": "8ede25a1c2150b6a",
+    "path": "workspace/skills/batfish-config-analysis/SKILL.md",
+    "title": "Batfish Configuration Analysis",
+    "category": "Skills"
+  },
+  {
+    "id": "bae7c1e160ea8414",
+    "path": "workspace/skills/bgp-registry-intel/SKILL.md",
+    "title": "BGP & Registry Intelligence",
+    "category": "Skills"
+  },
+  {
+    "id": "0575bbec8d27b66b",
+    "path": "workspace/skills/blender-3d-viz/SKILL.md",
+    "title": "Blender 3D Network Visualization",
+    "category": "Skills"
+  },
+  {
+    "id": "e5e98aed2d69e3a0",
+    "path": "workspace/skills/browser-gui-inspect/SKILL.md",
+    "title": "Browser GUI Inspect Skill",
+    "category": "Skills"
+  },
+  {
+    "id": "c6b9ff52d7e7207f",
+    "path": "workspace/skills/browser-viz-verify/SKILL.md",
+    "title": "Browser Visualization Verify Skill",
+    "category": "Skills"
+  },
+  {
+    "id": "b49e9d07c1753d29",
+    "path": "workspace/skills/canvas-network-viz/SKILL.md",
+    "title": "Canvas Network Visualization",
+    "category": "Skills"
+  },
+  {
+    "id": "025585440ffa4888",
+    "path": "workspace/skills/catalyst-center-readonly/SKILL.md",
+    "title": "Catalyst Center (read-only)",
+    "category": "Skills"
+  },
+  {
+    "id": "c3190dbf2a2b269d",
+    "path": "workspace/skills/catc-client-ops/SKILL.md",
+    "title": "Catalyst Center Client Operations and Monitoring",
+    "category": "Skills"
+  },
+  {
+    "id": "c6ea59779c3f82c5",
+    "path": "workspace/skills/catc-inventory/SKILL.md",
+    "title": "Catalyst Center Device Inventory and Site Management",
+    "category": "Skills"
+  },
+  {
+    "id": "f44731c9d43a2539",
+    "path": "workspace/skills/catc-troubleshoot/SKILL.md",
+    "title": "Catalyst Center Troubleshooting Workflows",
+    "category": "Skills"
+  },
+  {
+    "id": "d8b8b43663889af8",
+    "path": "workspace/skills/checkpoint/SKILL.md",
+    "title": "Check Point Security Platform",
+    "category": "Skills"
+  },
+  {
+    "id": "f5860123821e6067",
+    "path": "workspace/skills/cisco-psirt-advisories/SKILL.md",
+    "title": "Cisco PSIRT Advisory Checks",
+    "category": "Skills"
+  },
+  {
+    "id": "67e38ac2614a9a67",
+    "path": "workspace/skills/clab-lab-management/SKILL.md",
+    "title": "ContainerLab Lab Management",
+    "category": "Skills"
+  },
+  {
+    "id": "859cce0ccb0f1c08",
+    "path": "workspace/skills/claroty-asset-inventory/SKILL.md",
+    "title": "Claroty Asset Inventory",
+    "category": "Skills"
+  },
+  {
+    "id": "12203a0277889ca3",
+    "path": "workspace/skills/claroty-ot-topology/SKILL.md",
+    "title": "Claroty OT Topology",
+    "category": "Skills"
+  },
+  {
+    "id": "6fc063beef3edc28",
+    "path": "workspace/skills/claroty-risk-triage/SKILL.md",
+    "title": "Claroty Risk Triage",
+    "category": "Skills"
+  },
+  {
+    "id": "9f919547dae851cb",
+    "path": "workspace/skills/cloudflare-analytics/SKILL.md",
+    "title": "Cloudflare Analytics Skill",
+    "category": "Skills"
+  },
+  {
+    "id": "133a0320147cf69a",
+    "path": "workspace/skills/cloudflare-dns/SKILL.md",
+    "title": "Cloudflare DNS Skill",
+    "category": "Skills"
+  },
+  {
+    "id": "9f0c80b901a9e774",
+    "path": "workspace/skills/cloudflare-security/SKILL.md",
+    "title": "Cloudflare Security Skill",
+    "category": "Skills"
+  },
+  {
+    "id": "23d2274824dc4658",
+    "path": "workspace/skills/cloudflare-workers/SKILL.md",
+    "title": "Cloudflare Workers Skill",
+    "category": "Skills"
+  },
+  {
+    "id": "a329dc0a05ef2467",
+    "path": "workspace/skills/cloudflare-zerotrust/SKILL.md",
+    "title": "Cloudflare Zero Trust Skill",
+    "category": "Skills"
+  },
+  {
+    "id": "9da557198aebe32c",
+    "path": "workspace/skills/cml-admin/SKILL.md",
+    "title": "CML Administration",
+    "category": "Skills"
+  },
+  {
+    "id": "32bc1ca190fc6336",
+    "path": "workspace/skills/cml-lab-lifecycle/SKILL.md",
+    "title": "CML Lab Lifecycle Management",
+    "category": "Skills"
+  },
+  {
+    "id": "0c4af74fb211cbfb",
+    "path": "workspace/skills/cml-node-operations/SKILL.md",
+    "title": "CML Node Operations",
+    "category": "Skills"
+  },
+  {
+    "id": "c91a280ee6bfd0c6",
+    "path": "workspace/skills/cml-packet-capture/SKILL.md",
+    "title": "CML Packet Capture",
+    "category": "Skills"
+  },
+  {
+    "id": "57c226ac6c2731b7",
+    "path": "workspace/skills/cml-topology-builder/SKILL.md",
+    "title": "CML Topology Builder",
+    "category": "Skills"
+  },
+  {
+    "id": "49a1eba19e9a16c6",
+    "path": "workspace/skills/comfyui-topology-viz/SKILL.md",
+    "title": "ComfyUI Network Topology Visualization Skill",
+    "category": "Skills"
+  },
+  {
+    "id": "17b7be5b1c9a7183",
+    "path": "workspace/skills/datadog-apm/SKILL.md",
+    "title": "Datadog APM Skill",
+    "category": "Skills"
+  },
+  {
+    "id": "b317662beec2ef82",
+    "path": "workspace/skills/datadog-incidents/SKILL.md",
+    "title": "Datadog Incidents Skill",
+    "category": "Skills"
+  },
+  {
+    "id": "98cca220ab4b9ac1",
+    "path": "workspace/skills/datadog-logs/SKILL.md",
+    "title": "Datadog Logs Skill",
+    "category": "Skills"
+  },
+  {
+    "id": "ef8c804464f2367d",
+    "path": "workspace/skills/datadog-metrics/SKILL.md",
+    "title": "Datadog Metrics Skill",
+    "category": "Skills"
+  },
+  {
+    "id": "b670bd609f54be7c",
+    "path": "workspace/skills/defenseclaw-ops/SKILL.md",
+    "title": "DefenseClaw Operations",
+    "category": "Skills"
+  },
+  {
+    "id": "1aea494a794c08b7",
+    "path": "workspace/skills/desktop-gui-inspect/SKILL.md",
+    "title": "Desktop GUI Inspect Skill",
+    "category": "Skills"
+  },
+  {
+    "id": "631f5309839bd887",
+    "path": "workspace/skills/devnet-catalyst-search/SKILL.md",
+    "title": "DevNet Catalyst Center API Search",
+    "category": "Skills"
+  },
+  {
+    "id": "31abe8a9da97b8ee",
+    "path": "workspace/skills/devnet-meraki-search/SKILL.md",
+    "title": "DevNet Meraki API Search",
+    "category": "Skills"
+  },
+  {
+    "id": "518433b2c3d6c053",
+    "path": "workspace/skills/document-generation/SKILL.md",
+    "title": "Document Generation",
+    "category": "Skills"
+  },
+  {
+    "id": "a6bdd6477f9cc07f",
+    "path": "workspace/skills/drawio-diagram/SKILL.md",
+    "title": "Draw.io Network Diagrams",
+    "category": "Skills"
+  },
+  {
+    "id": "8f294f51b1108ebd",
+    "path": "workspace/skills/elasticsearch-logs/SKILL.md",
+    "title": "Elasticsearch Logs",
+    "category": "Skills"
+  },
+  {
+    "id": "693e0a28594bdaa1",
+    "path": "workspace/skills/equinix-fabric-operations/SKILL.md",
+    "title": "Equinix Fabric operations",
+    "category": "Skills"
+  },
+  {
+    "id": "d9ae4b9c1878b136",
+    "path": "workspace/skills/equinix-network-edge/SKILL.md",
+    "title": "Network Edge visibility",
+    "category": "Skills"
+  },
+  {
+    "id": "0c9ae6731ba8658c",
+    "path": "workspace/skills/eve-lab-topology-build/SKILL.md",
+    "title": "EVE Lab Topology Build",
+    "category": "Skills"
+  },
+  {
+    "id": "f90c26260159851a",
+    "path": "workspace/skills/eve-lab-topology-design/SKILL.md",
+    "title": "EVE Lab Topology Design",
+    "category": "Skills"
+  },
+  {
+    "id": "06e51b3c3b1e5439",
+    "path": "workspace/skills/eve-lab-topology-discovery/SKILL.md",
+    "title": "EVE Lab Topology Discovery",
+    "category": "Skills"
+  },
+  {
+    "id": "96e391c787317e8f",
+    "path": "workspace/skills/eve-lab-topology-validation/SKILL.md",
+    "title": "EVE Lab Topology Validation",
+    "category": "Skills"
+  },
+  {
+    "id": "74522dbd68b09316",
+    "path": "workspace/skills/eve-ng-config-ops/SKILL.md",
+    "title": "EVE-NG Config Operations",
+    "category": "Skills"
+  },
+  {
+    "id": "0341a13ba6148584",
+    "path": "workspace/skills/eve-ng-console-ops/SKILL.md",
+    "title": "EVE-NG Console Operations",
+    "category": "Skills"
+  },
+  {
+    "id": "822a7c45f7f4889a",
+    "path": "workspace/skills/eve-ng-lab-management/SKILL.md",
+    "title": "EVE-NG Lab Management",
+    "category": "Skills"
+  },
+  {
+    "id": "06e8f3d9f2b476bd",
+    "path": "workspace/skills/eve-ng-node-operations/SKILL.md",
+    "title": "EVE-NG Node Operations",
+    "category": "Skills"
+  },
+  {
+    "id": "0506e63c7fffa3a3",
+    "path": "workspace/skills/evpn-vxlan-fabric/SKILL.md",
+    "title": "EVPN/VXLAN Fabric",
+    "category": "Skills"
+  },
+  {
+    "id": "bff3ba8a45133f6c",
+    "path": "workspace/skills/f5-config-mgmt/SKILL.md",
+    "title": "F5 BIG-IP Configuration Management",
+    "category": "Skills"
+  },
+  {
+    "id": "992b71488ab5676a",
+    "path": "workspace/skills/f5-health-check/SKILL.md",
+    "title": "F5 BIG-IP Health Check",
+    "category": "Skills"
+  },
+  {
+    "id": "70be132a71bd5b45",
+    "path": "workspace/skills/f5-troubleshoot/SKILL.md",
+    "title": "F5 BIG-IP Troubleshooting",
+    "category": "Skills"
+  },
+  {
+    "id": "cdc38c4e42e80707",
+    "path": "workspace/skills/fmc-firewall-ops/SKILL.md",
+    "title": "Cisco FMC Firewall Operations",
+    "category": "Skills"
+  },
+  {
+    "id": "1d1e936e56663d4b",
+    "path": "workspace/skills/fortianalyzer-ops/SKILL.md",
+    "title": "FortiAnalyzer Operations \u2014 the analyzer plane",
+    "category": "Skills"
+  },
+  {
+    "id": "bf096a8fd12425b9",
+    "path": "workspace/skills/fortigate-ops/SKILL.md",
+    "title": "FortiGate Operations \u2014 the device plane",
+    "category": "Skills"
+  },
+  {
+    "id": "6367a428424661d7",
+    "path": "workspace/skills/fortimanager-ops/SKILL.md",
+    "title": "FortiManager Operations \u2014 the manager plane",
+    "category": "Skills"
+  },
+  {
+    "id": "80dbc8f10fcfe9ff",
+    "path": "workspace/skills/forward/SKILL.md",
+    "title": "Forward Skill",
+    "category": "Skills"
+  },
+  {
+    "id": "e4f7eb6e235fa811",
+    "path": "workspace/skills/fwrule-analyzer/SKILL.md",
+    "title": "Firewall Rule Analyzer",
+    "category": "Skills"
+  },
+  {
+    "id": "be076f15ff6a7c8f",
+    "path": "workspace/skills/gait-session-tracking/SKILL.md",
+    "title": "GAIT Session Tracking",
+    "category": "Skills"
+  },
+  {
+    "id": "47c8e8f87e540f6b",
+    "path": "workspace/skills/gcp-cloud-logging/SKILL.md",
+    "title": "GCP Cloud Logging",
+    "category": "Skills"
+  },
+  {
+    "id": "5c841ce148d15c69",
+    "path": "workspace/skills/gcp-cloud-monitoring/SKILL.md",
+    "title": "GCP Cloud Monitoring",
+    "category": "Skills"
+  },
+  {
+    "id": "71654681f0ace572",
+    "path": "workspace/skills/gcp-compute-ops/SKILL.md",
+    "title": "GCP Compute Operations",
+    "category": "Skills"
+  },
+  {
+    "id": "15f3ee3f48dd68f3",
+    "path": "workspace/skills/github-ops/SKILL.md",
+    "title": "GitHub Operations Skill",
+    "category": "Skills"
+  },
+  {
+    "id": "83ab4a076d18ffec",
+    "path": "workspace/skills/gitlab-devops/SKILL.md",
+    "title": "GitLab DevOps Skill",
+    "category": "Skills"
+  },
+  {
+    "id": "1b4001da939ee582",
+    "path": "workspace/skills/globalping-external-checks/SKILL.md",
+    "title": "Globalping External Checks",
+    "category": "Skills"
+  },
+  {
+    "id": "61c4d6840476742d",
+    "path": "workspace/skills/gnmi-telemetry/SKILL.md",
+    "title": "gnmi-telemetry",
+    "category": "Skills"
+  },
+  {
+    "id": "720d7e26166703b1",
+    "path": "workspace/skills/gns3-link-management/SKILL.md",
+    "title": "GNS3 Link Management",
+    "category": "Skills"
+  },
+  {
+    "id": "0318ef0364fd6079",
+    "path": "workspace/skills/gns3-node-operations/SKILL.md",
+    "title": "GNS3 Node Operations",
+    "category": "Skills"
+  },
+  {
+    "id": "1ca48a3d769e2e7a",
+    "path": "workspace/skills/gns3-packet-capture/SKILL.md",
+    "title": "GNS3 Packet Capture",
+    "category": "Skills"
+  },
+  {
+    "id": "27357fbd973752fb",
+    "path": "workspace/skills/gns3-project-lifecycle/SKILL.md",
+    "title": "GNS3 Project Lifecycle",
+    "category": "Skills"
+  },
+  {
+    "id": "2065fd0e7f73666f",
+    "path": "workspace/skills/gns3-snapshot-ops/SKILL.md",
+    "title": "GNS3 Snapshot Operations",
+    "category": "Skills"
+  },
+  {
+    "id": "83ac7b95eb0bf83a",
+    "path": "workspace/skills/grafana-observability/SKILL.md",
+    "title": "Grafana Observability",
+    "category": "Skills"
+  },
+  {
+    "id": "8b08053df8eae2cc",
+    "path": "workspace/skills/gtrace-ip-enrichment/SKILL.md",
+    "title": "IP Address Enrichment with gtrace",
+    "category": "Skills"
+  },
+  {
+    "id": "a82537856a0a0672",
+    "path": "workspace/skills/gtrace-path-analysis/SKILL.md",
+    "title": "Network Path Analysis with gtrace",
+    "category": "Skills"
+  },
+  {
+    "id": "99c9f074df100654",
+    "path": "workspace/skills/halo-asset-context/SKILL.md",
+    "title": "Halo Asset Context",
+    "category": "Skills"
+  },
+  {
+    "id": "cbc517e685a2cc6d",
+    "path": "workspace/skills/halo-change-request/SKILL.md",
+    "title": "Halo Change Request",
+    "category": "Skills"
+  },
+  {
+    "id": "d5ad1e5eedf7d849",
+    "path": "workspace/skills/halo-ticket-context/SKILL.md",
+    "title": "Halo Ticket Context",
+    "category": "Skills"
+  },
+  {
+    "id": "06d4c126eaa304f9",
+    "path": "workspace/skills/hardware-health-check/SKILL.md",
+    "title": "Hardware Health Check (out-of-band, read-only)",
+    "category": "Skills"
+  },
+  {
+    "id": "a956ed137c0616bb",
+    "path": "workspace/skills/hermes-hud-diagnostics/SKILL.md",
+    "title": "Hermes HUD diagnostics",
+    "category": "Skills"
+  },
+  {
+    "id": "8ee5040f30df914e",
+    "path": "workspace/skills/humanrail-escalation/SKILL.md",
+    "title": "HumanRail Escalation",
+    "category": "Skills"
+  },
+  {
+    "id": "6d72d658164034e8",
+    "path": "workspace/skills/infoblox-ddi/SKILL.md",
+    "title": "Infoblox DDI",
+    "category": "Skills"
+  },
+  {
+    "id": "8c6e4fbdf8c6d70a",
+    "path": "workspace/skills/infrahub-sot/SKILL.md",
+    "title": "Infrahub Source of Truth",
+    "category": "Skills"
+  },
+  {
+    "id": "f492bac56c7dfaaa",
+    "path": "workspace/skills/ipfabric/SKILL.md",
+    "title": "IP Fabric Network Assurance Skill",
+    "category": "Skills"
+  },
+  {
+    "id": "2579b719145d9d16",
+    "path": "workspace/skills/ipfix-receiver/SKILL.md",
+    "title": "IPFIX/NetFlow Receiver Skill",
+    "category": "Skills"
+  },
+  {
+    "id": "3915c8483f0ffb66",
+    "path": "workspace/skills/ise-incident-response/SKILL.md",
+    "title": "ISE Incident Response",
+    "category": "Skills"
+  },
+  {
+    "id": "d4347ee671e87afe",
+    "path": "workspace/skills/ise-posture-audit/SKILL.md",
+    "title": "ISE Posture and Policy Audit",
+    "category": "Skills"
+  },
+  {
+    "id": "51bea293e882418d",
+    "path": "workspace/skills/itential-automation/SKILL.md",
+    "title": "Itential Automation Platform",
+    "category": "Skills"
+  },
+  {
+    "id": "3e3f3d5f38318055",
+    "path": "workspace/skills/jenkins-cicd/SKILL.md",
+    "title": "Jenkins CI/CD Skill",
+    "category": "Skills"
+  },
+  {
+    "id": "bdeab651614405c5",
+    "path": "workspace/skills/jev-answer-review/SKILL.md",
+    "title": "Jev \u2014 Answer review",
+    "category": "Skills"
+  },
+  {
+    "id": "81cce22791a22aa1",
+    "path": "workspace/skills/jev-change-review/SKILL.md",
+    "title": "Jev \u2014 Change-plan review",
+    "category": "Skills"
+  },
+  {
+    "id": "965bc749051b9218",
+    "path": "workspace/skills/jev-diagnostic-advice/SKILL.md",
+    "title": "Jev \u2014 Diagnostic advice",
+    "category": "Skills"
+  },
+  {
+    "id": "15febf17c99534cb",
+    "path": "workspace/skills/jev-evidence-review/SKILL.md",
+    "title": "Jev \u2014 Evidence review",
+    "category": "Skills"
+  },
+  {
+    "id": "5f0fa5c42ef14014",
+    "path": "workspace/skills/jev-incident-triage/SKILL.md",
+    "title": "Jev \u2014 Incident triage",
+    "category": "Skills"
+  },
+  {
+    "id": "01223e1ca9545245",
+    "path": "workspace/skills/jev-specialist-advice/SKILL.md",
+    "title": "Jev \u2014 Specialist advice",
+    "category": "Skills"
+  },
+  {
+    "id": "b8810172b90888c0",
+    "path": "workspace/skills/junos-network/SKILL.md",
+    "title": "Juniper JunOS Network Automation",
+    "category": "Skills"
+  },
+  {
+    "id": "752f8410a8dd3185",
+    "path": "workspace/skills/k8s-network-policy/SKILL.md",
+    "title": "Kubernetes NetworkPolicy Review",
+    "category": "Skills"
+  },
+  {
+    "id": "f713726460613e4d",
+    "path": "workspace/skills/k8s-service-path/SKILL.md",
+    "title": "Kubernetes Service Path Tracing",
+    "category": "Skills"
+  },
+  {
+    "id": "8c0b0cc2eba6bc98",
+    "path": "workspace/skills/k8s-workload-inventory/SKILL.md",
+    "title": "Kubernetes Workload Inventory",
+    "category": "Skills"
+  },
+  {
+    "id": "6a375453556a0a68",
+    "path": "workspace/skills/kepner-tregoe-network-troubleshooting/SKILL.md",
+    "title": "Kepner-Tregoe for Network Troubleshooting",
+    "category": "Skills"
+  },
+  {
+    "id": "2e84f89414890523",
+    "path": "workspace/skills/kubeshark-traffic/SKILL.md",
+    "title": "Kubeshark Kubernetes Traffic Analysis",
+    "category": "Skills"
+  },
+  {
+    "id": "b63be8b6fa444e0d",
+    "path": "workspace/skills/markmap-viz/SKILL.md",
+    "title": "Markmap Mind Map Visualization",
+    "category": "Skills"
+  },
+  {
+    "id": "9ce85c554e49d887",
+    "path": "workspace/skills/memory/SKILL.md",
+    "title": "Skill: Persistent Memory",
+    "category": "Skills"
+  },
+  {
+    "id": "41fc79a7379944dc",
+    "path": "workspace/skills/mempalace/SKILL.md",
+    "title": "MemPalace \u2014 AI Memory System",
+    "category": "Skills"
+  },
+  {
+    "id": "40c398a7119548cd",
+    "path": "workspace/skills/meraki-monitoring/SKILL.md",
+    "title": "Meraki Monitoring & Diagnostics (read-only)",
+    "category": "Skills"
+  },
+  {
+    "id": "e39fc94a03ffa5f1",
+    "path": "workspace/skills/meraki-network-ops/SKILL.md",
+    "title": "Meraki Network Operations (read-only)",
+    "category": "Skills"
+  },
+  {
+    "id": "7e06085f1c842cb0",
+    "path": "workspace/skills/meraki-security-appliance/SKILL.md",
+    "title": "Meraki Security Appliance Operations (read-only)",
+    "category": "Skills"
+  },
+  {
+    "id": "b3b2bdfb215556ab",
+    "path": "workspace/skills/meraki-switch-ops/SKILL.md",
+    "title": "Meraki Switch Operations (read-only)",
+    "category": "Skills"
+  },
+  {
+    "id": "53f9226a7d900011",
+    "path": "workspace/skills/meraki-wireless-ops/SKILL.md",
+    "title": "Meraki Wireless Operations (read-only)",
+    "category": "Skills"
+  },
+  {
+    "id": "259c578bf5983acc",
+    "path": "workspace/skills/msgraph-files/SKILL.md",
+    "title": "Microsoft 365 Files (read-only)",
+    "category": "Skills"
+  },
+  {
+    "id": "0c158dc252096530",
+    "path": "workspace/skills/msgraph-visio/SKILL.md",
+    "title": "Microsoft 365 Visio / diagram publishing",
+    "category": "Skills"
+  },
+  {
+    "id": "1a3b0f911050c0f5",
+    "path": "workspace/skills/multivendor-device-query/SKILL.md",
+    "title": "Multivendor Device Query",
+    "category": "Skills"
+  },
+  {
+    "id": "d7c084511858f55b",
+    "path": "workspace/skills/multivendor-fleet-ops/SKILL.md",
+    "title": "Multivendor Fleet Ops",
+    "category": "Skills"
+  },
+  {
+    "id": "7c3a6df4ac5fc14b",
+    "path": "workspace/skills/multivendor-raw-cli/SKILL.md",
+    "title": "Multivendor Raw CLI",
+    "category": "Skills"
+  },
+  {
+    "id": "1fa7676a330a2d94",
+    "path": "workspace/skills/n2n-federation/SKILL.md",
+    "title": "NetClaw-to-NetClaw (N2N) Federation",
+    "category": "Skills"
+  },
+  {
+    "id": "89ae67c0701c7529",
+    "path": "workspace/skills/nautobot-sot/SKILL.md",
+    "title": "Nautobot Source of Truth",
+    "category": "Skills"
+  },
+  {
+    "id": "56c033febe22809c",
+    "path": "workspace/skills/netbox-reconcile/SKILL.md",
+    "title": "NetBox Reconciliation",
+    "category": "Skills"
+  },
+  {
+    "id": "d1b05e14784c5482",
+    "path": "workspace/skills/network-data-analysis/SKILL.md",
+    "title": "Network Data Analysis (read-only SQL)",
+    "category": "Skills"
+  },
+  {
+    "id": "2aa86e40c013b326",
+    "path": "workspace/skills/network-report-documents/SKILL.md",
+    "title": "Network Report Documents",
+    "category": "Skills"
+  },
+  {
+    "id": "4f666dc88644e984",
+    "path": "workspace/skills/nmap-network-scan/SKILL.md",
+    "title": "Network Scanning with nmap",
+    "category": "Skills"
+  },
+  {
+    "id": "2fe15c233c0c907a",
+    "path": "workspace/skills/nmap-scan-management/SKILL.md",
+    "title": "nmap Scan Management",
+    "category": "Skills"
+  },
+  {
+    "id": "a8bfe1bc743d16bb",
+    "path": "workspace/skills/nmap-service-detection/SKILL.md",
+    "title": "Service Detection & Vulnerability Scanning with nmap",
+    "category": "Skills"
+  },
+  {
+    "id": "6d88219d566b6862",
+    "path": "workspace/skills/nsm-ids-triage/SKILL.md",
+    "title": "NSM IDS Triage (read-only)",
+    "category": "Skills"
+  },
+  {
+    "id": "a131dab8f79b57a9",
+    "path": "workspace/skills/nsm-session-pivot/SKILL.md",
+    "title": "NSM Session Pivot (read-only)",
+    "category": "Skills"
+  },
+  {
+    "id": "01cd96baa0c2e940",
+    "path": "workspace/skills/nso-device-ops/SKILL.md",
+    "title": "NSO Device Operations",
+    "category": "Skills"
+  },
+  {
+    "id": "ffdfcac0f1f805e3",
+    "path": "workspace/skills/nso-service-mgmt/SKILL.md",
+    "title": "NSO Service Management",
+    "category": "Skills"
+  },
+  {
+    "id": "b51d01e6729fccba",
+    "path": "workspace/skills/nvd-cve/SKILL.md",
+    "title": "NVD CVE Vulnerability Search",
+    "category": "Skills"
+  },
+  {
+    "id": "b7b50f86f50b0d4a",
+    "path": "workspace/skills/packet-analysis/SKILL.md",
+    "title": "Packet Analysis Skill",
+    "category": "Skills"
+  },
+  {
+    "id": "5353af12eedee02a",
+    "path": "workspace/skills/pagerduty-incidents/SKILL.md",
+    "title": "PagerDuty Incidents Skill",
+    "category": "Skills"
+  },
+  {
+    "id": "71cee899a149c2ce",
+    "path": "workspace/skills/pagerduty-oncall/SKILL.md",
+    "title": "PagerDuty On-Call Skill",
+    "category": "Skills"
+  },
+  {
+    "id": "bd42cacb50dfa99c",
+    "path": "workspace/skills/pagerduty-orchestration/SKILL.md",
+    "title": "PagerDuty Orchestration Skill",
+    "category": "Skills"
+  },
+  {
+    "id": "6c37885dd8d670bb",
+    "path": "workspace/skills/pagerduty-services/SKILL.md",
+    "title": "PagerDuty Services Skill",
+    "category": "Skills"
+  },
+  {
+    "id": "edffefbcb18b4ab1",
+    "path": "workspace/skills/paloalto-panorama/SKILL.md",
+    "title": "Palo Alto Panorama",
+    "category": "Skills"
+  },
+  {
+    "id": "767b3dfaa9f55fb1",
+    "path": "workspace/skills/percepxion-oob/SKILL.md",
+    "title": "Percepxion OOB Skill",
+    "category": "Skills"
+  },
+  {
+    "id": "4b866d85050c950d",
+    "path": "workspace/skills/prisma-sdwan-apps/SKILL.md",
+    "title": "Prisma SD-WAN Application Visibility",
+    "category": "Skills"
+  },
+  {
+    "id": "3c1ca16980a20482",
+    "path": "workspace/skills/prisma-sdwan-config/SKILL.md",
+    "title": "Prisma SD-WAN Configuration Inspection",
+    "category": "Skills"
+  },
+  {
+    "id": "cf13be3f7e1f1feb",
+    "path": "workspace/skills/prisma-sdwan-status/SKILL.md",
+    "title": "Prisma SD-WAN Health and Status Monitoring",
+    "category": "Skills"
+  },
+  {
+    "id": "ef03d6e3fd1474df",
+    "path": "workspace/skills/prisma-sdwan-topology/SKILL.md",
+    "title": "Prisma SD-WAN Topology Discovery",
+    "category": "Skills"
+  },
+  {
+    "id": "e68537d18469e7a1",
+    "path": "workspace/skills/prometheus-monitoring/SKILL.md",
+    "title": "Prometheus Monitoring",
+    "category": "Skills"
+  },
+  {
+    "id": "8001601d10f7366c",
+    "path": "workspace/skills/protocol-participation/SKILL.md",
+    "title": "Protocol Participation \u2014 BGP + OSPF + GRE",
+    "category": "Skills"
+  },
+  {
+    "id": "fd39da0ac2642edd",
+    "path": "workspace/skills/pyats-asa-firewall/SKILL.md",
+    "title": "Cisco ASA Firewall Operations via pyATS",
+    "category": "Skills"
+  },
+  {
+    "id": "5bce95977226d914",
+    "path": "workspace/skills/pyats-config-mgmt/SKILL.md",
+    "title": "Configuration Management",
+    "category": "Skills"
+  },
+  {
+    "id": "9941e2b9af7be28f",
+    "path": "workspace/skills/pyats-dynamic-test/SKILL.md",
+    "title": "Dynamic pyATS Test Execution",
+    "category": "Skills"
+  },
+  {
+    "id": "16245a3019cfccf3",
+    "path": "workspace/skills/pyats-f5-ltm/SKILL.md",
+    "title": "F5 BIG-IP LTM/GTM Operations via pyATS",
+    "category": "Skills"
+  },
+  {
+    "id": "77037fd04bb96141",
+    "path": "workspace/skills/pyats-f5-platform/SKILL.md",
+    "title": "F5 BIG-IP Platform Operations via pyATS",
+    "category": "Skills"
+  },
+  {
+    "id": "2a51a4aefbe352ad",
+    "path": "workspace/skills/pyats-health-check/SKILL.md",
+    "title": "Device Health Check",
+    "category": "Skills"
+  },
+  {
+    "id": "9c0a501ec36e0539",
+    "path": "workspace/skills/pyats-junos-interfaces/SKILL.md",
+    "title": "JunOS Interface Operations via pyATS",
+    "category": "Skills"
+  },
+  {
+    "id": "4efb227870e12b2a",
+    "path": "workspace/skills/pyats-junos-routing/SKILL.md",
+    "title": "JunOS Routing Operations via pyATS",
+    "category": "Skills"
+  },
+  {
+    "id": "5a8eb89d05ed5203",
+    "path": "workspace/skills/pyats-junos-system/SKILL.md",
+    "title": "JunOS System Operations via pyATS",
+    "category": "Skills"
+  },
+  {
+    "id": "1d8fbbd1c7b6a2e6",
+    "path": "workspace/skills/pyats-linux-network/SKILL.md",
+    "title": "Linux Host Network Operations",
+    "category": "Skills"
+  },
+  {
+    "id": "1a228c5d262b5e39",
+    "path": "workspace/skills/pyats-linux-system/SKILL.md",
+    "title": "Linux Host System Operations",
+    "category": "Skills"
+  },
+  {
+    "id": "764996a91bc4a9c6",
+    "path": "workspace/skills/pyats-linux-vmware/SKILL.md",
+    "title": "VMware ESXi Host Operations",
+    "category": "Skills"
+  },
+  {
+    "id": "41e908a36937f099",
+    "path": "workspace/skills/pyats-network/SKILL.md",
+    "title": "pyATS Network Device Tool",
+    "category": "Skills"
+  },
+  {
+    "id": "8a5e92df4ea190a9",
+    "path": "workspace/skills/pyats-parallel-ops/SKILL.md",
+    "title": "Parallel Fleet Operations",
+    "category": "Skills"
+  },
+  {
+    "id": "bee9b77d63f14d41",
+    "path": "workspace/skills/pyats-routing/SKILL.md",
+    "title": "Routing Protocol Analysis",
+    "category": "Skills"
+  },
+  {
+    "id": "7477a701a834797c",
+    "path": "workspace/skills/pyats-security/SKILL.md",
+    "title": "Network Security Audit",
+    "category": "Skills"
+  },
+  {
+    "id": "f33aad2e2e3e815b",
+    "path": "workspace/skills/pyats-topology/SKILL.md",
+    "title": "Topology Discovery",
+    "category": "Skills"
+  },
+  {
+    "id": "8d8b87d45271706a",
+    "path": "workspace/skills/pyats-troubleshoot/SKILL.md",
+    "title": "Network Troubleshooting",
+    "category": "Skills"
+  },
+  {
+    "id": "46a1afb5fe591541",
+    "path": "workspace/skills/radkit-remote-access/SKILL.md",
+    "title": "RADKit Remote Device Access",
+    "category": "Skills"
+  },
+  {
+    "id": "66cdbdd488807dda",
+    "path": "workspace/skills/rag/SKILL.md",
+    "title": "Skill: RAG Knowledge Base",
+    "category": "Skills"
+  },
+  {
+    "id": "3cd938ff67f5a945",
+    "path": "workspace/skills/rfc-lookup/SKILL.md",
+    "title": "IETF RFC Lookup",
+    "category": "Skills"
+  },
+  {
+    "id": "97ce660ba48f00cc",
+    "path": "workspace/skills/sdwan-ops/SKILL.md",
+    "title": "Cisco SD-WAN Operations",
+    "category": "Skills"
+  },
+  {
+    "id": "73883b2bb5791712",
+    "path": "workspace/skills/servicenow-change-workflow/SKILL.md",
+    "title": "ServiceNow Change Workflow",
+    "category": "Skills"
+  },
+  {
+    "id": "50acb3a3d3e9ed86",
+    "path": "workspace/skills/slack-incident-workflow/SKILL.md",
+    "title": "Slack Incident Workflow",
+    "category": "Skills"
+  },
+  {
+    "id": "5a8d5d964e5f9dba",
+    "path": "workspace/skills/slack-network-alerts/SKILL.md",
+    "title": "Slack Network Alerts",
+    "category": "Skills"
+  },
+  {
+    "id": "4bfe0a42045206c6",
+    "path": "workspace/skills/slack-report-delivery/SKILL.md",
+    "title": "Slack Report Delivery",
+    "category": "Skills"
+  },
+  {
+    "id": "980ef94bf730d28b",
+    "path": "workspace/skills/slack-user-context/SKILL.md",
+    "title": "Slack User Context",
+    "category": "Skills"
+  },
+  {
+    "id": "4cb5cee7d5d0172a",
+    "path": "workspace/skills/slack-voice-interface/SKILL.md",
+    "title": "Slack Voice Interface",
+    "category": "Skills"
+  },
+  {
+    "id": "1600d793c495bcf9",
+    "path": "workspace/skills/snmptrap-receiver/SKILL.md",
+    "title": "SNMP Trap Receiver Skill",
+    "category": "Skills"
+  },
+  {
+    "id": "6aa826870429735e",
+    "path": "workspace/skills/splunk-indexes/SKILL.md",
+    "title": "Splunk Indexes Skill",
+    "category": "Skills"
+  },
+  {
+    "id": "d174fc3e366586e0",
+    "path": "workspace/skills/splunk-saved/SKILL.md",
+    "title": "Splunk Saved Searches Skill",
+    "category": "Skills"
+  },
+  {
+    "id": "5f0fe7d24c5814cd",
+    "path": "workspace/skills/splunk-search/SKILL.md",
+    "title": "Splunk Search Skill",
+    "category": "Skills"
+  },
+  {
+    "id": "7a251d430d6efb6b",
+    "path": "workspace/skills/subnet-calculator/SKILL.md",
+    "title": "Subnet Calculator (IPv4 + IPv6)",
+    "category": "Skills"
+  },
+  {
+    "id": "3204c5cd442e8399",
+    "path": "workspace/skills/suzieq-observability/SKILL.md",
+    "title": "SuzieQ Network Observability",
+    "category": "Skills"
+  },
+  {
+    "id": "b6e077a4ea4a8f51",
+    "path": "workspace/skills/syslog-receiver/SKILL.md",
+    "title": "Syslog Receiver Skill",
+    "category": "Skills"
+  },
+  {
+    "id": "270adcd09985c4b5",
+    "path": "workspace/skills/tavus-pal/SKILL.md",
+    "title": "Tavus Pal",
+    "category": "Skills"
+  },
+  {
+    "id": "063ecf8f5757d0d3",
+    "path": "workspace/skills/te-network-monitoring/SKILL.md",
+    "title": "ThousandEyes Network Monitoring",
+    "category": "Skills"
+  },
+  {
+    "id": "14db7e35a15c319a",
+    "path": "workspace/skills/te-path-analysis/SKILL.md",
+    "title": "ThousandEyes Path Analysis & Troubleshooting",
+    "category": "Skills"
+  },
+  {
+    "id": "989f22fe6d5d23bd",
+    "path": "workspace/skills/telemetry-ops/SKILL.md",
+    "title": "Unified Telemetry Operations Skill",
+    "category": "Skills"
+  },
+  {
+    "id": "5e75d792efe9da22",
+    "path": "workspace/skills/terraform-operations/SKILL.md",
+    "title": "Terraform Operations Skill",
+    "category": "Skills"
+  },
+  {
+    "id": "7049c73052e72628",
+    "path": "workspace/skills/terraform-registry/SKILL.md",
+    "title": "Terraform Registry Skill",
+    "category": "Skills"
+  },
+  {
+    "id": "26dc68477c9169d3",
+    "path": "workspace/skills/terraform-workspaces/SKILL.md",
+    "title": "Terraform Workspaces Skill",
+    "category": "Skills"
+  },
+  {
+    "id": "a4eb5b449247a5f4",
+    "path": "workspace/skills/threejs-network-viz/SKILL.md",
+    "title": "Three.js Network Topology Visualization Skill",
+    "category": "Skills"
+  },
+  {
+    "id": "b6a23bee6bd3920b",
+    "path": "workspace/skills/token-tracker/SKILL.md",
+    "title": "Skill: Token Tracker + Budget Enforcement",
+    "category": "Skills"
+  },
+  {
+    "id": "308845e12db54a30",
+    "path": "workspace/skills/topolograph-bgp-analysis/SKILL.md",
+    "title": "Topolograph BGP Topology Analysis",
+    "category": "Skills"
+  },
+  {
+    "id": "0d7fdd6fbd4357c9",
+    "path": "workspace/skills/topolograph-igp-analysis/SKILL.md",
+    "title": "Topolograph IGP Topology Analysis",
+    "category": "Skills"
+  },
+  {
+    "id": "dcf8ead9176538dc",
+    "path": "workspace/skills/twilio-daily-briefing/SKILL.md",
+    "title": "Twilio Daily Briefing Skill",
+    "category": "Skills"
+  },
+  {
+    "id": "f7212b3f4719b725",
+    "path": "workspace/skills/twilio-emergency-call/SKILL.md",
+    "title": "Twilio Emergency Call Skill",
+    "category": "Skills"
+  },
+  {
+    "id": "03a79150499089b8",
+    "path": "workspace/skills/twilio-inbound-voice/SKILL.md",
+    "title": "Twilio Inbound Voice Skill",
+    "category": "Skills"
+  },
+  {
+    "id": "20752dba8c6b221a",
+    "path": "workspace/skills/twilio-outbound-call/SKILL.md",
+    "title": "Twilio Outbound Call Skill",
+    "category": "Skills"
+  },
+  {
+    "id": "2e3146bb05dcd92e",
+    "path": "workspace/skills/twitter-check/SKILL.md",
+    "title": "Skill: Twitter Check",
+    "category": "Skills"
+  },
+  {
+    "id": "fb02d4be2dc56f35",
+    "path": "workspace/skills/twitter-heartbeat/SKILL.md",
+    "title": "Skill: Twitter Heartbeat",
+    "category": "Skills"
+  },
+  {
+    "id": "a0f78cd1746b4de9",
+    "path": "workspace/skills/twitter-respond/SKILL.md",
+    "title": "Twitter Respond Skill",
+    "category": "Skills"
+  },
+  {
+    "id": "7c77f53fb35a41d0",
+    "path": "workspace/skills/twitter-share/SKILL.md",
+    "title": "Skill: Twitter Share",
+    "category": "Skills"
+  },
+  {
+    "id": "f7c99a54a8dbf3af",
+    "path": "workspace/skills/ue5-network-viz/SKILL.md",
+    "title": "UE5 Network Visualization Skill",
+    "category": "Skills"
+  },
+  {
+    "id": "ec40bfdb4f6da0fd",
+    "path": "workspace/skills/uml-diagram/SKILL.md",
+    "title": "UML & Diagram Generation via Kroki",
+    "category": "Skills"
+  },
+  {
+    "id": "6e3452795e35cc9c",
+    "path": "workspace/skills/vault-mounts/SKILL.md",
+    "title": "Vault Mounts Skill",
+    "category": "Skills"
+  },
+  {
+    "id": "008114b0c914f5ab",
+    "path": "workspace/skills/vault-pki/SKILL.md",
+    "title": "Vault PKI Skill",
+    "category": "Skills"
+  },
+  {
+    "id": "d93d3374bc5c75d0",
+    "path": "workspace/skills/vault-secrets/SKILL.md",
+    "title": "Vault Secrets Skill",
+    "category": "Skills"
+  },
+  {
+    "id": "2b6393ea8dec4c3a",
+    "path": "workspace/skills/webex-incident-workflow/SKILL.md",
+    "title": "WebEx Incident Workflow",
+    "category": "Skills"
+  },
+  {
+    "id": "3993b4aa44975452",
+    "path": "workspace/skills/webex-network-alerts/SKILL.md",
+    "title": "WebEx Network Alerts",
+    "category": "Skills"
+  },
+  {
+    "id": "097b40f23f981569",
+    "path": "workspace/skills/webex-report-delivery/SKILL.md",
+    "title": "WebEx Report Delivery",
+    "category": "Skills"
+  },
+  {
+    "id": "ee08488fefdbd8c3",
+    "path": "workspace/skills/webex-user-context/SKILL.md",
+    "title": "WebEx User Context",
+    "category": "Skills"
+  },
+  {
+    "id": "ef0bfac44805d5cf",
+    "path": "workspace/skills/webex-voice-interface/SKILL.md",
+    "title": "WebEx Voice Interface",
+    "category": "Skills"
+  },
+  {
+    "id": "e0100be9805e2624",
+    "path": "workspace/skills/wikipedia-research/SKILL.md",
+    "title": "Wikipedia Research",
+    "category": "Skills"
+  },
+  {
+    "id": "0ae926d8a6973847",
+    "path": "workspace/skills/worldlabs-topology-viz/SKILL.md",
+    "title": "World Labs Fantastical Topology Visualization Skill",
+    "category": "Skills"
+  },
+  {
+    "id": "5f7f9e038263c864",
+    "path": "workspace/skills/zabbix-availability/SKILL.md",
+    "title": "Zabbix Availability & Inventory",
+    "category": "Skills"
+  },
+  {
+    "id": "13f2c9f609cc076f",
+    "path": "workspace/skills/zabbix-metrics-history/SKILL.md",
+    "title": "Zabbix Metrics History",
+    "category": "Skills"
+  },
+  {
+    "id": "3865c8aa5caff59a",
+    "path": "workspace/skills/zabbix-problem-review/SKILL.md",
+    "title": "Zabbix Problem Review",
+    "category": "Skills"
+  },
+  {
+    "id": "cefdc20ab574fa70",
+    "path": "workspace/skills/zoom-meeting-context/SKILL.md",
+    "title": "Zoom Meeting Context",
+    "category": "Skills"
+  },
+  {
+    "id": "9150649fe56a0c39",
+    "path": "workspace/skills/zscaler-identity/SKILL.md",
+    "title": "Zscaler Identity Skill",
+    "category": "Skills"
+  },
+  {
+    "id": "346d31eb093c82c1",
+    "path": "workspace/skills/zscaler-insights/SKILL.md",
+    "title": "Zscaler Insights Skill",
+    "category": "Skills"
+  },
+  {
+    "id": "591ff3880a5f52d3",
+    "path": "workspace/skills/zscaler-zdx/SKILL.md",
+    "title": "Zscaler Digital Experience (ZDX) Skill",
+    "category": "Skills"
+  },
+  {
+    "id": "267ac637658aa5fe",
+    "path": "workspace/skills/zscaler-zia/SKILL.md",
+    "title": "Zscaler Internet Access (ZIA) Skill",
+    "category": "Skills"
+  },
+  {
+    "id": "4f3be1e90dc6c5a3",
+    "path": "workspace/skills/zscaler-zpa/SKILL.md",
+    "title": "Zscaler Private Access (ZPA) Skill",
+    "category": "Skills"
+  }
+]

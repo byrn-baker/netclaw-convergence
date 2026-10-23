@@ -1,0 +1,21 @@
+
+> netclaw-hud@1.0.0 test:experience
+> node --test test/testbed-document.mjs test/mcp-configuration.mjs
+
+✔ every known MCP has a scoped descriptor; aliases and unknown secrets are honest (5.902875ms)
+✔ scoped save preserves unrelated values, verifies replacement, rejects stale and cross-card changes (36.879042ms)
+✔ masked read, read-only preview, CST guided update, private baseline and stale rejection (38.791208ms)
+✔ CRUD, advanced secret keep tokens and YAML/JSON/CSV roundtrips (151.70775ms)
+✔ refuses token transplantation, invalid data, duplicate CSV keys and unsafe aliases (18.536ms)
+✔ active sessions and failed revocation prevent writes; write fault preserves backup and reports consent (46.568084ms)
+✔ numeric credentials remain masked; string device keys and CSV edge cases are explicit (30.894333ms)
+✔ operation fields are allowlisted without dropping unintended changes (5.988625ms)
+✔ YAML/JSON merge conflicts are explicit; redacted copies and CSV preserve their documented limits (44.808667ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 9
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 464.457959

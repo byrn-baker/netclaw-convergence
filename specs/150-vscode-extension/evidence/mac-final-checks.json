@@ -1,0 +1,96 @@
+{
+  "observedOn": "2026-10-11",
+  "status": "implementation-complete-publication-held",
+  "platform": {
+    "macOS": "26.5.2",
+    "architecture": "arm64",
+    "buildNode": "24.19.0"
+  },
+  "artifact": {
+    "publisher": "NetClaw",
+    "name": "netclaw",
+    "version": "0.1.0",
+    "source": "c2a145946d331f7bc3d8c528c768d06998bb19d4",
+    "file": "netclaw-0.1.0-mac-final.vsix",
+    "sha256": "b13bdfe68c4086bd22edb7521d87443837127f1c70addae08e302b352725c6b8",
+    "bytes": 2349725,
+    "zipEntries": 25,
+    "originalMobileLogoExact": true,
+    "assistantPayloadIdenticalToWslQualifiedPackage": true
+  },
+  "sourceChecks": {
+    "typeCheck": "passed",
+    "build": "passed",
+    "defaultTests": {
+      "passed": 19,
+      "failed": 0,
+      "skipped": 1
+    },
+    "separateOptInRag": {
+      "passed": 1,
+      "realNativeMcpAndLocalEmbeddings": true,
+      "isolatedCorpus": true,
+      "providerCalls": 0
+    }
+  },
+  "editor1102": {
+    "exactInstalledPayloadVerified": true,
+    "ownedHudAndSyntheticGateway": true,
+    "actualNativeRagSearchAndCitation": true,
+    "chatOverviewCanvasRagHideRevealRegression": true,
+    "ragOverlappingControlsRegression": true,
+    "mcpDefinitionProcessAndCachedDisable": true
+  },
+  "editor1141": {
+    "exactInstalledPayloadVerified": true,
+    "normalWindowNativeContextReview": true,
+    "actualConfiguredOpenClawProvider": true,
+    "fictionalContextAnswer": "The fictional training note schedules its maintenance window for Thursday at 14:20 UTC.",
+    "chatRestoredWithoutResend": true,
+    "canvasSaveOpenAfterReveal": true,
+    "localAvatar": true,
+    "disconnectDisablesSend": true,
+    "nativeRagRetrievalInThisRun": false
+  },
+  "lifecycle1141": {
+    "syntheticOlderUpgrade": true,
+    "disableReenable": true,
+    "uninstall": true,
+    "profilePreserved": true,
+    "backendConfigurationPreserved": true
+  },
+  "lifecycle1102": {
+    "installUpgradeDisableReenable": true,
+    "uninstallCommandExit": 0,
+    "firstPostUninstallInventory": "VS Code embedded CLI V8 abort",
+    "followupInventoryExit": 0,
+    "followupInventoryContainsNetClaw": false,
+    "cleanUninterruptedLifecycleClaim": false
+  },
+  "preservation": {
+    "protectedOwnerFiles": 5,
+    "allUnchanged": true,
+    "ownerHudAndGatewayPidStartTimeUnchanged": true,
+    "temporaryHudStopped": true,
+    "noBaseSourceChanges": true,
+    "publisherCredentialsUsed": false,
+    "scope": "Selected configuration/environment/identity files and core process identity; not a full editor/global-storage byte comparison"
+  },
+  "limits": [
+    "Full Windows/WSL OpenClaw qualification covers preceding f75b73bd artifact; final RAG UI busy-state delta needs targeted WSL confirmation before future publication.",
+    "Copilot/Claude Code/Codex interactive evidence remains WSL evidence; adapter bytes unchanged. Copilot deviation and Default permissions recheck retained.",
+    "Existing Mac HUD on port3001 returned404 for identity. A separate temporary unchanged HUD bound to the existing home/gateway/provider supplied the live check; owner service untouched.",
+    "Live Hermes, WSL restart, second distribution/Remote SSH and device/external peer operations remain outside recorded live acceptance."
+  ],
+  "publication": {
+    "heldByOwner": true,
+    "published": false,
+    "merged": false,
+    "newExplicitAuthorizationRequired": true
+  },
+  "harnessFindings": [
+    "VS Code extensionTestsPath refuses native review dialogs; used normal isolated observer window.",
+    "Original fixed-token model prompt returned a refusal; recorded without weakening policy. A separate ordinary fictional-note question answered correctly.",
+    "Discarded only test-created unsaved fictional text through the normal dialog; automation now handles it explicitly."
+  ]
+}

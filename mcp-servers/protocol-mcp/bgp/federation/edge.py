@@ -125,16 +125,16 @@ class EdgeChannel:
         if self._closed:
             return
         self._closed = True
-        if self._read_task:
+        if self._read_task and self._read_task is not asyncio.current_task():
             self._read_task.cancel()
+        for fut in tuple(self._pending.values()):
+            if not fut.done():
+                fut.set_exception(ConnectionError("Channel closed; operation outcome may be unknown"))
+        self._pending.clear()
         try:
             await self.ws.close()
         except Exception:
             pass
-        for _, fut in list(self._pending.items()):
-            if not fut.done():
-                fut.cancel()
-        self._pending.clear()
         cb = self.on_close
         if cb:
             try:
@@ -204,19 +204,30 @@ class EdgeChannel:
     # ---- outbound requests (Border → phone, mirrors delegate_to_member) --
 
     async def call(self, method: str, params: dict, timeout: float = 30.0) -> dict:
+        if self._closed:
+            raise ConnectionError("Channel is closed")
         self._next_id += 1
         req_id = f"{self.local_identity}:{self._next_id}"
-        fut = asyncio.get_event_loop().create_future()
+        fut = asyncio.get_running_loop().create_future()
         self._pending[req_id] = fut
-        await self._send({"jsonrpc": "2.0", "id": req_id, "method": method, "params": params})
+
+        async def exchange():
+            await self._send({"jsonrpc": "2.0", "id": req_id, "method": method, "params": params})
+            return await fut
+
         try:
-            resp = await asyncio.wait_for(fut, timeout=timeout)
+            resp = await asyncio.wait_for(exchange(), timeout=timeout)
+            if "error" in resp:
+                raise RpcError(resp["error"]["code"], resp["error"]["message"])
+            return resp.get("result", {})
         except asyncio.TimeoutError:
+            raise RpcError(ERR_EXECUTION_TIMEOUT, f"{method} timed out; operation outcome may be unknown")
+        finally:
             self._pending.pop(req_id, None)
-            raise RpcError(ERR_EXECUTION_TIMEOUT, f"{method} timed out")
-        if "error" in resp:
-            raise RpcError(resp["error"]["code"], resp["error"]["message"])
-        return resp.get("result", {})
+            if not fut.done():
+                fut.cancel()
+            elif not fut.cancelled():
+                fut.exception()  # consume a close error if send failed concurrently
 
     async def notify(self, method: str, params: dict):
         await self._send({"jsonrpc": "2.0", "method": method, "params": params})

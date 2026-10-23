@@ -1,0 +1,56 @@
+{
+  "steps": [
+    {
+      "flags": [],
+      "exit_code": 0,
+      "message": "Preview: set PYATS_MCP_SCRIPT, PYATS_UPSTREAM_SCRIPT, PYATS_VENV; preserve testbed and unrelated settings; private backup before writes."
+    },
+    {
+      "flags": [
+        "--apply"
+      ],
+      "exit_code": 0,
+      "message": "Migrated; reload the runtime environment. Testbed untouched. Backup retained."
+    },
+    {
+      "flags": [
+        "--apply"
+      ],
+      "exit_code": 0,
+      "message": "Already migrated; unchanged."
+    },
+    {
+      "flags": [
+        "--restore"
+      ],
+      "exit_code": 0,
+      "message": "Preview: restore environment backup."
+    },
+    {
+      "flags": [
+        "--restore",
+        "--apply"
+      ],
+      "exit_code": 0,
+      "message": "Restored environment."
+    },
+    {
+      "runtime_flags": [
+        "--preview"
+      ],
+      "exit_code": 0
+    },
+    {
+      "runtime_flags": [],
+      "exit_code": 0
+    },
+    {
+      "runtime_flags": [
+        "--restore"
+      ],
+      "exit_code": 0
+    }
+  ],
+  "environment_restored": true,
+  "previous_runtime_imports": true
+}

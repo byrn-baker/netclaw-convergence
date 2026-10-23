@@ -1,0 +1,18 @@
+{
+  "version": "1.0.2",
+  "build": "4",
+  "validation": "passed without errors",
+  "upload": "succeeded without errors",
+  "delivery_id": "e7c95a4b-b3d6-4ae1-8304-ae6e6edbdc57",
+  "ipa_bytes": 24496792,
+  "processing": "VALID",
+  "public_submission": true,
+  "human_upload_authorization": "Explicit user instruction in this session",
+  "rejected_previous_candidate": "1.0.1(4): Apple closed train,90186/90062; never uploaded",
+  "internal_testflight": "IN_BETA_TESTING",
+  "external_testflight": "READY_FOR_BETA_SUBMISSION",
+  "uses_non_exempt_encryption": false,
+  "human_steps": "No submission blocker. Apple review pending; automatic release after approval. Real-device smoke remains unverified.",
+  "public_review_state": "WAITING_FOR_REVIEW",
+  "release_type": "AFTER_APPROVAL"
+}

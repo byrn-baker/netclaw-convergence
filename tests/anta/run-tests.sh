@@ -11,7 +11,7 @@ set -u
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 SERVER_DIR="$REPO_ROOT/mcp-servers/anta-mcp"
-VENV_PY="$SERVER_DIR/.venv/bin/python"
+VENV_PY="${NETCLAW_PY:-$SERVER_DIR/.venv/bin/python}"
 PASS=0; FAIL=0; SKIP=0
 
 ok()   { PASS=$((PASS+1)); echo "  ok   - $1"; }
@@ -115,6 +115,16 @@ else
             skip "cryptography isolation" "same version both sides"
         fi
     fi
+fi
+
+if "$VENV_PY" -c 'from anta.device import SSLParameters' >/dev/null 2>&1; then
+    if "$VENV_PY" "$REPO_ROOT/tests/anta/test-tls.py"; then
+        ok "HTTPS certificate/hostname enforcement and device cleanup"
+    else
+        bad "HTTPS verification regression"
+    fi
+else
+    skip "HTTPS verification API acceptance" "ANTA1.10 runtime unavailable"
 fi
 
 echo

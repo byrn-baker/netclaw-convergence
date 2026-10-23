@@ -1,3 +1,8 @@
+---
+name: twitter-check
+description: "Check Twitter mentions and prepare the configured response workflow. Use for twitter-check requests; preview and posting follow the operator authorization policy."
+---
+
 # Skill: Twitter Check
 
 **Purpose**: Quick invocation to check mentions and respond to #netclaw threads.
@@ -44,3 +49,8 @@ When invoked:
 
 ```
 User: /twitter-check
+
+## Failure Behavior
+
+- On a tool error (timeout, unreachable host, malformed response), report the failure and its error message directly to the user rather than fabricating or guessing at results.
+- For a confirmed read-only call, check connectivity and retry once if appropriate. For any call that changes state or sends a message, a timeout does not prove the action failed: inspect current state or delivery status before retrying, preserve the required approval/change gates, and do not repeat an action whose outcome is unknown.

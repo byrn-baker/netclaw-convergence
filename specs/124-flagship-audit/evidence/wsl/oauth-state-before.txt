@@ -1,0 +1,96 @@
+FFFF.                                                                    [100%]
+=================================== FAILURES ===================================
+__________ test_callback_rejects_unbound_codes[/callback?code=wrong] ___________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7d389122d8b0>
+tmp_path = PosixPath('/tmp/pytest-of-johncapobianco/pytest-263/test_callback_rejects_unbound_0')
+path = '/callback?code=wrong'
+
+    @pytest.mark.parametrize('path',['/callback?code=wrong','/callback?code=wrong&state=other','/unrelated?code=wrong&state=expected','/callback?code=wrong&state=expected&state=other'])
+    def test_callback_rejects_unbound_codes(monkeypatch,tmp_path,path):
+        obj=module(monkeypatch,tmp_path);obj.CallbackHandler.expected_state='expected';obj.CallbackHandler.code=None
+        with HTTPServer(('127.0.0.1',0),obj.CallbackHandler) as server:
+            thread=threading.Thread(target=server.handle_request);thread.start()
+            try:
+                urllib.request.urlopen('http://127.0.0.1:'+str(server.server_port)+path,timeout=3)
+            except urllib.error.HTTPError as error:
+                assert error.code==400
+            thread.join(3)
+>       assert obj.CallbackHandler.code is None
+E       AssertionError: assert 'wrong' is None
+E        +  where 'wrong' = <class 'oauth_fixture.CallbackHandler'>.code
+E        +    where <class 'oauth_fixture.CallbackHandler'> = <module 'oauth_fixture' from '/home/johncapobianco/netclaw/scripts/twitter_oauth2_setup.py'>.CallbackHandler
+
+tests/unit/test_oauth_callback_state.py:29: AssertionError
+____ test_callback_rejects_unbound_codes[/callback?code=wrong&state=other] _____
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7d3890d357c0>
+tmp_path = PosixPath('/tmp/pytest-of-johncapobianco/pytest-263/test_callback_rejects_unbound_1')
+path = '/callback?code=wrong&state=other'
+
+    @pytest.mark.parametrize('path',['/callback?code=wrong','/callback?code=wrong&state=other','/unrelated?code=wrong&state=expected','/callback?code=wrong&state=expected&state=other'])
+    def test_callback_rejects_unbound_codes(monkeypatch,tmp_path,path):
+        obj=module(monkeypatch,tmp_path);obj.CallbackHandler.expected_state='expected';obj.CallbackHandler.code=None
+        with HTTPServer(('127.0.0.1',0),obj.CallbackHandler) as server:
+            thread=threading.Thread(target=server.handle_request);thread.start()
+            try:
+                urllib.request.urlopen('http://127.0.0.1:'+str(server.server_port)+path,timeout=3)
+            except urllib.error.HTTPError as error:
+                assert error.code==400
+            thread.join(3)
+>       assert obj.CallbackHandler.code is None
+E       AssertionError: assert 'wrong' is None
+E        +  where 'wrong' = <class 'oauth_fixture.CallbackHandler'>.code
+E        +    where <class 'oauth_fixture.CallbackHandler'> = <module 'oauth_fixture' from '/home/johncapobianco/netclaw/scripts/twitter_oauth2_setup.py'>.CallbackHandler
+
+tests/unit/test_oauth_callback_state.py:29: AssertionError
+__ test_callback_rejects_unbound_codes[/unrelated?code=wrong&state=expected] ___
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7d3890d35df0>
+tmp_path = PosixPath('/tmp/pytest-of-johncapobianco/pytest-263/test_callback_rejects_unbound_2')
+path = '/unrelated?code=wrong&state=expected'
+
+    @pytest.mark.parametrize('path',['/callback?code=wrong','/callback?code=wrong&state=other','/unrelated?code=wrong&state=expected','/callback?code=wrong&state=expected&state=other'])
+    def test_callback_rejects_unbound_codes(monkeypatch,tmp_path,path):
+        obj=module(monkeypatch,tmp_path);obj.CallbackHandler.expected_state='expected';obj.CallbackHandler.code=None
+        with HTTPServer(('127.0.0.1',0),obj.CallbackHandler) as server:
+            thread=threading.Thread(target=server.handle_request);thread.start()
+            try:
+                urllib.request.urlopen('http://127.0.0.1:'+str(server.server_port)+path,timeout=3)
+            except urllib.error.HTTPError as error:
+                assert error.code==400
+            thread.join(3)
+>       assert obj.CallbackHandler.code is None
+E       AssertionError: assert 'wrong' is None
+E        +  where 'wrong' = <class 'oauth_fixture.CallbackHandler'>.code
+E        +    where <class 'oauth_fixture.CallbackHandler'> = <module 'oauth_fixture' from '/home/johncapobianco/netclaw/scripts/twitter_oauth2_setup.py'>.CallbackHandler
+
+tests/unit/test_oauth_callback_state.py:29: AssertionError
+_ test_callback_rejects_unbound_codes[/callback?code=wrong&state=expected&state=other] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7d3890d369c0>
+tmp_path = PosixPath('/tmp/pytest-of-johncapobianco/pytest-263/test_callback_rejects_unbound_3')
+path = '/callback?code=wrong&state=expected&state=other'
+
+    @pytest.mark.parametrize('path',['/callback?code=wrong','/callback?code=wrong&state=other','/unrelated?code=wrong&state=expected','/callback?code=wrong&state=expected&state=other'])
+    def test_callback_rejects_unbound_codes(monkeypatch,tmp_path,path):
+        obj=module(monkeypatch,tmp_path);obj.CallbackHandler.expected_state='expected';obj.CallbackHandler.code=None
+        with HTTPServer(('127.0.0.1',0),obj.CallbackHandler) as server:
+            thread=threading.Thread(target=server.handle_request);thread.start()
+            try:
+                urllib.request.urlopen('http://127.0.0.1:'+str(server.server_port)+path,timeout=3)
+            except urllib.error.HTTPError as error:
+                assert error.code==400
+            thread.join(3)
+>       assert obj.CallbackHandler.code is None
+E       AssertionError: assert 'wrong' is None
+E        +  where 'wrong' = <class 'oauth_fixture.CallbackHandler'>.code
+E        +    where <class 'oauth_fixture.CallbackHandler'> = <module 'oauth_fixture' from '/home/johncapobianco/netclaw/scripts/twitter_oauth2_setup.py'>.CallbackHandler
+
+tests/unit/test_oauth_callback_state.py:29: AssertionError
+=========================== short test summary info ============================
+FAILED tests/unit/test_oauth_callback_state.py::test_callback_rejects_unbound_codes[/callback?code=wrong]
+FAILED tests/unit/test_oauth_callback_state.py::test_callback_rejects_unbound_codes[/callback?code=wrong&state=other]
+FAILED tests/unit/test_oauth_callback_state.py::test_callback_rejects_unbound_codes[/unrelated?code=wrong&state=expected]
+FAILED tests/unit/test_oauth_callback_state.py::test_callback_rejects_unbound_codes[/callback?code=wrong&state=expected&state=other]
+4 failed, 1 passed in 0.18s

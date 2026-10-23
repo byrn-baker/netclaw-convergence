@@ -27,7 +27,10 @@ from __future__ import annotations
 import os
 import sys
 
-from mcp.server.fastmcp import FastMCP
+from functools import wraps
+from fastmcp.utilities.async_utils import call_sync_fn_in_threadpool
+from fastmcp_tasks import TasksExtension
+from fastmcp import FastMCP
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
@@ -35,6 +38,17 @@ import loader  # noqa: E402
 from sandbox import QueryRefused, QueryTimeout, Sandbox  # noqa: E402
 
 mcp = FastMCP("analysis-mcp")
+mcp.add_extension(TasksExtension(name="netclaw-analysis-mcp", concurrency=1))
+
+
+def _task_tool(fn):
+    """Register a threaded MCP task while preserving the direct Python callable."""
+    @wraps(fn)
+    async def run(*args, **kwargs):
+        return await call_sync_fn_in_threadpool(fn, *args, **kwargs)
+    mcp.tool(task=True)(run)
+    return fn
+
 
 QUERY_TIMEOUT = int(os.environ.get("ANALYSIS_QUERY_TIMEOUT", "30"))
 MAX_RESULT_ROWS = int(os.environ.get("ANALYSIS_MAX_RESULT_ROWS", "500"))
@@ -141,7 +155,7 @@ def analysis_datasets() -> dict:
                      notes=_notes or None)
 
 
-@mcp.tool()
+@_task_tool
 def analysis_query(sql: str, max_rows: int | None = None) -> dict:
     """Run one read-only SQL query against the loaded datasets.
 

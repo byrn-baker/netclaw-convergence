@@ -1,0 +1,46 @@
+✖ missing overlay cannot report enabled (2.914832ms)
+✖ failed overlay cannot report enabled (5.257839ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 0
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 62.33373
+
+✖ failing tests:
+
+test at ui/netclaw-visual/src/zoom/overlay-state.test.js:18:1
+✖ missing overlay cannot report enabled (2.914832ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  true !== false
+
+      at TestContext.<anonymous> (file:///home/johncapobianco/netclaw/ui/netclaw-visual/src/zoom/overlay-state.test.js:20:10)
+      at async Test.run (node:internal/test_runner/test:1113:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at ui/netclaw-visual/src/zoom/overlay-state.test.js:23:1
+✖ failed overlay cannot report enabled (5.257839ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  true !== false
+
+      at TestContext.<anonymous> (file:///home/johncapobianco/netclaw/ui/netclaw-visual/src/zoom/overlay-state.test.js:25:10)
+      at async Test.run (node:internal/test_runner/test:1113:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:788:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

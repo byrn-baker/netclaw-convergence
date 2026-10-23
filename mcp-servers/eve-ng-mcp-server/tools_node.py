@@ -4,7 +4,7 @@ import re
 import time
 from typing import Optional
 
-from mcp_init import mcp
+from mcp_init import mcp, _task_tool
 from eve_client import (
     get_client, EVEError, handle_eve_response, success_response, error_response,
     with_gait_logging, paginate_sequence,
@@ -78,7 +78,7 @@ def _seed_zero_config_if_needed(c, lab_path: str, node_id: str, node_info: dict)
     }
 
 
-@mcp.tool()
+@_task_tool
 @with_gait_logging("eve_list_nodes")
 def eve_list_nodes(lab_path: str, page: int = 1, page_size: int = 50) -> str:
     """
@@ -128,7 +128,7 @@ def eve_list_nodes(lab_path: str, page: int = 1, page_size: int = 50) -> str:
         return error_response(e)
 
 
-@mcp.tool()
+@_task_tool
 @with_gait_logging("eve_get_node")
 def eve_get_node(lab_path: str, node: str) -> str:
     """

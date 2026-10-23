@@ -7,6 +7,22 @@ sys.path.insert(0, str(Path(__file__).parent.parent.parent / "mcp-servers" / "ra
 
 from scrubber import SECRET_TYPES, scrub  # noqa: E402
 
+import pytest
+
+
+@pytest.mark.parametrize('command', [
+    'enable secret 0 synthetic-sensitive-value',
+    'enable password 0 synthetic-sensitive-value',
+    'enable secret level 15 0 synthetic-sensitive-value',
+    'enable password synthetic-sensitive-value with secret suffix',
+])
+def test_enable_plaintext_is_fully_redacted(command):
+    result, counts = scrub(command + '\nhostname retained\n')
+    assert 'synthetic-sensitive-value' not in result
+    assert 'secret suffix' not in result
+    assert 'hostname retained' in result
+    assert counts['enable_secret'] == 1
+
 CONFIG_SAMPLE = """hostname PE1
 enable secret 5 $1$abcd$WxYz1234567890abcdef
 username admin privilege 15 secret 9 $9$fLbCdEf/GhIjKlMnOpQrStUvWx

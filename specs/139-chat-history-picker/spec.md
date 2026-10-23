@@ -1,0 +1,2 @@
+# Previous chat picker
+List and reopen saved conversations from the Chat page. Restore visible transcript and reconnect to the same private gateway session for follow-up context. Keep browser-owned session isolation, model/effort, and unsent drafts. Support legacy bindings with hashed thread IDs without granting arbitrary gateway session access. Do not auto-resend interrupted turns. Show unavailable history and bounded transcript limits honestly.

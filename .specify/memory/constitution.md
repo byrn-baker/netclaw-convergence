@@ -1,7 +1,13 @@
 <!--
   Sync Impact Report
   ==================
-  Version change: 1.1.0 → 1.2.0 (MINOR — principle clarification)
+  Version change: 1.2.0 → 1.2.1 (PATCH — canonical spec path correction)
+
+  2026-09-26 spec 124 amendment: Principle XVI now names specs/, matching
+  the existing repository and SpecKit scripts. No safety principle changes.
+  Templates/scripts already use specs/; no template migration is required.
+
+  Previous 1.2.0 change:
 
   Modified principles:
     - Principle XI: Full-Stack Artifact Coherence — the installer touchpoint
@@ -220,7 +226,7 @@
 - All new features, MCP servers, and skills MUST follow the SDD
   workflow: specify → plan → task → implement.
 - No implementation work begins without a ratified spec.
-- Specs live in `.specify/specs/<feature-name>/` and follow the
+- Specs live in `specs/<feature-name>/` and follow the
   Speckit template structure.
 - Ad-hoc or undocumented feature additions ("cowboy coding") are
   not permitted.
@@ -352,4 +358,4 @@ MUST verify:
 - Use `.specify/` templates and workflows for all runtime
   development guidance.
 
-**Version**: 1.2.0 | **Ratified**: 2026-03-26 | **Last Amended**: 2026-07-08
+**Version**: 1.2.1 | **Ratified**: 2026-03-26 | **Last Amended**: 2026-09-26

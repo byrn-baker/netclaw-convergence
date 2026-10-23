@@ -37,7 +37,10 @@ import os
 import sys
 from typing import Any
 
-from mcp.server.fastmcp import FastMCP
+from functools import wraps
+from fastmcp.utilities.async_utils import call_sync_fn_in_threadpool
+from fastmcp_tasks import TasksExtension
+from fastmcp import FastMCP
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
@@ -59,6 +62,17 @@ from ratelimit import PER_MINUTE, PER_SECOND, RateLimiter, dedupe  # noqa: E402
 SERVER = "cisco-psirt"
 
 mcp = FastMCP("cisco-psirt")
+mcp.add_extension(TasksExtension(name="netclaw-cisco-psirt-mcp", concurrency=1))
+
+
+def _task_tool(fn):
+    """Register a threaded MCP task while preserving the direct Python callable."""
+    @wraps(fn)
+    async def run(*args, **kwargs):
+        return await call_sync_fn_in_threadpool(fn, *args, **kwargs)
+    mcp.tool(task=True)(run)
+    return fn
+
 
 _tokens = TokenProvider()
 _limiter = RateLimiter()
@@ -117,7 +131,7 @@ def _run_lookup(kind: str, key_parts: tuple, fetch, refresh: bool) -> tuple[list
     return advisories, ("refreshed" if refresh else "miss"), None
 
 
-@mcp.tool()
+@_task_tool
 def check_version(ostype: str, version: str, refresh: bool = False) -> dict:
     """Check whether a Cisco OS version has published PSIRT advisories.
 
@@ -190,7 +204,7 @@ def check_version(ostype: str, version: str, refresh: bool = False) -> dict:
     return result
 
 
-@mcp.tool()
+@_task_tool
 def check_versions(devices: list[dict], refresh: bool = False) -> dict:
     """Check a fleet, de-duplicating by version so the rate budget survives it.
 
@@ -243,7 +257,7 @@ def check_versions(devices: list[dict], refresh: bool = False) -> dict:
              "is clean — those devices were never checked.")
 
 
-@mcp.tool()
+@_task_tool
 def check_cve(cve: str, refresh: bool = False) -> dict:
     """Find Cisco advisories for a CVE id.
 
@@ -276,7 +290,7 @@ def check_cve(cve: str, refresh: bool = False) -> dict:
     return result
 
 
-@mcp.tool()
+@_task_tool
 def check_advisory(advisory_id: str) -> dict:
     """Fetch one advisory by id, e.g. `cisco-sa-bootp-WuBhNBxA`."""
     ident = (advisory_id or "").strip()
@@ -297,7 +311,7 @@ def check_advisory(advisory_id: str) -> dict:
     return result
 
 
-@mcp.tool()
+@_task_tool
 def list_recent(severity: str = "critical", start_date: str = "", end_date: str = "") -> dict:
     """List advisories of a severity first published in a date range.
 

@@ -5,7 +5,7 @@ import os
 import shutil
 import xml.etree.ElementTree as ET
 
-from mcp_init import mcp
+from mcp_init import mcp, _task_tool
 from eve_client import (
     get_client, EVEError, handle_eve_response, success_response, error_response,
     with_gait_logging, paginate_sequence,
@@ -88,7 +88,7 @@ def _set_config_in_unl(lab_path: str, node_id: str, config: str) -> dict:
     return {"fallback": "local_unl", "lab_file": full, "encoded_bytes": len(encoded), "startup_config_mode": node_elem.get("config")}
 
 
-@mcp.tool()
+@_task_tool
 @with_gait_logging("eve_get_node_config")
 def eve_get_node_config(lab_path: str, node: str) -> str:
     """
@@ -218,7 +218,7 @@ def eve_export_all_node_configs(lab_path: str) -> str:
         return error_response(e)
 
 
-@mcp.tool()
+@_task_tool
 @with_gait_logging("eve_list_config_summaries")
 def eve_list_config_summaries(lab_path: str, page: int = 1, page_size: int = 50) -> str:
     """
@@ -262,7 +262,7 @@ def eve_list_config_summaries(lab_path: str, page: int = 1, page_size: int = 50)
         return error_response(e)
 
 
-@mcp.tool()
+@_task_tool
 @with_gait_logging("eve_get_all_configs")
 def eve_get_all_configs(lab_path: str, page: int = 1, page_size: int = 50) -> str:
     """

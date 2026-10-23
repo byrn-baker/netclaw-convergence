@@ -1,0 +1,395 @@
+{
+  "awslabs.aws-network-mcp-server": {
+    "version": "0.0.17",
+    "requires_dist": [
+      "boto3>=1.40.74",
+      "fastmcp>=3.2.0",
+      "loguru>=0.7.0",
+      "mcp[cli]>=1.23.0",
+      "pydantic>=2.10.6"
+    ],
+    "framework_sources": [
+      {
+        "path": "awslabs/aws_network_mcp_server/server.py",
+        "imports": [
+          "fastmcp"
+        ]
+      },
+      {
+        "path": "awslabs/aws_network_mcp_server/tools/cloud_wan/detect_cloudwan_inspection.py",
+        "imports": [
+          "fastmcp.exceptions"
+        ]
+      },
+      {
+        "path": "awslabs/aws_network_mcp_server/tools/cloud_wan/get_all_cloudwan_routes.py",
+        "imports": [
+          "fastmcp.exceptions"
+        ]
+      },
+      {
+        "path": "awslabs/aws_network_mcp_server/tools/cloud_wan/get_cloudwan_attachment_details.py",
+        "imports": [
+          "fastmcp.exceptions"
+        ]
+      },
+      {
+        "path": "awslabs/aws_network_mcp_server/tools/cloud_wan/get_cloudwan_details.py",
+        "imports": [
+          "fastmcp.exceptions"
+        ]
+      },
+      {
+        "path": "awslabs/aws_network_mcp_server/tools/cloud_wan/get_cloudwan_logs.py",
+        "imports": [
+          "fastmcp.exceptions"
+        ]
+      },
+      {
+        "path": "awslabs/aws_network_mcp_server/tools/cloud_wan/get_cloudwan_peering_details.py",
+        "imports": [
+          "fastmcp.exceptions"
+        ]
+      },
+      {
+        "path": "awslabs/aws_network_mcp_server/tools/cloud_wan/get_cloudwan_routes.py",
+        "imports": [
+          "fastmcp.exceptions"
+        ]
+      },
+      {
+        "path": "awslabs/aws_network_mcp_server/tools/cloud_wan/list_cloudwan_peerings.py",
+        "imports": [
+          "fastmcp.exceptions"
+        ]
+      },
+      {
+        "path": "awslabs/aws_network_mcp_server/tools/cloud_wan/list_core_networks.py",
+        "imports": [
+          "fastmcp.exceptions"
+        ]
+      },
+      {
+        "path": "awslabs/aws_network_mcp_server/tools/cloud_wan/simulate_cloud_wan_route_change.py",
+        "imports": [
+          "fastmcp.exceptions"
+        ]
+      },
+      {
+        "path": "awslabs/aws_network_mcp_server/tools/general/find_ip_address.py",
+        "imports": [
+          "fastmcp.exceptions"
+        ]
+      },
+      {
+        "path": "awslabs/aws_network_mcp_server/tools/general/get_eni_details.py",
+        "imports": [
+          "fastmcp.exceptions"
+        ]
+      },
+      {
+        "path": "awslabs/aws_network_mcp_server/tools/network_firewall/get_firewall_rules.py",
+        "imports": [
+          "fastmcp.exceptions"
+        ]
+      },
+      {
+        "path": "awslabs/aws_network_mcp_server/tools/network_firewall/get_network_firewall_flow_logs.py",
+        "imports": [
+          "fastmcp.exceptions"
+        ]
+      },
+      {
+        "path": "awslabs/aws_network_mcp_server/tools/network_firewall/list_network_firewalls.py",
+        "imports": [
+          "fastmcp.exceptions"
+        ]
+      },
+      {
+        "path": "awslabs/aws_network_mcp_server/tools/transit_gateway/detect_transit_gateway_inspection.py",
+        "imports": [
+          "fastmcp.exceptions"
+        ]
+      },
+      {
+        "path": "awslabs/aws_network_mcp_server/tools/transit_gateway/get_all_transit_gateway_routes.py",
+        "imports": [
+          "fastmcp.exceptions"
+        ]
+      },
+      {
+        "path": "awslabs/aws_network_mcp_server/tools/transit_gateway/get_transit_gateway_details.py",
+        "imports": [
+          "fastmcp.exceptions"
+        ]
+      },
+      {
+        "path": "awslabs/aws_network_mcp_server/tools/transit_gateway/get_transit_gateway_flow_logs.py",
+        "imports": [
+          "fastmcp.exceptions"
+        ]
+      },
+      {
+        "path": "awslabs/aws_network_mcp_server/tools/transit_gateway/get_transit_gateway_routes.py",
+        "imports": [
+          "fastmcp.exceptions"
+        ]
+      },
+      {
+        "path": "awslabs/aws_network_mcp_server/tools/transit_gateway/list_transit_gateway_peerings.py",
+        "imports": [
+          "fastmcp.exceptions"
+        ]
+      },
+      {
+        "path": "awslabs/aws_network_mcp_server/tools/transit_gateway/list_transit_gateways.py",
+        "imports": [
+          "fastmcp.exceptions"
+        ]
+      },
+      {
+        "path": "awslabs/aws_network_mcp_server/tools/vpc/get_vpc_flow_logs.py",
+        "imports": [
+          "fastmcp.exceptions"
+        ]
+      },
+      {
+        "path": "awslabs/aws_network_mcp_server/tools/vpc/get_vpc_network_details.py",
+        "imports": [
+          "fastmcp.exceptions"
+        ]
+      },
+      {
+        "path": "awslabs/aws_network_mcp_server/tools/vpc/list_vpcs.py",
+        "imports": [
+          "fastmcp.exceptions"
+        ]
+      },
+      {
+        "path": "awslabs/aws_network_mcp_server/tools/vpn/list_vpn_connections.py",
+        "imports": [
+          "fastmcp.exceptions"
+        ]
+      }
+    ]
+  },
+  "awslabs.cloudwatch-mcp-server": {
+    "version": "0.3.1",
+    "requires_dist": [
+      "boto3>=1.38.22",
+      "loguru>=0.7.0",
+      "mcp[cli]<3.0.0,>=2.0.0",
+      "numpy>=2.0.0",
+      "pandas>=2.2.3",
+      "pydantic>=2.10.6",
+      "requests>=2.31.0",
+      "statsmodels>=0.14.0"
+    ],
+    "framework_sources": [
+      {
+        "path": "awslabs/cloudwatch_mcp_server/server.py",
+        "imports": [
+          "mcp.server.mcpserver"
+        ]
+      },
+      {
+        "path": "awslabs/cloudwatch_mcp_server/cloudwatch_alarms/tools.py",
+        "imports": [
+          "mcp.server.mcpserver"
+        ]
+      },
+      {
+        "path": "awslabs/cloudwatch_mcp_server/cloudwatch_logs/cwl_insights_batch.py",
+        "imports": [
+          "mcp.server.mcpserver"
+        ]
+      },
+      {
+        "path": "awslabs/cloudwatch_mcp_server/cloudwatch_logs/index_recommender.py",
+        "imports": [
+          "mcp.server.mcpserver"
+        ]
+      },
+      {
+        "path": "awslabs/cloudwatch_mcp_server/cloudwatch_logs/tools.py",
+        "imports": [
+          "mcp.server.mcpserver"
+        ]
+      },
+      {
+        "path": "awslabs/cloudwatch_mcp_server/cloudwatch_metrics/tools.py",
+        "imports": [
+          "mcp.server.mcpserver"
+        ]
+      }
+    ]
+  },
+  "awslabs.iam-mcp-server": {
+    "version": "1.1.1",
+    "requires_dist": [
+      "boto3>=1.34.0",
+      "botocore>=1.34.0",
+      "loguru>=0.7.0",
+      "mcp[cli]<3.0.0,>=2.0.0",
+      "pydantic>=2.10.6"
+    ],
+    "framework_sources": [
+      {
+        "path": "awslabs/iam_mcp_server/server.py",
+        "imports": [
+          "mcp.server.mcpserver"
+        ]
+      }
+    ]
+  },
+  "awslabs.cloudtrail-mcp-server": {
+    "version": "0.1.1",
+    "requires_dist": [
+      "boto3>=1.38.22",
+      "loguru>=0.7.0",
+      "mcp[cli]<3.0.0,>=2.0.0",
+      "pydantic>=2.10.6"
+    ],
+    "framework_sources": [
+      {
+        "path": "awslabs/cloudtrail_mcp_server/server.py",
+        "imports": [
+          "mcp.server.mcpserver"
+        ]
+      },
+      {
+        "path": "awslabs/cloudtrail_mcp_server/tools.py",
+        "imports": [
+          "mcp.server.mcpserver"
+        ]
+      }
+    ]
+  },
+  "awslabs.cost-explorer-mcp-server": {
+    "version": "0.0.21",
+    "requires_dist": [
+      "boto3>=1.38.40",
+      "loguru>=0.7.0",
+      "mcp[cli]>=1.23.0",
+      "pandas>=2.2.3",
+      "pydantic>=2.10.6"
+    ],
+    "framework_sources": [
+      {
+        "path": "awslabs/cost_explorer_mcp_server/comparison_handler.py",
+        "imports": [
+          "mcp.server.fastmcp"
+        ]
+      },
+      {
+        "path": "awslabs/cost_explorer_mcp_server/cost_usage_handler.py",
+        "imports": [
+          "mcp.server.fastmcp"
+        ]
+      },
+      {
+        "path": "awslabs/cost_explorer_mcp_server/forecasting_handler.py",
+        "imports": [
+          "mcp.server.fastmcp"
+        ]
+      },
+      {
+        "path": "awslabs/cost_explorer_mcp_server/metadata_handler.py",
+        "imports": [
+          "mcp.server.fastmcp"
+        ]
+      },
+      {
+        "path": "awslabs/cost_explorer_mcp_server/server.py",
+        "imports": [
+          "mcp.server.fastmcp"
+        ]
+      },
+      {
+        "path": "awslabs/cost_explorer_mcp_server/utility_handler.py",
+        "imports": [
+          "mcp.server.fastmcp"
+        ]
+      }
+    ]
+  },
+  "awslabs.aws-diagram-mcp-server": {
+    "version": "1.0.23",
+    "requires_dist": [
+      "bandit>=1.8.6",
+      "boto3>=1.40.53",
+      "diagrams>=0.24.4",
+      "mcp[cli]>=1.23.0",
+      "pydantic>=2.12.2",
+      "sarif-om>=1.0.4",
+      "setuptools>=80.9.0",
+      "starlette>=0.48.0",
+      "urllib3>=2.6.3"
+    ],
+    "framework_sources": [
+      {
+        "path": "awslabs/aws_diagram_mcp_server/server.py",
+        "imports": [
+          "mcp.server.fastmcp"
+        ]
+      }
+    ]
+  },
+  "cisco-nso-mcp-server": {
+    "version": "3.1.0",
+    "requires_dist": [
+      "cisco-nso-restconf>=1.0.5",
+      "fastmcp>=2.14.1",
+      "httpx>=0.28.1",
+      "python-dotenv>=1.2.1"
+    ],
+    "framework_sources": [
+      {
+        "path": "cisco_nso_mcp_server/server.py",
+        "imports": [
+          "fastmcp"
+        ]
+      }
+    ]
+  },
+  "infoblox-ddi-mcp": {
+    "version": "2.2.3",
+    "requires_dist": [
+      "cachetools>=5.3.0",
+      "fastmcp>=3.1.1",
+      "pybreaker>=1.0.0",
+      "python-dotenv>=1.0.0",
+      "requests>=2.31.0",
+      "structlog>=24.1.0",
+      "opentelemetry-api>=1.20; extra == \"otel\"",
+      "opentelemetry-exporter-otlp>=1.20; extra == \"otel\"",
+      "opentelemetry-sdk>=1.20; extra == \"otel\""
+    ],
+    "framework_sources": [
+      {
+        "path": "mcp_intent.py",
+        "imports": [
+          "fastmcp",
+          "fastmcp.server.middleware.middleware",
+          "fastmcp.server.dependencies",
+          "fastmcp.server.auth"
+        ]
+      }
+    ]
+  },
+  "pagerduty-mcp": {
+    "error": "invalid syntax (<unknown>, line 14)"
+  },
+  "blender-mcp": {
+    "version": "2.0.0",
+    "requires_dist": [
+      "mcp-for-blender>=2.0.0"
+    ],
+    "framework_sources": []
+  },
+  "mcp-grafana": {
+    "version": "2.0.0",
+    "requires_dist": null,
+    "framework_sources": []
+  }
+}

@@ -1,0 +1,11 @@
+✔ zero limits and false confirmation override retain their meaning (0.778637ms)
+✔ invalid overrides retain the last valid layer (0.248912ms)
+✔ real HUD server rejects hostile HTTP and WebSocket requests before fixture access (194.517885ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 297.654662

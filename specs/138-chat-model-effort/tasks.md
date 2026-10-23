@@ -1,0 +1,3 @@
+- [x] Add sanitized runtime model discovery and session effort transport.
+- [x] Add bottom-composer effort slider and persistence.
+- [x] Verify unit, build, runtime session settings and browser behavior.

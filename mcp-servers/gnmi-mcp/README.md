@@ -103,3 +103,7 @@ docker run --env-file .env gnmi-mcp
 - protobuf (protocol buffers)
 - cryptography (TLS handling)
 - pydantic (data models)
+
+## Spec124 production authorization update
+
+Production writes now require the exact ServiceNow CR to be approved and in Implement state. Missing or failed verification blocks writes. See [change-gate migration](../../docs/CHANGE-GATE-MIGRATION.md) for private configuration, preflight, backup and recovery. No ServiceNow record is created or approved automatically.

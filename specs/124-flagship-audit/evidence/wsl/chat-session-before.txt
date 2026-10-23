@@ -1,0 +1,184 @@
+FFFFFFFF                                                                 [100%]
+=================================== FAILURES ===================================
+________________ test_inbound_open_rejects_path_ids[../escape] _________________
+
+tmp_path = PosixPath('/tmp/pytest-of-johncapobianco/pytest-347/test_inbound_open_rejects_path0')
+session_id = '../escape'
+
+    @pytest.mark.parametrize('session_id',['../escape','/tmp/escape','a/b','a\\b','..'])
+    def test_inbound_open_rejects_path_ids(tmp_path,session_id):
+        svc,channels=setup(tmp_path)
+        try:
+            result=asyncio.run(svc.chat.handle_chat_open(channels[0],{'session_id':session_id}))
+>           assert result['accepted'] is False
+E           assert True is False
+
+tests/n2n/test_chat_session_boundaries.py:24: AssertionError
+_______________ test_inbound_open_rejects_path_ids[/tmp/escape] ________________
+
+tmp_path = PosixPath('/tmp/pytest-of-johncapobianco/pytest-347/test_inbound_open_rejects_path1')
+session_id = '/tmp/escape'
+
+    @pytest.mark.parametrize('session_id',['../escape','/tmp/escape','a/b','a\\b','..'])
+    def test_inbound_open_rejects_path_ids(tmp_path,session_id):
+        svc,channels=setup(tmp_path)
+        try:
+            result=asyncio.run(svc.chat.handle_chat_open(channels[0],{'session_id':session_id}))
+>           assert result['accepted'] is False
+E           assert True is False
+
+tests/n2n/test_chat_session_boundaries.py:24: AssertionError
+___________________ test_inbound_open_rejects_path_ids[a/b] ____________________
+
+tmp_path = PosixPath('/tmp/pytest-of-johncapobianco/pytest-347/test_inbound_open_rejects_path2')
+session_id = 'a/b'
+
+    @pytest.mark.parametrize('session_id',['../escape','/tmp/escape','a/b','a\\b','..'])
+    def test_inbound_open_rejects_path_ids(tmp_path,session_id):
+        svc,channels=setup(tmp_path)
+        try:
+            result=asyncio.run(svc.chat.handle_chat_open(channels[0],{'session_id':session_id}))
+>           assert result['accepted'] is False
+E           assert True is False
+
+tests/n2n/test_chat_session_boundaries.py:24: AssertionError
+___________________ test_inbound_open_rejects_path_ids[a\\b] ___________________
+
+tmp_path = PosixPath('/tmp/pytest-of-johncapobianco/pytest-347/test_inbound_open_rejects_path3')
+session_id = 'a\\b'
+
+    @pytest.mark.parametrize('session_id',['../escape','/tmp/escape','a/b','a\\b','..'])
+    def test_inbound_open_rejects_path_ids(tmp_path,session_id):
+        svc,channels=setup(tmp_path)
+        try:
+            result=asyncio.run(svc.chat.handle_chat_open(channels[0],{'session_id':session_id}))
+>           assert result['accepted'] is False
+E           assert True is False
+
+tests/n2n/test_chat_session_boundaries.py:24: AssertionError
+____________________ test_inbound_open_rejects_path_ids[..] ____________________
+
+tmp_path = PosixPath('/tmp/pytest-of-johncapobianco/pytest-347/test_inbound_open_rejects_path4')
+session_id = '..'
+
+    @pytest.mark.parametrize('session_id',['../escape','/tmp/escape','a/b','a\\b','..'])
+    def test_inbound_open_rejects_path_ids(tmp_path,session_id):
+        svc,channels=setup(tmp_path)
+        try:
+            result=asyncio.run(svc.chat.handle_chat_open(channels[0],{'session_id':session_id}))
+>           assert result['accepted'] is False
+E           assert True is False
+
+tests/n2n/test_chat_session_boundaries.py:24: AssertionError
+_________________ test_messages_require_owned_received_session _________________
+
+tmp_path = PosixPath('/tmp/pytest-of-johncapobianco/pytest-347/test_messages_require_owned_re0')
+
+    def test_messages_require_owned_received_session(tmp_path):
+        svc,channels=setup(tmp_path);calls=[]
+        async def gateway(*args,**kwargs):calls.append(args);return 'reply',1
+        svc.chat._ask_gateway=gateway
+        async def run():
+            opened=await svc.chat.handle_chat_open(channels[0],{'session_id':'owned'})
+            assert opened['accepted']
+            for channel,ident in [(channels[1],'owned'),(channels[0],'missing'),(channels[0],None)]:
+                with pytest.raises(RpcError):await svc.chat.handle_chat_message(channel,{'session_id':ident,'text':'untrusted'})
+            duplicate=await svc.chat.handle_chat_open(channels[1],{'session_id':'owned'})
+            assert not duplicate['accepted']
+>       try:asyncio.run(run());assert calls==[]
+            ^^^^^^^^^^^^^^^^^^
+
+tests/n2n/test_chat_session_boundaries.py:40:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+../.local/share/uv/python/cpython-3.12.10-linux-x86_64-gnu/lib/python3.12/asyncio/runners.py:195: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+../.local/share/uv/python/cpython-3.12.10-linux-x86_64-gnu/lib/python3.12/asyncio/runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../.local/share/uv/python/cpython-3.12.10-linux-x86_64-gnu/lib/python3.12/asyncio/base_events.py:691: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    async def run():
+        opened=await svc.chat.handle_chat_open(channels[0],{'session_id':'owned'})
+        assert opened['accepted']
+        for channel,ident in [(channels[1],'owned'),(channels[0],'missing'),(channels[0],None)]:
+>           with pytest.raises(RpcError):await svc.chat.handle_chat_message(channel,{'session_id':ident,'text':'untrusted'})
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+E           Failed: DID NOT RAISE <class 'bgp.federation.channel.RpcError'>
+
+tests/n2n/test_chat_session_boundaries.py:37: Failed
+__________________ test_transcript_link_cannot_write_outside ___________________
+
+tmp_path = PosixPath('/tmp/pytest-of-johncapobianco/pytest-347/test_transcript_link_cannot_wr0')
+
+    def test_transcript_link_cannot_write_outside(tmp_path):
+        svc,_=setup(tmp_path);outside=tmp_path/'outside.txt';outside.write_text('preserve')
+        (svc.chat.chats_dir/'linked.txt').symlink_to(outside)
+        try:
+>           with pytest.raises((OSError,ValueError,RpcError)):svc.chat._append('linked','untrusted')
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           Failed: DID NOT RAISE any of (<class 'OSError'>, <class 'ValueError'>, <class 'bgp.federation.channel.RpcError'>)
+
+tests/n2n/test_chat_session_boundaries.py:48: Failed
+______________ test_chat_reserves_allowance_before_gateway_await _______________
+
+tmp_path = PosixPath('/tmp/pytest-of-johncapobianco/pytest-347/test_chat_reserves_allowance_b0')
+
+    def test_chat_reserves_allowance_before_gateway_await(tmp_path):
+        svc,channels=setup(tmp_path);svc.authz.daily_requests=1;calls=[]
+        async def run():
+            release=asyncio.Event()
+            async def gateway(*args,**kwargs):calls.append(args);await release.wait();return 'reply',2
+            svc.chat._ask_gateway=gateway
+            await svc.chat.handle_chat_open(channels[0],{'session_id':'budget'})
+            one=asyncio.create_task(svc.chat.handle_chat_message(channels[0],{'session_id':'budget','text':'one'}))
+            await asyncio.sleep(0)
+            two=asyncio.create_task(svc.chat.handle_chat_message(channels[0],{'session_id':'budget','text':'two'}))
+            await asyncio.sleep(0);release.set()
+            results=await asyncio.gather(one,two,return_exceptions=True)
+            assert len(calls)==1
+            assert sum(isinstance(result,RpcError) for result in results)==1
+>       try:asyncio.run(run())
+            ^^^^^^^^^^^^^^^^^^
+
+tests/n2n/test_chat_session_boundaries.py:67:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+../.local/share/uv/python/cpython-3.12.10-linux-x86_64-gnu/lib/python3.12/asyncio/runners.py:195: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+../.local/share/uv/python/cpython-3.12.10-linux-x86_64-gnu/lib/python3.12/asyncio/runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../.local/share/uv/python/cpython-3.12.10-linux-x86_64-gnu/lib/python3.12/asyncio/base_events.py:691: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    async def run():
+        release=asyncio.Event()
+        async def gateway(*args,**kwargs):calls.append(args);await release.wait();return 'reply',2
+        svc.chat._ask_gateway=gateway
+        await svc.chat.handle_chat_open(channels[0],{'session_id':'budget'})
+        one=asyncio.create_task(svc.chat.handle_chat_message(channels[0],{'session_id':'budget','text':'one'}))
+        await asyncio.sleep(0)
+        two=asyncio.create_task(svc.chat.handle_chat_message(channels[0],{'session_id':'budget','text':'two'}))
+        await asyncio.sleep(0);release.set()
+        results=await asyncio.gather(one,two,return_exceptions=True)
+>       assert len(calls)==1
+E       AssertionError: assert 2 == 1
+E        +  where 2 = len([('one',), ('two',)])
+
+tests/n2n/test_chat_session_boundaries.py:65: AssertionError
+=========================== short test summary info ============================
+FAILED tests/n2n/test_chat_session_boundaries.py::test_inbound_open_rejects_path_ids[../escape]
+FAILED tests/n2n/test_chat_session_boundaries.py::test_inbound_open_rejects_path_ids[/tmp/escape]
+FAILED tests/n2n/test_chat_session_boundaries.py::test_inbound_open_rejects_path_ids[a/b]
+FAILED tests/n2n/test_chat_session_boundaries.py::test_inbound_open_rejects_path_ids[a\\b]
+FAILED tests/n2n/test_chat_session_boundaries.py::test_inbound_open_rejects_path_ids[..]
+FAILED tests/n2n/test_chat_session_boundaries.py::test_messages_require_owned_received_session
+FAILED tests/n2n/test_chat_session_boundaries.py::test_transcript_link_cannot_write_outside
+FAILED tests/n2n/test_chat_session_boundaries.py::test_chat_reserves_allowance_before_gateway_await
+8 failed in 0.31s

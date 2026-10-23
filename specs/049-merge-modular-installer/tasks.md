@@ -170,3 +170,38 @@ User Story 1 is the MVP — it's the one that turns "a great PR that would silen
 All 29 tasks completed 2026-07-08. The actual `scripts/lib/catalog.sh` / `scripts/lib/install-steps.sh` / `scripts/verify-catalog-coverage.py` / constitution changes were implemented directly on a local copy of PR #96's branch (`refs/pull/96/head`) and pushed to `calcuttin:feat/installer-tui-refactor` to preserve contributor attribution — see PR #96 for that diff and its own commit history. PR #96 went from `mergeStateStatus: DIRTY` / `mergeable: CONFLICTING` to `CLEAN` / `MERGEABLE` as a direct result. An explanatory comment was posted on PR #96 crediting the original contribution. This branch's job was the spec/plan/tasks record of that work, not the implementation itself.
 
 One unrelated, pre-existing bug was found and fixed along the way (separate commit on `main`, `dc5e411`): `.gitignore`'s `mcp-servers/*` rule had no exception for `atlassian-mcp/` or `chrome-devtools-mcp/`, so both directories' READMEs were silently never committed despite being referenced throughout the docs. Restored.
+
+## macOS keyboard follow-up (2026-10-09)
+
+- [X] T033 Reproduce the Bash 3.2 arrow failure and record the root cause.
+- [X] T034 Add PTY tests for arrow encodings, shortcuts, runtime cancellation,
+  checklist toggling, failed reads and explicit/non-interactive selection.
+- [X] T035 Fix `scripts/lib/tui.sh` and runtime cancellation in `scripts/install.sh`.
+- [X] T036 Run focused regressions, syntax and artifact/catalog checks; record
+  results and limitations in `verification.md` and session notes.
+
+## Python prerequisites follow-up (2026-10-09)
+
+- [X] T037 Verify missing uv and Python minimums against source/package metadata.
+- [X] T038 Add prerequisite validation and safe recovery from old managed venvs.
+- [X] T039 Add regressions for version rejection, uv selection and retry safety.
+- [X] T040 Document operator remedy, run focused checks and record limitations.
+
+## Full-log follow-up (2026-10-09)
+
+- [X] T041 Classify supplied logs and verify old-pip editable limitation.
+- [X] T042 Repair dedicated venv recovery/pip and canonical launch binding.
+- [X] T043 Repair multivendor, claw-certs and gtrace paths with regressions.
+- [X] T044 Verify affected suites; document unresolved external prerequisites
+  and update the draft PR's final scope and evidence.
+
+## Platform and component preflight follow-up (2026-10-09)
+
+- [X] T045 Record second-archive causes and define platform/preflight contract.
+- [X] T046 Add shared policy, platform detection, default Python and read-only
+  selection checks before mutations; expose --preflight and unsupported TUI labels.
+- [X] T047 Repair Zabbix cwd, enforce component Python bounds in recovery and
+  gates, and separate per-run logs.
+- [X] T048 Add regression and host-fixture checks plus real temporary Zabbix
+  install/discovery; run required reconciliation and applicable suites.
+- [X] T049 Update operator docs/evidence, commit, push and publish follow-up PR.

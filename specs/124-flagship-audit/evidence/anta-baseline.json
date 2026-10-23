@@ -1,0 +1,52 @@
+{
+  "counts": {
+    "BLOCKED_DEPENDENCY": 0,
+    "ERROR": 0,
+    "FAIL": 0,
+    "NEEDS_DOCKER": 0,
+    "NEEDS_LIVE_CREDENTIALS": 1,
+    "PASS": 1
+  },
+  "exit_code": 0,
+  "generated_at": "2026-09-26T20:01:22.971412+00:00",
+  "results": [
+    {
+      "capabilities": [
+        {
+          "detail": "missing: ANTA_PASSWORD, ANTA_TEST_HOST, ANTA_USERNAME",
+          "kind": "live",
+          "names": [
+            "ANTA_PASSWORD",
+            "ANTA_TEST_HOST",
+            "ANTA_USERNAME"
+          ],
+          "status": "NEEDS_LIVE_CREDENTIALS"
+        }
+      ],
+      "command": [
+        "bash",
+        "tests/anta/run-tests.sh"
+      ],
+      "detail": "offline contracts passed",
+      "duration_seconds": 0.10520345800068753,
+      "environment": {
+        "fingerprint": "4ce1072fd03f4ff806702e9f3c04a1dcfe21e9f3816813d0a6fe654c4e94d95e",
+        "path": "mcp-servers/anta-mcp/.venv"
+      },
+      "exit_code": 0,
+      "status": "PASS",
+      "suite": "anta",
+      "test_runs": [
+        {
+          "command": [
+            "bash",
+            "tests/anta/run-tests.sh"
+          ],
+          "exit_code": 0,
+          "output": "=== verdict model (stdlib only, always runs) ===\n  ok   - BGP inactive reclassified to not_applicable\n  ok   - unsupported command reclassified\n  ok   - genuine mismatch stays fail\n  ok   - NTP desync stays fail\n  ok   - success -> pass\n  ok   - skipped -> skipped\n  ok   - error -> error\n  ok   - unrecognised status does not become a pass\n  ok   - five counts kept separate\n  ok   - not_applicable is not counted as fail\n  ok   - skipped is not counted as pass\n  ok   - health percentage refused\n  ok   - unknown verdict rejected\n  ok   - unreachable yields error with zero results\n  ok   - empty selection is not a pass\n  ok   - envelope carries device, timestamp and tls disclosure\n  ok   - unattributed result rejected\n\n=== read-only posture (source scan, always runs) ===\n  ok   - no configuration path in server source\n  ok   - no credential is returned to callers\n\n=== live (skips without venv or device) ===\n  skip - live tests (ANTA_TEST_HOST not set)\n\npassed: 19  failed: 0  skipped: 1"
+        }
+      ]
+    }
+  ],
+  "schema_version": 1
+}

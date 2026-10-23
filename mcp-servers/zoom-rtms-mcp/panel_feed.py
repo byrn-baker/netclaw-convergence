@@ -16,6 +16,9 @@ import json
 import logging
 import mimetypes
 import os
+import time
+
+from panel_auth import verify_context
 
 import websockets
 from websockets.datastructures import Headers
@@ -54,8 +57,7 @@ async def _serve_static(connection, request):
     upgrade_hdr = request.headers.get("Upgrade", "")
     origin_hdr = request.headers.get("Origin", "")
     ua_hdr = request.headers.get("User-Agent", "")
-    logger.info("panel_feed request: path=%r upgrade=%r origin=%r user-agent=%r",
-                request.path, upgrade_hdr, origin_hdr, ua_hdr)
+    logger.debug("panel_feed request path=%r", path)
     if path == "/oauth/callback":
         # Zoom's install/consent flow redirects the browser here after the
         # user authorizes. This app's data access is scoped per-meeting via
@@ -125,7 +127,7 @@ async def _broadcast(meeting_uuid: str, message: dict):
     conns = _connections.get(meeting_uuid, set())
     dead = set()
     payload = json.dumps(message)
-    for ws in conns:
+    for ws in tuple(conns):
         try:
             await ws.send(payload)
         except Exception:
@@ -190,66 +192,58 @@ async def _handle_client_message(ws, meeting_uuid: str, msg: dict):
 
 
 async def _handler(ws):
-    logger.warning("TRACE: new panel WS connection opened")
-    # First message on a connection must carry meeting_uuid to route it.
     meeting_uuid = None
+    participant_id = None
+    expiry_task = None
     try:
+        first = json.loads(await asyncio.wait_for(ws.recv(), timeout=10))
+        if not isinstance(first, dict) or first.get("type") != "authenticate":
+            raise ValueError("Authentication required")
+        identity = verify_context(first.get("context"))
+        meeting_uuid = identity["meeting_uuid"]
+        participant_id = identity["user_id"]
+        if len(_connections.get(meeting_uuid, ())) >= 64 or sum(map(len, _connections.values())) >= 256:
+            raise ValueError("Panel connection capacity reached")
+        _connections.setdefault(meeting_uuid, set()).add(ws)
+        _participant_sockets.setdefault(meeting_uuid, {})[participant_id] = ws
+        async def expire():
+            await asyncio.sleep(max(0, identity["expires_at"] - time.time()))
+            await ws.close(code=4001, reason="Refresh Zoom app context")
+        expiry_task = asyncio.create_task(expire())
+        await ws.send(json.dumps({"type": "identified", "meeting_uuid": meeting_uuid}))
         async for raw in ws:
-            logger.warning("TRACE: panel WS raw message received: %r", raw[:500])
-            try:
-                msg = json.loads(raw)
-            except Exception as e:
-                logger.warning("TRACE: panel WS message JSON parse failed: %s", e)
-                continue
-
-            if msg.get("type") == "identify_by_active_meeting":
-                # Fallback for when Zoom's own getMeetingContext()/
-                # getUserContext() reject the panel with "No Permission for
-                # this API [code:80004, reason:app_not_support]" (confirmed
-                # live 2026-08-19 — a Marketplace-side app configuration gap,
-                # not something client code can route around directly). This
-                # server already knows the true meeting_uuid authoritatively
-                # from the RTMS webhook, independent of the Zoom SDK — so a
-                # panel that can't self-identify asks us instead. Picks the
-                # most-recently-started active session; fine for this
-                # feature's single-operator, single-live-meeting usage today,
-                # not a multi-tenant routing solution.
-                # last_activity, not started_at: confirmed live 2026-08-19 —
-                # Zoom fired two separate meeting.rtms_started webhooks with
-                # two different meeting_uuids for what was one physical
-                # meeting (an RTMS-level reconnect). Picking "most recently
-                # started" landed on the newer-but-silent session while all
-                # the real transcript kept flowing through the older one —
-                # the panel connected to an empty room, no error anywhere.
-                active = sorted(registry.list_active(), key=lambda s: s.last_activity, reverse=True)
-                if active:
-                    meeting_uuid = active[0].meeting_uuid
-                    _connections.setdefault(meeting_uuid, set()).add(ws)
-                    await ws.send(json.dumps({"type": "identified", "meeting_uuid": meeting_uuid}))
-                    logger.warning("TRACE: identified connection to active meeting_uuid=%r",
-                                   meeting_uuid)
-                else:
-                    logger.warning("TRACE: identify_by_active_meeting — no active meetings")
-                continue
-
-            meeting_uuid = msg.get("meeting_uuid", meeting_uuid)
-            if not meeting_uuid:
-                logger.warning("TRACE: panel WS message has no meeting_uuid, dropping: %r", msg)
-                continue
-            _connections.setdefault(meeting_uuid, set()).add(ws)
-            logger.warning("TRACE: registered connection for meeting_uuid=%r (now %d conns)",
-                           meeting_uuid, len(_connections[meeting_uuid]))
+            msg = json.loads(raw)
+            if not isinstance(msg, dict):raise ValueError("Invalid panel message")
+            if msg.get("meeting_uuid", meeting_uuid) != meeting_uuid:
+                raise ValueError("Cross-meeting subscription refused")
+            # The identity comes from Zoom's authenticated context, never from
+            # a claimed participant ID or an active-meeting fallback.
+            msg["participant_id"] = participant_id
             await _handle_client_message(ws, meeting_uuid, msg)
-    except Exception as e:
-        logger.warning("TRACE: panel WS connection closed: %s", e)
+    except (ValueError, TypeError, asyncio.TimeoutError):
+        await ws.close(code=1008, reason="Valid Zoom meeting context required")
+    except websockets.exceptions.ConnectionClosed:
+        pass
     finally:
+        if expiry_task:
+            expiry_task.cancel()
         if meeting_uuid:
-            _connections.get(meeting_uuid, set()).discard(ws)
+            conns = _connections.get(meeting_uuid, set())
+            conns.discard(ws)
+            if not conns:_connections.pop(meeting_uuid, None)
+            participants = _participant_sockets.get(meeting_uuid, {})
+            if participants.get(participant_id) is ws:
+                participants.pop(participant_id, None)
+                session = registry.get(meeting_uuid)
+                if session:
+                    session.viewers.discard(participant_id)
+                    session.camera_overlay_enrollments.discard(participant_id)
+            if not participants:_participant_sockets.pop(meeting_uuid, None)
 
 
 async def start_panel_feed_server():
     server = await websockets.serve(
-        _handler, "0.0.0.0", PORT, process_request=_serve_static)
+        _handler, os.environ.get("ZOOM_PANEL_FEED_HOST", "127.0.0.1"), PORT, process_request=_serve_static, max_size=65536, max_queue=16)
     logger.info(
         "Panel feed WebSocket + static panel (%s) listening on 0.0.0.0:%d",
         _STATIC_DIR, PORT)

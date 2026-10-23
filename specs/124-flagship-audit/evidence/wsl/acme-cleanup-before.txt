@@ -1,0 +1,126 @@
+FF.                                                                      [100%]/home/johncapobianco/netclaw/.contract-test-envs/n2n/lib/python3.12/site-packages/_pytest/unraisableexception.py:67: PytestUnraisableExceptionWarning: Exception ignored in: <function BaseSubprocessTransport.__del__ at 0x7e7a9d6f22a0>
+
+Traceback (most recent call last):
+  File "/home/johncapobianco/.local/share/uv/python/cpython-3.12.10-linux-x86_64-gnu/lib/python3.12/asyncio/base_subprocess.py", line 126, in __del__
+    self.close()
+  File "/home/johncapobianco/.local/share/uv/python/cpython-3.12.10-linux-x86_64-gnu/lib/python3.12/asyncio/base_subprocess.py", line 104, in close
+    proto.pipe.close()
+  File "/home/johncapobianco/.local/share/uv/python/cpython-3.12.10-linux-x86_64-gnu/lib/python3.12/asyncio/unix_events.py", line 568, in close
+    self._close(None)
+  File "/home/johncapobianco/.local/share/uv/python/cpython-3.12.10-linux-x86_64-gnu/lib/python3.12/asyncio/unix_events.py", line 592, in _close
+    self._loop.call_soon(self._call_connection_lost, exc)
+  File "/home/johncapobianco/.local/share/uv/python/cpython-3.12.10-linux-x86_64-gnu/lib/python3.12/asyncio/base_events.py", line 799, in call_soon
+    self._check_closed()
+  File "/home/johncapobianco/.local/share/uv/python/cpython-3.12.10-linux-x86_64-gnu/lib/python3.12/asyncio/base_events.py", line 545, in _check_closed
+    raise RuntimeError('Event loop is closed')
+RuntimeError: Event loop is closed
+
+Enable tracemalloc to get traceback where the object was allocated.
+See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+  warnings.warn(pytest.PytestUnraisableExceptionWarning(msg))
+
+=================================== FAILURES ===================================
+_________ test_acme_stops_and_reaps_child_on_timeout_or_cancel[False] __________
+
+tmp_path = PosixPath('/tmp/pytest-of-johncapobianco/pytest-353/test_acme_stops_and_reaps_chil0')
+cancel = False
+
+    @pytest.mark.parametrize('cancel',[False,True])
+    def test_acme_stops_and_reaps_child_on_timeout_or_cancel(tmp_path,cancel):
+        pidfile=tmp_path/'pid'
+        code='import os,time,pathlib,sys;pathlib.Path(sys.argv[1]).write_text(str(os.getpid()));time.sleep(30)'
+        async def run():
+            task=asyncio.create_task(acme._run([sys.executable,'-c',code,str(pidfile)],timeout_s=0.25 if not cancel else 30))
+            for _ in range(100):
+                if pidfile.exists():break
+                await asyncio.sleep(.01)
+            assert pidfile.exists()
+            if cancel:task.cancel()
+            with pytest.raises(asyncio.CancelledError if cancel else asyncio.TimeoutError):await task
+            assert not alive(int(pidfile.read_text()))
+>       try:asyncio.run(run())
+            ^^^^^^^^^^^^^^^^^^
+
+tests/n2n/test_acme_process_cleanup.py:28:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+../.local/share/uv/python/cpython-3.12.10-linux-x86_64-gnu/lib/python3.12/asyncio/runners.py:195: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+../.local/share/uv/python/cpython-3.12.10-linux-x86_64-gnu/lib/python3.12/asyncio/runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../.local/share/uv/python/cpython-3.12.10-linux-x86_64-gnu/lib/python3.12/asyncio/base_events.py:691: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    async def run():
+        task=asyncio.create_task(acme._run([sys.executable,'-c',code,str(pidfile)],timeout_s=0.25 if not cancel else 30))
+        for _ in range(100):
+            if pidfile.exists():break
+            await asyncio.sleep(.01)
+        assert pidfile.exists()
+        if cancel:task.cancel()
+        with pytest.raises(asyncio.CancelledError if cancel else asyncio.TimeoutError):await task
+>       assert not alive(int(pidfile.read_text()))
+E       AssertionError: assert not True
+E        +  where True = alive(318878)
+E        +    where 318878 = int('318878')
+E        +      where '318878' = read_text()
+E        +        where read_text = PosixPath('/tmp/pytest-of-johncapobianco/pytest-353/test_acme_stops_and_reaps_chil0/pid').read_text
+
+tests/n2n/test_acme_process_cleanup.py:27: AssertionError
+__________ test_acme_stops_and_reaps_child_on_timeout_or_cancel[True] __________
+
+tmp_path = PosixPath('/tmp/pytest-of-johncapobianco/pytest-353/test_acme_stops_and_reaps_chil1')
+cancel = True
+
+    @pytest.mark.parametrize('cancel',[False,True])
+    def test_acme_stops_and_reaps_child_on_timeout_or_cancel(tmp_path,cancel):
+        pidfile=tmp_path/'pid'
+        code='import os,time,pathlib,sys;pathlib.Path(sys.argv[1]).write_text(str(os.getpid()));time.sleep(30)'
+        async def run():
+            task=asyncio.create_task(acme._run([sys.executable,'-c',code,str(pidfile)],timeout_s=0.25 if not cancel else 30))
+            for _ in range(100):
+                if pidfile.exists():break
+                await asyncio.sleep(.01)
+            assert pidfile.exists()
+            if cancel:task.cancel()
+            with pytest.raises(asyncio.CancelledError if cancel else asyncio.TimeoutError):await task
+            assert not alive(int(pidfile.read_text()))
+>       try:asyncio.run(run())
+            ^^^^^^^^^^^^^^^^^^
+
+tests/n2n/test_acme_process_cleanup.py:28:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+../.local/share/uv/python/cpython-3.12.10-linux-x86_64-gnu/lib/python3.12/asyncio/runners.py:195: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+../.local/share/uv/python/cpython-3.12.10-linux-x86_64-gnu/lib/python3.12/asyncio/runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../.local/share/uv/python/cpython-3.12.10-linux-x86_64-gnu/lib/python3.12/asyncio/base_events.py:691: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    async def run():
+        task=asyncio.create_task(acme._run([sys.executable,'-c',code,str(pidfile)],timeout_s=0.25 if not cancel else 30))
+        for _ in range(100):
+            if pidfile.exists():break
+            await asyncio.sleep(.01)
+        assert pidfile.exists()
+        if cancel:task.cancel()
+        with pytest.raises(asyncio.CancelledError if cancel else asyncio.TimeoutError):await task
+>       assert not alive(int(pidfile.read_text()))
+E       AssertionError: assert not True
+E        +  where True = alive(318930)
+E        +    where 318930 = int('318930')
+E        +      where '318930' = read_text()
+E        +        where read_text = PosixPath('/tmp/pytest-of-johncapobianco/pytest-353/test_acme_stops_and_reaps_chil1/pid').read_text
+
+tests/n2n/test_acme_process_cleanup.py:27: AssertionError
+=========================== short test summary info ============================
+FAILED tests/n2n/test_acme_process_cleanup.py::test_acme_stops_and_reaps_child_on_timeout_or_cancel[False]
+FAILED tests/n2n/test_acme_process_cleanup.py::test_acme_stops_and_reaps_child_on_timeout_or_cancel[True]
+2 failed, 1 passed in 0.42s

@@ -22,20 +22,16 @@ source "$SCRIPT_DIR/lib/common.sh"
 # defaults safely (to "no") under a non-interactive invocation.
 source "$SCRIPT_DIR/lib/tui.sh"
 
-OPENCLAW_ENV="${OPENCLAW_ENV:-$HOME/.openclaw/.env}"
+eval "$(python3 "$SCRIPT_DIR/federation-control.py" env)"
+OPENCLAW_ENV="${OPENCLAW_ENV:-$RUNTIME_HOME/.env}"
 PROTOCOL_MCP_DIR="$NETCLAW_DIR/mcp-servers/protocol-mcp"
 BGP_DAEMON="$PROTOCOL_MCP_DIR/bgp-daemon-v2.py"
-BGP_API="http://127.0.0.1:8179"
-DAEMON_OUT="/tmp/bgp-daemon-v2.out"
+DAEMON_OUT="$RUNTIME_HOME/netclaw-federation/daemon.log"
 
 # Read a value from ~/.openclaw/.env ('' if unset)
 env_get() {
-    local v
-    v="$(grep -m1 "^${1}=" "$OPENCLAW_ENV" 2>/dev/null | cut -d= -f2-)"
-    # Strip one surrounding pair of single/double quotes — values like
-    # NETCLAW_BGP_PEERS='[...]' must reach json.loads() unquoted.
-    v="${v#\"}"; v="${v%\"}"; v="${v#\'}"; v="${v%\'}"
-    printf '%s' "$v"
+    [ -f "$OPENCLAW_ENV" ] || return 0
+    python3 "$SCRIPT_DIR/write-env.py" --get "$OPENCLAW_ENV" "$1"
 }
 
 # Prompt with default; re-prompts yes/no questions until the answer is valid
@@ -44,7 +40,7 @@ ask() {
     local var="$1" text="$2" default="${3:-}" input
     echo -ne "  ${CYAN}${text}${NC}${default:+ ${DIM}[$default]${NC}}: "
     read -r input
-    eval "$var=\"${input:-$default}\""
+    printf -v "$var" '%s' "${input:-$default}"
 }
 
 ask_yn() {
@@ -58,8 +54,8 @@ ask_yn() {
         read -r input
         input="${input:-$default}"
         case "$input" in
-            [Yy]|[Yy]es) eval "$var=y"; return ;;
-            [Nn]|[Nn]o)  eval "$var=n"; return ;;
+            [Yy]|[Yy]es) printf -v "$var" '%s' y; return ;;
+            [Nn]|[Nn]o)  printf -v "$var" '%s' n; return ;;
             *) echo -e "  ${YELLOW}Please answer y or n.${NC}" ;;
         esac
     done
@@ -67,44 +63,11 @@ ask_yn() {
 
 # ── daemon control ───────────────────────────────────────────────
 daemon_running() {
-    curl -s -m 2 "$BGP_API/status" 2>/dev/null | grep -q '"running"'
+    python3 "$SCRIPT_DIR/federation-control.py" status >/dev/null 2>&1
 }
 
 daemon_start() {
-    [ -f "$BGP_DAEMON" ] || { log_error "BGP daemon not found: $BGP_DAEMON"; exit 1; }
-    grep -q "^NETCLAW_ROUTER_ID=" "$OPENCLAW_ENV" 2>/dev/null || {
-        log_error "Peering is not configured yet — run ./scripts/peering-setup.sh first."
-        exit 1
-    }
-
-    if daemon_running; then
-        log_info "Stopping running mesh daemon..."
-        pkill -f "bgp-daemon-v2\.py" 2>/dev/null || true
-        sleep 1
-    fi
-
-    # Pull only the daemon's keys from .env — values may contain JSON, and
-    # other .env lines have unquoted spaces that break plain `source`.
-    log_info "Starting mesh BGP daemon..."
-    env $(grep -E "^(NETCLAW_ROUTER_ID|NETCLAW_LOCAL_AS|NETCLAW_LAB_MODE|NETCLAW_MESH_ENABLED|NETCLAW_MESH_OPEN|BGP_LISTEN_PORT|BGP_API_PORT|N2N_ENABLED|N2N_DISPLAY_NAME|N2N_RATE_PER_MIN|N2N_DAILY_REQUESTS|N2N_DAILY_TOKENS|N2N_ROLE|N2N_RISK_NAME|N2N_RISK_DESCRIPTION|N2N_ENABLED_STACKS|N2N_IN2N_PORT|N2N_RISK_MODE|N2N_BORDER_ENDPOINT|N2N_QUARANTINE_THRESHOLD|N2N_CERT_MODE|N2N_CLAW_DOMAIN|N2N_ACME_DNS_PROVIDER|N2N_ACME_EMAIL|N2N_ACME_STAGING|N2N_ACME_RESOLVERS|CLOUDFLARE_DNS_API_TOKEN)=" "$OPENCLAW_ENV") \
-        NETCLAW_BGP_PEERS="$(env_get NETCLAW_BGP_PEERS)" \
-        nohup python3 "$BGP_DAEMON" >> "$DAEMON_OUT" 2>&1 &
-    local pid=$!
-    sleep 3
-
-    # Make the mesh log world-readable so rsyslog (user syslog) can forward it
-    # to the OBS stack. The daemon recreates the file on start, so re-apply here.
-    chmod 644 /tmp/bgp-daemon-v2.log 2>/dev/null || true
-
-    if daemon_running; then
-        log_info "Mesh daemon running (pid $pid)"
-        log_info "  Control API: $BGP_API   BGP listen port: $(env_get BGP_LISTEN_PORT)"
-        log_info "  Logs: /tmp/bgp-daemon-v2.log"
-    else
-        log_error "Daemon did not come up — last output:"
-        tail -10 "$DAEMON_OUT" 2>/dev/null | sed 's/^/    /'
-        exit 1
-    fi
+    python3 "$SCRIPT_DIR/federation-control.py" start
 }
 
 daemon_status() {
@@ -133,17 +96,7 @@ for pfx, r in d.get("loc_rib", {}).items():
 }
 
 daemon_stop() {
-    if ! daemon_running; then
-        log_info "Mesh daemon is not running."
-        return 0
-    fi
-    pkill -f "bgp-daemon-v2\.py" 2>/dev/null || true
-    sleep 1
-    if daemon_running; then
-        log_error "Daemon did not stop — check for a stuck process."
-        exit 1
-    fi
-    log_info "Mesh daemon stopped."
+    python3 "$SCRIPT_DIR/federation-control.py" stop
 }
 
 case "${1:-}" in
@@ -156,7 +109,7 @@ esac
 
 # ── configuration wizard ─────────────────────────────────────────
 mkdir -p "$(dirname "$OPENCLAW_ENV")"
-[ -f "$OPENCLAW_ENV" ] || touch "$OPENCLAW_ENV"
+[ -f "$OPENCLAW_ENV" ] || (umask 077; touch "$OPENCLAW_ENV")
 
 echo ""
 echo -e "${BOLD}  NetClaw Protocol Peering${NC}"

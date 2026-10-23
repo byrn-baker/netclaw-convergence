@@ -92,3 +92,11 @@ Ingestion is atomic per document: chunks commit to both indexes before the regis
 pytest tests/unit/test_rag_*.py tests/integration/test_rag_mcp.py   # offline mechanics suite
 pytest tests/integration/test_rag_eval.py                            # golden-set eval (operator-supplied; skips without one)
 ```
+
+## Mutation audit status
+
+Mutation responses now include an `audit` object: `recorded` with a GAIT commit
+reference, or `unavailable` with a warning. An unavailable audit does not undo a
+completed data write; do not repeat the write solely to retry logging. These
+components declare `gait-ai` in their own runtime and require an initialized
+GAIT repository discoverable from the server working directory.

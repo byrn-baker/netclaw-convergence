@@ -1,0 +1,45 @@
+{
+  "counts": {
+    "BLOCKED_DEPENDENCY": 0,
+    "ERROR": 0,
+    "FAIL": 0,
+    "NEEDS_DOCKER": 0,
+    "NEEDS_LIVE_CREDENTIALS": 0,
+    "PASS": 1
+  },
+  "exit_code": 0,
+  "generated_at": "2026-09-27T13:38:22.082652+00:00",
+  "results": [
+    {
+      "capabilities": [],
+      "command": [
+        "/home/johncapobianco/netclaw/.contract-test-envs/halo-mcp/bin/python",
+        "-m",
+        "pytest",
+        "tests/halo-mcp"
+      ],
+      "detail": "offline contracts passed",
+      "duration_seconds": 1.9854065720001017,
+      "environment": {
+        "fingerprint": "d404f85656ca53d052900b925bf926fcb1c22d49be4e7b84bed12af789ed40ee",
+        "path": ".contract-test-envs/halo-mcp"
+      },
+      "exit_code": 0,
+      "status": "PASS",
+      "suite": "halo-mcp",
+      "test_runs": [
+        {
+          "command": [
+            "/home/johncapobianco/netclaw/.contract-test-envs/halo-mcp/bin/python",
+            "-m",
+            "pytest",
+            "tests/halo-mcp"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform linux -- Python 3.12.10, pytest-8.4.2, pluggy-1.6.0\nrootdir: /home/johncapobianco/netclaw/tests/halo-mcp\nconfigfile: pytest.ini\nplugins: asyncio-0.26.0, platformdirs-4.12.0, anyio-4.15.1\nasyncio: mode=Mode.AUTO, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function\ncollected 135 items\n\ntests/halo-mcp/test_client.py .....................                      [ 15%]\ntests/halo-mcp/test_client_get_all.py ........                           [ 21%]\ntests/halo-mcp/test_pagination.py ...........                            [ 29%]\ntests/halo-mcp/test_resolver.py ......................                   [ 45%]\ntests/halo-mcp/test_server_registration.py .............                 [ 55%]\ntests/halo-mcp/test_tools_assets.py .........                            [ 62%]\ntests/halo-mcp/test_tools_context.py .........                           [ 68%]\ntests/halo-mcp/test_tools_create_change_request.py .............         [ 78%]\ntests/halo-mcp/test_tools_fields.py ....                                 [ 81%]\ntests/halo-mcp/test_tools_knowledge.py ....                              [ 84%]\ntests/halo-mcp/test_tools_ticket_types.py .........                      [ 91%]\ntests/halo-mcp/test_tools_tickets.py ............                        [100%]\n\n============================= 135 passed in 1.34s =============================="
+        }
+      ]
+    }
+  ],
+  "schema_version": 1
+}

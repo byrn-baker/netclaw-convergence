@@ -25,30 +25,38 @@ let _currentState = "listening";
 async function enable() {
   if (typeof zoomSdk === "undefined") {
     console.warn("NetClawOverlay: zoomSdk unavailable (not running in Zoom client)");
-    return;
+    return false;
   }
+  let controllerStarted = false;
   try {
     // Controller mode is required for all Layers modes (research.md R8).
     await zoomSdk.callZoomApi("startLayer", { mode: "controller" });
+    controllerStarted = true;
     await zoomSdk.callZoomApi("startLayer", { mode: "camera" });
     _controllerActive = true;
     render();
+    return true;
   } catch (e) {
+    if (controllerStarted) {
+      try { await zoomSdk.callZoomApi("stopLayer", { mode: "controller" }); }
+      catch (cleanupError) { console.error("NetClawOverlay: controller cleanup failed", cleanupError); }
+    }
+    _controllerActive = false;
     console.error("NetClawOverlay: failed to start Camera mode — likely needs Zoom's Layers "
                   + "API review/entitlement (research.md R8):", e);
+    return false;
   }
 }
 
 async function disable() {
-  if (!_controllerActive) return;
-  try {
-    await zoomSdk.callZoomApi("stopLayer", { mode: "camera" });
-    await zoomSdk.callZoomApi("stopLayer", { mode: "controller" });
-  } catch (e) {
-    console.error("NetClawOverlay: failed to stop Camera mode:", e);
-  } finally {
-    _controllerActive = false;
+  if (!_controllerActive) return true;
+  let stopped = true;
+  for (const mode of ["camera", "controller"]) {
+    try { await zoomSdk.callZoomApi("stopLayer", { mode }); }
+    catch (error) { stopped = false; console.error("NetClawOverlay: failed to stop layer", mode, error); }
   }
+  if (stopped) _controllerActive = false;
+  return stopped;
 }
 
 function setState(state) {

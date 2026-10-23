@@ -1,0 +1,109 @@
+FFFF                                                                     [100%]
+=================================== FAILURES ===================================
+________ test_unchanged_certificate_is_not_renewed_or_retired[risk-ca] _________
+
+tmp_path = PosixPath('/tmp/pytest-of-johncapobianco/pytest-351/test_unchanged_certificate_is_0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7b57637e3890>
+kind = 'risk-ca'
+
+    @pytest.mark.parametrize('kind',['risk-ca','hub','acme'])
+    def test_unchanged_certificate_is_not_renewed_or_retired(tmp_path,monkeypatch,kind):
+        svc,rot=setup(tmp_path);pem,key=certs.create_self_signed('fixture')
+        if kind=='risk-ca':monkeypatch.setattr(svc.risk,'ensure_risk_ca',lambda:(pem,key))
+        elif kind=='hub':monkeypatch.setattr(svc.risk,'hub_credential',lambda:(pem,key))
+        else:
+            async def renew(*args):return pem
+            monkeypatch.setattr(acme,'renew',renew)
+        rot.register(kind,'fixture',pem);cred=svc.manager.list_credentials()[0]
+        try:
+>           assert asyncio.run(rot.renew_one(cred)) is False
+E           AssertionError: assert True is False
+E            +  where True = <function run at 0x7b576466d260>(<coroutine object RotationManager.renew_one at 0x7b5763585940>)
+E            +    where <function run at 0x7b576466d260> = asyncio.run
+E            +    and   <coroutine object RotationManager.renew_one at 0x7b5763585940> = renew_one({'cert_pem': '-----BEGIN CERTIFICATE-----\nMIIBQTCB6KADAgECAhReIy1RJu2IwUNbq03fsM8+NoDNMjAKBggqhkjOPQQDAjAS\nMRAwDgYDV...14:03:55Z', 'credential_id': 1, 'fingerprint': '1d90e146c0d0f00763cceae88301d1b472fadc5cfdb28522206f0bc866ea7f5d', ...})
+E            +      where renew_one = <bgp.federation.rotation.RotationManager object at 0x7b576450ce30>.renew_one
+
+tests/n2n/test_rotation_truthfulness.py:25: AssertionError
+------------------------------ Captured log call -------------------------------
+WARNING  n2n.gait:gait.py:101 gait.emit: unknown event 'cert-renewed' (recording anyway)
+__________ test_unchanged_certificate_is_not_renewed_or_retired[hub] ___________
+
+tmp_path = PosixPath('/tmp/pytest-of-johncapobianco/pytest-351/test_unchanged_certificate_is_1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7b57635eb6e0>
+kind = 'hub'
+
+    @pytest.mark.parametrize('kind',['risk-ca','hub','acme'])
+    def test_unchanged_certificate_is_not_renewed_or_retired(tmp_path,monkeypatch,kind):
+        svc,rot=setup(tmp_path);pem,key=certs.create_self_signed('fixture')
+        if kind=='risk-ca':monkeypatch.setattr(svc.risk,'ensure_risk_ca',lambda:(pem,key))
+        elif kind=='hub':monkeypatch.setattr(svc.risk,'hub_credential',lambda:(pem,key))
+        else:
+            async def renew(*args):return pem
+            monkeypatch.setattr(acme,'renew',renew)
+        rot.register(kind,'fixture',pem);cred=svc.manager.list_credentials()[0]
+        try:
+>           assert asyncio.run(rot.renew_one(cred)) is False
+E           AssertionError: assert True is False
+E            +  where True = <function run at 0x7b576466d260>(<coroutine object RotationManager.renew_one at 0x7b5763585bc0>)
+E            +    where <function run at 0x7b576466d260> = asyncio.run
+E            +    and   <coroutine object RotationManager.renew_one at 0x7b5763585bc0> = renew_one({'cert_pem': '-----BEGIN CERTIFICATE-----\nMIIBQDCB6KADAgECAhQprQb5sXgdMcm1tqpfShtW9DXuUzAKBggqhkjOPQQDAjAS\nMRAwDgYDV...14:03:55Z', 'credential_id': 1, 'fingerprint': 'fd88df27f5faf66e37a0734a853c0eb9267d0ca3e71dd710797ce16f472b71c5', ...})
+E            +      where renew_one = <bgp.federation.rotation.RotationManager object at 0x7b576450e660>.renew_one
+
+tests/n2n/test_rotation_truthfulness.py:25: AssertionError
+------------------------------ Captured log call -------------------------------
+WARNING  n2n.gait:gait.py:101 gait.emit: unknown event 'cert-renewed' (recording anyway)
+__________ test_unchanged_certificate_is_not_renewed_or_retired[acme] __________
+
+tmp_path = PosixPath('/tmp/pytest-of-johncapobianco/pytest-351/test_unchanged_certificate_is_2')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7b57635eb260>
+kind = 'acme'
+
+    @pytest.mark.parametrize('kind',['risk-ca','hub','acme'])
+    def test_unchanged_certificate_is_not_renewed_or_retired(tmp_path,monkeypatch,kind):
+        svc,rot=setup(tmp_path);pem,key=certs.create_self_signed('fixture')
+        if kind=='risk-ca':monkeypatch.setattr(svc.risk,'ensure_risk_ca',lambda:(pem,key))
+        elif kind=='hub':monkeypatch.setattr(svc.risk,'hub_credential',lambda:(pem,key))
+        else:
+            async def renew(*args):return pem
+            monkeypatch.setattr(acme,'renew',renew)
+        rot.register(kind,'fixture',pem);cred=svc.manager.list_credentials()[0]
+        try:
+>           assert asyncio.run(rot.renew_one(cred)) is False
+E           AssertionError: assert True is False
+E            +  where True = <function run at 0x7b576466d260>(<coroutine object RotationManager.renew_one at 0x7b5763585e40>)
+E            +    where <function run at 0x7b576466d260> = asyncio.run
+E            +    and   <coroutine object RotationManager.renew_one at 0x7b5763585e40> = renew_one({'cert_pem': '-----BEGIN CERTIFICATE-----\nMIIBQDCB6KADAgECAhRGS1hmCqLjM/wp3s9tUUedFpbkGTAKBggqhkjOPQQDAjAS\nMRAwDgYDV...14:03:55Z', 'credential_id': 1, 'fingerprint': 'be1349a54df036bb16a2b9a67a6e3aeb2722a3a8d4d6bad1e7a4593df7ebd5fe', ...})
+E            +      where renew_one = <bgp.federation.rotation.RotationManager object at 0x7b57635eb1a0>.renew_one
+
+tests/n2n/test_rotation_truthfulness.py:25: AssertionError
+------------------------------ Captured log call -------------------------------
+WARNING  n2n.gait:gait.py:101 gait.emit: unknown event 'cert-renewed' (recording anyway)
+_________________ test_same_key_new_certificate_remains_active _________________
+
+tmp_path = PosixPath('/tmp/pytest-of-johncapobianco/pytest-351/test_same_key_new_certificate_0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7b57635bfef0>
+
+    def test_same_key_new_certificate_remains_active(tmp_path,monkeypatch):
+        svc,rot=setup(tmp_path);old,key=certs.create_self_signed('fixture')
+        certificate=certs.x509.load_pem_x509_certificate(old.encode())
+        private=certs.serialization.load_pem_private_key(key.encode(),password=None)
+        renewed=certs._cert_pem(certs.x509.CertificateBuilder().subject_name(certificate.subject).issuer_name(certificate.issuer).public_key(private.public_key()).serial_number(certs.x509.random_serial_number()).not_valid_before(certificate.not_valid_before_utc).not_valid_after(certificate.not_valid_after_utc+datetime.timedelta(days=30)).sign(private,certs.hashes.SHA256()))
+        async def renew(*args):return renewed
+        monkeypatch.setattr(acme,'renew',renew)
+        rot.register('acme','fixture',old);cred=svc.manager.list_credentials()[0]
+        try:
+            assert asyncio.run(rot.renew_one(cred)) is True
+>           active=svc.manager.list_credentials();assert len(active)==1 and active[0]['state']=='active'
+                                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           assert (0 == 1)
+E            +  where 0 = len([])
+
+tests/n2n/test_rotation_truthfulness.py:42: AssertionError
+------------------------------ Captured log call -------------------------------
+WARNING  n2n.gait:gait.py:101 gait.emit: unknown event 'cert-renewed' (recording anyway)
+=========================== short test summary info ============================
+FAILED tests/n2n/test_rotation_truthfulness.py::test_unchanged_certificate_is_not_renewed_or_retired[risk-ca]
+FAILED tests/n2n/test_rotation_truthfulness.py::test_unchanged_certificate_is_not_renewed_or_retired[hub]
+FAILED tests/n2n/test_rotation_truthfulness.py::test_unchanged_certificate_is_not_renewed_or_retired[acme]
+FAILED tests/n2n/test_rotation_truthfulness.py::test_same_key_new_certificate_remains_active
+4 failed in 0.23s

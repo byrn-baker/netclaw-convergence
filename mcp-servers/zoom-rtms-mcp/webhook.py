@@ -14,6 +14,8 @@ import json
 import logging
 import os
 import threading
+import time
+import socket
 
 from models import registry
 
@@ -81,16 +83,63 @@ class _Handler(http.server.BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(raw)
 
+    def setup(self):
+        super().setup()
+        self.connection.settimeout(5)
+
     def do_POST(self):
-        if not self.path.startswith("/webhooks/zoom/rtms"):
+        if self.path.split("?", 1)[0] != "/webhooks/zoom/rtms":
             self._send_json(404, {"error": "not found"})
             return
-        length = int(self.headers.get("Content-Length", 0))
-        raw = self.rfile.read(length) if length else b"{}"
+        if not SECRET_TOKEN:
+            self._send_json(503, {"error": "webhook authentication is not configured"})
+            return
+        if self.headers.get("Transfer-Encoding"):
+            self._send_json(400, {"error": "Content-Length is required"})
+            return
+        try:
+            length = int(self.headers.get("Content-Length", ""))
+        except ValueError:
+            self._send_json(400, {"error": "invalid Content-Length"})
+            return
+        if length < 0 or length > 1024 * 1024:
+            self._send_json(413, {"error": "request body exceeds limit"})
+            return
+        timestamp = self.headers.get("x-zm-request-timestamp", "")
+        try:
+            fresh = abs(time.time() - int(timestamp)) <= 300
+        except ValueError:
+            fresh = False
+        if not fresh:
+            self._send_json(403, {"error": "invalid webhook authentication"})
+            return
+        try:
+            raw = self.rfile.read(length)
+        except (TimeoutError, socket.timeout):
+            self._send_json(408, {"error": "request timed out"})
+            return
+        expected = "v0=" + hmac.new(SECRET_TOKEN.encode(),
+            b"v0:" + timestamp.encode() + b":" + raw, hashlib.sha256).hexdigest()
+        supplied = self.headers.get("x-zm-signature", "")
+        if len(raw) != length or not hmac.compare_digest(expected.encode(), supplied.encode()):
+            self._send_json(403, {"error": "invalid webhook authentication"})
+            return
         try:
             data = json.loads(raw)
-        except Exception:
-            self._send_json(400, {"error": "invalid JSON"})
+            if not isinstance(data, dict) or not isinstance(data.get("payload", {}), dict):
+                raise ValueError("invalid event")
+            payload = data.get("payload", {})
+            if not isinstance(payload.get("object", {}), dict):
+                raise ValueError("invalid event object")
+            if data.get("event") == "endpoint.url_validation":
+                if not isinstance(payload.get("plainToken"), str):
+                    raise ValueError("invalid validation token")
+            elif data.get("event") in ("meeting.rtms_started", "meeting.rtms_stopped"):
+                mid = payload.get("meeting_uuid") or payload.get("object", {}).get("uuid")
+                if not isinstance(mid, str) or not mid or len(mid) > 256:
+                    raise ValueError("invalid meeting identity")
+        except (ValueError, TypeError):
+            self._send_json(400, {"error": "invalid JSON event"})
             return
         self._send_json(200, process_webhook_event(data))
 
@@ -100,9 +149,10 @@ class _Handler(http.server.BaseHTTPRequestHandler):
 
 def start_webhook_server() -> threading.Thread:
     if not SECRET_TOKEN:
-        logger.warning("ZOOM_RTMS_WEBHOOK_SECRET not set — URL validation handshake will fail")
-    server = http.server.HTTPServer(("0.0.0.0", PORT), _Handler)
+        logger.warning("ZOOM_RTMS_WEBHOOK_SECRET not set — webhook requests will be refused")
+    host = os.environ.get("ZOOM_RTMS_WEBHOOK_HOST", "127.0.0.1")
+    server = http.server.HTTPServer((host, PORT), _Handler)
     thread = threading.Thread(target=server.serve_forever, daemon=True, name="zoom-rtms-webhook")
     thread.start()
-    logger.info("RTMS webhook server listening on 0.0.0.0:%d", PORT)
+    logger.info("RTMS webhook server listening on %s:%d", host, PORT)
     return thread

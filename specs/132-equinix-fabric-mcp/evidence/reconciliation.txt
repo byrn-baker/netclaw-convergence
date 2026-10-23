@@ -1,0 +1,6 @@
+Reconciliation: PASS
+  catalog      pass   installer coverage and vendored state
+  docs         pass   documented counts
+  portability  pass   registration portability
+  packages     pass   npx/uvx packages skills invoke exist
+  dependencies pass   dependency pins and install paths

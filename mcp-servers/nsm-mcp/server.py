@@ -25,7 +25,10 @@ from __future__ import annotations
 import os
 import sys
 
-from mcp.server.fastmcp import FastMCP
+from functools import wraps
+from fastmcp.utilities.async_utils import call_sync_fn_in_threadpool
+from fastmcp_tasks import TasksExtension
+from fastmcp import FastMCP
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
@@ -33,6 +36,17 @@ from envelope import PostureError, emit, suricata_posture, zeek_posture  # noqa:
 import runner  # noqa: E402
 
 mcp = FastMCP("nsm-mcp")
+mcp.add_extension(TasksExtension(name="netclaw-nsm-mcp", concurrency=1))
+
+
+def _task_tool(fn):
+    """Register a threaded MCP task while preserving the direct Python callable."""
+    @wraps(fn)
+    async def run(*args, **kwargs):
+        return await call_sync_fn_in_threadpool(fn, *args, **kwargs)
+    mcp.tool(task=True)(run)
+    return fn
+
 
 # Analyses are cached per (pcap, mode) so a session pivot does not re-run Zeek on every
 # question. Keyed by absolute path + mtime so an edited capture is never served stale.
@@ -107,7 +121,7 @@ def nsm_update_rules() -> dict:
         return emit("nsm_update_rules", error=str(exc))
 
 
-@mcp.tool()
+@_task_tool
 def nsm_analyze(pcap: str, ignore_checksums: bool = True) -> dict:
     """Analyse a capture with both Zeek and Suricata and summarise what each could see.
 
@@ -147,7 +161,7 @@ def nsm_analyze(pcap: str, ignore_checksums: bool = True) -> dict:
         return emit("nsm_analyze", pcap=pcap, error=str(exc))
 
 
-@mcp.tool()
+@_task_tool
 def nsm_sessions(pcap: str, ignore_checksums: bool = True, limit: int = 100,
                  service: str | None = None) -> dict:
     """List the sessions Zeek reconstructed from a capture (its conn.log).
@@ -179,7 +193,7 @@ def nsm_sessions(pcap: str, ignore_checksums: bool = True, limit: int = 100,
         return emit("nsm_sessions", pcap=pcap, error=str(exc))
 
 
-@mcp.tool()
+@_task_tool
 def nsm_protocol_log(pcap: str, log: str, ignore_checksums: bool = True,
                      limit: int = 100, uid: str | None = None) -> dict:
     """Read one Zeek protocol log (dns, http, ssl, weird, notice…) from a capture.
@@ -208,7 +222,7 @@ def nsm_protocol_log(pcap: str, log: str, ignore_checksums: bool = True,
         return emit("nsm_protocol_log", pcap=pcap, error=str(exc))
 
 
-@mcp.tool()
+@_task_tool
 def nsm_alerts(pcap: str, limit: int = 100, min_severity: int | None = None) -> dict:
     """List Suricata's signature alerts for a capture, with its detection posture attached.
 

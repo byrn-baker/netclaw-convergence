@@ -26,6 +26,8 @@ import datetime
 import hashlib
 import ipaddress  # noqa: F401  (kept for parity with callers building IP SANs)
 import os
+import stat
+import tempfile
 from pathlib import Path
 from typing import Optional, Tuple
 
@@ -70,8 +72,19 @@ def _chmod(path: Path, mode: int) -> None:
 
 
 def _write_secret(path: Path, data: str) -> None:
-    path.write_text(data)
-    _chmod(path, 0o600)
+    if path.is_symlink() or (path.exists() and not stat.S_ISREG(path.stat().st_mode)):
+        raise ValueError("Credential path must be a regular file")
+    fd, temporary = tempfile.mkstemp(prefix=".credential-", dir=path.parent)
+    try:
+        with os.fdopen(fd, "w") as stream:
+            stream.write(data)
+            stream.flush()
+            os.fsync(stream.fileno())
+        os.chmod(temporary, 0o600)
+        os.replace(temporary, path)
+    finally:
+        if os.path.exists(temporary):
+            os.unlink(temporary)
 
 
 # ---- key + certificate primitives ----------------------------------------
@@ -101,9 +114,10 @@ def _san(name: str) -> x509.SubjectAlternativeName:
     return x509.SubjectAlternativeName([x509.UniformResourceIdentifier(f"ncfed:{name}")])
 
 
-def create_self_signed(common_name: str, days: int = 3650) -> Tuple[str, str]:
+def create_self_signed(common_name: str, days: int = 3650, key_pem: Optional[str] = None) -> Tuple[str, str]:
     """Self-signed leaf for the pinned trust model. Returns (cert_pem, key_pem)."""
-    key = generate_keypair()
+    key = (serialization.load_pem_private_key(key_pem.encode(), password=None)
+           if key_pem is not None else generate_keypair())
     name = x509.Name([x509.NameAttribute(NameOID.COMMON_NAME, common_name)])
     now = _now_utc()
     cert = (

@@ -21,48 +21,37 @@ const topicEl = document.getElementById("topic");
 const resultEl = document.getElementById("result");
 const overlayBtn = document.getElementById("overlay-toggle");
 
-function connect() {
-  // Same-origin as the Home URL that served this panel (contracts: the
-  // panel_feed server and the webhook/OAuth server share a host in this
-  // feature's design, research.md R3).
+async function connect() {
+  let context;
+  try {
+    if (typeof zoomSdk === "undefined") throw new Error("Open this panel inside Zoom");
+    context = (await zoomSdk.getAppContext()).context;
+    if (!context) throw new Error("Zoom meeting context unavailable");
+  } catch (_) {
+    statusEl.textContent = "Open NetClaw inside a Zoom meeting to connect securely.";
+    statusEl.className = "degraded";
+    return;
+  }
   const wsUrl = (location.protocol === "https:" ? "wss://" : "ws://") + location.host + "/";
   ws = new WebSocket(wsUrl);
-
   ws.onopen = () => {
-    statusEl.textContent = "Listening";
-    // Only meeting_uuid is actually required to register this connection
-    // server-side (panel_feed.py's _handler keys _connections purely on it —
-    // participant_id is only used later for the camera-overlay own-feed
-    // restriction). Requiring both here meant a getUserContext() failure
-    // alone (confirmed live 2026-08-19: getMeetingContext() succeeded,
-    // getUserContext() didn't, both live in the same try block so
-    // participantId was silently left null) permanently prevented viewer
-    // registration — the panel looked connected ("Listening") but never
-    // received a single subsequent broadcast (thinking/investigating/
-    // answered all vanished into an empty recipient set), with no error
-    // visible anywhere.
-    if (meetingUuid) {
-      sendViewerJoined();
-    } else {
-      // Zoom's own getMeetingContext()/getUserContext() are rejected outright
-      // on this app (confirmed live 2026-08-19: "No Permission for this API
-      // [code:80004, reason:app_not_support]" on both — a Marketplace-side
-      // app configuration gap, not something fixable here). This server
-      // already knows the true meeting_uuid authoritatively from the RTMS
-      // webhook, independent of the Zoom SDK, so ask it directly instead of
-      // being permanently stuck with no way to ever identify this meeting.
-      send({ type: "identify_by_active_meeting" });
-    }
+    statusEl.textContent = "Verifying meeting…";
+    send({ type: "authenticate", context });
+    context = null;
   };
-  ws.onclose = () => {
-    statusEl.textContent = "Disconnected — retrying…";
+  ws.onclose = (event) => {
     statusEl.className = "degraded";
+    if (event.code === 1008) {
+      statusEl.textContent = "Meeting authorization failed. Reopen NetClaw in Zoom.";
+      return;
+    }
+    statusEl.textContent = "Disconnected — retrying…";
     setTimeout(connect, 3000);
   };
-  ws.onerror = () => { /* onclose will fire and retry */ };
+  ws.onerror = () => {};
   ws.onmessage = (event) => {
-    const msg = JSON.parse(event.data);
-    handleServerMessage(msg);
+    try { handleServerMessage(JSON.parse(event.data)); }
+    catch (_) { statusEl.textContent = "Unable to read meeting update."; }
   };
 }
 
@@ -76,8 +65,7 @@ function send(msg) {
 
 function handleServerMessage(msg) {
   if (msg.type === "identified") {
-    // Response to identify_by_active_meeting — meetingUuid was null until
-    // now, so the mismatch filter below would otherwise drop this.
+    // Meeting identity verified by the server from Zoom app context.
     meetingUuid = msg.meeting_uuid;
     sendViewerJoined();
     return;
@@ -116,16 +104,28 @@ function handleServerMessage(msg) {
 }
 
 overlayBtn.addEventListener("click", async () => {
-  overlayEnabled = !overlayEnabled;
-  overlayBtn.textContent = overlayEnabled ? "Disable camera overlay" : "Enable camera overlay";
-  overlayBtn.className = overlayEnabled ? "enabled" : "";
-  send({
-    type: overlayEnabled ? "camera_overlay_enable" : "camera_overlay_disable",
-    meeting_uuid: meetingUuid, participant_id: participantId,
-  });
-  if (window.NetClawOverlay) {
-    if (overlayEnabled) await window.NetClawOverlay.enable();
-    else await window.NetClawOverlay.disable();
+  if (overlayBtn.disabled) return;
+  if (!window.NetClawOverlay) {
+    statusEl.textContent = "Camera overlay unavailable in this build.";
+    return;
+  }
+  overlayBtn.disabled = true;
+  const next = !overlayEnabled;
+  try {
+    const ok = next ? await window.NetClawOverlay.enable() : await window.NetClawOverlay.disable();
+    if (ok !== true) throw new Error("Camera overlay change was not confirmed.");
+    overlayEnabled = next;
+    overlayBtn.textContent = overlayEnabled ? "Disable camera overlay" : "Enable camera overlay";
+    overlayBtn.className = overlayEnabled ? "enabled" : "";
+    send({
+      type: overlayEnabled ? "camera_overlay_enable" : "camera_overlay_disable",
+      meeting_uuid: meetingUuid, participant_id: participantId,
+    });
+  } catch (error) {
+    statusEl.textContent = "Camera overlay unavailable or change failed.";
+    console.warn("NetClaw overlay change failed", error);
+  } finally {
+    overlayBtn.disabled = false;
   }
 });
 
@@ -148,7 +148,7 @@ async function initZoomSdk() {
   // zoomSdk.config() reject outright. Request core + Collaborate together
   // first, but fall back to core-only rather than letting one rejected
   // capability set kill the whole panel before it ever connects.
-  const CORE_CAPS = ["getRunningContext", "getMeetingContext", "getUserContext", "onMeeting"];
+  const CORE_CAPS = ["getAppContext", "getRunningContext", "getMeetingContext", "getUserContext", "onMeeting"];
   const COLLABORATE_CAPS = ["startCollaborate", "joinCollaborate", "leaveCollaborate", "onCollaborateChange"];
   let collaborateAvailable = true;
   try {

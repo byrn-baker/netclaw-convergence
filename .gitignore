@@ -1,5 +1,10 @@
 # Environment and secrets
 .env
+.env.*
+!.env.example
+!.env.*.example
+*.pre-voice-auth
+.voice-auth-*
 *.env.local
 # Kiro MCP settings can contain API keys — do not commit
 .kiro/settings/mcp.json
@@ -29,6 +34,7 @@ build/
 .venv/
 venv/
 env/
+.contract-test-envs/
 
 # Node
 node_modules/
@@ -60,8 +66,22 @@ netclaw.code-workspace
 
 # Local agent state and audit harnesses
 .gait/
-memory/
+/memory/
 .pytest_cache/
+
+# Codex local credentials/settings/session state; keep shared skills and prompts.
+/.codex/*
+!/.codex/skills/
+!/.codex/prompts/
+
+# Spec Kit local caches, backups and machine-specific extension configuration.
+# Keep .agents/skills/, the constitution, templates, manifests and workflows tracked.
+/.specify/extensions/.cache/
+/.specify/extensions/.backup/
+/.specify/extensions/*/local-config.yml
+/.specify/extensions/*/*-config.local.yml
+/.specify/workflows/.cache/
+/.specify/workflows/runs/
 
 # Diagrams (generated)
 *.drawio.bak
@@ -71,6 +91,9 @@ mcp-servers/*
 # Directory-level documentation (tracked in repo)
 !mcp-servers/README.md
 # Built-in MCP servers (tracked in repo)
+!mcp-servers/netclaw-dot-mcp/
+!mcp-servers/tavus-pal-mcp/
+mcp-servers/tavus-pal-mcp/.venv/
 !mcp-servers/n2n-mcp/
 !mcp-servers/protocol-mcp/
 !mcp-servers/suzieq-mcp/
@@ -127,6 +150,13 @@ mcp-servers/zabbix-mcp/.venv/
 mcp-servers/anta-mcp/.venv/
 !mcp-servers/zoom-rtms-mcp/
 # Spec 118: NetClaw for Zoom -- Meeting Intelligence.
+!mcp-servers/topology-diagram-mcp/
+!mcp-servers/image-style-mcp/
+# Spec 121: federated topology viz Stage A/B, NetClaw-authored, not vendored.
+!mcp-servers/worldlabs-marble-mcp/
+!mcp-servers/jev-mcp/
+mcp-servers/jev-mcp/.venv/
+# Spec 122: World Labs Marble fantastical topology viz, NetClaw-authored, not vendored.
 
 # Traces
 trace.json
@@ -177,3 +207,26 @@ docs/architecture/convergence-context
 labs/*/clab-*/
 labs/**/.tls/
 docs/blogs/
+
+*.pre-pyats-http
+*.pre-in2n-tls
+*.pre-zoom-auth
+*.pre-redfish-tls
+*.pre-nautobot-tls
+*.pre-anta-tls
+*.pre-change-gates
+
+*.pre-ssh-trust
+
+# Private environment-migration recovery digests
+*.pre-*.state.json
+local-permissions-backup.json
+# Local inventory backups may contain device credentials.
+*.yaml.backups/
+*.yml.backups/
+
+# Spec 148: private Hermes HUD source, never installed state.
+!mcp-servers/hermes-hud-mcp/
+mcp-servers/hermes-hud-mcp/.venv/
+mcp-servers/hermes-hud-mcp/__pycache__/
+.vite/

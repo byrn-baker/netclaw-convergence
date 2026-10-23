@@ -1,0 +1,578 @@
+import { Management } from "./state/management";
+import {
+  WorkspaceFiles,
+  openWorkspace,
+  workspaceFiles,
+} from "./views/workspace";
+import { openSecurity } from "./views/security";
+import * as vscode from "vscode";
+import path from "node:path";
+import fs from "node:fs";
+import { randomUUID } from "node:crypto";
+import { Connection } from "./connection/connect";
+import { Profiles, ConnectionProfile, hostContext } from "./state/profiles";
+import { LocalState } from "./state/local";
+import { NavigationTree, Navigation } from "./views/overview";
+import { domains, Domain, inspect } from "./client/domains";
+import { Json } from "./client/hud";
+import { openDataView } from "./webview/bridge";
+import { openChat } from "./views/chat";
+import { openMcp } from "./views/mcp";
+import { openTestbed } from "./views/testbed";
+import { openRag } from "./views/rag";
+import { openCanvas } from "./views/canvas";
+import { openIntent, peerChat } from "./views/intent";
+import { prepareService } from "./views/services";
+import { configureSettings, environment } from "./views/settings";
+import { AssistantProvider } from "./assistants/provider";
+
+export async function activate(context: vscode.ExtensionContext) {
+  const local = new LocalState(
+      path.join(context.globalStorageUri.fsPath, "state"),
+    ),
+    profiles = new Profiles(local),
+    connection = new Connection(context.secrets),
+    assistants = new AssistantProvider(context, connection);
+  const management = new Management(local);
+  const workspace = new WorkspaceFiles(context, management, connection);
+  context.subscriptions.push(management, workspace);
+  const output = vscode.window.createOutputChannel("NetClaw"),
+    status = vscode.window.createStatusBarItem(
+      vscode.StatusBarAlignment.Left,
+      40,
+    );
+  status.command = "netclaw.selectConnection";
+  const trees: NavigationTree[] = [];
+  context.subscriptions.push(
+    connection,
+    assistants,
+    output,
+    status,
+    vscode.lm.registerMcpServerDefinitionProvider(
+      "netclaw.assistant",
+      assistants,
+    ),
+  );
+  const refresh = () => {
+    for (const t of trees) t.refresh();
+    status.text = connection.identity
+      ? `$(remote) ${connection.profile?.label} · ${connection.identity.kind}`
+      : "$(remote) NetClaw: disconnected";
+    status.tooltip = connection.identity
+      ? `${hostContext()}\n${connection.identity.installationId}`
+      : "Connect to existing NetClaw";
+    status.show();
+  };
+  context.subscriptions.push(
+    connection.changed.event(refresh),
+    management.changed.event(refresh),
+  );
+  const register = (name: string, fn: (...args: any[]) => unknown) =>
+    context.subscriptions.push(
+      vscode.commands.registerCommand(
+        "netclaw." + name,
+        async (...args: any[]) => {
+          try {
+            return await fn(...args);
+          } catch (error) {
+            void vscode.window.showErrorMessage(
+              error instanceof Error ? error.message : "NetClaw action failed.",
+            );
+          }
+        },
+      ),
+    );
+  const connect = async (profile: ConnectionProfile) => {
+    await management.select(profile);
+    const identity = await vscode.window.withProgress(
+      {
+        location: vscode.ProgressLocation.Notification,
+        title: "Connecting to " + profile.label,
+      },
+      () => connection.connect(profile),
+    );
+    if (!profile.installationId) {
+      if (
+        (await vscode.window.showInformationMessage(
+          `Bind ${profile.label} to this existing NetClaw?`,
+          {
+            modal: true,
+            detail: `${hostContext()}\n${profile.url}\n${identity.kind}\n${identity.installationId}`,
+          },
+          "Bind installation",
+        )) !== "Bind installation"
+      ) {
+        connection.disconnect();
+        return;
+      }
+      const saved = await profiles.save({
+        ...profile,
+        installationId: identity.installationId,
+        harness: identity.kind,
+      });
+      await connection.connect(saved);
+    }
+    refresh();
+  };
+  register("workspaceControls", async () => {
+    if (!management.selected) await management.bind(connection);
+    if (management.selected)
+      return openWorkspace(context, management, workspace);
+  });
+  register("bindWorkspace", () => management.bind(connection));
+  register("openWorkspaceFile", (name: string) => workspace.open(name));
+  register("uploadWorkspaceFile", (name?: string) => workspace.upload(name));
+  register("saveRestartClaw", () => workspace.saveAndRestart());
+  register("startClaw", () => workspace.lifecycle("start"));
+  register("stopClaw", () => workspace.lifecycle("stop"));
+  register("restartClaw", () => workspace.lifecycle("restart"));
+  register("addConnection", async () => {
+    if (!vscode.workspace.isTrusted)
+      throw Error("Trust this workspace before connecting.");
+    if (process.platform === "win32") {
+      void vscode.window.showInformationMessage(
+        "Open this workspace in WSL before connecting to an existing NetClaw installation.",
+      );
+      await vscode.commands.executeCommand(
+        "workbench.action.quickOpen",
+        ">WSL:",
+      );
+      return;
+    }
+    const label = await vscode.window.showInputBox({
+      title: "Name this connection",
+      prompt:
+        "Choose a friendly name so you can recognize this NetClaw later. This is not a hostname or URL.",
+      placeHolder: "My Mac lab or WSL NetClaw",
+      validateInput: (value) =>
+        value.trim() ? undefined : "Enter a friendly name for this connection.",
+    });
+    if (!label) return;
+    const url = await vscode.window.showInputBox({
+      title: "NetClaw HUD API address",
+      value: "http://127.0.0.1:3001",
+      prompt: `Enter the running HUD API address on ${hostContext()}. The usual local address is http://127.0.0.1:3001. For another host, first open its WSL or Remote SSH workspace.`,
+    });
+    if (!url) return;
+    const p = await profiles.save({ label, url });
+    refresh();
+    await connect(p);
+  });
+  register("selectConnection", async (id?: string) => {
+    const p = id
+      ? profiles.list().find((p) => p.id === id)
+      : (
+          await vscode.window.showQuickPick(
+            profiles
+              .list()
+              .map((p) => ({ label: p.label, description: p.url, profile: p })),
+            { title: "Select existing NetClaw" },
+          )
+        )?.profile;
+    if (p) await connect(p);
+    else if (!profiles.list().length)
+      await vscode.commands.executeCommand("netclaw.addConnection");
+  });
+  register("disconnect", () => connection.disconnect());
+  register("renameConnection", async () => {
+    const item = await vscode.window.showQuickPick(
+      profiles.list().map((p) => ({ label: p.label, p })),
+    );
+    if (!item) return;
+    const label = await vscode.window.showInputBox({
+      title: "Connection label",
+      value: item.p.label,
+    });
+    if (label) {
+      await profiles.save({ ...item.p, label });
+      await management.rename(item.p.id, label);
+      if (connection.profile?.id === item.p.id)
+        connection.profile.label = label;
+      refresh();
+    }
+  });
+  register("removeConnection", async () => {
+    const item = await vscode.window.showQuickPick(
+      profiles.list().map((p) => ({ label: p.label, p })),
+    );
+    if (!item) return;
+    if (connection.profile?.id === item.p.id) connection.disconnect();
+    await profiles.remove(item.p.id);
+    await management.forget(item.p.id);
+    refresh();
+  });
+  const openDomain = (key: Domain) => {
+    if (!Object.hasOwn(domains, key)) throw Error("Unknown view.");
+    if (key === "network") return openTestbed(context, connection);
+    const b = connection.bound();
+    if (key === "security" || key === "openshell")
+      return openSecurity(
+        context,
+        connection,
+        key === "security" ? "defenseclaw" : "openshell",
+      );
+    return openDataView(context, connection, {
+      title: domains[key].title,
+      kind: key,
+      load: () => b.run(() => inspect(b.client, key)),
+    });
+  };
+  register("openDomain", openDomain);
+  register("configureMcp", (id?: string) => openMcp(context, connection, id));
+  for (const [name, key] of Object.entries({
+    openOverview: "overview",
+    openSettings: "settings",
+    openTokenomics: "tokenomics",
+    openGait: "gait",
+    openIntegrations: "integrations",
+    openSkills: "skills",
+    openOperations: "operations",
+    openPeers: "peers",
+    openNetwork: "network",
+    openScience: "science",
+    openMobile: "mobile",
+    openSecurity: "security",
+    openOpenShell: "openshell",
+  }))
+    register(name, () => openDomain(key as Domain));
+  register("openChat", () => openChat(context, connection));
+  register("openAvatar", () => openChat(context, connection, true));
+  register("openRag", () => openRag(context, connection));
+  register("openCanvas", () => openCanvas(context, connection));
+  register("configureSettings", () => configureSettings(connection));
+  register("prepareChange", () => environment(connection));
+  register("manageAssistants", () => assistants.setup());
+  register("addSelectedContext", async () => {
+    const b = connection.bound(),
+      editor = vscode.window.activeTextEditor,
+      text = editor?.document.getText(editor.selection);
+    if (!text?.trim()) throw Error("Select the exact text you want to stage.");
+    if (Buffer.byteLength(text) > 65536) throw Error("Select at most 64 KiB.");
+    if (
+      (await vscode.window.showInformationMessage(
+        "Stage the selected text for NetClaw?",
+        {
+          modal: true,
+          detail:
+            "Only explicitly selected context is sent when you submit Chat or Canvas. It may be disclosed to your configured model provider.",
+        },
+        "Stage selected text",
+      )) !== "Stage selected text"
+    )
+      return;
+    b.current();
+    const id = randomUUID();
+    connection.contexts.set(id, {
+      id,
+      name: path.basename(editor!.document.fileName),
+      content: text,
+      size: Buffer.byteLength(text),
+    });
+    void vscode.window.showInformationMessage(
+      "Text staged. Select it in Chat or Canvas before sending.",
+    );
+  });
+  register("openDocumentation", async () => {
+    const b = connection.bound(),
+      list = await b.run(() =>
+        b.client.request("GET", "/api/hud/documentation"),
+      );
+    const picked = await vscode.window.showQuickPick<
+      vscode.QuickPickItem & { id: string }
+    >(
+      (list.documents || []).map((d: Json) => ({
+        label: d.title || d.name || d.id,
+        description: d.path,
+        id: d.id,
+      })),
+      { title: "Existing NetClaw documentation" },
+    );
+    if (!picked) return;
+    b.current();
+    const doc = await b.run(() =>
+      b.client.request(
+        "GET",
+        "/api/hud/documentation/" +
+          encodeURIComponent((picked as { id: string }).id),
+      ),
+    );
+    await vscode.window.showTextDocument(
+      await vscode.workspace.openTextDocument({
+        content: doc.content || JSON.stringify(doc, null, 2),
+        language: "markdown",
+      }),
+      { preview: true },
+    );
+  });
+  register("openLogs", async () => {
+    const b = connection.bound(),
+      list = await b.run(() => b.client.request("GET", "/api/hud/logs"));
+    const picked = await vscode.window.showQuickPick<
+      vscode.QuickPickItem & { id: string }
+    >(
+      (list.sources || []).map((d: Json) => ({ label: d.name, id: d.id })),
+      { title: "Installation log source" },
+    );
+    if (!picked) {
+      if (!list.sources?.length)
+        void vscode.window.showInformationMessage(
+          list.reason || "No log source exposed by this runtime.",
+        );
+      return;
+    }
+    b.current();
+    const query = await vscode.window.showInputBox({
+      title: "Filter log text",
+      value: "",
+    });
+    if (query === undefined) return;
+    const route =
+      "/api/hud/logs/" +
+      encodeURIComponent((picked as { id: string }).id) +
+      "?q=" +
+      encodeURIComponent(query) +
+      "&severity=all";
+    openDataView(context, connection, {
+      title: "Installation logs",
+      kind: "logs",
+      load: () => b.run(() => b.client.request("GET", route)),
+    });
+  });
+  const investigate = async (prompt: string) => {
+    const b = connection.bound();
+    const id = randomUUID();
+    connection.contexts.set(id, {
+      id,
+      name: "Requested investigation",
+      content: prompt,
+      size: Buffer.byteLength(prompt),
+    });
+    b.current();
+    await vscode.commands.executeCommand("netclaw.openChat");
+    void vscode.window.showInformationMessage(
+      "Investigation context staged. Enter your request and select this context in Chat; no work has been sent.",
+    );
+  };
+  register("searchMemory", () =>
+    investigate(
+      "Use the installed memory tools to search recorded knowledge for the user’s question. Cite recorded sources and dates.",
+    ),
+  );
+  register("analyzeContext", () =>
+    investigate(
+      "Use the existing GCF tool to analyze only the explicitly selected context.",
+    ),
+  );
+  register("openMeetings", () =>
+    investigate(
+      "Inspect existing meeting context available to this NetClaw through its installed tools. Do not start a listener or join a meeting.",
+    ),
+  );
+  register("openPeerChat", () => peerChat(context, connection));
+  register("configureService", () => prepareService(connection));
+  register("openNativeRuntime", async () => {
+    const b = connection.bound(),
+      r = await b.run(() => b.client.request("GET", "/api/hud/runtime"));
+    const location = r.controlUi;
+    if (
+      !location?.available ||
+      !Number.isInteger(location.port) ||
+      location.port < 1 ||
+      location.port > 65535 ||
+      typeof location.basePath !== "string" ||
+      !/^([/][A-Za-z0-9_-]+)*$/.test(location.basePath)
+    )
+      throw Error(
+        location?.reason ||
+          "This runtime does not expose a valid native UI location.",
+      );
+    const raw = `${location.tls ? "https" : "http"}://127.0.0.1:${location.port}${location.basePath}/`;
+    const u = new URL(raw);
+    if (
+      !["127.0.0.1", "localhost", "[::1]"].includes(u.hostname) ||
+      !["http:", "https:"].includes(u.protocol)
+    )
+      throw Error("Native UI URL is not host-local.");
+    b.current();
+    await vscode.env.openExternal(
+      await vscode.env.asExternalUri(vscode.Uri.parse(raw)),
+    );
+  });
+  register("reviewProposal", async () => {
+    connection.bound();
+    const files = fs.existsSync(assistants.directory)
+      ? fs.readdirSync(assistants.directory).filter((f) => f.endsWith(".json"))
+      : [];
+    const drafts: Json[] = [];
+    for (const file of files) {
+      const r = JSON.parse(
+        fs.readFileSync(path.join(assistants.directory, file), "utf8"),
+      );
+      if (
+        /^[a-zA-Z0-9-]{1,120}$/.test(r.id) &&
+        r.installationId === connection.identity?.installationId
+      )
+        drafts.push(
+          ...new LocalState(path.join(assistants.directory, r.id)).get<Json[]>(
+            "proposals",
+            [],
+          ),
+        );
+    }
+    const item = await vscode.window.showQuickPick(
+      drafts.map((d) => ({
+        label: d.domain + " · " + d.summary.slice(0, 80),
+        draft: d,
+      })),
+      { title: "Assistant drafts — no approval or execution authority" },
+    );
+    if (!item) return;
+    await vscode.window.showTextDocument(
+      await vscode.workspace.openTextDocument({
+        language: "json",
+        content: JSON.stringify(item.draft, null, 2),
+      }),
+    );
+    void vscode.window.showInformationMessage(
+      "This is an inert draft. Use Configure Settings or the existing NetClaw workflow to review and initiate any actual change.",
+    );
+  });
+  register("openIntent", () => openIntent(context, connection));
+  for (const name of ["exportGait", "exportDiagnostics"])
+    register(name, async () => {
+      const b = connection.bound(),
+        value = await b.run(() =>
+          inspect(b.client, name === "exportGait" ? "gait" : "overview"),
+        );
+      const doc = await vscode.workspace.openTextDocument({
+        content: JSON.stringify(value, null, 2),
+        language: "json",
+      });
+      await vscode.window.showTextDocument(doc);
+      const target = await vscode.window.showSaveDialog({
+        saveLabel: "Save reviewed observation",
+        filters: { JSON: ["json"] },
+      });
+      if (target)
+        await vscode.workspace.fs.writeFile(target, Buffer.from(doc.getText()));
+    });
+  register("help", async () =>
+    vscode.window.showTextDocument(
+      await vscode.workspace.openTextDocument(
+        vscode.Uri.joinPath(context.extensionUri, "README.md"),
+      ),
+    ),
+  );
+  register("refresh", refresh);
+  const items = (group: string): Navigation[] => {
+    if (group === "connections")
+      return [
+        {
+          label: "Workspace & Claw",
+          description: management.selected?.profile.label || "Enable controls",
+          command: "netclaw.workspaceControls",
+          icon: "files",
+        },
+        {
+          label: "Select connection",
+          command: "netclaw.selectConnection",
+          icon: "remote",
+        },
+        ...(management.selected
+          ? [
+              ...workspaceFiles.map((name) => ({
+                label: name,
+                command: "netclaw.openWorkspaceFile",
+                args: [name],
+                icon: "markdown",
+              })),
+              {
+                label: "Start claw",
+                command: "netclaw.startClaw",
+                icon: "play",
+              },
+              {
+                label: "Stop claw",
+                command: "netclaw.stopClaw",
+                icon: "debug-stop",
+              },
+              {
+                label: "Restart claw",
+                command: "netclaw.restartClaw",
+                icon: "debug-restart",
+              },
+            ]
+          : []),
+        ...profiles.list().map((p) => ({
+          label: p.label,
+          description: connection.profile?.id === p.id ? "Connected" : p.url,
+          command: "netclaw.selectConnection",
+          args: [p.id],
+          icon: "remote",
+        })),
+        {
+          label: "Add existing NetClaw",
+          command: "netclaw.addConnection",
+          icon: "add",
+        },
+        {
+          label: "Rename connection",
+          command: "netclaw.renameConnection",
+          icon: "edit",
+        },
+      ];
+    const list: Navigation[] = Object.entries(domains)
+      .filter(([, d]) => d.group === group)
+      .map(([key, d]) => ({
+        label: d.title,
+        command: "netclaw.openDomain",
+        args: [key],
+        icon: d.icon,
+      }));
+    const extras: Record<string, [string, string, string][]> = {
+      operations: [
+        ["Chat", "openChat", "comment-discussion"],
+        ["Canvas", "openCanvas", "preview"],
+        ["Avatar", "openAvatar", "person"],
+        ["Review installation logs", "openLogs", "output"],
+        ["Terminal Intent", "openIntent", "terminal"],
+      ],
+      knowledge: [
+        ["RAG knowledge base", "openRag", "search"],
+        ["Search memory", "searchMemory", "history"],
+        ["Meeting context", "openMeetings", "comment-discussion"],
+      ],
+      integrations: [
+        ["Configure settings", "configureSettings", "settings-gear"],
+        ["Copilot, Claude Code & Codex", "manageAssistants", "hubot"],
+        ["Review assistant proposals", "reviewProposal", "checklist"],
+      ],
+      help: [
+        ["Read documentation", "openDocumentation", "book"],
+        ["Getting started", "help", "info"],
+      ],
+    };
+    for (const [label, command, icon] of extras[group] || [])
+      list.push({ label, command: "netclaw." + command, icon });
+    return list;
+  };
+  for (const group of [
+    "connections",
+    "estate",
+    "operations",
+    "integrations",
+    "knowledge",
+    "security",
+    "help",
+  ]) {
+    const tree = new NavigationTree(() => items(group));
+    trees.push(tree);
+    context.subscriptions.push(
+      tree,
+      vscode.window.registerTreeDataProvider("netclaw." + group, tree),
+    );
+  }
+  refresh();
+  return { connection, profiles, assistants, management, workspace };
+}
+export function deactivate() {}

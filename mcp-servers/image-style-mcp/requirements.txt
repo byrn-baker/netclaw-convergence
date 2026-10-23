@@ -1,0 +1,5 @@
+# FastMCP 4 / MCP 2 tested runtime (spec 141); install in an isolated environment.
+fastmcp==4.0.11
+mcp==2.3.0
+# See mcp-servers/n2n-mcp/requirements.txt for why the mcp<2 upper bound is load-bearing (spec 077).
+httpx>=0.27.0

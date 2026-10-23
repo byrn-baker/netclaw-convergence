@@ -45,7 +45,7 @@ except ImportError as e:
 EVE_URL               = os.getenv("EVE_URL", "http://127.0.0.1")
 EVE_USER              = os.getenv("EVE_USER", "")
 EVE_PASSWORD          = os.getenv("EVE_PASSWORD", "")
-EVE_VERIFY_SSL        = os.getenv("EVE_VERIFY_SSL", "true").lower() == "true"
+EVE_VERIFY_SSL        = os.getenv("EVE_VERIFY_SSL", "true").strip().lower() not in ("false", "0", "no")
 EVE_SESSION_TTL       = int(os.getenv("EVE_SESSION_TTL", "1800"))
 EVE_HTML5             = int(os.getenv("EVE_HTML5", "-1"))
 EVE_CACHE_TTL         = int(os.getenv("EVE_CACHE_TTL", "30"))

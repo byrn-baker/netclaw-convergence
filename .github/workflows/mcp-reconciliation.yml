@@ -25,12 +25,23 @@ on:
   pull_request:
     paths:
       - 'config/openclaw.json'
+      - 'config/hermes-hud*'
+      - 'scripts/runtime-selection.*'
+      - 'scripts/hud-launch.mjs'
       - 'mcp-servers/**'
       - 'scripts/lib/catalog.sh'
       - 'scripts/lib/install-steps.sh'
       - 'scripts/verify-*.py'
       - 'scripts/check-mcp-portability.py'
+      - 'scripts/*fastmcp*.py'
+      - 'scripts/check-mcp-tasks.py'
+      - 'scripts/setup-pyats-runtime.py'
+      - 'scripts/pyats-stdio.py'
+      - 'config/mcp-task-tools.json'
+      - 'config/python-components/**'
+      - 'config/fastmcp-external-patches.json'
       - 'scripts/reconcile-mcp.py'
+      - 'scripts/run-contract-tests.py'
       - 'specs/**'
       - 'workspace/skills/**'
       - 'tests/**'
@@ -42,6 +53,23 @@ on:
   workflow_dispatch:
 
 jobs:
+  contract-inventory:
+    name: Enumerate contract suites
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.matrix.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Validate manifest parity and export matrix
+        id: matrix
+        run: echo "matrix=$(python3 scripts/run-contract-tests.py --matrix)" >> "$GITHUB_OUTPUT"
+
   reconcile:
     name: Reconcile registration surfaces
     runs-on: ubuntu-latest
@@ -68,6 +96,12 @@ jobs:
       - name: Verify spec SDD artifacts
         run: python3 scripts/verify-spec-artifacts.py
 
+      - name: Audit owned FastMCP version coverage
+        run: python3 scripts/check-fastmcp-compat.py
+
+      - name: Audit MCP task adoption
+        run: python3 scripts/check-mcp-tasks.py
+
       - name: Reconcile MCP registration surfaces
         run: |
           python3 scripts/reconcile-mcp.py \
@@ -92,23 +126,33 @@ jobs:
       - name: Server startup (informational — CI has no components installed)
         run: python3 scripts/reconcile-mcp.py --surface startup --warn-only
 
-      - name: Exit-code contract tests
-        run: bash tests/reconcile/run-tests.sh
+  contract-tests:
+    name: Contract suite / ${{ matrix.suite }}
+    needs: contract-inventory
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.contract-inventory.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v4
 
-      # nsm-mcp's posture and pinning assertions need no containers; its two live-analysis
-      # assertions skip themselves when docker is unreachable, which it is here. Included so
-      # the chokepoint that stops "0 alerts" reading as "clean traffic" is regression-tested.
-      - name: nsm-mcp contract tests
-        run: bash tests/nsm/run-tests.sh
+      - name: Set up Python ${{ matrix.python }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
 
-      # analysis-mcp's path-allowlist and statement-screen assertions are pure stdlib and
-      # always run; the DuckDB lockdown assertions skip without the package, which CI does
-      # not install (SC-013). The allowlist is what keeps the memory/RAG stores unreachable.
-      - name: analysis-mcp contract tests
-        run: bash tests/analysis/run-tests.sh
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v6
 
-      # redfish-mcp's verdict assertions -- which stop a BMC timeout being reported as a downed
-      # host -- are pure stdlib and always run. The live DMTF-mockup ones skip without httpx
-      # and the container.
-      - name: redfish-mcp contract tests
-        run: bash tests/redfish/run-tests.sh
+      - name: Qualified HUD Node for Hermes launcher contracts
+        if: matrix.suite == 'hermes-hud' || matrix.suite == 'unit'
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Install HUD dependencies for Hermes launcher contracts
+        if: matrix.suite == 'hermes-hud' || matrix.suite == 'unit'
+        run: npm --prefix ui/netclaw-visual ci
+
+      - name: Prepare isolated dependencies and run offline contracts
+        run: python3 scripts/run-contract-tests.py --suite "${{ matrix.suite }}" --prepare

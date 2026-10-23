@@ -24,7 +24,8 @@ import sys
 # Allow `from clients...`, `from tools...`, etc. when run as a script.
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from mcp.server.fastmcp import FastMCP
+from fastmcp_tasks import TasksExtension
+from fastmcp import FastMCP
 
 from clients.claroty_client import client
 from tools.alerts import (
@@ -87,23 +88,24 @@ except ValueError as exc:
 
 
 mcp = FastMCP("claroty-mcp")
+mcp.add_extension(TasksExtension(name="netclaw-claroty-mcp", concurrency=1))
 
 # --- Read-only tools (15) ---
-mcp.tool()(list_devices)
-mcp.tool()(get_device_details)
-mcp.tool()(get_device_communication_map)
-mcp.tool()(list_alerts)
-mcp.tool()(get_alert_with_devices)
-mcp.tool()(list_vulnerabilities)
-mcp.tool()(get_vulnerable_devices)
-mcp.tool()(list_sites)
-mcp.tool()(get_site)
-mcp.tool()(list_edge_locations)
-mcp.tool()(list_servers)
-mcp.tool()(get_server_interfaces)
-mcp.tool()(list_ot_activity_events)
-mcp.tool()(get_audit_log)
-mcp.tool()(list_organization_zones)
+mcp.tool(task=True)(list_devices)
+mcp.tool(task=True)(get_device_details)
+mcp.tool(task=True)(get_device_communication_map)
+mcp.tool(task=True)(list_alerts)
+mcp.tool(task=True)(get_alert_with_devices)
+mcp.tool(task=True)(list_vulnerabilities)
+mcp.tool(task=True)(get_vulnerable_devices)
+mcp.tool(task=True)(list_sites)
+mcp.tool(task=True)(get_site)
+mcp.tool(task=True)(list_edge_locations)
+mcp.tool(task=True)(list_servers)
+mcp.tool(task=True)(get_server_interfaces)
+mcp.tool(task=True)(list_ot_activity_events)
+mcp.tool(task=True)(get_audit_log)
+mcp.tool(task=True)(list_organization_zones)
 
 # --- ITSM-gated write tools (6) ---
 mcp.tool()(acknowledge_alert)

@@ -7,8 +7,8 @@ so whichever interpreter `python3` resolves to must be able to import `gait`
 version and strands the old site-packages, which breaks every one of those
 skills with `ModuleNotFoundError: No module named 'gait'`.
 
-To stay upgrade-proof, re-exec into the dedicated GAIT venv when `gait` is not
-importable under the current interpreter. Create that venv with
+Prefer the dedicated GAIT venv when available so the framework version and
+bundled server source remain paired across upgrades and rollback. Create that venv with
 `scripts/gait-venv-setup.sh`. Set GAIT_VENV to override its location.
 """
 import os
@@ -34,6 +34,8 @@ def _reexec_into_venv() -> None:
     os.execv(venv_python, [venv_python, os.path.abspath(__file__), *sys.argv[1:]])
 
 
+_reexec_into_venv()
+
 try:
     import gait  # noqa: F401
 except ImportError:
@@ -47,6 +49,9 @@ import asyncio  # noqa: E402
 
 # Add the gait_mcp directory to path
 gait_dir = os.path.join(os.path.dirname(__file__), "..", "mcp-servers", "gait_mcp")
+bundled = os.path.join(sys.prefix, "netclaw-source", "mcp-servers", "gait_mcp")
+if os.path.isfile(os.path.join(bundled, "gait_mcp.py")):
+    gait_dir = bundled
 sys.path.insert(0, gait_dir)
 
 # Import the FastMCP instance from the GAIT server

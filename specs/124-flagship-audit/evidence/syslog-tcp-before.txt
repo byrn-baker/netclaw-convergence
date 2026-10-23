@@ -1,0 +1,88 @@
+FFF                                                                      [100%]
+=================================== FAILURES ===================================
+______________________ test_unterminated_frame_is_bounded ______________________
+
+    @async_test
+    async def test_unterminated_frame_is_bounded():
+        async def handler(data, addr):
+            pytest.fail('oversized frame dispatched')
+        protocol = module.TCPSyslogProtocol(handler, ('fixture', 1))
+        transport = Mock()
+        transport.get_extra_info.return_value = ('127.0.0.1', 1234)
+        protocol.connection_made(transport)
+        protocol.data_received(b'x' * (65536 + 1))
+>       transport.close.assert_called_once()
+
+tests/unit/test_syslog_tcp_limits.py:32:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <Mock name='mock.close' id='4446907392'>
+
+    def assert_called_once(self):
+        """assert that the mock was called only once.
+        """
+        if not self.call_count == 1:
+            msg = ("Expected '%s' to have been called once. Called %s times.%s"
+                   % (self._mock_name or 'mock',
+                      self.call_count,
+                      self._calls_repr()))
+>           raise AssertionError(msg)
+E           AssertionError: Expected 'close' to have been called once. Called 0 times.
+
+/opt/homebrew/Cellar/python@3.12/3.12.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12/unittest/mock.py:928: AssertionError
+_________________ test_pending_handlers_bounded_and_cancelled __________________
+
+    @async_test
+    async def test_pending_handlers_bounded_and_cancelled():
+        entered = asyncio.Event()
+        async def handler(data, addr):
+            entered.set()
+            await asyncio.Event().wait()
+        protocol = module.TCPSyslogProtocol(handler, ('fixture', 1))
+        transport = Mock()
+        transport.get_extra_info.return_value = ('127.0.0.1', 1234)
+        protocol.connection_made(transport)
+        protocol.data_received(b'x\n' * 129)
+>       transport.close.assert_called_once()
+
+tests/unit/test_syslog_tcp_limits.py:47:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <Mock name='mock.close' id='4446908496'>
+
+    def assert_called_once(self):
+        """assert that the mock was called only once.
+        """
+        if not self.call_count == 1:
+            msg = ("Expected '%s' to have been called once. Called %s times.%s"
+                   % (self._mock_name or 'mock',
+                      self.call_count,
+                      self._calls_repr()))
+>           raise AssertionError(msg)
+E           AssertionError: Expected 'close' to have been called once. Called 0 times.
+
+/opt/homebrew/Cellar/python@3.12/3.12.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12/unittest/mock.py:928: AssertionError
+------------------------------ Captured log call -------------------------------
+ERROR    asyncio:base_events.py:1833 Task was destroyed but it is pending!
+task: <Task pending name='Task-106' coro=<TCPSyslogProtocol._handle_message() done, defined at /Users/john.capobianco/netclaw/mcp-servers/syslog-mcp/tcp_receiver.py:54> wait_for=<Future pending cb=[Task.task_wakeup()]>>
+ERROR    asyncio:base_events.py:1833 Task was destroyed but it is pending!
+task: <Task pending name='Task-107' coro=<TCPSyslogProtocol._handle_message() done, defined at /Users/john.capobianco/netclaw/mcp-servers/syslog-mcp/tcp_receiver.py:54> wait_for=<Future pending cb=[Task.task_wakeup()]>>
+__________________ test_real_peer_delivery_admission_and_stop __________________
+
+    @async_test
+    async def test_real_peer_delivery_admission_and_stop():
+        seen = []
+        delivered = asyncio.Event()
+        async def handler(data, addr):
+            seen.append((data, addr))
+            delivered.set()
+>       receiver = module.TCPReceiver(handler, host='127.0.0.1', port=0, max_connections=1)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: TCPReceiver.__init__() got an unexpected keyword argument 'max_connections'
+
+tests/unit/test_syslog_tcp_limits.py:60: TypeError
+=========================== short test summary info ============================
+FAILED tests/unit/test_syslog_tcp_limits.py::test_unterminated_frame_is_bounded
+FAILED tests/unit/test_syslog_tcp_limits.py::test_pending_handlers_bounded_and_cancelled
+FAILED tests/unit/test_syslog_tcp_limits.py::test_real_peer_delivery_admission_and_stop
+3 failed in 0.05s

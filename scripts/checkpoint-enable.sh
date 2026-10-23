@@ -91,10 +91,10 @@ log_step "3/5 Building Check Point MCP servers..."
 
 cd "$CHECKPOINT_MCP_DIR"
 log_info "Running npm install..."
-npm install 2>/dev/null || log_warn "npm install had warnings"
+npm install || { log_error "Dependency installation failed"; exit 1; }
 
 log_info "Running npm build..."
-echo "n" | npm run build 2>/dev/null || log_warn "npm run build had warnings"
+echo "n" | npm run build || { log_error "MCP build failed"; exit 1; }
 cd "$NETCLAW_DIR"
 
 log_info "Check Point MCP servers built successfully."
@@ -108,16 +108,11 @@ log_step "4/5 Configuring Check Point credentials..."
 
 # Ensure OpenClaw directory exists
 mkdir -p "$OPENCLAW_DIR"
-[ -f "$OPENCLAW_ENV" ] || touch "$OPENCLAW_ENV"
+[ -f "$OPENCLAW_ENV" ] || (umask 077; touch "$OPENCLAW_ENV")
 
 # Helper function to set env vars
 _set_env_var() {
-    local key="$1" val="$2"
-    if grep -q "^${key}=" "$OPENCLAW_ENV" 2>/dev/null; then
-        sed -i.bak "s|^${key}=.*|${key}=${val}|" "$OPENCLAW_ENV" && rm -f "$OPENCLAW_ENV.bak"
-    else
-        echo "${key}=${val}" >> "$OPENCLAW_ENV"
-    fi
+    printf '%s' "$2" | python3 "$NETCLAW_DIR/scripts/write-env.py" "$OPENCLAW_ENV" "$1"
 }
 
 echo ""
@@ -219,25 +214,24 @@ if [ ! -f "$OPENCLAW_CONFIG" ]; then
 elif ! command -v python3 &> /dev/null; then
     log_warn "python3 not found — skipping prune. chkp-* servers may receive literal \${VAR} values for unset creds."
 else
-    CHKP_PRUNE_ENV="$OPENCLAW_ENV" python3 - "$OPENCLAW_CONFIG" <<'PY'
+    CHKP_SCRIPT_DIR="$NETCLAW_DIR/scripts" CHKP_PRUNE_ENV="$OPENCLAW_ENV" python3 - "$OPENCLAW_CONFIG" <<'PY'
 import json, os, re, sys
 
 cfg_path = sys.argv[1]
 env_path = os.environ["CHKP_PRUNE_ENV"]
 
-# Vars set to a non-empty value in the runtime .env (what OpenClaw can resolve).
-set_vars = set()
-try:
-    with open(env_path) as fh:
-        for line in fh:
-            s = line.strip()
-            if not s or s.startswith("#") or "=" not in s:
-                continue
-            k, v = s.split("=", 1)
-            if v.strip() != "":
-                set_vars.add(k)
-except FileNotFoundError:
-    pass
+from pathlib import Path
+import importlib.util
+script_dir = Path(os.environ['CHKP_SCRIPT_DIR'])
+def load(name, filename):
+    spec = importlib.util.spec_from_file_location(name, script_dir / filename)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+writer = load('env_writer', 'write-env.py')
+profiles = load('setup_profile', 'setup-profile.py')
+# Decode quoted empty values before deciding whether a placeholder resolves.
+set_vars = {key for key, value in writer.values(Path(env_path).read_text()).items() if value}
 
 # Guard: if no real Check Point credential is set yet, do NOT prune (that would
 # strip every placeholder, including S1C_URL/API_KEY, from an unconfigured
@@ -281,18 +275,14 @@ for name, srv in (servers or {}).items():
             dropped.append("%s.%s" % (name, key))
 
 if dropped or baked:
-    with open(cfg_path + ".bak", "w") as fh:
-        fh.write(raw)                     # back up the pre-prune config
-    with open(cfg_path, "w") as fh:
-        json.dump(cfg, fh, indent=2)
-        fh.write("\n")
+    profiles.save(Path(cfg_path), json.dumps(cfg, indent=2) + "\n")
     print("  pruned %d unresolved placeholder(s); baked %d default(s) in %s"
           % (len(dropped), len(baked), cfg_path))
     for d in dropped:
         print("    dropped %s" % d)
     for b in baked:
         print("    baked   %s" % b)
-    print("  backup: %s.bak" % cfg_path)
+    print("  private original retained in .setup-backups beside config")
 else:
     print("  no unresolved chkp-* placeholders — nothing to prune")
 PY
@@ -323,6 +313,7 @@ done
 
 echo ""
 log_info "Verification: $SERVERS_OK OK, $SERVERS_FAIL FAILED"
+[ "$SERVERS_FAIL" -eq 0 ] || { log_error "Installation verification failed"; exit 1; }
 echo ""
 
 # ═══════════════════════════════════════════

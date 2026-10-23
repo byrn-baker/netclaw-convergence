@@ -22,7 +22,7 @@ import os
 from typing import Optional
 
 import httpx
-from mcp.server.fastmcp import FastMCP
+from fastmcp import FastMCP
 
 BGP_DAEMON_API = os.environ.get("BGP_DAEMON_API", "http://127.0.0.1:8179")
 
@@ -30,7 +30,8 @@ mcp = FastMCP("n2n-mcp")
 
 
 def _gcf_dumps(data) -> str:
-    """Serialize response via Dayna GCF (graph/session/delta); JSON fallback."""
+    """Serialize response (JSON fallback; GCF/TOON when available)."""
+    if os.environ.get('NETCLAW_FEDERATION_SCOPED')=='1':return json.dumps(data)
     try:
         import sys
         sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "src"))
@@ -45,13 +46,28 @@ def _gcf_dumps(data) -> str:
         return json.dumps(data, indent=2, default=str)
 
 
+async def _scoped(method,path,body):
+    from urllib.parse import urlsplit
+    endpoint=os.environ.get('NETCLAW_FEDERATION_BROKER_URL','')
+    parsed=urlsplit(endpoint)
+    token=os.environ.get('NETCLAW_FEDERATION_EFFECT_PERMIT','')
+    if parsed.scheme!='http' or parsed.hostname!='127.0.0.1' or parsed.path or parsed.query or parsed.fragment or parsed.username or not token:
+        raise ValueError('Private federation effect permit required')
+    async with httpx.AsyncClient(timeout=610,trust_env=False,follow_redirects=False) as client:
+        response=await client.post(endpoint+'/effect',headers={'Authorization':'Bearer '+token},json={'method':method,'path':path,'body':body or {}})
+        response.raise_for_status()
+        return response.json()
+
+
 async def _get(path: str, params: Optional[dict] = None) -> dict:
+    if os.environ.get('NETCLAW_FEDERATION_SCOPED')=='1':return await _scoped('GET',path,params)
     async with httpx.AsyncClient(base_url=BGP_DAEMON_API, timeout=30) as c:
         r = await c.get(path, params=params)
         return r.json()
 
 
 async def _post(path: str, body: Optional[dict] = None) -> dict:
+    if os.environ.get('NETCLAW_FEDERATION_SCOPED')=='1':return await _scoped('POST',path,body)
     # Must outlast the daemon's own operation timeouts (chat 300s / skill 600s)
     # so the client never gives up before the daemon returns a definitive result.
     # A 120s client timeout was dropping federated chat/skill replies before they
@@ -63,6 +79,7 @@ async def _post(path: str, body: Optional[dict] = None) -> dict:
 
 
 async def _delete(path: str) -> dict:
+    if os.environ.get('NETCLAW_FEDERATION_SCOPED')=='1':raise ValueError('Administrative effects are not qualified')
     async with httpx.AsyncClient(base_url=BGP_DAEMON_API, timeout=30) as c:
         r = await c.delete(path)
         return r.json()

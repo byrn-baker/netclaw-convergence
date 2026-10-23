@@ -1,106 +1,135 @@
-"""
-GAIT (Global Audit and Immutable Trail) logging integration.
-Provides audit logging for all received telemetry events per FR-018.
-"""
-
+"""Bounded local GAIT persistence for telemetry; enqueue is not a commit."""
+import fcntl
 import json
 import logging
-from datetime import datetime
+import os
+import queue
+import re
+import threading
+from datetime import datetime, timezone
+from pathlib import Path
 from typing import Any, Dict, Optional
 
 logger = logging.getLogger(__name__)
 
 
 class GAITLogger:
-    """
-    GAIT audit logger for telemetry receivers.
+    """Batch events on one writer, with visible overload and persistence failures."""
 
-    Logs all received events to an immutable audit trail.
-    Falls back to standard logging if GAIT service is unavailable.
-    """
-
-    def __init__(
-        self,
-        service_name: str,
-        gait_endpoint: Optional[str] = None,
-        enabled: bool = True
-    ):
-        """
-        Initialize the GAIT logger.
-
-        Args:
-            service_name: Name of the MCP server (e.g., 'snmptrap-mcp')
-            gait_endpoint: Optional GAIT service endpoint
-            enabled: Whether GAIT logging is enabled
-        """
+    def __init__(self, service_name: str, gait_endpoint: Optional[str] = None,
+                 enabled: bool = True, *, audit_root=None, queue_size=1024):
+        if gait_endpoint:
+            raise ValueError('Remote GAIT endpoints are unsupported; use the local audit store')
+        if not re.fullmatch(r'[a-zA-Z0-9_-]+', service_name) or queue_size < 1:
+            raise ValueError('Invalid telemetry audit service or queue size')
         self.service_name = service_name
-        self.gait_endpoint = gait_endpoint
+        self.gait_endpoint = None
         self.enabled = enabled
+        self.root = Path(audit_root or Path.home() / '.openclaw' / 'telemetry-audit') / service_name
         self.log_count = 0
         self.error_count = 0
+        self.persisted_count = 0
+        self.last_commit = None
+        self.last_error = None
+        self._queue = queue.Queue(maxsize=queue_size)
+        self._lock = threading.Lock()
+        self._closed = threading.Event()
+        self._worker = None
 
-        # Setup dedicated audit logger
-        self.audit_logger = logging.getLogger(f"gait.{service_name}")
-        self.audit_logger.setLevel(logging.INFO)
-
-    def log_event(
-        self,
-        event_type: str,
-        source_ip: str,
-        data: Dict[str, Any],
-        metadata: Optional[Dict[str, Any]] = None
-    ) -> bool:
-        """
-        Log a telemetry event to GAIT.
-
-        Args:
-            event_type: Type of event (e.g., 'trap_received')
-            source_ip: Source IP address of the event
-            data: Event data to log
-            metadata: Optional additional metadata
-
-        Returns:
-            True if logged successfully, False otherwise
-        """
-        if not self.enabled:
+    def log_event(self, event_type: str, source_ip: str, data: Dict[str, Any],
+                  metadata: Optional[Dict[str, Any]] = None) -> bool:
+        """Return True only for queue admission, never as proof of persistence."""
+        with self._lock:
+            if not self.enabled or self._closed.is_set():
+                return False
+            self.log_count += 1
+            try:
+                payload = json.dumps({
+                    'timestamp': datetime.now(timezone.utc).isoformat(),
+                    'service': self.service_name, 'event_type': event_type,
+                    'source_ip': source_ip, 'data': data,
+                    'metadata': metadata or {}, 'sequence': self.log_count,
+                }, ensure_ascii=True)
+                if len(payload) > 16384:
+                    raise ValueError('Audit event exceeds 16KiB')
+                self._queue.put_nowait(payload)
+            except (TypeError, ValueError, queue.Full) as exc:
+                self.error_count += 1
+                self.last_error = type(exc).__name__
+                return False
+            if self._worker is None:
+                self._worker = threading.Thread(target=self._run,
+                    name=f'{self.service_name}-audit', daemon=True)
+                self._worker.start()
             return True
 
-        self.log_count += 1
+    def _persist(self, records):
+        from gait.repo import GaitRepo
+        from gait.schema import Turn
+        self.root.mkdir(parents=True, mode=0o700, exist_ok=True)
+        if self.root.is_symlink() or self.root.stat().st_uid != os.getuid():
+            raise PermissionError('Unsafe audit directory')
+        self.root.chmod(0o700)
+        descriptor = os.open(self.root / '.writer.lock',
+                             os.O_CREAT | os.O_RDWR | os.O_NOFOLLOW, 0o600)
+        with os.fdopen(descriptor, 'a') as lock_file:
+            fcntl.flock(lock_file, fcntl.LOCK_EX)
+            repo = GaitRepo(self.root)
+            repo.init()
+            turn = Turn.v0(user_text=f'{self.service_name} telemetry batch',
+                           assistant_text='[' + ','.join(records) + ']',
+                           visibility='private')
+            _, commit = repo.record_turn(turn, message=f'{len(records)} telemetry audit events')
+            return commit
 
-        audit_record = {
-            'timestamp': datetime.utcnow().isoformat() + 'Z',
-            'service': self.service_name,
-            'event_type': event_type,
-            'source_ip': source_ip,
-            'data': data,
-            'metadata': metadata or {},
-            'sequence': self.log_count
-        }
+    def _run(self):
+        while not self._closed.is_set() or not self._queue.empty():
+            try:
+                records = [self._queue.get(timeout=0.1)]
+            except queue.Empty:
+                continue
+            while len(records) < 64:
+                try:
+                    records.append(self._queue.get_nowait())
+                except queue.Empty:
+                    break
+            try:
+                commit = self._persist(records)
+                with self._lock:
+                    self.persisted_count += len(records)
+                    self.last_commit = commit
+            except Exception as exc:
+                with self._lock:
+                    first_failure = self.last_error is None
+                    self.error_count += len(records)
+                    self.last_error = type(exc).__name__
+                if first_failure:
+                    logger.warning('Telemetry GAIT persistence unavailable for %s (%s)',
+                                   self.service_name, type(exc).__name__)
+            finally:
+                for _ in records:
+                    self._queue.task_done()
 
-        try:
-            # Log to audit logger (can be configured to write to file, syslog, etc.)
-            self.audit_logger.info(json.dumps(audit_record))
+    def close(self, timeout=5.0):
+        """Stop admission and allow a bounded wait for queued persistence."""
+        with self._lock:
+            self._closed.set()
+            worker = self._worker
+        if worker:
+            worker.join(timeout=timeout)
+        return self.get_stats()
 
-            # If GAIT endpoint is configured, send there too
-            if self.gait_endpoint:
-                self._send_to_gait(audit_record)
-
-            return True
-
-        except Exception as e:
-            self.error_count += 1
-            logger.error(f"Failed to log GAIT event: {e}")
-            return False
-
-    def _send_to_gait(self, record: Dict[str, Any]) -> None:
-        """
-        Send audit record to GAIT service.
-
-        Note: This is a placeholder for actual GAIT integration.
-        In production, this would make an async HTTP call to the GAIT service.
-        """
-        # TODO: Implement actual GAIT service integration when available
-        pass
+    def get_stats(self) -> Dict[str, Any]:
+        with self._lock:
+            pending = self.log_count - self.persisted_count - self.error_count
+            return {
+                'enabled': self.enabled, 'service_name': self.service_name,
+                'mode': 'local_gait', 'log_count': self.log_count,
+                'persisted_count': self.persisted_count,
+                'pending_count': pending, 'error_count': self.error_count,
+                'last_commit': self.last_commit, 'last_error': self.last_error,
+                'closed': self._closed.is_set(),
+            }
 
     def log_trap_received(
         self,
@@ -143,13 +172,3 @@ class GAITLogger:
                 'traps_received': traps_received
             }
         )
-
-    def get_stats(self) -> Dict[str, Any]:
-        """Get GAIT logging statistics."""
-        return {
-            'enabled': self.enabled,
-            'service_name': self.service_name,
-            'log_count': self.log_count,
-            'error_count': self.error_count,
-            'gait_endpoint': self.gait_endpoint
-        }

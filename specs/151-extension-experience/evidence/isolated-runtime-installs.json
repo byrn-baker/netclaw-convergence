@@ -1,0 +1,17 @@
+{
+  "fixture": "/var/folders/ln/99pzcfd950j6vxf7gbfjjm5w0000gq/T/netclaw150-unchanged-hud-xb26BV",
+  "operations": [
+    {
+      "component": "gait",
+      "id": "c567780a-0e27-480a-9818-f7d3e3b4b0eb",
+      "state": "verified",
+      "message": "Runtime installed and imports verified; registration and endpoint access remain separate."
+    },
+    {
+      "component": "pyats",
+      "id": "7fc0e61a-81d8-4673-8968-25a1040b841a",
+      "state": "verified",
+      "message": "Runtime installed and imports verified; registration and endpoint access remain separate."
+    }
+  ]
+}

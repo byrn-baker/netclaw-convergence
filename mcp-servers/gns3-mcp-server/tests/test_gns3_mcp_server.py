@@ -87,7 +87,7 @@ class TestNameResolution:
         from gns3_mcp_server import _is_uuid
 
         assert _is_uuid("550e8400-e29b-41d4-a716-446655440000") is True
-        assert _is_uuid("550e8400e29b41d4a716446655440000") is True
+        assert _is_uuid("550e8400e29b41d4a716446655440000") is False  # API IDs use canonical hyphens
 
     def test_is_uuid_invalid(self):
         """Test _is_uuid with invalid input."""
@@ -99,108 +99,68 @@ class TestNameResolution:
 
 
 class TestInterfaceParsing:
-    """Test interface name parsing."""
+    @pytest.mark.parametrize('name,expected', [
+        ('eth0', (0, 0)), ('eth1', (0, 1)), ('Ethernet0', (0, 0)),
+        ('Gi0/0', (0, 0)), ('GigabitEthernet1/2', (1, 2)),
+        ('Fa0/0', (0, 0)), ('FastEthernet1/2', (1, 2)),
+        ('0/3', (0, 3)), ('port4', (0, 4)),
+    ])
+    def test_adapter_and_port(self, name, expected):
+        from gns3_mcp_server import parse_interface
+        assert parse_interface(name) == expected
 
-    def test_parse_standard_ethernet(self):
-        """Test parsing standard ethernet interfaces."""
-        from gns3_mcp_server import parse_interface_name
-
-        assert parse_interface_name("eth0") == ("Ethernet", 0)
-        assert parse_interface_name("eth1") == ("Ethernet", 1)
-        assert parse_interface_name("Ethernet0") == ("Ethernet", 0)
-
-    def test_parse_cisco_gigabit(self):
-        """Test parsing Cisco GigabitEthernet interfaces."""
-        from gns3_mcp_server import parse_interface_name
-
-        assert parse_interface_name("Gi0/0") == ("GigabitEthernet", 0)
-        assert parse_interface_name("GigabitEthernet0/1") == ("GigabitEthernet", 1)
-        assert parse_interface_name("g0/2") == ("GigabitEthernet", 2)
-
-    def test_parse_fastethernet(self):
-        """Test parsing FastEthernet interfaces."""
-        from gns3_mcp_server import parse_interface_name
-
-        assert parse_interface_name("Fa0/0") == ("FastEthernet", 0)
-        assert parse_interface_name("FastEthernet0/1") == ("FastEthernet", 1)
-        assert parse_interface_name("f0/2") == ("FastEthernet", 2)
-
-    def test_parse_unknown_returns_none(self):
-        """Test that unknown interface names return None."""
-        from gns3_mcp_server import parse_interface_name
-
-        assert parse_interface_name("unknown") is None
-        assert parse_interface_name("invalid") is None
+    @pytest.mark.parametrize('name', ['unknown', 'invalid', '', 'g0/2', 'eth-1'])
+    def test_invalid_interface_rejected(self, name):
+        from gns3_mcp_server import parse_interface, GNS3Error
+        with pytest.raises(GNS3Error) as error:
+            parse_interface(name)
+        assert error.value.error_code == 'GNS3_VALIDATION'
 
 
 class TestTemplateFuzzyMatching:
-    """Test template fuzzy matching."""
+    @pytest.mark.parametrize('query,expected', [('Cisco IOSv L2', ('1', 'Cisco IOSv L2')), ('iosv', ('1', 'Cisco IOSv L2')), ('ARISTA VEOS', ('3', 'Arista vEOS'))])
+    def test_resolver(self, query, expected):
+        from gns3_mcp_server import resolve_template_id
+        import httpx
+        client = MagicMock()
+        client.get.return_value = httpx.Response(200, json=[
+            {'template_id': '1', 'name': 'Cisco IOSv L2'},
+            {'template_id': '2', 'name': 'Cisco IOSv L3'},
+            {'template_id': '3', 'name': 'Arista vEOS'},
+        ])
+        assert resolve_template_id(client, query) == expected
+        client.get.assert_called_once_with('/v3/templates')
 
-    def test_fuzzy_match_exact(self):
-        """Test exact template name match."""
-        from gns3_mcp_server import fuzzy_match_template
-
-        templates = [
-            {"template_id": "1", "name": "Cisco IOSv"},
-            {"template_id": "2", "name": "Arista vEOS"},
-        ]
-
-        result = fuzzy_match_template("Cisco IOSv", templates)
-        assert result["template_id"] == "1"
-
-    def test_fuzzy_match_partial(self):
-        """Test partial template name match."""
-        from gns3_mcp_server import fuzzy_match_template
-
-        templates = [
-            {"template_id": "1", "name": "Cisco IOSv L2"},
-            {"template_id": "2", "name": "Cisco IOSv L3"},
-            {"template_id": "3", "name": "Arista vEOS"},
-        ]
-
-        result = fuzzy_match_template("iosv", templates)
-        assert result is not None
-        assert "IOSv" in result["name"]
-
-    def test_fuzzy_match_no_match(self):
-        """Test no template match returns None."""
-        from gns3_mcp_server import fuzzy_match_template
-
-        templates = [
-            {"template_id": "1", "name": "Cisco IOSv"},
-        ]
-
-        result = fuzzy_match_template("Juniper", templates)
-        assert result is None
+    def test_no_match(self):
+        from gns3_mcp_server import resolve_template_id, GNS3Error
+        import httpx
+        client = MagicMock()
+        client.get.return_value = httpx.Response(200, json=[{'template_id': '1', 'name': 'Cisco IOSv'}])
+        with pytest.raises(GNS3Error) as error:
+            resolve_template_id(client, 'Juniper')
+        assert error.value.status_code == 404
 
 
 class TestGNS3ClientConfig:
-    """Test GNS3Client configuration."""
-
     def test_client_initialization(self):
-        """Test client initializes with environment variables."""
-        import os
         from gns3_mcp_server import GNS3Client
+        client = GNS3Client('http://test:3080/', 'testuser', 'testpass')
+        try:
+            assert client.base_url == 'http://test:3080'
+            assert client.username == 'testuser'
+            assert client.password == 'testpass'
+            assert client.verify_ssl is True
+        finally:
+            client._client.close()
 
-        with patch.dict(os.environ, {
-            "GNS3_URL": "http://test:3080",
-            "GNS3_USER": "testuser",
-            "GNS3_PASSWORD": "testpass"
-        }):
-            client = GNS3Client()
-            assert client.base_url == "http://test:3080"
-            assert client.username == "testuser"
-            assert client.password == "testpass"
-
-    def test_client_missing_env_raises(self):
-        """Test client raises error when env vars missing."""
-        import os
-        from gns3_mcp_server import GNS3Client, GNS3Error
-
-        with patch.dict(os.environ, {}, clear=True):
-            with pytest.raises(GNS3Error) as exc_info:
-                GNS3Client()
-            assert "GNS3_URL" in str(exc_info.value)
+    def test_missing_credentials_rejected(self, monkeypatch):
+        import gns3_mcp_server as server
+        monkeypatch.setattr(server, 'client', None)
+        monkeypatch.setattr(server, 'GNS3_USER', '')
+        monkeypatch.setattr(server, 'GNS3_PASSWORD', '')
+        with pytest.raises(server.GNS3Error) as error:
+            server.get_client()
+        assert error.value.error_code == 'GNS3_AUTH_FAILED'
 
 
 class TestGAITLogging:
@@ -241,7 +201,8 @@ class TestResponseFormat:
         from gns3_mcp_server import mcp
 
         # Get registered tools
-        tools = mcp._tool_manager._tools if hasattr(mcp, '_tool_manager') else {}
+        import asyncio
+        tools = asyncio.run(mcp.list_tools())
 
         # Expected tool names based on contracts
         expected_tools = [
@@ -285,7 +246,7 @@ class TestResponseFormat:
 
         # This test documents expected tools
         # Actual registration check depends on FastMCP implementation
-        assert len(expected_tools) == 30  # 23 core + 2 utility + some extras
+        assert set(expected_tools) <= {tool.name for tool in tools}
 
 
 if __name__ == "__main__":

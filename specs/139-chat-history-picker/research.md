@@ -1,0 +1,4 @@
+# Runtime findings
+The earlier persistence change saved one current chat in sessionStorage; New chat replaced it. It did not provide a conversation index. Existing server-owned bindings already map browser cookies and hashed thread IDs to private gateway session keys. OpenClaw 2026.9.7 stores sessions outside legacy sessions.json and exposes sessions.list/chat.history RPCs. A real read returned 11 visible user/assistant messages. Runtime messages also contain tool results and reasoning, which are excluded from the Chat transcript projection.
+
+Legacy thread hashes cannot be reversed. Resume adds a stable server-issued alias while retaining the original hash and gateway key, so both existing tabs and reopened chats continue the same session. Only the owning browser cookie and selected agent can list or reopen a binding. Unbound sessions and different browser cookies are not automatically imported.

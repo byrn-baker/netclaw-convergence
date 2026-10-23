@@ -1,0 +1,2 @@
+# Plan
+Add server-side model catalog/projection and validation helpers, a read-only /api/chat/models route, and an optional chatModel request field. Reject unknown choices before session creation or gateway calls. Apply accepted references using x-openclaw-model. Expose provider/model names without auth-profile suffixes. Add a labelled composer selector, default label and load/error/single-choice states. Test projection, rejected values and actual outgoing request headers with a mock gateway; build and inspect browser rendering.

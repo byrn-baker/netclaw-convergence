@@ -31,6 +31,7 @@ import logging
 import os
 import re
 import shutil
+import tempfile
 import uuid
 
 from . import gateway_ws
@@ -114,6 +115,12 @@ async def _apply_production_controls(cmd: list, prompt: str) -> list:
     guard_ok, guard_detail = await controls.defenseclaw_available()
     if not guard_ok:
         raise EnforcementRefused(f"model-guard unavailable: {guard_detail}")
+    if "--model" in cmd:
+        index = cmd.index("--model")
+        override = cmd[index + 1] if index + 1 < len(cmd) else ""
+        route_ok, detail = controls.guarded_model_route(override)
+        if not route_ok:
+            raise EnforcementRefused(f"model-guard unavailable: {detail}")
     return cmd
 
 
@@ -184,8 +191,9 @@ def _extract_reply_from_envelopes(objs: list):
     # Best-effort token count
     tokens = 0
     try:
-        usage = (result.get("meta") or {}).get("usage") or obj.get("usage") or {}
-        tokens = usage.get("total_tokens") or usage.get("totalTokens") or 0
+        meta = result.get("meta") or {}
+        usage = meta.get("usage") or (meta.get("agentMeta") or {}).get("usage") or obj.get("usage") or {}
+        tokens = usage.get("total_tokens") or usage.get("totalTokens") or usage.get("total") or 0
     except Exception:
         tokens = 0
     return reply, int(tokens or 0)
@@ -212,11 +220,12 @@ def _extract_reply(stdout: str):
         except Exception:
             start = stdout.find("{", start + 1)
     if not objs:
-        # No JSON — return raw trailing text so the caller still gets something.
-        return stdout.strip()[-2000:], 0
+        raise RuntimeError("Agent returned no valid JSON result; task result unavailable")
 
     reply, tokens = _extract_reply_from_envelopes(objs)
-    return reply or "(no reply text in agent response)", tokens
+    if not reply:
+        raise RuntimeError("Agent returned no reply text; task result unavailable")
+    return reply, tokens
 
 
 def _extract_reply_from_ws_payload(payload: dict):
@@ -227,7 +236,9 @@ def _extract_reply_from_ws_payload(payload: dict):
     exact same extraction core `_extract_reply` uses (spec 116,
     contracts/run-agent-turn.md: "Reused unchanged")."""
     reply, tokens = _extract_reply_from_envelopes([payload] if isinstance(payload, dict) else [])
-    return reply or "(no reply text in agent response)", tokens
+    if not reply:
+        raise RuntimeError("Agent returned no reply text; task result unavailable")
+    return reply, tokens
 
 
 _RECOGNIZED_ORIGINS = {"voice"}
@@ -286,7 +297,7 @@ async def run_agent_turn(prompt: str, session_key: str = "n2n", timeout_s: int =
                          local: bool = False, model: str = None,
                          untrusted: bool = False, on_stall=None,
                          stall_after_s: int = 120, message_file: str = None,
-                         origin: str | None = None):
+                         origin: str | None = None, execution=None):
     """Run one agent turn. Returns (reply_text, tokens_used).
 
     Two modes:
@@ -334,6 +345,12 @@ async def run_agent_turn(prompt: str, session_key: str = "n2n", timeout_s: int =
     unrecognized value is normalized to `None` rather than failing the request
     (FR-012). Gateway (WS) mode only; the embedded path does not use it.
     """
+    from .runtime import selected
+    if selected().kind == 'hermes':
+        if message_file or model: # selected Hermes config is the qualified model binding
+            if message_file:raise RuntimeError('capability_unsupported: file ingress is not qualified for Hermes federation')
+        from .hermes_runtime import run_turn
+        return await run_turn(prompt,execution)
     if local and untrusted:
         # Fail-closed eN2N gate: never run external-peer input embedded unless
         # the 057 production controls actually verify. This makes the one-line
@@ -368,24 +385,30 @@ async def run_agent_turn(prompt: str, session_key: str = "n2n", timeout_s: int =
         # Both fail closed — a member that cannot be sandboxed or guarded does NOT
         # run unprotected. Testing mode runs unwrapped (fast iteration, FR-006).
         cmd = await _apply_production_controls(cmd, prompt)
-        proc = await asyncio.create_subprocess_exec(
-            *cmd, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.STDOUT,
-            env=_agent_env())
-        comm = asyncio.ensure_future(proc.communicate())
-        if not comm.done():
-            await asyncio.wait({comm}, timeout=float(timeout_s))
-        if not comm.done():
+        # Keep JSON separate from plugin diagnostics. A large Node stdout write
+        # to a pipe can also be truncated by an explicit process exit; regular
+        # files are synchronous on POSIX. Anonymous private files retain neither
+        # prompts nor credentials after the turn and avoid pipe backpressure.
+        with tempfile.TemporaryFile() as output_file, tempfile.TemporaryFile() as error_file:
+            proc = await asyncio.create_subprocess_exec(
+                *cmd, stdout=output_file, stderr=error_file, env=_agent_env())
             try:
-                proc.kill()
-            except Exception:
-                pass
-            comm.cancel()
-            raise asyncio.TimeoutError(
-                f"agent turn for session '{session_key}' timed out")
-        out, _ = await comm
-        stdout = out.decode(errors="replace") if out else ""
-        if proc.returncode != 0:
-            logger.warning("openclaw agent exited %s", proc.returncode)
+                await asyncio.wait_for(proc.wait(), timeout=float(timeout_s))
+            except BaseException:
+                if proc.returncode is None:
+                    try:
+                        proc.kill()
+                    except ProcessLookupError:
+                        pass
+                await proc.wait()
+                raise
+            if proc.returncode != 0:
+                raise RuntimeError(f"Agent process exited {proc.returncode}; task result unavailable")
+            output_file.seek(0)
+            out = output_file.read(16 * 1024 * 1024 + 1)
+            if len(out) > 16 * 1024 * 1024:
+                raise RuntimeError("Agent result exceeded 16 MiB; task result unavailable")
+            stdout = out.decode(errors="replace")
         return _extract_reply(stdout)
 
     # Gateway (default) path: persistent WS RPC, no per-turn subprocess, no
@@ -405,25 +428,32 @@ async def run_agent_turn(prompt: str, session_key: str = "n2n", timeout_s: int =
         # itself controls, so an operator can grep for how a given session_key
         # reached NetClaw.
         logger.info("agent turn origin=%s session_key=%s", normalized_origin, session_key)
-    call_future = asyncio.ensure_future(client.call("agent", params, float(timeout_s)))
-    remaining = float(timeout_s)
-    if on_stall and stall_after_s and stall_after_s < remaining:
-        done, _ = await asyncio.wait({call_future}, timeout=stall_after_s)
-        remaining -= stall_after_s
-        if not done:
-            # Silent this long usually means the gateway is holding the session
-            # at its scope-upgrade approval gate. Surface it to the operator and
-            # let the caller extend the window so the approval can land.
-            try:
-                remaining += max(0, int(on_stall(stall_after_s) or 0))
-            except Exception as e:
-                logger.warning("on_stall notifier failed: %s", e)
-    if not call_future.done():
-        await asyncio.wait({call_future}, timeout=remaining)
-    if not call_future.done():
-        call_future.cancel()
-        raise asyncio.TimeoutError(
-            f"agent turn for session '{session_key}' timed out — if the gateway "
-            f"is holding a scope-upgrade approval, approve it and retry")
-    payload = await call_future
-    return _extract_reply_from_ws_payload(payload)
+    call_future = asyncio.ensure_future(client.call("agent", params, None))
+    try:
+        remaining = float(timeout_s)
+        if on_stall and stall_after_s and stall_after_s < remaining:
+            done, _ = await asyncio.wait({call_future}, timeout=stall_after_s)
+            remaining -= stall_after_s
+            if not done:
+                # Silent this long usually means the gateway is holding the session
+                # at its scope-upgrade approval gate. Surface it to the operator and
+                # let the caller extend the window so the approval can land.
+                try:
+                    remaining += max(0, int(on_stall(stall_after_s) or 0))
+                except Exception as e:
+                    logger.warning("on_stall notifier failed: %s", e)
+        if not call_future.done():
+            await asyncio.wait({call_future}, timeout=remaining)
+        if not call_future.done():
+            call_future.cancel()
+            raise asyncio.TimeoutError(
+                f"agent turn for session '{session_key}' timed out — if the gateway "
+                f"is holding a scope-upgrade approval, approve it and retry")
+        payload = await call_future
+        return _extract_reply_from_ws_payload(payload)
+    finally:
+        if not call_future.done():
+            call_future.cancel()
+        # Consume cancellation/result so no pending RPC survives caller timeout
+        # or cancellation. The remote execution budget remains params['timeout'].
+        await asyncio.gather(call_future, return_exceptions=True)

@@ -1,0 +1,27 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_______ test_host_certificate_renewal_preserves_peer_pin_and_private_key _______
+
+tmp_path = PosixPath('/tmp/pytest-of-johncapobianco/pytest-355/test_host_certificate_renewal_0')
+
+    def test_host_certificate_renewal_preserves_peer_pin_and_private_key(tmp_path):
+        svc,rot=setup(tmp_path/'local');peer,_=setup(tmp_path/'remote')
+        old,key=svc.host_credential()
+        peer.risk.check_peer_pin(svc.local_identity,old)
+        rot.register('host-pinned',svc.local_identity,old);cred=svc.manager.list_credentials()[0]
+        try:
+            assert asyncio.run(rot.renew_one(cred)) is True
+            new,new_key=svc.host_credential()
+>           assert peer.risk.check_peer_pin(svc.local_identity,new)=='match'
+E           AssertionError: assert 'mismatch' == 'match'
+E
+E             - match
+E             + mismatch
+E             ? +++
+
+tests/n2n/test_rotation_truthfulness.py:55: AssertionError
+------------------------------ Captured log call -------------------------------
+WARNING  n2n.gait:gait.py:101 gait.emit: unknown event 'cert-renewed' (recording anyway)
+=========================== short test summary info ============================
+FAILED tests/n2n/test_rotation_truthfulness.py::test_host_certificate_renewal_preserves_peer_pin_and_private_key
+1 failed, 4 deselected in 0.15s

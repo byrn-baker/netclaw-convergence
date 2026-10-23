@@ -1,0 +1,91 @@
+FFFF......                                                               [100%]
+=================================== FAILURES ===================================
+_ test_enable_plaintext_is_fully_redacted[enable secret 0 synthetic-sensitive-value] _
+
+command = 'enable secret 0 synthetic-sensitive-value'
+
+    @pytest.mark.parametrize('command', [
+        'enable secret 0 synthetic-sensitive-value',
+        'enable password 0 synthetic-sensitive-value',
+        'enable secret level 15 0 synthetic-sensitive-value',
+        'enable password synthetic-sensitive-value with secret suffix',
+    ])
+    def test_enable_plaintext_is_fully_redacted(command):
+        result, counts = scrub(command + '\nhostname retained\n')
+>       assert 'synthetic-sensitive-value' not in result
+E       AssertionError: assert 'synthetic-sensitive-value' not in 'enable secr...e retained\n'
+E         
+E         'synthetic-sensitive-value' is contained here:
+E           enable secret <REDACTED:enable_secret> synthetic-sensitive-value
+E         ?                                        +++++++++++++++++++++++++
+E           hostname retained
+
+tests/unit/test_rag_scrubber.py:21: AssertionError
+_ test_enable_plaintext_is_fully_redacted[enable password 0 synthetic-sensitive-value] _
+
+command = 'enable password 0 synthetic-sensitive-value'
+
+    @pytest.mark.parametrize('command', [
+        'enable secret 0 synthetic-sensitive-value',
+        'enable password 0 synthetic-sensitive-value',
+        'enable secret level 15 0 synthetic-sensitive-value',
+        'enable password synthetic-sensitive-value with secret suffix',
+    ])
+    def test_enable_plaintext_is_fully_redacted(command):
+        result, counts = scrub(command + '\nhostname retained\n')
+>       assert 'synthetic-sensitive-value' not in result
+E       AssertionError: assert 'synthetic-sensitive-value' not in 'enable pass...e retained\n'
+E         
+E         'synthetic-sensitive-value' is contained here:
+E           enable password <REDACTED:enable_secret> synthetic-sensitive-value
+E         ?                                          +++++++++++++++++++++++++
+E           hostname retained
+
+tests/unit/test_rag_scrubber.py:21: AssertionError
+_ test_enable_plaintext_is_fully_redacted[enable secret level 15 0 synthetic-sensitive-value] _
+
+command = 'enable secret level 15 0 synthetic-sensitive-value'
+
+    @pytest.mark.parametrize('command', [
+        'enable secret 0 synthetic-sensitive-value',
+        'enable password 0 synthetic-sensitive-value',
+        'enable secret level 15 0 synthetic-sensitive-value',
+        'enable password synthetic-sensitive-value with secret suffix',
+    ])
+    def test_enable_plaintext_is_fully_redacted(command):
+        result, counts = scrub(command + '\nhostname retained\n')
+>       assert 'synthetic-sensitive-value' not in result
+E       AssertionError: assert 'synthetic-sensitive-value' not in 'enable secr...e retained\n'
+E         
+E         'synthetic-sensitive-value' is contained here:
+E           e_secret> synthetic-sensitive-value
+E           hostname retained
+
+tests/unit/test_rag_scrubber.py:21: AssertionError
+_ test_enable_plaintext_is_fully_redacted[enable password synthetic-sensitive-value with secret suffix] _
+
+command = 'enable password synthetic-sensitive-value with secret suffix'
+
+    @pytest.mark.parametrize('command', [
+        'enable secret 0 synthetic-sensitive-value',
+        'enable password 0 synthetic-sensitive-value',
+        'enable secret level 15 0 synthetic-sensitive-value',
+        'enable password synthetic-sensitive-value with secret suffix',
+    ])
+    def test_enable_plaintext_is_fully_redacted(command):
+        result, counts = scrub(command + '\nhostname retained\n')
+        assert 'synthetic-sensitive-value' not in result
+>       assert 'secret suffix' not in result
+E       AssertionError: assert 'secret suffix' not in 'enable pass...e retained\n'
+E         
+E         'secret suffix' is contained here:
+E           ret> with secret suffix
+E           hostname retained
+
+tests/unit/test_rag_scrubber.py:22: AssertionError
+=========================== short test summary info ============================
+FAILED tests/unit/test_rag_scrubber.py::test_enable_plaintext_is_fully_redacted[enable secret 0 synthetic-sensitive-value]
+FAILED tests/unit/test_rag_scrubber.py::test_enable_plaintext_is_fully_redacted[enable password 0 synthetic-sensitive-value]
+FAILED tests/unit/test_rag_scrubber.py::test_enable_plaintext_is_fully_redacted[enable secret level 15 0 synthetic-sensitive-value]
+FAILED tests/unit/test_rag_scrubber.py::test_enable_plaintext_is_fully_redacted[enable password synthetic-sensitive-value with secret suffix]
+4 failed, 6 passed in 0.05s

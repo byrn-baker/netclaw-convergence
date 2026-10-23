@@ -11,7 +11,7 @@
 set -uo pipefail
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-VENV_PY="$REPO_ROOT/mcp-servers/multivendor-cli-mcp/.venv/bin/python"
+VENV_PY="${NETCLAW_PY:-$REPO_ROOT/mcp-servers/multivendor-cli-mcp/.venv/bin/python}"
 PASS=0
 FAIL=0
 
@@ -56,6 +56,7 @@ done
 echo
 
 run_suite "Command filter contract (FR-022/023/029)" "$REPO_ROOT/tests/multivendor/test_filter.py"
+run_suite "SSH identity, raw-read gate and private baseline security" "$REPO_ROOT/tests/multivendor/test_security.py"
 
 if [ -f "$REPO_ROOT/tests/multivendor/test_inventory.py" ]; then
     run_suite "Inventory sources contract (FR-017*)" "$REPO_ROOT/tests/multivendor/test_inventory.py"

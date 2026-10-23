@@ -100,3 +100,44 @@ def test_assess_html_quality_ok_for_real_docs():
     q = assess_html_quality(docs, linked_count=1)
     assert q["spa_shell"] is False
     assert q["thin"] is False
+def test_download_cap_counts_decoded_bytes_and_closes_stream(monkeypatch):
+    import gzip
+    import httpx
+    import pytest
+    from ingestion.url_fetcher import fetch, FetchError
+
+    class Stream(httpx.SyncByteStream):
+        def __init__(self, chunks):
+            self.chunks = chunks
+            self.closed = False
+            self.reads = 0
+
+        def __iter__(self):
+            for chunk in self.chunks:
+                self.reads += 1
+                yield chunk
+
+        def close(self):
+            self.closed = True
+
+    # No Content-Length: enforce actual bytes; do not consume the rest on rejection.
+    stream = Stream([b'abc', b'def', b'should not be read'])
+    with httpx.Client(transport=httpx.MockTransport(lambda request: httpx.Response(200, stream=stream))) as client:
+        monkeypatch.setattr(httpx, 'stream', client.stream)
+        with pytest.raises(FetchError, match='exceeds'):
+            fetch(BASE, max_bytes=5)
+    assert stream.closed and stream.reads == 2
+
+    # A small compressed response must not bypass the decoded-size limit.
+    stream = Stream([gzip.compress(b'a' * 200)])
+    with httpx.Client(transport=httpx.MockTransport(lambda request: httpx.Response(200, headers={'content-encoding':'gzip'}, stream=stream))) as client:
+        monkeypatch.setattr(httpx, 'stream', client.stream)
+        with pytest.raises(FetchError, match='exceeds'):
+            fetch(BASE, max_bytes=100)
+    assert stream.closed
+
+    stream = Stream([b'abc', b'de'])
+    with httpx.Client(transport=httpx.MockTransport(lambda request: httpx.Response(200, headers={'content-type':'text/plain; charset=utf-8'}, stream=stream))) as client:
+        monkeypatch.setattr(httpx, 'stream', client.stream)
+        assert fetch(BASE, max_bytes=5) == (b'abcde', 'text/plain')
+    assert stream.closed

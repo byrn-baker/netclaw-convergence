@@ -20,6 +20,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 try:
+    from fastmcp_tasks import TasksExtension
     from fastmcp import FastMCP
 except ImportError:
     print("ERROR: fastmcp not installed. Run: pip3 install fastmcp", file=sys.stderr)
@@ -56,6 +57,7 @@ log = logging.getLogger("tts-mcp")
 # ---------------------------------------------------------------------------
 
 mcp = FastMCP("tts-mcp")
+mcp.add_extension(TasksExtension(name="netclaw-tts-mcp", concurrency=1))
 
 
 @mcp.tool()
@@ -105,7 +107,7 @@ async def text_to_speech(text: str, voice: str = "", output_format: str = "mp3")
         return json.dumps({"error": str(e)}, indent=2)
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def list_voices(language: str = "en") -> str:
     """
     List available TTS voices, optionally filtered by language.

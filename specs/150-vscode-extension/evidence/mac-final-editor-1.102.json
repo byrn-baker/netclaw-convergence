@@ -1,0 +1,24 @@
+{
+  "editor": "1.102.0",
+  "packageMode": "exact installed VSIX; all payload bytes verified",
+  "checks": [
+    "actual extension activation",
+    "saved host-local profile",
+    "unchanged HUD identity binding",
+    "mismatched identity rejected",
+    "actual VS Code MCP definition launches bundled adapter with Electron; cached disable enforced (not Copilot inference)",
+    "actual overview rendering in dark/light/high contrast",
+    "actual composer -> unchanged HUD -> synthetic gateway -> rendered reply",
+    "hidden Overview and Chat restore and accept refresh without resending work",
+    "Canvas branch without dispatch",
+    "actual integrated RAG search and rendered citation",
+    "integrated RAG panel; backend may be unavailable in fixture",
+    "hidden Canvas restores both lanes and accepts save/open",
+    "hidden RAG restores inventory and accepts refresh/search with cited retrieval",
+    "bundled local Avatar",
+    "target switch invalidates webview"
+  ],
+  "scope": "Actual desktop extension against unchanged HUD with synthetic local gateway; no real provider/device/WSL claim.",
+  "screenshotsRetainedPrivately": 7,
+  "artifactSha256": "b13bdfe68c4086bd22edb7521d87443837127f1c70addae08e302b352725c6b8"
+}

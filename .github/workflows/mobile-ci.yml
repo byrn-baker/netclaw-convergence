@@ -1,11 +1,14 @@
 name: Mobile CI
 on:
   pull_request:
-    paths: ['mobile/netclaw-mobile/**']
+    paths: ['mobile/netclaw-mobile/**', '.github/workflows/mobile-ci.yml']
 
 jobs:
   test-and-build:
-    runs-on: macos-14
+    runs-on: macos-26
+    timeout-minutes: 30
+    env:
+      DEVELOPER_DIR: /Applications/Xcode_26.6.app/Contents/Developer
     defaults:
       run:
         working-directory: mobile/netclaw-mobile
@@ -14,9 +17,34 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           channel: stable
+          flutter-version: '3.44.8'
+      # Flutter copies SwiftPM plugin sources before creating this parent on a clean checkout.
+      - run: mkdir -p build/ios/SourcePackages
       - run: flutter pub get
       - run: flutter analyze
       - run: flutter test
+      - name: Prepare non-production Firebase build fixture
+        # Compilation only: no Firebase account, push delivery, or signed release acceptance.
+        run: |
+          python3 - <<'PYTHON'
+          import plistlib
+          from pathlib import Path
+          fixture = {
+              'API_KEY': 'ci-build-fixture-not-a-real-api-key',
+              'GCM_SENDER_ID': '000000000000',
+              'PLIST_VERSION': '1',
+              'BUNDLE_ID': 'ca.automateyournetwork.netclaw',
+              'PROJECT_ID': 'netclaw-ci-invalid',
+              'GOOGLE_APP_ID': '1:000000000000:ios:0000000000000000000000',
+              'IS_ANALYTICS_ENABLED': False,
+              'IS_ADS_ENABLED': False,
+              'IS_GCM_ENABLED': False,
+              'IS_SIGNIN_ENABLED': False,
+          }
+          Path('ios/Runner/GoogleService-Info.plist').write_bytes(plistlib.dumps(fixture))
+          PYTHON
+      - name: Prepare Flutter native build settings
+        run: flutter build ios --debug --simulator --no-codesign --config-only
       - name: Build Runner (iOS Simulator)
         run: |
           xcodebuild build \

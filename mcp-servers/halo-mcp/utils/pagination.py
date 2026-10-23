@@ -30,17 +30,21 @@ def extract_list(payload: Any) -> Tuple[list, Optional[int]]:
     Handles three shapes:
     - a bare list (some endpoints return the array directly) -> (payload, None)
     - a wrapped dict ``{record_count, <entity>: [...]}`` -> (that array, record_count)
-    - anything else -> ([], None)
+    - anything else -> ValueError (not a successful empty inventory)
     """
     if isinstance(payload, list):
         return payload, None
     if not isinstance(payload, dict):
-        return [], None
+        raise ValueError("Halo list response must contain an items array")
 
     record_count = payload.get("record_count")
+    if record_count is not None and (type(record_count) is not int or record_count < 0):
+        raise ValueError("Halo list record_count must be a nonnegative integer")
     for key, value in payload.items():
         if key in _META_KEYS:
             continue
         if isinstance(value, list):
             return value, record_count
-    return [], record_count
+    if record_count == 0 and set(payload).issubset(_META_KEYS):
+        return [], 0
+    raise ValueError("Halo list response did not contain an items array")

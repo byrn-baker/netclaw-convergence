@@ -137,3 +137,17 @@ surfaced. What it means for you as a peer:
   seam is in place and activates automatically once `ssl` exposes ECH). Both are
   reported in `/n2n/posture` so operators can see the exposure rather than assume
   it away.
+
+### Dispatch overload and interrupted calls
+
+Federation dispatch shares a process-wide admission limit of 64 active handlers
+and 32 MiB of retained raw messages across connections. A peer that exceeds either
+limit is disconnected before another handler is started. Existing authorized
+handlers retain their slots until they finish, including after a disconnect;
+reconnecting cannot reset that budget. This limit covers federation dispatch,
+not all downstream provider workloads.
+
+An RPC deadline covers both sending and waiting for a response. Timeout or
+connection loss reports an unknown operation outcome and releases the local
+pending call. It does not prove a remote write was cancelled. Check the actual
+state before retrying a potentially completed write.

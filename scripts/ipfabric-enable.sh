@@ -79,15 +79,16 @@ log_step "2/4 Configuring IP Fabric credentials..."
 
 # Ensure OpenClaw directory exists
 mkdir -p "$OPENCLAW_DIR"
-[ -f "$OPENCLAW_ENV" ] || touch "$OPENCLAW_ENV"
+[ -f "$OPENCLAW_ENV" ] || (umask 077; touch "$OPENCLAW_ENV")
 
 # Helper function to set env vars
 _set_env_var() {
-    local key="$1" val="$2"
-    if grep -q "^${key}=" "$OPENCLAW_ENV" 2>/dev/null; then
-        sed -i.bak "s|^${key}=.*|${key}=${val}|" "$OPENCLAW_ENV" && rm -f "$OPENCLAW_ENV.bak"
-    else
-        echo "${key}=${val}" >> "$OPENCLAW_ENV"
+    printf '%s' "$2" | python3 "$NETCLAW_DIR/scripts/write-env.py" "$OPENCLAW_ENV" "$1"
+}
+
+set_placeholder() {
+    if ! grep -Eq "^[[:space:]]*(export[[:space:]]+)?${1}[[:space:]]*=" "$OPENCLAW_ENV"; then
+        _set_env_var "$1" "$2"
     fi
 }
 
@@ -118,12 +119,12 @@ if [[ ! "$config_now" =~ ^[Nn]$ ]]; then
             log_info "Set IPFABRIC_API_TOKEN=***"
         else
             log_warn "No token provided. Set IPFABRIC_API_TOKEN in $OPENCLAW_ENV later."
-            _set_env_var "IPFABRIC_API_TOKEN" "your-api-token-here"
+            set_placeholder "IPFABRIC_API_TOKEN" "your-api-token-here"
         fi
     else
         log_warn "No host provided. Setting placeholder values."
-        _set_env_var "IPFABRIC_HOST" "https://ipfabric.example.com"
-        _set_env_var "IPFABRIC_API_TOKEN" "your-api-token-here"
+        set_placeholder "IPFABRIC_HOST" "https://ipfabric.example.com"
+        set_placeholder "IPFABRIC_API_TOKEN" "your-api-token-here"
     fi
 
     log_info "Credentials saved to $OPENCLAW_ENV"
@@ -135,8 +136,8 @@ else
     echo "  IPFABRIC_API_TOKEN=your-api-token"
 
     # Set placeholders
-    _set_env_var "IPFABRIC_HOST" "https://ipfabric.example.com"
-    _set_env_var "IPFABRIC_API_TOKEN" "your-api-token-here"
+    set_placeholder "IPFABRIC_HOST" "https://ipfabric.example.com"
+    set_placeholder "IPFABRIC_API_TOKEN" "your-api-token-here"
 fi
 
 echo ""
@@ -147,10 +148,11 @@ echo ""
 
 log_step "3/4 Verifying IP Fabric MCP connectivity..."
 
-# Load the configured values
-source "$OPENCLAW_ENV" 2>/dev/null || true
+# Parse configuration as data; credentials must never execute shell syntax.
+IPFABRIC_HOST="$(python3 "$NETCLAW_DIR/scripts/write-env.py" --get "$OPENCLAW_ENV" IPFABRIC_HOST)"
+IPFABRIC_API_TOKEN="$(python3 "$NETCLAW_DIR/scripts/write-env.py" --get "$OPENCLAW_ENV" IPFABRIC_API_TOKEN)"
 
-if [ "${IPFABRIC_HOST:-}" != "https://ipfabric.example.com" ] && [ "${IPFABRIC_API_TOKEN:-}" != "your-api-token-here" ]; then
+if [ -n "$IPFABRIC_HOST" ] && [ -n "$IPFABRIC_API_TOKEN" ] && [ "$IPFABRIC_HOST" != "https://ipfabric.example.com" ] && [ "$IPFABRIC_API_TOKEN" != "your-api-token-here" ]; then
     # Try to reach the MCP endpoint
     MCP_URL="${IPFABRIC_HOST}/mcp"
     log_info "Testing connection to $MCP_URL..."

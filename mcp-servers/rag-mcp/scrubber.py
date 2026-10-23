@@ -12,10 +12,11 @@ from typing import Dict, Tuple
 # Order matters: more specific patterns first. Each entry: (type, compiled regex)
 # The regexes replace ONLY the secret portion via the 'secret' named group.
 _PATTERNS = [
-    # Cisco enable secret/password with type 5/7/8/9 hashes
+    # Explicit plaintext type 0 and multiword enable credentials must not
+    # survive after a redacted type marker or first word.
     (
         "enable_secret",
-        re.compile(r"(?m)^(?P<prefix>\s*enable\s+(?:secret|password)(?:\s+level\s+\d+)?(?:\s+[5789])?\s+)(?P<secret>\S+)"),
+        re.compile(r"(?m)^(?P<prefix>[ \t]*enable[ \t]+(?:secret|password)(?:[ \t]+level[ \t]+\d+)?(?:[ \t]+[05789])?[ \t]+)(?P<secret>[^\r\n]+)"),
     ),
     # username ... secret/password [type]
     (

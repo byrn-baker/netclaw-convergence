@@ -1,0 +1,92 @@
+=== Clean repository: every surface reconciled ===
+  ok   reconcile-mcp.py exits 0 on a reconciled tree (declaration surfaces) (exit 0)
+  ok   verify-catalog-coverage.py exits 0 (exit 0)
+  ok   verify-inventory-counts.py exits 0 (exit 0)
+  ok   check-mcp-portability.py exits 0 (exit 0)
+
+=== Portability surface: a machine-specific path must fail ===
+  ok   a /home/ path fails the portability check (exit 1)
+  ok   the failure names the offending entry
+  ok   the failure states what is wrong
+
+=== Portability surface: legitimate system paths must NOT fail (FR-004) ===
+  ok   /usr/bin/python3 and npx package specs pass (exit 0)
+
+=== Portability surface: --warn-only suppresses the failure exit ===
+  ok   --warn-only exits 0 despite findings (exit 0)
+
+=== Cannot-run is distinguishable from inconsistent (exit 2) ===
+  ok   a missing config yields exit 2, not 1 (exit 2)
+  ok   an unparseable config yields exit 2, not 1 (exit 2)
+
+=== Orchestrator aggregates a surface failure (FR-008) ===
+  ok   orchestrator exits 1 when the portability surface fails (exit 1)
+  ok   orchestrator --warn-only exits 0 despite a failing surface (exit 0)
+
+=== Orchestrator reports exit 2 when a check script is missing ===
+  ok   a missing check script yields exit 2 (exit 2)
+
+=== Dependency-pin surface (spec 077 / R0a) ===
+  ok   check-dependency-pins.py passes on a clean tree (exit 0)
+  ok   unbounded pin + submodule import fails (exit 1)
+  ok   the failure names the offending server
+  ok   the failure explains why it matters
+  ok   bounding the pin clears it (exit 0)
+  ok   bare pip3 install fails (exit 1)
+  ok   the failure names the remedy
+  ok   pip in a comment or log string is not a finding (exit 0)
+  ok   --warn-only exits 0 despite findings (exit 0)
+
+--- startup surface ---
+  ok   a server that blocks on stdio is not a failure (timeout != broken) (exit 0)
+  ok   a server with a missing module fails (exit 1)
+  ok   the finding names the server
+  ok   the finding names the missing module
+  ok   a registered server with no entry point fails (exit 1)
+  ok   the finding distinguishes absent file from missing module
+  ok   --warn-only exits 0 despite startup findings (exit 0)
+  ok   a server in STARTUP_EXCEPTIONS is suppressed (exit 0)
+  ok   a remote server is skipped, not failed (exit 0)
+
+--- meraki capability-id surface ---
+  ok   a real reachable capability ID passes (exit 0)
+  ok   an invented capability ID fails (exit 1)
+  ok   the finding says the ID cannot succeed anywhere
+  ok   the finding names the invented ID
+  ok   an unmarked mutating ID fails (exit 1)
+  ok   a mutating ID marked unreachable is allowed (exit 0)
+  ok   an unmarked deprecated ID fails (exit 1)
+  ok   the finding distinguishes deprecated from nonexistent
+  ok   --warn-only exits 0 despite meraki-id findings (exit 0)
+  ok   the shipped Meraki skills cite only real capability IDs (exit 0)
+
+--- pip helper (PEP 668 + legibility) ---
+  ok   PEP 668 refusal does not override system packages (exit 1)
+  ok   the managed-environment refusal is actionable
+  ok   a genuine install failure returns non-zero (exit 1)
+  ok   the real pip error is not swallowed
+  ok   the failure names what it was installing
+  ok   install-steps.sh has no --break-system-packages call sites left (exit 1)
+  ok   a component whose vendored directory was never cloned is skipped (exit 0)
+  ok   a wrong path inside an EXISTING vendored directory still fails (exit 1)
+  ok   a dead server FAILS reconciliation (startup is not warn-only) (exit 1)
+  ok   a missing runtime data file is distinguished from a missing entry point
+
+--- package-reference surface ---
+  ok   a verified existing package passes (exit 0)
+  ok   a package that does not exist fails (exit 1)
+  ok   the finding says the package cannot work
+  ok   the finding names the skill that invokes it
+  ok   an unverified package reference fails rather than passing silently (exit 1)
+  ok   the finding distinguishes unverified from nonexistent
+  ok   a pinned @version suffix resolves to the same package (exit 0)
+  ok   prose after npx is not treated as a package (exit 0)
+  ok   a reference marked as nonexistent is allowed as history (exit 0)
+  ok   --warn-only exits 0 despite package findings (exit 0)
+  ok   a missing manifest yields exit 2, not a false pass (exit 2)
+  ok   every package the shipped skills invoke is verified to exist (exit 0)
+
+=== Summary ===
+  passed: 64
+  failed: 0
+  all reconciliation contract tests passed

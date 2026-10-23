@@ -1,0 +1,60 @@
+FF.                                                                      [100%]
+=================================== FAILURES ===================================
+______________ test_failed_promotion_retains_original_and_staging ______________
+
+tmp_path = PosixPath('/tmp/pytest-of-johncapobianco/pytest-33/test_failed_promotion_retains_0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x71d3b2730470>
+
+    def test_failed_promotion_retains_original_and_staging(tmp_path, monkeypatch):
+        store = module.ChromaStore(str(tmp_path))
+        populate(store, 'stable-corpus', 'original')
+        populate(store, 'staging-corpus', 'replacement')
+        cls = type(store._collection('staging-corpus'))
+        original_modify = cls.modify
+        def fail_stage(self, *args, **kwargs):
+            if self.name == 'staging-corpus':
+                raise OSError('synthetic rename failure')
+            return original_modify(self, *args, **kwargs)
+        monkeypatch.setattr(cls, 'modify', fail_stage)
+        with pytest.raises(OSError):
+            store.promote_staging('staging-corpus', 'stable-corpus')
+>       assert store._ensure_client().get_collection('stable-corpus').get()['ids'] == ['original']
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/unit/test_rag_replica_promotion.py:29: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+.contract-test-envs/unit/lib/python3.12/site-packages/chromadb/api/client.py:260: in get_collection
+    model = self._server.get_collection(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <chromadb.api.rust.RustBindingsAPI object at 0x71d386af31d0>
+name = 'stable-corpus', tenant = 'default_tenant', database = 'default_database'
+
+    @override
+    def get_collection(
+        self,
+        name: str,
+        tenant: str = DEFAULT_TENANT,
+        database: str = DEFAULT_DATABASE,
+    ) -> CollectionModel:
+>       collection = self.bindings.get_collection(name, tenant, database)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       chromadb.errors.NotFoundError: Collection [stable-corpus] does not exist
+
+.contract-test-envs/unit/lib/python3.12/site-packages/chromadb/api/rust.py:272: NotFoundError
+___________________ test_missing_stage_never_replaces_stable ___________________
+
+tmp_path = PosixPath('/tmp/pytest-of-johncapobianco/pytest-33/test_missing_stage_never_repla0')
+
+    def test_missing_stage_never_replaces_stable(tmp_path):
+        store = module.ChromaStore(str(tmp_path))
+        populate(store, 'stable-corpus', 'original')
+>       with pytest.raises(Exception):
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE <class 'Exception'>
+
+tests/unit/test_rag_replica_promotion.py:36: Failed
+=========================== short test summary info ============================
+FAILED tests/unit/test_rag_replica_promotion.py::test_failed_promotion_retains_original_and_staging
+FAILED tests/unit/test_rag_replica_promotion.py::test_missing_stage_never_replaces_stable
+2 failed, 1 passed in 2.18s

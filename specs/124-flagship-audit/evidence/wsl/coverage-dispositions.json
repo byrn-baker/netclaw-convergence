@@ -1,0 +1,1122 @@
+[
+  {
+    "path": "benchmarks/results-2026-06-17.txt",
+    "disposition": "reference-boundary",
+    "sha256": "1ce914d9193c9cac3f15df1f7bf8c9370fd6dd79d4adcfdbe4ecc702d7e5a40e",
+    "method": "Historical/draft documentation inventory; recorded byte hash and heading for provenance",
+    "heading": ""
+  },
+  {
+    "path": "docs/APP-REVIEW-NOTES-DRAFT.md",
+    "disposition": "reference-boundary",
+    "sha256": "eba89e89e41c133bb87b0a7db2f9a10fce377f49ed498abadbea9db77fce7d0c",
+    "method": "Historical/draft documentation inventory; recorded byte hash and heading for provenance",
+    "heading": "# App Review Notes \u2014 Draft for \"Please provide instructions to use your app\""
+  },
+  {
+    "path": "docs/APP-REVIEW-REPLY-5.1-DRAFT.md",
+    "disposition": "reference-boundary",
+    "sha256": "4ddcf9ba29069ddbf03311d6c0366a75242b21780f79162d0e83539a01139d3a",
+    "method": "Historical/draft documentation inventory; recorded byte hash and heading for provenance",
+    "heading": "# Reply draft \u2014 Guidelines 5.1.1(i) / 5.1.2(i)"
+  },
+  {
+    "path": "docs/APP-STORE-LISTING-DRAFT.md",
+    "disposition": "reference-boundary",
+    "sha256": "32fc9a01cb7a26e066675e8eef537dbab5b9c07f254351e0833ee48857c1069d",
+    "method": "Historical/draft documentation inventory; recorded byte hash and heading for provenance",
+    "heading": "# App Store Connect Listing \u2014 Draft Copy"
+  },
+  {
+    "path": "docs/LINKEDIN-ARTICLE-DRAFT.md",
+    "disposition": "reference-boundary",
+    "sha256": "627b3b865f00aa83d1d6842a4b3ea73222587ffe2aa797ed8ef0aac81a3d08e8",
+    "method": "Historical/draft documentation inventory; recorded byte hash and heading for provenance",
+    "heading": "# Agentic Operations Goes Mobile"
+  },
+  {
+    "path": "docs/LINKEDIN-HYPE-POST-DRAFT.md",
+    "disposition": "reference-boundary",
+    "sha256": "c41bca532e847ae33ab284aa62d38595dcc4980a1eb2c6b3ea39bc2169f969da",
+    "method": "Historical/draft documentation inventory; recorded byte hash and heading for provenance",
+    "heading": "#NetworkAutomation #AgenticAI #NetDevOps #OpenSource #AppleWatch #iOS"
+  },
+  {
+    "path": "docs/blog/2026-04-18-enterprise-security-3-rings.md",
+    "disposition": "reference-boundary",
+    "sha256": "94a9db74b5b51c41a31c3d2883271fcd8ebfa3d4e1be6eaa7d05f9fe0f566be8",
+    "method": "Historical/draft documentation inventory; recorded byte hash and heading for provenance",
+    "heading": "# Running NetClaw with Enterprise Security: A 3-Ring Architecture"
+  },
+  {
+    "path": "docs/blog/2026-06-08-claroty-mcp.md",
+    "disposition": "reference-boundary",
+    "sha256": "94d532a6d2a24d70d8085c716b588777b2490c13c4e7da8478ba42a17b3ef85d",
+    "method": "Historical/draft documentation inventory; recorded byte hash and heading for provenance",
+    "heading": "# Claroty xDome joins NetClaw \u2014 OT visibility lands as MCP #74"
+  },
+  {
+    "path": "docs/blog/2026-07-10-n2n-federation.md",
+    "disposition": "reference-boundary",
+    "sha256": "542c9d211ac7fb5e53f8358907ce477b4e0008d339c607fb0094dae8218b91cc",
+    "method": "Historical/draft documentation inventory; recorded byte hash and heading for provenance",
+    "heading": "# NetClaws, Assemble: introducing N2N Federation and the NCFED protocol"
+  },
+  {
+    "path": "docs/blog/2026-07-11-n2n-reliability.md",
+    "disposition": "reference-boundary",
+    "sha256": "bf2c65632f339b6a3fd9d6f9d6a832a7af6dd441ebace71d1ae4453f0aaf251a",
+    "method": "Historical/draft documentation inventory; recorded byte hash and heading for provenance",
+    "heading": "# Making the mesh hold: N2N federation grows up"
+  },
+  {
+    "path": "docs/blog/2026-07-12-in2n-risk.md",
+    "disposition": "reference-boundary",
+    "sha256": "bccb0868da990e648bde54ec2930d26850e46ea27a590e017c70c2355ab8c624",
+    "method": "Historical/draft documentation inventory; recorded byte hash and heading for provenance",
+    "heading": "# A Risk of NetClaws"
+  },
+  {
+    "path": "docs/blog/2026-07-13-in2n-production.md",
+    "disposition": "reference-boundary",
+    "sha256": "ebb28780602375fc77d178da88a19a666b2f028ff69670fce1be37e7b4d473b7",
+    "method": "Historical/draft documentation inventory; recorded byte hash and heading for provenance",
+    "heading": "# Make It Mean It"
+  },
+  {
+    "path": "docs/blog/2026-07-15-claw-certification.md",
+    "disposition": "reference-boundary",
+    "sha256": "bc87c06d05823c7a28b239eb9ef0565a3d61a0b70802917c2b0e6c54ed2ec5a3",
+    "method": "Historical/draft documentation inventory; recorded byte hash and heading for provenance",
+    "heading": "# Draft blog post \u2014 for John's review before publishing (Constitution XVII)"
+  },
+  {
+    "path": "docs/blog/2026-07-17-rag-mcp.md",
+    "disposition": "reference-boundary",
+    "sha256": "c795df10b71c2d512ec9c1ce523cfb59fb77ad5075ba5ba5d859ebf8c9abf5f9",
+    "method": "Historical/draft documentation inventory; recorded byte hash and heading for provenance",
+    "heading": "# Published blog post (Constitution XVII \u2014 approved by John 2026-07-18)"
+  },
+  {
+    "path": "docs/blog/2026-07-23-auvik-mcp.md",
+    "disposition": "reference-boundary",
+    "sha256": "bf99a663e89a9333db547c3292e2eda9b72afa02c2033929cd464d07ca0be107",
+    "method": "Historical/draft documentation inventory; recorded byte hash and heading for provenance",
+    "heading": "# Teaching NetClaw to Speak Auvik \u2014 A Read-Only MSP Monitoring MCP"
+  },
+  {
+    "path": "docs/blog/2026-07-24-halo-mcp.md",
+    "disposition": "reference-boundary",
+    "sha256": "15f6e496aa032c4def71393739a13dda9583ad559cb3872fd42f98d42ca6112c",
+    "method": "Historical/draft documentation inventory; recorded byte hash and heading for provenance",
+    "heading": "# Teaching NetClaw to Open Change Requests \u2014 a HaloPSA / HaloITSM MCP"
+  },
+  {
+    "path": "docs/blog/2026-07-31-r1-multivendor-cli-driver.md",
+    "disposition": "reference-boundary",
+    "sha256": "1e13512d529baab0c2c3a445d314037a8538f812da16b50ef87c0f24c89a9902",
+    "method": "Historical/draft documentation inventory; recorded byte hash and heading for provenance",
+    "heading": "# Ninety Platforms, Two Bugs, and Why We Didn't Adopt Either Candidate"
+  },
+  {
+    "path": "docs/blog/2026-07-31-r2-cisco-psirt.md",
+    "disposition": "reference-boundary",
+    "sha256": "db0183cfd7d19009d4cb678fca5a8afe463c285898396e06fbdb8e048d8fb184",
+    "method": "Historical/draft documentation inventory; recorded byte hash and heading for provenance",
+    "heading": "# Eight API Families, One That Answers, and a Regex That Lied"
+  },
+  {
+    "path": "docs/blog/2026-07-31-r8-globalping.md",
+    "disposition": "reference-boundary",
+    "sha256": "9efd6fecb97d1a1301f4b6f09c4076be260d2e50b92c4f1181a476f7f1c914a5",
+    "method": "Historical/draft documentation inventory; recorded byte hash and heading for provenance",
+    "heading": "# Looking At Ourselves From Outside, And The Billing Model I Got Backwards"
+  },
+  {
+    "path": "docs/blog/2026-08-06-mobile-prerelease-sweep.md",
+    "disposition": "reference-boundary",
+    "sha256": "901786ab4f60f8f06dbaf69b55e68e1652e0ebc6b777a46a08433ee254034726",
+    "method": "Historical/draft documentation inventory; recorded byte hash and heading for provenance",
+    "heading": "# A Stuck Badge, a Feature We'd Already Built, and a Bug Only a Cold Cache Could Hide"
+  },
+  {
+    "path": "docs/blog/2026-08-14-mobile-polish-pass.md",
+    "disposition": "reference-boundary",
+    "sha256": "516501c089b2c6858f35835f94c048c919cdcd2d8eeadfa86bc8ec2364e20c34",
+    "method": "Historical/draft documentation inventory; recorded byte hash and heading for provenance",
+    "heading": "# Seven Small Fixes, One Bug Only a Tester Could Have Found"
+  },
+  {
+    "path": "docs/blog/2026-08-15-live-activity-interactive-inflight.md",
+    "disposition": "reference-boundary",
+    "sha256": "2deabca5da0446fbfd7e506db781020f0a55e15bb21a26700dc4472bbceea754",
+    "method": "Historical/draft documentation inventory; recorded byte hash and heading for provenance",
+    "heading": "# The Feature the Brief Asked For Doesn't Exist \u2014 Here's What Does"
+  },
+  {
+    "path": "docs/blog/2026-08-15-siri-app-intents.md",
+    "disposition": "reference-boundary",
+    "sha256": "458283d4c53813590c205fc4db68ff2885e94b51c5e8c9ae27e21e939862ac99",
+    "method": "Historical/draft documentation inventory; recorded byte hash and heading for provenance",
+    "heading": "# Three Things You Can Ask NetClaw Without Touching Your Phone"
+  },
+  {
+    "path": "docs/blog/2026-08-15-watch-double-tap-corner-complication.md",
+    "disposition": "reference-boundary",
+    "sha256": "2701014b2bc68463531bc64b51de1e2eff6e585de119ec4c749b8ca4898367c2",
+    "method": "Historical/draft documentation inventory; recorded byte hash and heading for provenance",
+    "heading": "# The Safest Feature Is the One That Reuses a Safety Check It Didn't Build"
+  },
+  {
+    "path": "docs/blog/2026-08-15-widgets-controlwidget.md",
+    "disposition": "reference-boundary",
+    "sha256": "8222e81b506381606d1d96dc27f7e578fa86703ff567ce45521b73b22a1714a0",
+    "method": "Historical/draft documentation inventory; recorded byte hash and heading for provenance",
+    "heading": "# The Wizard Got the Address Wrong"
+  },
+  {
+    "path": "docs/ietf/archive/draft-capobianco-ncfed-01.md",
+    "disposition": "reference-boundary",
+    "sha256": "7fab99d457f306070d9fa5beb513ce59f9b4393bb8e657cbd32869b84a89db2e",
+    "method": "Historical/draft documentation inventory; recorded byte hash and heading for provenance",
+    "heading": "# Introduction"
+  },
+  {
+    "path": "docs/ietf/archive/draft-capobianco-ncfed-02.md",
+    "disposition": "reference-boundary",
+    "sha256": "555e3547048e0926019470b8f01db930aa8a9fafd85688e2415d9062f64a5792",
+    "method": "Historical/draft documentation inventory; recorded byte hash and heading for provenance",
+    "heading": "# Introduction"
+  },
+  {
+    "path": "docs/ietf/archive/rendered/draft-capobianco-ncfed-01.html",
+    "disposition": "reference-boundary",
+    "sha256": "a8face185090bcc12f95ad81b1880325e0ad0e6010d561ee491cc03fc4dbf57b",
+    "method": "Historical/draft documentation inventory; recorded byte hash and heading for provenance",
+    "heading": ""
+  },
+  {
+    "path": "docs/ietf/archive/rendered/draft-capobianco-ncfed-01.txt",
+    "disposition": "reference-boundary",
+    "sha256": "650fa02587a50d1f51f2a84d2a77a029ee27ec8c5a6541e180945886175167e9",
+    "method": "Historical/draft documentation inventory; recorded byte hash and heading for provenance",
+    "heading": ""
+  },
+  {
+    "path": "docs/ietf/archive/rendered/draft-capobianco-ncfed-01.xml",
+    "disposition": "reference-boundary",
+    "sha256": "41517788fad47d67b02801feda75dc3cf4000b0047c28d2fcae79e225adc9c78",
+    "method": "Historical/draft documentation inventory; recorded byte hash and heading for provenance",
+    "heading": ""
+  },
+  {
+    "path": "docs/ietf/archive/rendered/draft-capobianco-ncfed-02.txt",
+    "disposition": "reference-boundary",
+    "sha256": "581bf74391a956779afff5df1ebc5d939fa186c629da3a2e2ac773c42a0b2782",
+    "method": "Historical/draft documentation inventory; recorded byte hash and heading for provenance",
+    "heading": ""
+  },
+  {
+    "path": "docs/ietf/archive/rendered/draft-capobianco-ncfed-02.xml",
+    "disposition": "reference-boundary",
+    "sha256": "d6f3f9ac3e3b36caeb523f2e39fd3ae3102bf86c331399edb3560aa473e3ee81",
+    "method": "Historical/draft documentation inventory; recorded byte hash and heading for provenance",
+    "heading": ""
+  },
+  {
+    "path": "docs/lab-report-2026-02-23.md",
+    "disposition": "reference-boundary",
+    "sha256": "3da4f45a22d12056347e53bcedfbd22cd1c0451526c97d9acf8187e72865f38c",
+    "method": "Historical/draft documentation inventory; recorded byte hash and heading for provenance",
+    "heading": "# \ud83e\udd9e NetClaw Lab Network \u2014 Status Report"
+  },
+  {
+    "path": "mcp-servers/auvik-mcp/__init__.py",
+    "disposition": "targeted-review",
+    "sha256": "c9b0a4220c1ccb5c535af87b2f6420b2ee4875f674dc467df6d7d3c1cfe3eab0",
+    "method": "AST confirmed empty/docstring-only Python package marker",
+    "heading": ""
+  },
+  {
+    "path": "mcp-servers/auvik-mcp/clients/__init__.py",
+    "disposition": "targeted-review",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "method": "AST confirmed empty/docstring-only Python package marker",
+    "heading": ""
+  },
+  {
+    "path": "mcp-servers/auvik-mcp/models/__init__.py",
+    "disposition": "targeted-review",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "method": "AST confirmed empty/docstring-only Python package marker",
+    "heading": ""
+  },
+  {
+    "path": "mcp-servers/auvik-mcp/tools/__init__.py",
+    "disposition": "targeted-review",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "method": "AST confirmed empty/docstring-only Python package marker",
+    "heading": ""
+  },
+  {
+    "path": "mcp-servers/auvik-mcp/utils/__init__.py",
+    "disposition": "targeted-review",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "method": "AST confirmed empty/docstring-only Python package marker",
+    "heading": ""
+  },
+  {
+    "path": "mcp-servers/azure-network-mcp/__init__.py",
+    "disposition": "targeted-review",
+    "sha256": "cb343dc64ddae1082f1ebca08d3b7ea06e7677d3c6c61f49e4c0e07e16574912",
+    "method": "AST confirmed empty/docstring-only Python package marker",
+    "heading": ""
+  },
+  {
+    "path": "mcp-servers/azure-network-mcp/clients/__init__.py",
+    "disposition": "targeted-review",
+    "sha256": "55ce56e7def52c1e1654a8f5e4ff12352ca2ea7be62ceee0d3db12305de78491",
+    "method": "AST confirmed empty/docstring-only Python package marker",
+    "heading": ""
+  },
+  {
+    "path": "mcp-servers/azure-network-mcp/compliance/__init__.py",
+    "disposition": "targeted-review",
+    "sha256": "6e055baa23add58f384f1f5b1e370cb116f96361fbb1dca9ba6c1880e6705848",
+    "method": "AST confirmed empty/docstring-only Python package marker",
+    "heading": ""
+  },
+  {
+    "path": "mcp-servers/azure-network-mcp/models/__init__.py",
+    "disposition": "targeted-review",
+    "sha256": "14c50b7dfb466a5cc3e5dfe68daf5cb5f3de750548d1d22457e1dba77f82d0b5",
+    "method": "AST confirmed empty/docstring-only Python package marker",
+    "heading": ""
+  },
+  {
+    "path": "mcp-servers/azure-network-mcp/tools/__init__.py",
+    "disposition": "targeted-review",
+    "sha256": "550cf5ebd9c54b7783079f4beeb27df68bae8cae841834d71cc3162a90005241",
+    "method": "AST confirmed empty/docstring-only Python package marker",
+    "heading": ""
+  },
+  {
+    "path": "mcp-servers/azure-network-mcp/utils/__init__.py",
+    "disposition": "targeted-review",
+    "sha256": "b48d76b8b04041311177c12e5eeb763492a256748e864c66d847ae84b6aa2bb0",
+    "method": "AST confirmed empty/docstring-only Python package marker",
+    "heading": ""
+  },
+  {
+    "path": "mcp-servers/bgp-intel-mcp/sources/__init__.py",
+    "disposition": "targeted-review",
+    "sha256": "35a41953b27e5bcaa79a40a90e48a274e624a572a8b7a2361c2a91c235c2558c",
+    "method": "AST confirmed empty/docstring-only Python package marker",
+    "heading": ""
+  },
+  {
+    "path": "mcp-servers/claroty-mcp/__init__.py",
+    "disposition": "targeted-review",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "method": "AST confirmed empty/docstring-only Python package marker",
+    "heading": ""
+  },
+  {
+    "path": "mcp-servers/claroty-mcp/clients/__init__.py",
+    "disposition": "targeted-review",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "method": "AST confirmed empty/docstring-only Python package marker",
+    "heading": ""
+  },
+  {
+    "path": "mcp-servers/claroty-mcp/models/__init__.py",
+    "disposition": "targeted-review",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "method": "AST confirmed empty/docstring-only Python package marker",
+    "heading": ""
+  },
+  {
+    "path": "mcp-servers/claroty-mcp/tools/__init__.py",
+    "disposition": "targeted-review",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "method": "AST confirmed empty/docstring-only Python package marker",
+    "heading": ""
+  },
+  {
+    "path": "mcp-servers/claroty-mcp/utils/__init__.py",
+    "disposition": "targeted-review",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "method": "AST confirmed empty/docstring-only Python package marker",
+    "heading": ""
+  },
+  {
+    "path": "mcp-servers/document-mcp/writers/__init__.py",
+    "disposition": "targeted-review",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "method": "AST confirmed empty/docstring-only Python package marker",
+    "heading": ""
+  },
+  {
+    "path": "mcp-servers/fortinet-mcp/planes/__init__.py",
+    "disposition": "targeted-review",
+    "sha256": "ca0e1e918d539fc19e85ad036f071ffc29e4c2c9eb0fc74214ca62f4587f36fc",
+    "method": "AST confirmed empty/docstring-only Python package marker",
+    "heading": ""
+  },
+  {
+    "path": "mcp-servers/fortinet-mcp/transport/__init__.py",
+    "disposition": "targeted-review",
+    "sha256": "ee4d0c5cf765d0e4b943aaf37162d6fab043c848e24a6b53b00c1afe87e8bbe1",
+    "method": "AST confirmed empty/docstring-only Python package marker",
+    "heading": ""
+  },
+  {
+    "path": "mcp-servers/gnmi-mcp/__init__.py",
+    "disposition": "targeted-review",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "method": "AST confirmed empty/docstring-only Python package marker",
+    "heading": ""
+  },
+  {
+    "path": "mcp-servers/gns3-mcp-server/tests/__init__.py",
+    "disposition": "targeted-review",
+    "sha256": "7a73914a923480edff27a3017a08044faa064be469f3c84e21aa91b5d4eff352",
+    "method": "AST confirmed empty/docstring-only Python package marker",
+    "heading": ""
+  },
+  {
+    "path": "mcp-servers/halo-mcp/__init__.py",
+    "disposition": "targeted-review",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "method": "AST confirmed empty/docstring-only Python package marker",
+    "heading": ""
+  },
+  {
+    "path": "mcp-servers/halo-mcp/clients/__init__.py",
+    "disposition": "targeted-review",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "method": "AST confirmed empty/docstring-only Python package marker",
+    "heading": ""
+  },
+  {
+    "path": "mcp-servers/halo-mcp/models/__init__.py",
+    "disposition": "targeted-review",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "method": "AST confirmed empty/docstring-only Python package marker",
+    "heading": ""
+  },
+  {
+    "path": "mcp-servers/halo-mcp/tools/__init__.py",
+    "disposition": "targeted-review",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "method": "AST confirmed empty/docstring-only Python package marker",
+    "heading": ""
+  },
+  {
+    "path": "mcp-servers/halo-mcp/utils/__init__.py",
+    "disposition": "targeted-review",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "method": "AST confirmed empty/docstring-only Python package marker",
+    "heading": ""
+  },
+  {
+    "path": "mcp-servers/multivendor-cli-mcp/inventory/__init__.py",
+    "disposition": "targeted-review",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "method": "AST confirmed empty/docstring-only Python package marker",
+    "heading": ""
+  },
+  {
+    "path": "mcp-servers/multivendor-cli-mcp/policy/__init__.py",
+    "disposition": "targeted-review",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "method": "AST confirmed empty/docstring-only Python package marker",
+    "heading": ""
+  },
+  {
+    "path": "mcp-servers/multivendor-cli-mcp/tools/__init__.py",
+    "disposition": "targeted-review",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "method": "AST confirmed empty/docstring-only Python package marker",
+    "heading": ""
+  },
+  {
+    "path": "mcp-servers/nautobot-golden-config-mcp/__init__.py",
+    "disposition": "targeted-review",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "method": "AST confirmed empty/docstring-only Python package marker",
+    "heading": ""
+  },
+  {
+    "path": "mcp-servers/nautobot-routing-mcp/__init__.py",
+    "disposition": "targeted-review",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "method": "AST confirmed empty/docstring-only Python package marker",
+    "heading": ""
+  },
+  {
+    "path": "mcp-servers/protocol-mcp/bgp/federation/edge_queue.py",
+    "disposition": "targeted-review",
+    "sha256": "dc9f49ef5503ca48740fb99e65733f436c40a6d9c272960c89c31996f6016d8a",
+    "method": "Source review of behavior and limits recorded in WSL continuation",
+    "heading": ""
+  },
+  {
+    "path": "mcp-servers/protocol-mcp/bgp/federation/logfilter.py",
+    "disposition": "targeted-review",
+    "sha256": "934f565f06d45e8b9d58e1d8770e1afaff412a1e8d9e1b6181bad4edb3a7ba0d",
+    "method": "Source review of behavior and limits recorded in WSL continuation",
+    "heading": ""
+  },
+  {
+    "path": "mcp-servers/protocol-mcp/bgp/federation/transport_health.py",
+    "disposition": "targeted-review",
+    "sha256": "ec7b66cb551fd8b019cbb2eb9befb36aa27c637136b6a2d13e403b1fe44b4d51",
+    "method": "Source review of behavior and limits recorded in WSL continuation",
+    "heading": ""
+  },
+  {
+    "path": "mcp-servers/protocol-mcp/tests/__init__.py",
+    "disposition": "targeted-review",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "method": "AST confirmed empty/docstring-only Python package marker",
+    "heading": ""
+  },
+  {
+    "path": "mcp-servers/rag-mcp/embeddings/__init__.py",
+    "disposition": "targeted-review",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "method": "AST confirmed empty/docstring-only Python package marker",
+    "heading": ""
+  },
+  {
+    "path": "mcp-servers/rag-mcp/ingestion/__init__.py",
+    "disposition": "targeted-review",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "method": "AST confirmed empty/docstring-only Python package marker",
+    "heading": ""
+  },
+  {
+    "path": "mcp-servers/rag-mcp/retrieval/__init__.py",
+    "disposition": "targeted-review",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "method": "AST confirmed empty/docstring-only Python package marker",
+    "heading": ""
+  },
+  {
+    "path": "mcp-servers/rag-mcp/storage/__init__.py",
+    "disposition": "targeted-review",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "method": "AST confirmed empty/docstring-only Python package marker",
+    "heading": ""
+  },
+  {
+    "path": "mcp-servers/syslog-mcp/__init__.py",
+    "disposition": "targeted-review",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "method": "AST confirmed empty/docstring-only Python package marker",
+    "heading": ""
+  },
+  {
+    "path": "mcp-servers/tts-mcp/output/tts_b3bd0071.mp3",
+    "disposition": "asset-boundary",
+    "sha256": "e67b8e50f92c7cebb2d2e9e0123dadd9c327bb5b40a1bd31ffd03abbd3ed25e3",
+    "method": "Passive audio artifact inventory and byte hash",
+    "heading": ""
+  },
+  {
+    "path": "mcp-servers/tts-mcp/output/tts_d479a4cc.mp3",
+    "disposition": "asset-boundary",
+    "sha256": "9d562faebdc33c993ba271211700920e2fc268f9ef06196aae2aa0a89449841b",
+    "method": "Passive audio artifact inventory and byte hash",
+    "heading": ""
+  },
+  {
+    "path": "mcp-servers/twitter-mcp/__init__.py",
+    "disposition": "targeted-review",
+    "sha256": "78bcec348325f48c38d00c99059ae490aa501d19fd62c807014a40d2aa273420",
+    "method": "AST confirmed empty/docstring-only Python package marker",
+    "heading": ""
+  },
+  {
+    "path": "mcp-servers/zoom-rtms-mcp/__init__.py",
+    "disposition": "targeted-review",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "method": "AST confirmed empty/docstring-only Python package marker",
+    "heading": ""
+  },
+  {
+    "path": "mcp-servers/zoom-rtms-mcp/tests/__init__.py",
+    "disposition": "targeted-review",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "method": "AST confirmed empty/docstring-only Python package marker",
+    "heading": ""
+  },
+  {
+    "path": "mobile/netclaw-mobile/android/app/src/main/AndroidManifest.xml",
+    "disposition": "targeted-review",
+    "sha256": "6d842180779905e91cf46e57f90b5d0757e15e2437fa6877b24f71cf893118bc",
+    "method": "Source review of behavior and limits recorded in WSL continuation",
+    "heading": ""
+  },
+  {
+    "path": "mobile/netclaw-mobile/ios/Runner/Info.plist",
+    "disposition": "targeted-review",
+    "sha256": "be52637a52f4322807206c0e2df841a5fa310c720e592fd9cf8315c8ff205904",
+    "method": "Source review of behavior and limits recorded in WSL continuation",
+    "heading": ""
+  },
+  {
+    "path": "mobile/netclaw-mobile/ios/Runner/PrivacyInfo.xcprivacy",
+    "disposition": "targeted-review",
+    "sha256": "e862e081d8914e2d365947e6936be5adf55af05b76b8d0385704096dcbeb5609",
+    "method": "Source review of behavior and limits recorded in WSL continuation",
+    "heading": ""
+  },
+  {
+    "path": "mobile/netclaw-mobile/ios/Runner/Runner.entitlements",
+    "disposition": "targeted-review",
+    "sha256": "0ae4057811efe269a82105f8e797cc16f0cd54018e1d2efa6185a13d5503e2b9",
+    "method": "Source review of behavior and limits recorded in WSL continuation",
+    "heading": ""
+  },
+  {
+    "path": "mobile/netclaw-mobile/test/answer_body_test.dart",
+    "disposition": "execution-coverage",
+    "sha256": "9a21e2f2be369318d2c96992435e0da563a3f419e9066b6ec7ddcee86b3e0e86",
+    "method": "Executed by complete serial Flutter test run on WSL, 431 passing tests",
+    "heading": ""
+  },
+  {
+    "path": "mobile/netclaw-mobile/test/answer_format_test.dart",
+    "disposition": "execution-coverage",
+    "sha256": "49eb3cf6529ac0c5f30c45ca47d5ce5997ce3283d5d57ceaeb66e8301a2b856f",
+    "method": "Executed by complete serial Flutter test run on WSL, 431 passing tests",
+    "heading": ""
+  },
+  {
+    "path": "mobile/netclaw-mobile/test/app_lock_test.dart",
+    "disposition": "execution-coverage",
+    "sha256": "8ec0ed57f9bc61cf2400e1c8cb3ad84bbc1ac8a6c4989d5401e1eed0d8286649",
+    "method": "Executed by complete serial Flutter test run on WSL, 431 passing tests",
+    "heading": ""
+  },
+  {
+    "path": "mobile/netclaw-mobile/test/approval_client_test.dart",
+    "disposition": "execution-coverage",
+    "sha256": "de23e89ca8919db39453ea2607be20070e14f1cd49dc8a39371fe3fff88248e6",
+    "method": "Executed by complete serial Flutter test run on WSL, 431 passing tests",
+    "heading": ""
+  },
+  {
+    "path": "mobile/netclaw-mobile/test/approval_confirmation_test.dart",
+    "disposition": "execution-coverage",
+    "sha256": "c602418db1c1f6143c3f4587bcf8e44b6466ac64727920a2ff361c396f93e3ae",
+    "method": "Executed by complete serial Flutter test run on WSL, 431 passing tests",
+    "heading": ""
+  },
+  {
+    "path": "mobile/netclaw-mobile/test/ask_border_headless_test.dart",
+    "disposition": "execution-coverage",
+    "sha256": "4bce353ec7be55d6a08fdf7e667f7fe8478e8d99fda992a23855fd19ffa29ce0",
+    "method": "Executed by complete serial Flutter test run on WSL, 431 passing tests",
+    "heading": ""
+  },
+  {
+    "path": "mobile/netclaw-mobile/test/ask_live_activity_test.dart",
+    "disposition": "execution-coverage",
+    "sha256": "6e1b55bf7433b58224d5810d950d3945a01b2f6eb0162c76f83acdacca9a7d3d",
+    "method": "Executed by complete serial Flutter test run on WSL, 431 passing tests",
+    "heading": ""
+  },
+  {
+    "path": "mobile/netclaw-mobile/test/background_refresh_test.dart",
+    "disposition": "execution-coverage",
+    "sha256": "d8fa57ea17ff1066262c984bed09550384bc9ba1a3fa0d05495b6078cadda6a6",
+    "method": "Executed by complete serial Flutter test run on WSL, 431 passing tests",
+    "heading": ""
+  },
+  {
+    "path": "mobile/netclaw-mobile/test/badge_lifecycle_test.dart",
+    "disposition": "execution-coverage",
+    "sha256": "b7a888a6242fc0fd6248efd5718d7ad1b90a9b0b21d1409caa154ad348975409",
+    "method": "Executed by complete serial Flutter test run on WSL, 431 passing tests",
+    "heading": ""
+  },
+  {
+    "path": "mobile/netclaw-mobile/test/border_health_headless_test.dart",
+    "disposition": "execution-coverage",
+    "sha256": "8776dc7e6491cdaaae5d58e34cb2e513f144c326236538387bad013d2965b6ad",
+    "method": "Executed by complete serial Flutter test run on WSL, 431 passing tests",
+    "heading": ""
+  },
+  {
+    "path": "mobile/netclaw-mobile/test/capability_registration_test.dart",
+    "disposition": "execution-coverage",
+    "sha256": "9fc52b4303a859c185ed09da9ab6d86db4b71f2500ae97244632e5c613d38890",
+    "method": "Executed by complete serial Flutter test run on WSL, 431 passing tests",
+    "heading": ""
+  },
+  {
+    "path": "mobile/netclaw-mobile/test/capture_client_test.dart",
+    "disposition": "execution-coverage",
+    "sha256": "aebf988ac3d559df6dde6e7c5348fdf8c9771d86e5d29914c9d44aee2449d805",
+    "method": "Executed by complete serial Flutter test run on WSL, 431 passing tests",
+    "heading": ""
+  },
+  {
+    "path": "mobile/netclaw-mobile/test/chat_retry_test.dart",
+    "disposition": "execution-coverage",
+    "sha256": "c4c7711421aa4c6080650567101031d1ea43d8df28d28047f6b66cbe0a7db411",
+    "method": "Executed by complete serial Flutter test run on WSL, 431 passing tests",
+    "heading": ""
+  },
+  {
+    "path": "mobile/netclaw-mobile/test/chat_screen_test.dart",
+    "disposition": "execution-coverage",
+    "sha256": "c47e5c9325a46de50cca3dc59e4319b2830de4644494456a8fe23d3244903ef9",
+    "method": "Executed by complete serial Flutter test run on WSL, 431 passing tests",
+    "heading": ""
+  },
+  {
+    "path": "mobile/netclaw-mobile/test/clear_and_revocation_test.dart",
+    "disposition": "execution-coverage",
+    "sha256": "89879e086ca0bd76659def3ebe842f4fc74c15e158340f2648acb4891aac41a1",
+    "method": "Executed by complete serial Flutter test run on WSL, 431 passing tests",
+    "heading": ""
+  },
+  {
+    "path": "mobile/netclaw-mobile/test/conversation_search_test.dart",
+    "disposition": "execution-coverage",
+    "sha256": "6edcd8081fb86d25dc4548810d08c6041d1265b08e3ec8941388f7508abbc8fa",
+    "method": "Executed by complete serial Flutter test run on WSL, 431 passing tests",
+    "heading": ""
+  },
+  {
+    "path": "mobile/netclaw-mobile/test/conversation_store_test.dart",
+    "disposition": "execution-coverage",
+    "sha256": "886ff7d8413c7fc526e23dbf0327008d1f9c013d383225d02790c1bd2c119f5a",
+    "method": "Executed by complete serial Flutter test run on WSL, 431 passing tests",
+    "heading": ""
+  },
+  {
+    "path": "mobile/netclaw-mobile/test/dashboard_data_test.dart",
+    "disposition": "execution-coverage",
+    "sha256": "4a06f8f4e306ae6f2f3b7caa9ec09f872dac234f6d1be22e3f608337ef0482a2",
+    "method": "Executed by complete serial Flutter test run on WSL, 431 passing tests",
+    "heading": ""
+  },
+  {
+    "path": "mobile/netclaw-mobile/test/dashboard_screen_test.dart",
+    "disposition": "execution-coverage",
+    "sha256": "8a7dc304e8e3a0fa53ddaef1d0008e65d23febb7bc633995e1893dc1673982dd",
+    "method": "Executed by complete serial Flutter test run on WSL, 431 passing tests",
+    "heading": ""
+  },
+  {
+    "path": "mobile/netclaw-mobile/test/device_deep_link_test.dart",
+    "disposition": "execution-coverage",
+    "sha256": "11e21e227f9ae08cfcccce5555e505ecc9f893576193141fe87aed4bf1d0a6ef",
+    "method": "Executed by complete serial Flutter test run on WSL, 431 passing tests",
+    "heading": ""
+  },
+  {
+    "path": "mobile/netclaw-mobile/test/device_heartbeat_test.dart",
+    "disposition": "execution-coverage",
+    "sha256": "e17b1665f69cb69b20a683934f9e9058883b6134e494d83a7928b9411d841e92",
+    "method": "Executed by complete serial Flutter test run on WSL, 431 passing tests",
+    "heading": ""
+  },
+  {
+    "path": "mobile/netclaw-mobile/test/edge_client_error_classification_test.dart",
+    "disposition": "execution-coverage",
+    "sha256": "26af21d6b2832ff610002056f0fa28054a56eb04135ab875a507e9c4ab615f5c",
+    "method": "Executed by complete serial Flutter test run on WSL, 431 passing tests",
+    "heading": ""
+  },
+  {
+    "path": "mobile/netclaw-mobile/test/edge_client_reconnect_leak_test.dart",
+    "disposition": "execution-coverage",
+    "sha256": "9095b5bd2e607465651665e9be5e80db388821650101744e51515dd92c72837f",
+    "method": "Executed by complete serial Flutter test run on WSL, 431 passing tests",
+    "heading": ""
+  },
+  {
+    "path": "mobile/netclaw-mobile/test/edge_identity_test.dart",
+    "disposition": "execution-coverage",
+    "sha256": "80c8b3797cf99ee41a33f7ee861f0073667c89ae69f71106bba4800eddcf88aa",
+    "method": "Executed by complete serial Flutter test run on WSL, 431 passing tests",
+    "heading": ""
+  },
+  {
+    "path": "mobile/netclaw-mobile/test/enrollment_display_name_test.dart",
+    "disposition": "execution-coverage",
+    "sha256": "529f9dbdb39b6dd7864abc78c95472e3d96dc4ae38ad862d3ee8a6b60c8ebec7",
+    "method": "Executed by complete serial Flutter test run on WSL, 431 passing tests",
+    "heading": ""
+  },
+  {
+    "path": "mobile/netclaw-mobile/test/enrollment_flow_test.dart",
+    "disposition": "execution-coverage",
+    "sha256": "df892afacdef528a747c0256fc3cccb261ca6b1a081d2f037fb20b1f47d6cd3d",
+    "method": "Executed by complete serial Flutter test run on WSL, 431 passing tests",
+    "heading": ""
+  },
+  {
+    "path": "mobile/netclaw-mobile/test/enrollment_store_test.dart",
+    "disposition": "execution-coverage",
+    "sha256": "35bafc8701559907a91e0e686a898b0228854b60838301e278bb3706e30d2587",
+    "method": "Executed by complete serial Flutter test run on WSL, 431 passing tests",
+    "heading": ""
+  },
+  {
+    "path": "mobile/netclaw-mobile/test/feed_screen_highlight_test.dart",
+    "disposition": "execution-coverage",
+    "sha256": "e26565637024cb756f78c7c2d8c770e6c519ca32cca21dd2468134e70c9bda1c",
+    "method": "Executed by complete serial Flutter test run on WSL, 431 passing tests",
+    "heading": ""
+  },
+  {
+    "path": "mobile/netclaw-mobile/test/feed_screen_test.dart",
+    "disposition": "execution-coverage",
+    "sha256": "9062df698a05a0b1bf61ac216f65f102ad7061e6b6befa1480b8a75d3943e556",
+    "method": "Executed by complete serial Flutter test run on WSL, 431 passing tests",
+    "heading": ""
+  },
+  {
+    "path": "mobile/netclaw-mobile/test/haptics_test.dart",
+    "disposition": "execution-coverage",
+    "sha256": "008bc54c9207a2c8984e3ac7ea64363179f8c785b6c36a3b9ad5f266309dffc2",
+    "method": "Executed by complete serial Flutter test run on WSL, 431 passing tests",
+    "heading": ""
+  },
+  {
+    "path": "mobile/netclaw-mobile/test/headless_connect_test.dart",
+    "disposition": "execution-coverage",
+    "sha256": "16606bc6315494277a93c224a015fd92cee9fc5ae205e957d009e66a03cfdb5e",
+    "method": "Executed by complete serial Flutter test run on WSL, 431 passing tests",
+    "heading": ""
+  },
+  {
+    "path": "mobile/netclaw-mobile/test/heartbeat_test.dart",
+    "disposition": "execution-coverage",
+    "sha256": "a6d8230edf0529668906837af9385819084f369368ed0b32ff2a95b71fea01f4",
+    "method": "Executed by complete serial Flutter test run on WSL, 431 passing tests",
+    "heading": ""
+  },
+  {
+    "path": "mobile/netclaw-mobile/test/live_activity_test.dart",
+    "disposition": "execution-coverage",
+    "sha256": "5adc624e2e6c4b2dd90534c300a3200621e17dbf6fc66d3622b1a9c543b416f1",
+    "method": "Executed by complete serial Flutter test run on WSL, 431 passing tests",
+    "heading": ""
+  },
+  {
+    "path": "mobile/netclaw-mobile/test/local_notifications_test.dart",
+    "disposition": "execution-coverage",
+    "sha256": "d1a8b88554ef58dac32013cbe433921307a1152dedbb95d86b21d57f3931fc7e",
+    "method": "Executed by complete serial Flutter test run on WSL, 431 passing tests",
+    "heading": ""
+  },
+  {
+    "path": "mobile/netclaw-mobile/test/manual_enrollment_screen_test.dart",
+    "disposition": "execution-coverage",
+    "sha256": "1d464deae5dfd4839573a89ca5ff9d7372b45b911ce574af1fbfebb39d776722",
+    "method": "Executed by complete serial Flutter test run on WSL, 431 passing tests",
+    "heading": ""
+  },
+  {
+    "path": "mobile/netclaw-mobile/test/message_feed_test.dart",
+    "disposition": "execution-coverage",
+    "sha256": "9131060ca84a3c553bb2feda6ed0d2d07612b8fdf6139b4f7eb45ce588419fe9",
+    "method": "Executed by complete serial Flutter test run on WSL, 431 passing tests",
+    "heading": ""
+  },
+  {
+    "path": "mobile/netclaw-mobile/test/no_hardcoded_colors_test.dart",
+    "disposition": "execution-coverage",
+    "sha256": "0f7365fcd1042268026b2dbbef76a3d821b4792e775164ebedd4d67a5f3627d3",
+    "method": "Executed by complete serial Flutter test run on WSL, 431 passing tests",
+    "heading": ""
+  },
+  {
+    "path": "mobile/netclaw-mobile/test/notification_deep_link_test.dart",
+    "disposition": "execution-coverage",
+    "sha256": "1a14a3b8c2d741ae3d9838e425993d8bd481557027948977713d3fa454352469",
+    "method": "Executed by complete serial Flutter test run on WSL, 431 passing tests",
+    "heading": ""
+  },
+  {
+    "path": "mobile/netclaw-mobile/test/notification_response_routing_test.dart",
+    "disposition": "execution-coverage",
+    "sha256": "1643b54502aa308f820d44899d6ecc43780a29798b75b9ae9ff50de7fcf3ca13",
+    "method": "Executed by complete serial Flutter test run on WSL, 431 passing tests",
+    "heading": ""
+  },
+  {
+    "path": "mobile/netclaw-mobile/test/onboarding_explainer_screen_test.dart",
+    "disposition": "execution-coverage",
+    "sha256": "c21fbfb91c4d13479a8b90ca3c54c4162196122ac51b0694e21fa1d02df01511",
+    "method": "Executed by complete serial Flutter test run on WSL, 431 passing tests",
+    "heading": ""
+  },
+  {
+    "path": "mobile/netclaw-mobile/test/pending_approval_store_test.dart",
+    "disposition": "execution-coverage",
+    "sha256": "4c265293311d78a623fe2293d5d4b41ac1e882bece63d9b291333bbfe1b6aa8a",
+    "method": "Executed by complete serial Flutter test run on WSL, 431 passing tests",
+    "heading": ""
+  },
+  {
+    "path": "mobile/netclaw-mobile/test/pending_approvals_headless_test.dart",
+    "disposition": "execution-coverage",
+    "sha256": "6fa3b98e7c15d969fdb5708a92784d87edd48d7d596bddb8d77c5d98fe1d570d",
+    "method": "Executed by complete serial Flutter test run on WSL, 431 passing tests",
+    "heading": ""
+  },
+  {
+    "path": "mobile/netclaw-mobile/test/pending_open_intent_test.dart",
+    "disposition": "execution-coverage",
+    "sha256": "fb326158317e1dfed9c4f2a53a3f3f5013e0849282d00a477cbec7b9b76071ab",
+    "method": "Executed by complete serial Flutter test run on WSL, 431 passing tests",
+    "heading": ""
+  },
+  {
+    "path": "mobile/netclaw-mobile/test/push_message_ingest_test.dart",
+    "disposition": "execution-coverage",
+    "sha256": "10d979edf22994e776e41053c3d4f6d6c5b03273bf5ff4c2c93c9f70bdf59494",
+    "method": "Executed by complete serial Flutter test run on WSL, 431 passing tests",
+    "heading": ""
+  },
+  {
+    "path": "mobile/netclaw-mobile/test/push_registration_test.dart",
+    "disposition": "execution-coverage",
+    "sha256": "be629e44d13a9a89692af6c23a14aae54bf142508f280bd2913606a256e95fb2",
+    "method": "Executed by complete serial Flutter test run on WSL, 431 passing tests",
+    "heading": ""
+  },
+  {
+    "path": "mobile/netclaw-mobile/test/reconnect_supervisor_test.dart",
+    "disposition": "execution-coverage",
+    "sha256": "d54a0bbf87a508358e20d2ad0c55f00bc4cce064b8b3fa1c8a7190f0900bf370",
+    "method": "Executed by complete serial Flutter test run on WSL, 431 passing tests",
+    "heading": ""
+  },
+  {
+    "path": "mobile/netclaw-mobile/test/settings_screen_test.dart",
+    "disposition": "execution-coverage",
+    "sha256": "00f63274b1db928ff21445bc71186a5f6bec238d9d019998bbc4dfe8c8793b92",
+    "method": "Executed by complete serial Flutter test run on WSL, 431 passing tests",
+    "heading": ""
+  },
+  {
+    "path": "mobile/netclaw-mobile/test/theme_preference_test.dart",
+    "disposition": "execution-coverage",
+    "sha256": "9d350f5398aa5f08ac0e6abc7666062753d7fb677df1f8f38a1352aafa6b097d",
+    "method": "Executed by complete serial Flutter test run on WSL, 431 passing tests",
+    "heading": ""
+  },
+  {
+    "path": "mobile/netclaw-mobile/test/theme_test.dart",
+    "disposition": "execution-coverage",
+    "sha256": "b57248eaf39f1b64bb09cd705a3d1aedcdb2ddb499b4341a72431816ea1d4af7",
+    "method": "Executed by complete serial Flutter test run on WSL, 431 passing tests",
+    "heading": ""
+  },
+  {
+    "path": "mobile/netclaw-mobile/test/turn_reconciler_test.dart",
+    "disposition": "execution-coverage",
+    "sha256": "c2ee0cb64e8121046b18c609e6bf1a0e270a255223b322dbd219ccb89213bbd7",
+    "method": "Executed by complete serial Flutter test run on WSL, 431 passing tests",
+    "heading": ""
+  },
+  {
+    "path": "mobile/netclaw-mobile/test/voice_session_test.dart",
+    "disposition": "execution-coverage",
+    "sha256": "1b14d953362f2de299a5af014a9b456e33296bfa829e5e326553eb315380713b",
+    "method": "Executed by complete serial Flutter test run on WSL, 431 passing tests",
+    "heading": ""
+  },
+  {
+    "path": "mobile/netclaw-mobile/test/voice_transcription_test.dart",
+    "disposition": "execution-coverage",
+    "sha256": "6dd26338795b742bd1858559b65a0e1e45d8a5f75b5961b69bb9bc8107aa44c4",
+    "method": "Executed by complete serial Flutter test run on WSL, 431 passing tests",
+    "heading": ""
+  },
+  {
+    "path": "mobile/netclaw-mobile/test/watch_relay_test.dart",
+    "disposition": "execution-coverage",
+    "sha256": "bcb88bbc9e228ea3396fdba65a8642e04bddaf8c72c20e4566a03f7b886eb836",
+    "method": "Executed by complete serial Flutter test run on WSL, 431 passing tests",
+    "heading": ""
+  },
+  {
+    "path": "mobile/netclaw-mobile/test/widget_data_test.dart",
+    "disposition": "execution-coverage",
+    "sha256": "c8c7529725ddf6d5cf72bdaeae56a897f31bffa0056f7c49ba8d343bbba2492a",
+    "method": "Executed by complete serial Flutter test run on WSL, 431 passing tests",
+    "heading": ""
+  },
+  {
+    "path": "mobile/netclaw-mobile/test/widget_test.dart",
+    "disposition": "execution-coverage",
+    "sha256": "895c1f21f99a806dcdc5af6dd2ba82e53e0144580a76e71d371cda06330167ce",
+    "method": "Executed by complete serial Flutter test run on WSL, 431 passing tests",
+    "heading": ""
+  },
+  {
+    "path": "tests/auvik-mcp/__init__.py",
+    "disposition": "targeted-review",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "method": "AST confirmed empty/docstring-only Python package marker",
+    "heading": ""
+  },
+  {
+    "path": "tests/halo-mcp/__init__.py",
+    "disposition": "targeted-review",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "method": "AST confirmed empty/docstring-only Python package marker",
+    "heading": ""
+  },
+  {
+    "path": "ui/netclaw-visual/src/orgchart-render/peer-treatments.test.js",
+    "disposition": "execution-coverage",
+    "sha256": "dbc9b2836998edeb1f0e833522797c4037e3271ee9496d69bedb4e8144ee26cc",
+    "method": "Executed by npm test src/**/*.test.js, 219 passing HUD tests",
+    "heading": ""
+  },
+  {
+    "path": "ui/netclaw-visual/src/orgchart-render/treatments.test.js",
+    "disposition": "execution-coverage",
+    "sha256": "766eaf1db04d058fbf619cec2f5a024e2b6d202aea7cb341d442e568405df552",
+    "method": "Executed by npm test src/**/*.test.js, 219 passing HUD tests",
+    "heading": ""
+  },
+  {
+    "path": "ui/netclaw-visual/src/orgchart/categorize.test.js",
+    "disposition": "execution-coverage",
+    "sha256": "c68da6b980f83023680d8fd5fe77cd7567af217e627a3c11cada9bce2981a262",
+    "method": "Executed by npm test src/**/*.test.js, 219 passing HUD tests",
+    "heading": ""
+  },
+  {
+    "path": "ui/netclaw-visual/src/orgchart/feed-state.js",
+    "disposition": "targeted-review",
+    "sha256": "408ae3c777e44c0668bc94ae1c41408411c04cd2ca3ee0ed71efb94fb308bab7",
+    "method": "Source review of behavior and limits recorded in WSL continuation",
+    "heading": ""
+  },
+  {
+    "path": "ui/netclaw-visual/src/orgchart/feed-state.test.js",
+    "disposition": "execution-coverage",
+    "sha256": "da1d3a7f95d09918d1be75734715e654d9987db3749c610dce432cc2a1e72a2b",
+    "method": "Executed by npm test src/**/*.test.js, 219 passing HUD tests",
+    "heading": ""
+  },
+  {
+    "path": "ui/netclaw-visual/src/orgchart/force-layout.test.js",
+    "disposition": "execution-coverage",
+    "sha256": "f4dc7f2e573320154a9be550431c1ef4413d9b1407af5e6afba995ebe72306ea",
+    "method": "Executed by npm test src/**/*.test.js, 219 passing HUD tests",
+    "heading": ""
+  },
+  {
+    "path": "ui/netclaw-visual/src/orgchart/freshness.js",
+    "disposition": "targeted-review",
+    "sha256": "783a8692ea1b62f12add595bb0888a0d357cb2df8a26adb9b43920de57619579",
+    "method": "Source review of behavior and limits recorded in WSL continuation",
+    "heading": ""
+  },
+  {
+    "path": "ui/netclaw-visual/src/orgchart/freshness.test.js",
+    "disposition": "execution-coverage",
+    "sha256": "da9856ef0f422cae61f749d67e8107fb6bd2e557a5620984cf3f04336dbc1cf8",
+    "method": "Executed by npm test src/**/*.test.js, 219 passing HUD tests",
+    "heading": ""
+  },
+  {
+    "path": "ui/netclaw-visual/src/orgchart/health.js",
+    "disposition": "targeted-review",
+    "sha256": "365661b777c207700cd11aa82e6c1f50df1664f53a6554d492ffd547377a419a",
+    "method": "Source review of behavior and limits recorded in WSL continuation",
+    "heading": ""
+  },
+  {
+    "path": "ui/netclaw-visual/src/orgchart/health.test.js",
+    "disposition": "execution-coverage",
+    "sha256": "e67e9749d4df0de22a71b22bf64f6e4f923d8061594b01b150097be166f21b1d",
+    "method": "Executed by npm test src/**/*.test.js, 219 passing HUD tests",
+    "heading": ""
+  },
+  {
+    "path": "ui/netclaw-visual/src/orgchart/layout-payload.test.js",
+    "disposition": "execution-coverage",
+    "sha256": "f4039b11332a77f460ab8f3e745fc1ae5c7a38484b8d41e3ad267a869ca804d8",
+    "method": "Executed by npm test src/**/*.test.js, 219 passing HUD tests",
+    "heading": ""
+  },
+  {
+    "path": "ui/netclaw-visual/src/orgchart/layout-store.test.js",
+    "disposition": "execution-coverage",
+    "sha256": "3c1a5bf806a8a5b84bbecb1d9c16e93746381a177ad814a9cd3fb7b37ab487b1",
+    "method": "Executed by npm test src/**/*.test.js, 219 passing HUD tests",
+    "heading": ""
+  },
+  {
+    "path": "ui/netclaw-visual/src/orgchart/layout.test.js",
+    "disposition": "execution-coverage",
+    "sha256": "26e5e5f348ac184dd195fc7d994dbda4ed4546d4d815a4d1bbadd443dd6c83cf",
+    "method": "Executed by npm test src/**/*.test.js, 219 passing HUD tests",
+    "heading": ""
+  },
+  {
+    "path": "ui/netclaw-visual/src/orgchart/liveness.js",
+    "disposition": "targeted-review",
+    "sha256": "2405f3eba5c3eaf1f261cb517ad4b1ec17861a76ab887d12ff94262365f11a08",
+    "method": "Source review of behavior and limits recorded in WSL continuation",
+    "heading": ""
+  },
+  {
+    "path": "ui/netclaw-visual/src/orgchart/liveness.test.js",
+    "disposition": "execution-coverage",
+    "sha256": "5d9fa4b8f62474257261726c3dd44426312c45136975351c80ce6940d549e60e",
+    "method": "Executed by npm test src/**/*.test.js, 219 passing HUD tests",
+    "heading": ""
+  },
+  {
+    "path": "ui/netclaw-visual/src/orgchart/normalize.test.js",
+    "disposition": "execution-coverage",
+    "sha256": "3c4963c74d77f0673c8e82fbf3befa947d887d7bc0ee42f0bca8b47eb6447e84",
+    "method": "Executed by npm test src/**/*.test.js, 219 passing HUD tests",
+    "heading": ""
+  },
+  {
+    "path": "ui/netclaw-visual/src/orgchart/ordering.test.js",
+    "disposition": "execution-coverage",
+    "sha256": "6e8ac5a4ea8e22bcb8a64dc50064022bf3463fd2d84da8a5f9ba18dc698adaaa",
+    "method": "Executed by npm test src/**/*.test.js, 219 passing HUD tests",
+    "heading": ""
+  },
+  {
+    "path": "ui/netclaw-visual/src/orgchart/peer-detail.test.js",
+    "disposition": "execution-coverage",
+    "sha256": "62815fe286aba5583bbfce9618d27437a4c89d38ea84f4f479b5bc73bd8003ae",
+    "method": "Executed by npm test src/**/*.test.js, 219 passing HUD tests",
+    "heading": ""
+  },
+  {
+    "path": "ui/netclaw-visual/src/orgchart/presets.test.js",
+    "disposition": "execution-coverage",
+    "sha256": "4868d64e50816ce188febef0fb5e3cc6115172ae90458cf8ac3055148ecc1140",
+    "method": "Executed by npm test src/**/*.test.js, 219 passing HUD tests",
+    "heading": ""
+  },
+  {
+    "path": "workspace/skills/aci-change-deploy/SKILL.md",
+    "disposition": "targeted-review",
+    "sha256": "cd65a2b1be52900b64b3558363cc24c18abd4c064643c439000202ee6402a5f1",
+    "method": "Source review of behavior and limits recorded in WSL continuation",
+    "heading": "# ACI Change Deployment"
+  }
+]

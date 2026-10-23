@@ -39,5 +39,7 @@ def merge_page(acc: list, payload: dict) -> list:
     Returns:
         The same *acc* list, extended with items from ``payload["data"]``.
     """
-    acc.extend(payload.get("data", []))
+    if not isinstance(payload, dict) or not isinstance(payload.get("data"), list):
+        raise ValueError("Auvik list response must contain a data array")
+    acc.extend(payload["data"])
     return acc

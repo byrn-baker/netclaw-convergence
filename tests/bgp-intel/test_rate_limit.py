@@ -219,6 +219,22 @@ def test_max_rps_cannot_be_raised() -> None:
     del os.environ["BGP_INTEL_MAX_RPS"]
 
 
+def test_fractional_rate_is_honoured() -> None:
+    _install_stub()
+    os.environ["BGP_INTEL_MAX_RPS"] = "0.5"
+    client = PoliteClient()
+    async def run():
+        await client.get_json("rpki", "https://example.test/fraction1")
+        await client.get_json("rpki", "https://example.test/fraction2")
+    try:
+        asyncio.run(run())
+        starts = [row[1] for row in _StubAsyncClient.timeline]
+        check("0.5rps admits two requests at least two seconds apart",
+              len(starts) == 2 and starts[1] - starts[0] >= 2.0)
+    finally:
+        del os.environ["BGP_INTEL_MAX_RPS"]
+
+
 def main() -> int:
     print("rate limit + cache contract tests (stubbed transport, no external network)")
     for fn in (
@@ -229,6 +245,7 @@ def main() -> int:
         test_fresh_bypasses_the_cache,
         test_ttls_are_per_source,
         test_max_rps_cannot_be_raised,
+        test_fractional_rate_is_honoured,
     ):
         print(f"\n{fn.__name__}")
         fn()

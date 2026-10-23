@@ -30,3 +30,8 @@ Use this skill as the **entrypoint** for EVE-NG topology design work.
 - Read `{baseDir}/references/discovery-workflow.md` for question flow, defaults, design options, domain guidance, and image selection.
 - Read `{baseDir}/references/validation-workflow.md` for output sections, QA gates, build-plan rules, and topology checks.
 - Read `{baseDir}/references/unl-validator.md` when you need validator usage, expected outputs, or requirements-file schema.
+
+## Failure Behavior
+
+- On a tool error (timeout, unreachable host, malformed response), report the failure and its error message directly to the user rather than fabricating or guessing at results.
+- For a confirmed read-only call, check connectivity and retry once if appropriate. For any call that changes state or sends a message, a timeout does not prove the action failed: inspect current state or delivery status before retrying, preserve the required approval/change gates, and do not repeat an action whose outcome is unknown.

@@ -1,0 +1,172 @@
+[
+  {
+    "component": "analysis-mcp",
+    "status": "pass",
+    "detail": "uv resolution for Python 3.12; not a live vendor test"
+  },
+  {
+    "component": "anta-mcp",
+    "status": "pass",
+    "detail": "uv resolution for Python 3.12; not a live vendor test"
+  },
+  {
+    "component": "auvik-mcp",
+    "status": "pass",
+    "detail": "uv resolution for Python 3.12; not a live vendor test"
+  },
+  {
+    "component": "azure-network-mcp",
+    "status": "pass",
+    "detail": "uv resolution for Python 3.12; not a live vendor test"
+  },
+  {
+    "component": "batfish-mcp",
+    "status": "pass",
+    "detail": "uv resolution for Python 3.12; not a live vendor test"
+  },
+  {
+    "component": "bgp-intel-mcp",
+    "status": "pass",
+    "detail": "uv resolution for Python 3.12; not a live vendor test"
+  },
+  {
+    "component": "catc-mcp",
+    "status": "pass",
+    "detail": "uv resolution for Python 3.12; not a live vendor test"
+  },
+  {
+    "component": "cisco-psirt-mcp",
+    "status": "pass",
+    "detail": "uv resolution for Python 3.12; not a live vendor test"
+  },
+  {
+    "component": "claroty-mcp",
+    "status": "pass",
+    "detail": "uv resolution for Python 3.12; not a live vendor test"
+  },
+  {
+    "component": "document-mcp",
+    "status": "pass",
+    "detail": "uv resolution for Python 3.12; not a live vendor test"
+  },
+  {
+    "component": "eve-ng-mcp-server",
+    "status": "pass",
+    "detail": "uv resolution for Python 3.12; not a live vendor test"
+  },
+  {
+    "component": "fortinet-mcp",
+    "status": "pass",
+    "detail": "uv resolution for Python 3.12; not a live vendor test"
+  },
+  {
+    "component": "gnmi-mcp",
+    "status": "pass",
+    "detail": "uv resolution for Python 3.12; not a live vendor test"
+  },
+  {
+    "component": "gns3-mcp-server",
+    "status": "pass",
+    "detail": "uv resolution for Python 3.12; not a live vendor test"
+  },
+  {
+    "component": "halo-mcp",
+    "status": "pass",
+    "detail": "uv resolution for Python 3.12; not a live vendor test"
+  },
+  {
+    "component": "memory-mcp",
+    "status": "pass",
+    "detail": "uv resolution for Python 3.12; not a live vendor test"
+  },
+  {
+    "component": "multivendor-cli-mcp",
+    "status": "pass",
+    "detail": "uv resolution for Python 3.12; not a live vendor test"
+  },
+  {
+    "component": "nautobot-golden-config-mcp",
+    "status": "pass",
+    "detail": "uv resolution for Python 3.12; not a live vendor test"
+  },
+  {
+    "component": "nautobot-mcp-v2",
+    "status": "pass",
+    "detail": "uv resolution for Python 3.12; not a live vendor test"
+  },
+  {
+    "component": "nautobot-routing-mcp",
+    "status": "pass",
+    "detail": "uv resolution for Python 3.12; not a live vendor test"
+  },
+  {
+    "component": "nsm-mcp",
+    "status": "pass",
+    "detail": "uv resolution for Python 3.12; not a live vendor test"
+  },
+  {
+    "component": "packet-buddy-mcp",
+    "status": "pass",
+    "detail": "uv resolution for Python 3.12; not a live vendor test"
+  },
+  {
+    "component": "protocol-mcp",
+    "status": "pass",
+    "detail": "uv resolution for Python 3.12; not a live vendor test"
+  },
+  {
+    "component": "rag-mcp",
+    "status": "pass",
+    "detail": "uv resolution for Python 3.12; not a live vendor test"
+  },
+  {
+    "component": "redfish-mcp",
+    "status": "pass",
+    "detail": "uv resolution for Python 3.12; not a live vendor test"
+  },
+  {
+    "component": "suzieq-mcp",
+    "status": "pass",
+    "detail": "uv resolution for Python 3.12; not a live vendor test"
+  },
+  {
+    "component": "topology-diagram-mcp",
+    "status": "pass",
+    "detail": "uv resolution for Python 3.12; not a live vendor test"
+  },
+  {
+    "component": "tts-mcp",
+    "status": "pass",
+    "detail": "uv resolution for Python 3.12; not a live vendor test"
+  },
+  {
+    "component": "worldlabs-marble-mcp",
+    "status": "pass",
+    "detail": "uv resolution for Python 3.12; not a live vendor test"
+  },
+  {
+    "component": "zoom-rtms-mcp",
+    "status": "pass",
+    "detail": "uv resolution for Python 3.12; not a live vendor test"
+  },
+  {
+    "component": "wikipedia",
+    "status": "pass",
+    "detail": "uv resolution for Python 3.12; not a live vendor test"
+  },
+  {
+    "component": "nvd-cve",
+    "status": "pass",
+    "detail": "uv resolution for Python 3.12; not a live vendor test"
+  },
+  {
+    "component": "sdwan",
+    "status": "pass",
+    "detail": "uv resolution for Python 3.12; not a live vendor test"
+  },
+  {
+    "component": "netbox",
+    "status": "pass",
+    "detail": "uv resolution for Python 3.12; not a live vendor test"
+  }
+]

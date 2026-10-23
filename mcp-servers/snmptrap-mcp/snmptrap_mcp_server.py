@@ -13,6 +13,17 @@ from mcp.server import Server
 from mcp.server.stdio import stdio_server
 from mcp.types import Tool, TextContent
 
+# Direct file and `python -m snmptrap_mcp_server` launches need a package
+# context for local imports. Keep each receiver's generic module names isolated.
+if not __package__:
+    import sys
+    import types
+    from pathlib import Path
+    __package__ = "netclaw_snmptrap_receiver"
+    package = types.ModuleType(__package__)
+    package.__path__ = [str(Path(__file__).resolve().parent)]
+    sys.modules[__package__] = package
+
 from .models import (
     SNMPTrap, TrapQueryFilter, ReceiverStatus,
     SNMPVersion, STANDARD_TRAPS
@@ -257,6 +268,9 @@ async def handle_stop_receiver() -> List[TextContent]:
     if gait_logger:
         gait_logger.log_receiver_stopped(receiver_status.port, receiver_status.traps_received)
 
+    if gait_logger:
+        await asyncio.to_thread(gait_logger.close)
+
     receiver_status.is_running = False
 
     return [TextContent(type="text", text="SNMP trap receiver stopped")]
@@ -267,6 +281,10 @@ async def handle_get_status() -> List[TextContent]:
     import json
 
     status_dict = receiver_status.to_dict()
+    if udp_receiver:
+        status_dict['udp_transport'] = udp_receiver.get_status()
+    if gait_logger:
+        status_dict['audit'] = gait_logger.get_stats()
 
     # Add store stats
     if message_store:
@@ -412,8 +430,13 @@ async def handle_get_counts(arguments: Dict[str, Any]) -> List[TextContent]:
 
 async def main():
     """Run the MCP server."""
-    async with stdio_server() as (read_stream, write_stream):
-        await app.run(read_stream, write_stream, app.create_initialization_options())
+    try:
+        async with stdio_server() as (read_stream, write_stream):
+            await app.run(read_stream, write_stream, app.create_initialization_options())
+    finally:
+        await handle_stop_receiver()
+        if gait_logger:
+            await asyncio.to_thread(gait_logger.close)
 
 
 if __name__ == "__main__":

@@ -8,3 +8,7 @@
 # tag was moved or the asset was altered; either way it is not what was verified
 # against a live cluster.
 692a7b283a96140311fd46f13b8373657b2e9bfe660a36bb6434e8c42d899dbc  kubernetes-mcp-server-linux-amd64
+
+# macOS artifacts: GitHub release API asset digests verified in spec 124.
+51ea2d7f452cfa2f930425e3b1870233beaf9f92e2105fc92305565f293c922a  kubernetes-mcp-server-darwin-arm64
+9f3a7a8b71587725f996ac2411f5287ceeab3714bd7d1533aac9b3c107a0b38b  kubernetes-mcp-server-darwin-amd64

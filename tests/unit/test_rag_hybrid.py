@@ -112,3 +112,70 @@ def test_reranker_unavailable_model_degrades_gracefully():
 def test_reranker_empty_candidates():
     rr = Reranker("any", enabled=False)
     assert rr.rerank("q", [], k=5, relevance_floor=0.3) == []
+
+
+def test_legacy_primitive_pickle_cache_remains_readable(tmp_path):
+    import pickle
+    payload = {'chunk_ids':['legacy'], 'tokenized_corpus':[['bgp','neighbor']], 'built_ts':'2026-01-01'}
+    path = tmp_path/'documents.pkl'
+    path.write_bytes(pickle.dumps(payload))
+    before = path.read_bytes()
+    assert BM25Store(str(tmp_path)).search('documents','neighbor',5)[0]['chunk_id']=='legacy'
+    assert path.read_bytes()==before
+
+
+def test_pickle_globals_and_malformed_corpus_are_rejected(tmp_path, capsys):
+    import pickle
+    import pytest
+    class Unsafe:
+        def __reduce__(self):
+            return (print, ('UNSAFE_CACHE_EXECUTED',))
+    path = tmp_path/'documents.pkl'
+    path.write_bytes(pickle.dumps(Unsafe()))
+    original = path.read_bytes()
+    with pytest.raises(pickle.UnpicklingError, match='forbidden'):
+        BM25Store(str(tmp_path)).search('documents','bgp',5)
+    assert 'UNSAFE_CACHE_EXECUTED' not in capsys.readouterr().out
+    assert path.read_bytes()==original
+    for invalid in ([], {'chunk_ids':['a'],'tokenized_corpus':[]}, {'chunk_ids':['a'],'tokenized_corpus':[[12]]}):
+        path.write_bytes(pickle.dumps(invalid))
+        with pytest.raises(ValueError):
+            BM25Store(str(tmp_path)).search('documents','bgp',5)
+
+
+def test_failed_cache_write_preserves_previous_disk_and_memory(tmp_path, monkeypatch):
+    import pytest
+    import storage.bm25_store as module
+    store = BM25Store(str(tmp_path))
+    store.add('documents', [{'chunk_id': 'original', 'text': 'retained route evidence'}])
+    original = (tmp_path/'documents.pkl').read_bytes()
+    def broken_dump(data, stream):
+        stream.write(b'partial')
+        raise OSError('synthetic disk failure')
+    monkeypatch.setattr(module.pickle, 'dump', broken_dump)
+    with pytest.raises(OSError):
+        store.add('documents', [{'chunk_id': 'new', 'text': 'new route evidence'}])
+    assert (tmp_path/'documents.pkl').read_bytes() == original
+    assert store._load('documents')[0] == ['original']
+    assert BM25Store(str(tmp_path))._load('documents')[0] == ['original']
+    assert not list(tmp_path.glob('.bm25-*.tmp'))
+    assert (tmp_path/'documents.pkl').stat().st_mode & 0o777 == 0o600
+
+
+def test_concurrent_additions_survive_reload(tmp_path, monkeypatch):
+    from concurrent.futures import ThreadPoolExecutor
+    import threading
+    import time
+    store = BM25Store(str(tmp_path))
+    original = store._build_index
+    def delayed(tokens):
+        time.sleep(.005)
+        return original(tokens)
+    monkeypatch.setattr(store, '_build_index', delayed)
+    barrier = threading.Barrier(8)
+    def add(i):
+        barrier.wait(timeout=5)
+        store.add('documents', [{'chunk_id': str(i), 'text': 'parallel route evidence'}])
+    with ThreadPoolExecutor(max_workers=8) as pool:
+        list(pool.map(add, range(8)))
+    assert set(BM25Store(str(tmp_path))._load('documents')[0]) == {str(i) for i in range(8)}

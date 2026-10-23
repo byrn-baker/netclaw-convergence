@@ -1,0 +1,2502 @@
+{
+  "spec": 142,
+  "extension": "io.modelcontextprotocol/tasks",
+  "version": "4.0.11",
+  "servers": [
+    {
+      "server": "analysis-mcp",
+      "status": "enabled",
+      "reason": "Reviewed bounded reads/analysis; execution policies retained.",
+      "tools": [
+        {
+          "name": "analysis_datasets",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "analysis_query",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "analysis_status",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        }
+      ]
+    },
+    {
+      "server": "anta-mcp",
+      "status": "enabled",
+      "reason": "Reviewed bounded reads/analysis; execution policies retained.",
+      "tools": [
+        {
+          "name": "anta_describe_test",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "anta_list_tests",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "anta_run_tests",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "anta_status",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        }
+      ]
+    },
+    {
+      "server": "auvik-mcp",
+      "status": "enabled",
+      "reason": "Reviewed bounded reads/analysis; execution policies retained.",
+      "tools": [
+        {
+          "name": "auvik_get_component_statistics",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "auvik_get_device_statistics",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "auvik_get_interface_statistics",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "auvik_get_oid_statistics",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "auvik_get_service_statistics",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "auvik_get_snmp_poller_history",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "auvik_get_usage",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "auvik_list_alerts",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "auvik_list_components",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "auvik_list_configurations",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "auvik_list_device_lifecycle",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "auvik_list_device_warranty",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "auvik_list_devices",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "auvik_list_entity_audits",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "auvik_list_entity_notes",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "auvik_list_interfaces",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "auvik_list_networks",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "auvik_list_snmp_poller_settings",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "auvik_list_tenants",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "auvik_verify_credentials",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        }
+      ]
+    },
+    {
+      "server": "azure-network-mcp",
+      "status": "enabled",
+      "reason": "Reviewed bounded reads/analysis; execution policies retained.",
+      "tools": [
+        {
+          "name": "azure_audit_nsg_compliance",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "azure_get_app_gateway_health",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "azure_get_dns_zones",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "azure_get_effective_security_rules",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "azure_get_expressroute_routes",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "azure_get_expressroute_status",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "azure_get_firewall_policy",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "azure_get_lb_backend_health",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "azure_get_network_watcher_status",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "azure_get_nsg_rules",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "azure_get_private_endpoints",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "azure_get_route_tables",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "azure_get_vnet_details",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "azure_get_vnet_peerings",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "azure_get_vpn_gateway_status",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "azure_list_firewalls",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "azure_list_load_balancers",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "azure_list_nsgs",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "azure_list_subscriptions",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "azure_list_vnets",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        }
+      ]
+    },
+    {
+      "server": "batfish-mcp",
+      "status": "enabled",
+      "reason": "Reviewed bounded reads/analysis; execution policies retained.",
+      "tools": [
+        {
+          "name": "batfish_check_compliance",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "batfish_delete_snapshot",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "batfish_diff_configs",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "batfish_list_snapshots",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "batfish_test_reachability",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "batfish_trace_acl",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "batfish_upload_snapshot",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "batfish_validate_config",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        }
+      ]
+    },
+    {
+      "server": "bgp-intel-mcp",
+      "status": "enabled",
+      "reason": "Reviewed bounded reads/analysis; execution policies retained.",
+      "tools": [
+        {
+          "name": "atlas_anchors",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "atlas_probe_count",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "peering_network",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "peering_presence",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "registry_abuse_contact",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "registry_lookup",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "resource_report",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "routing_announced_prefixes",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "routing_as_overview",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "rpki_validate",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        }
+      ]
+    },
+    {
+      "server": "catc-mcp",
+      "status": "enabled",
+      "reason": "Reviewed bounded reads/analysis; execution policies retained.",
+      "tools": [
+        {
+          "name": "catc_compliance",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "catc_describe_operation",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "catc_devices",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "catc_events",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "catc_find",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "catc_health",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "catc_other",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "catc_sites",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "catc_software",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "catc_wireless",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        }
+      ]
+    },
+    {
+      "server": "cisco-psirt-mcp",
+      "status": "enabled",
+      "reason": "Reviewed bounded reads/analysis; execution policies retained.",
+      "tools": [
+        {
+          "name": "check_advisory",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "check_cve",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "check_version",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "check_versions",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "list_recent",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "psirt_status",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        }
+      ]
+    },
+    {
+      "server": "claroty-mcp",
+      "status": "enabled",
+      "reason": "Reviewed bounded reads/analysis; execution policies retained.",
+      "tools": [
+        {
+          "name": "acknowledge_alert",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "assign_alerts",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "get_alert_with_devices",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "get_audit_log",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "get_device_communication_map",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "get_device_details",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "get_server_interfaces",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "get_site",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "get_vulnerable_devices",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "label_alerts",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "list_alerts",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "list_devices",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "list_edge_locations",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "list_organization_zones",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "list_ot_activity_events",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "list_servers",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "list_sites",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "list_vulnerabilities",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "set_device_custom_attribute",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "set_device_purdue_level",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "set_vulnerability_relevance",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        }
+      ]
+    },
+    {
+      "server": "document-mcp",
+      "status": "enabled",
+      "reason": "Reviewed bounded reads/analysis; execution policies retained.",
+      "tools": [
+        {
+          "name": "docx_write",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "list_documents",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "pdf_fill_form",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "pdf_inspect_form",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "pptx_write",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "xlsx_write",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        }
+      ]
+    },
+    {
+      "server": "eve-ng-mcp-server",
+      "status": "enabled",
+      "reason": "Reviewed bounded reads/analysis; execution policies retained.",
+      "tools": [
+        {
+          "name": "eve_auth",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "eve_connect_interface",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "eve_create_lab",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "eve_create_network",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "eve_create_node",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "eve_delete_lab",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "eve_delete_network",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "eve_delete_node",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "eve_discover_node",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "eve_exec_eos",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "eve_exec_ios",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "eve_exec_junos",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "eve_exec_nxos",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "eve_exec_vpcs",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "eve_export_all_node_configs",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "eve_export_lab",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "eve_export_node_config",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "eve_get_all_configs",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "eve_get_lab",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "eve_get_node",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "eve_get_node_config",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "eve_get_topology",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "eve_import_lab",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "eve_list_config_summaries",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "eve_list_images",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "eve_list_labs",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "eve_list_networks",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "eve_list_node_interfaces",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "eve_list_node_types",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "eve_list_nodes",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "eve_set_node_config",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "eve_set_node_startup_mode",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "eve_start_lab",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "eve_start_node",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "eve_status",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "eve_stop_lab",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "eve_stop_node",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "eve_wipe_node",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "eve_wipe_node_config",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        }
+      ]
+    },
+    {
+      "server": "fortinet-mcp",
+      "status": "enabled",
+      "reason": "Reviewed bounded reads/analysis; execution policies retained.",
+      "tools": [
+        {
+          "name": "faz_fetch_more",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "faz_list_devices",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "faz_policy_activity",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "faz_query_logs",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "fgt_compare_with_manager",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "fgt_get_policies",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "fgt_get_routes",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "fgt_list_interfaces",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "fgt_system_status",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "fgt_vpn_tunnels",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "fmg_check_change_record",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "fmg_get_policy_package",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "fmg_get_revisions",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "fmg_install_package",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "fmg_list_adoms",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "fmg_list_devices",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "fmg_list_policy_packages",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "fmg_preview_install",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "fmg_resolve_object",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "fmg_search_rules",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "fortinet_posture",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        }
+      ]
+    },
+    {
+      "server": "gnmi-mcp",
+      "status": "enabled",
+      "reason": "Reviewed bounded reads/analysis; execution policies retained.",
+      "tools": [
+        {
+          "name": "gnmi_browse_yang_paths",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "gnmi_capabilities",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "gnmi_compare_with_cli",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "gnmi_get",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "gnmi_get_subscription_updates",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "gnmi_get_subscriptions",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "gnmi_list_targets",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "gnmi_set",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "gnmi_subscribe",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "gnmi_unsubscribe",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        }
+      ]
+    },
+    {
+      "server": "gns3-mcp-server",
+      "status": "enabled",
+      "reason": "Reviewed bounded reads/analysis; execution policies retained.",
+      "tools": [
+        {
+          "name": "gns3_bulk_node_action",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "gns3_clone_project",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "gns3_close_project",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "gns3_create_link",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "gns3_create_node",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "gns3_create_project",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "gns3_create_snapshot",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "gns3_delete_link",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "gns3_delete_project",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "gns3_delete_snapshot",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "gns3_export_project",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "gns3_get_capture",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "gns3_get_node_console",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "gns3_get_project",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "gns3_import_project",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "gns3_isolate_node",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "gns3_list_computes",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "gns3_list_links",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "gns3_list_nodes",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "gns3_list_projects",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "gns3_list_snapshots",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "gns3_list_templates",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "gns3_open_project",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "gns3_reload_node",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "gns3_restore_snapshot",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "gns3_start_capture",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "gns3_start_node",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "gns3_stop_capture",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "gns3_stop_node",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "gns3_suspend_node",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        }
+      ]
+    },
+    {
+      "server": "halo-mcp",
+      "status": "enabled",
+      "reason": "Reviewed bounded reads/analysis; execution policies retained.",
+      "tools": [
+        {
+          "name": "halo_create_change_request",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "halo_get_asset",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "halo_get_asset_relationships",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "halo_get_asset_tickets",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "halo_get_field",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "halo_get_kb_article",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "halo_get_ticket",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "halo_get_ticket_actions",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "halo_get_ticket_type",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "halo_list_assets",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "halo_list_clients",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "halo_list_contracts",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "halo_list_fields",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "halo_list_kb_articles",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "halo_list_sites",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "halo_list_ticket_types",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "halo_list_tickets",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "halo_list_users",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        }
+      ]
+    },
+    {
+      "server": "image-style-mcp",
+      "status": "foreground",
+      "reason": "Paid/model execution and artifact side effects need replay/budget acceptance.",
+      "tools": [
+        {
+          "name": "style_image",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        }
+      ]
+    },
+    {
+      "server": "jev-mcp",
+      "status": "foreground",
+      "reason": "Inference budget, task binding and consent need explicit replay acceptance; status is immediate.",
+      "tools": [
+        {
+          "name": "jev_assessment",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "jev_evaluate",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "jev_status",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        }
+      ]
+    },
+    {
+      "server": "memory-mcp",
+      "status": "enabled",
+      "reason": "Reviewed bounded reads/analysis; execution policies retained.",
+      "tools": [
+        {
+          "name": "memory_get_decisions",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "memory_get_facts",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "memory_invalidate",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "memory_link_entities",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "memory_query_graph",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "memory_recall",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "memory_record_decision",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "memory_record_fact",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "memory_store_session",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "memory_timeline",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        }
+      ]
+    },
+    {
+      "server": "multivendor-cli-mcp",
+      "status": "enabled",
+      "reason": "Reviewed bounded reads/analysis; execution policies retained.",
+      "tools": [
+        {
+          "name": "check_command_policy",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "check_device_readiness",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "check_reachability",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "get_facts",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "list_devices",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "run_command",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "run_fleet",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "server_info",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        }
+      ]
+    },
+    {
+      "server": "n2n-mcp",
+      "status": "foreground",
+      "reason": "Federated grants, approval context and existing delegation task lifecycle require dedicated binding tests.",
+      "tools": [
+        {
+          "name": "n2n_approvals",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "n2n_approve",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "n2n_audit",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "n2n_chat",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "n2n_compare_capabilities",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "n2n_config",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "n2n_connect",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "n2n_consent",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "n2n_delegate",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "n2n_deny",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "n2n_enroll_token",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "n2n_faults",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "n2n_forget_endpoint",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "n2n_grant",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "n2n_health",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "n2n_invoke",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "n2n_kill",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "n2n_knowledge_query",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "n2n_knowledge_route",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "n2n_list_grants",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "n2n_member_add",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "n2n_member_health",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "n2n_member_list",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "n2n_member_remove",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "n2n_notify_phone",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "n2n_peer_capabilities",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "n2n_posture",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "n2n_replicate",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "n2n_replicate_delete",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "n2n_replicate_resync",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "n2n_revoke_grant",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "n2n_risk_status",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "n2n_route",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "n2n_set_edge_gate",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "n2n_set_visibility",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "n2n_status",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "n2n_task_cancel",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "n2n_task_result",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "n2n_task_status",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "n2n_trust",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        }
+      ]
+    },
+    {
+      "server": "nautobot-golden-config-mcp",
+      "status": "enabled",
+      "reason": "Reviewed bounded reads/analysis; execution policies retained.",
+      "tools": [
+        {
+          "name": "golden_config_backup",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "golden_config_compliance",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "golden_config_create_compliance_feature",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "golden_config_create_compliance_rule",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "golden_config_full_pipeline",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "golden_config_generate_intended",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "golden_config_get_backup",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "golden_config_get_compliance_diff",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "golden_config_get_compliance_summary",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "golden_config_get_device_context",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "golden_config_get_intended",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "golden_config_get_settings",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "golden_config_get_templates",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "golden_config_remediate",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "golden_config_render_preview",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "golden_config_update_device_context",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "golden_config_update_template",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        }
+      ]
+    },
+    {
+      "server": "nautobot-mcp-v2",
+      "status": "enabled",
+      "reason": "Reviewed bounded reads/analysis; execution policies retained.",
+      "tools": [
+        {
+          "name": "cisco_design_reference",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "golden_config_get_template",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "nautobot_add_secret_to_group",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "nautobot_assign_ip_to_vm",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "nautobot_create",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "nautobot_create_autonomous_system",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "nautobot_create_bgp_peer_group",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "nautobot_create_bgp_peering",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "nautobot_create_compliance_feature",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "nautobot_create_compliance_rule",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "nautobot_create_config_context",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "nautobot_create_git_repository",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "nautobot_create_graphql_query",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "nautobot_create_interface",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "nautobot_create_ip_address",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "nautobot_create_prefix",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "nautobot_create_secret",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "nautobot_create_secrets_group",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "nautobot_create_virtual_machine",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "nautobot_create_vlan",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "nautobot_create_vm_interface",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "nautobot_delete",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "nautobot_enable_job",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "nautobot_get_autonomous_systems",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "nautobot_get_bgp_routing",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "nautobot_get_cables",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "nautobot_get_compliance_rules",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "nautobot_get_config_compliance",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "nautobot_get_config_context_detail",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "nautobot_get_config_contexts",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "nautobot_get_device_config_context",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "nautobot_get_devices",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "nautobot_get_dynamic_group_members",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "nautobot_get_firewall_policies",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "nautobot_get_firewall_zones",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "nautobot_get_git_repositories",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "nautobot_get_golden_config_settings",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "nautobot_get_golden_configs",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "nautobot_get_graphql_queries",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "nautobot_get_interfaces",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "nautobot_get_ip_addresses",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "nautobot_get_job_result",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "nautobot_get_nat_policies",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "nautobot_get_ospf_routing",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "nautobot_get_prefixes",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "nautobot_get_schema",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "nautobot_get_virtual_machines",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "nautobot_get_vlans",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "nautobot_graphql",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "nautobot_list_jobs",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "nautobot_reconcile",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "nautobot_render_device_config",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "nautobot_run_job",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "nautobot_sync_git_repository",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "nautobot_test_connection",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "nautobot_update_config_context",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "nautobot_update_git_repository",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "nautobot_update_golden_config_setting",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "nautobot_update_object",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        }
+      ]
+    },
+    {
+      "server": "nautobot-routing-mcp",
+      "status": "enabled",
+      "reason": "Reviewed bounded reads/analysis; execution policies retained.",
+      "tools": [
+        {
+          "name": "routing_add_peer_to_group",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "routing_create_autonomous_system",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "routing_create_peer_group",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "routing_create_peering",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "routing_create_routing_instance",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "routing_delete_peer_group",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "routing_delete_peering",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "routing_get_autonomous_systems",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "routing_get_bgp_peer_detail",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "routing_get_bgp_peers",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "routing_get_bgp_summary",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "routing_get_peer_groups",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "routing_reconcile_bgp",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "routing_remove_peer_from_group",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        }
+      ]
+    },
+    {
+      "server": "netclaw-dot-mcp",
+      "status": "foreground",
+      "reason": "Custom ASGI principal is not FastMCP AccessToken; existing ask/job-result already returns application handles. Do not expose unscoped protocol task results.",
+      "tools": [
+        {
+          "name": "netclaw_ask",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "netclaw_audit_status",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "netclaw_health_summary",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "netclaw_inventory",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "netclaw_job_result",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        }
+      ]
+    },
+    {
+      "server": "nsm-mcp",
+      "status": "enabled",
+      "reason": "Reviewed bounded reads/analysis; execution policies retained.",
+      "tools": [
+        {
+          "name": "nsm_alerts",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "nsm_analyze",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "nsm_protocol_log",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "nsm_sessions",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "nsm_status",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "nsm_update_rules",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        }
+      ]
+    },
+    {
+      "server": "packet-buddy-mcp",
+      "status": "enabled",
+      "reason": "Reviewed bounded reads/analysis; execution policies retained.",
+      "tools": [
+        {
+          "name": "list_pcaps",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "pcap_conversations",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "pcap_dns_queries",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "pcap_endpoints",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "pcap_expert_info",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "pcap_filter",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "pcap_http_requests",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "pcap_packet_detail",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "pcap_protocol_hierarchy",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "pcap_summary",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "pcap_to_json",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "save_pcap_from_base64",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        }
+      ]
+    },
+    {
+      "server": "protocol-mcp",
+      "status": "enabled",
+      "reason": "Reviewed bounded reads/analysis; execution policies retained.",
+      "tools": [
+        {
+          "name": "bgp_adjust_local_pref",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "bgp_get_peers",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "bgp_get_rib",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "bgp_inject_route",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "bgp_withdraw_route",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "gre_tunnel_status",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "ospf_adjust_cost",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "ospf_get_lsdb",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "ospf_get_neighbors",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "protocol_summary",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        }
+      ]
+    },
+    {
+      "server": "rag-mcp",
+      "status": "enabled",
+      "reason": "Reviewed bounded reads/analysis; execution policies retained.",
+      "tools": [
+        {
+          "name": "rag_delete",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "rag_ingest",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "rag_ingest_base64",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "rag_ingest_url",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "rag_list",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "rag_reindex",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "rag_search",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "rag_snapshot",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "rag_stats",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "rag_update_metadata",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        }
+      ]
+    },
+    {
+      "server": "redfish-mcp",
+      "status": "enabled",
+      "reason": "Reviewed bounded reads/analysis; execution policies retained.",
+      "tools": [
+        {
+          "name": "redfish_firmware",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "redfish_logs",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "redfish_managers",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "redfish_status",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "redfish_systems",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "redfish_thermal_power",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        }
+      ]
+    },
+    {
+      "server": "suzieq-mcp",
+      "status": "enabled",
+      "reason": "Reviewed bounded reads/analysis; execution policies retained.",
+      "tools": [
+        {
+          "name": "suzieq_assert",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "suzieq_path",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "suzieq_show",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "suzieq_summarize",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "suzieq_unique",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        }
+      ]
+    },
+    {
+      "server": "topology-diagram-mcp",
+      "status": "enabled",
+      "reason": "Reviewed bounded reads/analysis; execution policies retained.",
+      "tools": [
+        {
+          "name": "render_structural",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        }
+      ]
+    },
+    {
+      "server": "tts-mcp",
+      "status": "enabled",
+      "reason": "Reviewed bounded reads/analysis; execution policies retained.",
+      "tools": [
+        {
+          "name": "list_voices",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "text_to_speech",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        }
+      ]
+    },
+    {
+      "server": "worldlabs-marble-mcp",
+      "status": "enabled",
+      "reason": "Reviewed bounded reads/analysis; execution policies retained.",
+      "tools": [
+        {
+          "name": "check_generation_status",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        },
+        {
+          "name": "generate_world",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "get_world",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        }
+      ]
+    },
+    {
+      "server": "zabbix-mcp",
+      "status": "foreground",
+      "reason": "Vendored upstream adoption is intentionally unmodified; requires a reviewed registration adapter and upstream acceptance.",
+      "tools": [
+        {
+          "name": "zabbix_api",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "zabbix_api_docs",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "zabbix_api_list",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        }
+      ]
+    },
+    {
+      "server": "zoom-rtms-mcp",
+      "status": "enabled",
+      "reason": "Reviewed bounded reads/analysis; execution policies retained.",
+      "tools": [
+        {
+          "name": "zoom_active_speaker",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "zoom_disable_listening",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "zoom_enable_listening",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "zoom_list_active_meetings",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "zoom_live_context",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "zoom_meeting_status",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "zoom_recent_chat",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "zoom_recent_transcript",
+          "task": false,
+          "reason": "Mutation, approval, collector, existing job lifecycle, or short local response; keep original execution."
+        },
+        {
+          "name": "zoom_search_historical_meetings",
+          "task": true,
+          "reason": "Bounded read/analysis with foreground fallback."
+        }
+      ]
+    }
+  ]
+}

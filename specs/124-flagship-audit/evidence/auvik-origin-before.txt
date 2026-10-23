@@ -1,0 +1,116 @@
+FFFF..                                                                   [100%]
+=================================== FAILURES ===================================
+_ test_untrusted_cursor_never_receives_credentials[https://foreign.example/page2] _
+
+cursor = 'https://foreign.example/page2'
+
+    @pytest.mark.parametrize('cursor', [
+        'https://foreign.example/page2',
+        'http://api.example/page2',
+        'https://api.example:444/page2',
+        'https://user:password@api.example/page2',
+    ])
+    async def test_untrusted_cursor_never_receives_credentials(cursor):
+        requests = []
+        def handler(request):
+            requests.append(request)
+            return httpx.Response(200, json={'data': [{'id': 'first'}],
+                                            'links': {'next': cursor} if len(requests) == 1 else {}})
+        client = AuvikClient('https://api.example', 'fixture-user', 'fixture-key',
+                             transport=httpx.MockTransport(handler))
+        try:
+            result = await client.get_all('/v1/devices')
+        finally:
+            await client.close()
+>       assert len(requests) == 1
+E       AssertionError: assert 2 == 1
+E        +  where 2 = len([<Request('GET', 'https://api.example/v1/devices')>, <Request('GET', 'https://foreign.example/page2')>])
+
+tests/auvik-mcp/test_pagination_origin.py:24: AssertionError
+__ test_untrusted_cursor_never_receives_credentials[http://api.example/page2] __
+
+cursor = 'http://api.example/page2'
+
+    @pytest.mark.parametrize('cursor', [
+        'https://foreign.example/page2',
+        'http://api.example/page2',
+        'https://api.example:444/page2',
+        'https://user:password@api.example/page2',
+    ])
+    async def test_untrusted_cursor_never_receives_credentials(cursor):
+        requests = []
+        def handler(request):
+            requests.append(request)
+            return httpx.Response(200, json={'data': [{'id': 'first'}],
+                                            'links': {'next': cursor} if len(requests) == 1 else {}})
+        client = AuvikClient('https://api.example', 'fixture-user', 'fixture-key',
+                             transport=httpx.MockTransport(handler))
+        try:
+            result = await client.get_all('/v1/devices')
+        finally:
+            await client.close()
+>       assert len(requests) == 1
+E       AssertionError: assert 2 == 1
+E        +  where 2 = len([<Request('GET', 'https://api.example/v1/devices')>, <Request('GET', 'http://api.example/page2')>])
+
+tests/auvik-mcp/test_pagination_origin.py:24: AssertionError
+_ test_untrusted_cursor_never_receives_credentials[https://api.example:444/page2] _
+
+cursor = 'https://api.example:444/page2'
+
+    @pytest.mark.parametrize('cursor', [
+        'https://foreign.example/page2',
+        'http://api.example/page2',
+        'https://api.example:444/page2',
+        'https://user:password@api.example/page2',
+    ])
+    async def test_untrusted_cursor_never_receives_credentials(cursor):
+        requests = []
+        def handler(request):
+            requests.append(request)
+            return httpx.Response(200, json={'data': [{'id': 'first'}],
+                                            'links': {'next': cursor} if len(requests) == 1 else {}})
+        client = AuvikClient('https://api.example', 'fixture-user', 'fixture-key',
+                             transport=httpx.MockTransport(handler))
+        try:
+            result = await client.get_all('/v1/devices')
+        finally:
+            await client.close()
+>       assert len(requests) == 1
+E       AssertionError: assert 2 == 1
+E        +  where 2 = len([<Request('GET', 'https://api.example/v1/devices')>, <Request('GET', 'https://api.example:444/page2')>])
+
+tests/auvik-mcp/test_pagination_origin.py:24: AssertionError
+_ test_untrusted_cursor_never_receives_credentials[https://user:password@api.example/page2] _
+
+cursor = 'https://user:password@api.example/page2'
+
+    @pytest.mark.parametrize('cursor', [
+        'https://foreign.example/page2',
+        'http://api.example/page2',
+        'https://api.example:444/page2',
+        'https://user:password@api.example/page2',
+    ])
+    async def test_untrusted_cursor_never_receives_credentials(cursor):
+        requests = []
+        def handler(request):
+            requests.append(request)
+            return httpx.Response(200, json={'data': [{'id': 'first'}],
+                                            'links': {'next': cursor} if len(requests) == 1 else {}})
+        client = AuvikClient('https://api.example', 'fixture-user', 'fixture-key',
+                             transport=httpx.MockTransport(handler))
+        try:
+            result = await client.get_all('/v1/devices')
+        finally:
+            await client.close()
+>       assert len(requests) == 1
+E       AssertionError: assert 2 == 1
+E        +  where 2 = len([<Request('GET', 'https://api.example/v1/devices')>, <Request('GET', 'https://user:password@api.example/page2')>])
+
+tests/auvik-mcp/test_pagination_origin.py:24: AssertionError
+=========================== short test summary info ============================
+FAILED tests/auvik-mcp/test_pagination_origin.py::test_untrusted_cursor_never_receives_credentials[https://foreign.example/page2]
+FAILED tests/auvik-mcp/test_pagination_origin.py::test_untrusted_cursor_never_receives_credentials[http://api.example/page2]
+FAILED tests/auvik-mcp/test_pagination_origin.py::test_untrusted_cursor_never_receives_credentials[https://api.example:444/page2]
+FAILED tests/auvik-mcp/test_pagination_origin.py::test_untrusted_cursor_never_receives_credentials[https://user:password@api.example/page2]
+4 failed, 2 passed in 0.08s

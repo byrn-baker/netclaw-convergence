@@ -1,0 +1,9 @@
+{
+  "command": "openclaw health --json --timeout 5000",
+  "exit_code": 0,
+  "ok": true,
+  "structured_response": true,
+  "config_preserved": true,
+  "service_repair": "Installed missing local gateway LaunchAgent using existing token configuration; no configured channels or cron jobs",
+  "raw_output": "retained privately; not committed"
+}

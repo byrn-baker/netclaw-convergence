@@ -1,0 +1,30 @@
+{
+  "results": [
+    {
+      "stage": "initial",
+      "version": "0.0.0",
+      "connected": true
+    },
+    {
+      "stage": "upgraded",
+      "version": "0.1.0",
+      "connected": true
+    },
+    {
+      "stage": "disabled",
+      "disabled": true
+    },
+    {
+      "stage": "reenabled",
+      "version": "0.1.0",
+      "connected": true
+    }
+  ],
+  "uninstalled": true,
+  "backendPreserved": true,
+  "providerCalls": 0,
+  "syntheticGatewayCalls": 0,
+  "sha256": "b13bdfe68c4086bd22edb7521d87443837127f1c70addae08e302b352725c6b8",
+  "scope": "Actual installed VSIX; synthetic older package upgrade; isolated unchanged HUD; no owner-service modifications.",
+  "profilePreservedAcrossUpgradeAndDisable": true
+}

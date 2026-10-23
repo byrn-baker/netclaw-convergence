@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import json
 import logging
+import math
 import os
 from typing import Dict
 
@@ -76,15 +77,33 @@ def _load_pricing_overrides() -> Dict[str, ModelPricing]:
         )
         return {}
 
+    if not isinstance(overrides_data, dict):
+        logger.warning("Pricing overrides must be a model mapping; ignoring overrides")
+        return {}
     overrides: Dict[str, ModelPricing] = {}
     for model_name, prices in overrides_data.items():
         canonical = _resolve_model(model_name)
         base = DEFAULT_PRICING.get(canonical)
+        if not isinstance(prices, dict):
+            logger.warning("Ignoring malformed pricing entry for %s", canonical)
+            continue
+        values = {
+            "input": prices.get("input", base.input_price_per_1m if base else 5.0),
+            "output": prices.get("output", base.output_price_per_1m if base else 25.0),
+            "cache_discount": prices.get("cache_discount", base.cache_discount_pct if base else 90.0),
+        }
+        try:
+            valid = all(type(v) in (int, float) and math.isfinite(v) and v >= 0 for v in values.values())
+        except OverflowError:
+            valid = False
+        if not valid or values["cache_discount"] > 100:
+            logger.warning("Ignoring invalid numeric pricing entry for %s", canonical)
+            continue
         overrides[canonical] = ModelPricing(
             model_name=canonical,
-            input_price_per_1m=prices.get("input", base.input_price_per_1m if base else 5.0),
-            output_price_per_1m=prices.get("output", base.output_price_per_1m if base else 25.0),
-            cache_discount_pct=prices.get("cache_discount", base.cache_discount_pct if base else 90.0),
+            input_price_per_1m=values["input"],
+            output_price_per_1m=values["output"],
+            cache_discount_pct=values["cache_discount"],
         )
 
     return overrides

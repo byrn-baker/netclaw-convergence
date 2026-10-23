@@ -1,0 +1,16 @@
+{
+  "publisher": "NetClaw",
+  "name": "netclaw",
+  "version": "0.1.0",
+  "source": "7b4ebee3cf819aeab86622606eb9afc729a7748b",
+  "sha256": "f75b73bdeaf524bf647ad4920ea5b5c85979ee1c20cba62d9cd6a20f6f79af45",
+  "bytes": 2349236,
+  "artifact": "netclaw-0.1.0-wsl-fixes.vsix",
+  "qualification": "Windows/WSL existing OpenClaw scope qualified with documented limitations; exact replacement Mac review/requalification and publication remain.",
+  "changesSinceFirstReplacement": [
+    "extension/changelog.md",
+    "extension/readme.md",
+    "extension/dist/extension.cjs"
+  ],
+  "assistantPayloadIdenticalToOriginal": true
+}

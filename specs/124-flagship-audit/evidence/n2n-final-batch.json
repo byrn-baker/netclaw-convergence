@@ -1,0 +1,45 @@
+{
+  "counts": {
+    "BLOCKED_DEPENDENCY": 0,
+    "ERROR": 0,
+    "FAIL": 0,
+    "NEEDS_DOCKER": 0,
+    "NEEDS_LIVE_CREDENTIALS": 0,
+    "PASS": 1
+  },
+  "exit_code": 0,
+  "generated_at": "2026-09-26T22:35:28.758854+00:00",
+  "results": [
+    {
+      "capabilities": [],
+      "command": [
+        "/Users/john.capobianco/netclaw/.contract-test-envs/n2n/bin/python",
+        "-m",
+        "pytest",
+        "tests/n2n"
+      ],
+      "detail": "offline contracts passed",
+      "duration_seconds": 38.54825370800245,
+      "environment": {
+        "fingerprint": "385596b075708500e2ac69f7d5ffbece964d09dae4ea79cead5f7f77d58f645d",
+        "path": ".contract-test-envs/n2n"
+      },
+      "exit_code": 0,
+      "status": "PASS",
+      "suite": "n2n",
+      "test_runs": [
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/n2n/bin/python",
+            "-m",
+            "pytest",
+            "tests/n2n"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\nplugins: anyio-4.15.1\ncollected 478 items\n\ntests/n2n/test_acme_060.py ..                                            [  0%]\ntests/n2n/test_authorization.py ........                                 [  2%]\ntests/n2n/test_benign_disconnect_100.py .............                    [  4%]\ntests/n2n/test_certs_060.py .............                                [  7%]\ntests/n2n/test_cold_start.py ...                                         [  8%]\ntests/n2n/test_consent.py .....                                          [  9%]\ntests/n2n/test_controls_failclosed.py .......                            [ 10%]\ntests/n2n/test_dead_peer_dampening_100.py ...........................    [ 16%]\ntests/n2n/test_delegation_bypass_guard.py .......                        [ 17%]\ntests/n2n/test_durable_services.py ....                                  [ 18%]\ntests/n2n/test_edge_approval.py ......                                   [ 19%]\ntests/n2n/test_edge_approvals_list.py ...                                [ 20%]\ntests/n2n/test_edge_ask.py ...........                                   [ 22%]\ntests/n2n/test_edge_ask_timeout.py ............                          [ 25%]\ntests/n2n/test_edge_capture.py .....                                     [ 26%]\ntests/n2n/test_edge_enrollment.py .....                                  [ 27%]\ntests/n2n/test_edge_gate_108.py .....                                    [ 28%]\ntests/n2n/test_edge_heartbeat.py ..                                      [ 28%]\ntests/n2n/test_edge_push.py .....                                        [ 29%]\ntests/n2n/test_edge_push_wake_signal.py ....                             [ 30%]\ntests/n2n/test_edge_result_push_after_reconnect.py ........              [ 32%]\ntests/n2n/test_edge_ws_frame_size.py .....                               [ 33%]\ntests/n2n/test_en2n_auth_baseline_060.py ...                             [ 34%]\ntests/n2n/test_en2n_regression.py .....                                  [ 35%]\ntests/n2n/test_endpoint_persistence_063.py ...                           [ 35%]\ntests/n2n/test_endpoint_reannounce.py ..                                 [ 36%]\ntests/n2n/test_endpoint_stability_108.py ...                             [ 36%]\ntests/n2n/test_enrollment.py ......                                      [ 38%]\ntests/n2n/test_ergonomics.py ...                                         [ 38%]\ntests/n2n/test_fault_isolation.py ....                                   [ 39%]\ntests/n2n/test_faults_edge_liveness.py ..                                [ 39%]\ntests/n2n/test_forget_endpoint_100.py ................                   [ 43%]\ntests/n2n/test_framing.py ...                                            [ 43%]\ntests/n2n/test_gait_emit.py .....                                        [ 44%]\ntests/n2n/test_gateway_openclaw_resolve.py ...                           [ 45%]\ntests/n2n/test_gateway_rpc_cleanup.py .                                  [ 45%]\ntests/n2n/test_hub_attestation_060.py ..                                 [ 46%]\ntests/n2n/test_inbound_log_enrichment_100.py .....................       [ 50%]\ntests/n2n/test_internal_tls_security.py ..                               [ 51%]\ntests/n2n/test_internal_transport.py ...                                 [ 51%]\ntests/n2n/test_inventory.py .....                                        [ 52%]\ntests/n2n/test_invocation_chat.py ..                                     [ 53%]\ntests/n2n/test_knowledge_cards.py .........                              [ 55%]\ntests/n2n/test_knowledge_routing.py .........                            [ 56%]\ntests/n2n/test_log_dampening_config_100.py ......................        [ 61%]\ntests/n2n/test_logfilter_eof_100.py .................                    [ 65%]\ntests/n2n/test_member_delegation.py ....                                 [ 65%]\ntests/n2n/test_member_liveness_shared.py ..........                      [ 67%]\ntests/n2n/test_members_endpoint_edge_liveness.py .                       [ 68%]\ntests/n2n/test_metadata_seam_063.py ...                                  [ 68%]\ntests/n2n/test_negotiate.py ....                                         [ 69%]\ntests/n2n/test_outbound_outcome_100.py ................                  [ 73%]\ntests/n2n/test_patch_upgrade_060.py .                                    [ 73%]\ntests/n2n/test_posture.py ...........                                    [ 75%]\ntests/n2n/test_posture_certsec_060.py .                                  [ 75%]\ntests/n2n/test_pq_posture_063.py .......                                 [ 77%]\ntests/n2n/test_protocol_hardening.py ...................                 [ 81%]\ntests/n2n/test_quarantine.py ...                                         [ 81%]\ntests/n2n/test_reconnect.py ....                                         [ 82%]\ntests/n2n/test_replication_identity.py ....                              [ 83%]\ntests/n2n/test_replication_lifecycle.py ......                           [ 84%]\ntests/n2n/test_replication_manifest_batch.py .......                     [ 86%]\ntests/n2n/test_replication_provenance.py ...                             [ 86%]\ntests/n2n/test_risk.py ...........                                       [ 89%]\ntests/n2n/test_robustness.py ....                                        [ 89%]\ntests/n2n/test_rotation_060.py ..                                        [ 90%]\ntests/n2n/test_routing.py ......                                         [ 91%]\ntests/n2n/test_scope_enforcement.py ....                                 [ 92%]\ntests/n2n/test_secured_federation_060.py ...                             [ 93%]\ntests/n2n/test_starttls_upgrade_060.py .                                 [ 93%]\ntests/n2n/test_tasks.py .......                                          [ 94%]\ntests/n2n/test_tls_auth_060.py ....                                      [ 95%]\ntests/n2n/test_transport_field_108.py .......                            [ 97%]\ntests/n2n/test_transport_posture_108.py ......                           [ 98%]\ntests/n2n/test_trust_hardening_060.py .....                              [ 99%]\ntests/n2n/test_two_daemon_loopback.py .                                  [ 99%]\ntests/n2n/test_zoom_resource_limits.py ..                                [100%]\n\n=============================== warnings summary ===============================\ntests/n2n/test_certs_060.py::test_verify_rejects_expired_leaf_with_clock_hint\n  /Users/john.capobianco/netclaw/tests/n2n/test_certs_060.py:63: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).\n    future = datetime.datetime.utcnow() + datetime.timedelta(days=3)\n\ntests/n2n/test_edge_enrollment.py: 1 warning\ntests/n2n/test_en2n_auth_baseline_060.py: 2 warnings\ntests/n2n/test_endpoint_persistence_063.py: 1 warning\ntests/n2n/test_enrollment.py: 8 warnings\ntests/n2n/test_hub_attestation_060.py: 1 warning\ntests/n2n/test_internal_tls_security.py: 1 warning\ntests/n2n/test_internal_transport.py: 4 warnings\ntests/n2n/test_member_delegation.py: 3 warnings\ntests/n2n/test_quarantine.py: 4 warnings\ntests/n2n/test_routing.py: 8 warnings\ntests/n2n/test_secured_federation_060.py: 2 warnings\ntests/n2n/test_two_daemon_loopback.py: 1 warning\n  /Users/john.capobianco/netclaw/mcp-servers/protocol-mcp/bgp/federation/risk.py:114: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).\n    now = datetime.datetime.utcnow()\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n====================== 478 passed, 37 warnings in 38.23s ======================="
+        }
+      ]
+    }
+  ],
+  "schema_version": 1
+}

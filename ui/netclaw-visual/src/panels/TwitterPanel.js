@@ -1,3 +1,4 @@
+import { setSafeHtml, appendSafeHtml } from '../security/safe-html.js';
 /**
  * TwitterPanel - Visual HUD component for NetClaw Twitter integration
  *
@@ -36,7 +37,7 @@ export class TwitterPanel {
     this.element = document.createElement('div');
     this.element.id = 'twitter-panel';
     this.element.className = 'twitter-panel';
-    this.element.innerHTML = this.getTemplate();
+    setSafeHtml(this.element, this.getTemplate());
 
     // Set up event listeners
     this.setupEventListeners();
@@ -272,11 +273,11 @@ export class TwitterPanel {
     if (!listEl) return;
 
     if (this.tweets.length === 0) {
-      listEl.innerHTML = '<div class="twitter-empty">No tweets yet. Start posting!</div>';
+      setSafeHtml(listEl, '<div class="twitter-empty">No tweets yet. Start posting!</div>');
       return;
     }
 
-    listEl.innerHTML = this.tweets.map(tweet => this.getTweetHTML(tweet)).join('');
+    setSafeHtml(listEl, this.tweets.map(tweet => this.getTweetHTML(tweet)).join(''));
   }
 
   /**
@@ -287,11 +288,11 @@ export class TwitterPanel {
     if (!listEl) return;
 
     if (this.mentions.length === 0) {
-      listEl.innerHTML = '<div class="twitter-empty">No mentions yet. Check for @mentions!</div>';
+      setSafeHtml(listEl, '<div class="twitter-empty">No mentions yet. Check for @mentions!</div>');
       return;
     }
 
-    listEl.innerHTML = this.mentions.map(mention => this.getMentionHTML(mention)).join('');
+    setSafeHtml(listEl, this.mentions.map(mention => this.getMentionHTML(mention)).join(''));
   }
 
   /**

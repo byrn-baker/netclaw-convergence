@@ -1,0 +1,16 @@
+
+> netclaw-hud@1.0.0 build
+> vite build
+
+vite v6.4.3 building for production...
+transforming...
+✓ 84 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/canvas.html                                  0.77 kB │ gzip:   0.44 kB
+dist/index.html                                   7.22 kB │ gzip:   2.29 kB
+dist/assets/hud-CIYztu53.css                     25.76 kB │ gzip:   6.05 kB
+dist/assets/modulepreload-polyfill-B5Qt9EMX.js    0.71 kB │ gzip:   0.40 kB
+dist/assets/canvas-CuGWEEPi.js                  262.38 kB │ gzip:  81.27 kB
+dist/assets/hud-DOZQgZ7D.js                     852.42 kB │ gzip: 258.78 kB
+✓ built in 2.10s

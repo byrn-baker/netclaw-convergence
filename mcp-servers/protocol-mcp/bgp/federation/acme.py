@@ -22,6 +22,7 @@ from __future__ import annotations
 import asyncio
 import logging
 import os
+import signal
 from pathlib import Path
 from typing import Optional
 
@@ -68,9 +69,20 @@ def _argv(base_dir, domain: str, action: str) -> list:
 async def _run(argv: list, timeout_s: float = 180.0):
     proc = await asyncio.create_subprocess_exec(
         *argv, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.STDOUT,
-        env=os.environ.copy())
-    out, _ = await asyncio.wait_for(proc.communicate(), timeout=timeout_s)
-    return proc.returncode, (out.decode(errors="replace") if out else "")
+        env=os.environ.copy(), start_new_session=(os.name == "posix"))
+    try:
+        out, _ = await asyncio.wait_for(proc.communicate(), timeout=timeout_s)
+        return proc.returncode, (out.decode(errors="replace") if out else "")
+    except BaseException:
+        try:
+            if os.name == "posix":
+                os.killpg(proc.pid, signal.SIGKILL)
+            elif proc.returncode is None:
+                proc.kill()
+        except ProcessLookupError:
+            pass
+        await proc.communicate()  # drain and reap before reporting timeout/cancellation
+        raise
 
 
 def _cert_path(base_dir, domain: str) -> Path:
@@ -101,7 +113,7 @@ async def renew(domain: str, base_dir) -> Optional[str]:
     unless forced). Returns the current fullchain PEM."""
     if not os.path.exists(lego_bin()):
         return None
-    rc, out = await _run(_argv(base_dir, domain, "renew") + ["--days", "30"])
+    rc, out = await _run(_argv(base_dir, domain, "renew") + ["--days", "30", "--reuse-key"])
     if rc != 0:
         logger.warning("acme: renew for %s failed (rc=%s): %s", domain, rc, out[-500:])
         # Fall back to the on-disk cert if present (renew may no-op yet succeed).

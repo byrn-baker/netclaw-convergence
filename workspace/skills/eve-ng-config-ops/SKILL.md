@@ -26,3 +26,9 @@ Use this skill for **startup-config management inside lab files**.
 - `eve_list_config_summaries`
 - `eve_get_all_configs`
 - `eve_wipe_node_config`
+
+## Failure Behavior
+
+- If a tool call fails with an authentication or connection error, check that `EVE_PASSWORD`, `EVE_URL`, `EVE_USER` are set and valid before assuming a data or device problem.
+- On a tool error (timeout, unreachable host, malformed response), report the failure and its error message directly to the user rather than fabricating or guessing at results.
+- For a confirmed read-only call, check connectivity and retry once if appropriate. For any call that changes state or sends a message, a timeout does not prove the action failed: inspect current state or delivery status before retrying, preserve the required approval/change gates, and do not repeat an action whose outcome is unknown.

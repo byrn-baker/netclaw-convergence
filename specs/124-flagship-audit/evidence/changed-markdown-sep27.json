@@ -1,0 +1,990 @@
+{
+  "rendered_documents": [
+    {
+      "path": ".specify/memory/constitution.md",
+      "headings": 28,
+      "tables": 0,
+      "fences": 1
+    },
+    {
+      "path": "CLAUDE.md",
+      "headings": 13,
+      "tables": 0,
+      "fences": 4
+    },
+    {
+      "path": "README.md",
+      "headings": 189,
+      "tables": 95,
+      "fences": 83
+    },
+    {
+      "path": "SOUL.md",
+      "headings": 112,
+      "tables": 6,
+      "fences": 3
+    },
+    {
+      "path": "TOOLS.md",
+      "headings": 63,
+      "tables": 15,
+      "fences": 7
+    },
+    {
+      "path": "docs/CHANGE-GATE-MIGRATION.md",
+      "headings": 1,
+      "tables": 0,
+      "fences": 1
+    },
+    {
+      "path": "docs/ENVIRONMENT-FILES.md",
+      "headings": 1,
+      "tables": 0,
+      "fences": 1
+    },
+    {
+      "path": "docs/GAIT-RUNTIME-MIGRATION.md",
+      "headings": 1,
+      "tables": 0,
+      "fences": 0
+    },
+    {
+      "path": "docs/HUD-ACCESS.md",
+      "headings": 3,
+      "tables": 0,
+      "fences": 1
+    },
+    {
+      "path": "docs/IN2N-TRANSPORT-MIGRATION.md",
+      "headings": 4,
+      "tables": 0,
+      "fences": 3
+    },
+    {
+      "path": "docs/INTEGRATION-TLS-MIGRATION.md",
+      "headings": 1,
+      "tables": 0,
+      "fences": 1
+    },
+    {
+      "path": "docs/MOBILE-RELEASE.md",
+      "headings": 1,
+      "tables": 0,
+      "fences": 2
+    },
+    {
+      "path": "docs/MULTIVENDOR-SSH-MIGRATION.md",
+      "headings": 1,
+      "tables": 0,
+      "fences": 1
+    },
+    {
+      "path": "docs/N2N-FEDERATION-GUIDE.md",
+      "headings": 9,
+      "tables": 0,
+      "fences": 4
+    },
+    {
+      "path": "docs/PYATS-HTTP-MIGRATION.md",
+      "headings": 4,
+      "tables": 0,
+      "fences": 3
+    },
+    {
+      "path": "docs/PYTHON-RUNTIME-MIGRATION.md",
+      "headings": 2,
+      "tables": 0,
+      "fences": 1
+    },
+    {
+      "path": "docs/REDFISH-TLS-MIGRATION.md",
+      "headings": 1,
+      "tables": 0,
+      "fences": 1
+    },
+    {
+      "path": "docs/VOICE-SECURITY.md",
+      "headings": 4,
+      "tables": 0,
+      "fences": 2
+    },
+    {
+      "path": "docs/ZOOM-SECURITY-MIGRATION.md",
+      "headings": 1,
+      "tables": 0,
+      "fences": 1
+    },
+    {
+      "path": "labs/multivendor-r1/README.md",
+      "headings": 5,
+      "tables": 2,
+      "fences": 4
+    },
+    {
+      "path": "mcp-servers/anta-mcp/README.md",
+      "headings": 8,
+      "tables": 3,
+      "fences": 2
+    },
+    {
+      "path": "mcp-servers/claroty-mcp/README.md",
+      "headings": 14,
+      "tables": 4,
+      "fences": 3
+    },
+    {
+      "path": "mcp-servers/fortinet-mcp/README.md",
+      "headings": 14,
+      "tables": 4,
+      "fences": 3
+    },
+    {
+      "path": "mcp-servers/gnmi-mcp/README.md",
+      "headings": 11,
+      "tables": 3,
+      "fences": 3
+    },
+    {
+      "path": "mcp-servers/ipfix-mcp/README.md",
+      "headings": 21,
+      "tables": 2,
+      "fences": 9
+    },
+    {
+      "path": "mcp-servers/memory-mcp/README.md",
+      "headings": 29,
+      "tables": 1,
+      "fences": 15
+    },
+    {
+      "path": "mcp-servers/multivendor-cli-mcp/README.md",
+      "headings": 13,
+      "tables": 2,
+      "fences": 11
+    },
+    {
+      "path": "mcp-servers/nautobot-mcp-v2/README.md",
+      "headings": 10,
+      "tables": 5,
+      "fences": 2
+    },
+    {
+      "path": "mcp-servers/rag-mcp/README.md",
+      "headings": 11,
+      "tables": 2,
+      "fences": 2
+    },
+    {
+      "path": "mcp-servers/redfish-mcp/README.md",
+      "headings": 7,
+      "tables": 2,
+      "fences": 0
+    },
+    {
+      "path": "mcp-servers/snmptrap-mcp/README.md",
+      "headings": 22,
+      "tables": 2,
+      "fences": 10
+    },
+    {
+      "path": "mcp-servers/syslog-mcp/README.md",
+      "headings": 21,
+      "tables": 3,
+      "fences": 8
+    },
+    {
+      "path": "specs/124-flagship-audit/analysis.md",
+      "headings": 5,
+      "tables": 2,
+      "fences": 0
+    },
+    {
+      "path": "specs/124-flagship-audit/blog-draft.md",
+      "headings": 1,
+      "tables": 0,
+      "fences": 0
+    },
+    {
+      "path": "specs/124-flagship-audit/checklists/requirements.md",
+      "headings": 2,
+      "tables": 0,
+      "fences": 0
+    },
+    {
+      "path": "specs/124-flagship-audit/clarification.md",
+      "headings": 1,
+      "tables": 1,
+      "fences": 0
+    },
+    {
+      "path": "specs/124-flagship-audit/contracts/audit-and-migration.md",
+      "headings": 8,
+      "tables": 1,
+      "fences": 0
+    },
+    {
+      "path": "specs/124-flagship-audit/data-model.md",
+      "headings": 1,
+      "tables": 0,
+      "fences": 0
+    },
+    {
+      "path": "specs/124-flagship-audit/findings.md",
+      "headings": 61,
+      "tables": 2,
+      "fences": 0
+    },
+    {
+      "path": "specs/124-flagship-audit/handoff.md",
+      "headings": 7,
+      "tables": 0,
+      "fences": 0
+    },
+    {
+      "path": "specs/124-flagship-audit/plan.md",
+      "headings": 8,
+      "tables": 0,
+      "fences": 1
+    },
+    {
+      "path": "specs/124-flagship-audit/quickstart.md",
+      "headings": 1,
+      "tables": 0,
+      "fences": 1
+    },
+    {
+      "path": "specs/124-flagship-audit/requirement-evidence.md",
+      "headings": 2,
+      "tables": 1,
+      "fences": 0
+    },
+    {
+      "path": "specs/124-flagship-audit/research.md",
+      "headings": 7,
+      "tables": 0,
+      "fences": 0
+    },
+    {
+      "path": "specs/124-flagship-audit/spec.md",
+      "headings": 15,
+      "tables": 0,
+      "fences": 0
+    },
+    {
+      "path": "specs/124-flagship-audit/tasks.md",
+      "headings": 12,
+      "tables": 0,
+      "fences": 0
+    },
+    {
+      "path": "specs/124-flagship-audit/verification.md",
+      "headings": 4,
+      "tables": 1,
+      "fences": 0
+    },
+    {
+      "path": "specs/124-flagship-audit/wsl-handoff.md",
+      "headings": 5,
+      "tables": 0,
+      "fences": 5
+    },
+    {
+      "path": "workspace/skills/aap-lint/SKILL.md",
+      "headings": 10,
+      "tables": 3,
+      "fences": 0
+    },
+    {
+      "path": "workspace/skills/aci-fabric-audit/SKILL.md",
+      "headings": 30,
+      "tables": 1,
+      "fences": 16
+    },
+    {
+      "path": "workspace/skills/anta-validation/SKILL.md",
+      "headings": 10,
+      "tables": 2,
+      "fences": 4
+    },
+    {
+      "path": "workspace/skills/auvik-lifecycle/SKILL.md",
+      "headings": 13,
+      "tables": 3,
+      "fences": 0
+    },
+    {
+      "path": "workspace/skills/auvik-network-alerts/SKILL.md",
+      "headings": 13,
+      "tables": 3,
+      "fences": 0
+    },
+    {
+      "path": "workspace/skills/auvik-performance/SKILL.md",
+      "headings": 14,
+      "tables": 4,
+      "fences": 0
+    },
+    {
+      "path": "workspace/skills/aws-architecture-diagram/SKILL.md",
+      "headings": 12,
+      "tables": 2,
+      "fences": 0
+    },
+    {
+      "path": "workspace/skills/aws-cloud-monitoring/SKILL.md",
+      "headings": 11,
+      "tables": 1,
+      "fences": 1
+    },
+    {
+      "path": "workspace/skills/aws-cost-ops/SKILL.md",
+      "headings": 12,
+      "tables": 2,
+      "fences": 0
+    },
+    {
+      "path": "workspace/skills/aws-network-ops/SKILL.md",
+      "headings": 17,
+      "tables": 6,
+      "fences": 0
+    },
+    {
+      "path": "workspace/skills/aws-security-audit/SKILL.md",
+      "headings": 14,
+      "tables": 2,
+      "fences": 0
+    },
+    {
+      "path": "workspace/skills/azure-security-audit/SKILL.md",
+      "headings": 12,
+      "tables": 3,
+      "fences": 0
+    },
+    {
+      "path": "workspace/skills/checkpoint/SKILL.md",
+      "headings": 31,
+      "tables": 2,
+      "fences": 4
+    },
+    {
+      "path": "workspace/skills/claroty-ot-topology/SKILL.md",
+      "headings": 12,
+      "tables": 1,
+      "fences": 4
+    },
+    {
+      "path": "workspace/skills/cloudflare-analytics/SKILL.md",
+      "headings": 7,
+      "tables": 1,
+      "fences": 1
+    },
+    {
+      "path": "workspace/skills/cloudflare-dns/SKILL.md",
+      "headings": 7,
+      "tables": 1,
+      "fences": 1
+    },
+    {
+      "path": "workspace/skills/cloudflare-security/SKILL.md",
+      "headings": 7,
+      "tables": 1,
+      "fences": 1
+    },
+    {
+      "path": "workspace/skills/cloudflare-workers/SKILL.md",
+      "headings": 7,
+      "tables": 1,
+      "fences": 1
+    },
+    {
+      "path": "workspace/skills/cloudflare-zerotrust/SKILL.md",
+      "headings": 7,
+      "tables": 1,
+      "fences": 1
+    },
+    {
+      "path": "workspace/skills/cml-packet-capture/SKILL.md",
+      "headings": 16,
+      "tables": 3,
+      "fences": 4
+    },
+    {
+      "path": "workspace/skills/datadog-apm/SKILL.md",
+      "headings": 13,
+      "tables": 1,
+      "fences": 1
+    },
+    {
+      "path": "workspace/skills/datadog-logs/SKILL.md",
+      "headings": 11,
+      "tables": 1,
+      "fences": 1
+    },
+    {
+      "path": "workspace/skills/datadog-metrics/SKILL.md",
+      "headings": 11,
+      "tables": 1,
+      "fences": 1
+    },
+    {
+      "path": "workspace/skills/eve-lab-topology-build/SKILL.md",
+      "headings": 6,
+      "tables": 0,
+      "fences": 0
+    },
+    {
+      "path": "workspace/skills/eve-lab-topology-design/SKILL.md",
+      "headings": 6,
+      "tables": 0,
+      "fences": 0
+    },
+    {
+      "path": "workspace/skills/eve-lab-topology-discovery/SKILL.md",
+      "headings": 5,
+      "tables": 0,
+      "fences": 0
+    },
+    {
+      "path": "workspace/skills/eve-lab-topology-validation/SKILL.md",
+      "headings": 5,
+      "tables": 0,
+      "fences": 0
+    },
+    {
+      "path": "workspace/skills/eve-ng-config-ops/SKILL.md",
+      "headings": 5,
+      "tables": 0,
+      "fences": 0
+    },
+    {
+      "path": "workspace/skills/eve-ng-console-ops/SKILL.md",
+      "headings": 5,
+      "tables": 0,
+      "fences": 0
+    },
+    {
+      "path": "workspace/skills/eve-ng-lab-management/SKILL.md",
+      "headings": 6,
+      "tables": 0,
+      "fences": 0
+    },
+    {
+      "path": "workspace/skills/evpn-vxlan-fabric/SKILL.md",
+      "headings": 9,
+      "tables": 0,
+      "fences": 0
+    },
+    {
+      "path": "workspace/skills/fmc-firewall-ops/SKILL.md",
+      "headings": 14,
+      "tables": 3,
+      "fences": 3
+    },
+    {
+      "path": "workspace/skills/gait-session-tracking/SKILL.md",
+      "headings": 24,
+      "tables": 0,
+      "fences": 16
+    },
+    {
+      "path": "workspace/skills/gcp-cloud-logging/SKILL.md",
+      "headings": 13,
+      "tables": 2,
+      "fences": 1
+    },
+    {
+      "path": "workspace/skills/gcp-cloud-monitoring/SKILL.md",
+      "headings": 11,
+      "tables": 2,
+      "fences": 0
+    },
+    {
+      "path": "workspace/skills/github-ops/SKILL.md",
+      "headings": 15,
+      "tables": 0,
+      "fences": 0
+    },
+    {
+      "path": "workspace/skills/gnmi-telemetry/SKILL.md",
+      "headings": 14,
+      "tables": 1,
+      "fences": 0
+    },
+    {
+      "path": "workspace/skills/gtrace-ip-enrichment/SKILL.md",
+      "headings": 18,
+      "tables": 1,
+      "fences": 5
+    },
+    {
+      "path": "workspace/skills/gtrace-path-analysis/SKILL.md",
+      "headings": 18,
+      "tables": 1,
+      "fences": 7
+    },
+    {
+      "path": "workspace/skills/halo-asset-context/SKILL.md",
+      "headings": 10,
+      "tables": 3,
+      "fences": 4
+    },
+    {
+      "path": "workspace/skills/halo-ticket-context/SKILL.md",
+      "headings": 10,
+      "tables": 3,
+      "fences": 5
+    },
+    {
+      "path": "workspace/skills/hardware-health-check/SKILL.md",
+      "headings": 10,
+      "tables": 2,
+      "fences": 0
+    },
+    {
+      "path": "workspace/skills/infoblox-ddi/SKILL.md",
+      "headings": 11,
+      "tables": 1,
+      "fences": 1
+    },
+    {
+      "path": "workspace/skills/ipfabric/SKILL.md",
+      "headings": 24,
+      "tables": 7,
+      "fences": 10
+    },
+    {
+      "path": "workspace/skills/ipfix-receiver/SKILL.md",
+      "headings": 17,
+      "tables": 1,
+      "fences": 4
+    },
+    {
+      "path": "workspace/skills/ise-incident-response/SKILL.md",
+      "headings": 18,
+      "tables": 0,
+      "fences": 18
+    },
+    {
+      "path": "workspace/skills/ise-posture-audit/SKILL.md",
+      "headings": 17,
+      "tables": 5,
+      "fences": 17
+    },
+    {
+      "path": "workspace/skills/kepner-tregoe-network-troubleshooting/SKILL.md",
+      "headings": 12,
+      "tables": 1,
+      "fences": 1
+    },
+    {
+      "path": "workspace/skills/markmap-viz/SKILL.md",
+      "headings": 14,
+      "tables": 0,
+      "fences": 7
+    },
+    {
+      "path": "workspace/skills/mempalace/SKILL.md",
+      "headings": 35,
+      "tables": 0,
+      "fences": 26
+    },
+    {
+      "path": "workspace/skills/multivendor-device-query/SKILL.md",
+      "headings": 11,
+      "tables": 3,
+      "fences": 0
+    },
+    {
+      "path": "workspace/skills/multivendor-fleet-ops/SKILL.md",
+      "headings": 7,
+      "tables": 1,
+      "fences": 1
+    },
+    {
+      "path": "workspace/skills/multivendor-raw-cli/SKILL.md",
+      "headings": 8,
+      "tables": 2,
+      "fences": 0
+    },
+    {
+      "path": "workspace/skills/nautobot-sot/SKILL.md",
+      "headings": 17,
+      "tables": 3,
+      "fences": 0
+    },
+    {
+      "path": "workspace/skills/netbox-reconcile/SKILL.md",
+      "headings": 38,
+      "tables": 4,
+      "fences": 31
+    },
+    {
+      "path": "workspace/skills/nmap-network-scan/SKILL.md",
+      "headings": 21,
+      "tables": 1,
+      "fences": 6
+    },
+    {
+      "path": "workspace/skills/nmap-scan-management/SKILL.md",
+      "headings": 16,
+      "tables": 1,
+      "fences": 5
+    },
+    {
+      "path": "workspace/skills/nmap-service-detection/SKILL.md",
+      "headings": 22,
+      "tables": 2,
+      "fences": 6
+    },
+    {
+      "path": "workspace/skills/nso-device-ops/SKILL.md",
+      "headings": 15,
+      "tables": 4,
+      "fences": 0
+    },
+    {
+      "path": "workspace/skills/nso-service-mgmt/SKILL.md",
+      "headings": 15,
+      "tables": 3,
+      "fences": 0
+    },
+    {
+      "path": "workspace/skills/nvd-cve/SKILL.md",
+      "headings": 17,
+      "tables": 2,
+      "fences": 9
+    },
+    {
+      "path": "workspace/skills/packet-analysis/SKILL.md",
+      "headings": 15,
+      "tables": 1,
+      "fences": 0
+    },
+    {
+      "path": "workspace/skills/paloalto-panorama/SKILL.md",
+      "headings": 10,
+      "tables": 1,
+      "fences": 1
+    },
+    {
+      "path": "workspace/skills/protocol-participation/SKILL.md",
+      "headings": 31,
+      "tables": 13,
+      "fences": 8
+    },
+    {
+      "path": "workspace/skills/pyats-asa-firewall/SKILL.md",
+      "headings": 44,
+      "tables": 1,
+      "fences": 31
+    },
+    {
+      "path": "workspace/skills/pyats-f5-ltm/SKILL.md",
+      "headings": 32,
+      "tables": 19,
+      "fences": 6
+    },
+    {
+      "path": "workspace/skills/pyats-f5-platform/SKILL.md",
+      "headings": 46,
+      "tables": 31,
+      "fences": 8
+    },
+    {
+      "path": "workspace/skills/pyats-health-check/SKILL.md",
+      "headings": 19,
+      "tables": 0,
+      "fences": 18
+    },
+    {
+      "path": "workspace/skills/pyats-junos-interfaces/SKILL.md",
+      "headings": 29,
+      "tables": 1,
+      "fences": 21
+    },
+    {
+      "path": "workspace/skills/pyats-junos-routing/SKILL.md",
+      "headings": 39,
+      "tables": 1,
+      "fences": 28
+    },
+    {
+      "path": "workspace/skills/pyats-junos-system/SKILL.md",
+      "headings": 44,
+      "tables": 1,
+      "fences": 34
+    },
+    {
+      "path": "workspace/skills/pyats-linux-network/SKILL.md",
+      "headings": 24,
+      "tables": 1,
+      "fences": 13
+    },
+    {
+      "path": "workspace/skills/pyats-linux-system/SKILL.md",
+      "headings": 24,
+      "tables": 1,
+      "fences": 13
+    },
+    {
+      "path": "workspace/skills/pyats-network/SKILL.md",
+      "headings": 18,
+      "tables": 0,
+      "fences": 11
+    },
+    {
+      "path": "workspace/skills/pyats-parallel-ops/SKILL.md",
+      "headings": 8,
+      "tables": 0,
+      "fences": 1
+    },
+    {
+      "path": "workspace/skills/pyats-routing/SKILL.md",
+      "headings": 22,
+      "tables": 2,
+      "fences": 15
+    },
+    {
+      "path": "workspace/skills/pyats-security/SKILL.md",
+      "headings": 21,
+      "tables": 2,
+      "fences": 11
+    },
+    {
+      "path": "workspace/skills/pyats-topology/SKILL.md",
+      "headings": 22,
+      "tables": 1,
+      "fences": 16
+    },
+    {
+      "path": "workspace/skills/pyats-troubleshoot/SKILL.md",
+      "headings": 29,
+      "tables": 2,
+      "fences": 20
+    },
+    {
+      "path": "workspace/skills/radkit-remote-access/SKILL.md",
+      "headings": 21,
+      "tables": 3,
+      "fences": 1
+    },
+    {
+      "path": "workspace/skills/rag/SKILL.md",
+      "headings": 17,
+      "tables": 3,
+      "fences": 3
+    },
+    {
+      "path": "workspace/skills/rfc-lookup/SKILL.md",
+      "headings": 10,
+      "tables": 0,
+      "fences": 3
+    },
+    {
+      "path": "workspace/skills/slack-incident-workflow/SKILL.md",
+      "headings": 15,
+      "tables": 2,
+      "fences": 11
+    },
+    {
+      "path": "workspace/skills/slack-network-alerts/SKILL.md",
+      "headings": 19,
+      "tables": 4,
+      "fences": 8
+    },
+    {
+      "path": "workspace/skills/slack-report-delivery/SKILL.md",
+      "headings": 14,
+      "tables": 2,
+      "fences": 9
+    },
+    {
+      "path": "workspace/skills/snmptrap-receiver/SKILL.md",
+      "headings": 16,
+      "tables": 1,
+      "fences": 3
+    },
+    {
+      "path": "workspace/skills/splunk-indexes/SKILL.md",
+      "headings": 7,
+      "tables": 1,
+      "fences": 1
+    },
+    {
+      "path": "workspace/skills/splunk-saved/SKILL.md",
+      "headings": 7,
+      "tables": 1,
+      "fences": 1
+    },
+    {
+      "path": "workspace/skills/splunk-search/SKILL.md",
+      "headings": 9,
+      "tables": 1,
+      "fences": 1
+    },
+    {
+      "path": "workspace/skills/subnet-calculator/SKILL.md",
+      "headings": 18,
+      "tables": 2,
+      "fences": 14
+    },
+    {
+      "path": "workspace/skills/suzieq-observability/SKILL.md",
+      "headings": 12,
+      "tables": 0,
+      "fences": 0
+    },
+    {
+      "path": "workspace/skills/syslog-receiver/SKILL.md",
+      "headings": 16,
+      "tables": 1,
+      "fences": 3
+    },
+    {
+      "path": "workspace/skills/te-network-monitoring/SKILL.md",
+      "headings": 22,
+      "tables": 8,
+      "fences": 0
+    },
+    {
+      "path": "workspace/skills/te-path-analysis/SKILL.md",
+      "headings": 17,
+      "tables": 6,
+      "fences": 0
+    },
+    {
+      "path": "workspace/skills/telemetry-ops/SKILL.md",
+      "headings": 21,
+      "tables": 2,
+      "fences": 8
+    },
+    {
+      "path": "workspace/skills/terraform-operations/SKILL.md",
+      "headings": 8,
+      "tables": 1,
+      "fences": 1
+    },
+    {
+      "path": "workspace/skills/terraform-registry/SKILL.md",
+      "headings": 7,
+      "tables": 1,
+      "fences": 1
+    },
+    {
+      "path": "workspace/skills/threejs-network-viz/SKILL.md",
+      "headings": 16,
+      "tables": 2,
+      "fences": 3
+    },
+    {
+      "path": "workspace/skills/token-tracker/SKILL.md",
+      "headings": 25,
+      "tables": 4,
+      "fences": 3
+    },
+    {
+      "path": "workspace/skills/topolograph-igp-analysis/SKILL.md",
+      "headings": 8,
+      "tables": 2,
+      "fences": 1
+    },
+    {
+      "path": "workspace/skills/twilio-daily-briefing/SKILL.md",
+      "headings": 23,
+      "tables": 1,
+      "fences": 10
+    },
+    {
+      "path": "workspace/skills/twilio-emergency-call/SKILL.md",
+      "headings": 20,
+      "tables": 0,
+      "fences": 9
+    },
+    {
+      "path": "workspace/skills/twilio-inbound-voice/SKILL.md",
+      "headings": 25,
+      "tables": 0,
+      "fences": 11
+    },
+    {
+      "path": "workspace/skills/twilio-outbound-call/SKILL.md",
+      "headings": 23,
+      "tables": 0,
+      "fences": 11
+    },
+    {
+      "path": "workspace/skills/twitter-check/SKILL.md",
+      "headings": 7,
+      "tables": 0,
+      "fences": 3
+    },
+    {
+      "path": "workspace/skills/twitter-heartbeat/SKILL.md",
+      "headings": 21,
+      "tables": 3,
+      "fences": 9
+    },
+    {
+      "path": "workspace/skills/twitter-respond/SKILL.md",
+      "headings": 14,
+      "tables": 2,
+      "fences": 3
+    },
+    {
+      "path": "workspace/skills/twitter-share/SKILL.md",
+      "headings": 23,
+      "tables": 2,
+      "fences": 5
+    },
+    {
+      "path": "workspace/skills/webex-incident-workflow/SKILL.md",
+      "headings": 15,
+      "tables": 3,
+      "fences": 11
+    },
+    {
+      "path": "workspace/skills/webex-network-alerts/SKILL.md",
+      "headings": 20,
+      "tables": 4,
+      "fences": 7
+    },
+    {
+      "path": "workspace/skills/webex-report-delivery/SKILL.md",
+      "headings": 14,
+      "tables": 2,
+      "fences": 9
+    },
+    {
+      "path": "workspace/skills/webex-user-context/SKILL.md",
+      "headings": 16,
+      "tables": 4,
+      "fences": 4
+    },
+    {
+      "path": "workspace/skills/wikipedia-research/SKILL.md",
+      "headings": 30,
+      "tables": 0,
+      "fences": 21
+    },
+    {
+      "path": "workspace/skills/zscaler-identity/SKILL.md",
+      "headings": 7,
+      "tables": 1,
+      "fences": 1
+    },
+    {
+      "path": "workspace/skills/zscaler-insights/SKILL.md",
+      "headings": 7,
+      "tables": 1,
+      "fences": 1
+    },
+    {
+      "path": "workspace/skills/zscaler-zdx/SKILL.md",
+      "headings": 7,
+      "tables": 1,
+      "fences": 1
+    }
+  ],
+  "missing_local_links": [],
+  "table_overflow_candidates": []
+}

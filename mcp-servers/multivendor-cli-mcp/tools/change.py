@@ -27,9 +27,13 @@ a change that was never sanctioned.
 from __future__ import annotations
 
 import os
+import re
+import stat
+import uuid
 from datetime import datetime, timezone
 from enum import Enum
 from pathlib import Path
+from ssh_security import options as ssh_options
 
 import routing
 from credentials import CredentialError, resolve as resolve_credential
@@ -53,7 +57,7 @@ LAB_GROUPS = {g.strip().lower() for g in
               if g.strip()}
 
 # ServiceNow change states that count as authorised to implement.
-APPROVED_CR_STATES = {"implement", "scheduled", "-1", "-2"}
+APPROVED_CR_STATES = {"implement", "-1"}
 REJECTED_CR_STATES = {"canceled", "cancelled", "closed", "rejected", "4", "7"}
 
 
@@ -96,12 +100,44 @@ def _audit(event: str, **fields) -> None:
     repo with its own commit discipline, and this module must not assume it is
     initialised. A future task wires this into gait-mcp proper.
     """
-    BASELINE_ROOT.mkdir(parents=True, exist_ok=True)
+    _private_root()
     stamp = datetime.now(timezone.utc).isoformat()
     safe = {k: v for k, v in fields.items() if "password" not in k.lower()}
     line = f"{stamp} {event} " + " ".join(f"{k}={v!r}" for k, v in safe.items())
-    with open(BASELINE_ROOT / "audit.log", "a") as f:
+    with _private_file(BASELINE_ROOT / "audit.log", append=True) as f:
         f.write(line + "\n")
+        f.flush()
+        os.fsync(f.fileno())
+
+
+def _private_root() -> None:
+    if BASELINE_ROOT.is_symlink():
+        raise ValueError("Baseline directory must not be a symlink")
+    BASELINE_ROOT.mkdir(parents=True, exist_ok=True, mode=0o700)
+    BASELINE_ROOT.chmod(0o700)
+
+
+def _private_file(path: Path, *, append=False):
+    flags = os.O_WRONLY | os.O_CREAT | os.O_NOFOLLOW
+    flags |= os.O_APPEND if append else os.O_EXCL
+    fd = os.open(path, flags, 0o600)
+    try:
+        if not stat.S_ISREG(os.fstat(fd).st_mode):
+            raise ValueError("Baseline/audit output must be a regular file")
+        os.fchmod(fd, 0o600)
+        return os.fdopen(fd, "a" if append else "w", encoding="utf-8")
+    except BaseException:
+        os.close(fd)
+        raise
+
+
+def _save_baseline(device: str, text: str) -> Path:
+    path = _baseline_path(device)
+    with _private_file(path) as stream:
+        stream.write(text)
+        stream.flush()
+        os.fsync(stream.fileno())
+    return path
 
 
 def check_change_request(cr_number: str | None) -> dict:
@@ -117,7 +153,9 @@ def check_change_request(cr_number: str | None) -> dict:
 
     if not cr_number:
         return {"approved": False, "reason": "no change request supplied"}
-    if not (url and user and pw):
+    if not isinstance(cr_number, str) or not re.fullmatch(r"CHG[0-9]+", cr_number):
+        return {"approved": False, "reason": "invalid change request number"}
+    if not (url and url.startswith("https://") and user and pw):
         return {"approved": False,
                 "reason": "ServiceNow is not configured (SERVICENOW_INSTANCE_URL / "
                           "USERNAME / PASSWORD); a production change cannot be "
@@ -130,7 +168,7 @@ def check_change_request(cr_number: str | None) -> dict:
         r = httpx.get(endpoint, auth=(user, pw), timeout=20,
                       params={"sysparm_query": f"number={cr_number}",
                               "sysparm_fields": "number,state,short_description,approval",
-                              "sysparm_limit": 1})
+                              "sysparm_limit": 2})
         r.raise_for_status()
         rows = r.json().get("result", [])
     except Exception as exc:  # noqa: BLE001
@@ -140,6 +178,8 @@ def check_change_request(cr_number: str | None) -> dict:
     if not rows:
         return {"approved": False, "reason": f"change request {cr_number!r} not found"}
 
+    if not isinstance(rows, list) or len(rows) != 1 or not isinstance(rows[0], dict) or rows[0].get("number") != cr_number:
+        return {"approved": False, "reason": "ServiceNow did not return the exact requested change"}
     cr = rows[0]
     state = str(cr.get("state", "")).strip().lower()
     approval = str(cr.get("approval", "")).strip().lower()
@@ -148,7 +188,7 @@ def check_change_request(cr_number: str | None) -> dict:
         return {"approved": False, "cr": cr, "state": state,
                 "reason": f"change request {cr_number} is in state {state!r} — "
                           f"rejected or closed, so work must halt"}
-    if approval == "approved" or state in APPROVED_CR_STATES:
+    if approval == "approved" and state in APPROVED_CR_STATES:
         return {"approved": True, "cr": cr, "state": state,
                 "reason": f"change request {cr_number} authorises implementation "
                           f"(state={state!r}, approval={approval!r})"}
@@ -161,8 +201,8 @@ def _baseline_path(device: str) -> Path:
     """Sandboxed baseline path — a traversal in a device name cannot escape."""
     safe = "".join(c if (c.isalnum() or c in "-_.") else "_" for c in device)
     stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
-    BASELINE_ROOT.mkdir(parents=True, exist_ok=True)
-    resolved = (BASELINE_ROOT / f"{safe}-{stamp}.cfg").resolve()
+    _private_root()
+    resolved = (BASELINE_ROOT.resolve() / f"{safe[:100]}-{stamp}-{uuid.uuid4().hex}.cfg")
     if BASELINE_ROOT.resolve() not in resolved.parents:
         raise ValueError(f"refusing to write baseline outside {BASELINE_ROOT}")
     return resolved
@@ -202,7 +242,7 @@ def apply_config(device: str, config: str, change_request: str | None = None,
     for line in [ln for ln in config.splitlines() if ln.strip()]:
         verdict = evaluate(line, dev.platform, Mode.WRITE_ENABLED)
         if not verdict.allowed:
-            _audit("change.denied.filter", device=device, line=line[:60])
+            _audit("change.denied.filter", device=device, line_length=len(line))
             return {**base, "status": Stage.DENIED.value,
                     "denied_reason": f"config line {line.strip()!r}: {verdict.denied_reason}"}
 
@@ -246,8 +286,7 @@ def apply_config(device: str, config: str, change_request: str | None = None,
                          f"refusing to modify anything without one",
                 "detail": snapshot.get("error") or snapshot.get("denied_reason")}
 
-    path = _baseline_path(device)
-    path.write_text(snapshot.get("output") or "")
+    path = _save_baseline(device, snapshot.get("output") or "")
     _audit("change.baseline", device=device, baseline=str(path),
            bytes=len(snapshot.get("output") or ""))
 
@@ -266,7 +305,7 @@ def apply_config(device: str, config: str, change_request: str | None = None,
     _audit("change.applying", device=device, lines=len(config.splitlines()))
     applied = _send_config(dev, config, timeout_s=DEFAULT_TIMEOUT)
     if not applied["ok"]:
-        _audit("change.apply_failed", device=device, error=str(applied["error"])[:80])
+        _audit("change.apply_failed", device=device)
         return {**common, "status": Stage.ERROR.value,
                 "error": f"config application failed: {applied['error']}",
                 "note": "nothing was verified; inspect the device against the baseline"}
@@ -348,17 +387,23 @@ def _send_config(dev: inv.Device, config: str, timeout_s: int) -> dict:
         return {"ok": False, "error": str(exc)}
 
     from netmiko import ConnectHandler
+    conn = None
     try:
         conn = ConnectHandler(device_type=driver, host=dev.hostname,
                               username=cred.username, password=cred.password or "",
                               secret=cred.enable or "", fast_cli=False,
-                              conn_timeout=min(timeout_s, 30))
+                              conn_timeout=min(timeout_s, 30), **ssh_options(dev.name, cred))
         lines = [ln for ln in config.splitlines() if ln.strip()]
         out = conn.send_config_set(lines, read_timeout=timeout_s)
-        conn.disconnect()
         return {"ok": True, "output": out}
     except Exception as exc:  # noqa: BLE001
         return {"ok": False, "error": f"{type(exc).__name__}: {str(exc)[:200]}"}
+    finally:
+        if conn is not None:
+            try:
+                conn.disconnect()
+            except Exception:
+                pass
 
 
 def _structured_diff(before: str, after: str) -> dict:

@@ -1,0 +1,36 @@
+{
+  "root": "<mac-temp>/netclaw150-vsix-lifecycle-jQPiFN",
+  "results": [
+    {
+      "stage": "initial",
+      "version": "0.0.0",
+      "profileId": "421dcd3c-260d-46f8-94a5-521cfc72d80f",
+      "extensionPath": "<mac-temp>/netclaw150-vsix-lifecycle-jQPiFN/extensions/netclaw.netclaw-0.0.0",
+      "connected": true
+    },
+    {
+      "stage": "upgraded",
+      "version": "0.1.0",
+      "profileId": "421dcd3c-260d-46f8-94a5-521cfc72d80f",
+      "extensionPath": "<mac-temp>/netclaw150-vsix-lifecycle-jQPiFN/extensions/netclaw.netclaw-0.1.0",
+      "connected": true
+    },
+    {
+      "stage": "disabled",
+      "disabled": true
+    },
+    {
+      "stage": "reenabled",
+      "version": "0.1.0",
+      "profileId": "421dcd3c-260d-46f8-94a5-521cfc72d80f",
+      "extensionPath": "<mac-temp>/netclaw150-vsix-lifecycle-jQPiFN/extensions/netclaw.netclaw-0.1.0",
+      "connected": true
+    }
+  ],
+  "uninstalled": true,
+  "backendPreserved": true,
+  "providerCalls": 0,
+  "syntheticGatewayCalls": 0,
+  "sha256": "71694842db407dbb28ed695a31ca583a892d2c2bc0903c04829514b123fec005",
+  "scope": "Actual installed VSIX; synthetic older package upgrade; isolated unchanged HUD; no owner-service modifications."
+}

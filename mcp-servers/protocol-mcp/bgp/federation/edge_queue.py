@@ -136,11 +136,11 @@ class EdgeQueue:
         the order the operator would have received them."""
         sql = ("SELECT queue_id, payload, reason, enqueued_at, attempts "
                "FROM edge_message_queue "
-               "WHERE member_id=? AND delivered_at IS NULL ORDER BY queue_id ASC")
-        params: tuple = (member_id,)
+               "WHERE member_id=? AND delivered_at IS NULL AND enqueued_at >= ? ORDER BY queue_id ASC")
+        params: tuple = (member_id, time.time() - self.ttl_seconds)
         if limit:
             sql += " LIMIT ?"
-            params = (member_id, limit)
+            params = (*params, limit)
         out = []
         for row in self._conn.execute(sql, params).fetchall():
             try:
@@ -174,7 +174,8 @@ class EdgeQueue:
     def depth(self, member_id: str) -> int:
         row = self._conn.execute(
             "SELECT COUNT(*) FROM edge_message_queue "
-            "WHERE member_id=? AND delivered_at IS NULL", (member_id,)).fetchone()
+            "WHERE member_id=? AND delivered_at IS NULL AND enqueued_at >= ?",
+            (member_id, time.time() - self.ttl_seconds)).fetchone()
         return int(row[0]) if row else 0
 
     def depths(self) -> dict:
@@ -182,4 +183,5 @@ class EdgeQueue:
         silently-accumulating backlog is visible rather than implicit."""
         return {r[0]: int(r[1]) for r in self._conn.execute(
             "SELECT member_id, COUNT(*) FROM edge_message_queue "
-            "WHERE delivered_at IS NULL GROUP BY member_id").fetchall()}
+            "WHERE delivered_at IS NULL AND enqueued_at >= ? GROUP BY member_id",
+            (time.time() - self.ttl_seconds,)).fetchall()}

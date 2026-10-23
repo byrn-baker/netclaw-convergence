@@ -12,7 +12,7 @@ An MCP server that receives and queries SNMP traps over UDP, supporting SNMPv1, 
 - **Deduplication**: Hash-based duplicate detection within configurable time window
 - **Rate Limiting**: Token bucket algorithm to prevent overload
 - **Query Interface**: Filter traps by time, source, version, or OID
-- **GAIT Logging**: Audit trail for all received traps
+- **GAIT Logging**: Bounded local GAIT persistence with explicit pending/error counters
 
 ## Installation
 
@@ -208,3 +208,26 @@ snmptrap -v 2c -c public localhost:162 '' 1.3.6.1.6.3.1.1.5.3 \
 ## License
 
 Part of the NetClaw project.
+
+## Local telemetry audit
+
+Audit events are queued for a single writer and committed in batches to the
+private `~/.openclaw/telemetry-audit/snmptrap-mcp` GAIT repository. Install the
+updated requirements in the receiver's existing isolated Python runtime. There
+is no historical audit data to migrate from the previous placeholder; ordinary
+Python logs are not retrospectively converted into GAIT records. Existing data
+stores and log files are preserved. No remote GAIT endpoint is supported.
+
+The status tool's `audit` object separates `persisted_count`, `pending_count` and
+`error_count`, and includes the last commit and error class. Queue admission is
+not persistence. The queue holds at most 1,024 events, each at most 16 KiB;
+overload or persistence failure increments `error_count`. Normal shutdown waits
+up to five seconds for outstanding writes; pending events can be lost on process
+termination or a crash. IPFIX retains its existing one-in-100 flow sampling.
+Check these counters before claiming a complete audit trail. This local history
+is access-restricted and hash-linked, not external write-once storage. Monitor
+its disk usage and archive it according to your retention policy.
+
+UDP transport status reports `pending_handlers` and `dropped_datagrams`. At most
+256 handlers are admitted per listener; excess datagrams are counted and dropped
+before task creation. Receiver stop cancels and joins its pending handlers.

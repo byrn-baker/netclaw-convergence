@@ -21,6 +21,32 @@ def test_default_deny(manager):
     assert not d.allowed and d.code == "not_allowlisted"
 
 
+def test_non_federated_peer_denied_by_default(manager):
+    """A peer_identity with no federation_peer row at all (e.g. an iN2N
+    member's self-referential identity on its own channel to Border, which
+    has no eN2N federation_peer row) is denied via the is_federated() gate
+    when already_trusted is not set (spec 121 research.md R10)."""
+    authz = Authorizer(manager)
+    d = authz.authorize("johns-risk/viz", "tool", "topology-diagram-mcp/render_structural")
+    assert not d.allowed and d.code == "severed"
+
+
+def test_already_trusted_bypasses_is_federated_gate_but_still_requires_grant(manager):
+    """spec 121 research.md R10: an internal (iN2N) channel's self-referential
+    peer_identity has no federation_peer row, but is_federated() must not be
+    the only gate — already_trusted skips ONLY that eN2N-specific check, the
+    grant check below it still runs and still denies with no grant."""
+    authz = Authorizer(manager)
+    d = authz.authorize("johns-risk/viz", "tool", "topology-diagram-mcp/render_structural",
+                        already_trusted=True)
+    assert not d.allowed and d.code == "not_allowlisted"
+
+    authz.grant("johns-risk/viz", "tool", "topology-diagram-mcp/render_structural")
+    d2 = authz.authorize("johns-risk/viz", "tool", "topology-diagram-mcp/render_structural",
+                         already_trusted=True)
+    assert d2.allowed and d2.code == "allowlisted"
+
+
 def test_grant_allows(manager):
     ident = _federated(manager)
     authz = Authorizer(manager)
@@ -70,3 +96,28 @@ def test_approval_lifecycle(manager):
     authz.resolve_approval(appr["approval_id"], "approve")
     assert authz.approval_status(appr["approval_id"]) == "approved"
     assert len(authz.pending_approvals()) == 0
+
+
+def test_expired_approval_cannot_be_resolved_before_status_poll(manager):
+    authz = Authorizer(manager)
+    inv_id = manager._conn.execute(
+        "INSERT INTO remote_invocation_record (direction, peer_identity, decision, outcome) "
+        "VALUES ('inbound', 'fixture', 'approval_required', 'pending')").lastrowid
+    approval = authz.create_approval(inv_id)['approval_id']
+    manager._conn.execute("UPDATE approval_request SET expires_at='2000-01-01T00:00:00Z' WHERE id=?", (approval,))
+    manager._conn.commit()
+    result = authz.resolve_approval(approval, 'approve')
+    assert result['resolved'] is False and result['expired'] is True
+    assert authz.approval_status(approval) == 'expired'
+    assert not authz.pending_approvals()
+
+
+def test_listing_expires_unpolled_approvals(manager):
+    authz = Authorizer(manager)
+    inv_id = manager._conn.execute(
+        "INSERT INTO remote_invocation_record (direction, peer_identity, decision, outcome) "
+        "VALUES ('inbound', 'fixture', 'approval_required', 'pending')").lastrowid
+    approval = authz.create_approval(inv_id)['approval_id']
+    manager._conn.execute("UPDATE approval_request SET expires_at='2000-01-01T00:00:00Z' WHERE id=?", (approval,))
+    manager._conn.commit()
+    assert not authz.pending_approvals()

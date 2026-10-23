@@ -29,6 +29,25 @@ check_command() {
 
 clone_or_pull() {
     local dir="$1" url="$2"
+    local revision="" manifest="${NETCLAW_DIR:-}/config/fastmcp-external-patches.json"
+    if [ -f "$manifest" ]; then
+        revision="$(python3 - "$manifest" "$(basename "$dir")" <<'PYREV'
+import json, sys
+entries = json.load(open(sys.argv[1]))['components'].values()
+print(next((e['reviewed_commit'] or '' for e in entries if e['directory'] == sys.argv[2]), ''))
+PYREV
+)" || return 1
+    fi
+    if [ -n "$revision" ]; then
+        if [ -d "$dir" ]; then
+            log_info "Keeping reviewed checkout and operator edits; compatibility hashes will be checked."
+        else
+            log_info "Cloning reviewed revision $revision from $url..."
+            git clone --no-checkout "$url" "$dir" || return 1
+            git -C "$dir" checkout --detach "$revision" || return 1
+        fi
+        return 0
+    fi
     if [ -d "$dir" ]; then
         log_info "Already cloned. Pulling latest..."
         git -C "$dir" pull || log_warn "git pull failed, using existing version"
@@ -54,20 +73,24 @@ clone_or_pull() {
 # changes (e.g. after a --runtime flag or the TUI prompt).
 # ───────────────────────────────────────────
 define_runtime() {
-    RUNTIME="${NETCLAW_RUNTIME:-openclaw}"
+    local resolver="$(cd -P "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)/runtime-selection.py"
+    RUNTIME="$(python3 "$resolver" --field kind)" || return 1
+    local resolved_home resolved_config
+    resolved_home="$(python3 "$resolver" --field home)" || return 1
+    resolved_config="$(python3 "$resolver" --field configPath)" || return 1
     case "$RUNTIME" in
         openclaw)
             RUNTIME_CMD="openclaw"
             RUNTIME_NAME="OpenClaw"
-            RUNTIME_HOME="${OPENCLAW_HOME:-$HOME/.openclaw}"
-            RUNTIME_CONFIG="$RUNTIME_HOME/openclaw.json"
+            RUNTIME_HOME="$resolved_home"
+            RUNTIME_CONFIG="${OPENCLAW_CONFIG_PATH:-$RUNTIME_HOME/openclaw.json}"
             RUNTIME_WORKSPACE="$RUNTIME_HOME/workspace"
             RUNTIME_SKILLS="$RUNTIME_HOME/workspace/skills"
             ;;
         hermes)
             RUNTIME_CMD="hermes"
             RUNTIME_NAME="Hermes"
-            RUNTIME_HOME="${HERMES_HOME:-$HOME/.hermes}"
+            RUNTIME_HOME="$resolved_home"
             RUNTIME_CONFIG="$RUNTIME_HOME/config.yaml"
             RUNTIME_WORKSPACE="$RUNTIME_HOME"
             RUNTIME_SKILLS="$RUNTIME_HOME/skills"
@@ -77,6 +100,8 @@ define_runtime() {
             exit 1
             ;;
     esac
+    RUNTIME_HOME="$resolved_home"
+    RUNTIME_CONFIG="$resolved_config"
     RUNTIME_ENV="$RUNTIME_HOME/.env"
 
     # The component manifest lives under the runtime's state dir unless the
@@ -85,17 +110,31 @@ define_runtime() {
     NETCLAW_MANIFEST="${_NETCLAW_MANIFEST_ENV:-$RUNTIME_HOME/netclaw-components.conf}"
 }
 
-# Write KEY=VALUE into the runtime .env (create or update in place).
+# Write literal dotenv KEY=VALUE into the runtime .env (atomic and private).
 # Portable — no associative arrays for macOS bash 3.2.
+_NETCLAW_ENV_WRITER="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/write-env.py"
 _set_env_var() {
     local key="$1" val="$2"
     local env_file="${RUNTIME_ENV:-${OPENCLAW_ENV:-$HOME/.openclaw/.env}}"
-    mkdir -p "$(dirname "$env_file")"
-    [ -f "$env_file" ] || touch "$env_file"
-    if grep -q "^${key}=" "$env_file" 2>/dev/null; then
-        sed -i.bak "s|^${key}=.*|${key}=${val}|" "$env_file" && rm -f "$env_file.bak"
-    else
-        echo "${key}=${val}" >> "$env_file"
+    printf '%s' "$val" | python3 "$_NETCLAW_ENV_WRITER" "$env_file" "$key"
+}
+
+# Persist operator-filled settings before the runtime wizard/daemon reads them.
+# Deliberately do not source/export dotenv: it is data, not shell code.
+_import_runtime_env() {
+    if [ "$RUNTIME" = "hermes" ]; then
+        log_info "Hermes uses its selected .env; repository credentials are not imported implicitly."
+        return 0
+    fi
+    python3 "$(dirname "$_NETCLAW_ENV_WRITER")/import-env.py" \
+        --source "$NETCLAW_DIR/.env" --target "$RUNTIME_ENV" --apply
+}
+
+# Bootstrap user-owned locations without replacing explicit operator choices.
+_set_env_default() {
+    local key="$1" val="$2"
+    if ! grep -Eq "^[[:space:]]*(export[[:space:]]+)?${key}[[:space:]]*=" "$RUNTIME_ENV" 2>/dev/null; then
+        _set_env_var "$key" "$val"
     fi
 }
 

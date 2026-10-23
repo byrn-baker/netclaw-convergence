@@ -1,0 +1,38 @@
+[
+  {
+    "state": "ready",
+    "width": 1280,
+    "overflow": false,
+    "card": 1
+  },
+  {
+    "state": "ready",
+    "width": 390,
+    "overflow": false,
+    "card": 1
+  },
+  {
+    "state": "stale",
+    "width": 1280,
+    "overflow": false,
+    "card": 1
+  },
+  {
+    "state": "stale",
+    "width": 390,
+    "overflow": false,
+    "card": 1
+  },
+  {
+    "state": "disabled",
+    "width": 1280,
+    "overflow": false,
+    "card": 0
+  },
+  {
+    "state": "disabled",
+    "width": 390,
+    "overflow": false,
+    "card": 0
+  }
+]

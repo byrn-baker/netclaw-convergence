@@ -8,6 +8,7 @@ Includes enforcement hooks for cost ceilings and tool-call depth limits.
 from __future__ import annotations
 
 import threading
+import math
 import uuid
 from datetime import datetime, timezone
 from typing import Dict, List, Optional, Tuple
@@ -60,6 +61,16 @@ class SessionLedger:
             gcf_savings: Tokens saved by GCF serialization.
         """
         with self._lock:
+            try:
+                valid = (type(cost.total_cost) in (int, float)
+                         and math.isfinite(cost.total_cost) and cost.total_cost >= 0
+                         and math.isfinite(self.total_cost + cost.total_cost))
+            except OverflowError:
+                valid = False
+            if not valid:
+                self.budget_halted = True
+                self.halt_reason = "invalid_cost"
+                raise ValueError("Cost must be finite and nonnegative; budget halted pending valid accounting")
             self.total_input_tokens += token_count.input_tokens
             self.total_output_tokens += token_count.output_tokens
             self.total_cost += cost.total_cost
@@ -166,6 +177,8 @@ class SessionLedger:
             RuntimeError: If allow_override is False in the policy.
         """
         with self._lock:
+            if self.halt_reason == "invalid_cost":
+                raise RuntimeError("Invalid usage accounting must be corrected before starting a new ledger")
             if not self.budget.allow_override:
                 raise RuntimeError(
                     "Budget override is disabled for this session policy"
@@ -189,6 +202,10 @@ class SessionLedger:
             continuation instructions.
         """
         with self._lock:
+            if self.halt_reason == "invalid_cost":
+                return ("⚠️ Usage accounting failed: received an invalid cost. "
+                        "The recorded total is incomplete. Correct the usage source "
+                        "before starting a new session ledger; a budget override cannot repair it.")
             lines = []
 
             if self.halt_reason == "cost_cap":

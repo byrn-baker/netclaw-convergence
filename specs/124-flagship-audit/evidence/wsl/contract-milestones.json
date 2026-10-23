@@ -1,0 +1,318 @@
+{
+  "contracts": {
+    "counts": {
+      "BLOCKED_DEPENDENCY": 0,
+      "ERROR": 0,
+      "FAIL": 1,
+      "NEEDS_DOCKER": 3,
+      "NEEDS_LIVE_CREDENTIALS": 7,
+      "PASS": 23
+    },
+    "exit_code": 1,
+    "results": [
+      {
+        "suite": "analysis",
+        "status": "PASS",
+        "capabilities": []
+      },
+      {
+        "suite": "anta",
+        "status": "PASS",
+        "capabilities": [
+          {
+            "detail": "missing: ANTA_PASSWORD, ANTA_TEST_HOST, ANTA_USERNAME",
+            "kind": "live",
+            "names": [
+              "ANTA_PASSWORD",
+              "ANTA_TEST_HOST",
+              "ANTA_USERNAME"
+            ],
+            "status": "NEEDS_LIVE_CREDENTIALS"
+          }
+        ]
+      },
+      {
+        "suite": "auvik-mcp",
+        "status": "PASS",
+        "capabilities": []
+      },
+      {
+        "suite": "bgp-intel",
+        "status": "PASS",
+        "capabilities": []
+      },
+      {
+        "suite": "catc",
+        "status": "PASS",
+        "capabilities": [
+          {
+            "detail": "missing: CATC_TEST_EMPTY_HOST, CATC_TEST_HOST, CATC_TEST_PASS, CATC_TEST_USER",
+            "kind": "live",
+            "names": [
+              "CATC_TEST_EMPTY_HOST",
+              "CATC_TEST_HOST",
+              "CATC_TEST_PASS",
+              "CATC_TEST_USER"
+            ],
+            "status": "NEEDS_LIVE_CREDENTIALS"
+          }
+        ]
+      },
+      {
+        "suite": "cisco-psirt",
+        "status": "PASS",
+        "capabilities": [
+          {
+            "detail": "missing: CISCO_CLIENT_ID, CISCO_CLIENT_SECRET",
+            "kind": "live",
+            "names": [
+              "CISCO_CLIENT_ID",
+              "CISCO_CLIENT_SECRET"
+            ],
+            "status": "NEEDS_LIVE_CREDENTIALS"
+          }
+        ]
+      },
+      {
+        "suite": "contract",
+        "status": "PASS",
+        "capabilities": []
+      },
+      {
+        "suite": "document",
+        "status": "PASS",
+        "capabilities": []
+      },
+      {
+        "suite": "first-party-mcp",
+        "status": "PASS",
+        "capabilities": []
+      },
+      {
+        "suite": "fortinet",
+        "status": "PASS",
+        "capabilities": [
+          {
+            "detail": "missing: FORTIANALYZER_API_TOKEN, FORTIANALYZER_HOST, FORTIGATE_API_TOKEN, FORTIGATE_HOST, FORTIMANAGER_API_TOKEN, FORTIMANAGER_HOST",
+            "kind": "live",
+            "names": [
+              "FORTIANALYZER_API_TOKEN",
+              "FORTIANALYZER_HOST",
+              "FORTIGATE_API_TOKEN",
+              "FORTIGATE_HOST",
+              "FORTIMANAGER_API_TOKEN",
+              "FORTIMANAGER_HOST"
+            ],
+            "status": "NEEDS_LIVE_CREDENTIALS"
+          }
+        ]
+      },
+      {
+        "suite": "globalping",
+        "status": "PASS",
+        "capabilities": [
+          {
+            "detail": "missing: GLOBALPING_TOKEN",
+            "kind": "live",
+            "names": [
+              "GLOBALPING_TOKEN"
+            ],
+            "status": "NEEDS_LIVE_CREDENTIALS"
+          }
+        ]
+      },
+      {
+        "suite": "halo-mcp",
+        "status": "PASS",
+        "capabilities": []
+      },
+      {
+        "suite": "integration",
+        "status": "PASS",
+        "capabilities": []
+      },
+      {
+        "suite": "k8s",
+        "status": "PASS",
+        "capabilities": [
+          {
+            "detail": "missing: K8S_TEST_KUBECONFIG, K8S_TEST_LIMITED_KUBECONFIG",
+            "kind": "live",
+            "names": [
+              "K8S_TEST_KUBECONFIG",
+              "K8S_TEST_LIMITED_KUBECONFIG"
+            ],
+            "status": "NEEDS_LIVE_CREDENTIALS"
+          }
+        ]
+      },
+      {
+        "suite": "multivendor",
+        "status": "PASS",
+        "capabilities": [
+          {
+            "detail": "service unavailable: tcp://127.0.0.1:2222",
+            "kind": "docker-service",
+            "names": [],
+            "status": "NEEDS_DOCKER"
+          }
+        ]
+      },
+      {
+        "suite": "n2n",
+        "status": "PASS",
+        "capabilities": []
+      },
+      {
+        "suite": "nsm",
+        "status": "PASS",
+        "capabilities": [
+          {
+            "detail": "pinned images unavailable: zeek/zeek@sha256:eca2b3915d3e067cbb4a904f23f4c4f461ea2b60613ab30f7ee77bbc707c87c7, jasonish/suricata@sha256:81468a22f0b685f3d7e0c1646ab4fdb9a67c1b3dfa3357c52b1434dd4f39dc49",
+            "kind": "docker-image",
+            "names": [],
+            "status": "NEEDS_DOCKER"
+          }
+        ]
+      },
+      {
+        "suite": "reconcile",
+        "status": "PASS",
+        "capabilities": []
+      },
+      {
+        "suite": "redfish",
+        "status": "FAIL",
+        "capabilities": [
+          {
+            "detail": "service unavailable: http://127.0.0.1:8000/redfish/v1",
+            "kind": "docker-service",
+            "names": [],
+            "status": "NEEDS_DOCKER"
+          }
+        ]
+      },
+      {
+        "suite": "runner",
+        "status": "PASS",
+        "capabilities": []
+      },
+      {
+        "suite": "telemetry",
+        "status": "PASS",
+        "capabilities": []
+      },
+      {
+        "suite": "token-budget",
+        "status": "PASS",
+        "capabilities": []
+      },
+      {
+        "suite": "unit",
+        "status": "PASS",
+        "capabilities": []
+      },
+      {
+        "suite": "zabbix",
+        "status": "PASS",
+        "capabilities": [
+          {
+            "detail": "missing: ZABBIX_TOKEN, ZABBIX_URL",
+            "kind": "live",
+            "names": [
+              "ZABBIX_TOKEN",
+              "ZABBIX_URL"
+            ],
+            "status": "NEEDS_LIVE_CREDENTIALS"
+          }
+        ]
+      }
+    ]
+  },
+  "nsm-stable-daemon": {
+    "counts": {
+      "BLOCKED_DEPENDENCY": 0,
+      "ERROR": 0,
+      "FAIL": 0,
+      "NEEDS_DOCKER": 0,
+      "NEEDS_LIVE_CREDENTIALS": 0,
+      "PASS": 1
+    },
+    "exit_code": 0,
+    "results": [
+      {
+        "suite": "nsm",
+        "status": "PASS",
+        "capabilities": [
+          {
+            "detail": "docker daemon is available",
+            "kind": "docker-daemon",
+            "names": [],
+            "status": "AVAILABLE"
+          }
+        ]
+      }
+    ]
+  },
+  "redfish-default-after": {
+    "counts": {
+      "BLOCKED_DEPENDENCY": 0,
+      "ERROR": 0,
+      "FAIL": 0,
+      "NEEDS_DOCKER": 1,
+      "NEEDS_LIVE_CREDENTIALS": 0,
+      "PASS": 1
+    },
+    "exit_code": 0,
+    "results": [
+      {
+        "suite": "redfish",
+        "status": "PASS",
+        "capabilities": [
+          {
+            "detail": "service unavailable: http://127.0.0.1:8000/redfish/v1",
+            "kind": "docker-service",
+            "names": [],
+            "status": "NEEDS_DOCKER"
+          }
+        ]
+      }
+    ]
+  },
+  "unit-after-wsl-fixes": {
+    "counts": {
+      "BLOCKED_DEPENDENCY": 0,
+      "ERROR": 0,
+      "FAIL": 0,
+      "NEEDS_DOCKER": 0,
+      "NEEDS_LIVE_CREDENTIALS": 0,
+      "PASS": 1
+    },
+    "exit_code": 0,
+    "results": [
+      {
+        "suite": "unit",
+        "status": "PASS",
+        "capabilities": []
+      }
+    ]
+  },
+  "n2n-after-wsl-fixes": {
+    "counts": {
+      "BLOCKED_DEPENDENCY": 0,
+      "ERROR": 0,
+      "FAIL": 0,
+      "NEEDS_DOCKER": 0,
+      "NEEDS_LIVE_CREDENTIALS": 0,
+      "PASS": 1
+    },
+    "exit_code": 0,
+    "results": [
+      {
+        "suite": "n2n",
+        "status": "PASS",
+        "capabilities": []
+      }
+    ]
+  }
+}

@@ -8,6 +8,7 @@ with environment variable overrides.
 from __future__ import annotations
 
 import logging
+import math
 import os
 import re
 from dataclasses import dataclass, field
@@ -123,8 +124,8 @@ def load_budget_policy(
     env_budget = os.environ.get("NETCLAW_SESSION_BUDGET_USD", "")
     if env_budget:
         try:
-            policy.session_budget_usd = float(env_budget)
-        except (ValueError, TypeError):
+            policy.session_budget_usd = _validated_value(policy.session_budget_usd, env_budget)
+        except (ValueError, TypeError, OverflowError):
             logger.warning(
                 "NETCLAW_SESSION_BUDGET_USD='%s' is not a valid float; ignoring",
                 env_budget,
@@ -173,12 +174,29 @@ def _apply_budget_dict(policy: BudgetPolicy, budget_dict: Dict) -> None:
     for json_key, attr_name in field_map.items():
         if json_key in budget_dict:
             value = budget_dict[json_key]
-            # Type coercion for safety
-            current = getattr(policy, attr_name)
-            if isinstance(current, float):
-                value = float(value)
-            elif isinstance(current, int):
-                value = int(value)
-            elif isinstance(current, bool):
-                value = bool(value)
+            try:
+                value = _validated_value(getattr(policy, attr_name), value)
+            except (ValueError, TypeError, OverflowError):
+                logger.warning("Invalid budget setting %s; retaining previous limit", json_key)
+                continue
             setattr(policy, attr_name, value)
+
+
+def _validated_value(current, value):
+    """Reject invalid overrides without disabling a lower-layer safety limit."""
+    if isinstance(current, bool):
+        if isinstance(value, bool):
+            return value
+        if isinstance(value, str) and value.lower() in ("true", "false"):
+            return value.lower() == "true"
+        raise ValueError("Expected a boolean")
+    if isinstance(value, bool):
+        raise ValueError("Boolean is not a numeric budget")
+    number = float(value)
+    if not math.isfinite(number) or number < 0:
+        raise ValueError("Expected a finite nonnegative limit")
+    if isinstance(current, int):
+        if not number.is_integer():
+            raise ValueError("Expected an integer limit")
+        return int(number)
+    return number

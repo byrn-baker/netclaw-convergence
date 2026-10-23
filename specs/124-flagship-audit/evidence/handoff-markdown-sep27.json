@@ -1,0 +1,30 @@
+{
+  "rendered_documents": [
+    {
+      "path": "specs/124-flagship-audit/findings.md",
+      "headings": 61,
+      "tables": 2,
+      "fences": 0
+    },
+    {
+      "path": "specs/124-flagship-audit/handoff.md",
+      "headings": 7,
+      "tables": 0,
+      "fences": 0
+    },
+    {
+      "path": "specs/124-flagship-audit/verification.md",
+      "headings": 4,
+      "tables": 1,
+      "fences": 0
+    },
+    {
+      "path": "specs/124-flagship-audit/wsl-handoff.md",
+      "headings": 5,
+      "tables": 0,
+      "fences": 5
+    }
+  ],
+  "missing_local_links": [],
+  "table_overflow_candidates": []
+}

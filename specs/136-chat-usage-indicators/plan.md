@@ -1,0 +1,2 @@
+# Plan
+Add cached, coalesced, bounded CLI snapshot reads; isolate provider and session failure states. Resolve an existing HUD binding by cookie and thread without creating tasks. Project exact-session context and selected-provider windows only. Show measured occupancy, capacity, remaining quota, reset and snapshot timestamps in bottom-toolbar details. Poll only while Chat is active and visible; refresh after a turn. No provider/model/device calls to generate usage.

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import logging
 import os
+import ssl
 from typing import Any, Optional
 
 import httpx
@@ -19,7 +20,9 @@ class NautobotClient:
     def __init__(self):
         self.url = os.environ["NAUTOBOT_URL"].rstrip("/")
         self.token = os.environ["NAUTOBOT_TOKEN"]
-        verify = os.environ.get("NAUTOBOT_VERIFY_SSL", "false").lower() == "true"
+        verify = os.environ.get("NAUTOBOT_VERIFY_SSL", "true").lower() not in ("0", "false", "no")
+        if verify and os.environ.get("NAUTOBOT_CA_BUNDLE"):
+            verify = ssl.create_default_context(cafile=os.environ["NAUTOBOT_CA_BUNDLE"])
         timeout = int(os.environ.get("NAUTOBOT_TIMEOUT", "60"))
 
         self.http = httpx.AsyncClient(

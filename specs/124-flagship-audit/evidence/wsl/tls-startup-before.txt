@@ -1,0 +1,439 @@
+.......FFFFFFFFFFFFFFFFFFFFF............................F                [100%]
+=================================== FAILURES ===================================
+_ test_startup_tls_requires_explicit_disable[-catc-mcp/server.py-verify-CATALYST_CENTER_VERIFY_SSL] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7618c97c1b50>
+source = 'catc-mcp/server.py', target = 'verify'
+key = 'CATALYST_CENTER_VERIFY_SSL', value = ''
+
+    @pytest.mark.parametrize('source,target,key',SOURCES)
+    @pytest.mark.parametrize('value',[None,'','${UNSET_VERIFY_SSL}','typo','true','false','0','no'])
+    def test_startup_tls_requires_explicit_disable(monkeypatch,source,target,key,value):
+        if value is None:monkeypatch.delenv(key,raising=False)
+        else:monkeypatch.setenv(key,value)
+        tree=ast.parse((ROOT/'mcp-servers'/source).read_text())
+        expressions=[node.value for node in ast.walk(tree) if isinstance(node,(ast.Assign,ast.AnnAssign)) and target in [ast.unparse(t) for t in (node.targets if isinstance(node,ast.Assign) else [node.target])]]
+        assert len(expressions)==1
+        actual=eval(compile(ast.Expression(expressions[0]),source,'eval'),{'os':os})
+>       assert actual is (value not in ('false','0','no'))
+E       AssertionError: assert False is ('' not in ('false', '0', 'no'))
+
+tests/unit/test_tls_default_boundaries.py:29: AssertionError
+_ test_startup_tls_requires_explicit_disable[-gns3-mcp-server/gns3_mcp_server.py-GNS3_VERIFY_SSL-GNS3_VERIFY_SSL] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7618c97c2b70>
+source = 'gns3-mcp-server/gns3_mcp_server.py', target = 'GNS3_VERIFY_SSL'
+key = 'GNS3_VERIFY_SSL', value = ''
+
+    @pytest.mark.parametrize('source,target,key',SOURCES)
+    @pytest.mark.parametrize('value',[None,'','${UNSET_VERIFY_SSL}','typo','true','false','0','no'])
+    def test_startup_tls_requires_explicit_disable(monkeypatch,source,target,key,value):
+        if value is None:monkeypatch.delenv(key,raising=False)
+        else:monkeypatch.setenv(key,value)
+        tree=ast.parse((ROOT/'mcp-servers'/source).read_text())
+        expressions=[node.value for node in ast.walk(tree) if isinstance(node,(ast.Assign,ast.AnnAssign)) and target in [ast.unparse(t) for t in (node.targets if isinstance(node,ast.Assign) else [node.target])]]
+        assert len(expressions)==1
+        actual=eval(compile(ast.Expression(expressions[0]),source,'eval'),{'os':os})
+>       assert actual is (value not in ('false','0','no'))
+E       AssertionError: assert False is ('' not in ('false', '0', 'no'))
+
+tests/unit/test_tls_default_boundaries.py:29: AssertionError
+_ test_startup_tls_requires_explicit_disable[-eve-ng-mcp-server/eve_client.py-EVE_VERIFY_SSL-EVE_VERIFY_SSL] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7618c97c06b0>
+source = 'eve-ng-mcp-server/eve_client.py', target = 'EVE_VERIFY_SSL'
+key = 'EVE_VERIFY_SSL', value = ''
+
+    @pytest.mark.parametrize('source,target,key',SOURCES)
+    @pytest.mark.parametrize('value',[None,'','${UNSET_VERIFY_SSL}','typo','true','false','0','no'])
+    def test_startup_tls_requires_explicit_disable(monkeypatch,source,target,key,value):
+        if value is None:monkeypatch.delenv(key,raising=False)
+        else:monkeypatch.setenv(key,value)
+        tree=ast.parse((ROOT/'mcp-servers'/source).read_text())
+        expressions=[node.value for node in ast.walk(tree) if isinstance(node,(ast.Assign,ast.AnnAssign)) and target in [ast.unparse(t) for t in (node.targets if isinstance(node,ast.Assign) else [node.target])]]
+        assert len(expressions)==1
+        actual=eval(compile(ast.Expression(expressions[0]),source,'eval'),{'os':os})
+>       assert actual is (value not in ('false','0','no'))
+E       AssertionError: assert False is ('' not in ('false', '0', 'no'))
+
+tests/unit/test_tls_default_boundaries.py:29: AssertionError
+_ test_startup_tls_requires_explicit_disable[-auvik-mcp/auvik_mcp_server.py-AUVIK_VERIFY_SSL-AUVIK_VERIFY_SSL] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7618c9943dd0>
+source = 'auvik-mcp/auvik_mcp_server.py', target = 'AUVIK_VERIFY_SSL'
+key = 'AUVIK_VERIFY_SSL', value = ''
+
+    @pytest.mark.parametrize('source,target,key',SOURCES)
+    @pytest.mark.parametrize('value',[None,'','${UNSET_VERIFY_SSL}','typo','true','false','0','no'])
+    def test_startup_tls_requires_explicit_disable(monkeypatch,source,target,key,value):
+        if value is None:monkeypatch.delenv(key,raising=False)
+        else:monkeypatch.setenv(key,value)
+        tree=ast.parse((ROOT/'mcp-servers'/source).read_text())
+        expressions=[node.value for node in ast.walk(tree) if isinstance(node,(ast.Assign,ast.AnnAssign)) and target in [ast.unparse(t) for t in (node.targets if isinstance(node,ast.Assign) else [node.target])]]
+        assert len(expressions)==1
+        actual=eval(compile(ast.Expression(expressions[0]),source,'eval'),{'os':os})
+>       assert actual is (value not in ('false','0','no'))
+E       AssertionError: assert False is ('' not in ('false', '0', 'no'))
+
+tests/unit/test_tls_default_boundaries.py:29: AssertionError
+_ test_startup_tls_requires_explicit_disable[-halo-mcp/halo_mcp_server.py-HALO_VERIFY_SSL-HALO_VERIFY_SSL] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7618c97c20f0>
+source = 'halo-mcp/halo_mcp_server.py', target = 'HALO_VERIFY_SSL'
+key = 'HALO_VERIFY_SSL', value = ''
+
+    @pytest.mark.parametrize('source,target,key',SOURCES)
+    @pytest.mark.parametrize('value',[None,'','${UNSET_VERIFY_SSL}','typo','true','false','0','no'])
+    def test_startup_tls_requires_explicit_disable(monkeypatch,source,target,key,value):
+        if value is None:monkeypatch.delenv(key,raising=False)
+        else:monkeypatch.setenv(key,value)
+        tree=ast.parse((ROOT/'mcp-servers'/source).read_text())
+        expressions=[node.value for node in ast.walk(tree) if isinstance(node,(ast.Assign,ast.AnnAssign)) and target in [ast.unparse(t) for t in (node.targets if isinstance(node,ast.Assign) else [node.target])]]
+        assert len(expressions)==1
+        actual=eval(compile(ast.Expression(expressions[0]),source,'eval'),{'os':os})
+>       assert actual is (value not in ('false','0','no'))
+E       AssertionError: assert False is ('' not in ('false', '0', 'no'))
+
+tests/unit/test_tls_default_boundaries.py:29: AssertionError
+_ test_startup_tls_requires_explicit_disable[-suzieq-mcp/suzieq_client.py-self.verify_ssl-SUZIEQ_VERIFY_SSL] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7618c97c33e0>
+source = 'suzieq-mcp/suzieq_client.py', target = 'self.verify_ssl'
+key = 'SUZIEQ_VERIFY_SSL', value = ''
+
+    @pytest.mark.parametrize('source,target,key',SOURCES)
+    @pytest.mark.parametrize('value',[None,'','${UNSET_VERIFY_SSL}','typo','true','false','0','no'])
+    def test_startup_tls_requires_explicit_disable(monkeypatch,source,target,key,value):
+        if value is None:monkeypatch.delenv(key,raising=False)
+        else:monkeypatch.setenv(key,value)
+        tree=ast.parse((ROOT/'mcp-servers'/source).read_text())
+        expressions=[node.value for node in ast.walk(tree) if isinstance(node,(ast.Assign,ast.AnnAssign)) and target in [ast.unparse(t) for t in (node.targets if isinstance(node,ast.Assign) else [node.target])]]
+        assert len(expressions)==1
+        actual=eval(compile(ast.Expression(expressions[0]),source,'eval'),{'os':os})
+>       assert actual is (value not in ('false','0','no'))
+E       AssertionError: assert False is ('' not in ('false', '0', 'no'))
+
+tests/unit/test_tls_default_boundaries.py:29: AssertionError
+_ test_startup_tls_requires_explicit_disable[-claroty-mcp/clients/claroty_client.py-self.verify_ssl-CLAROTY_VERIFY_SSL] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7618c9943bf0>
+source = 'claroty-mcp/clients/claroty_client.py', target = 'self.verify_ssl'
+key = 'CLAROTY_VERIFY_SSL', value = ''
+
+    @pytest.mark.parametrize('source,target,key',SOURCES)
+    @pytest.mark.parametrize('value',[None,'','${UNSET_VERIFY_SSL}','typo','true','false','0','no'])
+    def test_startup_tls_requires_explicit_disable(monkeypatch,source,target,key,value):
+        if value is None:monkeypatch.delenv(key,raising=False)
+        else:monkeypatch.setenv(key,value)
+        tree=ast.parse((ROOT/'mcp-servers'/source).read_text())
+        expressions=[node.value for node in ast.walk(tree) if isinstance(node,(ast.Assign,ast.AnnAssign)) and target in [ast.unparse(t) for t in (node.targets if isinstance(node,ast.Assign) else [node.target])]]
+        assert len(expressions)==1
+        actual=eval(compile(ast.Expression(expressions[0]),source,'eval'),{'os':os})
+>       assert actual is (value not in ('false','0','no'))
+E       AssertionError: assert False is ('' not in ('false', '0', 'no'))
+
+tests/unit/test_tls_default_boundaries.py:29: AssertionError
+_ test_startup_tls_requires_explicit_disable[${UNSET_VERIFY_SSL}-catc-mcp/server.py-verify-CATALYST_CENTER_VERIFY_SSL] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7618c97e5370>
+source = 'catc-mcp/server.py', target = 'verify'
+key = 'CATALYST_CENTER_VERIFY_SSL', value = '${UNSET_VERIFY_SSL}'
+
+    @pytest.mark.parametrize('source,target,key',SOURCES)
+    @pytest.mark.parametrize('value',[None,'','${UNSET_VERIFY_SSL}','typo','true','false','0','no'])
+    def test_startup_tls_requires_explicit_disable(monkeypatch,source,target,key,value):
+        if value is None:monkeypatch.delenv(key,raising=False)
+        else:monkeypatch.setenv(key,value)
+        tree=ast.parse((ROOT/'mcp-servers'/source).read_text())
+        expressions=[node.value for node in ast.walk(tree) if isinstance(node,(ast.Assign,ast.AnnAssign)) and target in [ast.unparse(t) for t in (node.targets if isinstance(node,ast.Assign) else [node.target])]]
+        assert len(expressions)==1
+        actual=eval(compile(ast.Expression(expressions[0]),source,'eval'),{'os':os})
+>       assert actual is (value not in ('false','0','no'))
+E       AssertionError: assert False is ('${UNSET_VERIFY_SSL}' not in ('false', '0', 'no'))
+
+tests/unit/test_tls_default_boundaries.py:29: AssertionError
+_ test_startup_tls_requires_explicit_disable[${UNSET_VERIFY_SSL}-gns3-mcp-server/gns3_mcp_server.py-GNS3_VERIFY_SSL-GNS3_VERIFY_SSL] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7618c97e7e60>
+source = 'gns3-mcp-server/gns3_mcp_server.py', target = 'GNS3_VERIFY_SSL'
+key = 'GNS3_VERIFY_SSL', value = '${UNSET_VERIFY_SSL}'
+
+    @pytest.mark.parametrize('source,target,key',SOURCES)
+    @pytest.mark.parametrize('value',[None,'','${UNSET_VERIFY_SSL}','typo','true','false','0','no'])
+    def test_startup_tls_requires_explicit_disable(monkeypatch,source,target,key,value):
+        if value is None:monkeypatch.delenv(key,raising=False)
+        else:monkeypatch.setenv(key,value)
+        tree=ast.parse((ROOT/'mcp-servers'/source).read_text())
+        expressions=[node.value for node in ast.walk(tree) if isinstance(node,(ast.Assign,ast.AnnAssign)) and target in [ast.unparse(t) for t in (node.targets if isinstance(node,ast.Assign) else [node.target])]]
+        assert len(expressions)==1
+        actual=eval(compile(ast.Expression(expressions[0]),source,'eval'),{'os':os})
+>       assert actual is (value not in ('false','0','no'))
+E       AssertionError: assert False is ('${UNSET_VERIFY_SSL}' not in ('false', '0', 'no'))
+
+tests/unit/test_tls_default_boundaries.py:29: AssertionError
+_ test_startup_tls_requires_explicit_disable[${UNSET_VERIFY_SSL}-eve-ng-mcp-server/eve_client.py-EVE_VERIFY_SSL-EVE_VERIFY_SSL] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7618c982d910>
+source = 'eve-ng-mcp-server/eve_client.py', target = 'EVE_VERIFY_SSL'
+key = 'EVE_VERIFY_SSL', value = '${UNSET_VERIFY_SSL}'
+
+    @pytest.mark.parametrize('source,target,key',SOURCES)
+    @pytest.mark.parametrize('value',[None,'','${UNSET_VERIFY_SSL}','typo','true','false','0','no'])
+    def test_startup_tls_requires_explicit_disable(monkeypatch,source,target,key,value):
+        if value is None:monkeypatch.delenv(key,raising=False)
+        else:monkeypatch.setenv(key,value)
+        tree=ast.parse((ROOT/'mcp-servers'/source).read_text())
+        expressions=[node.value for node in ast.walk(tree) if isinstance(node,(ast.Assign,ast.AnnAssign)) and target in [ast.unparse(t) for t in (node.targets if isinstance(node,ast.Assign) else [node.target])]]
+        assert len(expressions)==1
+        actual=eval(compile(ast.Expression(expressions[0]),source,'eval'),{'os':os})
+>       assert actual is (value not in ('false','0','no'))
+E       AssertionError: assert False is ('${UNSET_VERIFY_SSL}' not in ('false', '0', 'no'))
+
+tests/unit/test_tls_default_boundaries.py:29: AssertionError
+_ test_startup_tls_requires_explicit_disable[${UNSET_VERIFY_SSL}-auvik-mcp/auvik_mcp_server.py-AUVIK_VERIFY_SSL-AUVIK_VERIFY_SSL] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7618c97e6510>
+source = 'auvik-mcp/auvik_mcp_server.py', target = 'AUVIK_VERIFY_SSL'
+key = 'AUVIK_VERIFY_SSL', value = '${UNSET_VERIFY_SSL}'
+
+    @pytest.mark.parametrize('source,target,key',SOURCES)
+    @pytest.mark.parametrize('value',[None,'','${UNSET_VERIFY_SSL}','typo','true','false','0','no'])
+    def test_startup_tls_requires_explicit_disable(monkeypatch,source,target,key,value):
+        if value is None:monkeypatch.delenv(key,raising=False)
+        else:monkeypatch.setenv(key,value)
+        tree=ast.parse((ROOT/'mcp-servers'/source).read_text())
+        expressions=[node.value for node in ast.walk(tree) if isinstance(node,(ast.Assign,ast.AnnAssign)) and target in [ast.unparse(t) for t in (node.targets if isinstance(node,ast.Assign) else [node.target])]]
+        assert len(expressions)==1
+        actual=eval(compile(ast.Expression(expressions[0]),source,'eval'),{'os':os})
+>       assert actual is (value not in ('false','0','no'))
+E       AssertionError: assert False is ('${UNSET_VERIFY_SSL}' not in ('false', '0', 'no'))
+
+tests/unit/test_tls_default_boundaries.py:29: AssertionError
+_ test_startup_tls_requires_explicit_disable[${UNSET_VERIFY_SSL}-halo-mcp/halo_mcp_server.py-HALO_VERIFY_SSL-HALO_VERIFY_SSL] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7618c9943680>
+source = 'halo-mcp/halo_mcp_server.py', target = 'HALO_VERIFY_SSL'
+key = 'HALO_VERIFY_SSL', value = '${UNSET_VERIFY_SSL}'
+
+    @pytest.mark.parametrize('source,target,key',SOURCES)
+    @pytest.mark.parametrize('value',[None,'','${UNSET_VERIFY_SSL}','typo','true','false','0','no'])
+    def test_startup_tls_requires_explicit_disable(monkeypatch,source,target,key,value):
+        if value is None:monkeypatch.delenv(key,raising=False)
+        else:monkeypatch.setenv(key,value)
+        tree=ast.parse((ROOT/'mcp-servers'/source).read_text())
+        expressions=[node.value for node in ast.walk(tree) if isinstance(node,(ast.Assign,ast.AnnAssign)) and target in [ast.unparse(t) for t in (node.targets if isinstance(node,ast.Assign) else [node.target])]]
+        assert len(expressions)==1
+        actual=eval(compile(ast.Expression(expressions[0]),source,'eval'),{'os':os})
+>       assert actual is (value not in ('false','0','no'))
+E       AssertionError: assert False is ('${UNSET_VERIFY_SSL}' not in ('false', '0', 'no'))
+
+tests/unit/test_tls_default_boundaries.py:29: AssertionError
+_ test_startup_tls_requires_explicit_disable[${UNSET_VERIFY_SSL}-suzieq-mcp/suzieq_client.py-self.verify_ssl-SUZIEQ_VERIFY_SSL] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7618c97c1040>
+source = 'suzieq-mcp/suzieq_client.py', target = 'self.verify_ssl'
+key = 'SUZIEQ_VERIFY_SSL', value = '${UNSET_VERIFY_SSL}'
+
+    @pytest.mark.parametrize('source,target,key',SOURCES)
+    @pytest.mark.parametrize('value',[None,'','${UNSET_VERIFY_SSL}','typo','true','false','0','no'])
+    def test_startup_tls_requires_explicit_disable(monkeypatch,source,target,key,value):
+        if value is None:monkeypatch.delenv(key,raising=False)
+        else:monkeypatch.setenv(key,value)
+        tree=ast.parse((ROOT/'mcp-servers'/source).read_text())
+        expressions=[node.value for node in ast.walk(tree) if isinstance(node,(ast.Assign,ast.AnnAssign)) and target in [ast.unparse(t) for t in (node.targets if isinstance(node,ast.Assign) else [node.target])]]
+        assert len(expressions)==1
+        actual=eval(compile(ast.Expression(expressions[0]),source,'eval'),{'os':os})
+>       assert actual is (value not in ('false','0','no'))
+E       AssertionError: assert False is ('${UNSET_VERIFY_SSL}' not in ('false', '0', 'no'))
+
+tests/unit/test_tls_default_boundaries.py:29: AssertionError
+_ test_startup_tls_requires_explicit_disable[${UNSET_VERIFY_SSL}-claroty-mcp/clients/claroty_client.py-self.verify_ssl-CLAROTY_VERIFY_SSL] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7618c982e4e0>
+source = 'claroty-mcp/clients/claroty_client.py', target = 'self.verify_ssl'
+key = 'CLAROTY_VERIFY_SSL', value = '${UNSET_VERIFY_SSL}'
+
+    @pytest.mark.parametrize('source,target,key',SOURCES)
+    @pytest.mark.parametrize('value',[None,'','${UNSET_VERIFY_SSL}','typo','true','false','0','no'])
+    def test_startup_tls_requires_explicit_disable(monkeypatch,source,target,key,value):
+        if value is None:monkeypatch.delenv(key,raising=False)
+        else:monkeypatch.setenv(key,value)
+        tree=ast.parse((ROOT/'mcp-servers'/source).read_text())
+        expressions=[node.value for node in ast.walk(tree) if isinstance(node,(ast.Assign,ast.AnnAssign)) and target in [ast.unparse(t) for t in (node.targets if isinstance(node,ast.Assign) else [node.target])]]
+        assert len(expressions)==1
+        actual=eval(compile(ast.Expression(expressions[0]),source,'eval'),{'os':os})
+>       assert actual is (value not in ('false','0','no'))
+E       AssertionError: assert False is ('${UNSET_VERIFY_SSL}' not in ('false', '0', 'no'))
+
+tests/unit/test_tls_default_boundaries.py:29: AssertionError
+_ test_startup_tls_requires_explicit_disable[typo-catc-mcp/server.py-verify-CATALYST_CENTER_VERIFY_SSL] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7618c982c4d0>
+source = 'catc-mcp/server.py', target = 'verify'
+key = 'CATALYST_CENTER_VERIFY_SSL', value = 'typo'
+
+    @pytest.mark.parametrize('source,target,key',SOURCES)
+    @pytest.mark.parametrize('value',[None,'','${UNSET_VERIFY_SSL}','typo','true','false','0','no'])
+    def test_startup_tls_requires_explicit_disable(monkeypatch,source,target,key,value):
+        if value is None:monkeypatch.delenv(key,raising=False)
+        else:monkeypatch.setenv(key,value)
+        tree=ast.parse((ROOT/'mcp-servers'/source).read_text())
+        expressions=[node.value for node in ast.walk(tree) if isinstance(node,(ast.Assign,ast.AnnAssign)) and target in [ast.unparse(t) for t in (node.targets if isinstance(node,ast.Assign) else [node.target])]]
+        assert len(expressions)==1
+        actual=eval(compile(ast.Expression(expressions[0]),source,'eval'),{'os':os})
+>       assert actual is (value not in ('false','0','no'))
+E       AssertionError: assert False is ('typo' not in ('false', '0', 'no'))
+
+tests/unit/test_tls_default_boundaries.py:29: AssertionError
+_ test_startup_tls_requires_explicit_disable[typo-gns3-mcp-server/gns3_mcp_server.py-GNS3_VERIFY_SSL-GNS3_VERIFY_SSL] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7618c982ee70>
+source = 'gns3-mcp-server/gns3_mcp_server.py', target = 'GNS3_VERIFY_SSL'
+key = 'GNS3_VERIFY_SSL', value = 'typo'
+
+    @pytest.mark.parametrize('source,target,key',SOURCES)
+    @pytest.mark.parametrize('value',[None,'','${UNSET_VERIFY_SSL}','typo','true','false','0','no'])
+    def test_startup_tls_requires_explicit_disable(monkeypatch,source,target,key,value):
+        if value is None:monkeypatch.delenv(key,raising=False)
+        else:monkeypatch.setenv(key,value)
+        tree=ast.parse((ROOT/'mcp-servers'/source).read_text())
+        expressions=[node.value for node in ast.walk(tree) if isinstance(node,(ast.Assign,ast.AnnAssign)) and target in [ast.unparse(t) for t in (node.targets if isinstance(node,ast.Assign) else [node.target])]]
+        assert len(expressions)==1
+        actual=eval(compile(ast.Expression(expressions[0]),source,'eval'),{'os':os})
+>       assert actual is (value not in ('false','0','no'))
+E       AssertionError: assert False is ('typo' not in ('false', '0', 'no'))
+
+tests/unit/test_tls_default_boundaries.py:29: AssertionError
+_ test_startup_tls_requires_explicit_disable[typo-eve-ng-mcp-server/eve_client.py-EVE_VERIFY_SSL-EVE_VERIFY_SSL] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7618c9943f50>
+source = 'eve-ng-mcp-server/eve_client.py', target = 'EVE_VERIFY_SSL'
+key = 'EVE_VERIFY_SSL', value = 'typo'
+
+    @pytest.mark.parametrize('source,target,key',SOURCES)
+    @pytest.mark.parametrize('value',[None,'','${UNSET_VERIFY_SSL}','typo','true','false','0','no'])
+    def test_startup_tls_requires_explicit_disable(monkeypatch,source,target,key,value):
+        if value is None:monkeypatch.delenv(key,raising=False)
+        else:monkeypatch.setenv(key,value)
+        tree=ast.parse((ROOT/'mcp-servers'/source).read_text())
+        expressions=[node.value for node in ast.walk(tree) if isinstance(node,(ast.Assign,ast.AnnAssign)) and target in [ast.unparse(t) for t in (node.targets if isinstance(node,ast.Assign) else [node.target])]]
+        assert len(expressions)==1
+        actual=eval(compile(ast.Expression(expressions[0]),source,'eval'),{'os':os})
+>       assert actual is (value not in ('false','0','no'))
+E       AssertionError: assert False is ('typo' not in ('false', '0', 'no'))
+
+tests/unit/test_tls_default_boundaries.py:29: AssertionError
+_ test_startup_tls_requires_explicit_disable[typo-auvik-mcp/auvik_mcp_server.py-AUVIK_VERIFY_SSL-AUVIK_VERIFY_SSL] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7618c97c09b0>
+source = 'auvik-mcp/auvik_mcp_server.py', target = 'AUVIK_VERIFY_SSL'
+key = 'AUVIK_VERIFY_SSL', value = 'typo'
+
+    @pytest.mark.parametrize('source,target,key',SOURCES)
+    @pytest.mark.parametrize('value',[None,'','${UNSET_VERIFY_SSL}','typo','true','false','0','no'])
+    def test_startup_tls_requires_explicit_disable(monkeypatch,source,target,key,value):
+        if value is None:monkeypatch.delenv(key,raising=False)
+        else:monkeypatch.setenv(key,value)
+        tree=ast.parse((ROOT/'mcp-servers'/source).read_text())
+        expressions=[node.value for node in ast.walk(tree) if isinstance(node,(ast.Assign,ast.AnnAssign)) and target in [ast.unparse(t) for t in (node.targets if isinstance(node,ast.Assign) else [node.target])]]
+        assert len(expressions)==1
+        actual=eval(compile(ast.Expression(expressions[0]),source,'eval'),{'os':os})
+>       assert actual is (value not in ('false','0','no'))
+E       AssertionError: assert False is ('typo' not in ('false', '0', 'no'))
+
+tests/unit/test_tls_default_boundaries.py:29: AssertionError
+_ test_startup_tls_requires_explicit_disable[typo-halo-mcp/halo_mcp_server.py-HALO_VERIFY_SSL-HALO_VERIFY_SSL] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7618c97e5a60>
+source = 'halo-mcp/halo_mcp_server.py', target = 'HALO_VERIFY_SSL'
+key = 'HALO_VERIFY_SSL', value = 'typo'
+
+    @pytest.mark.parametrize('source,target,key',SOURCES)
+    @pytest.mark.parametrize('value',[None,'','${UNSET_VERIFY_SSL}','typo','true','false','0','no'])
+    def test_startup_tls_requires_explicit_disable(monkeypatch,source,target,key,value):
+        if value is None:monkeypatch.delenv(key,raising=False)
+        else:monkeypatch.setenv(key,value)
+        tree=ast.parse((ROOT/'mcp-servers'/source).read_text())
+        expressions=[node.value for node in ast.walk(tree) if isinstance(node,(ast.Assign,ast.AnnAssign)) and target in [ast.unparse(t) for t in (node.targets if isinstance(node,ast.Assign) else [node.target])]]
+        assert len(expressions)==1
+        actual=eval(compile(ast.Expression(expressions[0]),source,'eval'),{'os':os})
+>       assert actual is (value not in ('false','0','no'))
+E       AssertionError: assert False is ('typo' not in ('false', '0', 'no'))
+
+tests/unit/test_tls_default_boundaries.py:29: AssertionError
+_ test_startup_tls_requires_explicit_disable[typo-suzieq-mcp/suzieq_client.py-self.verify_ssl-SUZIEQ_VERIFY_SSL] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7618c97e6510>
+source = 'suzieq-mcp/suzieq_client.py', target = 'self.verify_ssl'
+key = 'SUZIEQ_VERIFY_SSL', value = 'typo'
+
+    @pytest.mark.parametrize('source,target,key',SOURCES)
+    @pytest.mark.parametrize('value',[None,'','${UNSET_VERIFY_SSL}','typo','true','false','0','no'])
+    def test_startup_tls_requires_explicit_disable(monkeypatch,source,target,key,value):
+        if value is None:monkeypatch.delenv(key,raising=False)
+        else:monkeypatch.setenv(key,value)
+        tree=ast.parse((ROOT/'mcp-servers'/source).read_text())
+        expressions=[node.value for node in ast.walk(tree) if isinstance(node,(ast.Assign,ast.AnnAssign)) and target in [ast.unparse(t) for t in (node.targets if isinstance(node,ast.Assign) else [node.target])]]
+        assert len(expressions)==1
+        actual=eval(compile(ast.Expression(expressions[0]),source,'eval'),{'os':os})
+>       assert actual is (value not in ('false','0','no'))
+E       AssertionError: assert False is ('typo' not in ('false', '0', 'no'))
+
+tests/unit/test_tls_default_boundaries.py:29: AssertionError
+_ test_startup_tls_requires_explicit_disable[typo-claroty-mcp/clients/claroty_client.py-self.verify_ssl-CLAROTY_VERIFY_SSL] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7618c982fa40>
+source = 'claroty-mcp/clients/claroty_client.py', target = 'self.verify_ssl'
+key = 'CLAROTY_VERIFY_SSL', value = 'typo'
+
+    @pytest.mark.parametrize('source,target,key',SOURCES)
+    @pytest.mark.parametrize('value',[None,'','${UNSET_VERIFY_SSL}','typo','true','false','0','no'])
+    def test_startup_tls_requires_explicit_disable(monkeypatch,source,target,key,value):
+        if value is None:monkeypatch.delenv(key,raising=False)
+        else:monkeypatch.setenv(key,value)
+        tree=ast.parse((ROOT/'mcp-servers'/source).read_text())
+        expressions=[node.value for node in ast.walk(tree) if isinstance(node,(ast.Assign,ast.AnnAssign)) and target in [ast.unparse(t) for t in (node.targets if isinstance(node,ast.Assign) else [node.target])]]
+        assert len(expressions)==1
+        actual=eval(compile(ast.Expression(expressions[0]),source,'eval'),{'os':os})
+>       assert actual is (value not in ('false','0','no'))
+E       AssertionError: assert False is ('typo' not in ('false', '0', 'no'))
+
+tests/unit/test_tls_default_boundaries.py:29: AssertionError
+________________ test_registration_defaults_do_not_disable_tls _________________
+
+    def test_registration_defaults_do_not_disable_tls():
+        servers=json.loads((ROOT/'config/openclaw.json').read_text())['mcpServers']
+        for name,key in [('redfish-mcp','REDFISH_VERIFY_TLS'),('cml-mcp','CML_VERIFY_SSL')]:
+>           assert servers[name]['env'][key]=='${'+key+':-true}'
+E           AssertionError: assert '${REDFISH_VERIFY_TLS:-false}' == '${REDFISH_VERIFY_TLS:-true}'
+E
+E             - ${REDFISH_VERIFY_TLS:-true}
+E             ?                       ^^^
+E             + ${REDFISH_VERIFY_TLS:-false}
+E             ?                       ^^^^
+
+tests/unit/test_tls_default_boundaries.py:35: AssertionError
+=========================== short test summary info ============================
+FAILED tests/unit/test_tls_default_boundaries.py::test_startup_tls_requires_explicit_disable[-catc-mcp/server.py-verify-CATALYST_CENTER_VERIFY_SSL]
+FAILED tests/unit/test_tls_default_boundaries.py::test_startup_tls_requires_explicit_disable[-gns3-mcp-server/gns3_mcp_server.py-GNS3_VERIFY_SSL-GNS3_VERIFY_SSL]
+FAILED tests/unit/test_tls_default_boundaries.py::test_startup_tls_requires_explicit_disable[-eve-ng-mcp-server/eve_client.py-EVE_VERIFY_SSL-EVE_VERIFY_SSL]
+FAILED tests/unit/test_tls_default_boundaries.py::test_startup_tls_requires_explicit_disable[-auvik-mcp/auvik_mcp_server.py-AUVIK_VERIFY_SSL-AUVIK_VERIFY_SSL]
+FAILED tests/unit/test_tls_default_boundaries.py::test_startup_tls_requires_explicit_disable[-halo-mcp/halo_mcp_server.py-HALO_VERIFY_SSL-HALO_VERIFY_SSL]
+FAILED tests/unit/test_tls_default_boundaries.py::test_startup_tls_requires_explicit_disable[-suzieq-mcp/suzieq_client.py-self.verify_ssl-SUZIEQ_VERIFY_SSL]
+FAILED tests/unit/test_tls_default_boundaries.py::test_startup_tls_requires_explicit_disable[-claroty-mcp/clients/claroty_client.py-self.verify_ssl-CLAROTY_VERIFY_SSL]
+FAILED tests/unit/test_tls_default_boundaries.py::test_startup_tls_requires_explicit_disable[${UNSET_VERIFY_SSL}-catc-mcp/server.py-verify-CATALYST_CENTER_VERIFY_SSL]
+FAILED tests/unit/test_tls_default_boundaries.py::test_startup_tls_requires_explicit_disable[${UNSET_VERIFY_SSL}-gns3-mcp-server/gns3_mcp_server.py-GNS3_VERIFY_SSL-GNS3_VERIFY_SSL]
+FAILED tests/unit/test_tls_default_boundaries.py::test_startup_tls_requires_explicit_disable[${UNSET_VERIFY_SSL}-eve-ng-mcp-server/eve_client.py-EVE_VERIFY_SSL-EVE_VERIFY_SSL]
+FAILED tests/unit/test_tls_default_boundaries.py::test_startup_tls_requires_explicit_disable[${UNSET_VERIFY_SSL}-auvik-mcp/auvik_mcp_server.py-AUVIK_VERIFY_SSL-AUVIK_VERIFY_SSL]
+FAILED tests/unit/test_tls_default_boundaries.py::test_startup_tls_requires_explicit_disable[${UNSET_VERIFY_SSL}-halo-mcp/halo_mcp_server.py-HALO_VERIFY_SSL-HALO_VERIFY_SSL]
+FAILED tests/unit/test_tls_default_boundaries.py::test_startup_tls_requires_explicit_disable[${UNSET_VERIFY_SSL}-suzieq-mcp/suzieq_client.py-self.verify_ssl-SUZIEQ_VERIFY_SSL]
+FAILED tests/unit/test_tls_default_boundaries.py::test_startup_tls_requires_explicit_disable[${UNSET_VERIFY_SSL}-claroty-mcp/clients/claroty_client.py-self.verify_ssl-CLAROTY_VERIFY_SSL]
+FAILED tests/unit/test_tls_default_boundaries.py::test_startup_tls_requires_explicit_disable[typo-catc-mcp/server.py-verify-CATALYST_CENTER_VERIFY_SSL]
+FAILED tests/unit/test_tls_default_boundaries.py::test_startup_tls_requires_explicit_disable[typo-gns3-mcp-server/gns3_mcp_server.py-GNS3_VERIFY_SSL-GNS3_VERIFY_SSL]
+FAILED tests/unit/test_tls_default_boundaries.py::test_startup_tls_requires_explicit_disable[typo-eve-ng-mcp-server/eve_client.py-EVE_VERIFY_SSL-EVE_VERIFY_SSL]
+FAILED tests/unit/test_tls_default_boundaries.py::test_startup_tls_requires_explicit_disable[typo-auvik-mcp/auvik_mcp_server.py-AUVIK_VERIFY_SSL-AUVIK_VERIFY_SSL]
+FAILED tests/unit/test_tls_default_boundaries.py::test_startup_tls_requires_explicit_disable[typo-halo-mcp/halo_mcp_server.py-HALO_VERIFY_SSL-HALO_VERIFY_SSL]
+FAILED tests/unit/test_tls_default_boundaries.py::test_startup_tls_requires_explicit_disable[typo-suzieq-mcp/suzieq_client.py-self.verify_ssl-SUZIEQ_VERIFY_SSL]
+FAILED tests/unit/test_tls_default_boundaries.py::test_startup_tls_requires_explicit_disable[typo-claroty-mcp/clients/claroty_client.py-self.verify_ssl-CLAROTY_VERIFY_SSL]
+FAILED tests/unit/test_tls_default_boundaries.py::test_registration_defaults_do_not_disable_tls
+22 failed, 35 passed in 0.49s

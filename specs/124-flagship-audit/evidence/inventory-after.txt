@@ -1,0 +1,8 @@
+Skill count: 227
+  workspace/skills/ directories with SKILL.md: 227
+
+MCP integration count: 172
+  config/openclaw.json top-level entries: 109
+  + externally-installed (documented, not in config): 63
+
+Documentation check: PASS

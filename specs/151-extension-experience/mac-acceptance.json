@@ -1,0 +1,74 @@
+{
+  "date": "2026-10-11",
+  "platform": "darwin-arm64",
+  "editor": "1.108.0",
+  "sourceCommit": "2afa5b1b7a953f4822bbb9a15e45ff06ff6facf5",
+  "qualificationCommit": "774304d96a63a1e387842d40142a088d7f51ab87",
+  "artifact": {
+    "name": "netclaw-0.1.1.vsix",
+    "bytes": 4211457,
+    "sha256": "0a7c43238f3df39f409054d8ccb76975aa847d5986ffbcb2a2c645574da75d57"
+  },
+  "installedPayloadFileCount": 32,
+  "installedExperience": {
+    "checks": [
+      "Native nickname/API prompts and installation binding",
+      "All21 generic domain views: semantic title/purpose/cards or explicit source failure",
+      "Guided create \u2192 read-only preview \u2192 native review \u2192 verified isolated save",
+      "Unsaved YAML draft survives live light/dark/high-contrast changes",
+      "Native mode switch keeps unsaved work",
+      "Scoped MCP native review, secret replacement, verified save and private reset",
+      "MCP responsive widths,200% zoom and keyboard-only field selection; reduced-motion emulation",
+      "defenseclaw: native scope binding, editable rules, cancel preservation, weakening acknowledgment and verified fixture write",
+      "openshell: native scope binding, editable rules, cancel preservation, weakening acknowledgment and verified fixture write",
+      "Repeated graph refresh keeps one canvas and current selection",
+      "Reported BGP node selection/controls and WebGL-loss text fallback",
+      "Actual editor500-entry search: 2.6ms after debounce",
+      "Every view family checked in three themes/widths, 200% zoom, keyboard focus and reduced motion",
+      "Connection invalidation clears sensitive drafts"
+    ],
+    "layoutCases": 149,
+    "screenshots": 42,
+    "scope": "Synthetic data and isolated source HUD; no real provider or network-device calls. Security mutations target isolated CLI fixtures."
+  },
+  "liveUi": {
+    "connection": true,
+    "testbedEditingAvailable": true,
+    "mcpEditingAvailable": true,
+    "secretValuesHidden": true,
+    "bothSecurityMenusAndCancelledBinding": true,
+    "ownerConfigurationUnchanged": true,
+    "scope": "Read-only live Mac installation UI; no configuration, security policy or device changes."
+  },
+  "automation": {
+    "extensionPassed": 56,
+    "extensionSkipped": 1,
+    "skipReason": "Optional cached RAG embeddings not configured on this Mac run; WSL qualification recorded its real pass.",
+    "hudUnitPassed": 372,
+    "hudExperiencePassed": 9,
+    "typecheck": "passed",
+    "extensionBuild": "passed",
+    "hudBuild": "passed"
+  },
+  "publisherAccess": "NetClaw vsce verify-pat succeeded",
+  "readmeLinks": "All three commit-pinned links returned HTTP 200",
+  "limits": [
+    "Native vendor CLIs are not installed on this Mac; security writes use isolated CLI fixtures. Real vendor policy and traffic evidence remains the WSL qualification.",
+    "This run qualifies native macOS VS Code 1.108.0; other editor/remote platforms retain their separately recorded scope."
+  ],
+  "marketplace": {
+    "version": "0.1.1",
+    "downloadedArtifactSha256": "0a7c43238f3df39f409054d8ccb76975aa847d5986ffbcb2a2c645574da75d57",
+    "originalArtifactSha256": "0a7c43238f3df39f409054d8ccb76975aa847d5986ffbcb2a2c645574da75d57",
+    "archiveIdentical": true,
+    "payloadFilesMatched": 32,
+    "listing": "https://marketplace.visualstudio.com/items?itemName=NetClaw.netclaw",
+    "galleryPublicFlag": true,
+    "itemPageHttpStatus": 200,
+    "versionValidated": true,
+    "validatedCatalogContainsVersion": true,
+    "statusObservedAt": "2026-10-11T23:20:32Z",
+    "installationTarget": "Microsoft.VisualStudio.Code",
+    "statusNote": "Public item page returned200 and displayed the Visual Studio Code category and Install link; validated-only gallery included0.1.1."
+  }
+}

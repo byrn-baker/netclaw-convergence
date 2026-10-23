@@ -1,0 +1,10 @@
+{
+  "publisher": "NetClaw",
+  "name": "netclaw",
+  "version": "0.1.0",
+  "source": "8db2c2144e169f4c2ab832d3d62c40f1b1c6a807",
+  "sha256": "71694842db407dbb28ed695a31ca583a892d2c2bc0903c04829514b123fec005",
+  "bytes": 2220783,
+  "artifact": "netclaw-0.1.0.vsix",
+  "qualification": "Mac candidate for real Windows/WSL acceptance. Not published."
+}

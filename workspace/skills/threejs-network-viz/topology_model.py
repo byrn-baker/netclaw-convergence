@@ -129,7 +129,7 @@ class Vector3:
         return self / mag
 
     def to_list(self) -> list[float]:
-        return [self.x, self.y, self.z]
+        return [float(self.x), float(self.y), float(self.z)]
 
     @classmethod
     def random(cls, min_val: float = -10, max_val: float = 10) -> "Vector3":

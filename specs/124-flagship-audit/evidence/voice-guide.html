@@ -1,0 +1,23 @@
+<html><head><style>body{font:16px system-ui;max-width:1050px;margin:40px auto;color:#172033;line-height:1.5}pre{background:#eef1f5;padding:16px;overflow:auto}table{border-collapse:collapse}td,th{padding:8px;border:1px solid #aaa}a{color:#1264a3}</style></head><body><h1>Upgrade the voice webhook service</h1>
+<p>Spec 124 requires authenticated requests before voice callbacks can read call state or dispatch agent work. Unsigned or invalid Twilio callbacks return 403. Missing authentication configuration returns 503. Interactive callbacks also require an allowed caller or outbound recipient. The JSON alert-trigger API uses a separate bearer token.</p>
+<p>Twilio signs callbacks with the <strong>account Auth Token</strong>, not the API key secret. NetClaw validates the full public URL and form parameters with Twilio's SDK. Behind a proxy, configure the public HTTPS origin explicitly; forwarded headers cannot choose the signing origin. See <a href="https://www.twilio.com/docs/usage/tutorials/how-to-secure-your-flask-app-by-validating-incoming-twilio-requests">Twilio's Flask validation guidance</a>.</p>
+<h2>Migrate configuration</h2>
+<p>Run on the NetClaw host from the repository root, using the environment file your voice service loads:</p>
+<pre><code class="language-bash"># Preview missing setting names; no writes or secret values printed
+python3 scripts/migrate-voice-auth.py --env-file .env --public-url https://voice.example.com
+
+# Apply; prompts privately for the account Auth Token if not already configured
+python3 scripts/migrate-voice-auth.py --env-file .env --public-url https://voice.example.com --apply
+</code></pre>
+<p>The script preserves unrelated settings, generates <code>VOICE_ALERT_TOKEN</code> if absent, and stores the public origin in <code>VOICE_WEBHOOK_URL</code>. Existing files are backed up to <code>.env.pre-voice-auth</code>; both files use mode 0600. Repeating the same migration preserves the values and file contents. An existing backup is never overwritten. A failed atomic replacement preserves the original and backup.</p>
+<p>Load the migrated settings into the service environment and restart the webhook service. Confirm Twilio is configured with the same public host and scheme, and keep the proxy's <code>/webhooks/twilio/voice/...</code> paths intact. Verify a real signed callback in a sandbox before restoring production traffic. A provider call has not been tested by the offline audit.</p>
+<p>Configure authorized alert senders to use <code>Authorization: Bearer &lt;VOICE_ALERT_TOKEN&gt;</code> over HTTPS when posting JSON to <code>/webhooks/twilio/voice/trigger-alert</code>. Retrieve that token privately from the host's environment file; do not paste it into chats, shell history, logs, or Git. The migration creates configuration only: it does not send a call or authorize a new alert schedule.</p>
+<p>The old source contained a shared fallback gateway token. It is removed. Set your own <code>OPENCLAW_GATEWAY_TOKEN</code>; <strong>rotate the gateway token if you used the former fallback</strong>, because it was present in repository history. Existing explicitly configured tokens are preserved by the migration.</p>
+<h2>CML TLS</h2>
+<p>Voice CML requests now verify TLS by default. For a private CA, set <code>CML_CA_BUNDLE</code> to the absolute path of its PEM file. For an explicitly approved disposable lab only, <code>CML_VERIFY_SSL=false</code> retains the old unverified behavior. Leave verification enabled for production. No CML credentials or device configuration are changed by migration.</p>
+<h2>Recover configuration</h2>
+<pre><code class="language-bash">python3 scripts/migrate-voice-auth.py --env-file .env --restore
+python3 scripts/migrate-voice-auth.py --env-file .env --restore --apply
+</code></pre>
+<p>The first command previews; the second restores the saved file with mode 0600. Reload the service environment after recovery. Old configuration without authentication will remain unavailable under the secured server. Do not restore unauthenticated server code to a public endpoint. Keep the backup private and outside Git.</p>
+</body></html>

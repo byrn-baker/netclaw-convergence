@@ -1,0 +1,257 @@
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "{\n  \"ok\": true,\n  \"branch\": \"pal-distribution-design-2026-10-09\",\n  \"commits\": [\n    {\n      \"commit\": \"67e4b316\",\n      \"id\": \"67e4b316ab2e1c954cb3824972454aa33c43163b5573c6b8bd2134ec96e9cfc5\",\n      \"created_at\": \"2026-10-09T14:02:48\",\n      \"kind\": \"auto\",\n      \"message\": \"vscode-copilot\",\n      \"parents\": [\n        \"e157b66b\"\n      ],\n      \"turns\": 1,\n      \"merge\": false\n    },\n    {\n      \"commit\": \"e157b66b\",\n      \"id\": \"e157b66b7fe01552cec2e6b52e8175ae66a040e5e520405a5adb42836031c1d6\",\n      \"created_at\": \"2026-10-09T13:49:49\",\n      \"kind\": \"auto\",\n      \"message\": \"vscode-copilot\",\n      \"parents\": [\n        \"c1a8f5ff\"\n      ],\n      \"turns\": 1,\n      \"merge\": false\n    },\n    {\n      \"commit\": \"c1a8f5ff\",\n      \"id\": \"c1a8f5ff7746b7acb23391bcf61d76ba8662a8d9cba1a60b055161410afb1d98\",\n      \"created_at\": \"2026-10-09T13:20:53\",\n      \"kind\": \"auto\",\n      \"message\": \"vscode-copilot\",\n      \"parents\": [\n        \"a5685f13\"\n      ],\n      \"turns\": 1,\n      \"merge\": false\n    },\n    {\n      \"commit\": \"a5685f13\",\n      \"id\": \"a5685f13d1940efc216480b89bd92a79a0f0a08e71e2061c9a05cd6cb9e1379d\",\n      \"created_at\": \"2026-10-09T10:58:17\",\n      \"kind\": \"auto\",\n      \"message\": \"session-summary\",\n      \"parents\": [\n        \"cb0d97a0\"\n      ],\n      \"turns\": 1,\n      \"merge\": false\n    },\n    {\n      \"commit\": \"cb0d97a0\",\n      \"id\": \"cb0d97a02b6bc483fd4dc8a797d203ddfffa8d8abe67b4dd6b7e1899aaf70c8c\",\n      \"created_at\": \"2026-10-09T10:57:25\",\n      \"kind\": \"auto\",\n      \"message\": \"demo-launch\",\n      \"parents\": [\n        \"676208c7\"\n      ],\n      \"turns\": 1,\n      \"merge\": false\n    },\n    {\n      \"commit\": \"676208c7\",\n      \"id\": \"676208c748513f507ee846dc65159e207048e7b179bf5c21d5b1158633f6a0eb\",\n      \"created_at\": \"2026-10-09T10:20:48\",\n      \"kind\": \"auto\",\n      \"message\": \"session-summary\",\n      \"parents\": [\n        \"063a76b8\"\n      ],\n      \"turns\": 1,\n      \"merge\": false\n    },\n    {\n      \"commit\": \"063a76b8\",\n      \"id\": \"063a76b8f0ea9f5c2e906df6204cc9990c5f14934873276180c1c15fbb3d3bbc\",\n      \"created_at\": \"2026-10-09T10:18:03\",\n      \"kind\": \"auto\",\n      \"message\": \"implementation-milestone\",\n      \"parents\": [\n        \"474c4645\"\n      ],\n      \"turns\": 1,\n      \"merge\": false\n    },\n    {\n      \"commit\": \"474c4645\",\n      \"id\": \"474c4645a457a08a995b8d754c543ff423dd7c1ec5a66762cc4b9f6d9f167554\",\n      \"created_at\": \"2026-10-09T09:52:11\",\n      \"kind\": \"auto\",\n      \"message\": \"implementation-start\",\n      \"parents\": [\n        \"d647a24e\"\n      ],\n      \"turns\": 1,\n      \"merge\": false\n    },\n    {\n      \"commit\": \"d647a24e\",\n      \"id\": \"d647a24e8a3852908bf5a59eeb03f46809ee117f07e05a53859b71b75ee38bdf\",\n      \"created_at\": \"2026-10-09T09:35:03\",\n      \"kind\": \"auto\",\n      \"message\": \"session-summary\",\n      \"parents\": [\n        \"15de426d\"\n      ],\n      \"turns\": 1,\n      \"merge\": false\n    },\n    {\n      \"commit\": \"15de426d\",\n      \"id\": \"15de426dd4f5a19cdf65aab3d8af3f6fb7c0095d124313c10337646d33e5ae1f\",\n      \"created_at\": \"2026-10-09T09:34:17\",\n      \"kind\": \"auto\",\n      \"message\": \"research-and-spec\",\n      \"parents\": [\n        \"74559686\"\n      ],\n      \"turns\": 1,\n      \"merge\": false\n    },\n    {\n      \"commit\": \"74559686\",\n      \"id\": \"7455968650f779a009179347b810978c5b656624711193fca5cfcd5268ea7af7\",\n      \"created_at\": \"2026-10-09T09:28:30\",\n      \"kind\": \"auto\",\n      \"message\": \"main-restored\",\n      \"parents\": [\n        \"7b565501\"\n      ],\n      \"turns\": 1,\n      \"merge\": false\n    },\n    {\n      \"commit\": \"7b565501\",\n      \"id\": \"7b56550116d24be44e79b861bed1f1c5d17b65fa9b4584a81fccf28af6bf8132\",\n      \"created_at\": \"2026-10-09T09:27:37\",\n      \"kind\": \"auto\",\n      \"message\": \"session-start\",\n      \"parents\": [\n        \"6b6e48e2\"\n      ],\n      \"turns\": 1,\n      \"merge\": false\n    },\n    {\n      \"commit\": \"6b6e48e2\",\n      \"id\": \"6b6e48e29de8270addf218bb63d6208590bd5a391c4f35c8a1095c18842ae9f6\",\n      \"created_at\": \"2026-10-08T15:07:41\",\n      \"kind\": \"auto\",\n      \"message\": \"msp-architecture-document-complete\",\n      \"parents\": [\n        \"c8846e4e\"\n      ],\n      \"turns\": 1,\n      \"merge\": false\n    },\n    {\n      \"commit\": \"c8846e4e\",\n      \"id\": \"c8846e4e7b446778500c6a85a9066ad53279e0b15f7914c20c8b40a556e75121\",\n      \"created_at\": \"2026-10-08T15:00:51\",\n      \"kind\": \"auto\",\n      \"message\": \"vscode-copilot\",\n      \"parents\": [\n        \"3a7716fd\"\n      ],\n      \"turns\": 1,\n      \"merge\": false\n    },\n    {\n      \"commit\": \"3a7716fd\",\n      \"id\": \"3a7716fd226099c968e21908772b509e89583b66fcd844ded0b1359137757842\",\n      \"created_at\": \"2026-10-07T14:10:14\",\n      \"kind\": \"auto\",\n      \"message\": \"vscode-copilot\",\n      \"parents\": [\n        \"0bc811b5\"\n      ],\n      \"turns\": 1,\n      \"merge\": false\n    },\n    {\n      \"commit\": \"0bc811b5\",\n      \"id\": \"0bc811b5aac4cc219f33a5701ff7e91eb22c1776c4c9fa6191d82df47d40a1f7\",\n      \"created_at\": \"2026-10-07T14:09:33\",\n      \"kind\": \"auto\",\n      \"message\": \"vscode-copilot\",\n      \"parents\": [\n        \"f86f6551\"\n      ],\n      \"turns\": 1,\n      \"merge\": false\n    },\n    {\n      \"commit\": \"f86f6551\",\n      \"id\": \"f86f655172f7fd1c46d0e37270af841c3910fbffae3922254e8da46101d3eb08\",\n      \"created_at\": \"2026-10-07T14:02:59\",\n      \"kind\": \"auto\",\n      \"message\": \"vscode-copilot\",\n      \"parents\": [\n        \"2ae1b887\"\n      ],\n      \"turns\": 1,\n      \"merge\": false\n    },\n    {\n      \"commit\": \"2ae1b887\",\n      \"id\": \"2ae1b887e3bac0ab3ed9d604ac31058dfcda6218705d0e3c18b1955f96c5427f\",\n      \"created_at\": \"2026-10-07T13:57:40\",\n      \"kind\": \"auto\",\n      \"message\": \"vscode-copilot\",\n      \"parents\": [\n        \"50ea60ed\"\n      ],\n      \"turns\": 1,\n      \"merge\": false\n    },\n    {\n      \"commit\": \"50ea60ed\",\n      \"id\": \"50ea60ed1860a8824b21a2c0c86210d828d6a3243f589135f8f846d720abe80c\",\n      \"created_at\": \"2026-10-05T12:04:11\",\n      \"kind\": \"auto\",\n      \"message\": \"vscode-copilot\",\n      \"parents\": [\n        \"2370ebc5\"\n      ],\n      \"turns\": 1,\n      \"merge\": false\n    },\n    {\n      \"commit\": \"2370ebc5\",\n      \"id\": \"2370ebc5c166d53a961ff6b48216b75d654a2e754cf6c94e81dd69638bff64fc\",\n      \"created_at\": \"2026-10-05T12:00:26\",\n      \"kind\": \"auto\",\n      \"message\": \"vscode-copilot\",\n      \"parents\": [\n        \"f8150f5f\"\n      ],\n      \"turns\": 1,\n      \"merge\": false\n    }\n  ]\n}"
+    }
+  ],
+  "structuredContent": {
+    "result": {
+      "ok": true,
+      "branch": "pal-distribution-design-2026-10-09",
+      "commits": [
+        {
+          "commit": "67e4b316",
+          "id": "67e4b316ab2e1c954cb3824972454aa33c43163b5573c6b8bd2134ec96e9cfc5",
+          "created_at": "2026-10-09T14:02:48",
+          "kind": "auto",
+          "message": "vscode-copilot",
+          "parents": [
+            "e157b66b"
+          ],
+          "turns": 1,
+          "merge": false
+        },
+        {
+          "commit": "e157b66b",
+          "id": "e157b66b7fe01552cec2e6b52e8175ae66a040e5e520405a5adb42836031c1d6",
+          "created_at": "2026-10-09T13:49:49",
+          "kind": "auto",
+          "message": "vscode-copilot",
+          "parents": [
+            "c1a8f5ff"
+          ],
+          "turns": 1,
+          "merge": false
+        },
+        {
+          "commit": "c1a8f5ff",
+          "id": "c1a8f5ff7746b7acb23391bcf61d76ba8662a8d9cba1a60b055161410afb1d98",
+          "created_at": "2026-10-09T13:20:53",
+          "kind": "auto",
+          "message": "vscode-copilot",
+          "parents": [
+            "a5685f13"
+          ],
+          "turns": 1,
+          "merge": false
+        },
+        {
+          "commit": "a5685f13",
+          "id": "a5685f13d1940efc216480b89bd92a79a0f0a08e71e2061c9a05cd6cb9e1379d",
+          "created_at": "2026-10-09T10:58:17",
+          "kind": "auto",
+          "message": "session-summary",
+          "parents": [
+            "cb0d97a0"
+          ],
+          "turns": 1,
+          "merge": false
+        },
+        {
+          "commit": "cb0d97a0",
+          "id": "cb0d97a02b6bc483fd4dc8a797d203ddfffa8d8abe67b4dd6b7e1899aaf70c8c",
+          "created_at": "2026-10-09T10:57:25",
+          "kind": "auto",
+          "message": "demo-launch",
+          "parents": [
+            "676208c7"
+          ],
+          "turns": 1,
+          "merge": false
+        },
+        {
+          "commit": "676208c7",
+          "id": "676208c748513f507ee846dc65159e207048e7b179bf5c21d5b1158633f6a0eb",
+          "created_at": "2026-10-09T10:20:48",
+          "kind": "auto",
+          "message": "session-summary",
+          "parents": [
+            "063a76b8"
+          ],
+          "turns": 1,
+          "merge": false
+        },
+        {
+          "commit": "063a76b8",
+          "id": "063a76b8f0ea9f5c2e906df6204cc9990c5f14934873276180c1c15fbb3d3bbc",
+          "created_at": "2026-10-09T10:18:03",
+          "kind": "auto",
+          "message": "implementation-milestone",
+          "parents": [
+            "474c4645"
+          ],
+          "turns": 1,
+          "merge": false
+        },
+        {
+          "commit": "474c4645",
+          "id": "474c4645a457a08a995b8d754c543ff423dd7c1ec5a66762cc4b9f6d9f167554",
+          "created_at": "2026-10-09T09:52:11",
+          "kind": "auto",
+          "message": "implementation-start",
+          "parents": [
+            "d647a24e"
+          ],
+          "turns": 1,
+          "merge": false
+        },
+        {
+          "commit": "d647a24e",
+          "id": "d647a24e8a3852908bf5a59eeb03f46809ee117f07e05a53859b71b75ee38bdf",
+          "created_at": "2026-10-09T09:35:03",
+          "kind": "auto",
+          "message": "session-summary",
+          "parents": [
+            "15de426d"
+          ],
+          "turns": 1,
+          "merge": false
+        },
+        {
+          "commit": "15de426d",
+          "id": "15de426dd4f5a19cdf65aab3d8af3f6fb7c0095d124313c10337646d33e5ae1f",
+          "created_at": "2026-10-09T09:34:17",
+          "kind": "auto",
+          "message": "research-and-spec",
+          "parents": [
+            "74559686"
+          ],
+          "turns": 1,
+          "merge": false
+        },
+        {
+          "commit": "74559686",
+          "id": "7455968650f779a009179347b810978c5b656624711193fca5cfcd5268ea7af7",
+          "created_at": "2026-10-09T09:28:30",
+          "kind": "auto",
+          "message": "main-restored",
+          "parents": [
+            "7b565501"
+          ],
+          "turns": 1,
+          "merge": false
+        },
+        {
+          "commit": "7b565501",
+          "id": "7b56550116d24be44e79b861bed1f1c5d17b65fa9b4584a81fccf28af6bf8132",
+          "created_at": "2026-10-09T09:27:37",
+          "kind": "auto",
+          "message": "session-start",
+          "parents": [
+            "6b6e48e2"
+          ],
+          "turns": 1,
+          "merge": false
+        },
+        {
+          "commit": "6b6e48e2",
+          "id": "6b6e48e29de8270addf218bb63d6208590bd5a391c4f35c8a1095c18842ae9f6",
+          "created_at": "2026-10-08T15:07:41",
+          "kind": "auto",
+          "message": "msp-architecture-document-complete",
+          "parents": [
+            "c8846e4e"
+          ],
+          "turns": 1,
+          "merge": false
+        },
+        {
+          "commit": "c8846e4e",
+          "id": "c8846e4e7b446778500c6a85a9066ad53279e0b15f7914c20c8b40a556e75121",
+          "created_at": "2026-10-08T15:00:51",
+          "kind": "auto",
+          "message": "vscode-copilot",
+          "parents": [
+            "3a7716fd"
+          ],
+          "turns": 1,
+          "merge": false
+        },
+        {
+          "commit": "3a7716fd",
+          "id": "3a7716fd226099c968e21908772b509e89583b66fcd844ded0b1359137757842",
+          "created_at": "2026-10-07T14:10:14",
+          "kind": "auto",
+          "message": "vscode-copilot",
+          "parents": [
+            "0bc811b5"
+          ],
+          "turns": 1,
+          "merge": false
+        },
+        {
+          "commit": "0bc811b5",
+          "id": "0bc811b5aac4cc219f33a5701ff7e91eb22c1776c4c9fa6191d82df47d40a1f7",
+          "created_at": "2026-10-07T14:09:33",
+          "kind": "auto",
+          "message": "vscode-copilot",
+          "parents": [
+            "f86f6551"
+          ],
+          "turns": 1,
+          "merge": false
+        },
+        {
+          "commit": "f86f6551",
+          "id": "f86f655172f7fd1c46d0e37270af841c3910fbffae3922254e8da46101d3eb08",
+          "created_at": "2026-10-07T14:02:59",
+          "kind": "auto",
+          "message": "vscode-copilot",
+          "parents": [
+            "2ae1b887"
+          ],
+          "turns": 1,
+          "merge": false
+        },
+        {
+          "commit": "2ae1b887",
+          "id": "2ae1b887e3bac0ab3ed9d604ac31058dfcda6218705d0e3c18b1955f96c5427f",
+          "created_at": "2026-10-07T13:57:40",
+          "kind": "auto",
+          "message": "vscode-copilot",
+          "parents": [
+            "50ea60ed"
+          ],
+          "turns": 1,
+          "merge": false
+        },
+        {
+          "commit": "50ea60ed",
+          "id": "50ea60ed1860a8824b21a2c0c86210d828d6a3243f589135f8f846d720abe80c",
+          "created_at": "2026-10-05T12:04:11",
+          "kind": "auto",
+          "message": "vscode-copilot",
+          "parents": [
+            "2370ebc5"
+          ],
+          "turns": 1,
+          "merge": false
+        },
+        {
+          "commit": "2370ebc5",
+          "id": "2370ebc5c166d53a961ff6b48216b75d654a2e754cf6c94e81dd69638bff64fc",
+          "created_at": "2026-10-05T12:00:26",
+          "kind": "auto",
+          "message": "vscode-copilot",
+          "parents": [
+            "f8150f5f"
+          ],
+          "turns": 1,
+          "merge": false
+        }
+      ]
+    }
+  },
+  "isError": false
+}

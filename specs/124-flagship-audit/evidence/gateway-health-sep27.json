@@ -1,0 +1,7 @@
+{
+  "command": "openclaw health --json --timeout 5000",
+  "exit_code": 1,
+  "ok": false,
+  "structured_response": true,
+  "raw_output": "retained privately; not committed"
+}

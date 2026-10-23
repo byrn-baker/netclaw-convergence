@@ -31,7 +31,6 @@ logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s [%(name)s] %(levelname)s %(message)s',
     handlers=[
-        logging.FileHandler('/tmp/bgp-daemon-v2.log'),
         logging.StreamHandler(),
     ]
 )
@@ -352,7 +351,9 @@ async def handle_n2n(method, path, body):
             return 200, {"pending": fed.authz.pending_approvals()}
 
         if len(parts) == 3 and parts[1] == "approvals" and method == "POST":
-            fed.authz.resolve_approval(int(parts[2]), body.get("action", "deny"), body.get("via", "cli"))
+            result = fed.authz.resolve_approval(int(parts[2]), body.get("action", "deny"), body.get("via", "cli"))
+            if not result["resolved"]:
+                return 409, {"error": "approval expired or unknown; start a new invocation", **result}
             return 200, {"resolved": int(parts[2]), "action": body.get("action")}
 
         if path == "/n2n/audit" and method == "GET":
@@ -727,6 +728,7 @@ async def handle_n2n(method, path, body):
                          "note": "restart the daemon to (re)start iN2N listeners/dialers"}
 
         if path == "/n2n/members" and method == "GET":
+            from bgp.federation.member_inventory import stored_inventory
             def _spec_names(scope):
                 out = []
                 for e in fed.risk._scope_list(scope):
@@ -739,6 +741,7 @@ async def handle_n2n(method, path, body):
             return 200, {"members": [
                 {"member_id": m["member_id"], "display_name": m["display_name"],
                  "profile": m["profile"], "state": m["state"],
+                 "inventory": stored_inventory(m),
                  "transport_binding": m["transport_binding"],
                  "node_type": m["node_type"],
                  "specialty_count": fed.risk.specialty_count(m["scope"]),
@@ -978,9 +981,11 @@ async def _start_in2n(fed):
                 except Exception as e:
                     logger.warning("iN2N accept failed: %s", e)
 
-            server = await asyncio.start_server(on_conn, "0.0.0.0", port)
+            from bgp.federation.internal_security import server_context
+            bind = os.environ.get("N2N_IN2N_BIND", "127.0.0.1")
+            server = await asyncio.start_server(on_conn, bind, port, ssl=server_context(bind))
             fed._in2n_server = server  # keep a ref
-            logger.info("iN2N Border listener on 0.0.0.0:%d (risk=%s)", port, risk["risk_name"])
+            logger.info("iN2N Border listener on %s:%d (risk=%s)", bind, port, risk["risk_name"])
             # feature 057: on entering production, REQUIRE (verify, never mutate)
             # security.mode=defenseclaw so the Border's OWN model turns (via the
             # OpenClaw gateway) are guarded (T019a/FR-007), then start the background
@@ -1170,7 +1175,9 @@ async def _in2n_member_dialer(fed, host, port, token):
         try:
             ch = fed.border_channel
             if ch is None or getattr(ch, "_closed", True):
-                await fed.dial_border(host, port, enrollment_token=used_token)
+                from bgp.federation.internal_security import client_context
+                await fed.dial_border(host, port, enrollment_token=used_token,
+                                      ssl_context=client_context(host))
                 used_token = ""  # spent after a successful enroll
                 backoff = 5
         except Exception as e:
@@ -1251,7 +1258,12 @@ async def handle_http(reader, writer):
                 for peer_ip, session in _speaker.agent.sessions.items():
                     state = session.fsm.get_state_name() if hasattr(session, "fsm") else "unknown"
                     peers.append({"peer": peer_ip, "state": state})
-            resp_body = {"status": "running", "peers": peers, "injected_routes": list(_injected.keys())}
+            from bgp.federation.runtime import selected
+            runtime=selected()
+            resp_body = {"status": "running", "peers": peers, "injected_routes": list(_injected.keys()),
+                "installation_id":runtime.installation,"harness_type":runtime.kind,"pid":os.getpid(),
+                "n2n_enabled":bool(N2N_ENABLED),
+                "federation_ready":bool(N2N_ENABLED and _federation and (runtime.kind!='hermes' or getattr(getattr(_federation,'hermes_runtime',None),'ready',False)))}
 
         elif method == "GET" and path == "/rib":
             loc_rib_data = {}
@@ -1573,9 +1585,12 @@ async def main():
                 local_as=LOCAL_AS, router_id=ROUTER_ID,
                 display_name=N2N_DISPLAY_NAME, refresh_s=N2N_REFRESH_S,
             )
+            await _federation.start_runtime()
             _speaker.agent.federation_service = _federation
             logger.info("N2N federation ENABLED — identity %s", _federation.local_identity)
         except Exception as e:
+            from bgp.federation.runtime import selected
+            if selected().kind=='hermes':raise
             logger.error("N2N federation failed to init (continuing without it): %s", e)
     else:
         logger.info("N2N federation disabled (set N2N_ENABLED=true to enable)")
@@ -1634,4 +1649,19 @@ async def main():
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    async def owned_main():
+        import signal
+        from bgp.federation.runtime import selected
+        if not os.environ.get('NETCLAW_DAEMON_LOCK_FD'):
+            import importlib.util
+            from pathlib import Path
+            spec=importlib.util.spec_from_file_location('federation_control',Path(__file__).resolve().parents[2]/'scripts/federation-control.py')
+            module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+            module.claim(selected(initialize=True))
+        task=asyncio.current_task()
+        for signum in (signal.SIGTERM,signal.SIGINT):asyncio.get_running_loop().add_signal_handler(signum,task.cancel)
+        try:await main()
+        except asyncio.CancelledError:pass
+        finally:
+            if _federation is not None:await _federation.stop_runtime()
+    asyncio.run(owned_main())

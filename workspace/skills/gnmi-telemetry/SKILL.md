@@ -87,3 +87,8 @@ gNMI streaming telemetry operations for multi-vendor network devices. Query devi
 - TLS is mandatory for all connections; mTLS is supported
 - All operations are logged to the GAIT audit trail
 - Maximum 50 concurrent subscriptions (configurable via GNMI_MAX_SUBSCRIPTIONS)
+
+## Failure Behavior
+
+- On a tool error (timeout, unreachable host, malformed response), report the failure and its error message directly to the user rather than fabricating or guessing at results.
+- For a confirmed read-only call, check connectivity and retry once if appropriate. For any call that changes state or sends a message, a timeout does not prove the action failed: inspect current state or delivery status before retrying, preserve the required approval/change gates, and do not repeat an action whose outcome is unknown.

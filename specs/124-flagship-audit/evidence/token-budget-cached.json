@@ -1,0 +1,49 @@
+{
+  "counts": {
+    "BLOCKED_DEPENDENCY": 0,
+    "ERROR": 0,
+    "FAIL": 0,
+    "NEEDS_DOCKER": 0,
+    "NEEDS_LIVE_CREDENTIALS": 0,
+    "PASS": 1
+  },
+  "exit_code": 0,
+  "generated_at": "2026-09-26T22:39:43.975624+00:00",
+  "results": [
+    {
+      "capabilities": [],
+      "command": [
+        "/Users/john.capobianco/netclaw/.contract-test-envs/token-budget/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_budget_policy.py",
+        "tests/test_gcf_serializer.py",
+        "tests/test_session_budget.py"
+      ],
+      "detail": "offline contracts passed",
+      "duration_seconds": 0.24276754099992104,
+      "environment": {
+        "fingerprint": "709dfbe656c9a2e64ef0eae71ad8a2095730f68ad3c4e4877a29dd24f1d5190e",
+        "path": ".contract-test-envs/token-budget"
+      },
+      "exit_code": 0,
+      "status": "PASS",
+      "suite": "token-budget",
+      "test_runs": [
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/token-budget/bin/python",
+            "-m",
+            "pytest",
+            "tests/test_budget_policy.py",
+            "tests/test_gcf_serializer.py",
+            "tests/test_session_budget.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\ncollected 65 items\n\ntests/test_budget_policy.py .....................                        [ 32%]\ntests/test_gcf_serializer.py .....................                       [ 64%]\ntests/test_session_budget.py .......................                     [100%]\n\n============================== 65 passed in 0.08s =============================="
+        }
+      ]
+    }
+  ],
+  "schema_version": 1
+}

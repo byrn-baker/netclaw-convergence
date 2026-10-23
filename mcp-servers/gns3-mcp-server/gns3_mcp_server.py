@@ -29,6 +29,9 @@ logger = logging.getLogger("gns3-mcp")
 
 # Import FastMCP and httpx
 try:
+    from functools import wraps
+    from fastmcp.utilities.async_utils import call_sync_fn_in_threadpool
+    from fastmcp_tasks import TasksExtension
     from fastmcp import FastMCP
     import httpx
 except ImportError as e:
@@ -43,7 +46,7 @@ except ImportError as e:
 GNS3_URL = os.getenv("GNS3_URL", "http://localhost:3080")
 GNS3_USER = os.getenv("GNS3_USER", "")
 GNS3_PASSWORD = os.getenv("GNS3_PASSWORD", "")
-GNS3_VERIFY_SSL = os.getenv("GNS3_VERIFY_SSL", "true").lower() == "true"
+GNS3_VERIFY_SSL = os.getenv("GNS3_VERIFY_SSL", "true").strip().lower() not in ("false", "0", "no")
 GNS3_TOKEN_TTL = int(os.getenv("GNS3_TOKEN_TTL", "3000"))  # 50 minutes default
 
 # =============================================================================
@@ -340,6 +343,17 @@ def parse_interface(interface_str: str) -> tuple:
 # =============================================================================
 
 mcp = FastMCP("GNS3 MCP Server")
+mcp.add_extension(TasksExtension(name="netclaw-gns3-mcp-server", concurrency=1))
+
+
+def _task_tool(fn):
+    """Register a threaded MCP task while preserving the direct Python callable."""
+    @wraps(fn)
+    async def run(*args, **kwargs):
+        return await call_sync_fn_in_threadpool(fn, *args, **kwargs)
+    mcp.tool(task=True)(run)
+    return fn
+
 client: Optional[GNS3Client] = None
 
 
@@ -357,7 +371,7 @@ def get_client() -> GNS3Client:
 # Utility Tools (T011, T012)
 # =============================================================================
 
-@mcp.tool()
+@_task_tool
 @with_gait_logging("gns3_list_templates")
 def gns3_list_templates() -> str:
     """List available node templates on the GNS3 server."""
@@ -383,7 +397,7 @@ def gns3_list_templates() -> str:
         return error_response(e)
 
 
-@mcp.tool()
+@_task_tool
 @with_gait_logging("gns3_list_computes")
 def gns3_list_computes() -> str:
     """List available compute servers."""
@@ -416,7 +430,7 @@ def gns3_list_computes() -> str:
 # Project Lifecycle Tools (US1: T013-T021)
 # =============================================================================
 
-@mcp.tool()
+@_task_tool
 @with_gait_logging("gns3_list_projects")
 def gns3_list_projects() -> str:
     """List all GNS3 projects on the server."""
@@ -486,7 +500,7 @@ def gns3_create_project(
         return error_response(e)
 
 
-@mcp.tool()
+@_task_tool
 @with_gait_logging("gns3_get_project")
 def gns3_get_project(project_id: str) -> str:
     """
@@ -741,7 +755,7 @@ def gns3_import_project(file_path: str, name: str = None) -> str:
 # Node Operations Tools (US2: T023-T030)
 # =============================================================================
 
-@mcp.tool()
+@_task_tool
 @with_gait_logging("gns3_list_nodes")
 def gns3_list_nodes(project_id: str) -> str:
     """
@@ -1007,7 +1021,7 @@ def gns3_bulk_node_action(project_id: str, action: str) -> str:
         return error_response(e)
 
 
-@mcp.tool()
+@_task_tool
 @with_gait_logging("gns3_get_node_console")
 def gns3_get_node_console(project_id: str, node_id: str) -> str:
     """
@@ -1058,7 +1072,7 @@ def gns3_get_node_console(project_id: str, node_id: str) -> str:
 # Link Management Tools (US3: T032-T036)
 # =============================================================================
 
-@mcp.tool()
+@_task_tool
 @with_gait_logging("gns3_list_links")
 def gns3_list_links(project_id: str) -> str:
     """
@@ -1312,7 +1326,7 @@ def gns3_stop_capture(project_id: str, link_id: str) -> str:
         return error_response(e)
 
 
-@mcp.tool()
+@_task_tool
 @with_gait_logging("gns3_get_capture")
 def gns3_get_capture(project_id: str, link_id: str) -> str:
     """
@@ -1349,7 +1363,7 @@ def gns3_get_capture(project_id: str, link_id: str) -> str:
 # Snapshot Operations Tools (US5: T042-T045)
 # =============================================================================
 
-@mcp.tool()
+@_task_tool
 @with_gait_logging("gns3_list_snapshots")
 def gns3_list_snapshots(project_id: str) -> str:
     """

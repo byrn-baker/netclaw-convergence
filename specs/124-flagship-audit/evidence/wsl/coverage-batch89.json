@@ -1,0 +1,272 @@
+[
+  {
+    "path": "scripts/checkpoint-enable.sh",
+    "sha256": "2f05aebd6b83faf72f1935bef6f65f9f8065d3d1b6ba1757ec5cc9f052b1983f",
+    "state": "targeted-review",
+    "method": "Standalone credential, callback, process launch and failure boundaries; actual isolated fixture tests in standalone-writers-after.txt."
+  },
+  {
+    "path": "scripts/forward-enable.sh",
+    "sha256": "c1d559c398ecf1d408d2cb075ed19ebe502a8d55191099f210b675a9809ede4b",
+    "state": "targeted-review",
+    "method": "Standalone credential, callback, process launch and failure boundaries; actual isolated fixture tests in standalone-writers-after.txt."
+  },
+  {
+    "path": "scripts/patch-claw-certs.sh",
+    "sha256": "622fec0cac835a273b0088210998e3bedf9d396339f04fdba65229a17974e75b",
+    "state": "targeted-review",
+    "method": "Standalone credential, callback, process launch and failure boundaries; actual isolated fixture tests in standalone-writers-after.txt."
+  },
+  {
+    "path": "scripts/peering-setup.sh",
+    "sha256": "e54a1c1df3276e82b6f7809cc889effbe1427a4a716d2c270b820dbeceb13c3e",
+    "state": "targeted-review",
+    "method": "Standalone credential, callback, process launch and failure boundaries; actual isolated fixture tests in standalone-writers-after.txt."
+  },
+  {
+    "path": "scripts/twilio_install.sh",
+    "sha256": "8774f54df4756fe8c3db4f790bbcdbdba1336082d698c466683e471f9cf5de6f",
+    "state": "targeted-review",
+    "method": "Standalone credential, callback, process launch and failure boundaries; actual isolated fixture tests in standalone-writers-after.txt."
+  },
+  {
+    "path": "scripts/twitter_install.sh",
+    "sha256": "79c89a91154cb0a29063664fcc88fbd55d548b6509231b4ef499e0b341fdde80",
+    "state": "targeted-review",
+    "method": "Standalone credential, callback, process launch and failure boundaries; actual isolated fixture tests in standalone-writers-after.txt."
+  },
+  {
+    "path": "scripts/twitter_oauth2_setup.py",
+    "sha256": "46c70433dbcda231cc882d3407e3aa90d99f8a9deaee8b2624c96d03e53cee30",
+    "state": "targeted-review",
+    "method": "Standalone credential, callback, process launch and failure boundaries; actual isolated fixture tests in standalone-writers-after.txt."
+  },
+  {
+    "path": "tests/auvik-mcp/conftest.py",
+    "sha256": "cb3f4c39604bb984f6c162cbd4632a06452b893febc063dcfe238e8cd4cb6134",
+    "state": "execution-coverage",
+    "method": "Executed by the passing batch86 declared contract family; excludes opt-in live harnesses. Execution is not a full source review."
+  },
+  {
+    "path": "tests/auvik-mcp/pytest.ini",
+    "sha256": "e28a989e765f6f1fc37e02fb00a351f56391f749cafcd3f93057abbfb17ba26b",
+    "state": "execution-coverage",
+    "method": "Executed by the passing batch86 declared contract family; excludes opt-in live harnesses. Execution is not a full source review."
+  },
+  {
+    "path": "tests/bgp-intel/run-tests.sh",
+    "sha256": "18343a22994568eec22f1b15a67d4e3af9adfdef607410f1714332346cc36736",
+    "state": "execution-coverage",
+    "method": "Executed by the passing batch86 declared contract family; excludes opt-in live harnesses. Execution is not a full source review."
+  },
+  {
+    "path": "tests/bgp-intel/test_envelope.py",
+    "sha256": "06b456a6ee503902222dc49e483b866678e63c16bcf9996f32111c10c5bbe0b2",
+    "state": "execution-coverage",
+    "method": "Executed by the passing batch86 declared contract family; excludes opt-in live harnesses. Execution is not a full source review."
+  },
+  {
+    "path": "tests/bgp-intel/test_manifest_size.py",
+    "sha256": "bcd26470870a137a6deafa355b1c54ff5654f3137b808db40eecc16ce8f4aebf",
+    "state": "execution-coverage",
+    "method": "Executed by the passing batch86 declared contract family; excludes opt-in live harnesses. Execution is not a full source review."
+  },
+  {
+    "path": "tests/bgp-intel/test_outcomes.py",
+    "sha256": "5a5e083d9757d3a321587f8e05e58df0206c86fc607ac5d36e49826231a6cbe1",
+    "state": "execution-coverage",
+    "method": "Executed by the passing batch86 declared contract family; excludes opt-in live harnesses. Execution is not a full source review."
+  },
+  {
+    "path": "tests/bgp-intel/test_validate.py",
+    "sha256": "12cb6e79f8d859eb8e5b7ff157a23bc7cef665f1594292e40b745d4c514f1f23",
+    "state": "execution-coverage",
+    "method": "Executed by the passing batch86 declared contract family; excludes opt-in live harnesses. Execution is not a full source review."
+  },
+  {
+    "path": "tests/catc/run-tests.sh",
+    "sha256": "69a74d7208bfd6a5086f7cbfb3d54ea07092f26886f40eefb2bf39e13aa062a0",
+    "state": "execution-coverage",
+    "method": "Executed by the passing batch86 declared contract family; excludes opt-in live harnesses. Execution is not a full source review."
+  },
+  {
+    "path": "tests/catc/test_catalogue.py",
+    "sha256": "63cdbc4ca28e3aa438c35aa06356fbd44b121b6746c2bd94815a86889e4e453f",
+    "state": "execution-coverage",
+    "method": "Executed by the passing batch86 declared contract family; excludes opt-in live harnesses. Execution is not a full source review."
+  },
+  {
+    "path": "tests/cisco-psirt/run-tests.sh",
+    "sha256": "dee4655f0c833d79070d199f4d9edc8cfd7e2f269489639e99896a6928da4ae7",
+    "state": "execution-coverage",
+    "method": "Executed by the passing batch86 declared contract family; excludes opt-in live harnesses. Execution is not a full source review."
+  },
+  {
+    "path": "tests/cisco-psirt/test_cache_ratelimit.py",
+    "sha256": "5f1e20b385ae9c860bc39f33b77b05a8e1366dc7b385206cafe5fc15bf885152",
+    "state": "execution-coverage",
+    "method": "Executed by the passing batch86 declared contract family; excludes opt-in live harnesses. Execution is not a full source review."
+  },
+  {
+    "path": "tests/cisco-psirt/test_normalise.py",
+    "sha256": "9e7a12da80fde5074a890d74c1f9525f12bf71c828c15e9daa49c66782b6a32f",
+    "state": "execution-coverage",
+    "method": "Executed by the passing batch86 declared contract family; excludes opt-in live harnesses. Execution is not a full source review."
+  },
+  {
+    "path": "tests/document/run-tests.sh",
+    "sha256": "93bada528cf0204b9a4d22692794a8286049c67c1365b6a2e212f3a9f05d04ef",
+    "state": "execution-coverage",
+    "method": "Executed by the passing batch86 declared contract family; excludes opt-in live harnesses. Execution is not a full source review."
+  },
+  {
+    "path": "tests/document/test_manifest_size.py",
+    "sha256": "cf075be82cb141f7e3f561ff2a0c953c7967936540cc769d0942bb01b10986d0",
+    "state": "execution-coverage",
+    "method": "Executed by the passing batch86 declared contract family; excludes opt-in live harnesses. Execution is not a full source review."
+  },
+  {
+    "path": "tests/document/test_no_fabrication.py",
+    "sha256": "8f00ba41d6b4080dd99797e3611c5c494f51c6c023a2a094e6f70eeab62ccee4",
+    "state": "execution-coverage",
+    "method": "Executed by the passing batch86 declared contract family; excludes opt-in live harnesses. Execution is not a full source review."
+  },
+  {
+    "path": "tests/document/test_output_paths.py",
+    "sha256": "285a9410c9137612a6675d8c4ad1f852e4fad801c48345304d2f9553d26e806b",
+    "state": "execution-coverage",
+    "method": "Executed by the passing batch86 declared contract family; excludes opt-in live harnesses. Execution is not a full source review."
+  },
+  {
+    "path": "tests/document/test_pdf_forms.py",
+    "sha256": "b4631f6d9594df06cbdd867a0d48a3982d3ea3486ffe19f5fdfc4506c314476e",
+    "state": "execution-coverage",
+    "method": "Executed by the passing batch86 declared contract family; excludes opt-in live harnesses. Execution is not a full source review."
+  },
+  {
+    "path": "tests/document/test_provenance.py",
+    "sha256": "aaac66dfc70f161bc458f40dcec744539250a23eaa3c779b15a82e7e64a70aa3",
+    "state": "execution-coverage",
+    "method": "Executed by the passing batch86 declared contract family; excludes opt-in live harnesses. Execution is not a full source review."
+  },
+  {
+    "path": "tests/document/test_sanitize.py",
+    "sha256": "8c2c41b01ea6781c5a0e7c1d6efb70043d1625e63a9381df498eb05270b276e5",
+    "state": "execution-coverage",
+    "method": "Executed by the passing batch86 declared contract family; excludes opt-in live harnesses. Execution is not a full source review."
+  },
+  {
+    "path": "tests/document/test_tagged_values.py",
+    "sha256": "9268a75be67afe62b7d26554339cbdb4bde76c83ad7038642367ce5218bdb311",
+    "state": "execution-coverage",
+    "method": "Executed by the passing batch86 declared contract family; excludes opt-in live harnesses. Execution is not a full source review."
+  },
+  {
+    "path": "tests/fortinet/test_audit.py",
+    "sha256": "ca3209ce6271da3d1b05205c97d6ef339680bbfa4d8aa7c18ed0858a617ab668",
+    "state": "execution-coverage",
+    "method": "Executed by the passing batch86 declared contract family; excludes opt-in live harnesses. Execution is not a full source review."
+  },
+  {
+    "path": "tests/fortinet/test_credentials.py",
+    "sha256": "608c74c66094315f5a7a20ba2abf25c36434237e3bb3b4a9f03210c0ccc35537",
+    "state": "execution-coverage",
+    "method": "Executed by the passing batch86 declared contract family; excludes opt-in live harnesses. Execution is not a full source review."
+  },
+  {
+    "path": "tests/fortinet/test_device_plane.py",
+    "sha256": "0220aadb9da6e87fd1b01068163d6adbab0ace52d0ebfa65263c8a2c1af888fe",
+    "state": "execution-coverage",
+    "method": "Executed by the passing batch86 declared contract family; excludes opt-in live harnesses. Execution is not a full source review."
+  },
+  {
+    "path": "tests/fortinet/test_envelope.py",
+    "sha256": "8067071e545857bbb30e65b96f84163672eaa72e6bad283da203af2c86d15ee9",
+    "state": "execution-coverage",
+    "method": "Executed by the passing batch86 declared contract family; excludes opt-in live harnesses. Execution is not a full source review."
+  },
+  {
+    "path": "tests/globalping/run-tests.sh",
+    "sha256": "8aa06479e3b4b5cb857a63a48ef5fa8f7681fa0df307bae6d362541ada475e54",
+    "state": "execution-coverage",
+    "method": "Executed by the passing batch86 declared contract family; excludes opt-in live harnesses. Execution is not a full source review."
+  },
+  {
+    "path": "tests/halo-mcp/conftest.py",
+    "sha256": "2887bea87c536991f055b6fd95528018d920f7d398d86cb1981b4904a291e4fa",
+    "state": "execution-coverage",
+    "method": "Executed by the passing batch86 declared contract family; excludes opt-in live harnesses. Execution is not a full source review."
+  },
+  {
+    "path": "tests/halo-mcp/pytest.ini",
+    "sha256": "e28a989e765f6f1fc37e02fb00a351f56391f749cafcd3f93057abbfb17ba26b",
+    "state": "execution-coverage",
+    "method": "Executed by the passing batch86 declared contract family; excludes opt-in live harnesses. Execution is not a full source review."
+  },
+  {
+    "path": "tests/k8s/run-tests.sh",
+    "sha256": "1dbf502cb1da4b516fcd9c67bbb7afd2487ec208d2759d40bdfa054bc61d4910",
+    "state": "execution-coverage",
+    "method": "Executed by the passing batch86 declared contract family; excludes opt-in live harnesses. Execution is not a full source review."
+  },
+  {
+    "path": "tests/k8s/test_config_forced.py",
+    "sha256": "6d4694c92437d01a1115f646fe298b49d22d7bc3b35e691481c747a06cf7fb20",
+    "state": "execution-coverage",
+    "method": "Executed by the passing batch86 declared contract family; excludes opt-in live harnesses. Execution is not a full source review."
+  },
+  {
+    "path": "tests/k8s/test_skill_procedure.py",
+    "sha256": "5f35e10d354ca07138470f0d55a45092a3634b8f9ac6f7200fa52e8f1005aa9e",
+    "state": "execution-coverage",
+    "method": "Executed by the passing batch86 declared contract family; excludes opt-in live harnesses. Execution is not a full source review."
+  },
+  {
+    "path": "tests/multivendor/test_filter.py",
+    "sha256": "a828cdd08819c99245d492b5952ad7a72176702eb070b0839d99bf708b500fea",
+    "state": "execution-coverage",
+    "method": "Executed by the passing batch86 declared contract family; excludes opt-in live harnesses. Execution is not a full source review."
+  },
+  {
+    "path": "tests/multivendor/test_inventory.py",
+    "sha256": "ad0d8be4eae8a8aed02521b9d39a61215ebb2d206224b697361447cb5eac8cd4",
+    "state": "execution-coverage",
+    "method": "Executed by the passing batch86 declared contract family; excludes opt-in live harnesses. Execution is not a full source review."
+  },
+  {
+    "path": "tests/n2n/conftest.py",
+    "sha256": "bc9dd83b0d301e77565e7c58ac4af802695b8d4438f47e10b09a423de4f3e45d",
+    "state": "execution-coverage",
+    "method": "Executed by the passing batch86 declared contract family; excludes opt-in live harnesses. Execution is not a full source review."
+  },
+  {
+    "path": "tests/nsm/run-tests.sh",
+    "sha256": "6d2dc44cecab01726f189c2de1904378467b564a3387bb5bfdf7c415a9f7a5fa",
+    "state": "execution-coverage",
+    "method": "Executed by the passing batch86 declared contract family; excludes opt-in live harnesses. Execution is not a full source review."
+  },
+  {
+    "path": "tests/runner/run-tests.sh",
+    "sha256": "edac998e7bee04e8c7c7cae1673dfeef7b2bdccb6d62453cf3e33df301484255",
+    "state": "execution-coverage",
+    "method": "Executed by the passing batch86 declared contract family; excludes opt-in live harnesses. Execution is not a full source review."
+  },
+  {
+    "path": "tests/zabbix/run-tests.sh",
+    "sha256": "a81a81ffe5814efdca3e2d61c29648543ee9e296ecba9019a5ecc6200943ca21",
+    "state": "execution-coverage",
+    "method": "Executed by the passing batch86 declared contract family; excludes opt-in live harnesses. Execution is not a full source review."
+  },
+  {
+    "path": "tests/zabbix/test_readonly_forced.py",
+    "sha256": "b4263e1c662fce737c8d1be4833abe8addefe1a49e84193a43bba272b62cb555",
+    "state": "execution-coverage",
+    "method": "Executed by the passing batch86 declared contract family; excludes opt-in live harnesses. Execution is not a full source review."
+  },
+  {
+    "path": "tests/zabbix/test_skill_procedure.py",
+    "sha256": "91910a83cae7249eadaa16af954fb00bbaa76c7d9cfaa6d7f7019e5cd63542ff",
+    "state": "execution-coverage",
+    "method": "Executed by the passing batch86 declared contract family; excludes opt-in live harnesses. Execution is not a full source review."
+  }
+]

@@ -1,0 +1,134 @@
+[
+  {
+    "nodes": 10,
+    "mode": "full",
+    "profile": "graph",
+    "median_ms": 0.253,
+    "output_chars": 1201,
+    "compact_json_chars": 1371,
+    "pretty_json_chars": 2188,
+    "ratio_to_compact_json": 0.876,
+    "token_estimate_note": "Serializer uses chars/4, not model tokenizer measurements."
+  },
+  {
+    "nodes": 10,
+    "mode": "graph",
+    "profile": "graph",
+    "median_ms": 0.252,
+    "output_chars": 1201,
+    "compact_json_chars": 1371,
+    "pretty_json_chars": 2188,
+    "ratio_to_compact_json": 0.876,
+    "token_estimate_note": "Serializer uses chars/4, not model tokenizer measurements."
+  },
+  {
+    "nodes": 10,
+    "mode": "generic",
+    "profile": "generic",
+    "median_ms": 0.23,
+    "output_chars": 618,
+    "compact_json_chars": 1371,
+    "pretty_json_chars": 2188,
+    "ratio_to_compact_json": 0.451,
+    "token_estimate_note": "Serializer uses chars/4, not model tokenizer measurements."
+  },
+  {
+    "nodes": 10,
+    "mode": "off",
+    "profile": "json",
+    "median_ms": 0.033,
+    "output_chars": 2188,
+    "compact_json_chars": 1371,
+    "pretty_json_chars": 2188,
+    "ratio_to_compact_json": 1.596,
+    "token_estimate_note": "Serializer uses chars/4, not model tokenizer measurements."
+  },
+  {
+    "nodes": 100,
+    "mode": "full",
+    "profile": "graph",
+    "median_ms": 2.057,
+    "output_chars": 9845,
+    "compact_json_chars": 13971,
+    "pretty_json_chars": 22348,
+    "ratio_to_compact_json": 0.705,
+    "token_estimate_note": "Serializer uses chars/4, not model tokenizer measurements."
+  },
+  {
+    "nodes": 100,
+    "mode": "graph",
+    "profile": "graph",
+    "median_ms": 2.087,
+    "output_chars": 9845,
+    "compact_json_chars": 13971,
+    "pretty_json_chars": 22348,
+    "ratio_to_compact_json": 0.705,
+    "token_estimate_note": "Serializer uses chars/4, not model tokenizer measurements."
+  },
+  {
+    "nodes": 100,
+    "mode": "generic",
+    "profile": "generic",
+    "median_ms": 1.936,
+    "output_chars": 5300,
+    "compact_json_chars": 13971,
+    "pretty_json_chars": 22348,
+    "ratio_to_compact_json": 0.379,
+    "token_estimate_note": "Serializer uses chars/4, not model tokenizer measurements."
+  },
+  {
+    "nodes": 100,
+    "mode": "off",
+    "profile": "json",
+    "median_ms": 0.352,
+    "output_chars": 22348,
+    "compact_json_chars": 13971,
+    "pretty_json_chars": 22348,
+    "ratio_to_compact_json": 1.6,
+    "token_estimate_note": "Serializer uses chars/4, not model tokenizer measurements."
+  },
+  {
+    "nodes": 1000,
+    "mode": "full",
+    "profile": "graph",
+    "median_ms": 19.745,
+    "output_chars": 98859,
+    "compact_json_chars": 139881,
+    "pretty_json_chars": 223858,
+    "ratio_to_compact_json": 0.707,
+    "token_estimate_note": "Serializer uses chars/4, not model tokenizer measurements."
+  },
+  {
+    "nodes": 1000,
+    "mode": "graph",
+    "profile": "graph",
+    "median_ms": 19.748,
+    "output_chars": 98859,
+    "compact_json_chars": 139881,
+    "pretty_json_chars": 223858,
+    "ratio_to_compact_json": 0.707,
+    "token_estimate_note": "Serializer uses chars/4, not model tokenizer measurements."
+  },
+  {
+    "nodes": 1000,
+    "mode": "generic",
+    "profile": "generic",
+    "median_ms": 18.072,
+    "output_chars": 52012,
+    "compact_json_chars": 139881,
+    "pretty_json_chars": 223858,
+    "ratio_to_compact_json": 0.372,
+    "token_estimate_note": "Serializer uses chars/4, not model tokenizer measurements."
+  },
+  {
+    "nodes": 1000,
+    "mode": "off",
+    "profile": "json",
+    "median_ms": 3.409,
+    "output_chars": 223858,
+    "compact_json_chars": 139881,
+    "pretty_json_chars": 223858,
+    "ratio_to_compact_json": 1.6,
+    "token_estimate_note": "Serializer uses chars/4, not model tokenizer measurements."
+  }
+]

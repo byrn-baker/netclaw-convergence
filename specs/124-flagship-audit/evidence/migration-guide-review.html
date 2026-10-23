@@ -1,0 +1,30 @@
+<!doctype html><meta charset="utf-8"><style>body{font:18px/1.55 system-ui;max-width:900px;margin:40px auto;color:#173044}pre{white-space:pre-wrap;background:#eef3f7;padding:16px}code{font-size:.85em}a{color:#0068b5}</style><h1>Multivendor SSH identity migration</h1>
+<p>Spec 124 makes SSH host-key checking mandatory by default for multivendor raw
+reads, normalized reads and gated writes. Unknown or changed identities fail
+before a command runs. Existing users must supply independently verified host keys.</p>
+<p>Obtain each public host key through a trusted console or administrator and compare
+its fingerprint independently. A bare <code>ssh-keyscan</code> result is not proof of identity.
+For a nonstandard SSH port, the known_hosts name is <code>[hostname]:port</code>.</p>
+<p>Preview, apply and restart the multivendor MCP:</p>
+<pre><code class="language-sh">python3 scripts/migrate-ssh-trust.py --env-file ~/.openclaw/.env --known-hosts ~/.ssh/known_hosts
+python3 scripts/migrate-ssh-trust.py --env-file ~/.openclaw/.env --known-hosts ~/.ssh/known_hosts --apply
+</code></pre>
+<p>The script preserves unrelated settings, writes mode 0600, keeps a private
+<code>.env.pre-ssh-trust</code> backup and is idempotent. It neither connects to devices nor
+learns keys. Recovery is <code>--restore</code> to preview, then <code>--restore --apply</code>; this
+restores the entire saved environment, so preserve any later edits first.</p>
+<p>Netmiko drivers load the standard known_hosts file and the optional
+<code>MULTIVENDOR_KNOWN_HOSTS</code> file. The NAPALM Junos adapter uses PyEZ's verified
+connection and <strong>the standard <code>~/.ssh/known_hosts</code> file</strong>; install its trusted keys
+there. An incompatible Junos SDK fails before connection. EOS normalized reads
+use SSH. <code>MULTIVENDOR_&lt;DEVICE_NAME&gt;_PORT</code> supports alternate SSH ports, with dashes
+in device names replaced by underscores.</p>
+<p>An explicit <code>MULTIVENDOR_SSH_STRICT=false</code> is available only for disposable lab
+compatibility; it disables identity checking and is disclosed in tool results as
+<code>ssh_host_key_checking: false</code>. The migration always enables checking.</p>
+<p>Raw <code>run_command</code> remains read-only even with <code>MULTIVENDOR_WRITE_ENABLED=true</code>.
+Move configuration automation to <code>apply_config</code>, which retains baseline, approval,
+change-request and verification gates. See <a href="CHANGE-GATE-MIGRATION.md">change-gate migration</a>.</p>
+<p>New baselines and audit files are mode 0600 in a mode 0700 baseline directory.
+Each baseline has a unique name. Previously copied/exported baseline files are
+outside this protection and should remain in private operator storage.</p>

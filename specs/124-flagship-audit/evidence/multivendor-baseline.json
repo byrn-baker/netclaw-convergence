@@ -1,0 +1,48 @@
+{
+  "counts": {
+    "BLOCKED_DEPENDENCY": 0,
+    "ERROR": 0,
+    "FAIL": 0,
+    "NEEDS_DOCKER": 1,
+    "NEEDS_LIVE_CREDENTIALS": 0,
+    "PASS": 1
+  },
+  "exit_code": 0,
+  "generated_at": "2026-09-26T20:01:30.499444+00:00",
+  "results": [
+    {
+      "capabilities": [
+        {
+          "detail": "service unavailable: tcp://127.0.0.1:2222",
+          "kind": "docker-service",
+          "names": [],
+          "status": "NEEDS_DOCKER"
+        }
+      ],
+      "command": [
+        "bash",
+        "tests/multivendor/run-tests.sh"
+      ],
+      "detail": "offline contracts passed",
+      "duration_seconds": 5.247301082999911,
+      "environment": {
+        "fingerprint": "0701502d501907a0a23b822a36743cc1ac0cafeb0c633be4225e9f49791370b6",
+        "path": "mcp-servers/multivendor-cli-mcp/.venv"
+      },
+      "exit_code": 0,
+      "status": "PASS",
+      "suite": "multivendor",
+      "test_runs": [
+        {
+          "command": [
+            "bash",
+            "tests/multivendor/run-tests.sh"
+          ],
+          "exit_code": 0,
+          "output": "### Dependency isolation (FR-030a/c) ###\n  ok   venv imports nornir\n  ok   nornir absent from system interpreter\n  ok   venv imports napalm\n  ok   napalm absent from system interpreter\n  ok   venv imports netmiko\n  ok   netmiko absent from system interpreter\n  ok   venv imports jdiff\n  ok   jdiff absent from system interpreter\n\n=== Command filter contract (FR-022/023/029) ===\n=== Ordering: chaining is rejected BEFORE the allowlist (contract) ===\n  ok   'show version; write erase' is DENIED\n  ok     ...and denied for CHAINING, not denylist\n  ok   chaining via shell AND denied\n  ok   chaining via shell OR denied\n  ok   chaining via redirection denied\n  ok   chaining via input redirection denied\n  ok   chaining via backtick denied\n  ok   chaining via substitution denied\n  ok   chaining via embedded newline denied\n  ok   chaining via background denied\n\n=== A single pipe is a display filter, not a bypass ===\n  ok   'show run | include bgp' is ALLOWED\n\n=== Read-only mode blocks non-allowlisted verbs (FR-022) ===\n  ok   'configure terminal' denied in read-only\n  ok   'set interfaces ge-0/0/0 disable' denied in read-only\n  ok   'commit' denied in read-only\n  ok   'show version' allowed in read-only\n\n=== Denylist fires per platform, not just Cisco (FR-023, SC-008) ===\n  ok   [cisco_ios] 'write erase' denied even in WRITE mode\n  ok   [cisco_ios] 'reload' denied even in WRITE mode\n  ok   [juniper_junos] 'request system zeroize' denied even in WRITE mode\n  ok   [vyos] 'delete interfaces eth0' denied even in WRITE mode\n  ok   [mikrotik_routeros] '/system reset-configuration' denied even in WRITE mode\n  ok   [nokia_srlinux] 'tools system configuration' denied even in WRITE mode\n  ok   [dell_sonic] 'config erase' denied even in WRITE mode\n  ok   [extreme_exos] 'unconfigure switch' denied even in WRITE mode\n  ok   [huawei_vrp] 'reset saved-configuration' denied even in WRITE mode\n  ok   [ubiquiti_edge] 'format' denied even in WRITE mode\n  ok   [linux] 'rm -rf /' denied even in WRITE mode\n\n=== Substring false positives are NOT blocked ===\n  ok   'show reload-reason' allowed (contains 'reload' but verb is 'show')\n  ok   'show system uptime' allowed on vyos (contains 'system')\n\n=== Unmodelled platforms still get the universal baseline ===\n  ok   'reload' denied on an unmodelled platform\n  ok     ...and reported as unmodelled\n  ok   universal deny is non-empty for unknown platform\n  ok   is_modelled('cisco_ios') is True\n  ok   is_modelled(None) is False\n\n=== Shell escape is denied everywhere ===\n  ok   'bash' denied\n  ok   'sh' denied\n  ok   'shell' denied\n  ok   'start-shell' denied\n  ok   'run bash' denied\n\n=== Case and whitespace cannot evade the denylist ===\n  ok   'RELOAD' denied\n  ok   '  reload  ' denied\n  ok   'ReLoAd' denied\n  ok   'WRITE   ERASE' denied\n\n=== Degenerate input ===\n  ok   empty command denied\n  ok   whitespace-only denied\n  ok   over-long command denied\n\n=== Default mode is read-only when unspecified (FR-022) ===\n  ok   omitting mode yields read-only behaviour\n\n  passed: 46\n  failed: 0\n  SUITE PASS (Command filter contract (FR-022/023/029))\n\n=== Inventory sources contract (FR-017*) ===\n=== Operator inventory loads, and reports its source (FR-017c) ===\n  ok   3 devices parsed\n  ok   all report source=operator\n  ok   hostname parsed\n  ok   platform parsed\n  ok   groups parsed as a list\n  ok   per-device credential_ref honoured (FR-020)\n\n=== owning_server is computed per device (FR-009/FR-011) ===\n  ok   mikrotik owned by this server\n  ok   cisco_xe owned by pyats\n\n=== Credentials are REJECTED in any inventory source (FR-017d, SC-006) ===\n  ok   'password' in inventory is rejected\n  ok   'enable_secret' in inventory is rejected\n  ok   'api_key' in inventory is rejected\n  ok   'private_key' in inventory is rejected\n  ok   'token' in inventory is rejected\n  ok   'credential_ref' itself is NOT treated as a secret\n  ok   'password' is treated as a secret\n\n=== Generated vs operator files are never confused (FR-017a/b) ===\n  ok   generated file is detected as generated\n  ok   operator file is NOT detected as generated\n  ok   loading a GENERATED file as operator is refused\n  ok   loading an OPERATOR file as generated is refused\n  ok   generated devices report source=generated\n  ok   the marker key is not parsed as a device\n\n=== Absent devices are reported, never guessed (FR-021) ===\n  ok   missing device raises, naming it\n  ok   present device is found\n\n=== Malformed inventory fails loudly ===\n  ok   no hostname rejected\n  ok   not key: value rejected\n\n=== Routing: writes single-pathed, normalized reads permitted (FR-008/009/010) ===\n  ok   WRITE to cisco_xe refused\n  ok     ...naming pyats as owner\n  ok     ...with a reason mentioning one write path\n  ok   NORMALIZED_READ on cisco_xe PERMITTED (the exception)\n  ok   RAW_READ on cisco_xe refused\n  ok   WRITE to juniper_junos refused naming junos-mcp\n  ok   WRITE to 'mikrotik_routeros' permitted (unowned)\n  ok   WRITE to 'vyos' permitted (unowned)\n  ok   WRITE to 'sonic' permitted (unowned)\n  ok   WRITE to 'nokia_srlinux' permitted (unowned)\n  ok   WRITE to None permitted (unowned)\n  ok   refusal payload has status=refused\n  ok   refusal payload names owning_server\n\n=== Credentials: env fallback works without Vault (FR-018, SC-007a) ===\n  ok   no credential configured -> clear error\n  ok     ...error says secrets must not be in inventory\n  ok   env credential resolves with NO Vault configured\n  ok     ...and reports path=environment (FR-018a)\n  ok   posture() exposes no secret\n  ok   repr() redacts secrets\n  ok   str() redacts secrets\n  ok   reference-scoped credential overrides the generic one (FR-020)\n  ok   generic reference still resolves generically\n\n  passed: 47\n  failed: 0\n  SUITE PASS (Inventory sources contract (FR-017*))\n\n### Summary ###\n  suites/checks passed: 10\n  failed: 0\n  all multivendor tests passed"
+        }
+      ]
+    }
+  ],
+  "schema_version": 1
+}

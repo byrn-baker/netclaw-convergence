@@ -1,0 +1,52 @@
+{
+  "counts": {
+    "BLOCKED_DEPENDENCY": 0,
+    "ERROR": 0,
+    "FAIL": 0,
+    "NEEDS_DOCKER": 0,
+    "NEEDS_LIVE_CREDENTIALS": 1,
+    "PASS": 1
+  },
+  "exit_code": 0,
+  "generated_at": "2026-09-27T13:57:12.010522+00:00",
+  "results": [
+    {
+      "capabilities": [
+        {
+          "detail": "missing: ANTA_PASSWORD, ANTA_TEST_HOST, ANTA_USERNAME",
+          "kind": "live",
+          "names": [
+            "ANTA_PASSWORD",
+            "ANTA_TEST_HOST",
+            "ANTA_USERNAME"
+          ],
+          "status": "NEEDS_LIVE_CREDENTIALS"
+        }
+      ],
+      "command": [
+        "bash",
+        "tests/anta/run-tests.sh"
+      ],
+      "detail": "offline contracts passed",
+      "duration_seconds": 1.9741705289998208,
+      "environment": {
+        "fingerprint": "65f25aa43a866a168f34dfb463b1bc2482928b9d30ff90ba87239bfbc1fdf014",
+        "path": ".contract-test-envs/anta"
+      },
+      "exit_code": 0,
+      "status": "PASS",
+      "suite": "anta",
+      "test_runs": [
+        {
+          "command": [
+            "bash",
+            "tests/anta/run-tests.sh"
+          ],
+          "exit_code": 0,
+          "output": "=== verdict model (stdlib only, always runs) ===\n  ok   - BGP inactive reclassified to not_applicable\n  ok   - unsupported command reclassified\n  ok   - genuine mismatch stays fail\n  ok   - NTP desync stays fail\n  ok   - success -> pass\n  ok   - skipped -> skipped\n  ok   - error -> error\n  ok   - unrecognised status does not become a pass\n  ok   - five counts kept separate\n  ok   - not_applicable is not counted as fail\n  ok   - skipped is not counted as pass\n  ok   - health percentage refused\n  ok   - unknown verdict rejected\n  ok   - unreachable yields error with zero results\n  ok   - empty selection is not a pass\n  ok   - envelope carries device, timestamp and tls disclosure\n  ok   - unattributed result rejected\n\n=== read-only posture (source scan, always runs) ===\n  ok   - no configuration path in server source\n  ok   - no credential is returned to callers\n\n=== live (skips without venv or device) ===\n  skip - live tests (ANTA_TEST_HOST not set)\nPASS: ANTA certificate and hostname enforcement, explicit override, device cleanup\n  ok   - HTTPS certificate/hostname enforcement and device cleanup\n\npassed: 20  failed: 0  skipped: 1"
+        }
+      ]
+    }
+  ],
+  "schema_version": 1
+}

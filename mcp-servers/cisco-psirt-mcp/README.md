@@ -131,8 +131,8 @@ message: errors name the environment variable, never its contents.
 python3 -m pip install -r mcp-servers/cisco-psirt-mcp/requirements.txt
 ```
 
-Pins are **bounded** (`mcp>=1.2.0,<2`, `httpx>=0.27.0,<1`). The upper bound on `mcp` is
-load-bearing: `mcp` 2.0.0 removed `mcp.server.fastmcp`, which this server imports.
+Uses standalone `fastmcp==4.0.11` with `mcp==2.3.0` in an isolated runtime (spec 141).
+See [the migration and rollback guide](../../docs/FASTMCP-UPGRADE.md).
 
 ## Tests
 

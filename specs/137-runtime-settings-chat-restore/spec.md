@@ -1,0 +1,2 @@
+# Runtime settings and refresh-safe Chat
+Settings must read the actual configured OpenClaw home, honor selected-agent overrides and expose only allowlisted display fields. Missing configuration must show unavailable, never repository examples. Standard Chat must retain its conversation, draft, model choice and thread identifier across refresh in the same browser tab. Interrupted requests must not be replayed; restore the draft with an explicit unknown-outcome message. New chat clears the current saved view without deleting gateway records.

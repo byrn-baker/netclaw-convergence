@@ -1,16 +1,9 @@
-"""Certificate rotation (feature 060, US3).
+"""Certificate renewal with preserved pinned identity.
 
-Renews every managed credential automatically before expiry (default at 2/3 of
-lifetime elapsed — FR-012), with a dual-trust overlap so no channel drops during
-rollover (FR-013). Local credentials (host-pinned, risk CA, hub, member) are
-re-issued in place; domain-verified (ACME) credentials are renewed by acme.py.
-Rotation lifecycle events are audited (FR-016).
-
-Design (research R6): trust-by-name (domain-verified) rotates for free — peers
-verify the successor's chain automatically. Trust-by-key (pinned / risk CA)
-distributes the successor over the existing authenticated channel before the old
-one expires; both are accepted during the overlap window (the peer/member records
-carry pinned_fp + pinned_fp_next).
+Routine host certificate renewal retains its existing private key, so peer SPKI
+pins remain valid. ACME renewal is delegated to lego. Unchanged CA/hub output is
+reported as a failure, never a successful rotation. Deliberate key replacement
+requires operator re-verification; automatic successor-key overlap is not provided.
 """
 
 from __future__ import annotations
@@ -62,9 +55,11 @@ class RotationManager:
         return self.manager.credentials_due(_iso(now))
 
     async def renew_one(self, cred: dict) -> bool:
-        """Renew a single credential: issue a successor, open the overlap window,
-        distribute to peers/members where trust is by key, retire the old. Returns
-        True on success. Best-effort per-kind; failures escalate (FR-014)."""
+        """Renew a certificate; preserve routine pinned identity and report failures.
+
+        A new certificate with the same key updates its active registry row. A
+        different key fingerprint retires the predecessor only after registration.
+        """
         kind = cred["kind"]
         subject = cred["subject_identity"]
         try:
@@ -73,26 +68,34 @@ class RotationManager:
                 new_cert = await acme.renew(subject, self.manager.base_dir)
                 if not new_cert:
                     raise RuntimeError("acme renew produced no certificate")
+                self._validate_successor(cred, new_cert)
                 self.register("acme", subject, new_cert, issuer="ACME")
             elif kind == "risk-ca":
                 new_cert, _ = self.risk.ensure_risk_ca()  # idempotent; explicit rekey elsewhere
+                self._validate_successor(cred, new_cert)
                 self.register("risk-ca", subject, new_cert, issuer="self")
             elif kind == "hub":
                 new_cert, _ = self.risk.hub_credential()
+                self._validate_successor(cred, new_cert)
                 self.register("hub", subject, new_cert, issuer="risk-ca")
             elif kind == "host-pinned":
-                cert_pem, key_pem = certs.create_self_signed(subject)
+                installed, key_pem = self.svc.host_credential()
+                if certs.key_fingerprint(installed) != cred["fingerprint"]:
+                    raise RuntimeError("Installed host identity differs from renewal registry")
+                cert_pem, _ = certs.create_self_signed(subject, key_pem=key_pem)
+                if certs.key_fingerprint(cert_pem) != cred["fingerprint"]:
+                    raise RuntimeError("Installed private key does not match host certificate")
+                new_cert = cert_pem
+                self._validate_successor(cred, new_cert)
                 kd = certs.keys_dir(str(self.manager.base_dir)) / "host"
-                (kd / "host.crt").write_text(cert_pem)
-                certs._write_secret(kd / "host.key", key_pem)
+                certs._write_secret(kd / "host.crt", cert_pem)
                 self.svc._host_cred = (cert_pem, key_pem)
                 self.register("host-pinned", subject, cert_pem, issuer="self")
-                # Open overlap: announce successor pin to key-pinned peers.
-                await self._announce_successor(cert_pem)
             else:
                 logger.info("rotation: no renewer for kind %s (%s)", kind, subject)
                 return False
-            self.manager.set_credential_state(cred["fingerprint"], "retired")
+            if certs.key_fingerprint(new_cert) != cred["fingerprint"]:
+                self.manager.set_credential_state(cred["fingerprint"], "retired")
             self.audit.record_cert_event(kind="renewed", subject_identity=subject,
                                          detail=f"{kind} rotated")
             return True
@@ -103,18 +106,15 @@ class RotationManager:
             logger.warning("rotation: renew failed for %s (%s): %s", subject, kind, e)
             return False
 
-    async def _announce_successor(self, new_cert_pem: str):
-        """Distribute a new host credential's pin to every live key-pinned peer
-        over the existing authenticated channel (FR-013 dual-trust overlap)."""
-        succ_fp = certs.key_fingerprint(new_cert_pem)
-        for ident, ch in list(self.svc.channels.items()):
-            try:
-                await ch.notify("n2n/cert/update", {"fingerprint": succ_fp,
-                                                     "cert_pem": new_cert_pem})
-                self.audit.record_cert_event(kind="overlap-opened", subject_identity=ident,
-                                             detail=f"successor {succ_fp[:16]}")
-            except Exception:
-                pass
+    @staticmethod
+    def _validate_successor(cred, certificate):
+        previous = cred.get("cert_pem")
+        if previous and certs.fingerprint(previous) == certs.fingerprint(certificate):
+            raise RuntimeError("Renewal returned the unchanged certificate; operator renewal is required")
+        now = datetime.datetime.now(_UTC)
+        parsed = certs.x509.load_pem_x509_certificate(certificate.encode())
+        if not (parsed.not_valid_before_utc <= now < parsed.not_valid_after_utc):
+            raise RuntimeError("Renewal returned a certificate that is not currently valid")
 
     async def run_once(self, now: Optional[datetime.datetime] = None) -> int:
         """Renew everything currently due. Returns the count renewed."""

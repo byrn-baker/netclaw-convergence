@@ -1,0 +1,10 @@
+{
+  "publisher": "NetClaw",
+  "name": "netclaw",
+  "version": "1.1.0",
+  "source": "0f30b260915389339523a592792d32b507c9012c",
+  "sha256": "0f8ac4bd8bd9bd64c9198ea66ec501a81c1f8b17c02f736ab0e5dd613b28b75d",
+  "bytes": 4225859,
+  "artifact": "netclaw-1.1.0.vsix",
+  "qualification": "Spec152 workspace files and claw controls candidate. See specs/152-workspace-claw-controls/verification.md and WSL-HANDOFF.md for exact evidence and platform limits. Feature-branch packaging/push authorized; no merge, live deployment or Marketplace publication authorized. Packaging does not publish."
+}

@@ -1,5 +1,6 @@
 """Tests for utils.pagination.extract_list (wrapper-key + record_count extraction)."""
 
+import pytest
 from utils.pagination import extract_list
 
 
@@ -47,8 +48,7 @@ def test_extract_list_dict_without_item_array():
     assert rc == 0
 
 
-def test_extract_list_non_dict_non_list():
-    """A scalar / None payload yields empty items and record_count None."""
-    assert extract_list(None) == ([], None)
-    assert extract_list(42) == ([], None)
-    assert extract_list("nope") == ([], None)
+@pytest.mark.parametrize('payload', [None, 42, 'nope', {}, {'record_count': '2'}, {'record_count': -1}])
+def test_extract_list_non_list_shapes_are_errors(payload):
+    with pytest.raises(ValueError):
+        extract_list(payload)

@@ -1,0 +1,8 @@
+....................                                                     [100%]
+=============================== warnings summary ===============================
+tests/n2n/test_certs_060.py::test_verify_rejects_expired_leaf_with_clock_hint
+  /home/johncapobianco/netclaw/tests/n2n/test_certs_060.py:63: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    future = datetime.datetime.utcnow() + datetime.timedelta(days=3)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+20 passed, 1 warning in 0.39s

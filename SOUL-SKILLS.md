@@ -1690,3 +1690,10 @@ ITSM/PSA change management plus asset and ticket context. HaloPSA and HaloITSM s
 | `halo-change-request` | Open change requests: discover and confirm the org's change ticket type (cached in Memory MCP), learn its fields, preview the assembled ticket, then create only on explicit user approval. | `workspace/skills/halo-change-request/SKILL.md` |
 | `halo-asset-context` | Review a Halo asset with its related tickets and CMDB/CI relationships. | `workspace/skills/halo-asset-context/SKILL.md` |
 | `halo-ticket-context` | Review a Halo ticket with its action/note history, linked assets, and KB articles. | `workspace/skills/halo-ticket-context/SKILL.md` |
+
+## Jev Science Officer
+
+Six dynamic advisory workflows: evidence review, specialist advice, answer review,
+diagnostic advice, change-plan review and incident triage. Use the matching `jev-*`
+skill. No static question library; no execution or approval authority. See
+[Science Officer guide](docs/JEV-SCIENCE-OFFICER.md).

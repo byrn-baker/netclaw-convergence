@@ -1,0 +1,226 @@
+{
+  "awslabs.aws-diagram-mcp-server": {
+    "version": "1.0.23",
+    "framework_dependencies": [
+      "mcp[cli]>=1.23.0"
+    ],
+    "requires_python": ">=3.12"
+  },
+  "awslabs.aws-network-mcp-server": {
+    "version": "0.0.17",
+    "framework_dependencies": [
+      "fastmcp>=3.2.0",
+      "mcp[cli]>=1.23.0"
+    ],
+    "requires_python": ">=3.10"
+  },
+  "awslabs.cloudtrail-mcp-server": {
+    "version": "0.1.1",
+    "framework_dependencies": [
+      "mcp[cli]<3.0.0,>=2.0.0"
+    ],
+    "requires_python": ">=3.10"
+  },
+  "awslabs.cloudwatch-mcp-server": {
+    "version": "0.3.1",
+    "framework_dependencies": [
+      "mcp[cli]<3.0.0,>=2.0.0"
+    ],
+    "requires_python": ">=3.10"
+  },
+  "awslabs.cost-explorer-mcp-server": {
+    "version": "0.0.21",
+    "framework_dependencies": [
+      "mcp[cli]>=1.23.0"
+    ],
+    "requires_python": ">=3.10"
+  },
+  "awslabs.iam-mcp-server": {
+    "version": "1.1.1",
+    "framework_dependencies": [
+      "mcp[cli]<3.0.0,>=2.0.0"
+    ],
+    "requires_python": ">=3.10"
+  },
+  "blender-mcp": {
+    "version": "2.0.0",
+    "framework_dependencies": [],
+    "requires_python": ">=3.10"
+  },
+  "cisco-nso-mcp-server": {
+    "version": "3.1.0",
+    "framework_dependencies": [
+      "fastmcp>=2.14.1"
+    ],
+    "requires_python": "<4.0,>=3.12"
+  },
+  "cisco-sdwan-mcp": {
+    "version": "0.1.0",
+    "framework_dependencies": [
+      "fastmcp>=3.2.0"
+    ],
+    "requires_python": ">=3.11"
+  },
+  "cml-mcp": {
+    "version": "0.32.1",
+    "framework_dependencies": [
+      "fastmcp<4,>=3.1.1"
+    ],
+    "requires_python": "<3.15,>=3.12"
+  },
+  "comfyui-mcp": {
+    "version": "0.0.5",
+    "framework_dependencies": [
+      "fastmcp>=2.13.0.2"
+    ],
+    "requires_python": ">=3.11"
+  },
+  "document-mcp": {
+    "version": "0.0.4",
+    "framework_dependencies": [
+      "mcp[cli]>=1.0.0"
+    ],
+    "requires_python": ">=3.10"
+  },
+  "elasticsearch-mcp": {
+    "version": "0.1.1",
+    "framework_dependencies": [
+      "mcp>=1.0.0"
+    ],
+    "requires_python": ">=3.10"
+  },
+  "github-mcp-server": {
+    "version": "2.5.7",
+    "framework_dependencies": [
+      "mcp<2.0.0,>=1.0.0"
+    ],
+    "requires_python": ">=3.10"
+  },
+  "iflow-mcp-cdot65-palo-alto-mcp": {
+    "version": "0.1.0",
+    "framework_dependencies": [
+      "mcp<2.0.0,>=1.7.1"
+    ],
+    "requires_python": "<3.13,>=3.10"
+  },
+  "infoblox-ddi-mcp": {
+    "version": "2.2.3",
+    "framework_dependencies": [
+      "fastmcp>=3.1.1"
+    ],
+    "requires_python": ">=3.10"
+  },
+  "infrahub-mcp": {
+    "version": "1.2.0",
+    "framework_dependencies": [
+      "fastmcp>=4.0.0",
+      "mcp>=2.0"
+    ],
+    "requires_python": ">=3.13"
+  },
+  "itential-mcp": {
+    "version": "0.14.0",
+    "framework_dependencies": [
+      "fastmcp<4,>=3.4.1"
+    ],
+    "requires_python": ">=3.10"
+  },
+  "jev-mcp": {
+    "version": "0.1.2",
+    "framework_dependencies": [
+      "mcp>=2.2"
+    ],
+    "requires_python": ">=3.10"
+  },
+  "mcp-atlassian": {
+    "version": "0.23.1",
+    "framework_dependencies": [
+      "fastmcp<4.0.0,>=3.2.4",
+      "mcp<2.0.0,>=1.27.0"
+    ],
+    "requires_python": ">=3.10"
+  },
+  "memory-mcp": {
+    "version": "0.1.0.dev1",
+    "framework_dependencies": [
+      "mcp>=1.0.0"
+    ],
+    "requires_python": ">=3.11"
+  },
+  "memory-mcp-server": {
+    "version": "0.2.0",
+    "framework_dependencies": [],
+    "requires_python": ">=3.12"
+  },
+  "meraki-magic-mcp": {
+    "version": "0.1.0",
+    "framework_dependencies": [
+      "fastmcp>=2.14.5",
+      "mcp[cli]>=1.8.0"
+    ],
+    "requires_python": ">=3.13"
+  },
+  "pagerduty-mcp": {
+    "version": "1.1.0",
+    "framework_dependencies": [
+      "mcp[cli]~=1.8"
+    ],
+    "requires_python": "~=3.12.0"
+  },
+  "prometheus-mcp-server": {
+    "version": "1.6.2",
+    "framework_dependencies": [
+      "fastmcp>=3.1.0"
+    ],
+    "requires_python": ">=3.10"
+  },
+  "protocol-mcp": {
+    "version": "0.1.3",
+    "framework_dependencies": [
+      "fastmcp<3"
+    ],
+    "requires_python": ">=3.11"
+  },
+  "rag-mcp": {
+    "version": "0.1.4",
+    "framework_dependencies": [
+      "mcp[cli]>=1.6.0"
+    ],
+    "requires_python": ">=3.11"
+  },
+  "servicenow-mcp": {
+    "version": "0.1.1",
+    "framework_dependencies": [
+      "mcp[cli]>=1.12.0"
+    ],
+    "requires_python": ">=3.12"
+  },
+  "subnet-calculator-mcp": {
+    "version": "0.1.2",
+    "framework_dependencies": [
+      "mcp>=1.4.0"
+    ],
+    "requires_python": ">=3.10"
+  },
+  "tts-mcp": {
+    "version": "0.1.4",
+    "framework_dependencies": [
+      "fastmcp<3,>=2.0"
+    ],
+    "requires_python": ">=3.11"
+  },
+  "twitter-mcp": {
+    "version": "0.1.1",
+    "framework_dependencies": [
+      "mcp<2.0.0,>=1.6.0"
+    ],
+    "requires_python": ">=3.11"
+  },
+  "zabbix-mcp": {
+    "version": "0.6.1",
+    "framework_dependencies": [
+      "fastmcp<5,>=4.0.0"
+    ],
+    "requires_python": "<3.15,>=3.11"
+  }
+}

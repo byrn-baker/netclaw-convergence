@@ -119,14 +119,14 @@ class ReplicationManager:
                     f"embedding model mismatch: source uses '{remote_model}', "
                     f"local RAG uses '{local_model}' — refusing before any transfer")
             total = int(manifest["chunk_count"])
-            if total > MAX_CHUNKS:
+            if total < 0 or total > MAX_CHUNKS:
                 raise ValueError(
                     f"source collection has {total} chunks, exceeding the configured "
                     f"maximum of {MAX_CHUNKS} (N2N_REPLICATION_MAX_CHUNKS) — refusing "
                     f"before any transfer")
 
             identity = local_replica_identity(peer, collection_id)
-            write_target = f"{identity}__staging_{uuid.uuid4().hex[:8]}" if resync else identity
+            write_target = f"{identity}__staging_{uuid.uuid4().hex[:8]}"
             chroma = _bridge.chroma_store()
             registry = _bridge.registry()
 
@@ -137,12 +137,21 @@ class ReplicationManager:
             # separate manifest breakdown).
             docs_seen: dict = {}
             offset = 0
+            seen_ids = set()
             try:
+                chroma.count(write_target)  # create an explicit empty staging generation
                 while received < total:
                     page = await self.service.invoker.fetch_replicate_batch(
                         peer, collection_id, offset, BATCH_SIZE)
                     if not page.get("ids"):
                         break
+                    ids = page["ids"]
+                    if (len(ids) > total - received or len(ids) > BATCH_SIZE
+                            or any(len(page.get(key, [])) != len(ids)
+                                   for key in ("embeddings", "texts", "metadatas"))
+                            or len(set(ids)) != len(ids) or seen_ids.intersection(ids)):
+                        raise ValueError("Invalid replication page size, shape or duplicate chunk ids")
+                    seen_ids.update(ids)
                     chroma.upsert_chunks(write_target, page["ids"], page["embeddings"],
                                          page["texts"], page["metadatas"])
                     for meta in page["metadatas"]:
@@ -158,7 +167,7 @@ class ReplicationManager:
                     raise ValueError(
                         f"transfer incomplete: received {received} of {total} chunks "
                         f"declared by the manifest — discarding, not exposing a partial replica")
-            except Exception:
+            except BaseException:
                 # FR-006: an interrupted/failed transfer must leave no
                 # partially-queryable collection AND no orphaned chunk data —
                 # write_target only ever holds this attempt's chunks (never a
@@ -169,16 +178,26 @@ class ReplicationManager:
                 raise
 
             now = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
-            if resync:
-                registry.delete_by_collection(identity)
-                chroma.promote_staging(write_target, identity)
-            for doc_id, info in docs_seen.items():
-                row_id = registry.new_document(
-                    kind="replica", title=info["title"], source=f"n2n:{peer}",
-                    doc_type="other", content_hash=_content_hash_for(peer, collection_id, doc_id),
-                    collection=identity, source_peer_identity=peer,
-                    source_collection_id=collection_id,
-                    source_embedding_model=remote_model, replicated_at=now)
-                registry.finalize(row_id, chunk_count=info["chunk_count"])
+            publish = []
+            try:
+                for doc_id, info in docs_seen.items():
+                    final_hash = _content_hash_for(peer, collection_id, doc_id)
+                    row_id = registry.new_document(
+                        kind="replica", title=info["title"], source=f"n2n:{peer}",
+                        doc_type="other", content_hash=uuid.uuid4().hex,
+                        collection=write_target, source_peer_identity=peer,
+                        source_collection_id=collection_id,
+                        source_embedding_model=remote_model, replicated_at=now)
+                    publish.append((row_id, final_hash, info["chunk_count"]))
+                # Publish registry rows only after the vector rename succeeds;
+                # promotion retains and restores the previous generation if
+                # the registry transaction fails. No await splits publication.
+                chroma.promote_staging(
+                    write_target, identity,
+                    on_promote=lambda: registry.publish_replica(write_target, identity, publish))
+            except BaseException:
+                registry.delete_by_collection(write_target)
+                chroma.delete_collection(write_target)
+                raise
             return f"replicated {received} chunks into '{identity}'", 0
         return worker

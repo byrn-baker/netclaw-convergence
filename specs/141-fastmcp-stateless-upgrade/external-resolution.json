@@ -1,0 +1,117 @@
+{
+  "aci": {
+    "status": "pass",
+    "manifest": "installer explicit dependencies"
+  },
+  "fmc": {
+    "status": "pass",
+    "manifest": "CiscoFMC-MCP-server-community/requirements.txt"
+  },
+  "ise": {
+    "status": "pass",
+    "manifest": "ISE_MCP/requirements.txt"
+  },
+  "wikipedia": {
+    "status": "pass",
+    "manifest": "Wikipedia_MCP/requirements.txt"
+  },
+  "catalyst-center-legacy": {
+    "status": "retired"
+  },
+  "sdwan": {
+    "status": "pass",
+    "manifest": "installer explicit dependencies"
+  },
+  "containerlab": {
+    "status": "pass",
+    "manifest": "clab-mcp-server/requirements.txt"
+  },
+  "f5": {
+    "status": "pass",
+    "manifest": "f5-mcp-server/requirements.txt"
+  },
+  "gait": {
+    "status": "pass",
+    "manifest": "installer explicit dependencies"
+  },
+  "humanrail": {
+    "status": "pass",
+    "manifest": "installer explicit dependencies"
+  },
+  "infrahub": {
+    "status": "pass",
+    "manifest": "infrahub-mcp/pyproject.toml"
+  },
+  "arista-cvp": {
+    "status": "pass",
+    "manifest": "installer explicit dependencies"
+  },
+  "nvd-cve": {
+    "status": "pass",
+    "manifest": "mcp-nvd/pyproject.toml"
+  },
+  "meraki": {
+    "status": "retired"
+  },
+  "netbox": {
+    "status": "pass",
+    "manifest": "netbox-mcp-server/pyproject.toml"
+  },
+  "radkit": {
+    "status": "error",
+    "manifest": "radkit-mcp-server-community/pyproject.toml",
+    "error": "  \u00d7 No solution found when resolving dependencies:\n  \u2570\u2500\u25b6 Because there is no version of cisco-radkit-client==1.9.0 and\n      radkit-mcp-server depends on cisco-radkit-client==1.9.0, we can conclude\n      that your requirements are unsatisfiable.\n"
+  },
+  "subnet-calc": {
+    "status": "pass",
+    "manifest": "installer explicit dependencies"
+  },
+  "te-community": {
+    "status": "pass",
+    "manifest": "thousandeyes-mcp-community/requirements.txt"
+  },
+  "uml": {
+    "status": "pass",
+    "manifest": "uml-mcp/pyproject.toml"
+  },
+  "percepxion": {
+    "status": "pass",
+    "manifest": "percepxion-mcp-server/pyproject.toml"
+  },
+  "slc": {
+    "status": "pass",
+    "manifest": "slc-mcp-server/pyproject.toml"
+  },
+  "nmap": {
+    "status": "pass",
+    "manifest": "nmap-mcp/requirements.txt"
+  },
+  "aruba-cx": {
+    "status": "pass",
+    "manifest": "aruba-cx-mcp/mcp-servers/aruba-cx-mcp/requirements.txt"
+  },
+  "aap": {
+    "status": "pass",
+    "manifest": "AAP-Enterprise-MCP-Server/pyproject.toml"
+  },
+  "fwrule": {
+    "status": "pass",
+    "manifest": "fwrule-mcp/pyproject.toml"
+  },
+  "prometheus": {
+    "status": "pass",
+    "manifest": "prometheus-mcp-server/pyproject.toml"
+  },
+  "prisma-sdwan": {
+    "status": "pass",
+    "manifest": "prisma-sdwan-mcp/pyproject.toml"
+  },
+  "cml": {
+    "status": "pass",
+    "manifest": "cml-mcp/pyproject.toml"
+  },
+  "itential": {
+    "status": "pass",
+    "manifest": "itential-mcp/pyproject.toml"
+  }
+}

@@ -1,0 +1,23 @@
+[
+  {
+    "browser": "WSL Chromium",
+    "kind": "hud",
+    "health": 200,
+    "websocket": true,
+    "chatFixtureResponse": true,
+    "errors": []
+  },
+  {
+    "browser": "WSL Chromium",
+    "kind": "canvas",
+    "health": 200,
+    "websocket": true,
+    "chatFixtureResponse": true,
+    "errors": []
+  },
+  {
+    "canvasPendingReplyBlocksSessionChange": true,
+    "fixture": "3-second delayed local gateway response; attempted New chat while request pending",
+    "windowsRetest": "WSLInterop binfmt registration absent; Windows executable returned Exec format error. Historical Windows Edge acceptance retained, current change retested in WSL Chromium. No host interop configuration changed."
+  }
+]

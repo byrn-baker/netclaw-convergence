@@ -1,0 +1,154 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_______________ test_gateway_stall_extends_window_and_completes ________________
+
+self = <bgp.federation.gateway_ws.GatewayWsClient object at 0x10a917e90>
+method = 'agent'
+params = {'agentId': 'main', 'deliver': False, 'idempotencyKey': '1ed7bd9a-142f-43b8-a56c-5744995660c5', 'message': 'hi', ...}
+timeout_s = 2.0, expect_final = True
+
+    async def call(self, method: str, params: dict, timeout_s: float,
+                    expect_final: bool = True) -> dict:
+        """Send one JSON-RPC request, await its matching (final) response,
+        return the response frame's `payload`. Raises GatewayWsError on an
+        `ok: false` response, TimeoutError if no response arrives within
+        timeout_s.
+
+        `expect_final=True` (default, matches how OpenClaw's own CLI dispatches
+        `agent`): skip an intermediate "accepted" acknowledgement frame and
+        wait for the real final result frame with the same request id.
+
+        On a dropped connection mid-call, reconnects once and retries the call
+        once before giving up (spec 116 Edge Case: a connection hiccup must not
+        corrupt in-flight turn bookkeeping or silently hang).
+        """
+        try:
+>           return await self._call_once(method, params, timeout_s, expect_final)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+mcp-servers/protocol-mcp/bgp/federation/gateway_ws.py:193:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+mcp-servers/protocol-mcp/bgp/federation/gateway_ws.py:202: in _call_once
+    await self._ensure_connected()
+mcp-servers/protocol-mcp/bgp/federation/gateway_ws.py:97: in _ensure_connected
+    self._ws = await websockets.connect(self.url, open_timeout=_CONNECT_TIMEOUT_S)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.contract-test-envs/n2n/lib/python3.12/site-packages/websockets/asyncio/client.py:555: in __await_impl__
+    self.connection = await self.create_connection()
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.contract-test-envs/n2n/lib/python3.12/site-packages/websockets/asyncio/client.py:470: in create_connection
+    _, connection = await loop.create_connection(factory, **kwargs)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.12/3.12.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/base_events.py:1132: in create_connection
+    raise exceptions[0]
+/opt/homebrew/Cellar/python@3.12/3.12.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/base_events.py:1107: in create_connection
+    sock = await self._connect_sock(
+/opt/homebrew/Cellar/python@3.12/3.12.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/base_events.py:1010: in _connect_sock
+    await self.sock_connect(sock, address)
+/opt/homebrew/Cellar/python@3.12/3.12.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/selector_events.py:651: in sock_connect
+    return await fut
+           ^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <_UnixSelectorEventLoop running=False closed=True debug=False>
+fut = None, sock = <socket.socket [closed] fd=-1, family=2, type=1, proto=6>
+address = ('127.0.0.1', 18789)
+
+    def _sock_connect_cb(self, fut, sock, address):
+        if fut.done():
+            return
+
+        try:
+            err = sock.getsockopt(socket.SOL_SOCKET, socket.SO_ERROR)
+            if err != 0:
+                # Jump to any except clause below.
+>               raise OSError(err, f'Connect call failed {address}')
+E               ConnectionRefusedError: [Errno 61] Connect call failed ('127.0.0.1', 18789)
+
+/opt/homebrew/Cellar/python@3.12/3.12.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/selector_events.py:691: ConnectionRefusedError
+
+During handling of the above exception, another exception occurred:
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10a8c76e0>
+tmp_path = PosixPath('/private/var/folders/ln/99pzcfd950j6vxf7gbfjjm5w0000gq/T/pytest-of-john.capobianco/pytest-1/test_gateway_stall_extends_win0')
+
+    def test_gateway_stall_extends_window_and_completes(monkeypatch, tmp_path):
+        """A turn silent past stall_after_s gets the on_stall extension and can
+        still complete (previously it died on the hard timeout)."""
+        import bgp.federation.gateway as gw
+
+        fake = tmp_path / "openclaw"
+        fake.write_text("#!/bin/sh\nsleep 3\n"
+                        "echo '{\"result\":{\"payloads\":[{\"text\":\"late-ok\"}]}}'\n")
+        fake.chmod(0o755)
+        monkeypatch.setenv("PATH", f"{tmp_path}:" + __import__("os").environ["PATH"])
+
+        stalls = []
+
+        def on_stall(waited):
+            stalls.append(waited)
+            return 10  # operator approval window
+
+>       reply, _ = asyncio.run(gw.run_agent_turn(
+            "hi", timeout_s=2, on_stall=on_stall, stall_after_s=1))
+
+tests/n2n/test_delegation_bypass_guard.py:100:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+/opt/homebrew/Cellar/python@3.12/3.12.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/runners.py:195: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.12/3.12.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.12/3.12.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/base_events.py:691: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+mcp-servers/protocol-mcp/bgp/federation/gateway.py:428: in run_agent_turn
+    payload = await call_future
+              ^^^^^^^^^^^^^^^^^
+mcp-servers/protocol-mcp/bgp/federation/gateway_ws.py:198: in call
+    return await self._call_once(method, params, timeout_s, expect_final)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+mcp-servers/protocol-mcp/bgp/federation/gateway_ws.py:202: in _call_once
+    await self._ensure_connected()
+mcp-servers/protocol-mcp/bgp/federation/gateway_ws.py:97: in _ensure_connected
+    self._ws = await websockets.connect(self.url, open_timeout=_CONNECT_TIMEOUT_S)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.contract-test-envs/n2n/lib/python3.12/site-packages/websockets/asyncio/client.py:555: in __await_impl__
+    self.connection = await self.create_connection()
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.contract-test-envs/n2n/lib/python3.12/site-packages/websockets/asyncio/client.py:470: in create_connection
+    _, connection = await loop.create_connection(factory, **kwargs)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/homebrew/Cellar/python@3.12/3.12.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/base_events.py:1132: in create_connection
+    raise exceptions[0]
+/opt/homebrew/Cellar/python@3.12/3.12.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/base_events.py:1107: in create_connection
+    sock = await self._connect_sock(
+/opt/homebrew/Cellar/python@3.12/3.12.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/base_events.py:1010: in _connect_sock
+    await self.sock_connect(sock, address)
+/opt/homebrew/Cellar/python@3.12/3.12.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/selector_events.py:651: in sock_connect
+    return await fut
+           ^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <_UnixSelectorEventLoop running=False closed=True debug=False>
+fut = None, sock = <socket.socket [closed] fd=-1, family=2, type=1, proto=6>
+address = ('127.0.0.1', 18789)
+
+    def _sock_connect_cb(self, fut, sock, address):
+        if fut.done():
+            return
+
+        try:
+            err = sock.getsockopt(socket.SOL_SOCKET, socket.SO_ERROR)
+            if err != 0:
+                # Jump to any except clause below.
+>               raise OSError(err, f'Connect call failed {address}')
+E               ConnectionRefusedError: [Errno 61] Connect call failed ('127.0.0.1', 18789)
+
+/opt/homebrew/Cellar/python@3.12/3.12.12/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/selector_events.py:691: ConnectionRefusedError
+------------------------------ Captured log call -------------------------------
+WARNING  n2n.gateway_ws:gateway_ws.py:195 gateway_ws: connection dropped during agent call; reconnecting
+=========================== short test summary info ============================
+FAILED tests/n2n/test_delegation_bypass_guard.py::test_gateway_stall_extends_window_and_completes
+1 failed in 1.13s

@@ -1,0 +1,59 @@
+/* Terminal chrome only: never override xterm font metrics, transforms or selection. */
+.nc-terminal {
+  --nt-surface: #f8fafc;
+  --nt-menu: #ffffff;
+  --nt-line: #dce3eb;
+  --nt-text: #273649;
+  --nt-muted: #5b6b7e;
+  --nt-hover: #e9eff4;
+  --nt-accent: #0a7776;
+  font-family: "Segoe UI", system-ui, sans-serif;
+  container: terminal / inline-size;
+}
+.nc-terminal[data-theme="dark"] {
+  --nt-surface: #111b27;
+  --nt-menu: #182432;
+  --nt-line: #2a3a4a;
+  --nt-text: #dbe5ef;
+  --nt-muted: #9cacc0;
+  --nt-hover: #233447;
+  --nt-accent: #74d7ce;
+}
+.nc-terminal .nt-titlebar { background:var(--nt-menu); color:var(--nt-text); }
+.nc-terminal .nt-terminal-icon { color:var(--nt-accent); flex-shrink:0; }
+.nc-terminal .nt-window-title { font-size:11px; font-weight:650; letter-spacing:.025em; white-space:nowrap; }
+.nc-terminal .nt-session-name { font-size:11.5px; color:var(--nt-muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.nc-terminal .nt-connection-badge { padding:2px 7px; border:1px solid var(--nt-line); border-radius:4px; font-size:9px; color:var(--nt-muted); white-space:nowrap; }
+.nc-terminal .nt-connection-badge[data-status="connected"] { color:var(--nt-accent); border-color:#308c8066; }
+.nc-terminal .nt-connection-badge[data-status="error"] { color:#c34458; border-color:#c3445866; }
+.nc-terminal .nt-toolbar { align-items:center; flex-wrap:wrap; gap:3px; padding:7px 10px; background:var(--nt-surface); border-bottom:1px solid var(--nt-line); flex-shrink:0; }
+.nc-terminal .nt-menu-group { display:contents; }
+.nc-terminal .nt-device-select { flex:0 1 248px; width:248px; min-width:165px; max-width:38%; height:31px; box-sizing:border-box; margin-right:8px; padding:0 9px; border:1px solid var(--nt-line); border-radius:5px; color:var(--nt-text); background:var(--nt-menu); font:11px "Cascadia Mono",Consolas,monospace; text-overflow:ellipsis; }
+.nc-terminal .nt-toolbar summary { gap:7px; }
+.nc-terminal .nt-toolbar summary::after { content:""; width:4px; height:4px; border-right:1px solid currentColor; border-bottom:1px solid currentColor; transform:translateY(-1px) rotate(45deg); opacity:.6; }
+.nc-terminal .nt-toolbar summary::-webkit-details-marker { display:none; }
+/* Override legacy inline action styles in the menu only; danger text remains intact. */
+.nc-terminal .nt-toolbar details[open] > summary,
+.nc-terminal .nt-toolbar summary:hover { background:var(--nt-hover) !important; }
+.nc-terminal .nt-toolbar [role="menu"] > button { min-height:32px; height:auto !important; border:0 !important; border-radius:4px !important; padding:7px 10px !important; background:transparent !important; color:var(--nt-text) !important; font:500 11.5px/1.4 "Segoe UI",system-ui,sans-serif !important; text-align:left; }
+.nc-terminal .nt-toolbar [role="menu"] > button:not(:disabled):hover { background:var(--nt-hover) !important; }
+.nc-terminal .nt-toolbar [role="menu"] > button.nt-danger { color:#cc4962 !important; }
+.nc-terminal .nt-toolbar [role="menu"] > label { padding:7px 10px !important; line-height:1.5; font-size:11px !important; color:var(--nt-text) !important; }
+.nc-terminal .nt-toolbar [role="menu"] select { max-width:100%; }
+.nc-terminal .nt-toolbar details[aria-label="Extra Features menu"] > [role="menu"],
+.nc-terminal .nt-toolbar details[aria-label="AI settings menu"] > [role="menu"] { left:auto !important; right:0; }
+.nc-terminal .nt-outputbar { display:flex; flex-wrap:wrap; align-items:center; gap:6px; padding:5px 10px; min-height:36px; background:var(--nt-menu); border-bottom:1px solid var(--nt-line); flex-shrink:0; }
+.nc-terminal .nt-outputbar [role="tab"] { height:32px !important; padding:0 9px !important; font-size:11px !important; font-weight:550 !important; color:var(--nt-muted) !important; border-radius:0; }
+.nc-terminal .nt-outputbar [role="tab"][aria-selected="true"] { color:var(--nt-accent) !important; border-bottom-color:var(--nt-accent) !important; }
+.nc-terminal .nt-outputbar [role="tab"]:hover { background:var(--nt-hover) !important; }
+.nc-terminal .nt-outputbar select { height:28px !important; font-size:11px !important; font-weight:500 !important; border-color:var(--nt-line) !important; color:var(--nt-text) !important; background:var(--nt-surface) !important; }
+.nc-terminal .nt-outputbar > button:not([role="tab"]) { font-weight:600 !important; height:28px !important; font-size:11px !important; }
+.nc-terminal .nt-selection-hint { margin-left:auto; color:var(--nt-muted); font-size:10px; white-space:nowrap; }
+.nc-terminal .nt-statusbar { padding:6px 11px; display:flex; align-items:center; gap:7px; background:#0e1721; border-bottom:1px solid #20303e; color:#b4c4d5; font-size:10.5px; flex-shrink:0; }
+.nc-terminal .nt-status-message { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.nc-terminal .nt-workflow-hint { margin-left:auto; color:#96a9bd; font-size:10px; white-space:nowrap; }
+.nc-terminal :is(button,select,summary,input):focus-visible { outline:2px solid var(--nt-accent); outline-offset:2px; }
+.nc-terminal button:disabled { cursor:not-allowed !important; }
+@container terminal (max-width:1000px) { .nt-selection-hint { display:none; } .nt-workflow-hint { max-width:45%; overflow:hidden; text-overflow:ellipsis; } }
+@container terminal (max-width:740px) { .nt-device-select { flex-basis:205px !important; width:205px !important; } .nt-toolbar { column-gap:1px !important; } .nt-toolbar summary { font-size:11px !important; padding:0 6px !important; } .nt-toolbar summary::after { display:none; } .nt-connection-badge { display:none; } }
+@container terminal (max-width:580px) { .nt-workflow-hint { display:none; } .nt-outputbar { gap:3px !important; } }

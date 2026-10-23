@@ -1,0 +1,339 @@
+FFFFFFFFFFFFF.                                                           [100%]
+=================================== FAILURES ===================================
+____________ test_invalid_optional_price_override_uses_default[[]] _____________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x70ede6fe29e0>
+raw = '[]'
+
+    @pytest.mark.parametrize('raw', ['[]', 'null', '42', '{"opus": null}', '{"opus":{"input":NaN}}', '{"opus":{"input":-1}}', '{"opus":{"cache_discount":101}}', '{"opus":{"input":true}}'])
+    def test_invalid_optional_price_override_uses_default(monkeypatch, raw):
+        monkeypatch.setenv('NETCLAW_TOKEN_PRICING_OVERRIDE', raw)
+>       pricing = get_pricing('opus')
+                  ^^^^^^^^^^^^^^^^^^^
+
+tests/unit/test_token_cost_validation.py:11:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src/netclaw_tokens/cost_calculator.py:101: in get_pricing
+    overrides = _load_pricing_overrides()
+                ^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    def _load_pricing_overrides() -> Dict[str, ModelPricing]:
+        """Load pricing overrides from NETCLAW_TOKEN_PRICING_OVERRIDE env var.
+
+        Expected format: JSON string like:
+          {"claude-opus-4-6": {"input": 6.0, "output": 30.0}}
+        """
+        raw = os.environ.get("NETCLAW_TOKEN_PRICING_OVERRIDE", "")
+        if not raw:
+            return {}
+
+        try:
+            overrides_data = json.loads(raw)
+        except (json.JSONDecodeError, TypeError):
+            logger.warning(
+                "NETCLAW_TOKEN_PRICING_OVERRIDE is not valid JSON; ignoring overrides"
+            )
+            return {}
+
+        overrides: Dict[str, ModelPricing] = {}
+>       for model_name, prices in overrides_data.items():
+                                  ^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'list' object has no attribute 'items'
+
+src/netclaw_tokens/cost_calculator.py:80: AttributeError
+___________ test_invalid_optional_price_override_uses_default[null] ____________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x70ede6fe2d70>
+raw = 'null'
+
+    @pytest.mark.parametrize('raw', ['[]', 'null', '42', '{"opus": null}', '{"opus":{"input":NaN}}', '{"opus":{"input":-1}}', '{"opus":{"cache_discount":101}}', '{"opus":{"input":true}}'])
+    def test_invalid_optional_price_override_uses_default(monkeypatch, raw):
+        monkeypatch.setenv('NETCLAW_TOKEN_PRICING_OVERRIDE', raw)
+>       pricing = get_pricing('opus')
+                  ^^^^^^^^^^^^^^^^^^^
+
+tests/unit/test_token_cost_validation.py:11:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src/netclaw_tokens/cost_calculator.py:101: in get_pricing
+    overrides = _load_pricing_overrides()
+                ^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    def _load_pricing_overrides() -> Dict[str, ModelPricing]:
+        """Load pricing overrides from NETCLAW_TOKEN_PRICING_OVERRIDE env var.
+
+        Expected format: JSON string like:
+          {"claude-opus-4-6": {"input": 6.0, "output": 30.0}}
+        """
+        raw = os.environ.get("NETCLAW_TOKEN_PRICING_OVERRIDE", "")
+        if not raw:
+            return {}
+
+        try:
+            overrides_data = json.loads(raw)
+        except (json.JSONDecodeError, TypeError):
+            logger.warning(
+                "NETCLAW_TOKEN_PRICING_OVERRIDE is not valid JSON; ignoring overrides"
+            )
+            return {}
+
+        overrides: Dict[str, ModelPricing] = {}
+>       for model_name, prices in overrides_data.items():
+                                  ^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'NoneType' object has no attribute 'items'
+
+src/netclaw_tokens/cost_calculator.py:80: AttributeError
+____________ test_invalid_optional_price_override_uses_default[42] _____________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x70ede6ea8b90>
+raw = '42'
+
+    @pytest.mark.parametrize('raw', ['[]', 'null', '42', '{"opus": null}', '{"opus":{"input":NaN}}', '{"opus":{"input":-1}}', '{"opus":{"cache_discount":101}}', '{"opus":{"input":true}}'])
+    def test_invalid_optional_price_override_uses_default(monkeypatch, raw):
+        monkeypatch.setenv('NETCLAW_TOKEN_PRICING_OVERRIDE', raw)
+>       pricing = get_pricing('opus')
+                  ^^^^^^^^^^^^^^^^^^^
+
+tests/unit/test_token_cost_validation.py:11:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src/netclaw_tokens/cost_calculator.py:101: in get_pricing
+    overrides = _load_pricing_overrides()
+                ^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    def _load_pricing_overrides() -> Dict[str, ModelPricing]:
+        """Load pricing overrides from NETCLAW_TOKEN_PRICING_OVERRIDE env var.
+
+        Expected format: JSON string like:
+          {"claude-opus-4-6": {"input": 6.0, "output": 30.0}}
+        """
+        raw = os.environ.get("NETCLAW_TOKEN_PRICING_OVERRIDE", "")
+        if not raw:
+            return {}
+
+        try:
+            overrides_data = json.loads(raw)
+        except (json.JSONDecodeError, TypeError):
+            logger.warning(
+                "NETCLAW_TOKEN_PRICING_OVERRIDE is not valid JSON; ignoring overrides"
+            )
+            return {}
+
+        overrides: Dict[str, ModelPricing] = {}
+>       for model_name, prices in overrides_data.items():
+                                  ^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'int' object has no attribute 'items'
+
+src/netclaw_tokens/cost_calculator.py:80: AttributeError
+______ test_invalid_optional_price_override_uses_default[{"opus": null}] _______
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x70ede6f2a470>
+raw = '{"opus": null}'
+
+    @pytest.mark.parametrize('raw', ['[]', 'null', '42', '{"opus": null}', '{"opus":{"input":NaN}}', '{"opus":{"input":-1}}', '{"opus":{"cache_discount":101}}', '{"opus":{"input":true}}'])
+    def test_invalid_optional_price_override_uses_default(monkeypatch, raw):
+        monkeypatch.setenv('NETCLAW_TOKEN_PRICING_OVERRIDE', raw)
+>       pricing = get_pricing('opus')
+                  ^^^^^^^^^^^^^^^^^^^
+
+tests/unit/test_token_cost_validation.py:11:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src/netclaw_tokens/cost_calculator.py:101: in get_pricing
+    overrides = _load_pricing_overrides()
+                ^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    def _load_pricing_overrides() -> Dict[str, ModelPricing]:
+        """Load pricing overrides from NETCLAW_TOKEN_PRICING_OVERRIDE env var.
+
+        Expected format: JSON string like:
+          {"claude-opus-4-6": {"input": 6.0, "output": 30.0}}
+        """
+        raw = os.environ.get("NETCLAW_TOKEN_PRICING_OVERRIDE", "")
+        if not raw:
+            return {}
+
+        try:
+            overrides_data = json.loads(raw)
+        except (json.JSONDecodeError, TypeError):
+            logger.warning(
+                "NETCLAW_TOKEN_PRICING_OVERRIDE is not valid JSON; ignoring overrides"
+            )
+            return {}
+
+        overrides: Dict[str, ModelPricing] = {}
+        for model_name, prices in overrides_data.items():
+            canonical = _resolve_model(model_name)
+            base = DEFAULT_PRICING.get(canonical)
+            overrides[canonical] = ModelPricing(
+                model_name=canonical,
+>               input_price_per_1m=prices.get("input", base.input_price_per_1m if base else 5.0),
+                                   ^^^^^^^^^^
+                output_price_per_1m=prices.get("output", base.output_price_per_1m if base else 25.0),
+                cache_discount_pct=prices.get("cache_discount", base.cache_discount_pct if base else 90.0),
+            )
+E           AttributeError: 'NoneType' object has no attribute 'get'
+
+src/netclaw_tokens/cost_calculator.py:85: AttributeError
+__ test_invalid_optional_price_override_uses_default[{"opus":{"input":NaN}}] ___
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x70ede6f29f20>
+raw = '{"opus":{"input":NaN}}'
+
+    @pytest.mark.parametrize('raw', ['[]', 'null', '42', '{"opus": null}', '{"opus":{"input":NaN}}', '{"opus":{"input":-1}}', '{"opus":{"cache_discount":101}}', '{"opus":{"input":true}}'])
+    def test_invalid_optional_price_override_uses_default(monkeypatch, raw):
+        monkeypatch.setenv('NETCLAW_TOKEN_PRICING_OVERRIDE', raw)
+        pricing = get_pricing('opus')
+>       assert pricing.input_price_per_1m == 5
+E       AssertionError: assert nan == 5
+E        +  where nan = ModelPricing(model_name='claude-opus-4-6', input_price_per_1m=nan, output_price_per_1m=25.0, cache_discount_pct=90.0).input_price_per_1m
+
+tests/unit/test_token_cost_validation.py:12: AssertionError
+___ test_invalid_optional_price_override_uses_default[{"opus":{"input":-1}}] ___
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x70ede7e4ae50>
+raw = '{"opus":{"input":-1}}'
+
+    @pytest.mark.parametrize('raw', ['[]', 'null', '42', '{"opus": null}', '{"opus":{"input":NaN}}', '{"opus":{"input":-1}}', '{"opus":{"cache_discount":101}}', '{"opus":{"input":true}}'])
+    def test_invalid_optional_price_override_uses_default(monkeypatch, raw):
+        monkeypatch.setenv('NETCLAW_TOKEN_PRICING_OVERRIDE', raw)
+        pricing = get_pricing('opus')
+>       assert pricing.input_price_per_1m == 5
+E       AssertionError: assert -1 == 5
+E        +  where -1 = ModelPricing(model_name='claude-opus-4-6', input_price_per_1m=-1, output_price_per_1m=25.0, cache_discount_pct=90.0).input_price_per_1m
+
+tests/unit/test_token_cost_validation.py:12: AssertionError
+_ test_invalid_optional_price_override_uses_default[{"opus":{"cache_discount":101}}] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x70ede6ea4d50>
+raw = '{"opus":{"cache_discount":101}}'
+
+    @pytest.mark.parametrize('raw', ['[]', 'null', '42', '{"opus": null}', '{"opus":{"input":NaN}}', '{"opus":{"input":-1}}', '{"opus":{"cache_discount":101}}', '{"opus":{"input":true}}'])
+    def test_invalid_optional_price_override_uses_default(monkeypatch, raw):
+        monkeypatch.setenv('NETCLAW_TOKEN_PRICING_OVERRIDE', raw)
+        pricing = get_pricing('opus')
+        assert pricing.input_price_per_1m == 5
+>       assert pricing.cache_discount_pct == 90
+E       AssertionError: assert 101 == 90
+E        +  where 101 = ModelPricing(model_name='claude-opus-4-6', input_price_per_1m=5.0, output_price_per_1m=25.0, cache_discount_pct=101).cache_discount_pct
+
+tests/unit/test_token_cost_validation.py:13: AssertionError
+__ test_invalid_optional_price_override_uses_default[{"opus":{"input":true}}] __
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x70ede6eb28a0>
+raw = '{"opus":{"input":true}}'
+
+    @pytest.mark.parametrize('raw', ['[]', 'null', '42', '{"opus": null}', '{"opus":{"input":NaN}}', '{"opus":{"input":-1}}', '{"opus":{"cache_discount":101}}', '{"opus":{"input":true}}'])
+    def test_invalid_optional_price_override_uses_default(monkeypatch, raw):
+        monkeypatch.setenv('NETCLAW_TOKEN_PRICING_OVERRIDE', raw)
+        pricing = get_pricing('opus')
+>       assert pricing.input_price_per_1m == 5
+E       AssertionError: assert True == 5
+E        +  where True = ModelPricing(model_name='claude-opus-4-6', input_price_per_1m=True, output_price_per_1m=25.0, cache_discount_pct=90.0).input_price_per_1m
+
+tests/unit/test_token_cost_validation.py:12: AssertionError
+____________ test_invalid_usage_halts_without_poisoning_ledger[nan] ____________
+
+value = nan
+
+    @pytest.mark.parametrize('value', [float('nan'), float('inf'), -1.0, True, '0'])
+    def test_invalid_usage_halts_without_poisoning_ledger(value):
+        ledger = SessionLedger()
+>       with pytest.raises(ValueError):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE ValueError
+
+tests/unit/test_token_cost_validation.py:20: Failed
+____________ test_invalid_usage_halts_without_poisoning_ledger[inf] ____________
+
+value = inf
+
+    @pytest.mark.parametrize('value', [float('nan'), float('inf'), -1.0, True, '0'])
+    def test_invalid_usage_halts_without_poisoning_ledger(value):
+        ledger = SessionLedger()
+>       with pytest.raises(ValueError):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE ValueError
+
+tests/unit/test_token_cost_validation.py:20: Failed
+___________ test_invalid_usage_halts_without_poisoning_ledger[-1.0] ____________
+
+value = -1.0
+
+    @pytest.mark.parametrize('value', [float('nan'), float('inf'), -1.0, True, '0'])
+    def test_invalid_usage_halts_without_poisoning_ledger(value):
+        ledger = SessionLedger()
+>       with pytest.raises(ValueError):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE ValueError
+
+tests/unit/test_token_cost_validation.py:20: Failed
+___________ test_invalid_usage_halts_without_poisoning_ledger[True] ____________
+
+value = True
+
+    @pytest.mark.parametrize('value', [float('nan'), float('inf'), -1.0, True, '0'])
+    def test_invalid_usage_halts_without_poisoning_ledger(value):
+        ledger = SessionLedger()
+>       with pytest.raises(ValueError):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE ValueError
+
+tests/unit/test_token_cost_validation.py:20: Failed
+_____________ test_invalid_usage_halts_without_poisoning_ledger[0] _____________
+
+value = '0'
+
+    @pytest.mark.parametrize('value', [float('nan'), float('inf'), -1.0, True, '0'])
+    def test_invalid_usage_halts_without_poisoning_ledger(value):
+        ledger = SessionLedger()
+        with pytest.raises(ValueError):
+>           ledger.record('tool', TokenCount(input_tokens=1), CostEstimate(total_cost=value))
+
+tests/unit/test_token_cost_validation.py:21:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <netclaw_tokens.session_ledger.SessionLedger object at 0x70ede6ec8d60>
+tool_name = 'tool'
+token_count = TokenCount(input_tokens=1, output_tokens=0, model='claude-opus-4-6', timestamp=datetime.datetime(2026, 9, 27, 13, 20, 15, 887491, tzinfo=datetime.timezone.utc), estimated=False, cache_creation_input_tokens=0, cache_read_input_tokens=0)
+cost = CostEstimate(input_cost=0.0, output_cost=0.0, cache_discount=0.0, total_cost='0', model='claude-opus-4-6')
+gcf_savings = 0
+
+    def record(
+        self,
+        tool_name: str,
+        token_count: TokenCount,
+        cost: CostEstimate,
+        gcf_savings: int = 0,
+    ) -> None:
+        """Record a tool call's token usage. Thread-safe.
+
+        Args:
+            tool_name: MCP tool identifier.
+            token_count: Token count for this call.
+            cost: Cost estimate for this call.
+            gcf_savings: Tokens saved by GCF serialization.
+        """
+        with self._lock:
+            self.total_input_tokens += token_count.input_tokens
+            self.total_output_tokens += token_count.output_tokens
+>           self.total_cost += cost.total_cost
+E           TypeError: unsupported operand type(s) for +=: 'float' and 'str'
+
+src/netclaw_tokens/session_ledger.py:65: TypeError
+=========================== short test summary info ============================
+FAILED tests/unit/test_token_cost_validation.py::test_invalid_optional_price_override_uses_default[[]]
+FAILED tests/unit/test_token_cost_validation.py::test_invalid_optional_price_override_uses_default[null]
+FAILED tests/unit/test_token_cost_validation.py::test_invalid_optional_price_override_uses_default[42]
+FAILED tests/unit/test_token_cost_validation.py::test_invalid_optional_price_override_uses_default[{"opus": null}]
+FAILED tests/unit/test_token_cost_validation.py::test_invalid_optional_price_override_uses_default[{"opus":{"input":NaN}}]
+FAILED tests/unit/test_token_cost_validation.py::test_invalid_optional_price_override_uses_default[{"opus":{"input":-1}}]
+FAILED tests/unit/test_token_cost_validation.py::test_invalid_optional_price_override_uses_default[{"opus":{"cache_discount":101}}]
+FAILED tests/unit/test_token_cost_validation.py::test_invalid_optional_price_override_uses_default[{"opus":{"input":true}}]
+FAILED tests/unit/test_token_cost_validation.py::test_invalid_usage_halts_without_poisoning_ledger[nan]
+FAILED tests/unit/test_token_cost_validation.py::test_invalid_usage_halts_without_poisoning_ledger[inf]
+FAILED tests/unit/test_token_cost_validation.py::test_invalid_usage_halts_without_poisoning_ledger[-1.0]
+FAILED tests/unit/test_token_cost_validation.py::test_invalid_usage_halts_without_poisoning_ledger[True]
+FAILED tests/unit/test_token_cost_validation.py::test_invalid_usage_halts_without_poisoning_ledger[0]
+13 failed, 1 passed in 0.08s

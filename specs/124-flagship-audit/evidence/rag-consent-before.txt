@@ -1,0 +1,57 @@
+FF.                                                                      [100%]
+=================================== FAILURES ===================================
+_ test_invalid_linked_scope_never_ingests[text/html-<a href="/next">next</a>] __
+
+server = <module 'rag_mcp_server' from '/Users/john.capobianco/netclaw/mcp-servers/rag-mcp/rag_mcp_server.py'>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10a530110>
+mime = 'text/html', body = b'<a href="/next">next</a>'
+
+    @pytest.mark.parametrize('mime,body', [('text/html', b'<a href="/next">next</a>'), ('text/plain', b'guide')])
+    def test_invalid_linked_scope_never_ingests(server, monkeypatch, mime, body):
+        monkeypatch.setattr(server, 'fetch', lambda *args, **kwargs: (body, mime))
+        ingested = []
+        monkeypatch.setattr(server, '_ingest_fetched', lambda *args: ingested.append(args) or server.success_response({}))
+        response = server._do_ingest_url('https://docs.example/start', mode='ingest', include_linked=True, scope_token_value='invalid')
+        assert response['error']['code'] == 'SCOPE_TOKEN_INVALID'
+>       assert ingested == []
+E       assert [('https://do...other', None)] == []
+E
+E         Left contains one more item: ('https://docs.example/start', b'<a href="/next">next</a>', 'text/html', 'other', None)
+E         Use -v to get more diff
+
+tests/unit/test_rag_ingest_guards.py:26: AssertionError
+__________ test_invalid_linked_scope_never_ingests[text/plain-guide] ___________
+
+server = <module 'rag_mcp_server' from '/Users/john.capobianco/netclaw/mcp-servers/rag-mcp/rag_mcp_server.py'>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10e5fe120>
+mime = 'text/plain', body = b'guide'
+
+    @pytest.mark.parametrize('mime,body', [('text/html', b'<a href="/next">next</a>'), ('text/plain', b'guide')])
+    def test_invalid_linked_scope_never_ingests(server, monkeypatch, mime, body):
+        monkeypatch.setattr(server, 'fetch', lambda *args, **kwargs: (body, mime))
+        ingested = []
+        monkeypatch.setattr(server, '_ingest_fetched', lambda *args: ingested.append(args) or server.success_response({}))
+        response = server._do_ingest_url('https://docs.example/start', mode='ingest', include_linked=True, scope_token_value='invalid')
+        assert response['error']['code'] == 'SCOPE_TOKEN_INVALID'
+>       assert ingested == []
+E       AssertionError: assert [('https://do...other', None)] == []
+E
+E         Left contains one more item: ('https://docs.example/start', b'guide', 'text/plain', 'other', None)
+E         Use -v to get more diff
+
+tests/unit/test_rag_ingest_guards.py:26: AssertionError
+=============================== warnings summary ===============================
+tests/unit/test_rag_ingest_guards.py::test_invalid_linked_scope_never_ingests[text/html-<a href="/next">next</a>]
+  /Users/john.capobianco/netclaw/.contract-test-envs/unit/lib/python3.12/site-packages/fastmcp/server/auth/providers/jwt.py:10: AuthlibDeprecationWarning: authlib.jose module is deprecated, please use joserfc instead.
+  It will be compatible before version 2.0.0.
+    from authlib.jose import JsonWebKey, JsonWebToken
+
+tests/unit/test_rag_ingest_guards.py::test_invalid_linked_scope_never_ingests[text/html-<a href="/next">next</a>]
+  /Users/john.capobianco/netclaw/.contract-test-envs/unit/lib/python3.12/site-packages/authlib/integrations/httpx_client/assertion_client.py:5: AuthlibDeprecationWarning: The httpx module is deprecated; please use httpx2 instead.
+    from ._compat import httpx2
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/unit/test_rag_ingest_guards.py::test_invalid_linked_scope_never_ingests[text/html-<a href="/next">next</a>]
+FAILED tests/unit/test_rag_ingest_guards.py::test_invalid_linked_scope_never_ingests[text/plain-guide]
+2 failed, 1 passed, 2 warnings in 1.82s

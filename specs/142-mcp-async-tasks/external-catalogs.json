@@ -1,0 +1,127 @@
+{
+  "wikipedia": {
+    "status": "pass",
+    "fastmcp": "4.0.11",
+    "mcp": "2.3.0",
+    "task_tools": [
+      "check_page_exists",
+      "disambiguation_options",
+      "get_categories",
+      "get_content",
+      "get_html",
+      "get_images",
+      "get_links",
+      "get_page_id",
+      "get_references",
+      "get_summary",
+      "get_title",
+      "get_url",
+      "search_pages"
+    ],
+    "tools": [
+      "check_page_exists",
+      "disambiguation_options",
+      "get_categories",
+      "get_content",
+      "get_html",
+      "get_images",
+      "get_links",
+      "get_page_id",
+      "get_references",
+      "get_summary",
+      "get_title",
+      "get_url",
+      "search_pages"
+    ],
+    "protocol_modes": [
+      "legacy",
+      "2026-07-28"
+    ],
+    "fixture_note": "no vendor tool invocation"
+  },
+  "nvd-cve": {
+    "status": "pass",
+    "fastmcp": "4.0.11",
+    "mcp": "2.3.0",
+    "task_tools": [
+      "get_cve",
+      "search_cve"
+    ],
+    "tools": [
+      "get_cve",
+      "search_cve"
+    ],
+    "protocol_modes": [
+      "legacy",
+      "2026-07-28"
+    ],
+    "fixture_note": "no vendor tool invocation"
+  },
+  "sdwan": {
+    "status": "pass",
+    "fastmcp": "4.0.11",
+    "mcp": "2.3.0",
+    "task_tools": [
+      "get_alarms",
+      "get_bfd_sessions",
+      "get_centralized_policies",
+      "get_control_connections",
+      "get_device_template_details",
+      "get_device_templates",
+      "get_devices",
+      "get_events",
+      "get_feature_template_details",
+      "get_feature_templates",
+      "get_interface_stats",
+      "get_omp_routes",
+      "get_running_config",
+      "get_template_variables",
+      "get_wan_edge_inventory"
+    ],
+    "tools": [
+      "generate_site_config",
+      "get_alarms",
+      "get_bfd_sessions",
+      "get_centralized_policies",
+      "get_control_connections",
+      "get_device_template_details",
+      "get_device_templates",
+      "get_devices",
+      "get_events",
+      "get_feature_template_details",
+      "get_feature_templates",
+      "get_interface_stats",
+      "get_omp_routes",
+      "get_running_config",
+      "get_template_variables",
+      "get_wan_edge_inventory"
+    ],
+    "protocol_modes": [
+      "legacy",
+      "2026-07-28"
+    ],
+    "fixture_note": "no vendor tool invocation"
+  },
+  "netbox": {
+    "status": "pass",
+    "fastmcp": "4.0.11",
+    "mcp": "2.3.0",
+    "task_tools": [
+      "netbox_get_changelogs",
+      "netbox_get_object_by_id",
+      "netbox_get_objects",
+      "netbox_search_objects"
+    ],
+    "tools": [
+      "netbox_get_changelogs",
+      "netbox_get_object_by_id",
+      "netbox_get_objects",
+      "netbox_search_objects"
+    ],
+    "protocol_modes": [
+      "legacy",
+      "2026-07-28"
+    ],
+    "fixture_note": "no vendor tool invocation"
+  }
+}

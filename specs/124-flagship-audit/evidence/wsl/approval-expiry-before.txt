@@ -1,0 +1,41 @@
+........FF                                                               [100%]
+=================================== FAILURES ===================================
+_________ test_expired_approval_cannot_be_resolved_before_status_poll __________
+
+manager = <bgp.federation.manager.FederationManager object at 0x7df0e723b590>
+
+    def test_expired_approval_cannot_be_resolved_before_status_poll(manager):
+        authz = Authorizer(manager)
+        inv_id = manager._conn.execute(
+            "INSERT INTO remote_invocation_record (direction, peer_identity, decision, outcome) "
+            "VALUES ('inbound', 'fixture', 'approval_required', 'pending')").lastrowid
+        approval = authz.create_approval(inv_id)['approval_id']
+        manager._conn.execute("UPDATE approval_request SET expires_at='2000-01-01T00:00:00Z' WHERE id=?", (approval,))
+        manager._conn.commit()
+        result = authz.resolve_approval(approval, 'approve')
+>       assert result['resolved'] is False and result['expired'] is True
+E       assert (True is False)
+
+tests/n2n/test_authorization.py:110: AssertionError
+___________________ test_listing_expires_unpolled_approvals ____________________
+
+manager = <bgp.federation.manager.FederationManager object at 0x7df0e723b5c0>
+
+    def test_listing_expires_unpolled_approvals(manager):
+        authz = Authorizer(manager)
+        inv_id = manager._conn.execute(
+            "INSERT INTO remote_invocation_record (direction, peer_identity, decision, outcome) "
+            "VALUES ('inbound', 'fixture', 'approval_required', 'pending')").lastrowid
+        approval = authz.create_approval(inv_id)['approval_id']
+        manager._conn.execute("UPDATE approval_request SET expires_at='2000-01-01T00:00:00Z' WHERE id=?", (approval,))
+        manager._conn.commit()
+>       assert not authz.pending_approvals()
+E       AssertionError: assert not [{'expires_at': '2000-01-01T00:00:00Z', 'id': 1, 'invocation_id': 1, 'peer_identity': 'fixture', ...}]
+E        +  where [{'expires_at': '2000-01-01T00:00:00Z', 'id': 1, 'invocation_id': 1, 'peer_identity': 'fixture', ...}] = pending_approvals()
+E        +    where pending_approvals = <bgp.federation.authorization.Authorizer object at 0x7df0e723b500>.pending_approvals
+
+tests/n2n/test_authorization.py:123: AssertionError
+=========================== short test summary info ============================
+FAILED tests/n2n/test_authorization.py::test_expired_approval_cannot_be_resolved_before_status_poll
+FAILED tests/n2n/test_authorization.py::test_listing_expires_unpolled_approvals
+2 failed, 8 passed in 0.18s

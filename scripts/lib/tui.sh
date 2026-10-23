@@ -46,15 +46,16 @@ netclaw_logo() {
 # ── key reader: echoes "up" "down" "left" "right" "space" "enter" ──
 # "all" "none" "quit" or the raw char
 tui_read_key() {
-    local k rest
-    IFS= read -rsn1 k
+    local k="" rest=""
+    IFS= read -rsn1 k || return 1
     if [ "$k" = $'\x1b' ]; then
-        read -rsn2 -t 0.05 rest || rest=""
+        # macOS ships Bash 3.2, whose read -t only accepts integer seconds.
+        IFS= read -rsn2 -t 1 rest || rest=""
         case "$rest" in
-            '[A') echo up ;;
-            '[B') echo down ;;
-            '[C') echo right ;;
-            '[D') echo left ;;
+            '[A'|'OA') echo up ;;
+            '[B'|'OB') echo down ;;
+            '[C'|'OC') echo right ;;
+            '[D'|'OD') echo left ;;
             *)    echo esc ;;
         esac
     else
@@ -124,7 +125,7 @@ tui_menu() {
         else
             echo ""
         fi
-        key=$(tui_read_key)
+        key=$(tui_read_key) || key=quit
         case "$key" in
             up)    cur=$(( (cur + total - 1) % total )) ;;
             down)  cur=$(( (cur + 1) % total )) ;;
@@ -195,7 +196,7 @@ tui_checklist() {
         printf '\033[2K'
         echo -e "  ${T_DIM}${sel}/${count} selected · showing $((top + 1))-$(( top + view > total ? total : top + view )) of ${total}${T_NC}"
 
-        key=$(tui_read_key)
+        key=$(tui_read_key) || key=quit
         case "$key" in
             up)
                 i=$((cur - 1))

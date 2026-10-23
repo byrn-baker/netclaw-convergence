@@ -49,6 +49,7 @@ All credentials are in `~/.openclaw/.env`. Never put credentials in skill files 
 - Twitter MCP         → TWITTER_API_KEY, TWITTER_API_SECRET, TWITTER_ACCESS_TOKEN, TWITTER_ACCESS_SECRET, TWITTER_HEARTBEAT_ENABLED (default: false)
 - Cisco PSIRT MCP     → CISCO_CLIENT_ID, CISCO_CLIENT_SECRET (OAuth2 client-credentials via id.cisco.com), CISCO_PSIRT_CACHE_DIR, CISCO_PSIRT_CACHE_TTL_S (default 21600)
 - Globalping MCP      → GLOBALPING_TOKEN (bearer, remote endpoint mcp.globalping.dev; 401 without it)
+- Topolograph MCP     → TOPOLOGRAPH_API_TOKEN (bearer), TOPOLOGRAPH_MCP_URL (optional, overrides the default hosted endpoint); remote HTTP, read-only, 401 without the token
 - Zoom RTMS MCP       → ZOOM_CLIENT_ID, ZOOM_CLIENT_SECRET, ZOOM_ACCOUNT_ID, ZOOM_RTMS_WEBHOOK_SECRET, N2N_ZOOM_CHANNEL_PORT, N2N_ZOOM_CHANNEL_SECRET (see docs/ZOOM-MEETING-INTELLIGENCE.md, spec 118)
 ```
 
@@ -236,6 +237,75 @@ The ComfyUI MCP server ([shawnrushefsky/comfyui-mcp](https://github.com/shawnrus
 - `run_workflow`'s `workflow` parameter requires a full ComfyUI workflow JSON (API format) — it does not accept a bare text prompt. Use `search_templates(taskType="txt2img")` → `get_template(templateId, parameters={prompt, checkpoint, ...})` to get a populated workflow without authoring raw node graphs.
 - `npm audit` on the built server reports 10 vulnerabilities (1 low, 2 moderate, 7 high) in transitive dependencies (`hono`, `path-to-regexp`, `qs`, `sharp`, `ws`) used for the server's own internal HTTP/media handling, not this skill's stdio-only usage — tracked non-blocking, same treatment as `sketchfab-mcp-server`'s own audit findings. Do not run `npm audit fix --force` without testing afterward — it force-upgrades `sharp` with a breaking change.
 
+## topology-diagram-mcp / image-style-mcp (spec 121 federated topology viz)
+
+Two new NetClaw-authored MCP servers, together spec 121's federated two-stage pipeline for
+`comfyui-topology-viz` — same skill entry point as spec 120's `comfyui-mcp`-based path above, now
+tried first when a live topology source is available, with spec 120's original path as the
+automatic fallback (`generation_path` in the response says which was used). Neither server is
+usable standalone; both run on the `johns-risk/viz` federation member, invoked from Border via
+`n2n/tools/call` (never in-process on Border — FR-005). See
+`specs/121-federated-topology-viz/research.md` for the full design.
+
+- **`topology-diagram-mcp`** (Stage A): one tool, `render_structural(snapshot_id, devices, links)`
+  → `{image_base64, format, positions, device_count}`. Deterministic — networkx (Kamada-Kawai
+  layout) + Pillow (drawing), procedural per-role icon shapes (circle=router, port-ticked
+  rect=switch, brick-hatched rect=firewall, diamond=load_balancer, monitor glyph=client). No
+  diffusion model, no external CLI. The original design called for N2G → draw.io XML → the draw.io
+  desktop CLI; that path doesn't work headlessly on this host (no `drawio` CLI anywhere, `graphviz`'s
+  system package needs interactive `sudo` this environment doesn't have) — research.md R3a.
+- **`image-style-mcp`** (Stage B): one tool, `style_image(image_base64, style_prompt,
+  negative_prompt)` → `{styled_image_base64, format}`. Talks to ComfyUI **directly via REST**
+  (`/prompt`, `/history/{id}`, `/view`, `/upload/image`) — not through `comfyui-mcp`'s task
+  tracker, confirmed broken in spec 120 (see the ComfyUI MCP Server section above). Runs an
+  image-edit workflow (Qwen-Image-Edit-2509 GGUF, `UnetLoaderGGUF` + `CLIPLoader` +
+  `TextEncodeQwenImageEdit` + `ReferenceLatent`, `denoise≈0.5` — structure-preserving, never a
+  fresh txt2img generation) so restyling can't drift the diagram's structure (FR-003). Model
+  weights (Q4_K_M unet 13.1GB, fp8-scaled text encoder 9.4GB, VAE 254MB — verified real sizes at
+  the HuggingFace source, Apache-2.0, ungated) live on the ComfyUI Windows host at
+  `models/unet/`, `models/text_encoders/`, `models/vae/` respectively.
+- **A real, previously-unexercised gap in the shared federation infrastructure had to be fixed to
+  make internal `n2n/tools/call` work at all** — four separate issues in `bgp/federation/{service,
+  invocation,authorization}.py` (missing dispatch entry, missing attestation elevation, eN2N-only
+  channel resolution, eN2N-only `is_federated` gate). All additive/backward-compatible, live-verified
+  end to end against the real `johns-risk/viz` member. See research.md R10 for the full account —
+  this was the first working internal `n2n/tools/call` in NetClaw's history.
+
+## worldlabs-marble-mcp (spec 122 fantastical topology viz)
+
+One new NetClaw-authored MCP server, a thin fully stateless proxy to three World Labs Marble REST
+endpoints, backing `workspace/skills/worldlabs-topology-viz/`. Unlike spec 121's pair above, this
+runs standalone on Border — no federation member required. See
+`specs/122-worldlabs-topology-viz/research.md` and `contracts/worldlabs-marble-mcp.md` for the full
+design.
+
+- **`generate_world(image_base64, text_prompt, display_name, user_confirmed, image_extension="png", model="marble-1.1")`**
+  — the one credit-spending operation. Passes the reference PNG inline via Marble's
+  `data_base64` image-reference source (no separate upload round trip — research.md R1). Requires
+  `user_confirmed=true`; a missing/false value is rejected with `confirmation_required` before any
+  request reaches World Labs (FR-016, research.md R8) — a code-level guard *in addition to* the
+  conversational confirmation the skill also requires.
+- **`check_generation_status(operation_id)`** — polls a started generation; a 404 maps to
+  `not_found_or_expired` (operation records carry roughly a one-hour `expires_at`).
+- **`get_world(world_id)`** — durable, no-cost fallback lookup for when an operation record has
+  expired but the world it produced has not (research.md R4); a 404 here maps to `not_found`
+  instead, since a world either exists or it doesn't.
+- Every non-200 response is normalized into one of five categories (`authentication_failure`,
+  `insufficient_credits`, `rate_limited`, `not_found_or_expired`/`not_found`, `generic_failure`) —
+  never the raw provider error object, and the `WLT_API_KEY` value is read fresh from the
+  environment on every call, never logged, never echoed in a result (FR-010).
+- **Explicitly decorative, not authoritative**: every preview and generation result the skill
+  produces carries a fixed statement (`topology_model.DECORATIVE_LABEL`) that the generated world
+  is an artistic interpretation, not an accurate diagram — the real, structurally-correct diagram
+  (from the existing, unmodified `topology-diagram-mcp/render_structural`) remains the source of
+  truth. Confirmed generation attempts are recorded in the existing GAIT audit trail
+  (`gait_record_turn`, Constitution Principle IV) — not a new store, and not optional (FR-015).
+- **Real-world finding, not documented upstream**: a freshly-created, funded World Labs API key can
+  return a bare HTTP 401 with no further detail — this was a platform-side propagation delay/issue,
+  not a client-side mistake (verified by reproducing the exact documented quickstart request
+  byte-for-byte and still getting 401, then confirming a newly-rotated key worked immediately).
+  Don't assume a 401 from a just-created key means the key or the request is wrong.
+
 ## Claroty xDome MCP Server
 
 The Claroty xDome MCP server provides 21 tools (15 read-only + 6 ITSM-gated writes) for OT / IoT / IoMT visibility via stdio transport:
@@ -286,6 +356,56 @@ hosts none. Only ~1,390 of the internet's ASNs host a probe.
 **Privacy note**: every tool requires a natural-language `context` field the vendor uses for intent
 analytics. NetClaw sends a generic, task-shaped value with no customer name, internal hostname, ticket or
 topology detail. `limits` output echoes a short token fragment — don't paste it into a public channel.
+
+## Topolograph IGP Topology Analysis (`topolograph-mcp`, remote)
+
+Link-state reasoning over the **whole area's LSDB** from a stored Topolograph snapshot — the layer
+that sees the topology as a graph, not one device's routing table. Remote HTTP against the operator's
+own Topolograph instance; no local server.
+
+| Tool | Purpose |
+|---|---|
+| `get_all_graphs` | List stored snapshots (protocol/area/date filters) — get a `graph_time` |
+| `get_graph_by_time` / `get_graph_status` | Full graph for a snapshot; completeness/health of it |
+| `get_nodes` / `get_edges` | Routers (ABR/ASBR, IS-IS overload/attached flags) and adjacencies (MPLS-TE fields via `include=`) |
+| `get_network_by_graph_time` / `get_lsps` | Prefixes in the graph; MPLS-TE LSP tunnels |
+| `get_shortest_path` / `get_cspf_path` | SPF path (optionally accounting for autoroute tunnels); constrained-SPF feasibility |
+| `get_edge_failure_reaction` | Whole-network impact of one or more link failures — simulation only |
+| `get_network_events` / `get_adjacency_events` / `get_events_timeline` | Topology-change events, raw or grouped into waves |
+
+**Read-only, enforced upstream**: the server runs `TOPOLOGRAPH_MCP_READ_ONLY=true`, so `upload_graph`
+and the `*_lsp` mutation tools are not in `tools/list`. NetClaw scopes the surface further with
+`defenseclaw tool allow topolograph-mcp <tool>` (the `get_*` tools) and blocks the rest.
+
+**Snapshot, not the wire**: results describe a stored graph and, for `get_edge_failure_reaction` /
+`get_cspf_path`, a prediction. Confirm on the device when the question is "is this true right now",
+and always report how old the `graph_time` is.
+
+## Topolograph BGP Topology Analysis (`topolograph-mcp`, remote)
+
+Same server and credential as the IGP tools above — BGP speakers, sessions, route table, and
+VRF/VPN inventory from Topolograph's BMP-fed BGP topology. **Requires Topolograph >= 2.69.1** and
+`topolograph-mcp-server >= v1.3.0` — an older server lists these tools but every call 404s or
+returns empty.
+
+| Tool | Purpose |
+|---|---|
+| `list_bgp_graphs` / `get_bgp_graph` | List BGP epochs (BMP collection cycles) — get a `bgp_graph_time` |
+| `list_bgp_nodes` / `list_bgp_sessions` | BGP speakers and peering sessions of an epoch (eBGP/iBGP, families, IGP relation) |
+| `search_bgp_routes` | Route table search, whole-graph or scoped to one speaker's resolved RIB view |
+| `get_bgp_node_route_summary` / `get_bgp_route_state` | Per-speaker route totals by RIB tag; point-in-time route state |
+| `compare_bgp_routes` / `get_bgp_events_timeline` | Route diff between two instants; BGP session/route monitoring events |
+| `list_bgp_bindings` / `get_bgp_binding` | Whether a BGP epoch's speakers match a stored IGP graph, and how confidently |
+| `resolve_route` | End-to-end destination resolution across a BGP/VPN/MPLS handoff, not just IGP SPF |
+| `get_vrf_inventory` / `list_vpn_routers` | VRF names/RDs/route-targets per router; VPN-PE candidates for `resolve_route` |
+
+**Read-only, same enforcement as the IGP tools**: none of the 14 mutate; scoped client-side with
+`defenseclaw tool allow topolograph-mcp <tool>`.
+
+**Empty is not "no BGP data"**: every one of these tools silently returned empty on Topolograph
+instances predating the v2.69.1/v2.69.2 auth fix (12 `/bgp-graph*` endpoints ran with no security
+scheme, so a valid bearer token was never even checked). If every call comes back empty, confirm the
+Topolograph version before concluding there is no BGP monitoring configured.
 
 ## Cisco PSIRT Advisories (`cisco-psirt-mcp`)
 
@@ -533,7 +653,7 @@ ANTA pulls **cryptography 50.0.0** while the system holds **46.0.5** with four u
 by dry-run *before* installing — spec 076's cryptography incident.
 
 Credentials: `ANTA_USERNAME` / `ANTA_PASSWORD`, environment only. `ANTA_VERIFY_TLS` defaults to
-`false` and is always disclosed in output as `tls_verified`.
+`true` and is always disclosed in output as `tls_verified`.
 
 ## Elasticsearch Logs (`elasticsearch-mcp`, adopted third-party Apache-2.0)
 
@@ -773,3 +893,169 @@ enrollment. The skill's "Key Terms" and "CLI Command Routing" sections encode th
 `redfish-mcp` reads BMC/hardware health on a server chassis, this reads OOB console-server/managed-device
 state — disjoint hardware classes · neither `pyats` nor `multivendor-cli` reaches a device through a serial
 console port, this closes that gap when the primary network path is down.
+
+## Jev Science Officer (spec125)
+
+`jev-mcp` is an optional stdio service with `jev_status`, `jev_evaluate` and `jev_assessment`.
+Hosted `TYPESAFE_API_KEY` (`JEV_API_KEY` alias), `JEV_ENABLED` opt-in, `JEV_BASE_URL` and
+`JEV_MODEL`; custom `JEV_COMPATIBLE_API_KEY` must bind to `JEV_COMPATIBLE_KEY_ENDPOINT`; dedicated virtualenv. Operator setup: `python3 scripts/jev-settings.py setup`.
+Daily $5 / originating task $0.25 caps persist in `JEV_DATA_DIR` (default `~/.openclaw/jev`).
+Trusted task binding or conservative shared unscoped case; model cannot reset budget identity.
+Dynamic questions only. Noul probability, Choice/Score confidence and Score rubric position
+are distinct. Advisory service is visible separately from execution members. No write tools.
+Private disclosure approval binds exact prepared request digest, destination and task;
+credentials excluded. See [guide](docs/JEV-SCIENCE-OFFICER.md) for failure and consent workflow.
+
+## Function-first HUD (spec127)
+
+Same local Vite/Express runtime and ports. Dashboard `/`, full Adam canvas
+`/canvas.html`, previous controls `/classic.html`, task-bound detail `/assessment.html`.
+Browser-owned HUD task mappings: `~/.openclaw/hud-bindings`, private and expiring.
+Detailed Jev reads require exact gateway transcript tool-result provenance; unsupported
+wrappers remain unbound. Read-only Jev CLI flag `--read-task-id` fixes a reader's task
+and disables evaluation. No new integration count or provider credential. See
+[HUD guide](docs/HUD-FUNCTION-FIRST.md); runtime/browser/host acceptance limits remain
+explicit in spec127 verification.
+
+
+## Chat / Canvas / OpenClaw switch (spec130)
+
+HUD root now defaults to in-memory standard Chat; Overview remains available. Scoped `/api/hud/session` + `/api/chat` with a separate hudThread; no shared global history. Chat retains draft/in-flight replies during navigation, reload clears its local view, New chat does not delete runtime history. Header Canvas retains the persistent iframe. Native OpenClaw uses validated controlUi port/basePath/TLS metadata from `/api/hud/runtime`, loopback-only, separate tab and native auth; no token projection. Forward gateway port as well for remote SSH use. OpenClaw blocks framing; do not strip its protections. No integration count changes.
+
+## Proposed Canvas terminal workflows (draft spec132)
+
+Browser SSH and optional context tools extend the existing Canvas, not a separate
+desktop application. Read [PR scope](docs/NETCLAW-CANVAS-PR.md) and
+[draft adoption plan](specs/131-canvas-terminal-workflows/plan.md) before deployment.
+Testbed edits preserve existing structures; collection needs explicit read-only
+consent. Genie uses a local Python runtime, not an AI JSON generator. Provider
+adapters are bounded/opt-in; VMware and ExtraHop remain planned. No new MCP server
+count or registration is claimed. The loopback API is not a multi-user RBAC service.
+Direct adapter and Local/Lab policy adoption still require maintainer review.
+
+## Equinix (spec132)
+
+Official upstream: https://mcp.equinix.com/fabric (Fabric and Network Edge together).
+Local policy: scripts/equinix-stdio.py; pinned mcp-remote@0.14.3 handles OAuth.
+EQUINIX_ENABLED / EQUINIX_ALLOW_WRITES default false. Browser consent is separate.
+EQUINIX_AUTH_DIR optionally sets private cache base; N2N_MEMBER_ID partitions it.
+EQUINIX_SERVICENOW_URL, EQUINIX_SERVICENOW_USERNAME and
+EQUINIX_SERVICENOW_PASSWORD are dedicated read-only verifier settings.
+See docs/EQUINIX.md. Source integration tested offline; account OAuth still pending.
+No native setup.exe source exists in this checkout; shared installer/setup covers WSL.
+
+
+### FastMCP migration branch — 2026-10-04 (spec 141)
+
+Branch `141-fastmcp-stateless-upgrade` uses FastMCP4.0.11/MCP2.3.0 for 35 owned servers and reviewed external upgrades. This supersedes historical FastMCP<3/MCP<2 advice for those migrated components only. No installed operator runtime or device was upgraded in this session. Source hashes, component bounds, fixture-only catalogs, rollback guidance and explicit unported upstream integrations are documented in `docs/FASTMCP-UPGRADE.md` and `specs/141-fastmcp-stateless-upgrade/verification.md`. Latest package constraints alone were insufficient: SDK1 imports, removed framework APIs and external transitive pins required migration. Preserve low-level SDK1 integrations in their isolated legacy runtimes.
+
+## Asynchronous MCP Tasks
+
+Optional Tasks support covers 298 tools across 35 integrations, led by 22 pyATS SSH/automation tools. Task-aware clients receive handles and poll; other clients retain foreground results. pyATS retains completed results in SQLite; the other enabled FastMCP integrations default to ephemeral memory. Approval, baseline and verification controls still apply. See [Tasks guide](docs/MCP-TASKS.md) for exact coverage, cancellation, storage and rollout limits.
+
+## Tavus Pal exploration — 2026-10-09 (draft spec 144)
+
+`TAVUS_API_KEY` is present in repository `.env`; authenticated GETs to Tavus faces, PALs and conversations succeeded. No conversation was created and no video minutes were used. This proves inventory access, not credit balance or creation entitlements. Proposed local HUD/MCP bridge and direct-connection alternatives are in `specs/144-tavus-netclaw-pal/`. No integration is installed. Private network data stays local; a hosted avatar receives whatever speech text is sent to it. Device inventory startup failed without a valid testbed environment, and the configured MemPalace script was missing during this session.
+
+### Tavus Pal implementation — 2026-10-09
+
+Branch `144-tavus-netclaw-pal` adds an optional HUD/MCP companion, setup scripts, a private budget ledger and local image picker. It targets only a separate all-tools-denied NetClaw agent. No live call, paid upgrade or custom face training has occurred. Runtime/provider activation and playback acceptance remain pending. See `docs/TAVUS-PAL.md`. Retrying pyATS with the configured testbed reached its parser but failed on the unsupported `connections.defaults.arguments` key; no current device evidence is available.
+
+### Local Pal prototype — 2026-10-09
+
+The same branch now adds John/Lobster GLBs generated with installed Blender 5.2.1,
+shared existing Chat routing, desktop avatar-left/chat-right layout and camera
+controls. Blender MCP exists in the repository config; no connected MCP tool was
+exposed here and localhost:9876 was not listening, so asset authoring used isolated
+Blender CLI. macOS local speech (`say` + `afconvert`) generated valid WAV in 1.38s
+in the measured adapter probe. This Apple Silicon host has 48 GiB RAM; local
+cloning/STT performance has not been benchmarked. `docs/john.png` is the requested
+HEIC conversion; no portrait/voice was uploaded.
+
+Gateway chat compatibility was disabled, causing the HUD's unavailable badge.
+After confirming no sessions updated within five minutes, backed up config at
+`~/.openclaw/backups/pal-local-20261009-133150.json`, enabled authenticated loopback
+chat completions and restarted the existing gateway. HUD now reports online;
+configured `anthropic/claude-sonnet-5` returned the exact synthetic test phrase
+through authenticated `/api/chat` in 3.33s. No operational tool call was requested.
+Local speech HTTP returned WAV 200. Browser automation blocked the local preview
+(`ERR_BLOCKED_BY_CLIENT`); do not claim live browser visual/playback acceptance.
+
+### Avatar runtime compatibility and polish — 2026-10-09
+
+Installed OpenClaw 2026.7.1-2 rejects --expect-url, old models.list agentId/
+includeDetails and chat.history maxBytes. HUD now pins loopback/auth via env,
+uses models.list view=configured and history maxChars, and runs the CLI with
+its own supported Node 24.19.0. Resolve the intended OpenClaw executable before
+prefixing Node's directory: otherwise a sibling CLI can shadow owner wrappers.
+The full UI-shaped chat request, model discovery and history reopen passed.
+Current local API process was refreshed after the user received their answer;
+15 models discovered. Local speech now supports 0.75–1.25× synthesis rate;
+real 0.8×/1.2× notice WAV durations were 3.34/2.61 seconds.
+
+The owner confirmed initial Avatar speech/animation works. Ten recorded polish
+passes add reliable activation, cancellation, remembered settings, bounded
+multi-clip reading, volume/speed, keyboard controls and graphics recovery.
+Build passes; 358/359 HUD tests pass (remaining known 127.0.0.2 Mac fixture).
+Qwen3-TTS Base via MLX Audio is the researched own-voice candidate, not installed
+or benchmarked. Keep future recordings in ~/.openclaw/pal/voices, not the public
+asset directory. Research/license sources are in spec144/research.md.
+
+## Installer access and readiness (spec 147)
+
+The twelve reported skill-only components now have native registrations (thirteen
+servers because Draw.io and RFC are separate). `config/installer-access.json` and
+`scripts/component-launch.py` bind both native access and recognized MCP_CALL skill
+commands to the installed interpreter/source/transport. No new write permission is
+granted. `logs/install/run-*/readiness.json` separates artifacts, registration,
+discovery and unverified endpoint/agent operations. See [operator guidance](docs/INSTALLER-READINESS.md).
+
+## Selected-runtime HUD
+
+Use `./scripts/netclaw hud status` for observation and `./scripts/netclaw hud` for an owner-requested launch. Selection persists separately from credentials. Hermes uses the selected home, private stdio conversation bridge and pinned isolated companion; no OpenClaw credential/history fallback. The initial eligible tool is the reviewed IPv4 subnet calculator (/24 through /30). Native Windows Hermes requires Ubuntu on WSL2. See `docs/HERMES-HUD.md` for setup, exact versions and recovery. The eight private bridge tools must never be registered with an agent.
+
+## Hermes federation qualification (spec149 / 1.8.0)
+
+The selected Hermes Border/member uses a private protected NCFED companion;
+OpenClaw remains the default when no runtime is selected. The initial receiver
+profile qualifies only the installed read-only subnet tool/skill; peer chat is
+conversation-only. HUD/mobile operator scope may delegate permitted subnet work,
+but no remote card, model claim or prompt grants operator authority. Missing harness
+metadata stays unknown. Preserve unknown/interrupted/cancellation-requested outcomes;
+never replay uncertain work. Hermes mobile media attachments are unavailable;
+voice-transcribed text and Siri voice origin are supported. Production Hermes
+model-guard/confinement remains unavailable and fails closed. See
+`docs/HERMES-FEDERATION.md` and spec149 verification before claiming broader support.
+
+
+## VS Code experience (spec151, local source)
+
+The extension uses theme-native cards, local decorative artwork and reported BGP-session 3D with a semantic list. New inventory/configuration routes stay in the existing HUD; there is no new MCP server or tool authority. Testbed forms/advanced YAML and YAML/JSON/CSV imports use masked secrets, revision-bound previews, private backups and explicit saves. The actual HUD testbed may differ from PYATS_TESTBED_PATH or be shared across installations; inventory edits revoke affected collector consent and never connect devices.
+
+Per-MCP fields use keep/replace/clear with explicit shared-use review. Scoped setup reuses staged pyATS/GAIT installers, canonical OpenClaw registration and owned N2N restart after target review; unsupported lifecycle/Hermes registration stays guidance. Saved/installed/registered does not imply endpoint or agent execution. Private operation evidence lives in the selected home under netclaw-hud/setup; uncertain operations never replay. See extensions/netclaw-vscode/README.md and specs/151-extension-experience/verification.md. No package, push, live deployment or Marketplace publication is authorized for this spec.
+
+Spec151 security amendment adds native host-bound DefenseClaw tool-rule/mode controls and OpenShell sandbox network-policy controls, with observed status/log snapshots, redacted before/after review, explicit weakening acknowledgment, private originals and verified/unknown outcomes. Shared security scope is separate from selected NetClaw identity. No lifecycle or live-environment changes are implied. Modern DefenseClaw connector/config-writer capabilities differ from historical `--source` examples; OpenShell global policy stays read-only and its CLI has no CAS write flag. See specs/151-extension-experience/research-security.md and the extension README. Mac contract-fixture acceptance is not live vendor enforcement qualification.
+
+Owner subsequently authorized the Spec151 commit/push/PR/main-merge step on2026-10-11. The packaging, deployment and release/Marketplace publication hold remains.
+
+### Spec152 WSL inspection — 2026-10-15
+
+Native OpenClaw expands tilde workspace paths using `OPENCLAW_HOME`; that is a
+user home, distinct from `OPENCLAW_STATE_DIR`. Preserve both during HUD discovery
+and helper execution. Windows VS Code profile isolation alone did not isolate
+remote extension file storage; verify the WSL host's actual global-storage path.
+The inspected Border workspace contains regular SOUL/IDENTITY files and four
+symlinked persona files, which the current management helper correctly refuses.
+The installed systemd gateway environment file remains unqualified for lifecycle
+controls. See specs/152-workspace-claw-controls/wsl-verification.md for evidence
+and limits; no live configuration or service change was made.
+
+## VS Code workspace and lifecycle controls (Spec152, local source)
+
+The upper Connections panel exposes SOUL/AGENTS/IDENTITY/USER/TOOLS/HEARTBEAT.md through a native VS Code document provider. Only reviewed read/save/upload/overwrite is available; no delete/rename. OpenClaw resolves the bound agent’s native workspace and verifies agreement with HUD discovery; Hermes files reside in its selected home. The protected Hermes HUD engine intentionally does not load persona context. Saved content, service readiness and actual prompt consumption remain distinct.
+
+Full selected-installation controls include verified owned gateway/engine, HUD/companion and configured federation. Offline management uses a persistent host binding and fixed local helper, private revision/ownership checks, backups and phase journals under `netclaw-hud/management`. Save & Restart requires verified saved bytes and revalidated service scope. Native services use exact user-manager actions; no broad PID/port/name cleanup. Unsupported ownership disables full control. No management tools or new authority are exposed to assistants.
+
+Source preview and acceptance: `specs/152-workspace-claw-controls/verification.md`. The owner subsequently authorized packaging and feature-branch push for an isolated WSL preview connected to real NetClaw. See `specs/152-workspace-claw-controls/WSL-HANDOFF.md`. Merge, live deployment and Marketplace publication remain held.
+
+Spec152 production authorization (2026-10-16) supersedes its prior holds. WSL corrected native OpenClaw home/tilde resolution; follow-up systemd discovery isolates explicit foreign installations and qualifies private literal gateway.systemd.env. Symlink files remain refused, and live WSL lifecycle was not exercised. See specs/152-workspace-claw-controls/release-verification.md.

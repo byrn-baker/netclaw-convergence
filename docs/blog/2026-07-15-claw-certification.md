@@ -34,8 +34,10 @@ Authentication is mutual and bound to the specific TLS session (RFC 5929
 channel binding), so an on-path attacker can't relay a proof. Inside a "risk" of
 claws, the Border is now a certificate authority: members cryptographically verify
 that the hub they dialed is the legitimate one — the last direction of trust the
-draft flagged as missing. And every credential rotates itself before expiry with
-an overlap window, so nothing ever drops because a cert aged out.
+draft flagged as missing. Routine host and ACME renewal preserve the existing private key and peer pins.
+Renewal failures are visible; CA/hub renewal and deliberate key replacement need
+operator coordination and re-verification. Automatic successor-key overlap is
+not implemented (corrected by spec 124).
 
 ## The satisfying part
 

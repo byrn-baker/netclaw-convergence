@@ -125,11 +125,7 @@ class ClarotyClient:
     def __init__(self) -> None:
         self.api_url = os.environ.get("CLAROTY_API_URL", _DEFAULT_BASE_URL).rstrip("/")
         self.api_token = os.environ.get("CLAROTY_API_TOKEN", "")
-        self.verify_ssl = os.environ.get("CLAROTY_VERIFY_SSL", "true").lower() in (
-            "true",
-            "1",
-            "yes",
-        )
+        self.verify_ssl = os.environ.get("CLAROTY_VERIFY_SSL", "true").strip().lower() not in ("false", "0", "no")
         self.timeout = int(os.environ.get("CLAROTY_TIMEOUT", str(_DEFAULT_TIMEOUT)))
         self.rate_limit_per_min = int(
             os.environ.get("CLAROTY_RATE_LIMIT_PER_MIN", str(_DEFAULT_RATE_LIMIT))
@@ -217,7 +213,7 @@ class ClarotyClient:
         if isinstance(data, list):
             return data
         if not isinstance(data, dict):
-            return []
+            raise ValueError("xDome list response must contain a recognized items array")
 
         # Preferred path: caller told us the key.
         if items_key:
@@ -252,7 +248,7 @@ class ClarotyClient:
             list(data.keys()),
             items_key,
         )
-        return []
+        raise ValueError("xDome response did not contain a recognized items array")
 
     async def paginate(
         self,

@@ -1,0 +1,123 @@
+{
+  "client": "codex",
+  "exit": 0,
+  "timedOut": false,
+  "tools": [
+    "netclaw_status",
+    "netclaw_inspect",
+    "netclaw_propose_change",
+    "netclaw_request",
+    "netclaw_request_status"
+  ],
+  "allExpected": true,
+  "outcomes": [
+    {
+      "tool": "netclaw_status",
+      "status": "completed",
+      "error": null,
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"installationId\":\"22222222-2222-4222-8222-222222222222\",\"runtime\":\"openclaw\",\"readiness\":{\"ready\":true,\"executionVerified\":false},\"delegationEnabled\":true,\"authority\":\"Requests use existing NetClaw tools and approval rules. This adapter is not a sandbox or a separate backend permission grant.\",\"billing\":\"NetClaw usage excludes this assistant\u2019s own model costs.\"}"
+          }
+        ],
+        "structured_content": {
+          "installationId": "22222222-2222-4222-8222-222222222222",
+          "runtime": "openclaw",
+          "readiness": {
+            "ready": true,
+            "executionVerified": false
+          },
+          "delegationEnabled": true,
+          "authority": "Requests use existing NetClaw tools and approval rules. This adapter is not a sandbox or a separate backend permission grant.",
+          "billing": "NetClaw usage excludes this assistant\u2019s own model costs."
+        }
+      }
+    },
+    {
+      "tool": "netclaw_inspect",
+      "status": "completed",
+      "error": null,
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"source\":\"/api/runtime\",\"installationId\":\"22222222-2222-4222-8222-222222222222\",\"observedAt\":\"2026-10-11T10:56:27.960Z\",\"data\":{\"kind\":\"openclaw\",\"installationId\":\"22222222-2222-4222-8222-222222222222\",\"label\":\"OpenClaw\",\"readiness\":{\"ready\":true},\"capabilities\":{\"writes\":true}}}"
+          }
+        ],
+        "structured_content": {
+          "source": "/api/runtime",
+          "installationId": "22222222-2222-4222-8222-222222222222",
+          "observedAt": "2026-10-11T10:56:27.960Z",
+          "data": {
+            "kind": "openclaw",
+            "installationId": "22222222-2222-4222-8222-222222222222",
+            "label": "OpenClaw",
+            "readiness": {
+              "ready": true
+            },
+            "capabilities": {
+              "writes": true
+            }
+          }
+        }
+      }
+    },
+    {
+      "tool": "netclaw_propose_change",
+      "status": "completed",
+      "error": null,
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"proposalId\":\"adb1cc78-4430-4da0-8612-32abb6712c06\",\"installationId\":\"22222222-2222-4222-8222-222222222222\",\"domain\":\"budget\",\"summary\":\"Consider a smaller budget; do not apply anything\",\"state\":\"draft\",\"createdAt\":\"2026-10-11T10:56:27.965Z\",\"review\":\"A human must review this inert draft in the extension. It grants no approval and applies nothing.\"}"
+          }
+        ],
+        "structured_content": {
+          "proposalId": "adb1cc78-4430-4da0-8612-32abb6712c06",
+          "installationId": "22222222-2222-4222-8222-222222222222",
+          "domain": "budget",
+          "summary": "Consider a smaller budget; do not apply anything",
+          "state": "draft",
+          "createdAt": "2026-10-11T10:56:27.965Z",
+          "review": "A human must review this inert draft in the extension. It grants no approval and applies nothing."
+        }
+      }
+    },
+    {
+      "tool": "netclaw_request",
+      "status": "failed",
+      "error": {
+        "message": "MCP tool call requires approval, but approval policy is never"
+      },
+      "result": null
+    },
+    {
+      "tool": "netclaw_request_status",
+      "status": "failed",
+      "error": null,
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "Request is not owned by this registration."
+          }
+        ],
+        "structured_content": null
+      }
+    }
+  ],
+  "inertDrafts": 1,
+  "syntheticGatewayCalls": 0,
+  "usage": {
+    "input_tokens": 38662,
+    "cached_input_tokens": 24704,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 342,
+    "reasoning_output_tokens": 0
+  },
+  "scope": "Actual named assistant and provider, unchanged HUD, synthetic NetClaw gateway. No real NetClaw provider or device execution.",
+  "root": "<mac-temp>/netclaw150-unchanged-hud-ItKPPS"
+}

@@ -1,0 +1,41 @@
+{
+  "bundles": [
+    {
+      "bundle": "Runner.app",
+      "identifier": "ca.automateyournetwork.netclaw.mobile",
+      "version": "1.0.1",
+      "build": "3"
+    },
+    {
+      "bundle": "LiveActivityWidget.appex",
+      "identifier": "ca.automateyournetwork.netclaw.mobile.liveactivitywidget",
+      "version": "1.0.0",
+      "build": "1"
+    },
+    {
+      "bundle": "NetClawWidgetExtension.appex",
+      "identifier": "ca.automateyournetwork.netclaw.mobile.netclawwidget",
+      "version": "1.0",
+      "build": "1"
+    },
+    {
+      "bundle": "WatchApp.app",
+      "identifier": "ca.automateyournetwork.netclaw.mobile.watchapp",
+      "version": null,
+      "build": null
+    },
+    {
+      "bundle": "WatchComplication.appex",
+      "identifier": "ca.automateyournetwork.netclaw.mobile.watchapp.wcomplication",
+      "version": "1.0.0",
+      "build": "1"
+    }
+  ],
+  "errors": [
+    "LiveActivityWidget.appex: version/build differs from containing app",
+    "NetClawWidgetExtension.appex: version/build differs from containing app",
+    "WatchApp.app: missing identifier/version/build",
+    "WatchApp.app: version/build differs from containing app",
+    "WatchComplication.appex: version/build differs from containing app"
+  ]
+}

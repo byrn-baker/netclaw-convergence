@@ -22,8 +22,13 @@ Usage:
 """
 import argparse
 import json
+import importlib.util
 import sys
 from pathlib import Path
+
+_writer_spec = importlib.util.spec_from_file_location("netclaw_literal_writer", Path(__file__).with_name("write-env.py"))
+_writer = importlib.util.module_from_spec(_writer_spec)
+_writer_spec.loader.exec_module(_writer)
 
 
 def needs_cwd(entry: dict, repo: Path) -> bool:
@@ -85,7 +90,7 @@ def main() -> int:
         print("normalize-mcp-cwd: dry run, not writing")
         return 0
 
-    cfg_path.write_text(json.dumps(cfg, indent=2) + "\n")
+    _writer.write_private(cfg_path, json.dumps(cfg, indent=2) + "\n")
     print(f"normalize-mcp-cwd: wrote {cfg_path}")
     return 0
 

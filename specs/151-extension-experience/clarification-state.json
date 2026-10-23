@@ -1,0 +1,51 @@
+{
+  "phase": "complete-local",
+  "minimum_questions": 5,
+  "asked": 5,
+  "answered": 5,
+  "pending": null,
+  "next_phase": "owner-authorized repository PR/merge, then wait",
+  "release_hold": [
+    "package",
+    "deploy",
+    "release-tag",
+    "marketplace",
+    "github-release",
+    "blog-publication"
+  ],
+  "answers": [
+    {
+      "id": "visual_theme",
+      "choice": "B",
+      "answer": "Automatically follow VS Code light/dark theme, applying the same brand typography, cards and accents."
+    },
+    {
+      "id": "testbed_editor_workflow",
+      "choice": "A",
+      "answer": "Device cards and guided forms, plus an advanced YAML editor and file import/export."
+    },
+    {
+      "id": "testbed_file_formats",
+      "choice": "B",
+      "answer": "YAML and JSON, plus CSV for a documented subset of device inventory fields."
+    },
+    {
+      "id": "mcp_setup_scope",
+      "choice": "C",
+      "answer": "B plus allowing the extension to execute supported installation, registration and restart actions after explicit confirmation."
+    },
+    {
+      "id": "visual_enhancement_scope",
+      "choice": "A",
+      "answer": "Custom branded imagery plus interactive 3D where it helps, especially topology; restrained motion elsewhere."
+    }
+  ],
+  "securityAmendment": {
+    "choice": "Rules and enforcement modes",
+    "weakeningConfirmation": true,
+    "lifecycle": false,
+    "phase": "complete-local"
+  },
+  "total_answers": 6,
+  "repository_merge_authorized": true
+}

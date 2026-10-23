@@ -116,7 +116,7 @@ The service principal needs read access to:
 ## Architecture
 
 ```
-azure_network_mcp_server.py   (FastMCP entry point, GAIT logging, tool registration)
+azure_network_mcp_server.py   (FastMCP entry point, operation logging, tool registration)
   |
   +-- clients/azure_client.py  (Azure SDK client factory, credential mgmt)
   +-- tools/
@@ -146,3 +146,8 @@ All tools accept an optional `subscription_id` parameter. If omitted, the defaul
 ## Read-Only by Default
 
 All operations are read-only (GET/List). No create, modify, or delete operations are exposed. Write operations would require ITSM Change Request approval per NetClaw constitution.
+
+Operation logs use Python logging and are not persisted GAIT commits. The calling
+NetClaw session must separately record its observations in GAIT. A `returned` log
+means the tool function returned; inspect the response for an error envelope before
+claiming a successful Azure observation.

@@ -1,6 +1,8 @@
 import BackgroundTasks
 import Flutter
 import UIKit
+import flutter_secure_storage_darwin
+import flutter_local_notifications
 
 /// 103/FR-013 (US3): must match Info.plist's `BGTaskSchedulerPermittedIdentifiers`
 /// and the identifier registered below exactly, or the OS silently refuses to
@@ -20,6 +22,7 @@ private let backgroundRefreshMinimumInterval: TimeInterval = 15 * 60
   // doesn't tear the engine down mid-flight; cleared once that attempt
   // finishes (success, failure, or OS expiration).
   private var backgroundRefreshEngine: FlutterEngine?
+  private static let backgroundEngineGroup = FlutterEngineGroup(name: "netclaw-background-refresh", project: nil)
 
   override func application(
     _ application: UIApplication,
@@ -36,7 +39,7 @@ private let backgroundRefreshMinimumInterval: TimeInterval = 15 * 60
         task.setTaskCompleted(success: false)
         return
       }
-      self.handleBackgroundRefresh(task: refreshTask)
+      DispatchQueue.main.async { self.handleBackgroundRefresh(task: refreshTask) }
     }
     let launched = super.application(application, didFinishLaunchingWithOptions: launchOptions)
     scheduleBackgroundRefresh()
@@ -69,10 +72,18 @@ private let backgroundRefreshMinimumInterval: TimeInterval = 15 * 60
     // refresh cycle.
     scheduleBackgroundRefresh()
 
-    let engine = FlutterEngine(name: "background-refresh")
-    engine.run(withEntrypoint: "backgroundRefreshMain")
-    GeneratedPluginRegistrant.register(with: engine)
-    // Only EdgeIdentityPlugin is needed: backgroundRefreshMain reconnects and
+    let engine = Self.backgroundEngineGroup.makeEngine(
+      withEntrypoint: "backgroundRefreshMain",
+      libraryURI: "package:netclaw_mobile/ncfed/background_refresh.dart")
+    // Register only the plugins used by this headless entrypoint. Firebase
+    // is owned by the foreground engine and is not needed for queue replay.
+    if let registrar = engine.registrar(forPlugin: "FlutterSecureStorageDarwinPlugin") {
+      FlutterSecureStorageDarwinPlugin.register(with: registrar)
+    }
+    if let registrar = engine.registrar(forPlugin: "FlutterLocalNotificationsPlugin") {
+      FlutterLocalNotificationsPlugin.register(with: registrar)
+    }
+    // The app-specific EdgeIdentityPlugin is also needed: refresh reconnects and
     // drains via EdgeClient/wireMessageFeed, which need the Secure Enclave
     // identity to prove possession of the pinned key (in2n/hello) -- it does
     // not touch the watch relay or Live Activity, so those plugins are

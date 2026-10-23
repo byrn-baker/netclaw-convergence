@@ -185,3 +185,9 @@ async def get_device(device_id: str):
 - [DefenseClaw Guide](../docs/DEFENSECLAW.md) - Full security documentation
 - [Security Principles](../docs/SOUL-DEFENSE.md) - Security posture guidance
 - [SKILL-SCHEMA.md](../workspace/skills/SKILL-SCHEMA.md) - Skill definition schema
+
+## Jev Science Officer
+
+[jev-mcp](jev-mcp/README.md): optional isolated Python FastMCP stdio service with three
+tools (`jev_status`, `jev_evaluate`, `jev_assessment`), mixed dynamic typed judgments,
+persistent daily/task budgets and exact scoped private disclosure consent. No device writes.

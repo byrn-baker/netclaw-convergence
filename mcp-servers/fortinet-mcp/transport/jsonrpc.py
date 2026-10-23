@@ -36,7 +36,7 @@ class JsonRpcError(RuntimeError):
     def __init__(self, message: str, *, code: int | None = None, outcome: Outcome | None = None):
         super().__init__(message)
         self.code = code
-        self.outcome = outcome or Outcome.EMPTY_RESULT
+        self.outcome = outcome or Outcome.REQUEST_FAILED
 
 
 class JsonRpcClient:
@@ -90,17 +90,23 @@ class JsonRpcClient:
                 outcome=Outcome.AUTH_EXPIRED,
             )
         response.raise_for_status()
-        body = response.json()
-
-        results = body.get("result") or []
-        first = results[0] if results else {}
-        status = first.get("status") or {}
-        code = status.get("code", 0)
+        try:
+            body = response.json()
+        except ValueError:
+            raise JsonRpcError("Appliance returned invalid JSON") from None
+        results = body.get("result") if isinstance(body, dict) else None
+        if not isinstance(results, list) or len(results) != 1 or not isinstance(results[0], dict):
+            raise JsonRpcError("Appliance response is missing its single RPC result")
+        first = results[0]
+        status = first.get("status")
+        if not isinstance(status, dict) or type(status.get("code")) is not int:
+            raise JsonRpcError("Appliance response is missing a numeric RPC status code")
+        code = status["code"]
 
         if code != 0:
             message = status.get("message", "unspecified error")
             outcome = (
-                Outcome.AUTH_EXPIRED if code in _AUTH_ERROR_CODES else Outcome.EMPTY_RESULT
+                Outcome.AUTH_EXPIRED if code in _AUTH_ERROR_CODES else Outcome.REQUEST_FAILED
             )
             raise JsonRpcError(
                 f"{self._creds.plane.value} plane returned {code}: {message}",

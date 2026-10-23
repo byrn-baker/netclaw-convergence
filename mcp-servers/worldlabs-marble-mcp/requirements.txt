@@ -1,0 +1,5 @@
+# FastMCP 4 / MCP 2 tested runtime (spec 141); install in an isolated environment.
+fastmcp==4.0.11
+fastmcp-tasks==4.0.11
+mcp==2.3.0
+httpx>=0.24.0

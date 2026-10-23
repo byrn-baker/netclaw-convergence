@@ -39,6 +39,10 @@ class UDPReceiverProtocol(asyncio.DatagramProtocol):
         self.packets_received = 0
         self.bytes_received = 0
         self.errors = 0
+        self.pending = set()
+        self.max_pending = 256
+        self.dropped_datagrams = 0
+        self.closed = False
 
     def connection_made(self, transport: asyncio.DatagramTransport) -> None:
         """Called when the transport is ready."""
@@ -56,8 +60,12 @@ class UDPReceiverProtocol(asyncio.DatagramProtocol):
         self.packets_received += 1
         self.bytes_received += len(data)
 
-        # Schedule async handler
-        asyncio.create_task(self._handle_message(data, addr))
+        if self.closed or len(self.pending) >= self.max_pending:
+            self.dropped_datagrams += 1
+            return
+        task = asyncio.create_task(self._handle_message(data, addr))
+        self.pending.add(task)
+        task.add_done_callback(self.pending.discard)
 
     async def _handle_message(self, data: bytes, addr: Tuple[str, int]) -> None:
         """Handle message with error catching."""
@@ -74,8 +82,19 @@ class UDPReceiverProtocol(asyncio.DatagramProtocol):
         self.errors += 1
         logger.error(f"UDP receiver error: {exc}")
 
+    async def shutdown(self):
+        self.closed = True
+        for task in tuple(self.pending):
+            task.cancel()
+        if self.pending:
+            await asyncio.gather(*tuple(self.pending), return_exceptions=True)
+        self.pending.clear()
+
     def connection_lost(self, exc: Optional[Exception]) -> None:
         """Called when the connection is lost."""
+        self.closed = True
+        for task in tuple(self.pending):
+            task.cancel()
         if exc:
             logger.error(f"UDP connection lost: {exc}")
         else:
@@ -86,7 +105,10 @@ class UDPReceiverProtocol(asyncio.DatagramProtocol):
         return {
             'packets_received': self.packets_received,
             'bytes_received': self.bytes_received,
-            'errors': self.errors
+            'errors': self.errors,
+            'pending_handlers': len(self.pending),
+            'dropped_datagrams': self.dropped_datagrams,
+            'max_pending_handlers': self.max_pending
         }
 
 
@@ -150,7 +172,8 @@ class UDPReceiver:
             self.transport.close()
             self.transport = None
 
-        self.protocol = None
+        if self.protocol:
+            await self.protocol.shutdown()
         self.is_running = False
         logger.info("UDP receiver stopped")
 

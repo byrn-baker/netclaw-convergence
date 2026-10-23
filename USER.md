@@ -12,7 +12,7 @@
 
 - **Communication style:** Technical, concise — include CLI output and protocol details
 - **Report format:** Severity-sorted tables with HEALTHY / WARNING / CRITICAL ratings
-- **Change management:** Always require ServiceNow CR before touching a device
+- **Change management:** Production requires approved ServiceNow CRs. Explicitly opted-in Terminal Intent Local/Lab requests use scoped local approval and audit under AGENTS.md; lab mode is never assumed or enabled by default.
 - **Escalation:** Notify immediately on P1/P2; queue P3/P4 for next business day
 
 ## Your Network
@@ -24,6 +24,45 @@
 
 ## Notes
 
+- Spec151 direction (2026-10-11): redesign the VS Code extension around automateyournetwork.com branding and responsive cards; preserve blue actions, filters and search. Add clear connection guidance, testbed CRUD/import and per-MCP environment/setup. Follow SDD with at least five clarification questions before plan/tasks/analyze/fixes/implementation. No packaging, pushing, live deployment or Marketplace/public release until explicitly requested.
+- Spec151 theme choice (2026-10-11): automatically follow VS Code's light/dark theme with branded cards, typography and accents; preserve high-contrast accessibility.
+- Spec151 testbed workflow (2026-10-11): device cards and guided forms plus an advanced YAML editor, with file import/export.
+- Spec151 testbed formats (2026-10-11): YAML/YML and equivalent JSON, plus CSV for basic device inventory fields.
+- Spec151 per-MCP setup (2026-10-11): include direct execution of supported installation, registration and restart actions after explicit confirmation, alongside configuration/help and reviewed command staging. Development and acceptance remain isolated; no live deployment is authorized.
+- Spec151 visuals (2026-10-11): custom branded imagery plus purposeful interactive 3D, especially topology, with restrained motion elsewhere. All five clarification decisions are complete; continue the authorized SDD workflow through local implementation.
+
 - (Add anything NetClaw should remember about you, your team, or your network here)
 - (e.g., "R1 and R2 are in the lab — less strict change control needed")
 - (e.g., "Always CC @oncall-noc in Slack for P1 alerts")
+
+- Jev preference (2026-09-27): optional visible Science Officer, dynamically invented questions from human/member context, advice-only with read-only evidence; default $5/day and $0.25/task budgets adjustable by operator. Avoid static question libraries.
+- HUD preference (2026-09-27): function over flash; preserve Adam's reusable context/chat canvas and add detailed Science Officer data views during the new HUD phase.
+
+- Roadmap clarification (2026-09-27): spec126 is the small README refresh; HUD is127, preserving Adam's canvas. Phase4 scope is README plus a common utility to upgrade existing NetClaw installations to the latest build.
+
+- HUD127 scope (2026-09-27): panel-first dashboards with Basic/Advanced presentation; Three.js where relationship/topology views help. Cover standalone, iN2N Risk of Claws, eN2N external neighbours, Jev Science Officer and mobile devices. Adam Mason's full context/chat canvas must survive, including existing saved work and investigation affordances.
+
+- HUD refinement: name the preserved workspace Canvas; provide direct RAG uploads/retrieval and a masked configuration inventory in the menu.
+
+- HUD additions: per-Claw MCP/LLM introspection, Tokenomics, Documentation and CLI/API references, direct Logs with filters/commands, Sean Mahoney's guide panel, and early LAB/production plus DefenseClaw/OpenShell views. README should lead with the new HUD rather than the old SSH migration callout. Keep Canvas and hold pushes for review.
+
+- Release preference (2026-09-28): establish official NetClaw 1.0.0, then use 1.x.y versions as completed specs evolve the project; require numbered specs and Spec Kit artifacts for contributions/PRs. Feature specs use minor bumps, fixes/docs/maintenance use patches; source and mobile component versions remain independent.
+
+- Chat preference (2026-09-28): standard back-and-forth Chat should be the default HUD interface, with Canvas still available and native OpenClaw as a third option opening in a separate tab (explicitly approved).
+
+- Tavus exploration (2026-10-09): pursue a spec-driven NetClaw Pal assessment within Free only: 20 conversational minutes, stock faces and no paid upgrade. Spec 143 is abandoned; return to main before the new exploration.
+
+- 2026-10-09: Authorized moving to spec branch 144 and starting Pal implementation. Interested in using a lobster or personal smiley image. Keep the Tavus experiment on Free; local browser icon supported, custom Tavus training excluded.
+
+- Pal design clarification (2026-10-09, supersedes the initial Free-only product scope): Free default with optional custom face/voice on entitled accounts; each owner supplies their own key; full authorized NetClaw access through Border with existing approvals; optional downloadable John photo/voice pack; automatic non-sensitive summaries with private details local. No paid upgrade or provider training has been authorized. John then requested PNG conversion and recording guidance, questioned the paid custom-avatar limitation, and asked to explore local Blender and other services.
+- Local Pal approved (2026-10-09): start with John and Lobster selectable local avatars. Existing configured frontier model produces the chat answer; local speech/animation presents it. Keep Blender MCP in the authoring path when connected. Prove the two-character formula before offering custom uploads or an external conversion script. Avatar left, Chat visible on the right, selection below; include move/pan, rotate, zoom and reset controls. Keep the same chat session when switching views or characters.
+- Interface correction (2026-10-09): Avatar is the fourth Chat interface beside Chat, Canvas and OpenClaw, not a separate Pal sidebar tab.
+- Spec151 security choice (2026-10-11): expose OpenShell and DefenseClaw allow/block rules, supported policies/enforcement modes, status and logs; require explicit acknowledgment for weakened protection. This addition does not include lifecycle start/stop/restart.
+- Spec151 merge authorization (2026-10-11): commit all completed work, push the feature branch, create and merge its PR into main, then stop for further instructions. Packaging, deployment, release tags and Marketplace/GitHub release/blog publication remain held.
+- Spec152 direction (2026-10-15): new focused VS Code feature/branch for the top-panel workspace files SOUL.md, AGENTS.md, IDENTITY.md, USER.md, TOOLS.md and HEARTBEAT.md. Read, edit/update and upload/overwrite; no deletion. Include restart after saving and direct Start/Stop/Restart. Confirmed both OpenClaw and Hermes using actual runtime workspaces, and full selected-installation lifecycle including its owned gateway/engine, HUD and federation services. Specification work does not authorize live deployment or publication.
+
+- Spec152 implementation authorization (2026-10-15): proceed through planning, implementation and verification, then FIRST show an ephemeral isolated VS Code with the implemented build. Push/live deployment require later owner approval.
+
+- Spec152 WSL handoff authorization (2026-10-15): package the implemented build, add a WSL handoff prompt, and push the feature branch so it can be pulled on the real NetClaw host. Launch an isolated patched VS Code there connected to the real installation for file inspection. This supersedes the earlier package/push hold; no merge or Marketplace publication was requested.
+
+- Spec152 production authorization (2026-10-16): fetch the WSL follow-up, commit remaining work, create and merge the PR, remove completed feature branches, return to main and push to production. This explicitly supersedes the earlier merge/publication hold for this feature.

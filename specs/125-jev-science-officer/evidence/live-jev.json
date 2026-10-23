@@ -1,0 +1,61 @@
+{
+  "test": "single live MCP mixed-primitive synthetic batch",
+  "provider": "TypeSafe Jev",
+  "status": "ok",
+  "model": "jev-1.13.0",
+  "latency_seconds_including_mcp_and_audit": 0.927,
+  "usage": {
+    "input_tokens": 465,
+    "output_tokens": 71
+  },
+  "actual_cost_usd": 1.953e-05,
+  "reserved_cost_usd": 0.0027525120000000004,
+  "answers": {
+    "support": {
+      "type": "noul",
+      "noul": 0.95
+    },
+    "next": {
+      "type": "choice",
+      "probabilities": {
+        "application_probe": 0.99,
+        "none": 0.01,
+        "repeat_link": 0.0
+      },
+      "confidence": 0.99,
+      "choice": "application_probe"
+    },
+    "coverage": {
+      "type": "score",
+      "probabilities": {
+        "0": 1.0,
+        "1": 0.0,
+        "2": 0.0
+      },
+      "confidence": 1.0,
+      "score": 0.0,
+      "legend": {
+        "0": "No application response measurement exists",
+        "1": "An application response was measured once",
+        "2": "Repeated application response measurements establish a current baseline"
+      }
+    }
+  },
+  "budgets": {
+    "daily_limit_usd": 0.01,
+    "case_limit_usd": 0.01,
+    "daily_used_usd": 1.953e-05,
+    "case_used_usd": 1.953e-05
+  },
+  "audit": {
+    "local": "recorded",
+    "gait": {
+      "status": "recorded",
+      "commit": "d979dd8bd4b37a84eb06563778e7bf716b1d8716c02e86f2ca63d2ed616808a8"
+    }
+  },
+  "external_calls_requested": 1,
+  "test_budget_usd": 0.01,
+  "private_network_data_sent": false,
+  "tool_error": false
+}

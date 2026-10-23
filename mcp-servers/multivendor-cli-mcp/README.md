@@ -1,7 +1,7 @@
 # Multivendor CLI Driver — MCP Server
 
 **Spec**: 076 (roadmap R1) | **Transport**: stdio | **Server id**: `multivendor-cli`
-**Status**: read-only tool surface; device tools land in spec 076 Phases 4-6
+**Status**: read-only tools by default; separately enabled configuration tools enforce approval, baseline and verification gates.
 
 Reaches ~90 platform families NetClaw's Cisco/Juniper-specific servers cannot.
 
@@ -192,10 +192,18 @@ whether the command returned successfully.
 | Symptom | Cause | Fix |
 |---|---|---|
 | `status: denied`, `denied_reason` mentions chaining | Command contained `;` or `&&` | Send commands separately |
-| `status: denied` in read-only mode | Verb not in the allowlist | Use a `show`-class command, or enable write mode deliberately |
+| `status: denied` in read-only mode | Verb not in the allowlist | Use a `show`-class command; approved changes belong in gated `apply_config` |
 | `status: platform_mismatch` | Inventory platform ≠ what the device reports | Fix the source of truth; wrong driver gives confusing output |
 | `status: auth_failed` | Credentials resolved but rejected | Check Vault path or env vars — note this is *not* unreachable |
 | `apply_config` returns `refused` | Cisco/Junos device | Use `pyATS` or `junos-mcp`; this server is read-only there by design |
 | `available: false` on a getter | Platform's NAPALM driver lacks it | Use `run_command` for the raw equivalent — the gap is reported, not hidden |
 | My generated inventory edits vanished | It is a cache | Move to Option C, an operator-authored file the server never writes |
 | `source_used` is `generated`, not `live_sot` | Source of truth was unreachable | Check `fallback_reason`; results may be stale |
+
+## Spec124 production authorization update
+
+Production writes now require the exact ServiceNow CR to be approved and in Implement state. Missing or failed verification blocks writes. See [change-gate migration](../../docs/CHANGE-GATE-MIGRATION.md) for private configuration, preflight, backup and recovery. No ServiceNow record is created or approved automatically.
+
+## SSH identity and raw-command migration
+
+SSH host-key checks now default to strict. See [migration guide](../../docs/MULTIVENDOR-SSH-MIGRATION.md) before restarting existing installations. Raw commands stay read-only when write tools are enabled.

@@ -1,0 +1,104 @@
+{
+  "conclusion": "success",
+  "databaseId": 36326574760,
+  "headSha": "e008464f7eb7593fb86b6e15c3231f14f7648fb4",
+  "jobs": [
+    {
+      "completedAt": "2026-09-27T14:46:08Z",
+      "conclusion": "success",
+      "databaseId": 108640381320,
+      "name": "test-and-build",
+      "startedAt": "2026-09-27T14:37:28Z",
+      "status": "completed",
+      "steps": [
+        {
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/checkout@v4",
+          "number": 2,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run subosito/flutter-action@v2",
+          "number": 3,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run mkdir -p build/ios/SourcePackages",
+          "number": 4,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run flutter pub get",
+          "number": 5,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run flutter analyze",
+          "number": 6,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run flutter test",
+          "number": 7,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Prepare non-production Firebase build fixture",
+          "number": 8,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Prepare Flutter native build settings",
+          "number": 9,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Build Runner (iOS Simulator)",
+          "number": 10,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Build WatchApp (watchOS Simulator)",
+          "number": 11,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run subosito/flutter-action@v2",
+          "number": 21,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@v4",
+          "number": 22,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 23,
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/automateyournetwork/netclaw/actions/runs/36326574760/job/108640381320"
+    }
+  ],
+  "status": "completed",
+  "url": "https://github.com/automateyournetwork/netclaw/actions/runs/36326574760"
+}

@@ -1,0 +1,49 @@
+.topology-backdrop { position: fixed; inset: 0; z-index: 11000; background: #0008; display: grid; place-items: center; padding: 20px; color: #e4edf7; font: 13px/1.5 system-ui, sans-serif; }
+.topology-settings { width: min(760px, 100%); max-height: 90vh; display: flex; flex-direction: column; border: 1px solid #466370; border-radius: 12px; background: #101d28; box-shadow: 0 20px 60px #0008; overflow: hidden; }
+.topology-settings header, .topology-settings footer { display: flex; justify-content: space-between; align-items: center; gap: 14px; padding: 16px 20px; border-bottom: 1px solid #304251; }
+.topology-settings footer { border-top: 1px solid #304251; border-bottom: 0; flex-wrap: wrap; }
+.topology-settings h2 { margin: 0; font-size: 19px; }
+.topology-settings h3 { font-size: 14px; margin: 16px 0 8px; }
+.topology-settings p { margin: 6px 0; color: #afc1d2; }
+.topology-settings-body { overflow: auto; padding: 0 20px 16px; }
+.topology-settings button, .topology-settings select, .topology-manage { font: inherit; color: #e4edf7; background: #172c3a; border: 1px solid #466370; border-radius: 6px; padding: 7px 10px; cursor: pointer; }
+.topology-settings button:disabled { opacity: .45; cursor: default; }
+.topology-settings button:focus-visible, .topology-settings input:focus-visible, .topology-settings select:focus-visible { outline: 2px solid #7fdbca; outline-offset: 3px; }
+.topology-settings .topology-primary { background: #0e7c7b; }
+.topology-notice { padding: 10px 12px; background: #0b141e; border-left: 3px solid #6bc6bc; margin-top: 12px; }
+.topology-device-list { display: grid; gap: 8px; }
+.topology-device { padding: 10px 12px; border: 1px solid #304251; border-radius: 8px; }
+.topology-device > label { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+.topology-device > label span { color: #afc1d2; font-size: 11px; }
+.topology-login { margin: 10px 0; border-top: 1px solid #304251; padding-top: 10px; }
+.topology-login-fields { display: flex; flex-wrap: wrap; gap: 10px; }
+.topology-login-fields label { flex: 1; min-width: 160px; }
+.topology-login-fields input { display: block; box-sizing: border-box; width: 100%; padding: 8px; border: 1px solid #466370; border-radius: 5px; background: #0b141e; color: #e4edf7; font: inherit; }
+.topology-host-key { border: 1px solid #bc9450; padding: 10px; margin-top: 8px; border-radius: 6px; }
+.topology-host-key code { overflow-wrap: anywhere; }
+.topology-host-key button { margin: 5px 8px 0 0; }
+.topology-legacy { margin-top: 7px; font-size: 11px; color: #e7c389; }
+.topology-interval { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 15px; }
+.topology-consent { display: flex; align-items: start; gap: 9px; padding: 12px; margin-top: 16px; border: 1px solid #3e8582; border-radius: 6px; }
+.topology-settings .topology-error { color: #ff9d9d; }
+.topology-context { grid-column: 1 / -1; }
+.topology-context .topology-manage { margin-bottom: 8px; font-size: 11px; padding: 4px 8px; }
+.topology-observation { margin-top: 10px; padding: 9px; border: 1px solid #304251; border-radius: 6px; background: #0b151e; }
+.topology-observation strong { color: #b8eae4; }
+.topology-current, .topology-stale { display: inline-block; font-size: 9px; margin-left: 9px; padding: 1px 5px; border-radius: 4px; background: #173832; color: #a5e9c8; }
+.topology-stale { background: #42321e; color: #ffda97; }
+.topology-context details { margin-top: 10px; }
+.topology-closest { margin-top: 14px; padding: 12px; border: 1px solid #3d756f; border-left: 3px solid #63b9ae; border-radius: 6px; background: #10232b; }
+.topology-closest h4 { margin-bottom: 8px !important; }
+.topology-closest > div { margin: 9px 0; }
+.topology-closest strong { color: #b8eae4; }
+.topology-scope-list { display: grid; gap: 7px; }
+.topology-scope { display: flex; gap: 9px; align-items: start; border: 1px solid #304251; padding: 9px; border-radius: 6px; }
+.topology-scope > span { min-width: 0; }
+.topology-scope span span, .topology-scope code { display: block; color: #afc1d2; font-size: 11px; overflow-wrap: anywhere; }
+.topology-identifiers { margin: 14px 0; }
+.topology-identifiers h4 { margin-top: 14px; }
+.topology-fact-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.topology-fact-grid .topology-observation { margin-top: 0; }
+.topology-fact-grid dl { margin: 8px 0; }
+@container (max-width: 580px) { .topology-fact-grid { grid-template-columns: minmax(0, 1fr); } }

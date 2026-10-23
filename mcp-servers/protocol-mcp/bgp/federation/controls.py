@@ -30,6 +30,7 @@ import shutil
 import time
 from pathlib import Path
 from typing import Tuple
+from urllib.parse import urlsplit
 
 logger = logging.getLogger("n2n.controls")
 
@@ -42,7 +43,8 @@ def _security_config_path() -> Path:
     ~/.openclaw/config/openclaw.json — NOT the gateway's ~/.openclaw/openclaw.json,
     whose `security` object has a different schema (writing 'mode' there makes the
     gateway fail startup with 'security: Invalid input')."""
-    return Path(os.path.expanduser("~/.openclaw/config/openclaw.json"))
+    from .runtime import selected
+    return selected().home/'config/openclaw.json'
 
 
 def security_mode() -> str:
@@ -150,6 +152,41 @@ async def sandbox_available() -> Tuple[bool, str]:
 DEFENSECLAW_GUARD_PORT = int(os.environ.get("DEFENSECLAW_GUARD_PORT", "4000"))
 
 
+def guarded_model_route(model_override=None) -> Tuple[bool, str]:
+    """Check the effective local configuration; never rewrite provider settings."""
+    from .runtime import selected as selected_runtime
+    runtime=selected_runtime()
+    if runtime.kind=='hermes':return False, 'Hermes model-guard integration is not qualified; production delegation is unavailable'
+    try:
+        state = Path(os.environ.get("OPENCLAW_STATE_DIR") or os.environ.get("OPENCLAW_HOME")
+                     or os.path.expanduser("~/.openclaw"))
+        config = Path(os.environ.get("OPENCLAW_CONFIG_PATH") or state / "openclaw.json")
+        cfg = json.loads(config.read_text())
+        agents = cfg.get("agents") or {}
+        model = (agents.get("defaults") or {}).get("model")
+        inherited_fallbacks = model.get("fallbacks", []) if isinstance(model, dict) else []
+        agent_id = os.environ.get("N2N_AGENT_ID", "main")
+        for agent in agents.get("list") or []:
+            if agent.get("id") == agent_id and agent.get("model") is not None:
+                model = agent["model"]
+        primary = model.get("primary") if isinstance(model, dict) else model
+        fallbacks = model.get("fallbacks", []) if isinstance(model, dict) else []
+        if not isinstance(fallbacks, list) or not isinstance(inherited_fallbacks, list):
+            return False, "model fallback configuration is invalid"
+        selected = [model_override if model_override is not None else primary, *fallbacks, *inherited_fallbacks]
+        if not all(isinstance(m, str) and m.startswith("defenseclaw/") and m.split("/", 1)[1]
+                   for m in selected):
+            return False, "primary, override and fallback models must use the defenseclaw provider"
+        provider = ((cfg.get("models") or {}).get("providers") or {}).get("defenseclaw") or {}
+        url = urlsplit(provider.get("baseUrl", ""))
+        if (url.scheme not in ("http", "https") or url.hostname not in ("localhost", "127.0.0.1", "::1")
+                or url.port != DEFENSECLAW_GUARD_PORT or url.username or url.password):
+            return False, "defenseclaw provider must target the configured loopback guard port"
+        return True, "guarded model route configured"
+    except (OSError, ValueError, TypeError, AttributeError):
+        return False, "effective model route configuration is unavailable or invalid"
+
+
 async def defenseclaw_available() -> Tuple[bool, str]:
     """(True, "") if DefenseClaw model-I/O guarding is actually in effect; else (False, reason).
 
@@ -162,6 +199,14 @@ async def defenseclaw_available() -> Tuple[bool, str]:
     this is what prevents a false 'enforced' (the 056 "silent bypass to direct
     provider" bug). To reach enforced, run `defenseclaw setup guardrail --mode
     action` and route members through the proxy."""
+    # Recheck configuration before even a cached liveness result: a live proxy
+    # does not mean the configured model actually uses it.
+    mode_ok, detail = require_defenseclaw_mode()
+    if not mode_ok:
+        return False, detail
+    route_ok, detail = guarded_model_route()
+    if not route_ok:
+        return False, detail
     cached = _cached("model-guard")
     if cached is not None:
         return cached

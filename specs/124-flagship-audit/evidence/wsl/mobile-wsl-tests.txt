@@ -1,0 +1,526 @@
+Resolving dependencies...
+Downloading packages...
+  _flutterfire_internals 1.3.75 (1.3.77 available)
+  archive 4.0.9 (4.3.0 available)
+  camera 0.12.0+2 (0.12.1 available)
+  camera_android_camerax 0.7.4+2 (0.7.5 available)
+  camera_avfoundation 0.10.2 (0.11.0 available)
+  camera_platform_interface 2.13.1 (2.14.0 available)
+  camera_web 0.3.5+4 (0.3.5+6 available)
+  cli_util 0.4.2 (0.6.0 available)
+  clock 1.1.2 (1.1.3 available)
+  code_assets 1.2.1 (2.1.0 available)
+  cross_file 0.3.5+4 (0.4.0 available)
+  dbus 0.7.13 (0.8.0 available)
+  firebase_core 4.12.1 (4.15.0 available)
+  firebase_core_platform_interface 8.0.0 (8.1.1 available)
+  firebase_core_web 3.9.1 (3.12.0 available)
+  firebase_messaging 16.4.3 (16.7.0 available)
+  firebase_messaging_platform_interface 4.9.2 (4.10.0 available)
+  firebase_messaging_web 4.2.3 (4.2.5 available)
+  flutter_local_notifications 22.2.0 (22.3.1 available)
+  flutter_local_notifications_platform_interface 12.1.0 (12.2.0 available)
+  flutter_secure_storage 10.3.1 (11.2.0 available)
+  flutter_secure_storage_darwin 0.3.2 (0.4.3 available)
+  flutter_secure_storage_linux 3.0.1 (3.0.3 available)
+  flutter_secure_storage_platform_interface 2.0.1 (2.1.1 available)
+  hooks 2.0.2 (2.2.0 available)
+  html 0.15.6 (0.15.7 available)
+  image 4.9.1 (4.10.1 available)
+  jni 1.0.0 (1.0.3 available)
+  jni_flutter 1.0.1 (1.0.3 available)
+  local_auth_android 2.0.9 (2.2.0 available)
+  local_auth_darwin 2.0.3 (2.0.4 available)
+  local_auth_windows 2.0.1 (2.0.2 available)
+  matcher 0.12.19 (0.12.20 available)
+  material_color_utilities 0.13.0 (0.13.1 available)
+  meta 1.18.0 (1.19.0 available)
+  mime 2.0.0 (2.1.0 available)
+  mobile_scanner 7.4.0 (7.4.2 available)
+  objective_c 9.4.1 (9.6.0 available)
+  package_config 2.2.0 (3.0.0 available)
+  petitparser 7.0.2 (7.1.0 available)
+  platform 3.1.6 (3.2.0 available)
+  posix 6.5.0 (6.5.2 available)
+  process 5.0.5 (5.0.6 available)
+  pub_semver 2.2.0 (2.2.1 available)
+  record_use 0.6.0 (1.1.1 available)
+  speech_to_text 7.4.0 (7.5.0 available)
+  speech_to_text_platform_interface 2.4.0 (2.5.0 available)
+  stack_trace 1.12.1 (1.12.2 available)
+  stream_transform 2.1.1 (2.1.2 available)
+  test_api 0.7.11 (0.7.14 available)
+  url_launcher_android 6.3.32 (6.3.33 available)
+  url_launcher_ios 6.4.1 (6.4.2 available)
+  url_launcher_linux 3.2.2 (3.2.3 available)
+  url_launcher_macos 3.2.5 (3.2.6 available)
+  url_launcher_windows 3.1.5 (3.1.6 available)
+  vector_math 2.2.0 (2.4.3 available)
+  vm_service 15.2.0 (15.3.0 available)
+  webdriver 3.1.0 (3.2.0 available)
+  win32 6.3.0 (6.4.0 available)
+  yaml 3.1.3 (3.1.4 available)
+Got dependencies!
+60 packages have newer versions incompatible with dependency constraints.
+Try `flutter pub outdated` for more information.
+00:00 +0: loading <repo>/mobile/netclaw-mobile/test/capture_client_test.dart
+00:00 +0: <repo>/mobile/netclaw-mobile/test/capture_client_test.dart: captureAndAsk (US2, phone-initiated) a successful capture attaches to n2n/edge/ask with the exact shape
+00:00 +1: <repo>/mobile/netclaw-mobile/test/capture_client_test.dart: captureAndAsk (US2, phone-initiated) a bare capture with no text is still sent (FR-005)
+00:00 +2: <repo>/mobile/netclaw-mobile/test/capture_client_test.dart: captureAndAsk (US2, phone-initiated) a declined/cancelled capture never calls ask() at all
+00:00 +3: <repo>/mobile/netclaw-mobile/test/capture_client_test.dart: captureAndAsk (US2, phone-initiated) a capture exceeding the size cap is refused, never sent (FR-005a)
+00:00 +4: <repo>/mobile/netclaw-mobile/test/capture_client_test.dart: n2n/edge/capture handler (US3, Border-requested) a successful capture returns decision=captured with the exact shape
+00:00 +5: <repo>/mobile/netclaw-mobile/test/capture_client_test.dart: n2n/edge/capture handler (US3, Border-requested) a declined/cancelled capture returns an explicit decline, never empty/hanging
+00:00 +6: <repo>/mobile/netclaw-mobile/test/capture_client_test.dart: n2n/edge/capture handler (US3, Border-requested) an oversized capture is declined server-side too, not just client-side
+00:00 +7: <repo>/mobile/netclaw-mobile/test/edge_client_lifecycle_test.dart: valid replies complete the actual client request
+[edge-diag] dial 2026-09-27T09:05:37.666560
+[edge-diag] outbound show 2026-09-27T09:05:37.671296
+[edge-diag] failAll: Client closed
+00:00 +8: <repo>/mobile/netclaw-mobile/test/edge_client_lifecycle_test.dart: send failure closes client and rejects subsequent work promptly
+[edge-diag] dial 2026-09-27T09:05:37.684434
+[edge-diag] outbound show 2026-09-27T09:05:37.685156
+[edge-diag] failAll: Request transport failed
+00:00 +9: <repo>/mobile/netclaw-mobile/test/edge_client_lifecycle_test.dart: explicit close resolves pending requests without reconnect notification
+[edge-diag] dial 2026-09-27T09:05:37.695203
+[edge-diag] outbound show 2026-09-27T09:05:37.696143
+[edge-diag] failAll: Client closed
+00:00 +10: <repo>/mobile/netclaw-mobile/test/edge_client_lifecycle_test.dart: malformed message fails pending work: invalid-json
+[edge-diag] dial 2026-09-27T09:05:37.701472
+[edge-diag] outbound show 2026-09-27T09:05:37.702189
+[edge-diag] failAll: Invalid peer message
+00:00 +11: <repo>/mobile/netclaw-mobile/test/edge_client_lifecycle_test.dart: malformed message fails pending work: []
+[edge-diag] dial 2026-09-27T09:05:37.707769
+[edge-diag] outbound show 2026-09-27T09:05:37.708367
+[edge-diag] failAll: Invalid peer message
+00:00 +12: <repo>/mobile/netclaw-mobile/test/edge_client_lifecycle_test.dart: malformed message fails pending work: {"id":"phone:1","result":3}
+[edge-diag] dial 2026-09-27T09:05:37.713321
+[edge-diag] outbound show 2026-09-27T09:05:37.713799
+[edge-diag] failAll: Invalid peer message
+00:00 +13: <repo>/mobile/netclaw-mobile/test/edge_client_lifecycle_test.dart: malformed message fails pending work: {"method":42}
+[edge-diag] dial 2026-09-27T09:05:37.717568
+[edge-diag] outbound show 2026-09-27T09:05:37.717940
+[edge-diag] failAll: Invalid peer message
+00:00 +14: <repo>/mobile/netclaw-mobile/test/edge_client_lifecycle_test.dart: handler failure returns sanitized RPC error without unhandled future
+[edge-diag] dial 2026-09-27T09:05:37.721193
+[edge-diag] inbound broken handler=true 2026-09-27T09:05:37.722414
+[edge-diag] failAll: Client closed
+00:00 +15: <repo>/mobile/netclaw-mobile/test/edge_client_lifecycle_test.dart: timeout does not poison later requests
+[edge-diag] dial 2026-09-27T09:05:37.737206
+[edge-diag] outbound slow 2026-09-27T09:05:37.739008
+[edge-diag] outbound next 2026-09-27T09:05:37.741922
+[edge-diag] failAll: Client closed
+00:00 +16: <repo>/mobile/netclaw-mobile/test/pending_approvals_headless_test.dart: speaks the live count when approvals are pending (FR-006)
+00:00 +17: <repo>/mobile/netclaw-mobile/test/pending_approvals_headless_test.dart: uses singular phrasing for exactly one pending approval
+00:00 +18: <repo>/mobile/netclaw-mobile/test/pending_approvals_headless_test.dart: speaks an explicit statement for zero, not a bare "0" (FR-006)
+00:00 +19: <repo>/mobile/netclaw-mobile/test/approval_client_test.dart: receiveApproval tracks a pushed approval and resolve() sends the wire call
+00:00 +20: <repo>/mobile/netclaw-mobile/test/approval_client_test.dart: a failed/cancelled biometric attempt never triggers n2n/edge/approval_resolve (T013/FR-002)
+00:01 +21: <repo>/mobile/netclaw-mobile/test/approval_client_test.dart: a failed/cancelled biometric attempt never triggers n2n/edge/approval_resolve (T013/FR-002)
+00:01 +22: <repo>/mobile/netclaw-mobile/test/approval_client_test.dart: a failed/cancelled biometric attempt never triggers n2n/edge/approval_resolve (T013/FR-002)
+00:01 +23: <repo>/mobile/netclaw-mobile/test/approval_client_test.dart: a failed/cancelled biometric attempt never triggers n2n/edge/approval_resolve (T013/FR-002)
+00:01 +24: <repo>/mobile/netclaw-mobile/test/approval_client_test.dart: a failed/cancelled biometric attempt never triggers n2n/edge/approval_resolve (T013/FR-002)
+00:01 +25: <repo>/mobile/netclaw-mobile/test/approval_client_test.dart: a failed/cancelled biometric attempt never triggers n2n/edge/approval_resolve (T013/FR-002)
+00:01 +26: <repo>/mobile/netclaw-mobile/test/approval_client_test.dart: a failed/cancelled biometric attempt never triggers n2n/edge/approval_resolve (T013/FR-002)
+00:01 +27: <repo>/mobile/netclaw-mobile/test/approval_client_test.dart: a failed/cancelled biometric attempt never triggers n2n/edge/approval_resolve (T013/FR-002)
+00:01 +28: <repo>/mobile/netclaw-mobile/test/approval_client_test.dart: a failed/cancelled biometric attempt never triggers n2n/edge/approval_resolve (T013/FR-002)
+00:01 +29: <repo>/mobile/netclaw-mobile/test/approval_client_test.dart: a failed/cancelled biometric attempt never triggers n2n/edge/approval_resolve (T013/FR-002)
+00:01 +30: <repo>/mobile/netclaw-mobile/test/approval_client_test.dart: a failed/cancelled biometric attempt never triggers n2n/edge/approval_resolve (T013/FR-002)
+00:01 +31: <repo>/mobile/netclaw-mobile/test/approval_client_test.dart: a failed/cancelled biometric attempt never triggers n2n/edge/approval_resolve (T013/FR-002)
+00:01 +32: <repo>/mobile/netclaw-mobile/test/approval_client_test.dart: a failed/cancelled biometric attempt never triggers n2n/edge/approval_resolve (T013/FR-002)
+00:01 +33: <repo>/mobile/netclaw-mobile/test/approval_client_test.dart: a failed/cancelled biometric attempt never triggers n2n/edge/approval_resolve (T013/FR-002)
+00:01 +34: <repo>/mobile/netclaw-mobile/test/approval_client_test.dart: a failed/cancelled biometric attempt never triggers n2n/edge/approval_resolve (T013/FR-002)
+00:01 +35: <repo>/mobile/netclaw-mobile/test/approval_client_test.dart: a failed/cancelled biometric attempt never triggers n2n/edge/approval_resolve (T013/FR-002)
+00:01 +36: <repo>/mobile/netclaw-mobile/test/approval_client_test.dart: a failed/cancelled biometric attempt never triggers n2n/edge/approval_resolve (T013/FR-002)
+00:01 +37: <repo>/mobile/netclaw-mobile/test/approval_client_test.dart: a failed/cancelled biometric attempt never triggers n2n/edge/approval_resolve (T013/FR-002)
+00:01 +38: <repo>/mobile/netclaw-mobile/test/approval_client_test.dart: a failed/cancelled biometric attempt never triggers n2n/edge/approval_resolve (T013/FR-002)
+00:01 +39: <repo>/mobile/netclaw-mobile/test/approval_client_test.dart: a failed/cancelled biometric attempt never triggers n2n/edge/approval_resolve (T013/FR-002)
+00:01 +40: <repo>/mobile/netclaw-mobile/test/approval_client_test.dart: a failed/cancelled biometric attempt never triggers n2n/edge/approval_resolve (T013/FR-002)
+00:01 +41: <repo>/mobile/netclaw-mobile/test/approval_client_test.dart: a failed/cancelled biometric attempt never triggers n2n/edge/approval_resolve (T013/FR-002)
+00:01 +42: <repo>/mobile/netclaw-mobile/test/approval_client_test.dart: a failed/cancelled biometric attempt never triggers n2n/edge/approval_resolve (T013/FR-002)
+00:01 +43: <repo>/mobile/netclaw-mobile/test/approval_client_test.dart: a failed/cancelled biometric attempt never triggers n2n/edge/approval_resolve (T013/FR-002)
+00:01 +44: <repo>/mobile/netclaw-mobile/test/approval_client_test.dart: a failed/cancelled biometric attempt never triggers n2n/edge/approval_resolve (T013/FR-002)
+00:01 +45: <repo>/mobile/netclaw-mobile/test/approval_client_test.dart: a failed/cancelled biometric attempt never triggers n2n/edge/approval_resolve (T013/FR-002)
+00:01 +46: <repo>/mobile/netclaw-mobile/test/approval_client_test.dart: a failed/cancelled biometric attempt never triggers n2n/edge/approval_resolve (T013/FR-002)
+00:01 +47: <repo>/mobile/netclaw-mobile/test/approval_client_test.dart: a failed/cancelled biometric attempt never triggers n2n/edge/approval_resolve (T013/FR-002)
+00:01 +48: <repo>/mobile/netclaw-mobile/test/approval_client_test.dart: a failed/cancelled biometric attempt never triggers n2n/edge/approval_resolve (T013/FR-002)
+00:01 +49: <repo>/mobile/netclaw-mobile/test/approval_client_test.dart: a failed/cancelled biometric attempt never triggers n2n/edge/approval_resolve (T013/FR-002)
+00:01 +50: <repo>/mobile/netclaw-mobile/test/approval_client_test.dart: a failed/cancelled biometric attempt never triggers n2n/edge/approval_resolve (T013/FR-002)
+00:01 +51: <repo>/mobile/netclaw-mobile/test/approval_client_test.dart: a failed/cancelled biometric attempt never triggers n2n/edge/approval_resolve (T013/FR-002)
+00:01 +52: <repo>/mobile/netclaw-mobile/test/approval_client_test.dart: a failed/cancelled biometric attempt never triggers n2n/edge/approval_resolve (T013/FR-002)
+00:01 +53: <repo>/mobile/netclaw-mobile/test/approval_client_test.dart: a failed/cancelled biometric attempt never triggers n2n/edge/approval_resolve (T013/FR-002)
+00:01 +54: <repo>/mobile/netclaw-mobile/test/approval_client_test.dart: a failed/cancelled biometric attempt never triggers n2n/edge/approval_resolve (T013/FR-002)
+00:01 +55: <repo>/mobile/netclaw-mobile/test/approval_client_test.dart: a failed/cancelled biometric attempt never triggers n2n/edge/approval_resolve (T013/FR-002)
+00:01 +56: <repo>/mobile/netclaw-mobile/test/approval_client_test.dart: a failed/cancelled biometric attempt never triggers n2n/edge/approval_resolve (T013/FR-002)
+00:01 +57: <repo>/mobile/netclaw-mobile/test/approval_client_test.dart: a failed/cancelled biometric attempt never triggers n2n/edge/approval_resolve (T013/FR-002)
+00:01 +58: <repo>/mobile/netclaw-mobile/test/approval_client_test.dart: a failed/cancelled biometric attempt never triggers n2n/edge/approval_resolve (T013/FR-002)
+00:01 +59: <repo>/mobile/netclaw-mobile/test/approval_client_test.dart: a failed/cancelled biometric attempt never triggers n2n/edge/approval_resolve (T013/FR-002)
+00:01 +60: <repo>/mobile/netclaw-mobile/test/approval_client_test.dart: a failed/cancelled biometric attempt never triggers n2n/edge/approval_resolve (T013/FR-002)
+00:01 +61: <repo>/mobile/netclaw-mobile/test/approval_client_test.dart: a failed/cancelled biometric attempt never triggers n2n/edge/approval_resolve (T013/FR-002)
+00:01 +62: <repo>/mobile/netclaw-mobile/test/approval_client_test.dart: a successful biometric attempt resolves the approval (approve)
+00:05 +63: <repo>/mobile/netclaw-mobile/test/onboarding_explainer_screen_test.dart: FR-001: a fresh install with no enrollment shows the explainer before the scanner
+00:05 +64: <repo>/mobile/netclaw-mobile/test/onboarding_explainer_screen_test.dart: FR-001: a fresh install with no enrollment shows the explainer before the scanner
+00:05 +65: <repo>/mobile/netclaw-mobile/test/onboarding_explainer_screen_test.dart: FR-001: a fresh install with no enrollment shows the explainer before the scanner
+00:05 +66: <repo>/mobile/netclaw-mobile/test/onboarding_explainer_screen_test.dart: FR-001: a fresh install with no enrollment shows the explainer before the scanner
+00:06 +67: <repo>/mobile/netclaw-mobile/test/onboarding_explainer_screen_test.dart: FR-001: a fresh install with no enrollment shows the explainer before the scanner
+00:06 +68: <repo>/mobile/netclaw-mobile/test/onboarding_explainer_screen_test.dart: FR-001: a fresh install with no enrollment shows the explainer before the scanner
+00:06 +69: <repo>/mobile/netclaw-mobile/test/onboarding_explainer_screen_test.dart: FR-001: a fresh install with no enrollment shows the explainer before the scanner
+00:07 +70: <repo>/mobile/netclaw-mobile/test/answer_body_test.dart: AnswerBody (109/FR-006, Clarifications 2026-08-14) terminal + markdown-looking text renders via MarkdownBody
+00:07 +71: <repo>/mobile/netclaw-mobile/test/chat_retry_test.dart: a failed turn offers a Retry action
+00:07 +72: <repo>/mobile/netclaw-mobile/test/chat_retry_test.dart: a failed turn offers a Retry action
+00:07 +73: <repo>/mobile/netclaw-mobile/test/chat_retry_test.dart: a failed turn offers a Retry action
+00:07 +74: <repo>/mobile/netclaw-mobile/test/chat_retry_test.dart: a failed turn offers a Retry action
+00:07 +75: <repo>/mobile/netclaw-mobile/test/chat_retry_test.dart: a failed turn offers a Retry action
+00:07 +76: <repo>/mobile/netclaw-mobile/test/chat_retry_test.dart: a failed turn offers a Retry action
+00:07 +77: <repo>/mobile/netclaw-mobile/test/chat_retry_test.dart: a failed turn offers a Retry action
+00:07 +78: <repo>/mobile/netclaw-mobile/test/chat_retry_test.dart: a failed turn offers a Retry action
+00:07 +79: <repo>/mobile/netclaw-mobile/test/chat_retry_test.dart: a failed turn offers a Retry action
+00:07 +80: <repo>/mobile/netclaw-mobile/test/chat_retry_test.dart: a failed turn offers a Retry action
+00:07 +81: <repo>/mobile/netclaw-mobile/test/chat_retry_test.dart: a failed turn offers a Retry action
+00:07 +82: <repo>/mobile/netclaw-mobile/test/chat_retry_test.dart: a failed turn offers a Retry action
+00:07 +83: <repo>/mobile/netclaw-mobile/test/chat_retry_test.dart: a failed turn offers a Retry action
+00:07 +84: <repo>/mobile/netclaw-mobile/test/chat_retry_test.dart: a failed turn offers a Retry action
+00:07 +85: <repo>/mobile/netclaw-mobile/test/chat_retry_test.dart: a failed turn offers a Retry action
+00:07 +86: <repo>/mobile/netclaw-mobile/test/chat_retry_test.dart: a failed turn offers a Retry action
+00:07 +87: <repo>/mobile/netclaw-mobile/test/chat_retry_test.dart: a failed turn offers a Retry action
+00:07 +88: <repo>/mobile/netclaw-mobile/test/chat_retry_test.dart: a failed turn offers a Retry action
+00:07 +89: <repo>/mobile/netclaw-mobile/test/chat_retry_test.dart: a failed turn offers a Retry action
+00:07 +90: <repo>/mobile/netclaw-mobile/test/chat_retry_test.dart: a failed turn offers a Retry action
+00:07 +91: <repo>/mobile/netclaw-mobile/test/chat_retry_test.dart: a failed turn offers a Retry action
+00:07 +92: <repo>/mobile/netclaw-mobile/test/chat_retry_test.dart: a failed turn offers a Retry action
+00:07 +93: <repo>/mobile/netclaw-mobile/test/chat_retry_test.dart: a failed turn offers a Retry action
+00:07 +94: <repo>/mobile/netclaw-mobile/test/chat_retry_test.dart: a failed turn offers a Retry action
+00:07 +95: <repo>/mobile/netclaw-mobile/test/feed_screen_highlight_test.dart: the message a notification refers to is highlighted
+00:07 +96: <repo>/mobile/netclaw-mobile/test/feed_screen_highlight_test.dart: the message a notification refers to is highlighted
+00:07 +97: <repo>/mobile/netclaw-mobile/test/chat_retry_test.dart: Retry resends the original text as a new turn
+00:07 +98: <repo>/mobile/netclaw-mobile/test/chat_retry_test.dart: Retry resends the original text as a new turn
+00:07 +99: <repo>/mobile/netclaw-mobile/test/chat_retry_test.dart: Retry resends the original text as a new turn
+00:07 +100: <repo>/mobile/netclaw-mobile/test/chat_retry_test.dart: Retry resends the original text as a new turn
+00:08 +101: <repo>/mobile/netclaw-mobile/test/chat_retry_test.dart: Retry resends the original text as a new turn
+00:08 +102: <repo>/mobile/netclaw-mobile/test/onboarding_explainer_screen_test.dart: FR-002: an already-enrolled launch skips the explainer entirely
+00:08 +103: <repo>/mobile/netclaw-mobile/test/onboarding_explainer_screen_test.dart: FR-002: an already-enrolled launch skips the explainer entirely
+00:08 +104: <repo>/mobile/netclaw-mobile/test/onboarding_explainer_screen_test.dart: FR-002: an already-enrolled launch skips the explainer entirely
+00:08 +105: <repo>/mobile/netclaw-mobile/test/onboarding_explainer_screen_test.dart: FR-002: an already-enrolled launch skips the explainer entirely
+00:08 +106: <repo>/mobile/netclaw-mobile/test/onboarding_explainer_screen_test.dart: FR-002: an already-enrolled launch skips the explainer entirely
+00:08 +107: <repo>/mobile/netclaw-mobile/test/onboarding_explainer_screen_test.dart: FR-002: an already-enrolled launch skips the explainer entirely
+00:08 +108: <repo>/mobile/netclaw-mobile/test/onboarding_explainer_screen_test.dart: FR-002: an already-enrolled launch skips the explainer entirely
+00:08 +109: <repo>/mobile/netclaw-mobile/test/onboarding_explainer_screen_test.dart: FR-002: an already-enrolled launch skips the explainer entirely
+00:08 +110: <repo>/mobile/netclaw-mobile/test/chat_retry_test.dart: dismissing the retry dialog sends nothing
+00:08 +111: <repo>/mobile/netclaw-mobile/test/chat_retry_test.dart: dismissing the retry dialog sends nothing
+00:08 +112: <repo>/mobile/netclaw-mobile/test/chat_retry_test.dart: dismissing the retry dialog sends nothing
+00:08 +113: <repo>/mobile/netclaw-mobile/test/chat_retry_test.dart: dismissing the retry dialog sends nothing
+00:08 +114: <repo>/mobile/netclaw-mobile/test/chat_retry_test.dart: dismissing the retry dialog sends nothing
+00:08 +115: <repo>/mobile/netclaw-mobile/test/chat_retry_test.dart: dismissing the retry dialog sends nothing
+00:08 +116: <repo>/mobile/netclaw-mobile/test/chat_retry_test.dart: dismissing the retry dialog sends nothing
+00:08 +117: <repo>/mobile/netclaw-mobile/test/chat_retry_test.dart: dismissing the retry dialog sends nothing
+00:08 +118: <repo>/mobile/netclaw-mobile/test/chat_retry_test.dart: dismissing the retry dialog sends nothing
+00:08 +119: <repo>/mobile/netclaw-mobile/test/chat_retry_test.dart: dismissing the retry dialog sends nothing
+00:08 +120: <repo>/mobile/netclaw-mobile/test/chat_retry_test.dart: dismissing the retry dialog sends nothing
+00:08 +121: <repo>/mobile/netclaw-mobile/test/chat_retry_test.dart: dismissing the retry dialog sends nothing
+00:08 +122: <repo>/mobile/netclaw-mobile/test/chat_retry_test.dart: dismissing the retry dialog sends nothing
+00:08 +123: <repo>/mobile/netclaw-mobile/test/chat_retry_test.dart: dismissing the retry dialog sends nothing
+00:08 +124: <repo>/mobile/netclaw-mobile/test/chat_retry_test.dart: dismissing the retry dialog sends nothing
+00:08 +125: <repo>/mobile/netclaw-mobile/test/chat_retry_test.dart: dismissing the retry dialog sends nothing
+00:08 +126: <repo>/mobile/netclaw-mobile/test/chat_retry_test.dart: dismissing the retry dialog sends nothing
+00:08 +127: <repo>/mobile/netclaw-mobile/test/chat_retry_test.dart: dismissing the retry dialog sends nothing
+00:08 +128: <repo>/mobile/netclaw-mobile/test/chat_retry_test.dart: dismissing the retry dialog sends nothing
+00:08 +129: <repo>/mobile/netclaw-mobile/test/chat_retry_test.dart: dismissing the retry dialog sends nothing
+00:08 +130: <repo>/mobile/netclaw-mobile/test/chat_retry_test.dart: dismissing the retry dialog sends nothing
+00:08 +131: <repo>/mobile/netclaw-mobile/test/chat_retry_test.dart: dismissing the retry dialog sends nothing
+00:08 +132: <repo>/mobile/netclaw-mobile/test/chat_retry_test.dart: dismissing the retry dialog sends nothing
+00:08 +133: <repo>/mobile/netclaw-mobile/test/chat_retry_test.dart: a completed turn offers no Retry
+00:08 +134: <repo>/mobile/netclaw-mobile/test/chat_retry_test.dart: a cancelled turn is also retryable
+00:08 +135: <repo>/mobile/netclaw-mobile/test/turn_reconciler_test.dart: recovers an answer that completed while disconnected
+00:08 +136: <repo>/mobile/netclaw-mobile/test/turn_reconciler_test.dart: a failed task recovers its REASON, not a blank failure
+00:08 +137: <repo>/mobile/netclaw-mobile/test/turn_reconciler_test.dart: a still-running turn is left alone for the next pass
+00:08 +138: <repo>/mobile/netclaw-mobile/test/turn_reconciler_test.dart: terminal turns are never re-queried
+00:08 +139: <repo>/mobile/netclaw-mobile/test/turn_reconciler_test.dart: an unreachable Border is not an error, and retries next time
+00:08 +140: <repo>/mobile/netclaw-mobile/test/turn_reconciler_test.dart: is idempotent — a second pass changes nothing and re-queries nothing
+00:08 +141: <repo>/mobile/netclaw-mobile/test/turn_reconciler_test.dart: recovers several stranded turns in one pass
+00:08 +142: <repo>/mobile/netclaw-mobile/test/turn_reconciler_test.dart: onChanged fires only when something was actually recovered
+00:09 +143: <repo>/mobile/netclaw-mobile/test/theme_test.dart: theme (109/US1) light and dark schemes share the same brand seed, differ only in brightness
+00:09 +144: <repo>/mobile/netclaw-mobile/test/theme_test.dart: theme (109/US1) MaterialApp resolves the dark scheme under a dark platform brightness
+00:09 +145: <repo>/mobile/netclaw-mobile/test/theme_test.dart: theme (109/US1) MaterialApp resolves the dark scheme under a dark platform brightness
+00:09 +146: <repo>/mobile/netclaw-mobile/test/feed_screen_test.dart: message copy/share/select/markdown (109/US2) a text message body is selectable
+00:09 +147: <repo>/mobile/netclaw-mobile/test/feed_screen_test.dart: message copy/share/select/markdown (109/US2) a text message body is selectable
+00:09 +148: <repo>/mobile/netclaw-mobile/test/feed_screen_test.dart: message copy/share/select/markdown (109/US2) a text message body is selectable
+00:09 +149: <repo>/mobile/netclaw-mobile/test/feed_screen_test.dart: message copy/share/select/markdown (109/US2) a text message body is selectable
+00:09 +150: <repo>/mobile/netclaw-mobile/test/feed_screen_test.dart: message copy/share/select/markdown (109/US2) a text message body is selectable
+00:09 +151: <repo>/mobile/netclaw-mobile/test/feed_screen_test.dart: message copy/share/select/markdown (109/US2) a text message body is selectable
+00:10 +152: <repo>/mobile/netclaw-mobile/test/feed_screen_test.dart: message copy/share/select/markdown (109/US2) a text message body is selectable
+00:10 +153: <repo>/mobile/netclaw-mobile/test/feed_screen_test.dart: message copy/share/select/markdown (109/US2) a text message body is selectable
+00:10 +154: <repo>/mobile/netclaw-mobile/test/feed_screen_test.dart: message copy/share/select/markdown (109/US2) a text message body is selectable
+00:10 +155: <repo>/mobile/netclaw-mobile/test/feed_screen_test.dart: message copy/share/select/markdown (109/US2) a text message body is selectable
+00:10 +156: <repo>/mobile/netclaw-mobile/test/feed_screen_test.dart: message copy/share/select/markdown (109/US2) a text message body is selectable
+00:10 +157: <repo>/mobile/netclaw-mobile/test/feed_screen_test.dart: message copy/share/select/markdown (109/US2) a text message body is selectable
+00:10 +158: <repo>/mobile/netclaw-mobile/test/feed_screen_test.dart: message copy/share/select/markdown (109/US2) a text message body is selectable
+00:10 +159: <repo>/mobile/netclaw-mobile/test/feed_screen_test.dart: message copy/share/select/markdown (109/US2) a text message body is selectable
+00:10 +160: <repo>/mobile/netclaw-mobile/test/feed_screen_test.dart: message copy/share/select/markdown (109/US2) a text message body is selectable
+00:10 +161: <repo>/mobile/netclaw-mobile/test/feed_screen_test.dart: message copy/share/select/markdown (109/US2) a text message body is selectable
+00:10 +162: <repo>/mobile/netclaw-mobile/test/widget_test.dart: App starts on the enrollment screen when nothing is persisted
+00:11 +163: <repo>/mobile/netclaw-mobile/test/widget_test.dart: App starts on the enrollment screen when nothing is persisted
+00:11 +164: <repo>/mobile/netclaw-mobile/test/widget_test.dart: App starts on the enrollment screen when nothing is persisted
+00:11 +165: <repo>/mobile/netclaw-mobile/test/widget_test.dart: App starts on the enrollment screen when nothing is persisted
+00:11 +166: <repo>/mobile/netclaw-mobile/test/widget_test.dart: App starts on the enrollment screen when nothing is persisted
+00:11 +167: <repo>/mobile/netclaw-mobile/test/widget_test.dart: App starts on the enrollment screen when nothing is persisted
+00:11 +168: <repo>/mobile/netclaw-mobile/test/widget_test.dart: App starts on the enrollment screen when nothing is persisted
+00:11 +169: <repo>/mobile/netclaw-mobile/test/widget_test.dart: App starts on the enrollment screen when nothing is persisted
+00:11 +170: <repo>/mobile/netclaw-mobile/test/widget_test.dart: App starts on the enrollment screen when nothing is persisted
+00:11 +171: <repo>/mobile/netclaw-mobile/test/widget_test.dart: App starts on the enrollment screen when nothing is persisted
+00:11 +172: <repo>/mobile/netclaw-mobile/test/widget_test.dart: App starts on the enrollment screen when nothing is persisted
+00:11 +173: <repo>/mobile/netclaw-mobile/test/widget_test.dart: App starts on the enrollment screen when nothing is persisted
+00:11 +174: <repo>/mobile/netclaw-mobile/test/widget_test.dart: App starts on the enrollment screen when nothing is persisted
+00:11 +175: <repo>/mobile/netclaw-mobile/test/widget_test.dart: App starts on the enrollment screen when nothing is persisted
+00:11 +176: <repo>/mobile/netclaw-mobile/test/widget_test.dart: App starts on the enrollment screen when nothing is persisted
+00:11 +177: <repo>/mobile/netclaw-mobile/test/widget_test.dart: App starts on the enrollment screen when nothing is persisted
+00:11 +178: <repo>/mobile/netclaw-mobile/test/widget_test.dart: App starts on the enrollment screen when nothing is persisted
+00:11 +179: <repo>/mobile/netclaw-mobile/test/widget_test.dart: App starts on the enrollment screen when nothing is persisted
+00:11 +180: <repo>/mobile/netclaw-mobile/test/widget_test.dart: App starts on the enrollment screen when nothing is persisted
+00:11 +181: <repo>/mobile/netclaw-mobile/test/widget_test.dart: App starts on the enrollment screen when nothing is persisted
+00:11 +182: <repo>/mobile/netclaw-mobile/test/widget_test.dart: App starts on the enrollment screen when nothing is persisted
+00:11 +183: <repo>/mobile/netclaw-mobile/test/widget_test.dart: App starts on the enrollment screen when nothing is persisted
+00:11 +184: <repo>/mobile/netclaw-mobile/test/widget_test.dart: App starts on the enrollment screen when nothing is persisted
+00:11 +185: <repo>/mobile/netclaw-mobile/test/widget_test.dart: App starts on the enrollment screen when nothing is persisted
+00:11 +186: <repo>/mobile/netclaw-mobile/test/widget_test.dart: App starts on the enrollment screen when nothing is persisted
+00:11 +187: <repo>/mobile/netclaw-mobile/test/widget_test.dart: App starts on the enrollment screen when nothing is persisted
+00:11 +188: <repo>/mobile/netclaw-mobile/test/widget_test.dart: App starts on the enrollment screen when nothing is persisted
+00:11 +189: <repo>/mobile/netclaw-mobile/test/widget_test.dart: App starts on the enrollment screen when nothing is persisted
+00:11 +190: <repo>/mobile/netclaw-mobile/test/widget_test.dart: App starts on the enrollment screen when nothing is persisted
+00:11 +191: <repo>/mobile/netclaw-mobile/test/widget_test.dart: App starts on the enrollment screen when nothing is persisted
+00:11 +192: <repo>/mobile/netclaw-mobile/test/widget_test.dart: App starts on the enrollment screen when nothing is persisted
+00:11 +193: <repo>/mobile/netclaw-mobile/test/widget_test.dart: App starts on the enrollment screen when nothing is persisted
+00:11 +194: <repo>/mobile/netclaw-mobile/test/widget_test.dart: App starts on the enrollment screen when nothing is persisted
+00:11 +195: <repo>/mobile/netclaw-mobile/test/widget_test.dart: App starts on the enrollment screen when nothing is persisted
+00:11 +196: <repo>/mobile/netclaw-mobile/test/widget_test.dart: App starts on the enrollment screen when nothing is persisted
+00:11 +197: <repo>/mobile/netclaw-mobile/test/widget_test.dart: App starts on the enrollment screen when nothing is persisted
+00:11 +198: <repo>/mobile/netclaw-mobile/test/widget_test.dart: App starts on the enrollment screen when nothing is persisted
+00:11 +199: <repo>/mobile/netclaw-mobile/test/widget_test.dart: App starts on the enrollment screen when nothing is persisted
+00:11 +200: <repo>/mobile/netclaw-mobile/test/widget_test.dart: App starts on the enrollment screen when nothing is persisted
+00:11 +201: <repo>/mobile/netclaw-mobile/test/widget_test.dart: App starts on the enrollment screen when nothing is persisted
+00:11 +202: <repo>/mobile/netclaw-mobile/test/widget_test.dart: App starts on the enrollment screen when nothing is persisted
+00:11 +203: <repo>/mobile/netclaw-mobile/test/widget_test.dart: App starts on the enrollment screen when nothing is persisted
+00:11 +204: <repo>/mobile/netclaw-mobile/test/feed_screen_test.dart: search (109/US6) typing a query narrows the list live
+00:11 +205: <repo>/mobile/netclaw-mobile/test/feed_screen_test.dart: search (109/US6) typing a query narrows the list live
+00:12 +206: <repo>/mobile/netclaw-mobile/test/feed_screen_test.dart: search (109/US6) clearing the query restores the full list
+00:12 +207: <repo>/mobile/netclaw-mobile/test/feed_screen_test.dart: search (109/US6) clearing the query restores the full list
+00:12 +208: <repo>/mobile/netclaw-mobile/test/feed_screen_test.dart: search (109/US6) clearing the query restores the full list
+00:12 +209: <repo>/mobile/netclaw-mobile/test/feed_screen_test.dart: search (109/US6) clearing the query restores the full list
+00:12 +210: <repo>/mobile/netclaw-mobile/test/feed_screen_test.dart: search (109/US6) clearing the query restores the full list
+00:12 +211: <repo>/mobile/netclaw-mobile/test/feed_screen_test.dart: search (109/US6) clearing the query restores the full list
+00:12 +212: <repo>/mobile/netclaw-mobile/test/feed_screen_test.dart: search (109/US6) clearing the query restores the full list
+00:12 +213: <repo>/mobile/netclaw-mobile/test/feed_screen_test.dart: search (109/US6) clearing the query restores the full list
+00:12 +214: <repo>/mobile/netclaw-mobile/test/feed_screen_test.dart: search (109/US6) clearing the query restores the full list
+00:12 +215: <repo>/mobile/netclaw-mobile/test/feed_screen_test.dart: search (109/US6) clearing the query restores the full list
+00:12 +216: <repo>/mobile/netclaw-mobile/test/feed_screen_test.dart: search (109/US6) clearing the query restores the full list
+00:12 +217: <repo>/mobile/netclaw-mobile/test/feed_screen_test.dart: search (109/US6) clearing the query restores the full list
+00:12 +218: <repo>/mobile/netclaw-mobile/test/feed_screen_test.dart: search (109/US6) clearing the query restores the full list
+00:12 +219: <repo>/mobile/netclaw-mobile/test/feed_screen_test.dart: search (109/US6) clearing the query restores the full list
+00:12 +220: <repo>/mobile/netclaw-mobile/test/feed_screen_test.dart: search (109/US6) clearing the query restores the full list
+00:12 +221: <repo>/mobile/netclaw-mobile/test/feed_screen_test.dart: search (109/US6) clearing the query restores the full list
+00:12 +222: <repo>/mobile/netclaw-mobile/test/feed_screen_test.dart: search (109/US6) clearing the query restores the full list
+00:12 +223: <repo>/mobile/netclaw-mobile/test/feed_screen_test.dart: search (109/US6) clearing the query restores the full list
+00:12 +224: <repo>/mobile/netclaw-mobile/test/notification_deep_link_test.dart: a tap whose message has not arrived yet (spec 107/US1) expires and reports it, rather than waiting forever (FR-003)
+00:12 +225: <repo>/mobile/netclaw-mobile/test/conversation_store_test.dart: appended turns persist across a simulated app restart (T011)
+00:12 +226: <repo>/mobile/netclaw-mobile/test/conversation_store_test.dart: appended turns persist across a simulated app restart (T011)
+00:12 +227: <repo>/mobile/netclaw-mobile/test/conversation_store_test.dart: appended turns persist across a simulated app restart (T011)
+00:12 +228: <repo>/mobile/netclaw-mobile/test/feed_screen_test.dart: search (109/US6) a query matching nothing shows an explicit empty state
+00:12 +229: <repo>/mobile/netclaw-mobile/test/feed_screen_test.dart: search (109/US6) a query matching nothing shows an explicit empty state
+00:12 +230: <repo>/mobile/netclaw-mobile/test/feed_screen_test.dart: search (109/US6) a query matching nothing shows an explicit empty state
+00:12 +231: <repo>/mobile/netclaw-mobile/test/feed_screen_test.dart: search (109/US6) a query matching nothing shows an explicit empty state
+00:12 +232: <repo>/mobile/netclaw-mobile/test/feed_screen_test.dart: search (109/US6) a query matching nothing shows an explicit empty state
+00:12 +233: <repo>/mobile/netclaw-mobile/test/feed_screen_test.dart: search (109/US6) a query matching nothing shows an explicit empty state
+00:12 +234: <repo>/mobile/netclaw-mobile/test/feed_screen_test.dart: search (109/US6) a query matching nothing shows an explicit empty state
+00:12 +235: <repo>/mobile/netclaw-mobile/test/feed_screen_test.dart: search (109/US6) a query matching nothing shows an explicit empty state
+00:12 +236: <repo>/mobile/netclaw-mobile/test/feed_screen_test.dart: search (109/US6) a query matching nothing shows an explicit empty state
+00:12 +237: <repo>/mobile/netclaw-mobile/test/feed_screen_test.dart: search (109/US6) a query matching nothing shows an explicit empty state
+00:12 +238: <repo>/mobile/netclaw-mobile/test/feed_screen_test.dart: search (109/US6) a query matching nothing shows an explicit empty state
+00:12 +239: <repo>/mobile/netclaw-mobile/test/feed_screen_test.dart: search (109/US6) a query matching nothing shows an explicit empty state
+00:12 +240: <repo>/mobile/netclaw-mobile/test/feed_screen_test.dart: search (109/US6) a query matching nothing shows an explicit empty state
+00:12 +241: <repo>/mobile/netclaw-mobile/test/feed_screen_test.dart: search (109/US6) a query matching nothing shows an explicit empty state
+00:12 +242: <repo>/mobile/netclaw-mobile/test/border_health_headless_test.dart: speaks the cached summary together with its age (FR-007)
+00:12 +243: <repo>/mobile/netclaw-mobile/test/border_health_headless_test.dart: speaks the alarm line verbatim when one is active
+00:12 +244: <repo>/mobile/netclaw-mobile/test/border_health_headless_test.dart: throws NoHealthDataError when no heartbeat has ever been received — distinct from a connection failure (User Story 3 AS3)
+00:12 +245: <repo>/mobile/netclaw-mobile/test/border_health_headless_test.dart: formats an hour-scale age correctly
+00:12 +246: <repo>/mobile/netclaw-mobile/test/dashboard_data_test.dart: buildDashboardSnapshot not enrolled: no stored enrollment
+00:12 +247: <repo>/mobile/netclaw-mobile/test/dashboard_data_test.dart: buildDashboardSnapshot enrolled and connected surfaces identity from StoredEnrollment
+00:12 +248: <repo>/mobile/netclaw-mobile/test/dashboard_data_test.dart: buildDashboardSnapshot enrolled but disconnected still surfaces identity, connected is false
+00:12 +249: <repo>/mobile/netclaw-mobile/test/dashboard_data_test.dart: UnreadPendingSnapshot totalUnread combines feed and chat, excludes approvals
+00:12 +250: <repo>/mobile/netclaw-mobile/test/message_feed_test.dart: appended messages persist across a simulated app restart (T029)
+00:13 +251: <repo>/mobile/netclaw-mobile/test/message_feed_test.dart: wireMessageFeed appends a Border-pushed message and acknowledges it
+00:13 +252: <repo>/mobile/netclaw-mobile/test/message_feed_test.dart: acknowledge/delete/unreadCount (073/FR-008/FR-012/FR-013) a new message is unread; unreadCount reflects it
+00:13 +253: <repo>/mobile/netclaw-mobile/test/message_feed_test.dart: acknowledge/delete/unreadCount (073/FR-008/FR-012/FR-013) acknowledge clears unread state but keeps the message visible
+00:13 +254: <repo>/mobile/netclaw-mobile/test/message_feed_test.dart: acknowledge/delete/unreadCount (073/FR-008/FR-012/FR-013) acknowledge persists across a simulated restart
+00:13 +255: <repo>/mobile/netclaw-mobile/test/message_feed_test.dart: acknowledge/delete/unreadCount (073/FR-008/FR-012/FR-013) delete permanently removes the message
+00:13 +256: <repo>/mobile/netclaw-mobile/test/message_feed_test.dart: acknowledge/delete/unreadCount (073/FR-008/FR-012/FR-013) a message written before this feature shipped (no acknowledged key) defaults to acknowledged=true, never unread (research D5)
+00:13 +257: <repo>/mobile/netclaw-mobile/test/message_feed_test.dart: deduplication by message identity (spec 107/US3, contract §2) a duplicate pushed_at is declined (FR-004, FR-005)
+00:13 +258: <repo>/mobile/netclaw-mobile/test/message_feed_test.dart: deduplication by message identity (spec 107/US3, contract §2) two distinct messages both store, even one second apart
+00:13 +259: <repo>/mobile/netclaw-mobile/test/message_feed_test.dart: deduplication by message identity (spec 107/US3, contract §2) read state survives re-delivery (FR-006, §2.2)
+00:13 +260: <repo>/mobile/netclaw-mobile/test/message_feed_test.dart: deduplication by message identity (spec 107/US3, contract §2) dedup survives a restart, matching on what is on disk
+00:13 +261: <repo>/mobile/netclaw-mobile/test/message_feed_test.dart: deduplication by message identity (spec 107/US3, contract §2) identity is instant-based, not DateTime-equality based
+00:13 +262: <repo>/mobile/netclaw-mobile/test/message_feed_test.dart: deduplication by message identity (spec 107/US3, contract §2) contains() reports what is stored
+00:13 +263: <repo>/mobile/netclaw-mobile/test/message_feed_test.dart: deduplication by message identity (spec 107/US3, contract §2) a declined duplicate does not re-announce via wireMessageFeed (§2.3)
+00:13 +264: <repo>/mobile/netclaw-mobile/test/message_feed_test.dart: EdgeMessage.tryFromWire strictness (spec 107, contract §3.3) rejects a missing or unparseable pushed_at rather than defaulting
+00:13 +265: <repo>/mobile/netclaw-mobile/test/message_feed_test.dart: EdgeMessage.tryFromWire strictness (spec 107, contract §3.3) fromWire keeps its lenient fallback for the live channel
+00:13 +266: <repo>/mobile/netclaw-mobile/test/message_feed_test.dart: EdgeMessage.tryFromWire strictness (spec 107, contract §3.3) accepts the fully stringified shape the sender emits
+00:13 +267: <repo>/mobile/netclaw-mobile/test/message_feed_test.dart: wireMessageFeed is the ONLY n2n/edge/message registration site (§4)
+00:13 +268: <repo>/mobile/netclaw-mobile/test/device_heartbeat_test.dart: looksLikeDeviceHeartbeat a heartbeat push (starts with "NetClaw ") is recognized
+00:13 +269: <repo>/mobile/netclaw-mobile/test/device_heartbeat_test.dart: looksLikeDeviceHeartbeat an ordinary agent-authored message is not mistaken for a heartbeat
+00:13 +270: <repo>/mobile/netclaw-mobile/test/device_heartbeat_test.dart: looksLikeDeviceHeartbeat a non-text push is never a heartbeat, even with matching text content
+00:13 +271: <repo>/mobile/netclaw-mobile/test/device_heartbeat_test.dart: heartbeatSummary / heartbeatIsAlarm (FR-010) a routine heartbeat with no alarm line summarizes as all-clear
+00:13 +272: <repo>/mobile/netclaw-mobile/test/device_heartbeat_test.dart: heartbeatSummary / heartbeatIsAlarm (FR-010) an alarm-bearing heartbeat surfaces the alarm line verbatim
+00:13 +273: <repo>/mobile/netclaw-mobile/test/device_heartbeat_test.dart: DeviceHeartbeatStatus.fromMessage captures summary, timestamp, and alarm flag from the raw push
+00:13 +274: <repo>/mobile/netclaw-mobile/test/device_heartbeat_test.dart: DeviceHeartbeatStore a heartbeat saved survives a simulated app restart
+00:13 +275: <repo>/mobile/netclaw-mobile/test/device_heartbeat_test.dart: DeviceHeartbeatStore a later save overwrites the earlier one -- only the latest heartbeat matters
+00:13 +276: <repo>/mobile/netclaw-mobile/test/device_heartbeat_test.dart: DeviceHeartbeatStore a store never written to loads as null, not an error
+00:13 +277: <repo>/mobile/netclaw-mobile/test/live_activity_test.dart: start() with no platform implementation never throws (best-effort)
+00:13 +278: <repo>/mobile/netclaw-mobile/test/live_activity_test.dart: end() with no platform implementation never throws (best-effort)
+00:13 +279: <repo>/mobile/netclaw-mobile/test/live_activity_test.dart: start() invokes the channel with the correct method and arguments
+00:13 +280: <repo>/mobile/netclaw-mobile/test/live_activity_test.dart: end() invokes the channel
+00:13 +281: <repo>/mobile/netclaw-mobile/test/live_activity_test.dart: with a recording mock handler update (spec 113, FR-003) invokes the update method with the given arguments
+00:13 +282: <repo>/mobile/netclaw-mobile/test/live_activity_test.dart: with a recording mock handler update (spec 113, FR-003) a channel exception is swallowed, matching start/end
+00:13 +283: <repo>/mobile/netclaw-mobile/test/live_activity_test.dart: with a recording mock handler startAsk/updateAsk/endAsk (spec 113, FR-004/FR-006/FR-007) startAsk invokes with taskId and questionPreview
+00:13 +284: <repo>/mobile/netclaw-mobile/test/live_activity_test.dart: with a recording mock handler startAsk/updateAsk/endAsk (spec 113, FR-004/FR-006/FR-007) updateAsk invokes with taskId and progressDetail
+00:13 +285: <repo>/mobile/netclaw-mobile/test/live_activity_test.dart: with a recording mock handler startAsk/updateAsk/endAsk (spec 113, FR-004/FR-006/FR-007) endAsk invokes with taskId and state
+00:13 +286: <repo>/mobile/netclaw-mobile/test/live_activity_test.dart: with a recording mock handler startAsk/updateAsk/endAsk (spec 113, FR-004/FR-006/FR-007) a channel exception on startAsk/updateAsk/endAsk is swallowed
+00:13 +287: <repo>/mobile/netclaw-mobile/test/enrollment_store_test.dart: a saved enrollment persists across a simulated app restart
+00:13 +288: <repo>/mobile/netclaw-mobile/test/enrollment_store_test.dart: load() returns null when nothing has ever been saved
+00:13 +289: <repo>/mobile/netclaw-mobile/test/enrollment_store_test.dart: clear() removes a saved enrollment
+00:13 +290: <repo>/mobile/netclaw-mobile/test/edge_identity_test.dart: EdgeIdentity talks to native code only via ensureKeyPair/sign
+00:14 +291: <repo>/mobile/netclaw-mobile/test/background_refresh_test.dart: summarizeBackgroundRefresh (FR-013: ONE notification, not one per item) a single new message
+00:14 +292: <repo>/mobile/netclaw-mobile/test/background_refresh_test.dart: summarizeBackgroundRefresh (FR-013: ONE notification, not one per item) several new messages
+00:14 +293: <repo>/mobile/netclaw-mobile/test/background_refresh_test.dart: summarizeBackgroundRefresh (FR-013: ONE notification, not one per item) a single approval request
+00:14 +294: <repo>/mobile/netclaw-mobile/test/background_refresh_test.dart: summarizeBackgroundRefresh (FR-013: ONE notification, not one per item) several approval requests
+00:14 +295: <repo>/mobile/netclaw-mobile/test/background_refresh_test.dart: summarizeBackgroundRefresh (FR-013: ONE notification, not one per item) messages and approvals together combine into one summary
+00:14 +296: <repo>/mobile/netclaw-mobile/test/background_refresh_test.dart: summarizeBackgroundRefresh (FR-013: ONE notification, not one per item) nothing arrived produces an empty summary (caller must not post in this case)
+00:14 +297: <repo>/mobile/netclaw-mobile/test/ask_border_headless_test.dart: reports the acknowledgment before any ask_result has arrived (FR-003)
+00:14 +298: <repo>/mobile/netclaw-mobile/test/ask_border_headless_test.dart: persists the turn as pending with origin siri before returning the ack (FR-005/FR-011)
+00:14 +299: <repo>/mobile/netclaw-mobile/test/ask_border_headless_test.dart: sends origin: voice on the underlying n2n/edge/ask call (spec 117 FR-002)
+00:14 +300: <repo>/mobile/netclaw-mobile/test/ask_border_headless_test.dart: once ask_result arrives within the window, finalizes the turn and notifies (FR-004)
+00:14 +301: <repo>/mobile/netclaw-mobile/test/ask_border_headless_test.dart: a failed task is also finalized and notified, not left pending
+00:14 +302: <repo>/mobile/netclaw-mobile/test/ask_border_headless_test.dart: a failed task is also finalized and notified, not left pending
+00:14 +303: <repo>/mobile/netclaw-mobile/test/ask_border_headless_test.dart: a failed task is also finalized and notified, not left pending
+00:14 +304: <repo>/mobile/netclaw-mobile/test/ask_border_headless_test.dart: a failed task is also finalized and notified, not left pending
+00:14 +305: <repo>/mobile/netclaw-mobile/test/ask_border_headless_test.dart: a failed task is also finalized and notified, not left pending
+00:14 +306: <repo>/mobile/netclaw-mobile/test/ask_border_headless_test.dart: a failed task is also finalized and notified, not left pending
+00:14 +307: <repo>/mobile/netclaw-mobile/test/ask_border_headless_test.dart: a failed task is also finalized and notified, not left pending
+00:14 +308: <repo>/mobile/netclaw-mobile/test/ask_border_headless_test.dart: if the window elapses first, the turn stays pending for later reconciliation (R8)
+00:14 +309: <repo>/mobile/netclaw-mobile/test/ask_border_headless_test.dart: onFinished fires exactly once even when the result arrives instead of timing out
+00:14 +310: <repo>/mobile/netclaw-mobile/test/ask_border_headless_test.dart: onFinished fires exactly once even when the result arrives instead of timing out
+00:14 +311: <repo>/mobile/netclaw-mobile/test/ask_border_headless_test.dart: onFinished fires exactly once even when the result arrives instead of timing out
+00:14 +312: <repo>/mobile/netclaw-mobile/test/notification_response_routing_test.dart: a plain tap (no action id) falls through to the deep-link handler
+00:14 +313: <repo>/mobile/netclaw-mobile/test/ask_border_headless_test.dart: a real answer arriving within fastWindow is returned directly for Siri to speak (two-way voice)
+00:14 +314: <repo>/mobile/netclaw-mobile/test/ask_border_headless_test.dart: a real answer arriving within fastWindow is returned directly for Siri to speak (two-way voice)
+00:14 +315: <repo>/mobile/netclaw-mobile/test/ask_border_headless_test.dart: a markdown-laden answer arriving within fastWindow is stripped for Siri, but stored unstripped for the Chat screen
+00:14 +316: <repo>/mobile/netclaw-mobile/test/ask_border_headless_test.dart: askBorderFastWindow is retuned to 12s against Pass 2's measured latency (spec 117 R1)
+00:14 +317: <repo>/mobile/netclaw-mobile/test/ask_border_headless_test.dart: stripMarkdownForSpeech removes bold/italic emphasis markers, keeping content
+00:14 +318: <repo>/mobile/netclaw-mobile/test/ask_border_headless_test.dart: stripMarkdownForSpeech removes headers, keeping content
+00:14 +319: <repo>/mobile/netclaw-mobile/test/ask_border_headless_test.dart: stripMarkdownForSpeech removes bullet list markers, keeping content
+00:14 +320: <repo>/mobile/netclaw-mobile/test/ask_border_headless_test.dart: stripMarkdownForSpeech leaves plain text with no markup unchanged
+00:14 +321: <repo>/mobile/netclaw-mobile/test/ask_border_headless_test.dart: stripMarkdownForSpeech handles a realistic mix of all three without leaving excess blank lines
+00:14 +322: <repo>/mobile/netclaw-mobile/test/manual_enrollment_screen_test.dart: buildManualEnrollmentQr produces the exact shape a scanned QR would
+00:14 +323: <repo>/mobile/netclaw-mobile/test/manual_enrollment_screen_test.dart: empty fields are refused before any enrollment attempt
+00:15 +324: <repo>/mobile/netclaw-mobile/test/manual_enrollment_screen_test.dart: empty fields are refused before any enrollment attempt
+00:15 +325: <repo>/mobile/netclaw-mobile/test/manual_enrollment_screen_test.dart: empty fields are refused before any enrollment attempt
+00:15 +326: <repo>/mobile/netclaw-mobile/test/manual_enrollment_screen_test.dart: empty fields are refused before any enrollment attempt
+00:15 +327: <repo>/mobile/netclaw-mobile/test/manual_enrollment_screen_test.dart: empty fields are refused before any enrollment attempt
+00:15 +328: <repo>/mobile/netclaw-mobile/test/manual_enrollment_screen_test.dart: empty fields are refused before any enrollment attempt
+00:15 +329: <repo>/mobile/netclaw-mobile/test/manual_enrollment_screen_test.dart: empty fields are refused before any enrollment attempt
+00:15 +330: <repo>/mobile/netclaw-mobile/test/manual_enrollment_screen_test.dart: empty fields are refused before any enrollment attempt
+00:15 +331: <repo>/mobile/netclaw-mobile/test/manual_enrollment_screen_test.dart: empty fields are refused before any enrollment attempt
+00:15 +332: <repo>/mobile/netclaw-mobile/test/manual_enrollment_screen_test.dart: empty fields are refused before any enrollment attempt
+00:15 +333: <repo>/mobile/netclaw-mobile/test/manual_enrollment_screen_test.dart: empty fields are refused before any enrollment attempt
+00:15 +334: <repo>/mobile/netclaw-mobile/test/manual_enrollment_screen_test.dart: empty fields are refused before any enrollment attempt
+00:15 +335: <repo>/mobile/netclaw-mobile/test/manual_enrollment_screen_test.dart: empty fields are refused before any enrollment attempt
+00:15 +336: <repo>/mobile/netclaw-mobile/test/manual_enrollment_screen_test.dart: empty fields are refused before any enrollment attempt
+00:15 +337: <repo>/mobile/netclaw-mobile/test/manual_enrollment_screen_test.dart: empty fields are refused before any enrollment attempt
+00:15 +338: <repo>/mobile/netclaw-mobile/test/manual_enrollment_screen_test.dart: empty fields are refused before any enrollment attempt
+00:15 +339: <repo>/mobile/netclaw-mobile/test/manual_enrollment_screen_test.dart: empty fields are refused before any enrollment attempt
+00:15 +340: <repo>/mobile/netclaw-mobile/test/manual_enrollment_screen_test.dart: empty fields are refused before any enrollment attempt
+00:15 +341: <repo>/mobile/netclaw-mobile/test/manual_enrollment_screen_test.dart: empty fields are refused before any enrollment attempt
+00:15 +342: <repo>/mobile/netclaw-mobile/test/manual_enrollment_screen_test.dart: empty fields are refused before any enrollment attempt
+00:15 +343: <repo>/mobile/netclaw-mobile/test/manual_enrollment_screen_test.dart: empty fields are refused before any enrollment attempt
+00:15 +344: <repo>/mobile/netclaw-mobile/test/manual_enrollment_screen_test.dart: empty fields are refused before any enrollment attempt
+00:15 +345: <repo>/mobile/netclaw-mobile/test/manual_enrollment_screen_test.dart: empty fields are refused before any enrollment attempt
+00:15 +346: <repo>/mobile/netclaw-mobile/test/manual_enrollment_screen_test.dart: empty fields are refused before any enrollment attempt
+00:15 +347: <repo>/mobile/netclaw-mobile/test/manual_enrollment_screen_test.dart: empty fields are refused before any enrollment attempt
+00:15 +348: <repo>/mobile/netclaw-mobile/test/manual_enrollment_screen_test.dart: empty fields are refused before any enrollment attempt
+00:15 +349: <repo>/mobile/netclaw-mobile/test/manual_enrollment_screen_test.dart: empty fields are refused before any enrollment attempt
+00:15 +350: <repo>/mobile/netclaw-mobile/test/edge_client_error_classification_test.dart: isRevokedByBorder -32023 (_ERR_NOT_TRUSTED) is treated as a genuine revocation
+00:15 +351: <repo>/mobile/netclaw-mobile/test/manual_enrollment_screen_test.dart: a non-numeric port is refused with a clear message
+00:15 +352: <repo>/mobile/netclaw-mobile/test/manual_enrollment_screen_test.dart: a non-numeric port is refused with a clear message
+00:15 +353: <repo>/mobile/netclaw-mobile/test/manual_enrollment_screen_test.dart: a non-numeric port is refused with a clear message
+00:15 +354: <repo>/mobile/netclaw-mobile/test/manual_enrollment_screen_test.dart: a non-numeric port is refused with a clear message
+00:16 +355: <repo>/mobile/netclaw-mobile/test/chat_screen_test.dart: an in-progress turn shows a distinct state from a completed one (T015)
+00:16 +356: <repo>/mobile/netclaw-mobile/test/chat_screen_test.dart: an in-progress turn shows a distinct state from a completed one (T015)
+00:16 +357: <repo>/mobile/netclaw-mobile/test/chat_screen_test.dart: an in-progress turn shows a distinct state from a completed one (T015)
+00:16 +358: <repo>/mobile/netclaw-mobile/test/chat_screen_test.dart: an in-progress turn shows a distinct state from a completed one (T015)
+00:16 +359: <repo>/mobile/netclaw-mobile/test/chat_screen_test.dart: an in-progress turn shows a distinct state from a completed one (T015)
+00:17 +360: <repo>/mobile/netclaw-mobile/test/chat_screen_test.dart: an in-progress turn shows a distinct state from a completed one (T015)
+00:17 +361: <repo>/mobile/netclaw-mobile/test/chat_screen_test.dart: an in-progress turn shows a distinct state from a completed one (T015)
+00:17 +362: <repo>/mobile/netclaw-mobile/test/chat_screen_test.dart: an in-progress turn shows a distinct state from a completed one (T015)
+00:17 +363: <repo>/mobile/netclaw-mobile/test/chat_screen_test.dart: an in-progress turn shows a distinct state from a completed one (T015)
+00:17 +364: <repo>/mobile/netclaw-mobile/test/chat_screen_test.dart: an in-progress turn shows a distinct state from a completed one (T015)
+00:17 +365: <repo>/mobile/netclaw-mobile/test/chat_screen_test.dart: an in-progress turn shows a distinct state from a completed one (T015)
+00:17 +366: <repo>/mobile/netclaw-mobile/test/chat_screen_test.dart: an in-progress turn shows a distinct state from a completed one (T015)
+00:17 +367: <repo>/mobile/netclaw-mobile/test/chat_screen_test.dart: an in-progress turn shows a distinct state from a completed one (T015)
+00:17 +368: <repo>/mobile/netclaw-mobile/test/chat_screen_test.dart: an in-progress turn shows a distinct state from a completed one (T015)
+00:17 +369: <repo>/mobile/netclaw-mobile/test/chat_screen_test.dart: an in-progress turn shows a distinct state from a completed one (T015)
+00:17 +370: <repo>/mobile/netclaw-mobile/test/chat_screen_test.dart: an in-progress turn shows a distinct state from a completed one (T015)
+00:17 +371: <repo>/mobile/netclaw-mobile/test/chat_screen_test.dart: an in-progress turn shows a distinct state from a completed one (T015)
+00:17 +372: <repo>/mobile/netclaw-mobile/test/chat_screen_test.dart: an in-progress turn shows a distinct state from a completed one (T015)
+00:17 +373: <repo>/mobile/netclaw-mobile/test/chat_screen_test.dart: an in-progress turn shows a distinct state from a completed one (T015)
+00:17 +374: <repo>/mobile/netclaw-mobile/test/chat_screen_test.dart: an in-progress turn shows a distinct state from a completed one (T015)
+00:17 +375: <repo>/mobile/netclaw-mobile/test/chat_screen_test.dart: an in-progress turn shows a distinct state from a completed one (T015)
+00:17 +376: <repo>/mobile/netclaw-mobile/test/chat_screen_test.dart: an in-progress turn shows a distinct state from a completed one (T015)
+00:17 +377: <repo>/mobile/netclaw-mobile/test/settings_screen_test.dart: Remove this device (105/US2/FR-003-FR-006) the control is visible
+00:17 +378: <repo>/mobile/netclaw-mobile/test/settings_screen_test.dart: Remove this device (105/US2/FR-003-FR-006) the control is visible
+00:17 +379: <repo>/mobile/netclaw-mobile/test/settings_screen_test.dart: Remove this device (105/US2/FR-003-FR-006) the control is visible
+00:17 +380: <repo>/mobile/netclaw-mobile/test/settings_screen_test.dart: Remove this device (105/US2/FR-003-FR-006) the control is visible
+00:17 +381: <repo>/mobile/netclaw-mobile/test/settings_screen_test.dart: Remove this device (105/US2/FR-003-FR-006) the control is visible
+00:17 +382: <repo>/mobile/netclaw-mobile/test/settings_screen_test.dart: Remove this device (105/US2/FR-003-FR-006) the control is visible
+00:17 +383: <repo>/mobile/netclaw-mobile/test/settings_screen_test.dart: Remove this device (105/US2/FR-003-FR-006) the control is visible
+00:17 +384: <repo>/mobile/netclaw-mobile/test/settings_screen_test.dart: Remove this device (105/US2/FR-003-FR-006) the control is visible
+00:17 +385: <repo>/mobile/netclaw-mobile/test/settings_screen_test.dart: Remove this device (105/US2/FR-003-FR-006) the control is visible
+00:17 +386: <repo>/mobile/netclaw-mobile/test/settings_screen_test.dart: Remove this device (105/US2/FR-003-FR-006) the control is visible
+00:17 +387: <repo>/mobile/netclaw-mobile/test/settings_screen_test.dart: Remove this device (105/US2/FR-003-FR-006) the control is visible
+00:17 +388: <repo>/mobile/netclaw-mobile/test/settings_screen_test.dart: Remove this device (105/US2/FR-003-FR-006) the control is visible
+00:17 +389: <repo>/mobile/netclaw-mobile/test/settings_screen_test.dart: Remove this device (105/US2/FR-003-FR-006) the control is visible
+00:17 +390: <repo>/mobile/netclaw-mobile/test/app_lock_test.dart: AppLockGate (109/FR-008/FR-009) toggle off (default): the child is shown immediately, no lock screen
+00:17 +391: <repo>/mobile/netclaw-mobile/test/app_lock_test.dart: AppLockGate (109/FR-008/FR-009) toggle off (default): the child is shown immediately, no lock screen
+00:17 +392: <repo>/mobile/netclaw-mobile/test/app_lock_test.dart: AppLockGate (109/FR-008/FR-009) toggle off (default): the child is shown immediately, no lock screen
+00:17 +393: <repo>/mobile/netclaw-mobile/test/app_lock_test.dart: AppLockGate (109/FR-008/FR-009) toggle off (default): the child is shown immediately, no lock screen
+00:17 +394: <repo>/mobile/netclaw-mobile/test/app_lock_test.dart: AppLockGate (109/FR-008/FR-009) toggle off (default): the child is shown immediately, no lock screen
+00:17 +395: <repo>/mobile/netclaw-mobile/test/app_lock_test.dart: AppLockGate (109/FR-008/FR-009) toggle off (default): the child is shown immediately, no lock screen
+00:17 +396: <repo>/mobile/netclaw-mobile/test/app_lock_test.dart: AppLockGate (109/FR-008/FR-009) toggle off (default): the child is shown immediately, no lock screen
+00:17 +397: <repo>/mobile/netclaw-mobile/test/app_lock_test.dart: AppLockGate (109/FR-008/FR-009) toggle off (default): the child is shown immediately, no lock screen
+00:17 +398: <repo>/mobile/netclaw-mobile/test/app_lock_test.dart: AppLockGate (109/FR-008/FR-009) toggle off (default): the child is shown immediately, no lock screen
+00:17 +399: <repo>/mobile/netclaw-mobile/test/app_lock_test.dart: AppLockGate (109/FR-008/FR-009) toggle off (default): the child is shown immediately, no lock screen
+00:17 +400: <repo>/mobile/netclaw-mobile/test/app_lock_test.dart: AppLockGate (109/FR-008/FR-009) toggle off (default): the child is shown immediately, no lock screen
+00:17 +401: <repo>/mobile/netclaw-mobile/test/app_lock_test.dart: AppLockGate (109/FR-008/FR-009) toggle off (default): the child is shown immediately, no lock screen
+00:17 +402: <repo>/mobile/netclaw-mobile/test/app_lock_test.dart: AppLockGate (109/FR-008/FR-009) toggle off (default): the child is shown immediately, no lock screen
+00:17 +403: <repo>/mobile/netclaw-mobile/test/app_lock_test.dart: AppLockGate (109/FR-008/FR-009) toggle off (default): the child is shown immediately, no lock screen
+00:17 +404: <repo>/mobile/netclaw-mobile/test/app_lock_test.dart: AppLockGate (109/FR-008/FR-009) toggle off (default): the child is shown immediately, no lock screen
+00:17 +405: <repo>/mobile/netclaw-mobile/test/app_lock_test.dart: AppLockGate (109/FR-008/FR-009) toggle off (default): the child is shown immediately, no lock screen
+00:17 +406: <repo>/mobile/netclaw-mobile/test/app_lock_test.dart: AppLockGate (109/FR-008/FR-009) toggle off (default): the child is shown immediately, no lock screen
+00:17 +407: <repo>/mobile/netclaw-mobile/test/app_lock_test.dart: AppLockGate (109/FR-008/FR-009) toggle off (default): the child is shown immediately, no lock screen
+00:17 +408: <repo>/mobile/netclaw-mobile/test/app_lock_test.dart: AppLockGate (109/FR-008/FR-009) toggle off (default): the child is shown immediately, no lock screen
+00:17 +409: <repo>/mobile/netclaw-mobile/test/app_lock_test.dart: AppLockGate (109/FR-008/FR-009) toggle off (default): the child is shown immediately, no lock screen
+00:17 +410: <repo>/mobile/netclaw-mobile/test/app_lock_test.dart: AppLockGate (109/FR-008/FR-009) toggle off (default): the child is shown immediately, no lock screen
+00:17 +411: <repo>/mobile/netclaw-mobile/test/settings_screen_test.dart: Remove this device (105/US2/FR-003-FR-006) an authentication error (e.g. biometric unavailable) also leaves it untouched
+00:17 +412: <repo>/mobile/netclaw-mobile/test/chat_screen_test.dart: answer copy/share/select/markdown (109/US2) the overflow menu Copy action copies the full answer
+00:18 +413: <repo>/mobile/netclaw-mobile/test/chat_screen_test.dart: answer copy/share/select/markdown (109/US2) the overflow menu Copy action copies the full answer
+00:18 +414: <repo>/mobile/netclaw-mobile/test/chat_screen_test.dart: answer copy/share/select/markdown (109/US2) the overflow menu Copy action copies the full answer
+00:18 +415: <repo>/mobile/netclaw-mobile/test/chat_screen_test.dart: answer copy/share/select/markdown (109/US2) the overflow menu Copy action copies the full answer
+00:18 +416: <repo>/mobile/netclaw-mobile/test/chat_screen_test.dart: answer copy/share/select/markdown (109/US2) the overflow menu Copy action copies the full answer
+00:18 +417: <repo>/mobile/netclaw-mobile/test/chat_screen_test.dart: answer copy/share/select/markdown (109/US2) the overflow menu Copy action copies the full answer
+00:18 +418: <repo>/mobile/netclaw-mobile/test/settings_screen_test.dart: Face ID app lock (109/US4/FR-008) toggling on persists and reveals the grace-period control
+00:18 +419: <repo>/mobile/netclaw-mobile/test/chat_screen_test.dart: answer copy/share/select/markdown (109/US2) long-pressing the answer opens the identical menu as the overflow button
+00:18 +420: <repo>/mobile/netclaw-mobile/test/settings_screen_test.dart: Face ID app lock (109/US4/FR-008) selecting a different grace-period duration persists it
+00:18 +421: <repo>/mobile/netclaw-mobile/test/settings_screen_test.dart: Face ID app lock (109/US4/FR-008) selecting a different grace-period duration persists it
+00:18 +422: <repo>/mobile/netclaw-mobile/test/chat_screen_test.dart: answer copy/share/select/markdown (109/US2) the Share action is wired through the injected shareAction
+00:18 +423: <repo>/mobile/netclaw-mobile/test/chat_screen_test.dart: answer copy/share/select/markdown (109/US2) the Share action is wired through the injected shareAction
+00:18 +424: <repo>/mobile/netclaw-mobile/test/chat_screen_test.dart: answer copy/share/select/markdown (109/US2) a fenced-block answer renders via Markdown; bare CLI output stays preformatted
+00:19 +425: <repo>/mobile/netclaw-mobile/test/chat_screen_test.dart: answer copy/share/select/markdown (109/US2) a pending/working turn shows no answer body at all -- "Working…" instead
+00:19 +426: <repo>/mobile/netclaw-mobile/test/chat_screen_test.dart: search and filter (109/US6) typing a query narrows the list live
+00:19 +427: <repo>/mobile/netclaw-mobile/test/chat_screen_test.dart: search and filter (109/US6) clearing the query restores the full list
+00:19 +428: <repo>/mobile/netclaw-mobile/test/chat_screen_test.dart: search and filter (109/US6) a state filter chip composes with an active text query
+00:19 +429: <repo>/mobile/netclaw-mobile/test/chat_screen_test.dart: search and filter (109/US6) an origin filter chip narrows to matching turns
+00:20 +430: <repo>/mobile/netclaw-mobile/test/chat_screen_test.dart: search and filter (109/US6) a query matching nothing shows an explicit empty state
+00:20 +431: All tests passed!

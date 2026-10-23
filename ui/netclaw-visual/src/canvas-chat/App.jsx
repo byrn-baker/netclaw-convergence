@@ -1,3 +1,20 @@
+import { branchSeed } from './branch-context.js';
+import { runtimeKey, runtimeStorage, runtimeInfo, sendChat, pendingRequest, observeRequest, requestControl, newConversation } from '../shared/runtime-client.js';
+import { C, COLLAPSED_H, DARK, LIGHT } from "./canvas-theme.js";
+import { apiError } from "./terminal-api.js";
+import React, { useState, useRef, useEffect, useCallback, useLayoutEffect } from "react";
+import { createSessionGate } from "./session-gate.js";
+import { installDashboardBridge } from "./dashboard-bridge.js";
+import { nodeTitle, clip, branchSections, copyRich, branchToHtmlFragment, branchToMarkdown, downloadTextFile, branchFileName, branchToHtmlDoc } from "./canvas-export.js";
+import { validateArtifactContent, buildTerminalArtifact, artifactFormat } from "./artifact-formats.js";
+import { TERMINAL_TRANSCRIPT_LIMIT } from "./terminal-constants.js";
+import { normalizeTerminalIntentHistory } from "./terminal-intent.js";
+import { unbindImportedSession, openAssessment } from "./assessment-link.js";
+import { createPortal } from "react-dom";
+import { createLazyLane } from "./LazyLane.jsx";
+export const TerminalLane = createLazyLane(() => import("./TerminalLane.jsx"), "SSH terminal");
+const ConfigReviewLane = createLazyLane(() => import("./ConfigReviewLane.jsx"), "Configuration review");
+const ResultLane = createLazyLane(() => import("./ResultLane.jsx"), "Result");
 /*
  * NetClaw Canvas Chat
  *
@@ -5,20 +22,8 @@
  * Built Right. NetClaw-specific transport, branding, and gateway behavior are
  * modifications. See LICENSE in this directory for the upstream MIT terms.
  */
-import React, { useState, useRef, useEffect, useLayoutEffect, useCallback } from "react";
-import { createPortal } from "react-dom";
 
-// ---- theme ---------------------------------------------------------------
-const C = {
-  canvas: "var(--canvas)", ink: "var(--ink)", muted: "var(--muted)", card: "var(--card)",
-  cardAlt: "var(--cardAlt)", hairline: "var(--hairline)", userBubble: "var(--userBubble)",
-  trunk: "var(--trunk)", codeBg: "var(--codeBg)", relBg: "var(--relBg)", relBorder: "var(--relBorder)", relText: "var(--relText)",
-};
-// light/dark palettes injected as CSS custom properties on the root container
-const LIGHT = { "--canvas": "#FBFAF6", "--ink": "#1C2433", "--muted": "#6B7280", "--card": "#FFFFFF", "--cardAlt": "#F6F2E7", "--hairline": "#E3DECF", "--userBubble": "#EEF1F6", "--trunk": "#1B2A4A", "--codeBg": "#F4F1E8", "--relBg": "#F4F1FB", "--relBorder": "#D9CFF0", "--relText": "#5B4B9E", "--ring": "rgba(28,36,51,0.13)", "--shadow": "rgba(0,0,0,0.12)",
-  "--codeText": "#1F2937", "--codeKw": "#6F42C1", "--codeStr": "#0A6E20", "--codeFn": "#005CC5", "--codeNum": "#B5651D", "--codeCmt": "#7A8290" };
-const DARK = { "--canvas": "#0F1216", "--ink": "#E7EAF0", "--muted": "#8B93A4", "--card": "#181C22", "--cardAlt": "#1F242C", "--hairline": "#2A2F39", "--userBubble": "#232A36", "--trunk": "#6098F0", "--codeBg": "#1B2028", "--relBg": "#221E30", "--relBorder": "#3A3350", "--relText": "#BBA9EC", "--ring": "rgba(255,255,255,0.16)", "--shadow": "rgba(0,0,0,0.5)",
-  "--codeText": "#CFD2D8", "--codeKw": "#C678DD", "--codeStr": "#98C379", "--codeFn": "#61AFEF", "--codeNum": "#E5C07B", "--codeCmt": "#6A7380" };
+// ---- branch colors -------------------------------------------------------
 const BRANCH = ["#0E7C7B", "#B5651D", "#5B4B9E", "#A8324E", "#2F6FB0", "#7A6A1F"];
 const ALLCOLORS = [C.trunk, ...BRANCH];
 const depthColor = (d) => (d === 0 ? C.trunk : BRANCH[(d - 1) % BRANCH.length]);
@@ -65,6 +70,10 @@ function orthPath(p, c, obstacles) {
 }
 
 const DEF_W = 360, DEF_H = 460, MIN_W = 260, MIN_H = 220, GAP = 130;
+const TERMINAL_W = 720, TERMINAL_H = 500;
+
+const CONFIG_REVIEW_W = 760, CONFIG_REVIEW_H = 560;
+const RESULT_W = 620, RESULT_H = 500;
 
 // Compute "tidy" positions for every visible node, organizing them into depth columns.
 // Returns a Map(id -> {x, y}). Closed nodes are skipped. Within each column nodes are
@@ -119,13 +128,14 @@ function computeTidyLayout(nodes, opts = {}) {
 
 const zbtn = { width: 28, height: 28, border: "none", background: "transparent", color: C.ink, cursor: "pointer", fontSize: 16, lineHeight: 1, borderRadius: 6, display: "flex", alignItems: "center", justifyContent: "center" };
 
-const COLLAPSED_H = 48;               // height of a minimized lane
+               // height of a minimized lane
+const localStorage = runtimeStorage(globalThis.localStorage);
 const STORE_KEY = "netclaw-canvas-v1"; // legacy localStorage key, migrated on first run
 
 // ---- IndexedDB persistence ----------------------------------------------
 // Sessions live in IDB instead of localStorage so capacity scales to ~half the disk
 // and we can keep an indefinite history of past investigations.
-const DB_NAME = "netclaw-canvas";
+const DB_NAME = runtimeKey("netclaw-canvas");
 const DB_VER = 2;
 const SESS_STORE = "sessions";
 const KV_STORE = "kv";
@@ -146,15 +156,36 @@ function idbOpen() {
     req.onerror = () => reject(req.error);
   });
 }
+const validStoredSession = value => {
+  if(value && runtimeInfo() && value.installationId!==runtimeInfo().installationId) throw Error('Saved canvas belongs to another installation.');
+  return value;
+};
 const idb = {
-  async put(s) { const db = await idbOpen(); return new Promise((res, rej) => { const tx = db.transaction(SESS_STORE, "readwrite"); tx.objectStore(SESS_STORE).put(s); tx.oncomplete = () => res(); tx.onerror = () => rej(tx.error); }); },
-  async get(id) { const db = await idbOpen(); return new Promise((res, rej) => { const r = db.transaction(SESS_STORE).objectStore(SESS_STORE).get(id); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); }); },
-  async list() { const db = await idbOpen(); return new Promise((res, rej) => { const r = db.transaction(SESS_STORE).objectStore(SESS_STORE).getAll(); r.onsuccess = () => res(r.result || []); r.onerror = () => rej(r.error); }); },
+  async put(s) { const db = await idbOpen(); return new Promise((res, rej) => { const tx = db.transaction(SESS_STORE, "readwrite"); tx.objectStore(SESS_STORE).put({...s,installationId:runtimeInfo()?.installationId}); tx.oncomplete = () => res(); tx.onerror = () => rej(tx.error); }); },
+  async get(id) { const db = await idbOpen(); return new Promise((res, rej) => { const r = db.transaction(SESS_STORE).objectStore(SESS_STORE).get(id); r.onsuccess = () => { try { res(validStoredSession(r.result)); } catch(error) { rej(error); } }; r.onerror = () => rej(r.error); }); },
+  async list() { const db = await idbOpen(); return new Promise((res, rej) => { const r = db.transaction(SESS_STORE).objectStore(SESS_STORE).getAll(); r.onsuccess = () => { try { res((r.result || []).map(validStoredSession)); } catch(error) { rej(error); } }; r.onerror = () => rej(r.error); }); },
   async del(id) { const db = await idbOpen(); return new Promise((res, rej) => { const tx = db.transaction(SESS_STORE, "readwrite"); tx.objectStore(SESS_STORE).delete(id); tx.oncomplete = () => res(); tx.onerror = () => rej(tx.error); }); },
   async kvGet(k) { const db = await idbOpen(); return new Promise((res, rej) => { const r = db.transaction(KV_STORE).objectStore(KV_STORE).get(k); r.onsuccess = () => res(r.result ? r.result.v : null); r.onerror = () => rej(r.error); }); },
   async kvPut(k, v) { const db = await idbOpen(); return new Promise((res, rej) => { const tx = db.transaction(KV_STORE, "readwrite"); tx.objectStore(KV_STORE).put({ k, v }); tx.oncomplete = () => res(); tx.onerror = () => rej(tx.error); }); },
   async kvDel(k) { const db = await idbOpen(); return new Promise((res, rej) => { const tx = db.transaction(KV_STORE, "readwrite"); tx.objectStore(KV_STORE).delete(k); tx.oncomplete = () => res(); tx.onerror = () => rej(tx.error); }); },
 };
+
+async function migrateLegacyCanvas() {
+  const selected=runtimeInfo();
+  if (selected?.kind !== 'openclaw' || !indexedDB.databases) return;
+  const claim=globalThis.localStorage.getItem('netclaw.legacy-canvas-owner');
+  if (claim && claim !== selected.installationId) return;
+  if (!((await indexedDB.databases()).some(db=>db.name==='netclaw-canvas'))) return;
+  if (localStorage.getItem('canvas-idb-migrated')==='1') return;
+  const old=await new Promise((resolve,reject)=>{const req=indexedDB.open('netclaw-canvas');req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error);});
+  try {
+    if(!old.objectStoreNames.contains(SESS_STORE))return;
+    const rows=await new Promise((resolve,reject)=>{const req=old.transaction(SESS_STORE).objectStore(SESS_STORE).getAll();req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error);});
+    globalThis.localStorage.setItem('netclaw.legacy-canvas-owner',selected.installationId);
+    for (const row of rows) { if(!await idb.get(row.id))await idb.put(row); }
+    localStorage.setItem('canvas-idb-migrated','1');
+  } finally { old.close(); } // Original database remains a recovery backup.
+}
 
 const sessId = () => "s-" + Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 8);
 const fmtAgo = (ts) => {
@@ -174,16 +205,28 @@ function deriveSessionTitle(nodes) {
       return s.length > 60 ? s.slice(0, 59).trimEnd() + "…" : s;
     }
   }
+  const terminal = nodes.find((node) => node.kind === "terminal");
+  if (terminal) return terminal.title || (terminal.terminalDevice ? `Terminal · ${terminal.terminalDevice}` : "SSH Terminal");
+  const review = nodes.find((node) => node.kind === "config-review");
+  if (review) return review.title || "Configuration review";
+  const result = nodes.find((node) => node.kind === "result");
+  if (result) return result.title || result.artifactName || "Result";
   return "New session";
 }
 
 // ---- api -----------------------------------------------------------------
 // NetClaw owns model/provider selection. The canvas sends branch-isolated
 // context to the same local API used by the existing Visual HUD chat drawer.
-const apiError = async (res) => { let detail = ""; try { const j = await res.json(); detail = j.error?.message || j.message || JSON.stringify(j.error || j); } catch {} return new Error("API " + res.status + (detail ? ": " + detail : "")); };
+
 
 // --- per-provider call shims; each returns assistant text or throws ---
-async function callNetClaw({ messages }) {
+let hudSessionReady;
+async function ensureHudSession() {
+  if (!hudSessionReady) hudSessionReady = fetch("/api/hud/session", { method: "POST" }).then(res => { if (!res.ok) throw new Error("HUD session unavailable"); }).catch(error => { hudSessionReady = null; throw error; });
+  return hudSessionReady;
+}
+async function callNetClaw({ messages, hudThread, onProgress }) {
+  await ensureHudSession();
   const context = messages.map((m) => ({ role: m.role, content: openaiContent(m) }));
   const latestUser = [...context].reverse().find((m) => m.role === "user");
   const latestText = typeof latestUser?.content === "string"
@@ -192,22 +235,15 @@ async function callNetClaw({ messages }) {
   const requestText = latestText.endsWith("\n\n" + TAB_SYSTEM)
     ? latestText.slice(0, -(TAB_SYSTEM.length + 2)).trim()
     : latestText;
-  const res = await fetch("/api/chat", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    // `message` drives NetClaw's activation visualization; `messages` carries
-    // the complete branch context (including the answer-format instruction).
-    body: JSON.stringify({ message: requestText, messages: context }),
-  });
-  if (!res.ok) throw await apiError(res);
-  const data = await res.json();
-  return String(data.response || "").trim();
+  const data = await sendChat({message: requestText, messages: context, hudThread}, onProgress);
+  if (!data.fromGateway) throw new Error('The runtime did not return a confirmed reply.');
+  return { text: String(data.response || "").trim(), assessmentRefs: Array.isArray(data.assessmentRefs) ? data.assessmentRefs : [], fromGateway: data.fromGateway === true };
 }
 
-async function callLLM(messages) {
-  const text = await callNetClaw({ messages });
-  if (!text) throw new Error("empty response from NetClaw");
-  return text;
+async function requestLLM(messages, hudThread, onProgress) {
+  const result = await callNetClaw({ messages, hudThread, onProgress });
+  if (!result.text) throw new Error("empty response from NetClaw");
+  return result;
 }
 
 // ---- image attachments (vision) ------------------------------------------
@@ -267,7 +303,10 @@ function toAPIMessages(msgs) {
   for (const m of msgs) {
     const role = m.role === "user" ? "user" : "assistant";
     // a quoted snippet the user attached rides in front of their question so the model sees it as context
-    let content = m.quote ? `Quoting from the conversation:\n"""\n${m.quote}\n"""\n\n${m.content || ""}` : (m.content || "");
+    const quoteLabel = m.quoteSource === "terminal"
+      ? "Quoting from the selected terminal output:"
+      : "Quoting from the conversation:";
+    let content = m.quote ? `${quoteLabel}\n"""\n${m.quote}\n"""\n\n${m.content || ""}` : (m.content || "");
     // attached text/data/code files are appended so the model can read them
     if (m.files && m.files.length) content += m.files.map((f) => `\n\n----- Attached file: ${f.name}${f.truncated ? " (truncated)" : ""} -----\n${f.text}`).join("");
     const images = m.images && m.images.length ? m.images : null;
@@ -296,7 +335,8 @@ The most authoritative references for this topic, named explicitly: exact RFC nu
 ===SUGGESTED ACTION===
 Concrete next steps to investigate or resolve this, as a short prioritized list. Be specific and operational (commands to run, things to check, what to rule out). If nothing actionable applies, say so.
 
-Use those literal delimiter lines. Do not output any other section headers.`;
+Use those literal delimiter lines. Do not output any other section headers.
+If you used Jev and have an actual assessment ID from its tool result, include within Summary a fenced jev-influence JSON object with assessment_id, status (supported/challenged/changed/unavailable), and explanation of your own interpretation. Never invent an ID or treat this interpretation as execution permission. Omit this object if no assessment was obtained.`;
 
 function parseTabs(raw) {
   const t = String(raw);
@@ -317,19 +357,8 @@ function parseTabs(raw) {
 let _seq = 0;
 
 // Short title and one-line essence for the branch index.
-function clip(s, n) { s = String(s || "").replace(/\s+/g, " ").trim(); return s.length > n ? s.slice(0, n - 1).trimEnd() + "…" : s; }
-function nodeTitle(n) {
-  if (n.title) return n.title;   // user-set custom thread/window name wins
-  if (n.synthFrom && n.synthFrom.length) {
-    const u = n.messages.find((m) => m.role === "user" && !m.relate);
-    return u && u.content ? clip(u.content, 40) : `Synthesis of ${n.synthFrom.length}`;
-  }
-  if (n.depth === 0) {
-    const u = n.messages.find((m) => m.role === "user" && !m.relate);
-    return u && u.content ? clip(u.content, 40) : "New thread";
-  }
-  return n.sourceQuote || "Branch";
-}
+
+
 // depth-first pre-order so each node is listed directly beneath its parent
 function orderTree(list) {
   const kids = {};
@@ -357,9 +386,26 @@ const ROOT = {
 
 export default function App() {
   const [nodes, setNodes] = useState([ROOT]);
+  const [sessionError, setSessionError] = useState(null);
+  const sessionGate = useRef(createSessionGate());
+  const [runtimeProgress, setRuntimeProgress] = useState({});
+  const callLLM = (messages, thread) => sessionGate.current.request(() => requestLLM(messages, thread, value=>setRuntimeProgress(previous=>({...previous,[thread]:value}))));
+  const runSessionChange = async (work) => {
+    try { await sessionGate.current.change(work); setSessionError(null); }
+    catch (error) { setSessionError(String(error.message || error)); }
+  };
   const [active, setActive] = useState("root");
   const [branchHint, setBranchHint] = useState(null);
   const [drafts, setDrafts] = useState({});
+  // Dashboard context is additive and never submits the conversation.
+  const dashboardAccept = useRef(null);
+  dashboardAccept.current = (content) => {
+    sessionGate.current.assertIdle();
+    if (!active || !nodes.some(node => node.id === active && !node.closed)) throw new Error("Select an open canvas thread first.");
+    setDrafts(previous => ({ ...previous, [active]: [previous[active], content].filter(Boolean).join("\n\n") }));
+  };
+  useEffect(() => installDashboardBridge({ window, accept: content => dashboardAccept.current(content) }), []);
+
   const [quotes, setQuotes] = useState({});   // per-node pending quote attached to the next question
   const [attachments, setAttachments] = useState({});   // per-node pending image attachments
   const interaction = useRef(null);   // {type, id, mx, my, x, y, w, h}
@@ -369,6 +415,12 @@ export default function App() {
   const firstSave = useRef(true);
   const [panning, setPanning] = useState(false);
   const [indexOpen, setIndexOpen] = useState(true);
+  const [resultsOpen, setResultsOpen] = useState(() => {
+    try { return localStorage.getItem("nc-canvas-results") !== "0"; } catch { return true; }
+  });
+  useEffect(() => {
+    try { localStorage.setItem("nc-canvas-results", resultsOpen ? "1" : "0"); } catch {}
+  }, [resultsOpen]);
   const [dark, setDark] = useState(() => { try { return localStorage.getItem("nc-canvas-theme") === "dark"; } catch { return false; } });
   // ---- user preferences ----
   const [showPrefs, setShowPrefs] = useState(false);
@@ -707,7 +759,13 @@ export default function App() {
       if (mod && (e.key === "z" || e.key === "Z")) { if (typing) return; e.preventDefault(); e.shiftKey ? redo() : undo(); return; }
       if (mod && (e.key === "y" || e.key === "Y")) { if (typing) return; e.preventDefault(); redo(); return; }
       if (mod && (e.key === "a" || e.key === "A")) { if (typing) return; e.preventDefault(); setSel(nodesRef.current.filter((n) => !n.closed).map((n) => n.id)); return; }
-      if (mod && (e.key === "j" || e.key === "J")) { if (typing) return; e.preventDefault(); if (selRef.current.length >= 2) createSynthesis(selRef.current); return; }
+      if (mod && (e.key === "j" || e.key === "J")) {
+        if (typing) return;
+        e.preventDefault();
+        const chatIds = selRef.current.filter((id) => nodesRef.current.find((node) => node.id === id && !["terminal", "config-review", "result"].includes(node.kind)));
+        if (chatIds.length >= 2) createSynthesis(chatIds);
+        return;
+      }
       if (mod && (e.key === "n" || e.key === "N")) { if (typing) return; e.preventDefault(); newMainThread(); return; }
       if (typing) return;
       if (e.key === "Escape") { if (overviewRef.current) { setOverview(false); return; } setSel([]); setBranchHint(null); return; }
@@ -867,7 +925,18 @@ export default function App() {
       danger: true,
       onOk: () => {
         commit();
-        setNodes((ns) => ns.filter((n) => !set.has(n.id)));
+        setNodes((ns) => ns.filter((n) => !set.has(n.id)).map((n) => {
+          if (!n.terminalHighlightRanges) return n;
+          const ranges = { ...n.terminalHighlightRanges };
+          let changed = false;
+          set.forEach((removedId) => {
+            if (removedId in ranges) {
+              delete ranges[removedId];
+              changed = true;
+            }
+          });
+          return changed ? { ...n, terminalHighlightRanges: ranges } : n;
+        }));
         setSel((s) => s.filter((sid) => !set.has(sid)));
         if (set.has(active)) {
           const surviving = nodesRef.current.find((n) => !set.has(n.id));
@@ -889,6 +958,184 @@ export default function App() {
     setTimeout(() => laneRefs.current[id]?.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" }), 60);
   };
 
+  const newTerminalWindow = () => {
+    commit();
+    const id = uid();
+    const vis = nodesRef.current.filter((n) => !n.closed);
+    const y = vis.length ? Math.max(...vis.map((n) => n.y + (n.min ? COLLAPSED_H : n.h))) + 36 : 40;
+    const x = vis.length ? Math.min(...vis.map((n) => n.x)) : 40;
+    const node = {
+      id,
+      kind: "terminal",
+      parentId: null,
+      depth: 0,
+      sourceQuote: null,
+      terminalDevice: null,
+      terminalTranscript: "",
+      terminalHighlightRanges: {},
+      terminalLegacySshCompatibility: false,
+      terminalStructuredFormat: "json",
+      terminalIntentHistory: [],
+      loading: false,
+      error: null,
+      closed: false,
+      min: false,
+      manual: true,
+      x,
+      y,
+      w: TERMINAL_W,
+      h: TERMINAL_H,
+      z: (zc.current += 1),
+      messages: [],
+    };
+    setNodes((ns) => [...ns, node]);
+    setActive(id);
+    setSel([id]);
+    setTimeout(() => laneRefs.current[id]?.scrollIntoView({ behavior: "smooth", inline: "center", block: "center" }), 60);
+  };
+
+  const newConfigReviewWindow = ({
+    source = "",
+    sourceName = "running-config.txt",
+    device = "",
+    sourceNodeId = null,
+  } = {}) => {
+    commit();
+    const id = uid();
+    const parent = sourceNodeId
+      ? nodesRef.current.find((candidate) => candidate.id === sourceNodeId)
+      : null;
+    const vis = nodesRef.current.filter((n) => !n.closed);
+    const x = parent
+      ? parent.x + parent.w + GAP
+      : (vis.length ? Math.min(...vis.map((n) => n.x)) : 40);
+    const y = parent
+      ? parent.y
+      : (vis.length ? Math.max(...vis.map((n) => n.y + (n.min ? COLLAPSED_H : n.h))) + 36 : 40);
+    const cleanSource = String(source || "").replace(/\r\n?/g, "\n").slice(0, 2_000_000);
+    const label = device || String(sourceName || "").replace(/\.[^.]+$/, "") || "running config";
+    const node = {
+      id,
+      kind: "config-review",
+      parentId: parent?.id || null,
+      depth: parent ? parent.depth + 1 : 0,
+      sourceQuote: cleanSource && parent ? "configuration review" : null,
+      configSource: cleanSource,
+      configSourceName: sourceName || "running-config.txt",
+      configNotes: [],
+      title: cleanSource ? `Config review · ${label}` : "Configuration review",
+      loading: false,
+      error: null,
+      closed: false,
+      min: false,
+      manual: true,
+      x,
+      y,
+      w: CONFIG_REVIEW_W,
+      h: CONFIG_REVIEW_H,
+      z: (zc.current += 1),
+      messages: [],
+    };
+    setNodes((ns) => [...ns, node]);
+    setActive(id);
+    setSel([id]);
+    setTimeout(() => laneRefs.current[id]?.scrollIntoView({ behavior: "smooth", inline: "center", block: "center" }), 60);
+  };
+
+  const createResultFromSource = ({
+    sourceNodeId,
+    source = "",
+    format = "json",
+    device = "",
+    name = "",
+    terminalRange = null,
+    parsedArtifact = null,
+  } = {}) => {
+    const cleanSource = String(source || "").replace(/\r\n?/g, "\n").slice(0, 1_000_000).replace(/\s+$/, "");
+    if (!cleanSource.trim()) return null;
+    const parent = nodesRef.current.find((candidate) => candidate.id === sourceNodeId);
+    if (!parent) return null;
+    if (parent.kind === 'terminal' && format === 'json' && !parsedArtifact) {
+      patch(parent.id, { terminalGenieRequest: { id: uid(), source: cleanSource, range: terminalRange }, terminalStructuredFormat: 'json' });
+      setBranchHint(null);
+      return null;
+    }
+
+    const built = parsedArtifact?.parser === 'Genie / pyATS' && format === 'json' ? {
+      ...parsedArtifact, validation: validateArtifactContent(parsedArtifact.content, 'json'),
+    } : buildTerminalArtifact({
+      source: cleanSource,
+      format,
+      device,
+      name,
+    });
+    if (built.validation.status !== "valid") return null;
+    commit();
+    const id = uid();
+    const siblings = nodesRef.current.filter((candidate) => candidate.parentId === parent.id && !candidate.closed).length;
+    const createdAt = new Date().toISOString();
+    const node = {
+      id,
+      kind: "result",
+      parentId: parent.id,
+      depth: parent.depth + 1,
+      sourceQuote: `${built.label} result from ${device || nodeTitle(parent)}`,
+      artifactFormat: built.format,
+      artifactLabel: built.label,
+      artifactName: built.name,
+      artifactMime: built.mime,
+      artifactContent: built.content,
+      artifactSource: cleanSource,
+      artifactSourceLabel: device || nodeTitle(parent),
+      artifactSourceNodeId: parent.id,
+      artifactRecords: built.records,
+      artifactStructure: built.structure,
+      artifactBytes: built.bytes,
+      artifactValidation: built.validation,
+      artifactParser: built.parser || null,
+      artifactParserVersion: built.parserVersion || null,
+      artifactCommand: built.command || null,
+      artifactOs: built.os || null,
+      artifactVersion: 1,
+      artifactCreatedAt: createdAt,
+      title: `Result · ${built.name}`,
+      loading: false,
+      error: null,
+      closed: false,
+      min: false,
+      manual: true,
+      x: parent.x + parent.w + GAP,
+      y: parent.y + Math.min(240, siblings * 48),
+      w: RESULT_W,
+      h: RESULT_H,
+      z: (zc.current += 1),
+      messages: [],
+    };
+    setNodes((current) => {
+      const withHighlight = parent.kind === "terminal" && terminalRange
+        ? current.map((candidate) => (
+          candidate.id === parent.id
+            ? {
+              ...candidate,
+              terminalHighlightRanges: {
+                ...(candidate.terminalHighlightRanges || {}),
+                [id]: terminalRange,
+              },
+            }
+            : candidate
+        ))
+        : current;
+      return [...withHighlight, node];
+    });
+    setResultsOpen(true);
+    setActive(id);
+    setSel([id]);
+    setBranchHint(null);
+    window.getSelection()?.removeAllRanges();
+    window.setTimeout(() => laneRefs.current[id]?.scrollIntoView({ behavior: "smooth", inline: "center", block: "center" }), 60);
+    return id;
+  };
+
   const relateToOrigin = async (nodeId, quote) => {
     const chain = [];
     let cur = nodes.find((n) => n.id === nodeId);
@@ -898,15 +1145,16 @@ export default function App() {
     const instruction = { role: "user", content: `Step back from the detail. The messages above began in the main thread and branched down into this tangent.${focus} In 2 to 4 sentences, explain plainly how this connects back to what was originally being investigated: what it clarified, confirmed, changed, or added, and name the concrete link. Do not restate the branch; bridge it to the origin.` };
     patch(nodeId, { loading: true, error: null });
     try {
-      const text = await callLLM(toAPIMessages([...ctx, instruction]));
-      append(nodeId, { role: "assistant", relate: true, content: text });
+      if (!currentSession?.id) throw new Error("Wait for the canvas session to load.");
+      const result = await callLLM(toAPIMessages([...ctx, instruction]), (nodes.find(n=>n.id===nodeId)?.hudThread || currentSession.id + ":" + nodeId));
+      append(nodeId, { role: "assistant", relate: true, content: result.text, assessmentRefs: result.assessmentRefs, fromGateway: result.fromGateway });
     } catch (e) { patch(nodeId, { error: String(e.message || e) }); }
     finally { patch(nodeId, { loading: false }); }
   };
 
   // --- local persistence (works in your offline build; the claude.ai preview sandboxes storage) ---
   const serialize = () => ({
-    v: 1, active,
+    v: 1, active, drafts, quotes, attachments,
     nodes: nodes.map((n) => ({ ...n, loading: false, error: null, messages: n.messages.map((m) => (m.streaming ? { ...m, done: true } : m)) })),
   });
 
@@ -915,11 +1163,48 @@ export default function App() {
     let mx = 0;
     obj.nodes.forEach((n) => { const m = /^n(\d+)$/.exec(n.id || ""); if (m) mx = Math.max(mx, +m[1]); });
     _seq = mx;
-    let loaded = obj.nodes.map((n) => ({ ...n, loading: false, error: null }));
+    let loaded = obj.nodes.map((n) => ({
+      ...n,
+      loading: false,
+      error: null,
+      ...(n.kind === "terminal" ? {
+        messages: Array.isArray(n.messages) ? n.messages : [],
+        terminalTranscript: String(n.terminalTranscript || "").slice(0, TERMINAL_TRANSCRIPT_LIMIT),
+        terminalHighlightRanges: n.terminalHighlightRanges && typeof n.terminalHighlightRanges === "object"
+          ? n.terminalHighlightRanges
+          : {},
+        terminalLegacySshCompatibility: n.terminalLegacySshCompatibility === true,
+        terminalStructuredFormat: n.terminalStructuredFormat === "intent"
+          ? "intent"
+          : artifactFormat(n.terminalStructuredFormat || "json").id,
+        terminalIntentHistory: normalizeTerminalIntentHistory(n.terminalIntentHistory),
+      } : n.kind === "config-review" ? {
+        messages: Array.isArray(n.messages) ? n.messages : [],
+        configSource: String(n.configSource || "").slice(0, 2_000_000),
+        configNotes: Array.isArray(n.configNotes) ? n.configNotes : [],
+      } : n.kind === "result" ? {
+        messages: [],
+        artifactContent: String(n.artifactContent || "").slice(0, 2_000_000),
+        artifactSource: String(n.artifactSource || "").slice(0, 1_000_000),
+        artifactStructure: ["hierarchical", "structured", "flat"].includes(n.artifactStructure)
+          ? n.artifactStructure
+          : "structured",
+        artifactVersion: Math.max(1, Number.parseInt(n.artifactVersion, 10) || 1),
+      } : {}),
+    }));
+    loaded = loaded.map((node) => (
+      node.kind === "result"
+        ? {
+          ...node,
+          artifactValidation: validateArtifactContent(node.artifactContent, node.artifactFormat),
+        }
+        : node
+    ));
     // if every window in this session was closed, reopen its main threads so the canvas isn't
     // blank (otherwise the chat shows "no threads open" with no way to bring them back)
     if (loaded.length && loaded.every((n) => n.closed)) loaded = loaded.map((n) => (n.depth === 0 ? { ...n, closed: false } : n));
     setNodes(loaded);
+    setDrafts(obj.drafts || {}); setQuotes(obj.quotes || {}); setAttachments(obj.attachments || {});
     const firstOpen = loaded.find((n) => !n.closed);
     setActive(obj.active && loaded.some((n) => n.id === obj.active && !n.closed) ? obj.active : (firstOpen ? firstOpen.id : null));
   };
@@ -944,13 +1229,14 @@ export default function App() {
   const openFile = (e) => {
     const f = e.target.files && e.target.files[0]; if (!f) return;
     const reader = new FileReader();
-    reader.onload = () => { try { loadState(JSON.parse(String(reader.result))); } catch {} };
+    reader.onload = () => runSessionChange(() => loadState(unbindImportedSession(JSON.parse(String(reader.result)))));
     reader.readAsText(f);
     e.target.value = "";
   };
 
   // ---- session persistence (IndexedDB) ----
-  const [currentSession, setCurrentSession] = useState(null); // { id, createdAt }
+  const [currentSession, setCurrentSession] = useState(null);
+  useEffect(() => { if (window.parent !== window) window.parent.postMessage({ type: "netclaw:session-changed" }, location.origin); }, [currentSession?.id]); // { id, createdAt }
   const [showSessions, setShowSessions] = useState(false);
   const [sessionList, setSessionList] = useState([]);
   const [sessSearch, setSessSearch] = useState("");
@@ -1032,6 +1318,7 @@ export default function App() {
   useEffect(() => {
     (async () => {
       try {
+        await migrateLegacyCanvas();
         let all = []; try { all = await idb.list(); } catch {}
         if (!all.length) {
           let legacy = null;
@@ -1040,7 +1327,7 @@ export default function App() {
             const id = sessId();
             const now = Date.now();
             const sess = { id, title: deriveSessionTitle(legacy.nodes), createdAt: now, updatedAt: now, nodes: legacy.nodes, active: legacy.active };
-            try { await idb.put(sess); localStorage.removeItem(STORE_KEY); } catch {}
+            try { await idb.put(sess); } catch {}
             setCurrentSession({ id, createdAt: now });
             loadState(legacy);
             firstSave.current = true;
@@ -1055,7 +1342,7 @@ export default function App() {
         }
         const newest = all.reduce((a, b) => (a.updatedAt > b.updatedAt ? a : b));
         setCurrentSession({ id: newest.id, createdAt: newest.createdAt });
-        loadState({ nodes: newest.nodes, active: newest.active });
+        loadState(newest);
         firstSave.current = true;
         setSessionList(all);
       } catch (e) { console.warn("session init failed", e); }
@@ -1070,54 +1357,58 @@ export default function App() {
     saveTimerRef.current = setTimeout(() => {
       const data = serialize();
       const now = Date.now();
-      idb.put({ id: currentSession.id, title: deriveSessionTitle(data.nodes), createdAt: currentSession.createdAt, updatedAt: now, nodes: data.nodes, active: data.active })
-        .then(() => setSessionList((ls) => { const others = ls.filter((s) => s.id !== currentSession.id); return [{ id: currentSession.id, title: deriveSessionTitle(data.nodes), createdAt: currentSession.createdAt, updatedAt: now, nodes: data.nodes, active: data.active }, ...others]; }))
-        .catch(() => {});
+      idb.put({ id: currentSession.id, title: deriveSessionTitle(data.nodes), createdAt: currentSession.createdAt, updatedAt: now, nodes: data.nodes, active: data.active, drafts:data.drafts, quotes:data.quotes, attachments:data.attachments })
+        .then(() => setSessionList((ls) => { const others = ls.filter((s) => s.id !== currentSession.id); return [{ id: currentSession.id, title: deriveSessionTitle(data.nodes), createdAt: currentSession.createdAt, updatedAt: now, nodes: data.nodes, active: data.active, drafts:data.drafts, quotes:data.quotes, attachments:data.attachments }, ...others]; }))
+        .catch((error) => setSessionError("Session save failed: " + String(error.message || error)));
     }, 400);
-  }, [nodes, active, currentSession]); // eslint-disable-line
+    return () => clearTimeout(saveTimerRef.current);
+  }, [nodes, active, currentSession, drafts, quotes, attachments]); // eslint-disable-line
 
-  const newSession = async () => {
-    // flush any pending save of the current session first
+  const newSession = () => runSessionChange(async () => {
     if (saveTimerRef.current) { clearTimeout(saveTimerRef.current); saveTimerRef.current = null; }
     if (currentSession) {
       const data = serialize();
-      try { await idb.put({ id: currentSession.id, title: deriveSessionTitle(data.nodes), createdAt: currentSession.createdAt, updatedAt: Date.now(), nodes: data.nodes, active: data.active }); } catch {}
+      await idb.put({ id: currentSession.id, title: deriveSessionTitle(data.nodes), createdAt: currentSession.createdAt, updatedAt: Date.now(), nodes: data.nodes, active: data.active, drafts:data.drafts, quotes:data.quotes, attachments:data.attachments });
     }
+    resetSession();
+  });
+
+  const openSession = (id) => runSessionChange(async () => {
+    if (saveTimerRef.current) { clearTimeout(saveTimerRef.current); saveTimerRef.current = null; }
+    if (currentSession) {
+      const data = serialize();
+      await idb.put({ id: currentSession.id, title: deriveSessionTitle(data.nodes), createdAt: currentSession.createdAt, updatedAt: Date.now(), nodes: data.nodes, active: data.active, drafts:data.drafts, quotes:data.quotes, attachments:data.attachments });
+    }
+    const sess = await idb.get(id);
+    if (!sess) throw new Error("Session is unavailable.");
+    setCurrentSession({ id: sess.id, createdAt: sess.createdAt });
+    pastRef.current = []; futureRef.current = [];
+    loadState(sess);
+    firstSave.current = true;
+    setShowSessions(false);
+    reloadSessionList();
+  });
+
+  const deleteSession = (id) => runSessionChange(async () => {
+    if (saveTimerRef.current) { clearTimeout(saveTimerRef.current); saveTimerRef.current = null; }
+    await idb.del(id);
+    setSessionFolder((m) => { if (!(id in m)) return m; const out = { ...m }; delete out[id]; return out; });
+    setSessionTitles((m) => { if (!(id in m)) return m; const out = { ...m }; delete out[id]; return out; });
+    if (currentSession && currentSession.id === id) resetSession();
+    else reloadSessionList();
+  });
+
+  const resetSession = () => {
     const id = sessId(); const now = Date.now();
     setCurrentSession({ id, createdAt: now });
     pastRef.current = []; futureRef.current = [];
     _seq = 0;
     setNodes([{ ...ROOT, messages: [] }]);
-    setActive("root");
-    setSel([]);
+    setDrafts({}); setQuotes({}); setAttachments({});
+    setActive("root"); setSel([]);
     firstSave.current = true;
     setShowSessions(false);
     reloadSessionList();
-  };
-
-  const openSession = async (id) => {
-    if (saveTimerRef.current) { clearTimeout(saveTimerRef.current); saveTimerRef.current = null; }
-    if (currentSession) {
-      const data = serialize();
-      try { await idb.put({ id: currentSession.id, title: deriveSessionTitle(data.nodes), createdAt: currentSession.createdAt, updatedAt: Date.now(), nodes: data.nodes, active: data.active }); } catch {}
-    }
-    try {
-      const sess = await idb.get(id); if (!sess) return;
-      setCurrentSession({ id: sess.id, createdAt: sess.createdAt });
-      pastRef.current = []; futureRef.current = [];
-      loadState({ nodes: sess.nodes, active: sess.active });
-      firstSave.current = true;
-      setShowSessions(false);
-      reloadSessionList();
-    } catch {}
-  };
-
-  const deleteSession = async (id) => {
-    try { await idb.del(id); } catch {}
-    setSessionFolder((m) => { if (!(id in m)) return m; const out = { ...m }; delete out[id]; return out; });
-    setSessionTitles((m) => { if (!(id in m)) return m; const out = { ...m }; delete out[id]; return out; });
-    if (currentSession && currentSession.id === id) await newSession();
-    else reloadSessionList();
   };
 
   useEffect(() => { try { localStorage.setItem("nc-canvas-theme", dark ? "dark" : "light"); } catch {} }, [dark]);
@@ -1137,7 +1428,21 @@ export default function App() {
     setBranchHint({ nodeId, quote: text, x: r.left + r.width / 2, y: r.top - 8 });
   };
 
-  async function run(nodeId, apiMessages) {
+  const onTerminalSelect = (nodeId, selection) => {
+    const source = String(selection?.quote || "").replace(/\r\n?/g, "\n").replace(/\s+$/, "");
+    const quote = source.replace(/\s+/g, " ").trim();
+    if (!quote || quote.length < 2 || !selection?.range) return;
+    setBranchHint({
+      nodeId,
+      quote,
+      source,
+      x: selection.x,
+      y: selection.y,
+      terminalRange: selection.range,
+    });
+  };
+
+  async function run(nodeId, apiMessages, submittedDraft) {
     patch(nodeId, { loading: true, error: null });
     try {
       const msgs = toAPIMessages(apiMessages);
@@ -1147,29 +1452,54 @@ export default function App() {
 
       // Tool selection and execution stay inside NetClaw/OpenClaw. The browser
       // contributes only this branch's conversation context and attachments.
-      const raw = await callLLM(msgs);
+      if (!currentSession?.id) throw new Error("Wait for the canvas session to load.");
+      const result = await callLLM(msgs, (nodes.find(n=>n.id===nodeId)?.hudThread || currentSession.id + ":" + nodeId));
+      const raw = result.text;
       const tabs = parseTabs(raw);
-      append(nodeId, tabs ? { role: "assistant", content: tabs.context, tabs } : { role: "assistant", content: raw });
+      append(nodeId, { ...(tabs ? { role: "assistant", content: tabs.context, tabs } : { role: "assistant", content: raw }), assessmentRefs: result.assessmentRefs, assessmentBinding: result.assessmentRefs.length ? "bound" : "unbound", fromGateway: result.fromGateway });
     }
-    catch (e) { patch(nodeId, { error: String(e.message || e) }); }
+    catch (e) { patch(nodeId, { error: String(e.message || e) }); if(submittedDraft!==undefined)setDrafts(d=>({...d,[nodeId]:d[nodeId] || submittedDraft})); }
     finally { patch(nodeId, { loading: false }); }
   }
 
-  function createBranch(parentId, quote) {
+  function createBranch(parentId, quote, options = {}) {
     commit();
     const parent = nodes.find((n) => n.id === parentId);
+    if (!parent) return null;
     const siblings = nodes.filter((n) => n.parentId === parentId).length;
     const id = uid();
     const node = {
-      id, parentId, depth: parent.depth + 1, sourceQuote: quote, loading: false, error: null, min: true,
+      ...(runtimeInfo()?.kind==='hermes'?{seedContext:branchSeed(nodes,parentId,quote)}:{}),
+      id, parentId, depth: parent.depth + 1, sourceQuote: quote, loading: false, error: null, min: options.expanded ? false : true,
       x: parent.x + parent.w + GAP, y: parent.y + siblings * (COLLAPSED_H + 8),
       w: DEF_W, h: DEF_H, z: (zc.current += 1), messages: [],
     };
-    setNodes((ns) => [...ns, node]);
+    setNodes((ns) => {
+      const next = parent.kind === "terminal" && options.terminalRange
+        ? ns.map((candidate) => (
+          candidate.id === parentId
+            ? {
+              ...candidate,
+              terminalHighlightRanges: {
+                ...(candidate.terminalHighlightRanges || {}),
+                [id]: options.terminalRange,
+              },
+            }
+            : candidate
+        ))
+        : ns;
+      return [...next, node];
+    });
+    if (options.quoteContext) {
+      const quoteContext = String(options.quoteText || quote || "").replace(/\r\n?/g, "\n").trim().slice(0, 200_000);
+      setQuotes((current) => ({ ...current, [id]: quoteContext }));
+    }
     setActive(id);
+    if (parent.kind === "terminal") setSel([id]);
     setBranchHint(null);
     window.getSelection()?.removeAllRanges();
     setTimeout(() => laneRefs.current[id]?.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" }), 60);
+    return id;
   }
 
   // Attach the selected text to this node's composer as context for the next question in the thread.
@@ -1204,7 +1534,9 @@ export default function App() {
   // right of the rightmost source, vertically centered across the source span. Its messages
   // are empty; the API chain is composed from every source's chain when send() runs.
   function createSynthesis(sourceIds) {
-    const sources = sourceIds.map((sid) => nodes.find((n) => n.id === sid)).filter(Boolean);
+    const sources = sourceIds
+      .map((sid) => nodes.find((n) => n.id === sid))
+      .filter((node) => node && !["terminal", "config-review", "result"].includes(node.kind));
     if (sources.length < 2) return;
     commit();
     const maxDepth = Math.max(...sources.map((s) => s.depth));
@@ -1213,6 +1545,7 @@ export default function App() {
     const botEdge = Math.max(...sources.map((s) => s.y + (s.min ? COLLAPSED_H : s.h)));
     const id = uid();
     const node = {
+      ...(runtimeInfo()?.kind==='hermes'?{seedContext:JSON.parse(JSON.stringify(synthChain({synthFrom:sources.map(s=>s.id)})))}:{}),
       id, parentId: sources[0].id, synthFrom: sources.map((s) => s.id),
       depth: maxDepth + 1, sourceQuote: null, loading: false, error: null, min: false,
       x: rightEdge + GAP, y: Math.max(40, (topEdge + botEdge) / 2 - DEF_H / 2),
@@ -1243,7 +1576,7 @@ export default function App() {
     const out = [];
     const sources = (node.synthFrom || []).map((sid) => nodes.find((n) => n.id === sid)).filter(Boolean);
     sources.forEach((s, i) => {
-      const lineageNodes = [...lineage(s.id), s];
+      const lineageNodes = s.seedContext ? [{id:s.id+':seed',messages:s.seedContext},s] : [...lineage(s.id), s];
       const label = nodeTitle(s) || ("thread " + (i + 1));
       const fresh = lineageNodes.filter((n) => !seen.has(n.id));
       if (!fresh.length) return;
@@ -1260,22 +1593,42 @@ export default function App() {
     const imgs = items.filter((it) => it.kind === "image").map(({ mediaType, data, name }) => ({ mediaType, data, name }));
     const files = items.filter((it) => it.kind === "file").map(({ name, text, truncated }) => ({ name, text, ...(truncated ? { truncated: true } : {}) }));
     if (!text && !imgs.length && !files.length) return;
+    if(runtimeInfo()?.kind==='hermes' && items.length) {patch(nodeId,{error:'Attachments are unavailable for this Hermes HUD release. Your draft and files have been retained.'});return;}
     commit();
     const node = nodes.find((n) => n.id === nodeId);
-    const quote = (quotes[nodeId] || "").trim();
-    const msg = { role: "user", content: text, ...(quote ? { quote } : {}), ...(imgs.length ? { images: imgs } : {}), ...(files.length ? { files } : {}) };
+    const parent = node?.parentId ? nodes.find((candidate) => candidate.id === node.parentId) : null;
+    const terminalSourceQuote = parent?.kind === "terminal"
+      && !node.messages.some((message) => message.role === "user")
+      ? node.sourceQuote
+      : "";
+    const quote = (quotes[nodeId] || terminalSourceQuote || "").trim();
+    const msg = {
+      role: "user",
+      content: text,
+      ...(quote ? { quote, ...(parent?.kind === "terminal" ? { quoteSource: "terminal" } : {}) } : {}),
+      ...(imgs.length ? { images: imgs } : {}),
+      ...(files.length ? { files } : {}),
+    };
     append(nodeId, msg);
     setDrafts((d) => ({ ...d, [nodeId]: "" }));
     if (quote) clearQuote(nodeId);
     if (items.length) clearImages(nodeId);
     bringFront(nodeId);
     // synthesis nodes feed the union of every source's full chain; branches walk the parent lineage
-    const ctx = node.synthFrom ? synthChain(node) : lineage(nodeId).flatMap((n) => n.messages.filter((m) => !m.relate));
-    run(nodeId, [...ctx, ...node.messages.filter((m) => !m.relate), msg]);
+    const ctx = node.seedContext || (node.synthFrom ? synthChain(node) : lineage(nodeId).flatMap((n) => n.messages.filter((m) => !m.relate)));
+    run(nodeId, [...ctx, ...node.messages.filter((m) => !m.relate), msg], text);
   }
 
   // breadcrumb path
+  const results = nodes
+    .filter((node) => node.kind === "result")
+    .slice()
+    .sort((left, right) => String(right.artifactCreatedAt || "").localeCompare(String(left.artifactCreatedAt || "")));
   const path = []; { let cur = nodes.find((n) => n.id === active); while (cur) { path.unshift(cur); cur = nodes.find((n) => n.id === cur.parentId); } }
+  const synthSelection = sel.filter((id) => {
+    const node = nodes.find((candidate) => candidate.id === id);
+    return node && !["terminal", "config-review", "result"].includes(node.kind);
+  });
 
   // world extent (only nodes visible on the canvas)
   const open = nodes.filter((n) => !n.closed);
@@ -1295,6 +1648,32 @@ export default function App() {
       connectors.push({ id: c.id + "-p" + idx, d: orthPath(eff(p), eff(c), obstacles), color, synth: !!c.synthFrom });
     });
   });
+
+  const activeThread=nodes.find(n=>n.id===active)?.hudThread || (currentSession ? currentSession.id+':'+active : '');
+  const activeRequest=runtimeProgress[activeThread] || pendingRequest(activeThread);
+  const recoverCanvas=async()=>{
+    const nodeId=active, thread=activeThread;
+    patch(nodeId,{loading:true,error:null});
+    try {
+      const data=await sessionGate.current.request(()=>observeRequest(thread,value=>setRuntimeProgress(p=>({...p,[thread]:value}))));
+      const raw=data.response || data.output, tabs=parseTabs(raw);
+      append(nodeId,{role:'assistant',content:tabs?.context || raw,...(tabs?{tabs}:{}),fromGateway:true,assessmentRefs:[]});
+      patch(nodeId,{error:null});setDrafts(d=>({...d,[nodeId]:''}));
+    } catch(error) { patch(nodeId,{error:error.message}); }
+    finally { patch(nodeId,{loading:false}); }
+  };
+  const controlCanvas=async(action,body)=>{
+    const thread=activeThread;
+    try { const value=await requestControl(thread,action,body);setRuntimeProgress(p=>({...p,[thread]:value})); }
+    catch(error) { setSessionError(error.message); }
+  };
+  const freshCanvas=async()=>{
+    const nodeId=active;
+    try { await sessionGate.current.change(async()=>{
+      const conversation=await newConversation(activeThread);
+      if(conversation)patch(nodeId,{hudThread:conversation.thread,error:null});
+    }); } catch(error) { setSessionError(error.message); }
+  };
 
   return (
     <div style={{ ...(dark ? DARK : LIGHT), height: "100dvh", minHeight: 480, display: "flex", flexDirection: "column", background: C.canvas, color: C.ink, fontFamily: "ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif" }}>
@@ -1316,6 +1695,14 @@ export default function App() {
         .sb-del:hover{background:#A8324E!important;color:#fff!important;border-color:#A8324E!important}
         @media(max-width:900px){.hud-back-label{display:none}}`}</style>
 
+      {sessionError && <div role="alert" style={{ padding: 10, color: "#c53030" }}>{sessionError}</div>}
+      {runtimeInfo()?.kind==='hermes' && activeRequest && <div role="status" style={{padding:8,display:'flex',gap:8,alignItems:'center',flexWrap:'wrap'}}>
+        <span>Hermes · {activeRequest.state || 'Admission unconfirmed'}</span>
+        <button onClick={recoverCanvas} disabled={nodes.find(n=>n.id===active)?.loading}>Check status</button>
+        <button onClick={()=>controlCanvas('stop')}>Request stop</button>
+        <button onClick={freshCanvas}>Start fresh conversation</button>
+        {activeRequest.approval && <><button onClick={()=>controlCanvas('approval',{approvalId:activeRequest.approval.id || activeRequest.approval.request_id,choice:'once'})}>Allow once</button><button onClick={()=>controlCanvas('approval',{approvalId:activeRequest.approval.id || activeRequest.approval.request_id,choice:'deny'})}>Deny</button></>}
+      </div>}
       {/* top bar */}
       <div style={{ flexShrink: 0, padding: "8px 14px", borderBottom: `1px solid ${C.hairline}`, background: C.canvas, display: "flex", alignItems: "center", gap: 10, zIndex: 100 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
@@ -1359,6 +1746,7 @@ export default function App() {
             { type: "item", label: "Lock to lanes", checked: lanesLocked, action: () => { commit(); setLanesLocked((v) => !v); } },
             { type: "separator" },
             { type: "item", label: "Branches sidebar", checked: indexOpen, action: () => setIndexOpen((o) => !o) },
+            { type: "item", label: "Results rail", checked: resultsOpen, action: () => setResultsOpen((open) => !open) },
             { type: "item", label: "Dark mode", checked: dark, action: () => setDark((d) => !d) },
             { type: "separator" },
             { type: "item", label: "Zoom in", shortcut: "⌘=", action: () => setZoomAt(zoom * 1.25) },
@@ -1367,7 +1755,10 @@ export default function App() {
             { type: "item", label: "Fit all", shortcut: "F", action: () => fitView() },
           ]} />
           <Menu label="Tools" items={[
-            { type: "item", label: sel.length >= 2 ? `Synthesize ${sel.length} selected` : "Synthesize (shift+click 2+ windows)", shortcut: "⌘J", action: () => createSynthesis(sel), disabled: sel.length < 2 },
+            { type: "item", label: "New SSH terminal", action: newTerminalWindow },
+            { type: "item", label: "New configuration review", action: () => newConfigReviewWindow() },
+            { type: "separator" },
+            { type: "item", label: synthSelection.length >= 2 ? `Synthesize ${synthSelection.length} selected` : "Synthesize (shift+click 2+ chats)", shortcut: "⌘J", action: () => createSynthesis(synthSelection), disabled: synthSelection.length < 2 },
           ]} />
           <Menu label="Help" items={[
             { type: "item", label: "Tutorial…", action: () => setShowTutorial(true) },
@@ -1627,7 +2018,65 @@ export default function App() {
           </svg>
 
           {/* windows (closed nodes are hidden from the canvas but kept in the sidebar) */}
-          {nodes.filter((n) => !n.closed).map((n) => (
+          {nodes.filter((n) => !n.closed).map((n) => n.kind === "terminal" ? (
+            <TerminalLane key={n.id} node={n} color="#0E7C7B" isActive={n.id === active} selected={sel.includes(n.id)}
+              animate={!interacting}
+              dark={dark}
+              laneRef={(el) => (laneRefs.current[n.id] = el)}
+              onFocus={(e) => selectNode(n, e)}
+              onDragStart={(e) => startDrag(e, n)}
+              onResizeStart={(e) => startResize(e, n)}
+              onToggleMin={() => toggleMin(n.id)}
+              onDelete={() => closeNode(n.id)}
+              highlights={nodes.filter((child) => child.parentId === n.id && !child.closed && child.sourceQuote).map((child) => ({
+                id: child.id,
+                quote: child.sourceQuote,
+                color: depthColor(child.depth),
+                range: n.terminalHighlightRanges?.[child.id],
+              }))}
+              onSelect={(selection) => onTerminalSelect(n.id, selection)}
+              onAutoFit={() => patch(n.id, { w: TERMINAL_W, h: TERMINAL_H, manual: false })}
+              onOpenConfigReview={(review) => newConfigReviewWindow({ ...review, sourceNodeId: n.id })}
+              onCreateResult={(artifact) => createResultFromSource({ ...artifact, sourceNodeId: n.id })}
+              onPatch={(changes) => patch(n.id, changes)} />
+          ) : n.kind === "config-review" ? (
+            <ConfigReviewLane key={n.id} node={n} color="#B5651D" isActive={n.id === active} selected={sel.includes(n.id)}
+              animate={!interacting}
+              theme={C}
+              portalTheme={dark ? DARK : LIGHT}
+              laneRef={(el) => (laneRefs.current[n.id] = el)}
+              onFocus={(e) => selectNode(n, e)}
+              onDragStart={(e) => startDrag(e, n)}
+              onResizeStart={(e) => startResize(e, n)}
+              onToggleMin={() => toggleMin(n.id)}
+              onDelete={() => closeNode(n.id)}
+              onAutoFit={() => patch(n.id, { w: CONFIG_REVIEW_W, h: CONFIG_REVIEW_H, manual: false })}
+              onCommit={commit}
+              onPatch={(changes) => patch(n.id, changes)} />
+          ) : n.kind === "result" ? (
+            <ResultLane key={n.id} node={n} color="#0E7C7B" isActive={n.id === active} selected={sel.includes(n.id)}
+              animate={!interacting}
+              theme={C}
+              laneRef={(el) => (laneRefs.current[n.id] = el)}
+              onFocus={(event) => selectNode(n, event)}
+              onDragStart={(event) => startDrag(event, n)}
+              onResizeStart={(event) => startResize(event, n)}
+              onToggleMin={() => toggleMin(n.id)}
+              onDelete={() => closeNode(n.id)}
+              onAutoFit={() => patch(n.id, { w: RESULT_W, h: RESULT_H, manual: false })}
+              onConvert={(format) => createResultFromSource({
+                sourceNodeId: n.id,
+                source: n.artifactParser ? n.artifactContent : (n.artifactSource || n.artifactContent),
+                format,
+                device: n.artifactSourceLabel,
+                name: n.artifactName,
+              })}
+              onBranch={() => createBranch(n.id, `Artifact ${n.artifactName}`, {
+                expanded: true,
+                quoteContext: true,
+                quoteText: n.artifactContent,
+              })} />
+          ) : (
             <Lane key={n.id} node={n} color={depthColor(n.depth)} isActive={n.id === active} selected={sel.includes(n.id)}
               animate={!interacting}
               dark={dark}
@@ -1653,7 +2102,7 @@ export default function App() {
               right edge of the selection bounding box so it follows the user's eye to the
               place the new synthesis node will land. */}
           {(() => {
-            const picked = sel.map((id) => nodes.find((n) => n.id === id)).filter((n) => n && !n.closed);
+            const picked = synthSelection.map((id) => nodes.find((n) => n.id === id)).filter((n) => n && !n.closed);
             if (picked.length < 2) return null;
             const rightEdge = Math.max(...picked.map((n) => n.x + n.w));
             const topEdge = Math.min(...picked.map((n) => n.y));
@@ -1662,7 +2111,7 @@ export default function App() {
             const colors = picked.map((n) => depthColor(n.depth));
             return (
               <div style={{ position: "absolute", left: rightEdge + 18, top: midY, transform: "translate(0, -50%)", zIndex: 60, pointerEvents: "auto" }}>
-                <button onClick={() => createSynthesis(sel)}
+                <button onClick={() => createSynthesis(synthSelection)}
                   style={{ display: "flex", alignItems: "center", gap: 8, background: C.trunk, color: "#fff", border: "none", borderRadius: 9, padding: "9px 14px", fontSize: 12.5, fontWeight: 600, cursor: "pointer", boxShadow: "0 8px 22px rgba(0,0,0,0.3)", whiteSpace: "nowrap", animation: synthSeenHint ? "none" : "synthPulse 1.6s ease-in-out infinite" }}>
                   <span style={{ display: "inline-flex", gap: 2 }}>
                     {colors.slice(0, 5).map((c, i) => <span key={i} style={{ width: 6, height: 6, borderRadius: "50%", background: c, display: "inline-block" }} />)}
@@ -1689,6 +2138,54 @@ export default function App() {
           </div>
         )}
         </div>
+
+        {resultsOpen ? (
+          <aside aria-label="Canvas results"
+            style={{ width: 268, flexShrink: 0, borderLeft: `1px solid ${C.hairline}`, background: C.cardAlt, display: "flex", flexDirection: "column", minHeight: 0 }}>
+            <div style={{ height: 38, padding: "0 10px 0 12px", borderBottom: `1px solid ${C.hairline}`, display: "flex", alignItems: "center", gap: 7, flexShrink: 0 }}>
+              <span aria-hidden="true" style={{ color: "#0E7C7B", fontSize: 13 }}>▤</span>
+              <span style={{ fontFamily: "ui-monospace, Menlo, monospace", fontSize: 9.5, letterSpacing: 1, textTransform: "uppercase", color: C.ink, fontWeight: 800 }}>Results ({results.length})</span>
+              <button onClick={() => setResultsOpen(false)} title="hide Results rail"
+                style={{ marginLeft: "auto", width: 22, height: 22, border: "none", borderRadius: 5, background: "transparent", color: C.muted, cursor: "pointer", fontSize: 12 }}>›</button>
+            </div>
+            <div style={{ flex: 1, minHeight: 0, overflowY: "auto", padding: 9 }}>
+              {!results.length && (
+                <div style={{ margin: "10px 2px", padding: "14px 12px", border: `1px dashed ${C.hairline}`, borderRadius: 9, color: C.muted, fontSize: 11.5, lineHeight: 1.5, textAlign: "center" }}>
+                  Select terminal output, choose a structured format, and create a Result. It will always remain available here.
+                </div>
+              )}
+              {results.map((result) => {
+                const valid = result.artifactValidation?.status === "valid";
+                const bytes = Number(result.artifactBytes) || 0;
+                const size = bytes < 1024 ? `${bytes} B` : `${(bytes / 1024).toFixed(bytes < 10240 ? 1 : 0)} KB`;
+                return (
+                  <button key={result.id} onClick={() => focusNode(result.id)}
+                    aria-label={`Open result ${result.artifactName}`}
+                    style={{ width: "100%", display: "grid", gridTemplateColumns: "38px 1fr 20px", alignItems: "center", gap: 8, textAlign: "left", padding: "10px 9px", marginBottom: 8, border: `1px solid ${active === result.id ? "#0E7C7B" : C.hairline}`, borderRadius: 9, background: active === result.id ? "#0E7C7B0F" : C.card, color: C.ink, cursor: "pointer", boxShadow: active === result.id ? "0 0 0 1px #0E7C7B22" : "none" }}>
+                    <span style={{ width: 36, height: 42, border: `1px solid ${C.hairline}`, borderRadius: 6, background: C.cardAlt, display: "grid", placeItems: "center", position: "relative", fontSize: 16 }} aria-hidden="true">
+                      ▤
+                      <span style={{ position: "absolute", left: -4, bottom: 4, background: result.artifactFormat === "xml" ? "#A8324E" : result.artifactFormat === "yaml" ? "#B5651D" : "#0E7C7B", color: "#fff", borderRadius: 3, padding: "1px 4px", fontFamily: "ui-monospace, Menlo, monospace", fontSize: 7.5, fontWeight: 800 }}>{result.artifactLabel || String(result.artifactFormat || "").toUpperCase()}</span>
+                    </span>
+                    <span style={{ minWidth: 0 }}>
+                      <span style={{ display: "block", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", fontSize: 11.5, fontWeight: 750 }}>{result.artifactName}</span>
+                      <span style={{ display: "block", marginTop: 3, color: valid ? "#0E7C7B" : "#A8324E", fontSize: 10 }}>{valid ? "✓ Validated" : "⚠ Invalid"} · {result.artifactStructure === "hierarchical" ? "Hierarchy" : result.artifactStructure === "flat" ? "Flat" : "Structured"} · {result.artifactRecords || 0} records</span>
+                      <span style={{ display: "block", marginTop: 2, color: C.muted, fontSize: 9.5 }}>{size} · v{result.artifactVersion || 1}{result.closed ? " · hidden" : ""}</span>
+                    </span>
+                    <span aria-hidden="true" style={{ color: "#0E7C7B", fontSize: 15 }}>↗</span>
+                  </button>
+                );
+              })}
+            </div>
+            <div style={{ padding: "8px 10px", borderTop: `1px solid ${C.hairline}`, color: C.muted, fontSize: 9.5, lineHeight: 1.4, flexShrink: 0 }}>
+              Saved with this local Canvas session. Review terminal output before sharing.
+            </div>
+          </aside>
+        ) : (
+          <button onClick={() => setResultsOpen(true)} title={`show Results rail (${results.length})`}
+            style={{ width: 28, flexShrink: 0, border: "none", borderLeft: `1px solid ${C.hairline}`, background: C.cardAlt, color: "#0E7C7B", cursor: "pointer", fontSize: 12, fontWeight: 800, writingMode: "vertical-rl", letterSpacing: 0.8 }}>
+            Results ({results.length})
+          </button>
+        )}
       </div>
 
       {/* overview: full screen topology map of the reasoning graph */}
@@ -1804,7 +2301,10 @@ export default function App() {
                 const q = sessSearch.trim().toLowerCase();
                 const matches = !q ? sessionList : sessionList.filter((s) => {
                   if ((s.title || "").toLowerCase().includes(q)) return true;
-                  return (s.nodes || []).some((n) => (n.messages || []).some((m) => String(m.content || "").toLowerCase().includes(q)));
+                  return (s.nodes || []).some((n) => (
+                    String(n.terminalTranscript || "").toLowerCase().includes(q)
+                    || (n.messages || []).some((m) => String(m.content || "").toLowerCase().includes(q))
+                  ));
                 });
 
                 // group the (filtered) sessions by folder; unknown/missing folder → Unfiled
@@ -1966,15 +2466,37 @@ export default function App() {
       {/* floating selection actions */}
       {branchHint && (
         <div ref={hintRef} style={{ position: "fixed", left: branchHint.x, top: branchHint.y, transform: "translate(-50%,-100%)", zIndex: 200, display: "flex", gap: 4 }}>
-          <button onMouseDown={(e) => e.preventDefault()} onClick={() => createBranch(branchHint.nodeId, branchHint.quote)}
+          <button onMouseDown={(e) => e.preventDefault()} onClick={() => createBranch(branchHint.nodeId, branchHint.quote, { terminalRange: branchHint.terminalRange })}
             style={{ background: "#1f2430", color: "#fff", border: "none", borderRadius: 7, padding: "7px 12px", fontSize: 12, fontWeight: 600, cursor: "pointer", boxShadow: "0 6px 18px rgba(0,0,0,0.22)", whiteSpace: "nowrap" }}>
             ⎇ Branch this →
           </button>
-          <button onMouseDown={(e) => e.preventDefault()} onClick={() => quoteAsContext(branchHint.nodeId, branchHint.quote)}
-            title="attach this text as context for your next question in this thread"
+          <button onMouseDown={(e) => e.preventDefault()} onClick={() => (
+            branchHint.terminalRange
+              ? createBranch(branchHint.nodeId, branchHint.quote, { terminalRange: branchHint.terminalRange, expanded: true, quoteContext: true })
+              : quoteAsContext(branchHint.nodeId, branchHint.quote)
+          )}
+            title={branchHint.terminalRange ? "open a chat branch with this terminal output attached as context" : "attach this text as context for your next question in this thread"}
             style={{ background: C.trunk, color: "#fff", border: "none", borderRadius: 7, padding: "7px 12px", fontSize: 12, fontWeight: 600, cursor: "pointer", boxShadow: "0 6px 18px rgba(0,0,0,0.22)", whiteSpace: "nowrap" }}>
-            ❝ Quote as context
+            {branchHint.terminalRange ? "❝ Ask in chat" : "❝ Quote as context"}
           </button>
+          {(() => {
+            const sourceNode = nodes.find((node) => node.id === branchHint.nodeId && node.kind === "terminal");
+            if (!sourceNode || !branchHint.terminalRange) return null;
+            const format = artifactFormat(sourceNode.terminalStructuredFormat || "json");
+            return (
+              <button onMouseDown={(event) => event.preventDefault()} onClick={() => createResultFromSource({
+                sourceNodeId: sourceNode.id,
+                source: branchHint.source || branchHint.quote,
+                format: format.id,
+                device: sourceNode.terminalDevice || "terminal",
+                terminalRange: branchHint.terminalRange,
+              })}
+                title={`create a persisted ${format.label} Result from this selected terminal output`}
+                style={{ background: "#0E7C7B", color: "#fff", border: "none", borderRadius: 7, padding: "7px 12px", fontSize: 12, fontWeight: 700, cursor: "pointer", boxShadow: "0 6px 18px rgba(0,0,0,0.22)", whiteSpace: "nowrap" }}>
+                ▤ Create {format.label}
+              </button>
+            );
+          })()}
           {(nodes.find((n) => n.id === branchHint.nodeId)?.depth > 0) && (
             <button onMouseDown={(e) => e.preventDefault()} onClick={() => { relateToOrigin(branchHint.nodeId, branchHint.quote); setBranchHint(null); window.getSelection()?.removeAllRanges(); }}
               style={{ background: "#5B4B9E", color: "#fff", border: "none", borderRadius: 7, padding: "7px 12px", fontSize: 12, fontWeight: 600, cursor: "pointer", boxShadow: "0 6px 18px rgba(0,0,0,0.22)", whiteSpace: "nowrap" }}>
@@ -2161,115 +2683,15 @@ function renderMarkdown(text, highlights) {
 // Facet bodies are already markdown, so markdown is the canonical export and HTML is derived from
 // it. Rich HTML placed on the clipboard pastes into OneNote / Word / Notion / Evernote with
 // formatting intact; the .md download imports cleanly into Obsidian / Logseq / Bear / Joplin.
-const EXPORT_FACETS = [["context", "Context"], ["summary", "Summary"], ["sources", "Authoritative source"], ["action", "Suggested action"]];
-
-function escHtml(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
 
 // inline markdown → html, mirroring mdInline: **bold**, `code`, *italic*, _italic_
-function mdInlineHtml(text) {
-  const codes = [];
-  let s = escHtml(text).replace(/`([^`]+?)`/g, (m, a) => { codes.push(a); return " " + (codes.length - 1) + " "; });
-  s = s.replace(/\*\*([^*]+?)\*\*/g, (m, a) => "<strong>" + a + "</strong>");
-  s = s.replace(/\*([^*]+?)\*/g, (m, a) => "<em>" + a + "</em>");
-  s = s.replace(/_([^_]+?)_/g, (m, a) => "<em>" + a + "</em>");
-  s = s.replace(/ (\d+) /g, (m, i) => "<code>" + codes[+i] + "</code>");
-  return s;
-}
+
 
 // block markdown → html. Headings shift +2 so a facet body's own headings stay subordinate
 // to the note skeleton (h1 title / h2 section / h3 facet).
-function mdBlockHtml(md) {
-  const lines = String(md).split(/\n/); const out = []; let list = null, code = null;
-  const closeList = () => { if (list) { out.push("</" + list + ">"); list = null; } };
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i];
-    const fence = line.match(/^\s*```(\w[\w+.-]*)?\s*$/);
-    if (fence) { if (code == null) { closeList(); code = []; } else { out.push("<pre><code>" + code.map(escHtml).join("\n") + "</code></pre>"); code = null; } continue; }
-    if (code) { code.push(line); continue; }
-    if (/^\s*([-*_])\1{2,}\s*$/.test(line)) { closeList(); out.push("<hr>"); continue; }
-    const b = line.match(/^\s*[-*•]\s+(.*)$/), n = line.match(/^\s*\d+[.)]\s+(.*)$/), h = line.match(/^\s*(#{1,3})\s+(.*)$/);
-    if (b) { if (list !== "ul") { closeList(); out.push("<ul>"); list = "ul"; } out.push("<li>" + mdInlineHtml(b[1]) + "</li>"); }
-    else if (n) { if (list !== "ol") { closeList(); out.push("<ol>"); list = "ol"; } out.push("<li>" + mdInlineHtml(n[1]) + "</li>"); }
-    else if (h) { closeList(); const lvl = Math.min(6, h[1].length + 2); out.push("<h" + lvl + ">" + mdInlineHtml(h[2]) + "</h" + lvl + ">"); }
-    else if (line.trim()) { closeList(); out.push("<p>" + mdInlineHtml(line) + "</p>"); }
-    else closeList();
-  }
-  if (code) out.push("<pre><code>" + code.map(escHtml).join("\n") + "</code></pre>");
-  closeList();
-  return out.join("\n");
-}
+
 
 // walk a node's messages into ordered { kind, label, body(markdown) } sections for export
-function branchSections(node) {
-  const secs = [];
-  (node.messages || []).forEach((m) => {
-    if (m.role === "user" && !m.relate) { if ((m.content || "").trim()) secs.push({ kind: "q", label: "You asked", body: m.content }); }
-    else if (m.role === "tool") { /* verbose tool output omitted from notes */ }
-    else if (m.tabs) { EXPORT_FACETS.forEach(([k, lbl]) => { const body = (m.tabs[k] || "").trim(); if (body) secs.push({ kind: "facet", label: lbl, body }); }); }
-    else if (m.relate) { if ((m.content || "").trim()) secs.push({ kind: "relate", label: "Relates back to origin", body: m.content }); }
-    else if ((m.content || "").trim()) secs.push({ kind: "a", label: "Answer", body: m.content });
-  });
-  return secs;
-}
-
-function branchToMarkdown(node) {
-  const L = ["# " + (nodeTitle(node) || "Untitled branch"), ""];
-  if (node.sourceQuote) L.push("> Branched from: “" + node.sourceQuote + "”", "");
-  branchSections(node).forEach((s) => { L.push((s.kind === "facet" ? "### " : "## ") + s.label, "", s.body.trim(), ""); });
-  L.push("---", "*Exported from NetClaw Canvas*");
-  return L.join("\n");
-}
-
-function branchToHtmlFragment(node) {
-  const P = ["<h1>" + escHtml(nodeTitle(node) || "Untitled branch") + "</h1>"];
-  if (node.sourceQuote) P.push("<blockquote><em>Branched from: “" + escHtml(node.sourceQuote) + "”</em></blockquote>");
-  branchSections(node).forEach((s) => {
-    P.push(s.kind === "facet" ? "<h3>" + escHtml(s.label) + "</h3>" : "<h2>" + escHtml(s.label) + "</h2>");
-    P.push(mdBlockHtml(s.body));
-  });
-  P.push("<hr><p><small>Exported from NetClaw Canvas</small></p>");
-  return P.join("\n");
-}
-
-function branchToHtmlDoc(node) {
-  const title = escHtml(nodeTitle(node) || "Untitled branch");
-  return `<!doctype html>
-<html><head><meta charset="utf-8"><title>${title}</title>
-<style>body{font-family:-apple-system,Segoe UI,Roboto,sans-serif;line-height:1.55;max-width:760px;margin:40px auto;padding:0 20px;color:#1a1a1a}h1{font-size:1.6em}h2{margin-top:1.4em;font-size:1.2em}h3{margin-top:1em;font-size:1.02em;color:#444}blockquote{border-left:3px solid #ccc;margin:0 0 1em;padding-left:12px;color:#666}code{background:#f2f2f2;padding:1px 4px;border-radius:4px;font-size:.9em}pre{background:#f6f6f6;padding:10px;border-radius:6px;overflow:auto}pre code{background:none;padding:0}hr{border:none;border-top:1px solid #e5e5e5;margin:24px 0}small{color:#888}</style>
-</head><body>
-${branchToHtmlFragment(node)}
-</body></html>`;
-}
-
-async function copyRich(html, text) {
-  try {
-    if (navigator.clipboard && typeof window !== "undefined" && window.ClipboardItem) {
-      await navigator.clipboard.write([new window.ClipboardItem({
-        "text/html": new Blob([html], { type: "text/html" }),
-        "text/plain": new Blob([text], { type: "text/plain" }),
-      })]);
-      return true;
-    }
-  } catch {}
-  try { await navigator.clipboard.writeText(text); return true; } catch {}
-  return false;
-}
-
-function downloadTextFile(name, mime, content) {
-  try {
-    const url = URL.createObjectURL(new Blob([content], { type: mime }));
-    const a = document.createElement("a");
-    a.href = url; a.download = name; a.target = "_blank"; a.rel = "noopener"; a.style.display = "none";
-    document.body.appendChild(a); a.click(); document.body.removeChild(a);
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
-    return true;
-  } catch { return false; }
-}
-
-function branchFileName(node) {
-  const t = (nodeTitle(node) || "branch").replace(/[\\/:*?"<>|]+/g, " ").replace(/\s+/g, " ").trim().slice(0, 60);
-  return t || "branch";
-}
 
 // Tool call + result block. Renders MCP style tool output (read_file, list_dir, search_files)
 // as a dark monospace card with structured rendering per tool. Selectable text so the
@@ -2596,7 +3018,9 @@ function Lane({ node, color, isActive, selected, highlights, synthSources, anima
       style={{ position: "absolute", left: node.x, top: node.y, width: node.w, height: node.min ? COLLAPSED_H : node.h, zIndex: node.z,
         transition: animate ? "left .35s cubic-bezier(.22,1,.36,1), top .35s cubic-bezier(.22,1,.36,1), width .3s cubic-bezier(.22,1,.36,1)" : "none",
         display: "flex", flexDirection: "column", borderRadius: 12, background: C.card,
-        border: `1px solid ${isActive ? color : C.hairline}`,
+        borderTop: `1px solid ${isActive ? color : C.hairline}`,
+        borderRight: `1px solid ${isActive ? color : C.hairline}`,
+        borderBottom: `1px solid ${isActive ? color : C.hairline}`,
         ...(isSynth ? { borderLeft: "none" } : { borderLeft: `4px solid ${color}` }),
         boxShadow: isActive ? `0 0 0 2px var(--ring), 0 12px 30px var(--shadow)` : `0 4px 14px var(--shadow)`, overflow: "hidden",
         ...(selected && !isActive ? { outline: `2px solid ${color}`, outlineOffset: 1 } : {}) }}>
@@ -2704,9 +3128,9 @@ function Lane({ node, color, isActive, selected, highlights, synthSources, anima
               <div onMouseUp={onSelect} style={{ padding: "9px 11px", fontSize: 13.5, lineHeight: 1.5, color: C.ink, cursor: "text" }}>{renderMarkdown(m.content, highlights)}</div>
             </div>
           ) : m.tabs ? (
-            <TabbedAnswer key={i} tabs={m.tabs} color={color} onSelect={onSelect} highlights={highlights} defaultTab={defaultTab} />
+            <React.Fragment key={i}><TabbedAnswer tabs={m.tabs} color={color} onSelect={onSelect} highlights={highlights} defaultTab={defaultTab} /><AssessmentLinks message={m} /></React.Fragment>
           ) : (
-            <div key={i} onMouseUp={onSelect} style={{ alignSelf: "flex-start", maxWidth: "94%", background: C.card, color: C.ink, padding: "9px 11px", border: `1px solid ${C.hairline}`, borderRadius: "10px 10px 10px 2px", fontSize: 13.5, lineHeight: 1.5, cursor: "text" }}>{renderMarkdown(m.content, highlights)}</div>
+            <div key={i} onMouseUp={onSelect} style={{ alignSelf: "flex-start", maxWidth: "94%", background: C.card, color: C.ink, padding: "9px 11px", border: `1px solid ${C.hairline}`, borderRadius: "10px 10px 10px 2px", fontSize: 13.5, lineHeight: 1.5, cursor: "text" }}> {renderMarkdown(m.content, highlights)}<AssessmentLinks message={m} /></div>
           )
         )}
         {node.loading && <div style={{ alignSelf: "flex-start", fontSize: 12, color: C.muted, fontStyle: "italic", display: "flex", gap: 6, alignItems: "center" }}><span style={{ width: 7, height: 7, borderRadius: "50%", background: color, display: "inline-block", animation: "pulse 1s infinite" }} /> thinking…</div>}
@@ -2820,6 +3244,7 @@ function Tutorial({ onClose }) {
     { id: "branching", title: "Threads and branching" },
     { id: "synthesis", title: "Synthesis (the inverse)" },
     { id: "localfiles", title: "Attachments and tools" },
+    { id: "configreview", title: "Configuration review" },
     { id: "layout", title: "Layout: free vs lanes" },
     { id: "sessions", title: "Sessions and persistence" },
     { id: "models", title: "NetClaw gateway" },
@@ -2841,7 +3266,7 @@ function Tutorial({ onClose }) {
         <div style={{ width: 200, flexShrink: 0, borderRight: `1px solid ${C.hairline}`, background: C.cardAlt, display: "flex", flexDirection: "column" }}>
           <div style={{ padding: "14px 16px 8px" }}>
             <div style={{ fontSize: 14, fontWeight: 700, color: C.ink }}>Tutorial</div>
-            <div style={{ fontSize: 11, color: C.muted, marginTop: 2 }}>NetClaw Canvas in 8 sections</div>
+            <div style={{ fontSize: 11, color: C.muted, marginTop: 2 }}>NetClaw Canvas in 9 sections</div>
           </div>
           <div style={{ flex: 1, overflowY: "auto", padding: "4px 0" }}>
             {sections.map((s, i) => (
@@ -2880,21 +3305,26 @@ function Tutorial({ onClose }) {
             <P>Network and operational tools are supplied by NetClaw through the OpenClaw gateway. The canvas does not hold provider credentials or replace NetClaw's tool, safety, GAIT, and change-management controls.</P>
             <Tip>Large text attachments are capped before they enter the conversation context. Image support depends on the model configured in the gateway.</Tip>
 
-            <H id="layout">5. Layout: free vs lanes</H>
+            <H id="configreview">5. Configuration review</H>
+            <P>Choose Tools → New configuration review to paste or import a running config. The source becomes immutable when review begins. Select a line and press <K>Enter</K>, or click its <K>+</K>, to insert commentary between that line and the next without changing device syntax.</P>
+            <P>From an SSH terminal, select the relevant running-config output and choose <strong>Review config</strong>. Review windows, comments, names, and layout persist with the Canvas session. Export creates an explicitly marked review artifact that must not be sent to a device.</P>
+            <Tip>Company synchronization stays disabled until NetClaw has an authenticated human identity and RBAC provider. N2N peer grants are not user permissions. Export to an access-controlled Git repository for the current audited sharing path.</Tip>
+
+            <H id="layout">6. Layout: free vs lanes</H>
             <P>By default you drag windows freely. When the canvas gets cluttered, two options under View:</P>
             <P><strong>▦ Tidy</strong> runs a one shot reflow: every visible window snaps into depth columns (trunk left, deeper branches further right), siblings stack vertically under their parent, parents center vertically across their children. Drag remains free afterward.</P>
             <P><strong>▤ Tile</strong> (<K>T</K>) fills the whole canvas: every open window is snapped into a gapless grid that fully covers the viewport at 100%, like Windows snap layouts. Fuller rows sit on top; drag remains free afterward.</P>
             <P><strong>🔒 Lanes</strong> turns Tidy into a persistent lock. New branches auto place, drag is disabled, the layout stays clean. Toggle off to drag freely again.</P>
 
-            <H id="sessions">6. Sessions and persistence</H>
+            <H id="sessions">7. Sessions and persistence</H>
             <P>Every change autosaves to your browser's IndexedDB (capacity is roughly half your disk, so you can keep an indefinite history). File → Sessions opens the library: switch between past sessions, search across them (titles and message contents), export any session as JSON, import one back.</P>
             <P>Sessions are local to this browser. They don't sync across devices. If that matters, export to JSON and re import on the other machine.</P>
 
-            <H id="models">7. NetClaw gateway</H>
+            <H id="models">8. NetClaw gateway</H>
             <P>The Canvas uses NetClaw's existing <K>/api/chat</K> proxy, which connects to the local OpenClaw gateway. Model choice, credentials, MCP integrations, skills, and tool execution remain configured in NetClaw.</P>
             <P>The status chip in the header shows whether the gateway is reachable. When it is offline, the server preserves the existing HUD behavior and returns NetClaw's local heuristic response.</P>
 
-            <H id="shortcuts">8. Keyboard shortcuts</H>
+            <H id="shortcuts">9. Keyboard shortcuts</H>
             <div style={{ display: "grid", gridTemplateColumns: "auto 1fr", gap: "6px 16px", margin: "10px 0", fontSize: 13 }}>
               <K>⌘N</K><span>New main thread</span>
               <K>⌘J</K><span>Synthesize selected windows</span>
@@ -2909,10 +3339,20 @@ function Tutorial({ onClose }) {
               <K>drag empty canvas</K><span>Pan the canvas</span>
               <K>shift + drag</K><span>Marquee select</span>
               <K>shift + click window</K><span>Toggle window in selection</span>
+              <K>Enter on config line</K><span>Insert a review comment below that line</span>
             </div>
           </div>
         </div>
       </div>
     </div>
   );
+}
+
+// Additive message affordance; the four original answer tabs stay intact.
+function AssessmentLinks({ message }) {
+  return <div style={{ padding: "6px 10px", fontSize: 12, color: C.muted }}>
+    {message.fromGateway === false && <p>Local fallback response · gateway unavailable</p>}
+    {(message.assessmentRefs || []).map(ref => <button key={ref.assessmentId} onClick={() => openAssessment(ref)} style={{ background: C.cardAlt, color: C.ink, border: `1px solid ${C.hairline}`, padding: "7px 10px", borderRadius: 5, cursor: "pointer", marginRight: 6 }}>Jev evidence ↗</button>)}
+    {message.assessmentBinding === "unbound" && <span>Jev: no trusted assessment link for this message</span>}
+  </div>;
 }

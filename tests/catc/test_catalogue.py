@@ -74,7 +74,7 @@ async def main():
         async with ClientSession(r,w) as s:
             await s.initialize()
             t=(await s.list_tools()).tools
-            m="\n".join(f"{x.name}\n{x.description or ''}\n{x.inputSchema}" for x in t)
+            m="\n".join(f"{x.name}\n{x.description or ''}\n{x.model_dump(by_alias=True)['inputSchema']}" for x in t)
             print(json.dumps({"n":len(t),"names":[x.name for x in t],
                               "chars":len(m),"lines":m.count("\n")}))
 asyncio.run(main())

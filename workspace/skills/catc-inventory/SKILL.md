@@ -1,6 +1,6 @@
 ---
 name: catc-inventory
-description: "Catalyst Center device inventory and site management - list/filter devices by hostname, IP, platform, family, role, reachability; view site hierarchy; get interface details per device; device reachability monitoring; cross-reference with pyATS. Use when listing network devices, checking device reachability, auditing software versions, viewing site hierarchy, or finding a device by serial number."
+description: "Catalyst Center device inventory and site management - list/filter devices by hostname, IP, platform, family, role, reachability; view site hierarchy; get interface details per device; device reachability monitoring; cross-reference with pyATS. Use when listing network devices, checking device reachability, auditing software versions, viewing site hierarchy, or finding a device by serial number. This is a narrow, purpose-built tool for that pyATS cross-reference workflow specifically. For anything else in Catalyst Center (wireless, assurance health, compliance, software images, events) or a comprehensive read-only query, use `catalyst-center-readonly` instead."
 license: Apache-2.0
 user-invocable: true
 metadata:
@@ -404,5 +404,10 @@ Software Version Compliance
 After completing any inventory operation, record the session in GAIT:
 
 ```bash
-python3 $MCP_CALL "python3 -u $GAIT_MCP_SCRIPT" gait_record_turn '{"input":{"role":"assistant","content":"Catalyst Center inventory audit on $CCC_HOST: 156 devices total, 152 reachable (97.4%), 4 unreachable (ACC-SW-15, AP-CHI-F2-03, AP-CHI-F2-04, RTR-WAN-02). Collection failures: 6 devices. Software compliance: 96% on approved versions. 2 sites with unreachable devices flagged for investigation.","artifacts":[]}}'
+python3 $MCP_CALL "python3 -u $GAIT_MCP_SCRIPT" gait_record_turn '{"user_text":"Example only: replace with the actual authorized request.","assistant_text":"Catalyst Center inventory audit on $CCC_HOST: 156 devices total, 152 reachable (97.4%), 4 unreachable (ACC-SW-15, AP-CHI-F2-03, AP-CHI-F2-04, RTR-WAN-02). Collection failures: 6 devices. Software compliance: 96% on approved versions. 2 sites with unreachable devices flagged for investigation.","artifacts":[]}'
 ```
+
+Audit examples are illustrative. Replace request, outcomes, identifiers and counts
+with observed session evidence; do not record these example results as facts.
+Inspect MCP `isError`, returned `ok`, and the recorded turn with `gait_show` when
+validating a new client/schema. Follow gait-session-tracking for branch checkout.

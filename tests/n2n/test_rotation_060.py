@@ -1,5 +1,5 @@
 """US3 rotation: credentials past their renew_after are renewed automatically,
-old ones retired, successors announced — no channel drop required. Uses the
+existing pinned key preserved — no channel drop required. Uses the
 credential registry + RotationManager directly (no 30-day waits)."""
 
 import asyncio
@@ -22,7 +22,7 @@ def test_due_detection_and_renew(tmp_path):
     svc = _svc(tmp_path)
     rot = RotationManager(svc)
     # Register a host credential whose renew_after is already in the past.
-    cert_pem, key_pem = certs.create_self_signed("as65001-4.4.4.4")
+    cert_pem, key_pem = svc.host_credential()
     cid = rot.register("host-pinned", "as65001-4.4.4.4", cert_pem, issuer="self")
     assert cid > 0
     # Force renew_after into the past so it's due now.
@@ -36,10 +36,12 @@ def test_due_detection_and_renew(tmp_path):
 
     renewed = asyncio.run(rot.run_once())
     assert renewed == 1
-    # A fresh active credential exists and the old fingerprint is retired.
+    # A fresh active certificate preserves the existing pinned identity.
     active = [c for c in svc.manager.list_credentials() if c["kind"] == "host-pinned"]
     assert active and active[0]["state"] == "active"
-    assert active[0]["fingerprint"] != certs.key_fingerprint(cert_pem)
+    assert active[0]["fingerprint"] == certs.key_fingerprint(cert_pem)
+    assert certs.fingerprint(active[0]["cert_pem"]) != certs.fingerprint(cert_pem)
+    assert svc.host_credential()[1] == key_pem
     # Rotation was audited.
     kinds = [e["kind"] for e in svc.audit.recent_cert_events(10)]
     assert "renewed" in kinds

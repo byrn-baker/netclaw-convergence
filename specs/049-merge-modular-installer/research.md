@@ -73,3 +73,85 @@
 **Decision**: Complete this work directly on `pr-96-review` (local branch tracking `refs/pull/96/head`), then push the result to `calcuttin:feat/installer-tui-refactor`. Confirmed via `gh pr view 96` that `maintainerCanModify: true` — the contributor explicitly enabled maintainer edits, so this is both technically possible and clearly welcomed by them. This updates PR #96 in place rather than opening a new, competing PR, preserving the contributor's own commit and its authorship in the final history regardless of who pushes follow-up commits after it.
 
 **Fallback** (only if the push is rejected for a reason not visible from `maintainerCanModify`, e.g. branch protection on their fork): open a new PR that includes their original commit (via merge, not squash-and-reattribute) with an explicit comment on PR #96 crediting them and linking to the superseding PR, then close #96. Discussed and pre-approved by the operator; not expected to be needed.
+
+## macOS keyboard follow-up (2026-10-09)
+
+On the host's `/bin/bash` 3.2.57, `read -t 0.05` reports an invalid timeout.
+A pseudo-terminal reproduction sends Down to `tui_menu`: the tail read fails,
+returns `esc`, and the menu aborts. `select_runtime` then swallows that failure
+with `|| return 0`, continuing with OpenClaw. This matches the reported symptom;
+Greg's exact terminal and keystroke stream have not been tested.
+
+Use an integer one-second bound for escape-sequence tails, supported by Bash
+3.2 and modern Bash. Preserve the first blocking character read, propagate its
+failure, recognize both arrow encodings, and cancel instead of accepting a
+runtime on failure. A standalone Escape can take up to one second to resolve.
+
+## Python prerequisites follow-up (2026-10-09)
+
+The supplied log explicitly shows pyATS failing because uv is missing. The
+shared helper creates component venvs from NETCLAW_PY (default: python3),
+then reuses existing runtimes solely on executable/pip availability. The
+prerequisite check does not validate Python version or require uv for the
+staged pyATS/GAIT installers. Apple Python 3.9 is available on this host;
+Greg's exact Python version remains unconfirmed.
+
+PyPI metadata for fastmcp 4.0.11 and mcp 2.3.0 declares Python >=3.10:
+https://pypi.org/pypi/fastmcp/4.0.11/json and
+https://pypi.org/pypi/mcp/2.3.0/json. These pins are compatible with each
+other's Python minimum; removing constraints would not repair Python 3.9.
+
+Use Python 3.12 as operator guidance, matching pyATS' default. Existing
+automatic environments with unsupported Python must not be reused after
+changing NETCLAW_PY; use a separate version-suffixed target, with the same
+ownership checks and success-only interpreter records.
+
+## Received full-log evidence (2026-10-09)
+
+104 actual logs: 42 contain ResolutionImpossible, 11 contain old-pip editable
+installation errors, five report no matching distribution, and two staged
+runtimes fail for missing uv. These are message counts, not 104 failures or
+proof that every error is exclusively Python-related. The supplied version
+output confirms Python 3.9.6. pip 21.2.4 predates PEP 660 editable support
+added in pip 21.3 (https://pip.pypa.io/en/stable/news/#v21-3).
+
+Additional direct defects: gtrace uses grep -P (rejected by macOS grep), ignores
+failed sudo binary placement, and logs success; claw-certs lacks cryptography
+and calls undefined log_success; multivendor requires virtualenv and hardcodes
+/usr/bin/python3; dedicated ANTA/source environments can retain old Python on
+retry. Canonical `.venv/bin/python` templates currently ignore runtime records,
+so recovery must update binding for those known templates while retaining
+custom command conflicts and unrelated transports.
+
+The archive also warns of absent Docker, kubectl, Ollama, tshark/capinfos,
+Graphviz, browser provisioning and production guards. Computer Use is explicitly
+a Linux virtual desktop. These external prerequisites need operator setup
+or selection changes; do not misclassify them as Python resolver bugs.
+
+## Second archive and preflight design (2026-10-09)
+
+Zabbix's requirements contain ./vendor/zabbix-mcp-server. pip resolves that
+against cwd, not the requirements file's parent. Removing the former cd in
+PR285 introduced the failure; offline pip parsing reproduces it and resolves
+the vendored directory when run from zabbix-mcp.
+
+Forward's quoted message comes from command -v go failing. Upstream requires
+Go 1.25 and CGO (https://github.com/forwardnetworks/forward-mcp#prerequisites).
+Panorama explicitly requires >=3.10,<3.13. Zoom rtms 1.1.0 publishes cp310–cp313
+wheels for darwin-arm64/linux-x86_64, with no cp314 wheel or source distribution.
+https://pypi.org/project/rtms/1.1.0/ and
+https://pypi.org/project/iflow-mcp-cdot65-palo-alto-mcp/.
+Cisco's RADKit PyPI page directs users to https://radkit.cisco.com/pip; the
+public index has only placeholder 1.99.1, not the pinned SDK 1.9.0. Preflight
+must report the need for vendor sources instead of promising a Python-only fix.
+
+Jev's archived error log is byte-identical to the first archive and predates
+the retry. Interactive success does not replace a prior failure log. Separate
+run directories prevent mixing these records. A read-only report cannot prove
+package resolution, credentials or service connectivity; label its scope.
+
+Use a JSON policy shared by the read-only checker and pip helper. Defaults
+cover all catalog entries; explicit bounds/tools/platform rules override them.
+Validate policy ids against the catalog and derive uvx/docker launcher needs
+from tracked MCP registrations. Keep the checker stdlib-only and Bash helpers
+compatible with Apple Bash 3.2. No package changes during offline tests.

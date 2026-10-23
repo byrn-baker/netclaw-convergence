@@ -1,6 +1,6 @@
 ---
 name: mempalace
-description: "MemPalace AI memory — persistent memory across sessions. Search past decisions, store architecture choices, track temporal network facts via knowledge graph, navigate cross-domain connections, maintain specialist agent diaries. Use when recalling past decisions, storing important context, tracking network changes over time, or maintaining operational journals."
+description: "MemPalace AI memory — an alternate, community memory tool (wing/room/drawer model plus its own knowledge graph) — persistent memory across sessions. Search past decisions, store architecture choices, track temporal network facts via knowledge graph, navigate cross-domain connections, maintain specialist agent diaries. NetClaw's primary, GAIT-integrated memory system is `memory` (spec 033) — use that unless you are specifically continuing work already filed in MemPalace's palace, since the two stores don't share data."
 license: Apache-2.0
 user-invocable: true
 metadata:
@@ -247,5 +247,14 @@ python3 $MCP_CALL "python3 -u $MEMPALACE_MCP_SCRIPT" mempalace_diary_write '{"ag
 Record memory operations in GAIT:
 
 ```bash
-python3 $MCP_CALL "python3 -u $GAIT_MCP_SCRIPT" gait_record_turn '{"prompt":"Store BGP migration decision in MemPalace","response":"Added drawer to wing_netclaw/routing-decisions: Campus core OSPF→eBGP migration rationale. Added KG triple: R1 bgp_peer R2 (valid_from 2026-04-08). Diary entry recorded.","artifacts":[]}'
+python3 $MCP_CALL "python3 -u $GAIT_MCP_SCRIPT" gait_record_turn '{"artifacts":[],"user_text":"Store BGP migration decision in MemPalace","assistant_text":"Added drawer to wing_netclaw/routing-decisions: Campus core OSPF→eBGP migration rationale. Added KG triple: R1 bgp_peer R2 (valid_from 2026-04-08). Diary entry recorded."}'
 ```
+
+## Failure Behavior
+
+- If a tool call fails with an authentication or connection error, check that `GAIT_MCP_SCRIPT`, `MCP_CALL`, `MEMPALACE_MCP_SCRIPT` are set and valid before assuming a data or device problem.
+- On a tool error (timeout, unreachable host, malformed response), report the failure and its error message directly to the user rather than fabricating or guessing at results.
+- For a confirmed read-only call, check connectivity and retry once if appropriate. For any call that changes state or sends a message, a timeout does not prove the action failed: inspect current state or delivery status before retrying, preserve the required approval/change gates, and do not repeat an action whose outcome is unknown.
+
+Audit examples are illustrative. Replace their request and outcomes with observed
+session evidence; inspect MCP `isError`, returned `ok` and recorded GAIT text.

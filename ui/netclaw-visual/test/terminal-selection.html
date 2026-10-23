@@ -1,0 +1,16 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Terminal selection regression fixture</title></head>
+<body style="margin:20px;background:#eceff3;font:14px system-ui">
+  <h1>Terminal selection regression fixture</h1>
+  <p>SYNTHETIC DATA ONLY · No SSH connection, API calls or saved Canvas state.</p>
+  <label>Canvas zoom <select id="zoom"><option>0.5</option><option selected>0.76</option><option>1</option><option>1.25</option><option>1.5</option></select></label>
+  <label>Terminal columns <select id="cols"><option selected>80</option><option>50</option><option>100</option></select></label>
+  <label><input type="checkbox" id="adapter" checked>Coordinate fix enabled</label>
+  <button id="scrollback">Load scrollback</button>
+  <p id="status" role="status" style="height:20px">Select SYNTHETIC on line 1, or a route on line 3.</p>
+  <pre id="selected" aria-label="Selected terminal text" style="height:40px;overflow:auto"></pre>
+  <div style="height:460px;overflow:auto;padding:30px;border:1px solid #aaa">
+    <div id="world" style="transform-origin:0 0;width:max-content"><div id="host" style="padding:7px 8px;background:#090e14;width:max-content"></div></div>
+  </div>
+  <script type="module" src="./terminal-selection-fixture.js"></script>
+</body></html>

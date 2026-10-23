@@ -1,0 +1,217 @@
+{
+  "analysis-mcp": {
+    "status": "pass",
+    "removed": [],
+    "added": [],
+    "input_contract_changes": []
+  },
+  "anta-mcp": {
+    "status": "pass",
+    "removed": [],
+    "added": [],
+    "input_contract_changes": []
+  },
+  "auvik-mcp": {
+    "status": "pass",
+    "removed": [],
+    "added": [],
+    "input_contract_changes": []
+  },
+  "azure-network-mcp": {
+    "status": "baseline-unavailable",
+    "upgraded_status": "pass"
+  },
+  "batfish-mcp": {
+    "status": "pass",
+    "removed": [],
+    "added": [],
+    "input_contract_changes": []
+  },
+  "bgp-intel-mcp": {
+    "status": "pass",
+    "removed": [],
+    "added": [],
+    "input_contract_changes": []
+  },
+  "catc-mcp": {
+    "status": "pass",
+    "removed": [],
+    "added": [],
+    "input_contract_changes": []
+  },
+  "cisco-psirt-mcp": {
+    "status": "pass",
+    "removed": [],
+    "added": [],
+    "input_contract_changes": []
+  },
+  "claroty-mcp": {
+    "status": "review",
+    "removed": [],
+    "added": [],
+    "input_contract_changes": [
+      "get_site",
+      "list_vulnerabilities",
+      "get_server_interfaces",
+      "get_alert_with_devices",
+      "list_sites",
+      "list_organization_zones",
+      "list_ot_activity_events",
+      "get_audit_log",
+      "set_device_custom_attribute",
+      "set_vulnerability_relevance",
+      "get_device_communication_map",
+      "list_servers",
+      "list_alerts",
+      "list_devices",
+      "set_device_purdue_level",
+      "acknowledge_alert"
+    ]
+  },
+  "document-mcp": {
+    "status": "baseline-unavailable",
+    "upgraded_status": "pass"
+  },
+  "eve-ng-mcp-server": {
+    "status": "pass",
+    "removed": [],
+    "added": [],
+    "input_contract_changes": []
+  },
+  "fortinet-mcp": {
+    "status": "pass",
+    "removed": [],
+    "added": [],
+    "input_contract_changes": []
+  },
+  "gnmi-mcp": {
+    "status": "baseline-unavailable",
+    "upgraded_status": "pass"
+  },
+  "gns3-mcp-server": {
+    "status": "pass",
+    "removed": [],
+    "added": [],
+    "input_contract_changes": []
+  },
+  "halo-mcp": {
+    "status": "pass",
+    "removed": [],
+    "added": [],
+    "input_contract_changes": []
+  },
+  "image-style-mcp": {
+    "status": "pass",
+    "removed": [],
+    "added": [],
+    "input_contract_changes": []
+  },
+  "jev-mcp": {
+    "status": "pass",
+    "removed": [],
+    "added": [],
+    "input_contract_changes": []
+  },
+  "memory-mcp": {
+    "status": "pass",
+    "removed": [],
+    "added": [],
+    "input_contract_changes": []
+  },
+  "multivendor-cli-mcp": {
+    "status": "pass",
+    "removed": [],
+    "added": [],
+    "input_contract_changes": []
+  },
+  "n2n-mcp": {
+    "status": "pass",
+    "removed": [],
+    "added": [],
+    "input_contract_changes": []
+  },
+  "nautobot-golden-config-mcp": {
+    "status": "pass",
+    "removed": [],
+    "added": [],
+    "input_contract_changes": []
+  },
+  "nautobot-mcp-v2": {
+    "status": "pass",
+    "removed": [],
+    "added": [],
+    "input_contract_changes": []
+  },
+  "nautobot-routing-mcp": {
+    "status": "pass",
+    "removed": [],
+    "added": [],
+    "input_contract_changes": []
+  },
+  "netclaw-dot-mcp": {
+    "status": "pass",
+    "removed": [],
+    "added": [],
+    "input_contract_changes": []
+  },
+  "nsm-mcp": {
+    "status": "pass",
+    "removed": [],
+    "added": [],
+    "input_contract_changes": []
+  },
+  "packet-buddy-mcp": {
+    "status": "pass",
+    "removed": [],
+    "added": [],
+    "input_contract_changes": []
+  },
+  "protocol-mcp": {
+    "status": "pass",
+    "removed": [],
+    "added": [],
+    "input_contract_changes": []
+  },
+  "rag-mcp": {
+    "status": "pass",
+    "removed": [],
+    "added": [],
+    "input_contract_changes": []
+  },
+  "redfish-mcp": {
+    "status": "pass",
+    "removed": [],
+    "added": [],
+    "input_contract_changes": []
+  },
+  "suzieq-mcp": {
+    "status": "pass",
+    "removed": [],
+    "added": [],
+    "input_contract_changes": []
+  },
+  "topology-diagram-mcp": {
+    "status": "baseline-unavailable",
+    "upgraded_status": "pass"
+  },
+  "tts-mcp": {
+    "status": "baseline-unavailable",
+    "upgraded_status": "pass"
+  },
+  "worldlabs-marble-mcp": {
+    "status": "pass",
+    "removed": [],
+    "added": [],
+    "input_contract_changes": []
+  },
+  "zabbix-mcp": {
+    "status": "baseline-unavailable",
+    "upgraded_status": "pass"
+  },
+  "zoom-rtms-mcp": {
+    "status": "pass",
+    "removed": [],
+    "added": [],
+    "input_contract_changes": []
+  }
+}

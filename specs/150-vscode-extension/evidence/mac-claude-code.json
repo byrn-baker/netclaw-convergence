@@ -1,0 +1,41 @@
+{
+  "client": "claude-code",
+  "exit": 0,
+  "timedOut": false,
+  "tools": [
+    "netclaw_status",
+    "netclaw_inspect",
+    "netclaw_propose_change",
+    "netclaw_request",
+    "netclaw_request_status"
+  ],
+  "allExpected": true,
+  "inertDrafts": 1,
+  "syntheticGatewayCalls": 1,
+  "requestState": "completed",
+  "usage": {
+    "input_tokens": 10,
+    "cache_creation_input_tokens": 4411,
+    "cache_read_input_tokens": 14861,
+    "output_tokens": 734,
+    "output_tokens_details": {
+      "thinking_tokens": 0
+    },
+    "server_tool_use": {
+      "web_search_requests": 0,
+      "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+      "ephemeral_1h_input_tokens": 4411,
+      "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "not_available",
+    "iterations": [],
+    "speed": "standard",
+    "fallback_credit": null
+  },
+  "costUsd": 0.0279762,
+  "scope": "Actual named assistant and provider, unchanged HUD, synthetic NetClaw gateway. No real NetClaw provider or device execution.",
+  "root": "<mac-temp>/netclaw150-unchanged-hud-8k5i69"
+}

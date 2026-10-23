@@ -1,0 +1,588 @@
+[
+  {
+    "integration": "analysis-mcp",
+    "ownership": "tracked",
+    "status": "upgraded",
+    "tools": 3,
+    "entrypoint": "mcp-servers/analysis-mcp/server.py"
+  },
+  {
+    "integration": "anta-mcp",
+    "ownership": "tracked",
+    "status": "upgraded",
+    "tools": 4,
+    "entrypoint": "mcp-servers/anta-mcp/server.py"
+  },
+  {
+    "integration": "auvik-mcp",
+    "ownership": "tracked",
+    "status": "upgraded",
+    "tools": 20,
+    "entrypoint": "mcp-servers/auvik-mcp/auvik_mcp_server.py"
+  },
+  {
+    "integration": "azure-network-mcp",
+    "ownership": "tracked",
+    "status": "upgraded",
+    "tools": 20,
+    "entrypoint": "mcp-servers/azure-network-mcp/azure_network_mcp_server.py"
+  },
+  {
+    "integration": "batfish-mcp",
+    "ownership": "tracked",
+    "status": "upgraded",
+    "tools": 8,
+    "entrypoint": "mcp-servers/batfish-mcp/batfish_mcp_server.py"
+  },
+  {
+    "integration": "bgp-intel-mcp",
+    "ownership": "tracked",
+    "status": "upgraded",
+    "tools": 10,
+    "entrypoint": "mcp-servers/bgp-intel-mcp/server.py"
+  },
+  {
+    "integration": "catc-mcp",
+    "ownership": "tracked",
+    "status": "upgraded",
+    "tools": 10,
+    "entrypoint": "mcp-servers/catc-mcp/server.py"
+  },
+  {
+    "integration": "cisco-psirt-mcp",
+    "ownership": "tracked",
+    "status": "upgraded",
+    "tools": 6,
+    "entrypoint": "mcp-servers/cisco-psirt-mcp/server.py"
+  },
+  {
+    "integration": "claroty-mcp",
+    "ownership": "tracked",
+    "status": "upgraded",
+    "tools": 21,
+    "entrypoint": "mcp-servers/claroty-mcp/claroty_mcp_server.py"
+  },
+  {
+    "integration": "document-mcp",
+    "ownership": "tracked",
+    "status": "upgraded",
+    "tools": 6,
+    "entrypoint": "mcp-servers/document-mcp/server.py"
+  },
+  {
+    "integration": "eve-ng-mcp-server",
+    "ownership": "tracked",
+    "status": "upgraded",
+    "tools": 39,
+    "entrypoint": "mcp-servers/eve-ng-mcp-server/eve_ng_mcp_server.py"
+  },
+  {
+    "integration": "fortinet-mcp",
+    "ownership": "tracked",
+    "status": "upgraded",
+    "tools": 21,
+    "entrypoint": "mcp-servers/fortinet-mcp/server.py"
+  },
+  {
+    "integration": "gnmi-mcp",
+    "ownership": "tracked",
+    "status": "upgraded",
+    "tools": 10,
+    "entrypoint": "mcp-servers/gnmi-mcp/gnmi_mcp_server.py"
+  },
+  {
+    "integration": "gns3-mcp-server",
+    "ownership": "tracked",
+    "status": "upgraded",
+    "tools": 30,
+    "entrypoint": "mcp-servers/gns3-mcp-server/gns3_mcp_server.py"
+  },
+  {
+    "integration": "halo-mcp",
+    "ownership": "tracked",
+    "status": "upgraded",
+    "tools": 18,
+    "entrypoint": "mcp-servers/halo-mcp/halo_mcp_server.py"
+  },
+  {
+    "integration": "image-style-mcp",
+    "ownership": "tracked",
+    "status": "upgraded",
+    "tools": 1,
+    "entrypoint": "mcp-servers/image-style-mcp/server.py"
+  },
+  {
+    "integration": "jev-mcp",
+    "ownership": "tracked",
+    "status": "upgraded",
+    "tools": 3,
+    "entrypoint": "mcp-servers/jev-mcp/server.py"
+  },
+  {
+    "integration": "memory-mcp",
+    "ownership": "tracked",
+    "status": "upgraded",
+    "tools": 10,
+    "entrypoint": "mcp-servers/memory-mcp/memory_mcp_server.py"
+  },
+  {
+    "integration": "multivendor-cli-mcp",
+    "ownership": "tracked",
+    "status": "upgraded",
+    "tools": 8,
+    "entrypoint": "mcp-servers/multivendor-cli-mcp/server.py"
+  },
+  {
+    "integration": "n2n-mcp",
+    "ownership": "tracked",
+    "status": "upgraded",
+    "tools": 40,
+    "entrypoint": "mcp-servers/n2n-mcp/server.py"
+  },
+  {
+    "integration": "nautobot-golden-config-mcp",
+    "ownership": "tracked",
+    "status": "upgraded",
+    "tools": 17,
+    "entrypoint": "mcp-servers/nautobot-golden-config-mcp/server.py"
+  },
+  {
+    "integration": "nautobot-mcp-v2",
+    "ownership": "tracked",
+    "status": "upgraded",
+    "tools": 59,
+    "entrypoint": "mcp-servers/nautobot-mcp-v2/server.py"
+  },
+  {
+    "integration": "nautobot-routing-mcp",
+    "ownership": "tracked",
+    "status": "upgraded",
+    "tools": 14,
+    "entrypoint": "mcp-servers/nautobot-routing-mcp/server.py"
+  },
+  {
+    "integration": "netclaw-dot-mcp",
+    "ownership": "tracked",
+    "status": "upgraded",
+    "tools": 5,
+    "entrypoint": "mcp-servers/netclaw-dot-mcp/server.py"
+  },
+  {
+    "integration": "nsm-mcp",
+    "ownership": "tracked",
+    "status": "upgraded",
+    "tools": 6,
+    "entrypoint": "mcp-servers/nsm-mcp/server.py"
+  },
+  {
+    "integration": "packet-buddy-mcp",
+    "ownership": "tracked",
+    "status": "upgraded",
+    "tools": 12,
+    "entrypoint": "mcp-servers/packet-buddy-mcp/server.py"
+  },
+  {
+    "integration": "protocol-mcp",
+    "ownership": "tracked",
+    "status": "upgraded",
+    "tools": 10,
+    "entrypoint": "mcp-servers/protocol-mcp/server.py"
+  },
+  {
+    "integration": "rag-mcp",
+    "ownership": "tracked",
+    "status": "upgraded",
+    "tools": 10,
+    "entrypoint": "mcp-servers/rag-mcp/rag_mcp_server.py"
+  },
+  {
+    "integration": "redfish-mcp",
+    "ownership": "tracked",
+    "status": "upgraded",
+    "tools": 6,
+    "entrypoint": "mcp-servers/redfish-mcp/server.py"
+  },
+  {
+    "integration": "suzieq-mcp",
+    "ownership": "tracked",
+    "status": "upgraded",
+    "tools": 5,
+    "entrypoint": "mcp-servers/suzieq-mcp/server.py"
+  },
+  {
+    "integration": "topology-diagram-mcp",
+    "ownership": "tracked",
+    "status": "upgraded",
+    "tools": 1,
+    "entrypoint": "mcp-servers/topology-diagram-mcp/server.py"
+  },
+  {
+    "integration": "tts-mcp",
+    "ownership": "tracked",
+    "status": "upgraded",
+    "tools": 2,
+    "entrypoint": "mcp-servers/tts-mcp/server.py"
+  },
+  {
+    "integration": "worldlabs-marble-mcp",
+    "ownership": "tracked",
+    "status": "upgraded",
+    "tools": 3,
+    "entrypoint": "mcp-servers/worldlabs-marble-mcp/server.py"
+  },
+  {
+    "integration": "zabbix-mcp",
+    "ownership": "tracked",
+    "status": "upgraded",
+    "tools": 3,
+    "entrypoint": "mcp-servers/zabbix-mcp/vendor/zabbix-mcp-server/src/zabbix_mcp_server/server.py"
+  },
+  {
+    "integration": "zoom-rtms-mcp",
+    "ownership": "tracked",
+    "status": "upgraded",
+    "tools": 9,
+    "entrypoint": "mcp-servers/zoom-rtms-mcp/server.py"
+  },
+  {
+    "integration": "aci",
+    "ownership": "external-source",
+    "status": "upgraded",
+    "directory": "ACI_MCP",
+    "reviewed_commit": "724e47d89edc725a51f1b4f6b0b2849da249309c",
+    "catalog_entries": [
+      "aci"
+    ]
+  },
+  {
+    "integration": "fmc",
+    "ownership": "external-source",
+    "status": "upgraded",
+    "directory": "CiscoFMC-MCP-server-community",
+    "reviewed_commit": "2158388a017da47ac76433cf53027d96238ba91c",
+    "catalog_entries": [
+      "fmc"
+    ]
+  },
+  {
+    "integration": "ise",
+    "ownership": "external-source",
+    "status": "upgraded",
+    "directory": "ISE_MCP",
+    "reviewed_commit": "1374165ab332ac51c64462f2495d0b8b4347a7bc",
+    "catalog_entries": [
+      "ise"
+    ]
+  },
+  {
+    "integration": "wikipedia",
+    "ownership": "external-source",
+    "status": "upgraded",
+    "directory": "Wikipedia_MCP",
+    "reviewed_commit": "0cd4b24e92419d03e6999d23e776c2826d75b7cd",
+    "catalog_entries": [
+      "wikipedia"
+    ]
+  },
+  {
+    "integration": "catalyst-center-legacy",
+    "ownership": "external-source",
+    "status": "retired",
+    "directory": "catalyst-center-mcp",
+    "reviewed_commit": "481ca28bd0e6d6325187e4c1d7f7eac584f952b3",
+    "catalog_entries": [
+      "catalyst-center-legacy"
+    ]
+  },
+  {
+    "integration": "sdwan",
+    "ownership": "external-source",
+    "status": "upgraded",
+    "directory": "cisco-sdwan-mcp",
+    "reviewed_commit": "fe2fdf6d0dae4bfde37f7e00176a9fbda63645a7",
+    "catalog_entries": [
+      "sdwan"
+    ]
+  },
+  {
+    "integration": "containerlab",
+    "ownership": "external-source",
+    "status": "upgraded",
+    "directory": "clab-mcp-server",
+    "reviewed_commit": "0252f5c97fb88a8931fa10957adba5302e9c8e11",
+    "catalog_entries": [
+      "containerlab"
+    ]
+  },
+  {
+    "integration": "f5",
+    "ownership": "external-source",
+    "status": "upgraded",
+    "directory": "f5-mcp-server",
+    "reviewed_commit": "89ef9d763d923e3728741c50b3a3602d9f96b166",
+    "catalog_entries": [
+      "f5"
+    ]
+  },
+  {
+    "integration": "gait",
+    "ownership": "external-source",
+    "status": "upgraded",
+    "directory": "gait_mcp",
+    "reviewed_commit": "d17cab9b10428f6d7cecd8a4f0a537ec6943981b",
+    "catalog_entries": [
+      "gait"
+    ]
+  },
+  {
+    "integration": "humanrail",
+    "ownership": "external-source",
+    "status": "upgraded",
+    "directory": "humanrail-mcp-server",
+    "reviewed_commit": "2b1bd40f2a5dae97569037f0303a38e324954ac3",
+    "catalog_entries": [
+      "humanrail"
+    ]
+  },
+  {
+    "integration": "infrahub",
+    "ownership": "external-source",
+    "status": "upgraded",
+    "directory": "infrahub-mcp",
+    "reviewed_commit": "bb2207f26c41238125df56af7476450a37752ad5",
+    "catalog_entries": [
+      "infrahub"
+    ]
+  },
+  {
+    "integration": "arista-cvp",
+    "ownership": "external-source",
+    "status": "upgraded",
+    "directory": "mcp-cvp-fun",
+    "reviewed_commit": "0f3e3accb12bf68aa61eea591716f0a94e7453d7",
+    "catalog_entries": [
+      "arista-cvp"
+    ]
+  },
+  {
+    "integration": "nvd-cve",
+    "ownership": "external-source",
+    "status": "upgraded",
+    "directory": "mcp-nvd",
+    "reviewed_commit": "568a603946715b7b3d520556841d826d2f73a222",
+    "catalog_entries": [
+      "nvd-cve"
+    ]
+  },
+  {
+    "integration": "meraki",
+    "ownership": "external-source",
+    "status": "retired",
+    "directory": "meraki-magic-mcp-community",
+    "reviewed_commit": "b846cfa9b60e7ccacc473bbcb0151ee99f5ff3aa",
+    "catalog_entries": [
+      "meraki"
+    ]
+  },
+  {
+    "integration": "netbox",
+    "ownership": "external-source",
+    "status": "upgraded",
+    "directory": "netbox-mcp-server",
+    "reviewed_commit": "14ec2fe7fb7d1f998eb2bfc50aaa67382447cdd5",
+    "catalog_entries": [
+      "netbox"
+    ]
+  },
+  {
+    "integration": "radkit",
+    "ownership": "external-source",
+    "status": "validation-blocked",
+    "directory": "radkit-mcp-server-community",
+    "reviewed_commit": "cc84063d9c705ca778f03b32abb7296daff64121",
+    "catalog_entries": [
+      "radkit"
+    ]
+  },
+  {
+    "integration": "subnet-calc",
+    "ownership": "external-source",
+    "status": "upgraded",
+    "directory": "subnet-calculator-mcp",
+    "reviewed_commit": "5178da6f83ebd894fa7331a62e1087ec9550751b",
+    "catalog_entries": [
+      "subnet-calc"
+    ]
+  },
+  {
+    "integration": "te-community",
+    "ownership": "external-source",
+    "status": "upgraded",
+    "directory": "thousandeyes-mcp-community",
+    "reviewed_commit": "cdb8fcc087d5f594b5764324afb6d6c3e181534f",
+    "catalog_entries": [
+      "te-community"
+    ]
+  },
+  {
+    "integration": "uml",
+    "ownership": "external-source",
+    "status": "upgraded",
+    "directory": "uml-mcp",
+    "reviewed_commit": "0a30a1cdd797be805c96d80b089a3ef36092885f",
+    "catalog_entries": [
+      "uml"
+    ]
+  },
+  {
+    "integration": "percepxion",
+    "ownership": "external-source",
+    "status": "upgraded",
+    "directory": "percepxion-mcp-server",
+    "reviewed_commit": "533fdc981f0457043e948204db216e2b8a4076f5",
+    "catalog_entries": [
+      "percepxion"
+    ]
+  },
+  {
+    "integration": "slc",
+    "ownership": "external-source",
+    "status": "upgraded",
+    "directory": "slc-mcp-server",
+    "reviewed_commit": "c5ba7f6bff56b23123c4bed5f39f48a5b19f35ad",
+    "catalog_entries": [
+      "slc"
+    ]
+  },
+  {
+    "integration": "nmap",
+    "ownership": "external-source",
+    "status": "upgraded",
+    "directory": "nmap-mcp",
+    "reviewed_commit": "b14990e08bf9d30da3ab6292ba27c83ecdd92b25",
+    "catalog_entries": [
+      "nmap"
+    ]
+  },
+  {
+    "integration": "aruba-cx",
+    "ownership": "external-source",
+    "status": "upgraded",
+    "directory": "aruba-cx-mcp",
+    "reviewed_commit": "fb4130d6cac7a6749cb4f53cf71e04f97b1fe867",
+    "catalog_entries": [
+      "aruba-cx"
+    ]
+  },
+  {
+    "integration": "aap",
+    "ownership": "external-source",
+    "status": "upgraded",
+    "directory": "AAP-Enterprise-MCP-Server",
+    "reviewed_commit": "f4f850a47f3e23d5394a79e20bb707b7760c7692",
+    "catalog_entries": [
+      "aap-ansible",
+      "aap-eda",
+      "aap-lint",
+      "aap-docs"
+    ]
+  },
+  {
+    "integration": "fwrule",
+    "ownership": "external-source",
+    "status": "upgraded",
+    "directory": "fwrule-mcp",
+    "reviewed_commit": "3bd52d79919b0aa5124e5d34fcbb12fb6112accd",
+    "catalog_entries": [
+      "fwrule"
+    ]
+  },
+  {
+    "integration": "prometheus",
+    "ownership": "external-source",
+    "status": "upgraded",
+    "directory": "prometheus-mcp-server",
+    "reviewed_commit": "667555aae98fe19bf4f95855050c6a263fb1118d",
+    "catalog_entries": [
+      "prometheus"
+    ]
+  },
+  {
+    "integration": "prisma-sdwan",
+    "ownership": "external-source",
+    "status": "upgraded",
+    "directory": "prisma-sdwan-mcp",
+    "reviewed_commit": "6d945395c53bf681f28e89c859e3039c83c91ccc",
+    "catalog_entries": [
+      "prisma-sdwan"
+    ]
+  },
+  {
+    "integration": "cml",
+    "ownership": "external-source",
+    "status": "upgraded",
+    "directory": "cml-mcp",
+    "reviewed_commit": "ffc70aa9e3ddc348ba31a379a3ecb20fa6868d6d",
+    "catalog_entries": [
+      "cml"
+    ]
+  },
+  {
+    "integration": "itential",
+    "ownership": "external-source",
+    "status": "upgraded",
+    "directory": "itential-mcp",
+    "reviewed_commit": "1b730c83bf34c4958bb5d334e2a50e667e6d0450",
+    "catalog_entries": [
+      "itential"
+    ]
+  },
+  {
+    "integration": "aws-network",
+    "ownership": "external-package",
+    "status": "upgraded",
+    "package": "awslabs.aws-network-mcp-server==0.0.17"
+  },
+  {
+    "integration": "nso",
+    "ownership": "external-package",
+    "status": "upgraded",
+    "package": "cisco-nso-mcp-server==3.1.0"
+  },
+  {
+    "integration": "infoblox",
+    "ownership": "external-package",
+    "status": "upgraded",
+    "package": "infoblox-ddi-mcp==2.2.3"
+  },
+  {
+    "integration": "atlassian",
+    "ownership": "external-package",
+    "status": "native-port-pending",
+    "evidence": "verification.md Remaining external integrations"
+  },
+  {
+    "integration": "aws-cost-explorer",
+    "ownership": "external-package",
+    "status": "native-port-pending",
+    "evidence": "verification.md Remaining external integrations"
+  },
+  {
+    "integration": "aws-diagram",
+    "ownership": "external-package",
+    "status": "native-port-pending",
+    "evidence": "verification.md Remaining external integrations"
+  },
+  {
+    "integration": "pagerduty",
+    "ownership": "external-package",
+    "status": "native-port-pending",
+    "evidence": "verification.md Remaining external integrations"
+  },
+  {
+    "integration": "blender",
+    "ownership": "external-package",
+    "status": "native-port-pending",
+    "evidence": "verification.md Remaining external integrations"
+  }
+]

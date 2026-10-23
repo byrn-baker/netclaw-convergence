@@ -1,0 +1,4 @@
+# Spec 141: isolated Lantronix runtime, supersedes upstream FastMCP3 lock.
+fastmcp==4.0.11
+fastmcp-slim==4.0.11
+mcp==2.3.0

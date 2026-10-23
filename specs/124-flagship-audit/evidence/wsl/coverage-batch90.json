@@ -1,0 +1,236 @@
+[
+  {
+    "path": "mcp-servers/auvik-mcp/auvik_mcp_server.py",
+    "sha256": "4ea7c656684e57577003ec22ac1804ab77177a2173701856248b13a85c37e850",
+    "state": "targeted-review",
+    "method": "Transport/registration and read-only dispatch boundary review; scope in wsl-review.md. Startup expressions checked with actual AST evaluation, distinct from live provider acceptance."
+  },
+  {
+    "path": "mcp-servers/catc-mcp/NOTICE.md",
+    "sha256": "84fa1e90c25d8f2dddf44a22cbdb76f985fb9885cada4211eaeddcb12224d98c",
+    "state": "targeted-review",
+    "method": "Transport/registration and read-only dispatch boundary review; scope in wsl-review.md. Startup expressions checked with actual AST evaluation, distinct from live provider acceptance."
+  },
+  {
+    "path": "mcp-servers/catc-mcp/README.md",
+    "sha256": "161c4da4a00d971a6a9182cb46e3856cf83d7ae1c8b60a72c9384c63c350eb0f",
+    "state": "targeted-review",
+    "method": "Transport/registration and read-only dispatch boundary review; scope in wsl-review.md. Startup expressions checked with actual AST evaluation, distinct from live provider acceptance."
+  },
+  {
+    "path": "mcp-servers/catc-mcp/catalog/compliance.json",
+    "sha256": "8ff800c936ba3334c835a5b1e965901d1d2bf814385b03313bdd758624f6d865",
+    "state": "generated-boundary",
+    "method": "Parsed generated upstream operation catalogue; GET-only, relative URI and facade dispatch reviewed. Appliance/version semantics remain external."
+  },
+  {
+    "path": "mcp-servers/catc-mcp/catalog/devices.json",
+    "sha256": "03e89457cbfdf5a471c73aa97b8ccad40f0228510f92ab36d31b7e5be168c203",
+    "state": "generated-boundary",
+    "method": "Parsed generated upstream operation catalogue; GET-only, relative URI and facade dispatch reviewed. Appliance/version semantics remain external."
+  },
+  {
+    "path": "mcp-servers/catc-mcp/catalog/events.json",
+    "sha256": "4ebc0234ef8eadfad761ca581cfa2754010a58236a9b3cf3c6cb8be2c63ceda0",
+    "state": "generated-boundary",
+    "method": "Parsed generated upstream operation catalogue; GET-only, relative URI and facade dispatch reviewed. Appliance/version semantics remain external."
+  },
+  {
+    "path": "mcp-servers/catc-mcp/catalog/health.json",
+    "sha256": "bc746f82403736864116f828b4b7f6c7e42bcb0937de8ecbb8978fd83830cf6f",
+    "state": "generated-boundary",
+    "method": "Parsed generated upstream operation catalogue; GET-only, relative URI and facade dispatch reviewed. Appliance/version semantics remain external."
+  },
+  {
+    "path": "mcp-servers/catc-mcp/catalog/other.json",
+    "sha256": "2cb26f5b54b2fc9c971ff706035d45d7b95424016b96becbd45da09ec4df46f8",
+    "state": "generated-boundary",
+    "method": "Parsed generated upstream operation catalogue; GET-only, relative URI and facade dispatch reviewed. Appliance/version semantics remain external."
+  },
+  {
+    "path": "mcp-servers/catc-mcp/catalog/sites.json",
+    "sha256": "b989f86edf2887b37e0a463d207219365ae7778a1b46746f791d0d9b52ea27b3",
+    "state": "generated-boundary",
+    "method": "Parsed generated upstream operation catalogue; GET-only, relative URI and facade dispatch reviewed. Appliance/version semantics remain external."
+  },
+  {
+    "path": "mcp-servers/catc-mcp/catalog/software.json",
+    "sha256": "c20aba9079968df0898f29b5c04dad95570abcbe0fb8053aa25a4cc523975dbe",
+    "state": "generated-boundary",
+    "method": "Parsed generated upstream operation catalogue; GET-only, relative URI and facade dispatch reviewed. Appliance/version semantics remain external."
+  },
+  {
+    "path": "mcp-servers/catc-mcp/catalog/wireless.json",
+    "sha256": "fbafb6a4aa0855e464a6cca1f5e994a1484277780c44f5419a96ba759f55084d",
+    "state": "generated-boundary",
+    "method": "Parsed generated upstream operation catalogue; GET-only, relative URI and facade dispatch reviewed. Appliance/version semantics remain external."
+  },
+  {
+    "path": "mcp-servers/catc-mcp/server.py",
+    "sha256": "e105acb4c51276159b3d77bb2f4a9a0aee8b7c9588df25cf9f0f52522b32c8ba",
+    "state": "targeted-review",
+    "method": "Transport/registration and read-only dispatch boundary review; scope in wsl-review.md. Startup expressions checked with actual AST evaluation, distinct from live provider acceptance."
+  },
+  {
+    "path": "mcp-servers/eve-ng-mcp-server/eve_client.py",
+    "sha256": "27f8ad4d208b1b57fa015859c5bdb8e9ae3fcf04a697d0028c0c68e727a00329",
+    "state": "targeted-review",
+    "method": "Transport/registration and read-only dispatch boundary review; scope in wsl-review.md. Startup expressions checked with actual AST evaluation, distinct from live provider acceptance."
+  },
+  {
+    "path": "mcp-servers/gns3-mcp-server/gns3_mcp_server.py",
+    "sha256": "bd327a087f35d864227f333e23d218d94833b4c1dc6114ad16adb43c313fe55c",
+    "state": "targeted-review",
+    "method": "Transport/registration and read-only dispatch boundary review; scope in wsl-review.md. Startup expressions checked with actual AST evaluation, distinct from live provider acceptance."
+  },
+  {
+    "path": "mcp-servers/halo-mcp/halo_mcp_server.py",
+    "sha256": "8ac1eefeca05597dcca95e7b7b6c3fa6e5840eaf6603ca444b5e7c743bf11b35",
+    "state": "targeted-review",
+    "method": "Transport/registration and read-only dispatch boundary review; scope in wsl-review.md. Startup expressions checked with actual AST evaluation, distinct from live provider acceptance."
+  },
+  {
+    "path": "mcp-servers/k8s-mcp/NOTICE.md",
+    "sha256": "a9b394472960c3840f871dd0dea351c1890663211500cec3250ee1d7e117a3a8",
+    "state": "targeted-review",
+    "method": "Transport/registration and read-only dispatch boundary review; scope in wsl-review.md. Startup expressions checked with actual AST evaluation, distinct from live provider acceptance."
+  },
+  {
+    "path": "mcp-servers/k8s-mcp/README.md",
+    "sha256": "649139f63ff0faa9105fc78a7e21fb684a28777581ae392d5ea89b35328ece98",
+    "state": "targeted-review",
+    "method": "Transport/registration and read-only dispatch boundary review; scope in wsl-review.md. Startup expressions checked with actual AST evaluation, distinct from live provider acceptance."
+  },
+  {
+    "path": "mcp-servers/k8s-mcp/config.toml",
+    "sha256": "59c7c18c7f3b9517b9ecc9d37d8d95d674cf674adf906f623332c2565d215fe3",
+    "state": "targeted-review",
+    "method": "Transport/registration and read-only dispatch boundary review; scope in wsl-review.md. Startup expressions checked with actual AST evaluation, distinct from live provider acceptance."
+  },
+  {
+    "path": "mcp-servers/suzieq-mcp/suzieq_client.py",
+    "sha256": "4a3a59d22160a29dab172ee5aefe659baa55afdffaec62abe6487647ab1de8e8",
+    "state": "targeted-review",
+    "method": "Transport/registration and read-only dispatch boundary review; scope in wsl-review.md. Startup expressions checked with actual AST evaluation, distinct from live provider acceptance."
+  },
+  {
+    "path": "mcp-servers/zabbix-mcp/NOTICE.md",
+    "sha256": "ed07c8e6bd4b150b47eab7e0309d023927e1e6690be63b04d4b8ea32cf6cb7ab",
+    "state": "targeted-review",
+    "method": "Transport/registration and read-only dispatch boundary review; scope in wsl-review.md. Startup expressions checked with actual AST evaluation, distinct from live provider acceptance."
+  },
+  {
+    "path": "mcp-servers/zabbix-mcp/README.md",
+    "sha256": "0f8102b29aaa8e17d5a67fb89e8ccccfb45e6664e1bd75eb9bfe76297822c5e9",
+    "state": "targeted-review",
+    "method": "Transport/registration and read-only dispatch boundary review; scope in wsl-review.md. Startup expressions checked with actual AST evaluation, distinct from live provider acceptance."
+  },
+  {
+    "path": "mcp-servers/zabbix-mcp/vendor/zabbix-mcp-server/.gitignore",
+    "sha256": "2f55d5a17586896abb1f269c1fbd9d0d017f298a7213b7caa464575aac580f45",
+    "state": "external-boundary",
+    "method": "Unmodified adopted upstream dependency; pinned notice, separate runtime, registration enforcement and relevant read/TLS call boundaries reviewed. This is not a full upstream code audit."
+  },
+  {
+    "path": "mcp-servers/zabbix-mcp/vendor/zabbix-mcp-server/CONTRIBUTING.md",
+    "sha256": "4702d456aea7cb75d6247f991b3b3119e8b16660fadb86d82fec96ba7222f7da",
+    "state": "external-boundary",
+    "method": "Unmodified adopted upstream dependency; pinned notice, separate runtime, registration enforcement and relevant read/TLS call boundaries reviewed. This is not a full upstream code audit."
+  },
+  {
+    "path": "mcp-servers/zabbix-mcp/vendor/zabbix-mcp-server/Dockerfile",
+    "sha256": "fc70d0dbdc704271b9458e821f6ec7362a53dacc593d0ad4ea8c854cd4c45d5b",
+    "state": "external-boundary",
+    "method": "Unmodified adopted upstream dependency; pinned notice, separate runtime, registration enforcement and relevant read/TLS call boundaries reviewed. This is not a full upstream code audit."
+  },
+  {
+    "path": "mcp-servers/zabbix-mcp/vendor/zabbix-mcp-server/LICENSE",
+    "sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986",
+    "state": "external-boundary",
+    "method": "Unmodified adopted upstream dependency; pinned notice, separate runtime, registration enforcement and relevant read/TLS call boundaries reviewed. This is not a full upstream code audit."
+  },
+  {
+    "path": "mcp-servers/zabbix-mcp/vendor/zabbix-mcp-server/README.md",
+    "sha256": "567473cbf8a34d66425057a432611de0d3a21223292309eacf112d0c207b8778",
+    "state": "external-boundary",
+    "method": "Unmodified adopted upstream dependency; pinned notice, separate runtime, registration enforcement and relevant read/TLS call boundaries reviewed. This is not a full upstream code audit."
+  },
+  {
+    "path": "mcp-servers/zabbix-mcp/vendor/zabbix-mcp-server/config/.env.example",
+    "sha256": "cf5ac13fb969a588b3ae4c4ea147526ca8486100421a1f6e5e156b5041100c4f",
+    "state": "external-boundary",
+    "method": "Unmodified adopted upstream dependency; pinned notice, separate runtime, registration enforcement and relevant read/TLS call boundaries reviewed. This is not a full upstream code audit."
+  },
+  {
+    "path": "mcp-servers/zabbix-mcp/vendor/zabbix-mcp-server/config/mcp.json",
+    "sha256": "e3e25d4917a456f2c21ce84abc65f445f829d23429122bb92ada39195c57a56b",
+    "state": "external-boundary",
+    "method": "Unmodified adopted upstream dependency; pinned notice, separate runtime, registration enforcement and relevant read/TLS call boundaries reviewed. This is not a full upstream code audit."
+  },
+  {
+    "path": "mcp-servers/zabbix-mcp/vendor/zabbix-mcp-server/docker-compose.yml",
+    "sha256": "9cfafda03dd8782968df1dc1a802018918243463fa3b56deaf72780d5c1ccc0f",
+    "state": "external-boundary",
+    "method": "Unmodified adopted upstream dependency; pinned notice, separate runtime, registration enforcement and relevant read/TLS call boundaries reviewed. This is not a full upstream code audit."
+  },
+  {
+    "path": "mcp-servers/zabbix-mcp/vendor/zabbix-mcp-server/pyproject.toml",
+    "sha256": "3764febf8b56e52d4feb0155a92b853bb9c512634485a9d4eef82faabaef98af",
+    "state": "external-boundary",
+    "method": "Unmodified adopted upstream dependency; pinned notice, separate runtime, registration enforcement and relevant read/TLS call boundaries reviewed. This is not a full upstream code audit."
+  },
+  {
+    "path": "mcp-servers/zabbix-mcp/vendor/zabbix-mcp-server/requirements.txt",
+    "sha256": "d35540e80da2ad1013f1ec9a16c661717ce0c1437e7880d40b2d8d96da5cd272",
+    "state": "external-boundary",
+    "method": "Unmodified adopted upstream dependency; pinned notice, separate runtime, registration enforcement and relevant read/TLS call boundaries reviewed. This is not a full upstream code audit."
+  },
+  {
+    "path": "mcp-servers/zabbix-mcp/vendor/zabbix-mcp-server/scripts/start_server.py",
+    "sha256": "05e6bcd32bb74c6eabcf4dd1e0187143db0655cd15283801663f6cf01783e24f",
+    "state": "external-boundary",
+    "method": "Unmodified adopted upstream dependency; pinned notice, separate runtime, registration enforcement and relevant read/TLS call boundaries reviewed. This is not a full upstream code audit."
+  },
+  {
+    "path": "mcp-servers/zabbix-mcp/vendor/zabbix-mcp-server/scripts/test_server.py",
+    "sha256": "ec698e88e7e5dafe0e235f621bde48a422c0c20d92ee99bfc18b307cb9a952cd",
+    "state": "external-boundary",
+    "method": "Unmodified adopted upstream dependency; pinned notice, separate runtime, registration enforcement and relevant read/TLS call boundaries reviewed. This is not a full upstream code audit."
+  },
+  {
+    "path": "mcp-servers/zabbix-mcp/vendor/zabbix-mcp-server/src/zabbix_mcp_server/__init__.py",
+    "sha256": "70e3391b15301e3a4035f27ab9084bd949a9572e9ee14df8526efd0c068576d5",
+    "state": "external-boundary",
+    "method": "Unmodified adopted upstream dependency; pinned notice, separate runtime, registration enforcement and relevant read/TLS call boundaries reviewed. This is not a full upstream code audit."
+  },
+  {
+    "path": "mcp-servers/zabbix-mcp/vendor/zabbix-mcp-server/src/zabbix_mcp_server/api_docs_scraper.py",
+    "sha256": "af98b5d716a41682310af2d594f142b206cf77e6ce4a3f200500c0ef3d465700",
+    "state": "external-boundary",
+    "method": "Unmodified adopted upstream dependency; pinned notice, separate runtime, registration enforcement and relevant read/TLS call boundaries reviewed. This is not a full upstream code audit."
+  },
+  {
+    "path": "mcp-servers/zabbix-mcp/vendor/zabbix-mcp-server/src/zabbix_mcp_server/client.py",
+    "sha256": "a9a2a4c8198a90b406fe23ad23cc4824f52c496ae8c38c5e562faaea470717e5",
+    "state": "targeted-review",
+    "method": "Transport/registration and read-only dispatch boundary review; scope in wsl-review.md. Startup expressions checked with actual AST evaluation, distinct from live provider acceptance."
+  },
+  {
+    "path": "mcp-servers/zabbix-mcp/vendor/zabbix-mcp-server/src/zabbix_mcp_server/config.py",
+    "sha256": "749718454d054cd5173dc83e19de2b09c26206ddf6fc3405d42c8d69e6352575",
+    "state": "targeted-review",
+    "method": "Transport/registration and read-only dispatch boundary review; scope in wsl-review.md. Startup expressions checked with actual AST evaluation, distinct from live provider acceptance."
+  },
+  {
+    "path": "mcp-servers/zabbix-mcp/vendor/zabbix-mcp-server/src/zabbix_mcp_server/server.py",
+    "sha256": "cbb279d93f4ce3f987295c288a0492429f1839822d524b99c8f5cc48d5ec9d17",
+    "state": "targeted-review",
+    "method": "Transport/registration and read-only dispatch boundary review; scope in wsl-review.md. Startup expressions checked with actual AST evaluation, distinct from live provider acceptance."
+  },
+  {
+    "path": "mcp-servers/zabbix-mcp/vendor/zabbix-mcp-server/src/zabbix_mcp_server/utils.py",
+    "sha256": "6570da6596211c914d4fce06d48abea0522d3522fbb8611ad2fac5df13fc322b",
+    "state": "targeted-review",
+    "method": "Transport/registration and read-only dispatch boundary review; scope in wsl-review.md. Startup expressions checked with actual AST evaluation, distinct from live provider acceptance."
+  }
+]

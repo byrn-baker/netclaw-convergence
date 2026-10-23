@@ -1,0 +1,38 @@
+[
+  {
+    "mode": "dev",
+    "page": "hud",
+    "status": 200,
+    "title": "NetClaw Visual",
+    "errors": [],
+    "body_chars": 1239,
+    "canvas_count": 1
+  },
+  {
+    "mode": "dev",
+    "page": "canvas",
+    "status": 200,
+    "title": "NetClaw Canvas Chat",
+    "errors": [],
+    "body_chars": 180,
+    "canvas_count": 0
+  },
+  {
+    "mode": "preview",
+    "page": "hud",
+    "status": 200,
+    "title": "NetClaw Visual",
+    "errors": [],
+    "body_chars": 1239,
+    "canvas_count": 1
+  },
+  {
+    "mode": "preview",
+    "page": "canvas",
+    "status": 200,
+    "title": "NetClaw Canvas Chat",
+    "errors": [],
+    "body_chars": 180,
+    "canvas_count": 0
+  }
+]

@@ -26,7 +26,10 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 from dotenv import load_dotenv
-from mcp.server.fastmcp import FastMCP
+from functools import wraps
+from fastmcp.utilities.async_utils import call_sync_fn_in_threadpool
+from fastmcp_tasks import TasksExtension
+from fastmcp import FastMCP
 
 # Add netclaw_tokens to path for GCF serialization
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "src"))
@@ -68,6 +71,17 @@ logger.info("Batfish MCP Server starting — host=%s port=%d network=%s",
 # FastMCP Server
 # ---------------------------------------------------------------------------
 mcp = FastMCP("batfish-mcp")
+mcp.add_extension(TasksExtension(name="netclaw-batfish-mcp", concurrency=1))
+
+
+def _task_tool(fn):
+    """Register a threaded MCP task while preserving the direct Python callable."""
+    @wraps(fn)
+    async def run(*args, **kwargs):
+        return await call_sync_fn_in_threadpool(fn, *args, **kwargs)
+    mcp.tool(task=True)(run)
+    return fn
+
 
 # ---------------------------------------------------------------------------
 # pybatfish Session Management (T006)
@@ -311,7 +325,7 @@ def batfish_upload_snapshot(
 # ---------------------------------------------------------------------------
 # Tool 2: batfish_validate_config (T011, T013)
 # ---------------------------------------------------------------------------
-@mcp.tool()
+@_task_tool
 @_safe_execute
 def batfish_validate_config(
     snapshot_name: str,
@@ -401,7 +415,7 @@ def batfish_validate_config(
 # ---------------------------------------------------------------------------
 # Tool 3: batfish_test_reachability (T014, T015, T016, T017)
 # ---------------------------------------------------------------------------
-@mcp.tool()
+@_task_tool
 @_safe_execute
 def batfish_test_reachability(
     snapshot_name: str,
@@ -501,7 +515,7 @@ def batfish_test_reachability(
 # ---------------------------------------------------------------------------
 # Tool 4: batfish_trace_acl (T018, T019, T020, T021)
 # ---------------------------------------------------------------------------
-@mcp.tool()
+@_task_tool
 @_safe_execute
 def batfish_trace_acl(
     snapshot_name: str,
@@ -619,7 +633,7 @@ def batfish_trace_acl(
 # ---------------------------------------------------------------------------
 # Tool 5: batfish_diff_configs (T022, T023, T024, T025, T026)
 # ---------------------------------------------------------------------------
-@mcp.tool()
+@_task_tool
 @_safe_execute
 def batfish_diff_configs(
     reference_snapshot: str,
@@ -975,7 +989,7 @@ _COMPLIANCE_DISPATCH = {
 }
 
 
-@mcp.tool()
+@_task_tool
 @_safe_execute
 def batfish_check_compliance(
     snapshot_name: str,
@@ -1038,7 +1052,7 @@ def batfish_check_compliance(
 # ---------------------------------------------------------------------------
 # Tool 7: batfish_list_snapshots (bonus utility)
 # ---------------------------------------------------------------------------
-@mcp.tool()
+@_task_tool
 @_safe_execute
 def batfish_list_snapshots(
     network: Optional[str] = None,

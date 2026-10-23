@@ -114,3 +114,7 @@ The following xDome capabilities are intentionally not in v1 — see `specs/035-
 - Site CRUD (the current `list_sites` / `get_site` are read-only)
 - Organization policy CRUD (zones, firewall groups, ACL policies, attribution rules)
 - CMMS asset upsert and match jobs
+
+## Spec124 production authorization update
+
+Production writes now require the exact ServiceNow CR to be approved and in Implement state. Missing or failed verification blocks writes. See [change-gate migration](../../docs/CHANGE-GATE-MIGRATION.md) for private configuration, preflight, backup and recovery. No ServiceNow record is created or approved automatically.

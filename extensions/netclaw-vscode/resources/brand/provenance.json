@@ -1,0 +1,11 @@
+{
+  "asset": "network-core.png",
+  "created": "2026-10-11",
+  "tool": "image_gen.imagegen",
+  "model": "Not reported by tool; no specific version claimed",
+  "dimensions": "1280x1280",
+  "transparent": true,
+  "use": "Decorative Overview artwork; essential text remains HTML; hidden in high contrast",
+  "prompt": "Create one premium decorative illustration for the NetClaw VS Code network engineering workbench. A sculpted geometric lobster-inspired core made of polished midnight graphite facets, cyan and magenta edge lighting, surrounded by a sparse abstract network constellation with delicate luminous connections and small floating geometric nodes. Sophisticated technical depth, clean editorial composition, uncluttered, balanced near-square composition. Transparent background; self-contained object with generous transparent negative space around it so it sits well in both light and dark editor themes. No text, letters, numbers, logos, UI controls, charts, real network devices, addresses, credentials, or topology. This is symbolic decorative art, not a factual diagram. Render a refined high-quality 3D aesthetic with crisp edges, subtle reflections and controlled bloom. Do not create a screenshot or a webpage.",
+  "private_data": "None supplied"
+}

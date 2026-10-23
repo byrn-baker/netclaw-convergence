@@ -1,0 +1,29 @@
+✖ real HUD server rejects hostile HTTP and WebSocket requests before fixture access (134.631583ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 214.957125
+
+✖ failing tests:
+
+test at src/security/server-access.test.js:33:1
+✖ real HUD server rejects hostile HTTP and WebSocket requests before fixture access (134.631583ms)
+  AssertionError [ERR_ASSERTION]: foreign browser cannot read fixture
+
+  200 !== 403
+
+      at TestContext.<anonymous> (file:///Users/john.capobianco/netclaw/ui/netclaw-visual/src/security/server-access.test.js:59:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+      at async Test.run (node:internal/test_runner/test:1113:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 200,
+    expected: 403,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

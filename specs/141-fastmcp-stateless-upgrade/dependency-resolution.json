@@ -1,0 +1,177 @@
+{
+  "analysis-mcp": {
+    "status": "pass",
+    "manifest": "mcp-servers/analysis-mcp/requirements.txt",
+    "error": null
+  },
+  "anta-mcp": {
+    "status": "pass",
+    "manifest": "mcp-servers/anta-mcp/requirements.txt",
+    "error": null
+  },
+  "auvik-mcp": {
+    "status": "pass",
+    "manifest": "mcp-servers/auvik-mcp/requirements.txt",
+    "error": null
+  },
+  "azure-network-mcp": {
+    "status": "pass",
+    "manifest": "mcp-servers/azure-network-mcp/requirements.txt",
+    "error": null
+  },
+  "batfish-mcp": {
+    "status": "pass",
+    "manifest": "mcp-servers/batfish-mcp/requirements.txt",
+    "error": null
+  },
+  "bgp-intel-mcp": {
+    "status": "pass",
+    "manifest": "mcp-servers/bgp-intel-mcp/requirements.txt",
+    "error": null
+  },
+  "catc-mcp": {
+    "status": "pass",
+    "manifest": "mcp-servers/catc-mcp/requirements.txt",
+    "error": null
+  },
+  "cisco-psirt-mcp": {
+    "status": "pass",
+    "manifest": "mcp-servers/cisco-psirt-mcp/requirements.txt",
+    "error": null
+  },
+  "claroty-mcp": {
+    "status": "pass",
+    "manifest": "mcp-servers/claroty-mcp/requirements.txt",
+    "error": null
+  },
+  "document-mcp": {
+    "status": "pass",
+    "manifest": "mcp-servers/document-mcp/requirements.txt",
+    "error": null
+  },
+  "eve-ng-mcp-server": {
+    "status": "pass",
+    "manifest": "mcp-servers/eve-ng-mcp-server/requirements.txt",
+    "error": null
+  },
+  "fortinet-mcp": {
+    "status": "pass",
+    "manifest": "mcp-servers/fortinet-mcp/requirements.txt",
+    "error": null
+  },
+  "gnmi-mcp": {
+    "status": "pass",
+    "manifest": "mcp-servers/gnmi-mcp/requirements.txt",
+    "error": null
+  },
+  "gns3-mcp-server": {
+    "status": "pass",
+    "manifest": "mcp-servers/gns3-mcp-server/requirements.txt",
+    "error": null
+  },
+  "halo-mcp": {
+    "status": "pass",
+    "manifest": "mcp-servers/halo-mcp/requirements.txt",
+    "error": null
+  },
+  "image-style-mcp": {
+    "status": "pass",
+    "manifest": "mcp-servers/image-style-mcp/requirements.txt",
+    "error": null
+  },
+  "jev-mcp": {
+    "status": "pass",
+    "manifest": "mcp-servers/jev-mcp/requirements.txt",
+    "error": null
+  },
+  "memory-mcp": {
+    "status": "pass",
+    "manifest": "mcp-servers/memory-mcp/pyproject.toml",
+    "error": null
+  },
+  "multivendor-cli-mcp": {
+    "status": "pass",
+    "manifest": "mcp-servers/multivendor-cli-mcp/requirements.txt",
+    "error": null
+  },
+  "n2n-mcp": {
+    "status": "pass",
+    "manifest": "mcp-servers/n2n-mcp/requirements.txt",
+    "error": null
+  },
+  "nautobot-golden-config-mcp": {
+    "status": "pass",
+    "manifest": "mcp-servers/nautobot-golden-config-mcp/requirements.txt",
+    "error": null
+  },
+  "nautobot-mcp-v2": {
+    "status": "pass",
+    "manifest": "mcp-servers/nautobot-mcp-v2/requirements.txt",
+    "error": null
+  },
+  "nautobot-routing-mcp": {
+    "status": "pass",
+    "manifest": "mcp-servers/nautobot-routing-mcp/requirements.txt",
+    "error": null
+  },
+  "netclaw-dot-mcp": {
+    "status": "pass",
+    "manifest": "mcp-servers/netclaw-dot-mcp/requirements.txt",
+    "error": null
+  },
+  "nsm-mcp": {
+    "status": "pass",
+    "manifest": "mcp-servers/nsm-mcp/requirements.txt",
+    "error": null
+  },
+  "packet-buddy-mcp": {
+    "status": "pass",
+    "manifest": "mcp-servers/packet-buddy-mcp/requirements.txt",
+    "error": null
+  },
+  "protocol-mcp": {
+    "status": "pass",
+    "manifest": "mcp-servers/protocol-mcp/requirements.txt",
+    "error": null
+  },
+  "rag-mcp": {
+    "status": "pass",
+    "manifest": "mcp-servers/rag-mcp/pyproject.toml",
+    "error": null
+  },
+  "redfish-mcp": {
+    "status": "pass",
+    "manifest": "mcp-servers/redfish-mcp/requirements.txt",
+    "error": null
+  },
+  "suzieq-mcp": {
+    "status": "pass",
+    "manifest": "mcp-servers/suzieq-mcp/requirements.txt",
+    "error": null
+  },
+  "topology-diagram-mcp": {
+    "status": "pass",
+    "manifest": "mcp-servers/topology-diagram-mcp/requirements.txt",
+    "error": null
+  },
+  "tts-mcp": {
+    "status": "pass",
+    "manifest": "mcp-servers/tts-mcp/requirements.txt",
+    "error": null
+  },
+  "worldlabs-marble-mcp": {
+    "status": "pass",
+    "manifest": "mcp-servers/worldlabs-marble-mcp/requirements.txt",
+    "error": null
+  },
+  "zabbix-mcp": {
+    "status": "pass",
+    "manifest": "mcp-servers/zabbix-mcp/requirements.txt",
+    "error": null
+  },
+  "zoom-rtms-mcp": {
+    "status": "pass",
+    "manifest": "mcp-servers/zoom-rtms-mcp/requirements.txt",
+    "error": null
+  }
+}

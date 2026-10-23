@@ -1,0 +1,48 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_____ test_startup_removes_interrupted_chunks_from_both_persistent_indexes _____
+
+tmp_path = PosixPath('/private/var/folders/ln/99pzcfd950j6vxf7gbfjjm5w0000gq/T/pytest-of-john.capobianco/pytest-10/test_startup_removes_interrupt0')
+
+    def test_startup_removes_interrupted_chunks_from_both_persistent_indexes(tmp_path):
+        import os
+        import subprocess
+        code = '''
+    import config
+    config.ensure_dirs()
+    from storage.registry import Registry
+    from storage.chroma_store import ChromaStore
+    from storage.bm25_store import BM25Store
+    registry = Registry(config.DB_PATH)
+    doc = registry.new_document('document', 'Interrupted', 'fixture', 'other', 'hash', 'documents')
+    registry.set_status(doc, 'embedding')
+    chroma = ChromaStore(config.CHROMA_DIR)
+    chroma.add_chunks('documents', ['chunk1'], [[1.,0.]], ['interrupted route'], [{'document_id':doc}])
+    bm25 = BM25Store(config.BM25_DIR)
+    bm25.add('documents', [{'chunk_id':'chunk1','text':'interrupted route'}])
+    assert bm25.search('documents','interrupted',5)
+    import rag_mcp_server
+    assert not rag_mcp_server.chroma.get_document_chunks('documents',doc)
+    assert not BM25Store(config.BM25_DIR).search('documents','interrupted',5), 'orphaned BM25 entry survived startup'
+    '''
+        env = {**os.environ, 'RAG_DATA_DIR':str(tmp_path), 'PYTHONPATH':str(Path(__file__).resolve().parents[2] / 'mcp-servers/rag-mcp')}
+        result = subprocess.run([sys.executable, '-c', code], env=env, capture_output=True, text=True, timeout=30)
+>       assert result.returncode == 0, result.stderr
+E       AssertionError: 2026-09-26 16:08:44,195 rag-mcp INFO rag-mcp starting with data directory: /private/var/folders/ln/99pzcfd950j6vxf7gbfjjm5w0000gq/T/pytest-of-john.capobianco/pytest-10/test_startup_removes_interrupt0
+E         2026-09-26 16:08:44,196 rag-mcp WARNING Sweeping interrupted ingestion: doc_5cd57f48c000 (Interrupted)
+E         /Users/john.capobianco/netclaw/.contract-test-envs/unit/lib/python3.12/site-packages/fastmcp/server/auth/providers/jwt.py:10: AuthlibDeprecationWarning: authlib.jose module is deprecated, please use joserfc instead.
+E         It will be compatible before version 2.0.0.
+E           from authlib.jose import JsonWebKey, JsonWebToken
+E         /Users/john.capobianco/netclaw/.contract-test-envs/unit/lib/python3.12/site-packages/authlib/integrations/httpx_client/assertion_client.py:5: AuthlibDeprecationWarning: The httpx module is deprecated; please use httpx2 instead.
+E           from ._compat import httpx2
+E         Traceback (most recent call last):
+E           File "<string>", line 17, in <module>
+E         AssertionError: orphaned BM25 entry survived startup
+E
+E       assert 1 == 0
+E        +  where 1 = CompletedProcess(args=['/Users/john.capobianco/netclaw/.contract-test-envs/unit/bin/python', '-c', "\nimport config\nc...t recent call last):\n  File "<string>", line 17, in <module>\nAssertionError: orphaned BM25 entry survived startup\n').returncode
+
+tests/unit/test_rag_ingest_guards.py:66: AssertionError
+=========================== short test summary info ============================
+FAILED tests/unit/test_rag_ingest_guards.py::test_startup_removes_interrupted_chunks_from_both_persistent_indexes
+1 failed, 3 deselected in 0.90s

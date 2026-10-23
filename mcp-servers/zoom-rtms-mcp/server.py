@@ -18,7 +18,10 @@ import logging
 import os
 import threading
 
-from mcp.server.fastmcp import FastMCP
+from functools import wraps
+from fastmcp.utilities.async_utils import call_sync_fn_in_threadpool
+from fastmcp_tasks import TasksExtension
+from fastmcp import FastMCP
 
 import panel_feed
 import recognition
@@ -31,6 +34,17 @@ logging.basicConfig(level=os.environ.get("ZOOM_RTMS_LOG_LEVEL", "INFO"))
 logger = logging.getLogger("zoom_rtms.server")
 
 mcp = FastMCP("zoom-rtms")
+mcp.add_extension(TasksExtension(name="netclaw-zoom-rtms-mcp", concurrency=1))
+
+
+def _task_tool(fn):
+    """Register a threaded MCP task while preserving the direct Python callable."""
+    @wraps(fn)
+    async def run(*args, **kwargs):
+        return await call_sync_fn_in_threadpool(fn, *args, **kwargs)
+    mcp.tool(task=True)(run)
+    return fn
+
 
 # ---------------------------------------------------------------------------
 # Background services
@@ -194,7 +208,7 @@ def zoom_live_context(meeting_uuid: str) -> dict:
     }
 
 
-@mcp.tool()
+@_task_tool
 def zoom_search_historical_meetings(query: str, time_hint: str = None) -> dict:
     """US2/T031: thin pass-through to the official Zoom Meetings MCP
     (research.md R6). Not implemented against a live Zoom MCP connection in

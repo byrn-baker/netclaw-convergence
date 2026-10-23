@@ -106,8 +106,8 @@ claim, and `kubectl auth whoami` is how to catch it.
 ## Limitations
 
 - **No per-call GAIT audit.** The binary exposes `--log-file`/`--log-level`, but measured at level 4 the log
-  contains lifecycle only — no tool calls, no arguments. Operational logging, not an audit trail. Acceptable
-  only because this is strictly read-only. (Whether level 9 records calls is untested.)
+  contains lifecycle only — no tool calls, no arguments. Operational logging, not an audit trail. Record read-only requests, observations and failures
+  separately in session GAIT. (Whether level 9 records calls is untested.)
 - **Trust-on-first-use checksum.** Upstream publishes none — 15 release assets, zero `sha` files. The
   recorded hash detects a re-tagged or altered asset; it is not upstream attestation.
 - **Cluster-scoped CRD policies** (Cilium, Calico) are readable as objects but their **semantics** are not

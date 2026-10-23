@@ -15,12 +15,22 @@ BIN = mcp_binary()
 CFG = repo("mcp-servers", "k8s-mcp", "config.toml")
 
 PROBE = r'''
-import asyncio, json, os, sys
+import asyncio, json, os, sys, tempfile
 from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
 async def main():
     env = dict(os.environ)
-    kc = os.environ.get("K8S_TEST_KUBECONFIG", "/dev/null")
+    kc = os.environ.get("K8S_TEST_KUBECONFIG")
+    fixture = None
+    if not kc:
+        # Valid shape for offline discovery; no credentials or real cluster.
+        fixture = tempfile.NamedTemporaryFile(mode="w", suffix=".json")
+        json.dump({"apiVersion":"v1", "kind":"Config", "current-context":"offline",
+            "clusters":[{"name":"offline","cluster":{"server":"https://127.0.0.1:1"}}],
+            "contexts":[{"name":"offline","context":{"cluster":"offline","user":"offline"}}],
+            "users":[{"name":"offline","user":{}}]}, fixture)
+        fixture.flush()
+        kc = fixture.name
     p = StdioServerParameters(command=sys.argv[1],
         args=["--config", sys.argv[2], "--kubeconfig", kc], env=env)
     async with stdio_client(p) as (r, w):
@@ -40,7 +50,7 @@ def _d():
     import json
     for line in reversed(out.stdout.strip().splitlines()):
         if line.startswith("{"): _C["d"] = json.loads(line); return _C["d"]
-    _C["d"] = None; return None
+    raise RuntimeError(f"Installed Kubernetes MCP manifest probe failed (exit {out.returncode}): {out.stderr[-1000:]}")
 
 def test_under_ceiling():
     d = _d()

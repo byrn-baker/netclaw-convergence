@@ -1,0 +1,10 @@
+{
+  "branch": "124-flagship-audit",
+  "source_checkpoint": "826a40e8f45f69345d8a38d08cf0222a71a08c8a",
+  "remote_verified": true,
+  "verification": "git ls-remote --heads origin 124-flagship-audit matched source revision before handoff-only follow-up",
+  "audit_complete": false,
+  "tasks_checked": 83,
+  "tasks_total": 94,
+  "apple_review_blocking": false
+}

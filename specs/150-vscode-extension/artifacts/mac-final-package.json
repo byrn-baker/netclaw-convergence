@@ -1,0 +1,11 @@
+{
+  "publisher": "NetClaw",
+  "name": "netclaw",
+  "version": "0.1.0",
+  "source": "c2a145946d331f7bc3d8c528c768d06998bb19d4",
+  "sha256": "b13bdfe68c4086bd22edb7521d87443837127f1c70addae08e302b352725c6b8",
+  "bytes": 2349725,
+  "artifact": "netclaw-0.1.0-mac-final.vsix",
+  "qualification": "Exact Mac installed/editor/provider/lifecycle checks recorded in evidence/mac-final.md. Prior full WSL/assistant qualification and limitations retained. Exact final RAG busy-state delta passed real Windows/WSL confirmation in evidence/wsl-final.md; no product-byte change or further Mac handoff required for the documented OpenClaw scope.",
+  "publication": "HELD BY OWNER: do not publish without new explicit authorization"
+}

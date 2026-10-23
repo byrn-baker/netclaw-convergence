@@ -21,14 +21,10 @@ So the engineering is not adoption — it is **making the whole surface reachabl
 NetClaw uses Cisco's **generated tool definitions** (Apache-2.0, `release/2.3.7.11`) — each carrying `uri`,
 `method` and `parameterLocation` — with its own thin client. See [NOTICE.md](./NOTICE.md).
 
-That single decision avoids three upstream properties:
-
-1. **`fastmcp>=2.0.0` unbounded** → resolves 3.x, colliding with five NetClaw servers pinning `<3`. The
-   third occurrence of the hazard that blocked spec 083.
-2. **Streamable HTTP on port 7001** — every other NetClaw MCP server is stdio.
-3. **A container**, which would otherwise be needed purely to isolate (1).
-
-Dependencies here are `mcp` and `httpx`. Nothing else.
+NetClaw preserves stdio operation and its thin HTTP client. The framework now uses
+standalone `fastmcp==4.0.11` and `mcp==2.3.0` in an isolated runtime (spec 141),
+with bounded `httpx` for appliance requests. See the
+[migration and rollback guide](../../docs/FASTMCP-UPGRADE.md).
 
 ## The 10 tools
 

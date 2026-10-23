@@ -187,70 +187,37 @@ class ChromaStore:
         if not query or not query.strip():
             return {"success": False, "error": {"code": "INVALID_QUERY", "message": "Query cannot be empty"}}
 
-        # Check availability
         if not self._init_client():
-            # Graceful degradation - return empty results
-            return {
-                "success": True,
-                "data": {
-                    "query": query,
-                    "results": [],
-                    "count": 0,
-                    "note": "Semantic search unavailable - ChromaDB not initialized",
-                },
-            }
-
+            return {"success": False, "error": {"code": "CHROMA_UNAVAILABLE", "message": "Semantic storage unavailable"}}
         if not self.embedder.available:
-            return {
-                "success": True,
-                "data": {
-                    "query": query,
-                    "results": [],
-                    "count": 0,
-                    "note": "Semantic search unavailable - embedding model not loaded",
-                },
-            }
-
-        # Generate query embedding
-        query_embedding = self.embedder.embed(query)
+            return {"success": False, "error": {"code": "EMBEDDING_FAILED", "message": "Embedding model unavailable"}}
+        try:
+            query_embedding = self.embedder.embed(query)
+        except Exception:
+            query_embedding = None
         if query_embedding is None:
-            return {
-                "success": True,
-                "data": {
-                    "query": query,
-                    "results": [],
-                    "count": 0,
-                    "note": "Semantic search unavailable - embedding generation failed",
-                },
-            }
-
-        # Cap top_k
+            return {"success": False, "error": {"code": "EMBEDDING_FAILED", "message": "Query embedding failed"}}
+        try:
+            if isinstance(top_k, bool) or not isinstance(top_k, int) or top_k < 1:
+                raise ValueError("Invalid result limit")
+            cutoff = datetime.fromisoformat(after.replace("Z", "+00:00")) if after else None
+            if cutoff and cutoff.tzinfo is None:
+                cutoff = cutoff.replace(tzinfo=timezone.utc)
+            normalized_topics = {t.strip().lower() for t in (topics or []) if t.strip()}
+        except (ValueError, TypeError, AttributeError):
+            return {"success": False, "error": {"code": "INVALID_FILTER", "message": "Invalid date, topics or result limit"}}
         top_k = min(top_k, 20)
-
-        # Build where clause for filtering
-        where_clause = None
-        where_conditions = []
-
-        if after:
-            where_conditions.append({"created_at": {"$gte": after}})
-
-        if topics:
-            # Filter by topics (any match)
-            normalized_topics = [t.strip().lower() for t in topics if t.strip()]
-            for topic in normalized_topics:
-                where_conditions.append({"topics": {"$contains": topic}})
-
-        if len(where_conditions) == 1:
-            where_clause = where_conditions[0]
-        elif len(where_conditions) > 1:
-            where_clause = {"$and": where_conditions}
-
+        filtered = bool(cutoff or normalized_topics)
         try:
             # Query ChromaDB
+            total = self._collection.count()
+            candidate_count = min(total, 200 if filtered else top_k)
+            partial = filtered and total > candidate_count
+            if not total:
+                return {"success": True, "data": {"query": query, "results": [], "count": 0, "partial": False}}
             results = self._collection.query(
                 query_embeddings=[query_embedding],
-                n_results=top_k,
-                where=where_clause,
+                n_results=candidate_count,
                 include=["documents", "metadatas", "distances"],
             )
 
@@ -273,6 +240,16 @@ class ChromaStore:
                     entities = metadata.get("entities", "").split(",") if metadata.get("entities") else []
                     topics_list = metadata.get("topics", "").split(",") if metadata.get("topics") else []
 
+                    if normalized_topics and not normalized_topics.intersection(topics_list):
+                        continue
+                    if cutoff:
+                        created = datetime.fromisoformat(metadata["created_at"].replace("Z", "+00:00"))
+                        if created.tzinfo is None:
+                            created = created.replace(tzinfo=timezone.utc)
+                        if created < cutoff:
+                            continue
+                    if len(processed_results) >= top_k:
+                        break
                     processed_results.append({
                         "id": doc_id,
                         "summary": document,
@@ -288,20 +265,15 @@ class ChromaStore:
                     "query": query,
                     "results": processed_results,
                     "count": len(processed_results),
+                    "partial": partial,
+                    "candidates_examined": candidate_count,
+                    "note": "Filters applied to bounded nearest candidates; additional matches may exist" if partial else "",
                 },
             }
 
-        except Exception as e:
-            log.error(f"Semantic search failed: {e}")
-            return {
-                "success": True,
-                "data": {
-                    "query": query,
-                    "results": [],
-                    "count": 0,
-                    "note": f"Semantic search failed: {e}",
-                },
-            }
+        except Exception:
+            log.exception("Semantic search failed")
+            return {"success": False, "error": {"code": "SEARCH_FAILED", "message": "Semantic query failed; no absence conclusion is available"}}
 
     def get_stats(self) -> Dict[str, Any]:
         """Get collection statistics."""

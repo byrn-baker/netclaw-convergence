@@ -115,7 +115,8 @@ def discover() -> tuple[list[dict], list[str]]:
                 ext = os.path.splitext(fn)[1].lower()
                 if ext not in READABLE:
                     continue
-                if denied(full) or not within_roots(os.path.realpath(full)):
+                resolved = os.path.realpath(full)
+                if denied(full) or denied(resolved) or not within_roots(resolved):
                     # realpath check: a symlink inside an allowed root pointing at the memory
                     # store must not be readable just because its link lives somewhere legal.
                     notes.append(f"skipped (outside allowed roots or denied): {full}")

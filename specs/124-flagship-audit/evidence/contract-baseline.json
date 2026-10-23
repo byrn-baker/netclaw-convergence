@@ -1,0 +1,33 @@
+{
+  "counts": {
+    "BLOCKED_DEPENDENCY": 0,
+    "ERROR": 0,
+    "FAIL": 0,
+    "NEEDS_DOCKER": 0,
+    "NEEDS_LIVE_CREDENTIALS": 0,
+    "PASS": 1
+  },
+  "exit_code": 0,
+  "generated_at": "2026-09-26T19:41:17.393491+00:00",
+  "results": [
+    {
+      "capabilities": [],
+      "command": [
+        "/Users/john.capobianco/netclaw/.contract-test-envs/contract/bin/python",
+        "-m",
+        "pytest",
+        "tests/contract"
+      ],
+      "detail": "offline contracts passed",
+      "duration_seconds": 0.44451979199948255,
+      "environment": {
+        "fingerprint": "bc6d8850317cf3e31725d0b4898996fc82c08624c7404ef535a3428943a96f0d",
+        "path": ".contract-test-envs/contract"
+      },
+      "exit_code": 0,
+      "status": "PASS",
+      "suite": "contract"
+    }
+  ],
+  "schema_version": 1
+}

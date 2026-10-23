@@ -1,0 +1,136 @@
+{
+  "merge_revision": "ee7b025607d052b3b4230a06da927e9393fcaced",
+  "pr": 265,
+  "branch": "main",
+  "feature_branch_deleted_local_and_remote": true,
+  "backup": "~/netclaw-backups/spec124-20260927T144807Z",
+  "backup_archives": [
+    "local-state.tar",
+    "root-owned-lab.tar"
+  ],
+  "backup_summary": {
+    "main_tar_exit": 2,
+    "omissions_recovered_in_supplement": 2,
+    "supplement_base": "netclaw/labs/multivendor-r1/clab-netclaw-r1",
+    "archives_validated": true,
+    "bytes": 13392909312,
+    "preserved_files": 666
+  },
+  "preserved_hashes": {
+    "matched": 666,
+    "total": 666
+  },
+  "existing_credential_settings_preserved": 28,
+  "gateway_config_structurally_unchanged": true,
+  "existing_env_keys_changed": [
+    "PYATS_MCP_SCRIPT"
+  ],
+  "env_keys_added": [
+    "PYATS_UPSTREAM_SCRIPT",
+    "PYATS_VENV",
+    "MULTIVENDOR_SSH_STRICT",
+    "MULTIVENDOR_KNOWN_HOSTS",
+    "N2N_IN2N_BIND"
+  ],
+  "lab_mode_preserved": true,
+  "services_running": 11,
+  "service_restart_counts": 0,
+  "gateway_authenticated_health": true,
+  "model_response_http": 200,
+  "model_marker_returned": true,
+  "hud_http": 200,
+  "canvas_http": 200,
+  "hud_api_health": 200,
+  "pyats_inventory_devices": 5,
+  "federation_enabled": true,
+  "federation_active_members": 4,
+  "mcp_discovery": [
+    {
+      "server": "comfyui-mcp",
+      "passed": true,
+      "tool_count": 41
+    },
+    {
+      "server": "fortinet-mcp",
+      "passed": true,
+      "tool_count": 21
+    },
+    {
+      "server": "gait-mcp",
+      "passed": true,
+      "tool_count": 23
+    },
+    {
+      "server": "image-style-mcp",
+      "passed": true,
+      "tool_count": 1
+    },
+    {
+      "server": "memory-mcp",
+      "passed": true,
+      "tool_count": 10
+    },
+    {
+      "server": "n2n-mcp",
+      "passed": true,
+      "tool_count": 40
+    },
+    {
+      "server": "pagerduty-mcp",
+      "passed": false,
+      "error": "process_exit_1"
+    },
+    {
+      "server": "rag-mcp",
+      "passed": true,
+      "tool_count": 10
+    },
+    {
+      "server": "topology-diagram-mcp",
+      "passed": true,
+      "tool_count": 1
+    },
+    {
+      "server": "twilio-voice-mcp",
+      "passed": true,
+      "tool_count": 6
+    },
+    {
+      "server": "twitter-mcp",
+      "passed": true,
+      "tool_count": 17
+    },
+    {
+      "server": "worldlabs-marble-mcp",
+      "passed": true,
+      "tool_count": 3
+    }
+  ],
+  "windows_edge_fixture": [
+    {
+      "browser": "Windows Edge",
+      "kind": "hud",
+      "health": 200,
+      "websocket": true,
+      "chatFixtureResponse": true,
+      "errors": []
+    },
+    {
+      "browser": "Windows Edge",
+      "kind": "canvas",
+      "health": 200,
+      "websocket": true,
+      "chatFixtureResponse": true,
+      "errors": []
+    }
+  ],
+  "border_skill_links_preserved": 36,
+  "replaced_skill_originals_all_match_existing_git_history": true,
+  "optional_limits": [
+    "PagerDuty discovery requires absent API key; configuration preserved.",
+    "Twilio inbound webhook Auth Token absent; no substitute credential created.",
+    "Zoom panel OAuth client credentials absent; webhook service running, live panel/meeting acceptance not claimed.",
+    "Configured explicit lab mode preserved; no automatic production promotion."
+  ],
+  "no_device_configuration_or_external_messages": true
+}

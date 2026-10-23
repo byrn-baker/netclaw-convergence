@@ -8,6 +8,7 @@ from enum import IntEnum
 from typing import Any, Dict, List, Optional
 from pydantic import BaseModel, Field
 import uuid
+import builtins
 
 
 class FlowVersion(IntEnum):
@@ -130,7 +131,7 @@ class FlowRecord(BaseModel):
     extra_fields: Dict[str, Any] = Field(default_factory=dict, description="Additional decoded fields")
 
     # Metadata
-    raw_data: Optional[bytes] = Field(None, description="Raw flow data", exclude=True)
+    raw_data: Optional[builtins.bytes] = Field(None, description="Raw flow data", exclude=True)
     parse_errors: List[str] = Field(default_factory=list, description="Any parsing warnings")
 
     class Config:

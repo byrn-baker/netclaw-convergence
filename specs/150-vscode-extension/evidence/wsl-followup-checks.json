@@ -1,0 +1,716 @@
+{
+  "observedOn": "2026-10-11",
+  "status": "windows-wsl-qualified-openclaw-with-recorded-limitations-mac-requalification-required",
+  "currentArtifact": {
+    "file": "netclaw-0.1.0-wsl-fixes.vsix",
+    "source": "7b4ebee3cf819aeab86622606eb9afc729a7748b",
+    "sha256": "f75b73bdeaf524bf647ad4920ea5b5c85979ee1c20cba62d9cd6a20f6f79af45",
+    "bytes": 2349236
+  },
+  "historicalCheckpointNote": "Original top-level artifact and prerequisite/checkpoint fields describe the earlier return; postUpdate contains the completed continuation and final disposition.",
+  "incomingCommit": "4e3cd2627ac80b7d160af7b135d30dec6580f202",
+  "validationBranch": "150-vscode-extension-wsl-followup-20261011",
+  "ownerSourceCommit": "aa2795313b487e00ccbe85d53f6a78db07b10a94",
+  "artifact": {
+    "extensionId": "NetClaw.netclaw",
+    "version": "0.1.0",
+    "sha256": "71694842db407dbb28ed695a31ca583a892d2c2bc0903c04829514b123fec005",
+    "bytes": 2220783,
+    "rebuilt": false,
+    "ownerPayloadFilesExact": 21,
+    "isolatedPayloadFilesExact": 21,
+    "manifestMatchesExceptEditorMetadata": true
+  },
+  "hudRepair": {
+    "explicitOwnerAuthorization": true,
+    "status": "applied-and-verified",
+    "node": "24.19.0",
+    "lockedDependenciesStaged": true,
+    "installScriptsEnabled": false,
+    "devDependenciesIncluded": true,
+    "lockfileUnchanged": true,
+    "oldDependencyTreeRetained": true,
+    "originalUnitBackupRetained": true,
+    "rollbackPrepared": true,
+    "rollbackUsed": false,
+    "unitDropIn": "50-spec150-supported-node.conf",
+    "unitsStoppedOrStartedBySession": [
+      "netclaw-hud.service"
+    ],
+    "globalRuntimeChanged": false,
+    "openclawExecutablePreserved": true,
+    "apiAndViteChildNodeVerified": true,
+    "nativeInstallationIdentityPreserved": true,
+    "selectionDescriptorPreserved": true
+  },
+  "liveInstallation": {
+    "kind": "openclaw",
+    "readiness": {
+      "ready": true,
+      "executionVerified": false
+    },
+    "gateway": {
+      "online": true,
+      "reachable": true,
+      "chatCompletionsEnabled": true
+    },
+    "apiProbes": [
+      {
+        "route": "/api/runtime",
+        "method": "GET",
+        "status": 200,
+        "seconds": 0.01,
+        "topLevelFields": [
+          "kind",
+          "installationId",
+          "label",
+          "readiness",
+          "capabilities"
+        ],
+        "arrayCounts": {},
+        "availability": {}
+      },
+      {
+        "route": "/api/gateway/status",
+        "method": "GET",
+        "status": 200,
+        "seconds": 0.07,
+        "topLevelFields": [
+          "online",
+          "reachable",
+          "chatCompletionsEnabled",
+          "port",
+          "reason"
+        ],
+        "arrayCounts": {},
+        "availability": {
+          "online": true
+        }
+      },
+      {
+        "route": "/api/n2n",
+        "method": "GET",
+        "status": 200,
+        "seconds": 0.65,
+        "topLevelFields": [
+          "available",
+          "identity",
+          "peers",
+          "approvals",
+          "risk",
+          "members",
+          "advisors",
+          "posture",
+          "gait",
+          "replicationJobs",
+          "edgeNodes",
+          "recentPushes",
+          "generatedAt"
+        ],
+        "arrayCounts": {
+          "peers": 7,
+          "approvals": 0,
+          "members": 28,
+          "advisors": 1,
+          "gait": 25,
+          "replicationJobs": 0,
+          "edgeNodes": 1,
+          "recentPushes": 0
+        },
+        "availability": {
+          "available": true
+        }
+      },
+      {
+        "route": "/api/graph",
+        "method": "GET",
+        "status": 200,
+        "seconds": 0.05,
+        "topLevelFields": [
+          "identity",
+          "config",
+          "settings",
+          "integrations",
+          "skills",
+          "devices",
+          "categories",
+          "stats",
+          "generatedAt"
+        ],
+        "arrayCounts": {
+          "settings": 10,
+          "integrations": 76,
+          "skills": 233,
+          "devices": 5,
+          "categories": 23
+        },
+        "availability": {}
+      },
+      {
+        "route": "/api/bgp",
+        "method": "GET",
+        "status": 200,
+        "seconds": 0.02,
+        "topLevelFields": [
+          "available",
+          "local",
+          "peers",
+          "rib",
+          "ribCount",
+          "injected",
+          "kernelRoutes",
+          "generatedAt"
+        ],
+        "arrayCounts": {
+          "peers": 0,
+          "kernelRoutes": 0
+        },
+        "availability": {
+          "available": true
+        }
+      },
+      {
+        "route": "/api/hud/runtime",
+        "method": "GET",
+        "status": 200,
+        "seconds": 0.01,
+        "topLevelFields": [
+          "available",
+          "llm",
+          "source",
+          "mcp_servers",
+          "controlUi",
+          "generatedAt"
+        ],
+        "arrayCounts": {
+          "mcp_servers": 14
+        },
+        "availability": {
+          "available": true
+        }
+      },
+      {
+        "route": "/api/hud/configuration",
+        "method": "GET",
+        "status": 200,
+        "seconds": 0.01,
+        "topLevelFields": [
+          "environmentFile",
+          "integrations"
+        ],
+        "arrayCounts": {
+          "integrations": 88
+        },
+        "availability": {}
+      },
+      {
+        "route": "/api/hud/tokenomics",
+        "method": "GET",
+        "status": 200,
+        "seconds": 0.5,
+        "topLevelFields": [
+          "available",
+          "groups",
+          "records",
+          "missingUsage",
+          "malformed",
+          "skippedFiles",
+          "scope",
+          "generatedAt"
+        ],
+        "arrayCounts": {
+          "groups": 5
+        },
+        "availability": {
+          "available": true
+        }
+      },
+      {
+        "route": "/api/budget/config",
+        "method": "GET",
+        "status": 200,
+        "seconds": 0.5,
+        "topLevelFields": [
+          "budget",
+          "interfaceDefaults"
+        ],
+        "arrayCounts": {},
+        "availability": {}
+      },
+      {
+        "route": "/api/hud/security",
+        "method": "GET",
+        "status": 200,
+        "seconds": 0.01,
+        "topLevelFields": [
+          "labMode",
+          "labExplicit",
+          "riskMode",
+          "riskExplicit",
+          "strictAll",
+          "defenseMode",
+          "guardMode",
+          "guardPort",
+          "source",
+          "generatedAt"
+        ],
+        "arrayCounts": {},
+        "availability": {}
+      },
+      {
+        "route": "/api/hud/openshell",
+        "method": "GET",
+        "status": 200,
+        "seconds": 0.08,
+        "topLevelFields": [
+          "commands",
+          "generatedAt"
+        ],
+        "arrayCounts": {
+          "commands": 2
+        },
+        "availability": {}
+      },
+      {
+        "route": "/api/rag/stats",
+        "method": "GET",
+        "status": 500,
+        "seconds": 1.26,
+        "errorRecordedPrivately": true
+      },
+      {
+        "route": "/api/rag/documents",
+        "method": "GET",
+        "status": 500,
+        "seconds": 1.22,
+        "errorRecordedPrivately": true
+      },
+      {
+        "route": "/api/hud/documentation",
+        "method": "GET",
+        "status": 200,
+        "seconds": 0.0,
+        "topLevelFields": [
+          "documents"
+        ],
+        "arrayCounts": {
+          "documents": 338
+        },
+        "availability": {}
+      },
+      {
+        "route": "/api/hud/reference",
+        "method": "GET",
+        "status": 200,
+        "seconds": 0.01,
+        "topLevelFields": [
+          "scope",
+          "cli",
+          "mcps",
+          "http",
+          "daemon"
+        ],
+        "arrayCounts": {
+          "cli": 197,
+          "mcps": 125
+        },
+        "availability": {}
+      },
+      {
+        "route": "/api/hud/logs",
+        "method": "GET",
+        "status": 200,
+        "seconds": 0.0,
+        "topLevelFields": [
+          "sources"
+        ],
+        "arrayCounts": {
+          "sources": 9
+        },
+        "availability": {}
+      },
+      {
+        "route": "/api/terminal/devices",
+        "method": "GET",
+        "status": 200,
+        "seconds": 0.0,
+        "topLevelFields": [
+          "devices"
+        ],
+        "arrayCounts": {
+          "devices": 5
+        },
+        "availability": {}
+      }
+    ],
+    "providerRequestsSubmitted": 0,
+    "ragUploadsSubmitted": 0,
+    "ragSearchesSubmitted": 0,
+    "ragReindexOrDeletionSubmitted": 0,
+    "pythonRepairPerformed": false,
+    "approvalChangesPerformed": false
+  },
+  "ragFailure": {
+    "routes": [
+      "/api/rag/stats",
+      "/api/rag/documents"
+    ],
+    "httpStatus": 500,
+    "error": "ModuleNotFoundError: No module named 'fastmcp.utilities.async_utils'",
+    "python": "3.14.4",
+    "installedFastmcp": "2.14.7",
+    "installedMcp": "1.28.1",
+    "declaredFastmcp": "4.0.11",
+    "declaredFastmcpTasks": "4.0.11",
+    "declaredMcp": "2.3.0",
+    "managedComponentMatch": false,
+    "scope": "Existing installation prerequisite; no extension defect established; broader repair not performed"
+  },
+  "windows": {
+    "build": "26300.9550",
+    "vscodeExecutableVersion": "1.140.0",
+    "remoteWsl": "0.104.3",
+    "isolatedLaunchAttempts": 1,
+    "isolatedLaunchExit": 255,
+    "sessionLogCreated": false,
+    "updaterProcessesPresent": true,
+    "updatingMutexPresent": true,
+    "exactSilentExitCauseProven": false,
+    "ownerAskedToCompleteUpdateNormally": true,
+    "ownerWindowsTerminated": false,
+    "updaterTerminated": false,
+    "updateLockBypassed": false
+  },
+  "wsl": {
+    "version": "3.0.1.0",
+    "distributionOs": "Ubuntu 26.04 LTS",
+    "kernel": "6.18.40.1-microsoft-standard-WSL2"
+  },
+  "isolatedEditor": {
+    "vsixInstallExit": 0,
+    "remoteStoragePrepared": true,
+    "launchedHostStorageIsolationVerified": false,
+    "observerRan": false,
+    "temporaryConditionalEnvironmentHookRestored": true,
+    "ownerInstallPreserved": true,
+    "upgradeDisableReenableUninstall": "blocked"
+  },
+  "acceptance": {
+    "connectionUi": "not-run",
+    "populatedPanelsUi": "not-run",
+    "realProviderChat": "not-run",
+    "canvasAvatar": "not-run",
+    "rag": "blocked",
+    "settingsCancel": "not-run",
+    "serviceStaging": "not-run",
+    "otherHarness": "not-evaluated",
+    "copilotInteractive": "not-run",
+    "claudeCodeInteractive": "not-run",
+    "codexInteractive": "not-run",
+    "assistantRegistrationsCreated": 0,
+    "trustIdentityReconnectUi": "not-run",
+    "lifecycle": "blocked",
+    "newSourceTestRuns": 0
+  },
+  "preservation": {
+    "protectedFileObservations": 12,
+    "unchangedFileObservations": 12,
+    "sampledServices": 15,
+    "unchangedServices": 11,
+    "sameBoot": true,
+    "coreGatewayMeshMembersSecurityPreserved": true,
+    "changedServices": [
+      "netclaw-hud.service",
+      "netclaw-ddns.service",
+      "netclaw-ddns-zoom.service",
+      "netclaw-zoom-rtms-mcp.service"
+    ],
+    "auxiliaryChanges": "Two scheduled DDNS units and an already-restarting Zoom RTMS unit varied independently; HUD restart intentional",
+    "originalOwnerEditsPreserved": true,
+    "addedOwnerUntrackedPath": "ui/netclaw-visual/node_modules.spec150-backup-20261011-0805/",
+    "sourceOrCredentialsChanged": false
+  },
+  "gait": {
+    "branch": "spec150-wsl-hud-repair-acceptance-20261011",
+    "startupRecord": "a55e3a31",
+    "milestoneRecords": [
+      "8ea7cb80",
+      "c909efc7",
+      "82d8b900"
+    ],
+    "rawTrail": "owner-private audit"
+  },
+  "startupInventory": {
+    "tool": "pyats_list_devices",
+    "status": "completed",
+    "entryCount": 5,
+    "deviceHealthVerified": false
+  },
+  "release": {
+    "T022": "open",
+    "T023": "open",
+    "merged": false,
+    "published": false
+  },
+  "checkpointStatus": "partial-blocked",
+  "postUpdate": {
+    "vscode": "1.141.0",
+    "vscodeCommit": "2a59476c9bfcb90b3ddc372c36762471b7dfad1c",
+    "updaterProcessesPresent": false,
+    "updatingMutexPresent": false,
+    "windowsDesktopWithWslHost": true,
+    "privateRemoteStorageVerified": true,
+    "runningExtensionsViewObserved": true,
+    "savedIdentityBoundProfile": true,
+    "bindingDialogVisualEvidence": true,
+    "profileReloadReconnect": true,
+    "chat": {
+      "realProviderAnswer": "SPEC150_WSL_CHAT_OK",
+      "ownedHistoryReopened": true,
+      "modelChoices": 10,
+      "newDefaultConversation": true,
+      "staleSendDisabled": true,
+      "selectedRagAndEditorContextAnswer": "APRICOT_B7A3D92E SELECTED_WSL_C8F2",
+      "finalCandidateSelectedContextAnswer": "SPEC150_FINAL_CHAT_OK APRICOT_B7A3D92E SELECTED_WSL_C8F2",
+      "finalCandidateActualProvider": true,
+      "finalCandidateHideRevealRefreshPassed": true,
+      "finalLiveDisconnectDisabledSend": true
+    },
+    "panels": {
+      "initialDomSuccesses": 21,
+      "initialRagSourceFailure": true,
+      "initialOnboardingOverlayObstructedVisualReview": true,
+      "visibleRecheckPending": false,
+      "replacementVisibleRenderedAndRefreshClickable": 22,
+      "healthyStateNotInferredFromRendering": true,
+      "finalCandidateVisibleRenderedAndRefreshClickable": 22
+    },
+    "ragRepair": {
+      "explicitOwnerAuthorization": true,
+      "status": "applied-and-verified",
+      "python": "3.12.10",
+      "fastmcp": "4.0.11",
+      "fastmcpTasks": "4.0.11",
+      "mcp": "2.3.0",
+      "chromadb": "1.5.9",
+      "torch": "2.13.0+cpu",
+      "isolatedLockedEnvironment": true,
+      "pipCheckPassed": true,
+      "disposableNativeIngestSearchPassed": true,
+      "corpusBackupRetained": true,
+      "copiedCorpusCompatibilityPassed": true,
+      "exactInvocationDispatcher": true,
+      "hudOnlyDropIn": "60-spec150-rag-runtime.conf",
+      "onlyHudRestarted": true,
+      "liveListAndStatsHttp200": true,
+      "documentCount": 1,
+      "chunkCount": 1055,
+      "globalPythonPackagesUnchanged": true,
+      "protectedFilesUnchanged": 12,
+      "nativeIdentityPreserved": true,
+      "rollbackPrepared": true,
+      "rollbackUsed": false,
+      "runtimeMustBeRetainedWhileServiceDropInActive": true
+    },
+    "interactiveAssistants": {
+      "copilot": "completed-with-recorded-permission-deviation-and-default-mode-followup",
+      "claudeCode": "interactive-completed-disabled-cached-call-refused",
+      "codex": "interactive-completed-disabled-cached-call-refused",
+      "registrationsCreated": 3,
+      "backendApprovalsChanged": false,
+      "copilotTemporaryAllowAllObserved": true,
+      "copilotDefaultPermissionsRestored": true,
+      "copilotFollowupResultConsent": "human-Allow-Once",
+      "registrationsDisabled": 3,
+      "terminalClientsExitedNormally": true,
+      "copilotOriginalBuiltinToolSelectionRestored": true,
+      "allRegistrationsDisabledAtEnd": true,
+      "normalTerminalClientsExited": true,
+      "originalAdapterAndFinalAdapterByteIdentical": true,
+      "interactiveResultsWereFromOriginalLoadedAdapter": true
+    },
+    "extensionRagUpload": {
+      "nativeFileReview": true,
+      "reviewedSha256": "d53b67547758ade86987aa0e0403fdb35abff20c9249ee8fc6623c23d2c4f8fa",
+      "bytes": 398,
+      "title": "spec150-wsl-rag-20261011-b7a3d92e.md",
+      "documentId": "doc_0e84d3b40932",
+      "actualIndexStatus": "ready",
+      "actualChunks": 1,
+      "searchCitationContext": "actual-native-search-stage-and-explicit-Chat-Canvas-provider-sends-passed"
+    },
+    "canvasAvatar": {
+      "localAvatarBothCharactersRendered": true,
+      "conversationPreserved": true,
+      "canvasRealProviderContextAnswer": true,
+      "branchSaveReopen": true,
+      "nativeExportImport": true,
+      "importedLanesReady": 2,
+      "importAutomaticExecution": false,
+      "package": "final-wsl-fixes",
+      "finalActualProviderAnswer": true,
+      "finalSaveReopenRevealExportImport": true,
+      "finalImportedLanesReady": 2,
+      "finalAvatarBothCharactersRendered": true
+    },
+    "settingsCancellation": {
+      "nativeEnvironmentCancelled": true,
+      "nativeBudgetCancelled": true,
+      "budgetConfigurationUnchanged": true
+    },
+    "installedLifecycle": {
+      "syntheticOlderLoaded": "0.0.0",
+      "finalUpgradeLoaded": "0.1.0",
+      "savedProfileReconnected": true,
+      "nativeDisable": true,
+      "disabledExtensionAbsentFromHost": true,
+      "nativeReenableAndReconnect": true,
+      "nativeUninstallAndAbsentFromHostAndCli": true,
+      "extensionStateFilesPreservedByteForByte": 20,
+      "exactFinalReinstallAndSavedProfile": true,
+      "ownerOriginalVsixPayloadPreserved": true
+    },
+    "temporaryEditorIsolationHookRestored": true,
+    "gait": {
+      "branch": "spec150-qualification-unblock-plan-20261011",
+      "records": [
+        "a55e3a31",
+        "8ea7cb80",
+        "c909efc7",
+        "82d8b900",
+        "df888ccd",
+        "2fac6b7e",
+        "a2df172b",
+        "c775f650",
+        "f2969ada",
+        "e975de0e",
+        "2f646369",
+        "b0726e0c",
+        "9fe859f9",
+        "14507b33"
+      ],
+      "checkpointLog": "wsl-gait-checkpoint.json",
+      "qualificationRecord": "14507b33",
+      "fullFirstParentLogDisplayed": true,
+      "serverDefaultProviderMetadata": "vscode-copilot (hardcoded by installed GAIT server; not actual turn authorship)"
+    },
+    "T022": "complete-for-recorded-Windows-WSL-OpenClaw-scope",
+    "T023": "open",
+    "merged": false,
+    "published": false,
+    "confirmedDefect": {
+      "originalVsixRejectedForRelease": true,
+      "trigger": "hide and reveal existing webview tab",
+      "chatBefore": "Ready for an explicit request.",
+      "chatAfter": "Loading owned conversation\u2026",
+      "actualWindowsWslReproduced": true,
+      "cause": "frontend sequence reset on webview recreation; host replay guard retained",
+      "fix": "persist per-view message counter with getState/setState",
+      "sourceCheck": "passed",
+      "sourceBuild": "passed",
+      "sourceTestsPassed": 18,
+      "sourceTestsFailed": 0,
+      "sourceTestsSkipped": 1,
+      "replacementPackagedRegression": "actual-Windows-WSL-Chat-hide-reveal-refresh-passed",
+      "originalVsixPreserved": true
+    },
+    "serviceStaging": {
+      "nativeReview": true,
+      "hudStatusStagedWithoutEnter": true,
+      "clearedWithCtrlC": true,
+      "ownerLifecycleExecuted": false,
+      "nativeMismatchedIdentityRejected": true,
+      "mismatchedIdentityWasPrivateFixture": true
+    },
+    "windowsGuidanceDefect": {
+      "actualPrivateWindowsHost": true,
+      "observedCommandPaletteInput": ">",
+      "connectionCreated": false,
+      "fix": "explicit WSL guidance plus quickOpen >WSL:",
+      "packagedRetest": "passed on actual private Windows-local host: >WSL: and guidance notification"
+    },
+    "intermediateReplacement": {
+      "source": "153e4f7238b4bdc737e06556217f361a03b6877e",
+      "artifactCommit": "5bd84624",
+      "artifact": "artifacts/netclaw-0.1.0-wsl-webview-fix.vsix",
+      "sha256": "d26a8d3bc08b9fcb69fa891bc7a6678ae998d119e6783bc533f47499e1170fee",
+      "bytes": 2349138,
+      "payloadFiles": 25,
+      "installedPayloadVerified": true,
+      "loadedOnWindowsWslAfterReload": true,
+      "assistantPayloadIdenticalToOriginal": true,
+      "macRequalificationPending": true
+    },
+    "finalCandidate": {
+      "publisher": "NetClaw",
+      "name": "netclaw",
+      "version": "0.1.0",
+      "source": "7b4ebee3cf819aeab86622606eb9afc729a7748b",
+      "sha256": "f75b73bdeaf524bf647ad4920ea5b5c85979ee1c20cba62d9cd6a20f6f79af45",
+      "bytes": 2349236,
+      "artifact": "netclaw-0.1.0-wsl-fixes.vsix",
+      "qualification": "Windows/WSL existing OpenClaw scope qualified with documented limitations; exact replacement Mac review/requalification and publication remain.",
+      "changesSinceFirstReplacement": [
+        "extension/changelog.md",
+        "extension/readme.md",
+        "extension/dist/extension.cjs"
+      ],
+      "assistantPayloadIdenticalToOriginal": true,
+      "artifactCommit": "79b94f80c041a4b92817b6cb29a00ce53dc0f094",
+      "macRequalificationPending": true
+    },
+    "untrustedWorkspace": {
+      "normalWindowsWindowWithWslHost": true,
+      "restrictedModeObserved": true,
+      "nativeAddConnectionRefused": true,
+      "ownerTrustSettingsUnchanged": true
+    },
+    "settingsWrites": {
+      "isolatedUnchangedHudFixture": true,
+      "nativeEnvironmentApplyAndPresenceVerification": true,
+      "nativeBudgetApplyAndReadback": true,
+      "unrelatedEnvAndRuntimeFieldsPreserved": true,
+      "ownerSettingsWritten": false
+    },
+    "nativeIdentityMismatch": {
+      "isolatedHudRestartedWithAlternateIdentity": true,
+      "pinnedConnectionRefused": true,
+      "ownerIdentityChanged": false
+    },
+    "pendingObservationDisconnect": {
+      "pausedOnlyIsolatedFixture": true,
+      "staleViewDisabled": true,
+      "ownerPaused": false
+    },
+    "privateValidationWindowsClosed": true,
+    "finalPreservation": {
+      "ownerHead": "aa2795313b487e00ccbe85d53f6a78db07b10a94",
+      "ownerSourceAndTestbedEditsPreserved": true,
+      "unchangedProtectedObservationsSinceBeforeRag": 11,
+      "changedClientStateFile": ".claude.json",
+      "exactClaudeBeforeAfterFieldDiffUnavailable": true,
+      "all12UnchangedAcrossManagementAndLifecycle": true,
+      "codexGlobalConfigHashUnchanged": true,
+      "ownerOriginalExtensionPayloadMatches": true,
+      "finalPrivatePayloadMatches": true,
+      "coreHudGatewayFederationIdentitiesStableDuringFinalTests": true,
+      "naturalTimerOrRestartingServicesVaried": true
+    },
+    "fixtureCleanup": {
+      "ownedFixturesStopped": true,
+      "originalFixtureLauncherRequiredForcedExitAfterGracefulCleanupWaitedForAlreadyExitedChild": true,
+      "ownerProcessesTerminated": false,
+      "evidenceRetained": true
+    },
+    "limitations": [
+      "Copilot Allow all was observed after first delegation; restored before further calls; fresh Default permissions run completed with human Allow Once result review. Cause not established.",
+      "No existing live Hermes host was qualified in this WSL run.",
+      "WSL restart, second distribution and Remote SSH were not exercised while preserving active owner work.",
+      "Device configuration, external peer work, physical mobile capture and approval/apply flows were not exercised.",
+      "Science projection was stale; mobile projection unreachable; OpenShell gateway-status command unavailable, although sandbox listing returned.",
+      "Exact final replacement still requires Mac review/requalification and Marketplace publication/installation verification.",
+      "New source editor regression was exercised via actual Windows/WSL UI; the standalone test:editor runner was not executed here."
+    ],
+    "T019": "reopened-for-exact-replacement-Mac-qualification"
+  }
+}

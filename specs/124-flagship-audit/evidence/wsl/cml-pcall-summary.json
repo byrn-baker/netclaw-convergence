@@ -1,0 +1,35 @@
+[
+  {
+    "command": "show version",
+    "exit_code": 0,
+    "status": "completed",
+    "concurrency": "pcall (process per device)",
+    "summary": {
+      "total": 4,
+      "success": 4,
+      "failed": 0
+    }
+  },
+  {
+    "command": "show ip interface brief",
+    "exit_code": 0,
+    "status": "completed",
+    "concurrency": "pcall (process per device)",
+    "summary": {
+      "total": 4,
+      "success": 4,
+      "failed": 0
+    }
+  },
+  {
+    "command": "show processes cpu sorted",
+    "exit_code": 0,
+    "status": "completed",
+    "concurrency": "pcall (process per device)",
+    "summary": {
+      "total": 4,
+      "success": 4,
+      "failed": 0
+    }
+  }
+]

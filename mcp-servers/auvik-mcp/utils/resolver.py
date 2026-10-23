@@ -50,6 +50,7 @@ class Resolution:
     id: Optional[str] = None
     ambiguous: bool = False
     candidates: list = field(default_factory=list)
+    error: Optional[str] = None
 
 
 def _device_candidate(item: dict) -> dict:
@@ -116,6 +117,8 @@ async def resolve_device(
 
     params = {"tenants": tenants} if tenants else None
     result = await client.get_all("/v1/inventory/device/info", params=params)
+    if result.get("error") or result.get("truncated"):
+        return Resolution(error=str(result.get("error") or "Inventory is incomplete; resolve by explicit id"))
     items = result.get("items", [])
 
     if _is_ip(value):
@@ -169,6 +172,8 @@ async def resolve_network(
 
     params = {"tenants": tenants} if tenants else None
     result = await client.get_all("/v1/inventory/network/info", params=params)
+    if result.get("error") or result.get("truncated"):
+        return Resolution(error=str(result.get("error") or "Inventory is incomplete; resolve by explicit id"))
     items = result.get("items", [])
 
     lower_value = value.lower()
@@ -209,6 +214,8 @@ async def resolve_tenant(
         return Resolution(id=value)
 
     result = await client.get_all("/v1/tenants")
+    if result.get("error") or result.get("truncated"):
+        return Resolution(error=str(result.get("error") or "Inventory is incomplete; resolve by explicit id"))
     items = result.get("items", [])
 
     lower_value = value.lower()
@@ -288,6 +295,8 @@ def resolve_or_error(
 
         {"error": {"code": ..., "message": ..., "details": ...}}
     """
+    if resolution.error:
+        return None, {"error": {"code": "UpstreamError", "message": resolution.error, "details": None}}
     if resolution.id is not None and not resolution.ambiguous:
         return (resolution.id, None)
 

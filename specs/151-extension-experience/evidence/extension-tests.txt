@@ -1,0 +1,55 @@
+
+> netclaw@0.1.0 test
+> node --test test/*.test.mjs
+
+✔ connection URLs stay loopback with an explicit port (0.585084ms)
+✔ owned session and identity header; no Node/backend launcher required (47.737ms)
+✔ changed identity prevents a write (13.965667ms)
+✔ a dropped submitted response stays unknown and is never retried (12.095292ms)
+✔ redirect is refused and target receives no cookie (1.265042ms)
+✔ Hermes returns owned pending work and status updates without replay (14.983375ms)
+✔ oversized responses and arbitrary routes are refused (19.670375ms)
+✔ multipart upload matches the existing file/doc_type route and reports pending (6.794084ms)
+✔ assistant rejects unknown approval/apply/raw tools and delegation opt-out (14.533458ms)
+✔ assistant proposal is inert and disable rejects cached client (13.070041ms)
+✔ same assistant request ID returns existing result without executing twice (48.412083ms)
+✔ concurrent adapter processes cannot submit the same request ID twice (37.783666ms)
+✔ reviewed service command binds existing home and quotes hostile path text literally (99.839958ms)
+✔ actual HUD strict document/config routes bind installation, preserve secrets and round-trip review/restore (438.358875ms)
+✔ shell escapes identity, uses shared semantic purpose and fixed action names (20.670666ms)
+✔ all domain presenters supply useful sections and distinguish unknown/false/zero (38.845375ms)
+{"measurement":"500-card filter settled-to-render upper bound","ms":31,"host":"darwin arm64","node":"v24.19.0","renderer":"JSDOM; actual editor measured separately"}
+✔ 500 cards filter and paginate with distinct empty states and literal markup (244.3205ms)
+✔ private export verifies content, replaces atomically, refuses inventory aliases and invalid destinations (18.66775ms)
+✔ unchanged Hermes ownership, admission, status, stop and nonce recovery (206.04075ms)
+✔ revealing a recreated webview continues its accepted message sequence (1.332667ms)
+✔ a different panel does not inherit another panel's message state (0.282292ms)
+﹣ actual unchanged RAG upload and cited retrieval with local cached embeddings (0.322833ms) # SKIP
+✔ RAG prevents overlapping clicks, resumes explicitly and keeps disconnect final (49.134625ms)
+{"evidence":"current-worktree-HUD-existing-contracts","source":"copied local worktree; synthetic gateway","root":"/var/folders/ln/99pzcfd950j6vxf7gbfjjm5w0000gq/T/netclaw150-unchanged-hud-BDk2Gf","gateway":"synthetic local process","providerCalls":0,"networkDeviceCalls":0,"chatCalls":2}
+✔ replacement client works with real source HUD (existing contracts): ownership, chat, reads, writes, preservation (753.839834ms)
+✔ Security read-only rules remain searchable and paginated; draft and stale-message fences hold (81.540958ms)
+✔ OpenShell edits stay in memory, cancel preserves drafts and invalidation removes policy and logs (12.704625ms)
+✔ DefenseClaw: scoped rules/settings use native CAS, preserve unrelated values, redact output and reject stale reviews (1402.860458ms)
+✔ OpenShell: explicit scope, protected network values, preserved non-network policy and global-policy refusal (902.315042ms)
+✔ Security failures and lost identity stay unknown, refuse replay, and never expose native stderr (1589.058541ms)
+✔ Security binding preserves real HOME and removes inherited gateway bypasses; unsupported writer is read-only (528.088334ms)
+✔ Security scope mismatch and oversized policies stay read-only; shared-target operations serialize (1520.385042ms)
+✔ preparation binds identity, canonical helper and reviewed config revisions without mutation (98.155125ms)
+✔ actual canonical registration is verified; cancellation before execution writes nothing; evidence has no secrets (198.772291ms)
+✔ actual owned federation fixture restarts with new PID, fixed identity and no peers (1262.751166ms)
+✔ failed guard and interrupted evidence never replay setup (59.919875ms)
+✔ staged command pins selected paths despite inherited targets; malformed evidence blocks replay (47.229208ms)
+✔ helper refusal preserves custom registration and records failure; lost confirmation after execution stays unknown (277.951167ms)
+✔ bundled official MCP transport against source HUD; no approval/apply surface (529.842667ms)
+✔ testbed drafts survive mode switches, never enter saved state and clear on invalidation (47.619334ms)
+✔ MCP untouched blanks keep values, explicit replace/clear submit only intended keys and busy/invalidation fence controls (8.872333ms)
+✔ BGP graph carries reported sessions only, exact IDs, explicit source and a bounded scene (2.101791ms)
+ℹ tests 41
+ℹ suites 0
+ℹ pass 40
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 1
+ℹ todo 0
+ℹ duration_ms 6040.345875

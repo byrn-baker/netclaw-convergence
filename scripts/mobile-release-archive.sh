@@ -22,8 +22,8 @@ NC='\033[0m'
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 MOBILE_DIR="$REPO_ROOT/mobile/netclaw-mobile"
 EXPORT_OPTIONS="$MOBILE_DIR/ExportOptions.plist"
-ARCHIVE_PATH="$MOBILE_DIR/build/Runner.xcarchive"
-EXPORT_PATH="$MOBILE_DIR/build/export"
+ARCHIVE_PATH="${NETCLAW_ARCHIVE_PATH:-$MOBILE_DIR/build/Runner.xcarchive}"
+EXPORT_PATH="${NETCLAW_EXPORT_PATH:-$MOBILE_DIR/build/export}"
 
 cd "$MOBILE_DIR"
 
@@ -44,12 +44,14 @@ fi
 
 echo -e "${GREEN}==>${NC} Archiving Runner (team: A49777FMJG)..."
 xcodebuild archive \
-  -project ios/Runner.xcodeproj \
+  -workspace ios/Runner.xcworkspace \
   -scheme Runner \
   -configuration Release \
   -archivePath "$ARCHIVE_PATH" \
   -destination "generic/platform=iOS" \
   -allowProvisioningUpdates
+
+python3 "$REPO_ROOT/scripts/check-mobile-bundle.py" "$ARCHIVE_PATH/Products/Applications/Runner.app"
 
 echo -e "${GREEN}==>${NC} Exporting for App Store Connect..."
 # -allowProvisioningUpdates: automatic signing's App Store distribution

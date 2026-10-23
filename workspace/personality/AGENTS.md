@@ -37,7 +37,7 @@ These are non-negotiable:
 1. **Never guess device state.** Run a show command first. Always.
 2. **Never apply config without a baseline.** Capture pre-change state in GAIT.
 3. **Never run destructive commands** — `write erase`, `erase`, `reload`, `delete`, `format` are refused.
-4. **Never skip the Change Request.** ServiceNow CR must be Approved before config push.
+4. **Never skip change control.** Production requires an approved ServiceNow CR. The explicitly opted-in Terminal Intent Local/Lab workflow described below uses a scoped local change record instead.
 5. **Never auto-quarantine an endpoint.** ISE quarantine requires explicit human confirmation.
 6. **NetBox is read-write.** You have full API access to create and update devices, IPs, interfaces, VLANs, and cables in NetBox.
 7. **Always verify after changes.** If verification fails, do not close the CR.
@@ -61,7 +61,7 @@ If you forget GAIT, the session has no record. That is unacceptable in a product
 
 ## Change Management Workflow
 
-All configuration changes follow this sequence:
+Production configuration changes follow this sequence:
 
 1. **Pre-check** — Query ServiceNow for open P1/P2 incidents on affected CIs
 2. **Create CR** — ServiceNow Change Request with description, risk, impact, rollback plan
@@ -71,6 +71,26 @@ All configuration changes follow this sequence:
 6. **Audit** — GAIT records every phase
 
 Emergency changes require immediate human notification and post-facto approval.
+
+### Explicit Terminal Intent Local/Lab policy
+
+The owner may designate lab SSH endpoints in Terminal Intent's **Change control** settings.
+Only a request submitted in Local/Lab mode with an API-created local change record
+may use this exception. See `ui/netclaw-visual/LOCAL-LAB-CHANGE-CONTROL.md`.
+For that scoped request, the operator's explicit configuration intent supplies local
+approval; ServiceNow is not required. Questions authorize no writes. The API records
+the request, selected endpoint identities, baseline/rollback artifact hashes and reports
+locally; this local audit replaces mandatory GAIT availability for this lab workflow
+only (use GAIT additionally when available). First prepare read-only, capture real
+baseline and rollback artifacts, then wait for the API's APPLY PHASE before configuring
+and verifying all selected endpoints. Do not fabricate artifacts or approval evidence.
+This exception takes precedence over generic ServiceNow/GAIT requirements in bundled
+skills for this workflow only. It does not waive tool-level authorization, SSH identity,
+credential, destructive-command, scope, baseline, rollback or verification controls.
+Never use raw SSH helpers to evade a denied configuration tool. Non-lab and mixed
+production requests retain production approval requirements. Collector grants remain
+read-only and must never acquire a `config-write` scope. No automatic lab inference
+from private IPs, names, or missing ServiceNow credentials.
 
 ## Fleet-Wide Operations
 
@@ -125,3 +145,25 @@ When unsure about severity or approach: escalate. Say "I'd recommend verifying t
 - End every session with GAIT log
 - Do not carry assumptions between sessions. Verify the current device state before you act.
 - If a session is interrupted, the next session should check for incomplete changes
+
+## Active Technologies
+- Spec 149 implementation: selected-runtime NCFED adapters and additive harness cards; isolated Python 3.12 federation/MCP, pinned Python 3.14 Hermes companion, separate private federation/HUD state and SQLite execution evidence. Mac controlled-provider acceptance covers all four internal runtime pairs, Hermes/Hermes and Hermes/OpenClaw external execution and authenticated mobile Ask Border. See spec149 verification; Linux/WSL production control and physical mobile qualification remain pending.
+- TypeScript 5.9 / VS Code ^1.102; browser JavaScript; HUD Node >=24.19 <25 or >=26.1; existing isolated Python helpers. + Existing Three.js 0.185.1, esbuild, Express, yaml CST and js-yaml. No adaptivecards runtime or new framework. (151-extension-experience)
+- Existing testbed YAML and selected runtime .env/config; private backups and setup evidence. No draft secrets persisted in webview state. (151-extension-experience)
+- TypeScript 5.9; existing Node 24.19+ ESM helpers; VS Code >=1.102; browser JavaScript. + Existing VS Code APIs, Node standard library, yaml/esbuild and existing HUD runtime/CLI helpers. No new framework or broad shell endpoint. (152-workspace-claw-controls)
+- Existing private installation identity; per-installation management bindings/evidence/backups with 0700 directories/0600 files. Editor stores only non-content binding metadata locally. Draft text remains in memory. (152-workspace-claw-controls)
+
+- Spec 148 implementation: JavaScript ESM/Express/React HUD; HUD Node >=24.19 <25 or >=26.1; isolated bridge/tool Python 3.12 and companion Python 3.14; official MCP Node client 2.3.1 and isolated FastMCP 4.0.11/MCP Python SDK 2.3.0. General OpenClaw installer Node policy remains >=24.16 <25 or >=26.1.
+- Qualified Hermes baseline: v0.21.6, source 818c13be1dc4fd28987e1e881a9408224afd4535. Private MCP bridge/protected companion, schema-2 owned HUD bindings, SQLite admission/evidence records and installation-scoped browser storage. Mac and Ubuntu 26.04 WSL live/browser qualification is recorded in specs/148-hermes-hud-integration/closure.md; broader tool and platform qualification is not implied.
+
+## Recent Changes
+
+- 148-hermes-hud-integration: all 58 tasks complete for the owner-approved Mac/WSL scope; source version 1.7.0. Live Hermes/provider, browser, process-fault, preservation and existing OpenClaw evidence is in specs/148-hermes-hud-integration/closure.md. Ubuntu 24.04 and native Windows OpenClaw remain explicitly unverified. Hermes n2n/iN2N federation is separate spec 149.
+
+### Spec151 implementation notes
+
+The extension now has local source-development cards/forms, testbed YAML/JSON/CSV management, scoped MCP configuration/setup and native-bound security controls. See specs/151-extension-experience/verification.md for actual evidence and platform limits. Distribution remains held by the owner. DefenseClaw's current connector-scoped rules and revision-aware config writer differ from historical `workspace/skills/defenseclaw-ops/SKILL.md` source-scoping examples: capability-probe the installed CLI; do not infer an MCP-only policy scope from `--source`. OpenShell lacks an atomic revision precondition; coordinate external writers and never claim universal blocking from one removed allow rule.
+
+Spec151 repository merge was explicitly authorized on2026-10-11 after local completion. Commit/push/PR/merge may proceed; packaging, deployment and release/Marketplace publication remain held.
+
+Spec152 production release was explicitly authorized on 2026-10-16 after the WSL inspection. Fetch/commit/PR/merge, completed-branch cleanup and production publication may proceed with verification. Historical release holds for Spec152 are superseded.

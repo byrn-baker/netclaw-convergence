@@ -70,11 +70,7 @@ class SuzieQClient:
     def __init__(self) -> None:
         self.api_url = os.environ.get("SUZIEQ_API_URL", "").rstrip("/")
         self.api_key = os.environ.get("SUZIEQ_API_KEY", "")
-        self.verify_ssl = os.environ.get("SUZIEQ_VERIFY_SSL", "true").lower() in (
-            "true",
-            "1",
-            "yes",
-        )
+        self.verify_ssl = os.environ.get("SUZIEQ_VERIFY_SSL", "true").strip().lower() not in ("false", "0", "no")
         self.timeout = int(os.environ.get("SUZIEQ_TIMEOUT", "30"))
         self.max_rows = DEFAULT_MAX_ROWS
         self.max_response_bytes = DEFAULT_MAX_RESPONSE_BYTES

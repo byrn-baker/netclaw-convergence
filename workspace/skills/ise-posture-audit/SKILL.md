@@ -233,7 +233,7 @@ Active Sessions Checked: N
 After completing the audit, record the session in GAIT:
 
 ```bash
-python3 $MCP_CALL "python3 -u $GAIT_MCP_SCRIPT" gait_record_turn '{"input":{"role":"assistant","content":"ISE posture audit completed. ISE: $ISE_BASE. Findings: 3 CRITICAL, 3 HIGH, 3 MEDIUM, 2 LOW. Critical items: default permit-all AuthZ rule, 14 non-compliant endpoints not quarantined, permit-all SGACL on IoT-to-Server cell.","artifacts":[]}}'
+python3 $MCP_CALL "python3 -u $GAIT_MCP_SCRIPT" gait_record_turn '{"user_text":"Example only: replace with the actual authorized request.","assistant_text":"ISE posture audit completed. ISE: $ISE_BASE. Findings: 3 CRITICAL, 3 HIGH, 3 MEDIUM, 2 LOW. Critical items: default permit-all AuthZ rule, 14 non-compliant endpoints not quarantined, permit-all SGACL on IoT-to-Server cell.","artifacts":[]}'
 ```
 
 ## Markmap Visualization
@@ -243,3 +243,14 @@ Generate a policy hierarchy mind map for the audit report:
 ```bash
 python3 $MCP_CALL "node $MARKMAP_MCP_SCRIPT" markmap_customize '{"markdown_content":"# ISE Policy Audit\n## CRITICAL\n### Default AuthZ permits all\n### Non-compliant endpoints active\n### Permit-all SGACL\n## HIGH\n### 23% Unknown endpoints\n### SGT overlap (employees + contractors)\n### Shadowed AuthZ rules\n## MEDIUM\n### No posture reassessment\n### Long-lived sessions\n### MAB instead of 802.1X\n## LOW\n### Unused SGTs\n### Dead profiler profiles","theme":"dark"}'
 ```
+
+## Failure Behavior
+
+- If a tool call fails with an authentication or connection error, check that `GAIT_MCP_SCRIPT`, `ISE_BASE`, `ISE_MCP_SCRIPT`, `ISE_PASSWORD`, `ISE_USERNAME`, `MARKMAP_MCP_SCRIPT` are set and valid before assuming a data or device problem.
+- On a tool error (timeout, unreachable host, malformed response), report the failure and its error message directly to the user rather than fabricating or guessing at results.
+- For a confirmed read-only call, check connectivity and retry once if appropriate. For any call that changes state or sends a message, a timeout does not prove the action failed: inspect current state or delivery status before retrying, preserve the required approval/change gates, and do not repeat an action whose outcome is unknown.
+
+Audit examples are illustrative. Replace request, outcomes, identifiers and counts
+with observed session evidence; do not record these example results as facts.
+Inspect MCP `isError`, returned `ok`, and the recorded turn with `gait_show` when
+validating a new client/schema. Follow gait-session-tracking for branch checkout.

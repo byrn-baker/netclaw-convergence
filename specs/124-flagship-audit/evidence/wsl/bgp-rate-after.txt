@@ -1,0 +1,38 @@
+rate limit + cache contract tests (stubbed transport, no external network)
+
+test_requests_to_one_source_are_never_concurrent
+  PASS  6 requests were made
+  PASS  max concurrency to one source is 1
+  PASS  no overlapping request intervals
+
+test_no_one_second_window_exceeds_the_ceiling
+  PASS  9 requests were made
+  PASS  no 1s window holds more than 4 requests
+  PASS  the ceiling is genuinely exercised
+
+test_different_sources_are_not_serialised_against_each_other
+  PASS  three different sources proceed in parallel
+
+test_cache_hit_avoids_a_request_and_reports_age
+  PASS  first call is not cached
+  PASS  second call is cached
+  PASS  cached call reports an age
+  PASS  only one request actually left
+
+test_fresh_bypasses_the_cache
+  PASS  fresh=True issued a second request
+
+test_ttls_are_per_source
+  PASS  RPKI TTL is 5 minutes
+  PASS  RDAP TTL is 24 hours
+  PASS  RPKI expires far sooner than RDAP
+  PASS  routing sits between them
+
+test_max_rps_cannot_be_raised
+  PASS  attempt to raise is clamped
+  PASS  lowering is honoured
+
+test_fractional_rate_is_honoured
+  PASS  0.5rps admits two requests at least two seconds apart
+
+all rate-limit and cache contract tests passed

@@ -1,0 +1,126 @@
+{
+  "schema_source_sha256": "08214a3f51479dce7504b5ef8c9f589ad262735ff685fc00ca06c75764531838",
+  "allowed_parameters": [
+    "artifacts",
+    "assistant_text",
+    "note",
+    "use_memory_snapshot",
+    "user_text"
+  ],
+  "checked_literal_calls": [
+    {
+      "path": "workspace/skills/aci-change-deploy/SKILL.md",
+      "line": 268
+    },
+    {
+      "path": "workspace/skills/aci-change-deploy/SKILL.md",
+      "line": 311
+    },
+    {
+      "path": "workspace/skills/pyats-health-check/SKILL.md",
+      "line": 268
+    },
+    {
+      "path": "workspace/skills/pyats-topology/SKILL.md",
+      "line": 201
+    },
+    {
+      "path": "workspace/skills/ise-posture-audit/SKILL.md",
+      "line": 236
+    },
+    {
+      "path": "workspace/skills/mempalace/SKILL.md",
+      "line": 250
+    },
+    {
+      "path": "workspace/skills/f5-health-check/SKILL.md",
+      "line": 291
+    },
+    {
+      "path": "workspace/skills/ise-incident-response/SKILL.md",
+      "line": 199
+    },
+    {
+      "path": "workspace/skills/f5-config-mgmt/SKILL.md",
+      "line": 489
+    },
+    {
+      "path": "workspace/skills/catc-client-ops/SKILL.md",
+      "line": 475
+    },
+    {
+      "path": "workspace/skills/nvd-cve/SKILL.md",
+      "line": 158
+    },
+    {
+      "path": "workspace/skills/servicenow-change-workflow/SKILL.md",
+      "line": 111
+    },
+    {
+      "path": "workspace/skills/servicenow-change-workflow/SKILL.md",
+      "line": 273
+    },
+    {
+      "path": "workspace/skills/pyats-security/SKILL.md",
+      "line": 231
+    },
+    {
+      "path": "workspace/skills/aci-fabric-audit/SKILL.md",
+      "line": 253
+    },
+    {
+      "path": "workspace/skills/pyats-config-mgmt/SKILL.md",
+      "line": 310
+    },
+    {
+      "path": "workspace/skills/f5-troubleshoot/SKILL.md",
+      "line": 619
+    },
+    {
+      "path": "workspace/skills/catc-inventory/SKILL.md",
+      "line": 407
+    },
+    {
+      "path": "workspace/skills/pyats-troubleshoot/SKILL.md",
+      "line": 320
+    },
+    {
+      "path": "workspace/skills/netbox-reconcile/SKILL.md",
+      "line": 325
+    },
+    {
+      "path": "workspace/skills/catc-troubleshoot/SKILL.md",
+      "line": 604
+    },
+    {
+      "path": "workspace/skills/gait-session-tracking/SKILL.md",
+      "line": 58
+    },
+    {
+      "path": "workspace/skills/gait-session-tracking/SKILL.md",
+      "line": 97
+    },
+    {
+      "path": "workspace/skills/gait-session-tracking/SKILL.md",
+      "line": 119
+    },
+    {
+      "path": "workspace/skills/gait-session-tracking/SKILL.md",
+      "line": 143
+    },
+    {
+      "path": "workspace/skills/gait-session-tracking/SKILL.md",
+      "line": 149
+    },
+    {
+      "path": "workspace/skills/gait-session-tracking/SKILL.md",
+      "line": 155
+    },
+    {
+      "path": "workspace/skills/gait-session-tracking/SKILL.md",
+      "line": 161
+    }
+  ],
+  "corrected_live_turn_retained_both_text_fields": true,
+  "legacy_probe_result": "ok true but user/assistant empty; retained and explained in next GAIT turn"
+}

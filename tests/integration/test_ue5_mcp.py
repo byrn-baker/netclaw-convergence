@@ -59,8 +59,8 @@ UE5_MCP_URL = os.environ.get("UE5_MCP_URL", "http://127.0.0.1:8000/mcp")
 
 # Marker for tests requiring UE5 to be running
 ue5_required = pytest.mark.skipif(
-    os.environ.get("SKIP_UE5_TESTS", "").lower() in ("1", "true", "yes"),
-    reason="UE5 tests skipped (SKIP_UE5_TESTS=1)",
+    os.environ.get("RUN_LIVE_UE5_TESTS") != "1" or os.environ.get("SKIP_UE5_TESTS", "").lower() in ("1", "true", "yes"),
+    reason="set RUN_LIVE_UE5_TESTS=1 with a disposable UE5 scene",
 )
 
 

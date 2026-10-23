@@ -64,7 +64,7 @@ async def test_stall_and_timeout_semantics_preserved():
     fake_client = AsyncMock()
 
     async def never_responds(method, params, timeout_s):
-        await asyncio.sleep(timeout_s + 10)  # never actually completes in time
+        await asyncio.Event().wait()  # never actually completes in time
 
     fake_client.call.side_effect = never_responds
 

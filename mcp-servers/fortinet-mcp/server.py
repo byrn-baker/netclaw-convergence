@@ -22,7 +22,8 @@ from typing import Any
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from mcp.server.fastmcp import FastMCP  # noqa: E402
+from fastmcp_tasks import TasksExtension
+from fastmcp import FastMCP  # noqa: E402
 
 import gates  # noqa: E402
 from credentials import MissingCredential, load  # noqa: E402
@@ -34,6 +35,7 @@ from transport.jsonrpc import JsonRpcClient  # noqa: E402
 from transport.rest import FortiOSClient  # noqa: E402
 
 mcp = FastMCP("fortinet-mcp")
+mcp.add_extension(TasksExtension(name="netclaw-fortinet-mcp", concurrency=1))
 
 
 def _missing(plane: Plane, exc: MissingCredential, tool: str) -> dict[str, Any]:
@@ -54,7 +56,7 @@ def _jsonrpc(plane: Plane) -> JsonRpcClient:
 # Device plane — FortiGate (6 tools)
 # ---------------------------------------------------------------------------
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def fgt_system_status(vdom: str = "root") -> dict:
     """FortiGate status: hostname, serial, version, HA mode and which member answered."""
     try:
@@ -65,7 +67,7 @@ async def fgt_system_status(vdom: str = "root") -> dict:
     return await dev.system_status(client, vdom)
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def fgt_list_interfaces(vdom: str = "root") -> dict:
     """FortiGate interfaces with link state, addressing and error counters, per VDOM."""
     try:
@@ -76,7 +78,7 @@ async def fgt_list_interfaces(vdom: str = "root") -> dict:
     return await dev.list_interfaces(client, vdom)
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def fgt_get_routes(vdom: str = "root", protocol: str = "") -> dict:
     """FortiGate routing table as observed on the device. Optional protocol filter."""
     try:
@@ -87,7 +89,7 @@ async def fgt_get_routes(vdom: str = "root", protocol: str = "") -> dict:
     return await dev.get_routes(client, vdom, protocol or None)
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def fgt_vpn_tunnels(vdom: str = "root") -> dict:
     """IPsec tunnel status with phase 1 and phase 2 reported SEPARATELY.
 
@@ -102,7 +104,7 @@ async def fgt_vpn_tunnels(vdom: str = "root") -> dict:
     return await dev.vpn_tunnels(client, vdom)
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def fgt_get_policies(vdom: str = "root") -> dict:
     """Firewall policy as RUNNING ON THE DEVICE. Compare with the manager for drift."""
     try:
@@ -113,7 +115,7 @@ async def fgt_get_policies(vdom: str = "root") -> dict:
     return await dev.get_policies(client, vdom)
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def fgt_compare_with_manager(adom: str, package: str, vdom: str = "root") -> dict:
     """Report divergence between FortiManager intent and FortiGate running state.
 
@@ -195,7 +197,7 @@ async def fgt_compare_with_manager(adom: str, package: str, vdom: str = "root") 
 # Manager plane — FortiManager (8 tools)
 # ---------------------------------------------------------------------------
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def fmg_list_adoms() -> dict:
     """List FortiManager ADOMs. The ADOM scopes everything else on this plane."""
     try:
@@ -204,7 +206,7 @@ async def fmg_list_adoms() -> dict:
         return _missing(Plane.MANAGER, exc, "fmg_list_adoms")
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def fmg_list_devices(adom: str) -> dict:
     """List FortiGates managed within an ADOM, with connection and sync status."""
     try:
@@ -213,7 +215,7 @@ async def fmg_list_devices(adom: str) -> dict:
         return _missing(Plane.MANAGER, exc, "fmg_list_devices")
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def fmg_list_policy_packages(adom: str) -> dict:
     """List policy packages in an ADOM with their install targets."""
     try:
@@ -222,7 +224,7 @@ async def fmg_list_policy_packages(adom: str) -> dict:
         return _missing(Plane.MANAGER, exc, "fmg_list_policy_packages")
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def fmg_get_policy_package(adom: str, package: str) -> dict:
     """Ordered rules in a policy package: position, action, enabled state, object refs."""
     try:
@@ -231,7 +233,7 @@ async def fmg_get_policy_package(adom: str, package: str) -> dict:
         return _missing(Plane.MANAGER, exc, "fmg_get_policy_package")
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def fmg_search_rules(
     adom: str, package: str, src: str = "", dst: str = "",
     service: str = "", object_name: str = "",
@@ -246,7 +248,7 @@ async def fmg_search_rules(
         return _missing(Plane.MANAGER, exc, "fmg_search_rules")
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def fmg_resolve_object(adom: str, name: str, obj_type: str = "address") -> dict:
     """Resolve an address/service object or group to its members, RECURSIVELY.
 
@@ -258,7 +260,7 @@ async def fmg_resolve_object(adom: str, name: str, obj_type: str = "address") ->
         return _missing(Plane.MANAGER, exc, "fmg_resolve_object")
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def fmg_get_revisions(adom: str, package: str) -> dict:
     """Policy package revision history — the rollback context for a change review."""
     try:
@@ -267,7 +269,7 @@ async def fmg_get_revisions(adom: str, package: str) -> dict:
         return _missing(Plane.MANAGER, exc, "fmg_get_revisions")
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def fmg_preview_install(adom: str, package: str, target: str = "") -> dict:
     """Preview what installing a policy package WOULD change. Read-only, no gates."""
     try:
@@ -280,7 +282,7 @@ async def fmg_preview_install(adom: str, package: str, target: str = "") -> dict
 # Analyzer plane — FortiAnalyzer (4 tools)
 # ---------------------------------------------------------------------------
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def faz_query_logs(
     adom: str, filter_expr: str, window_start: str = "",
     window_end: str = "", limit: int = 100, offset: int = 0,
@@ -299,7 +301,7 @@ async def faz_query_logs(
         return _missing(Plane.ANALYZER, exc, "faz_query_logs")
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def faz_fetch_more(
     adom: str, filter_expr: str, window_start: str, window_end: str,
     offset: int, limit: int = 100,
@@ -314,7 +316,7 @@ async def faz_fetch_more(
         return _missing(Plane.ANALYZER, exc, "faz_fetch_more")
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def faz_policy_activity(
     adom: str, policyid: int, window_start: str = "", window_end: str = "",
 ) -> dict:
@@ -332,7 +334,7 @@ async def faz_policy_activity(
         return _missing(Plane.ANALYZER, exc, "faz_policy_activity")
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def faz_list_devices(adom: str) -> dict:
     """Devices forwarding logs to this FortiAnalyzer. Check before trusting an empty query."""
     try:
@@ -345,7 +347,7 @@ async def faz_list_devices(adom: str) -> dict:
 # Write path — 2 tools, disabled by default, two independent gates
 # ---------------------------------------------------------------------------
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def fmg_check_change_record(change_request: str) -> dict:
     """Check whether a ServiceNow change record is approved. Read-only."""
     result = await gates.check_change_request(change_request)
@@ -419,7 +421,7 @@ async def fmg_install_package(
     )
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def fortinet_posture() -> dict:
     """Report which planes are configured and the current write-gate posture."""
     from credentials import configured_planes

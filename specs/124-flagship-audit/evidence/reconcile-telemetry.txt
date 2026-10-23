@@ -1,0 +1,7 @@
+Reconciliation: PASS
+  catalog      pass   installer coverage and vendored state
+  dependencies pass   dependency pins and install paths
+  docs         pass   documented counts
+  meraki-ids   pass   Meraki capability IDs cited in skills
+  packages     pass   npx/uvx packages skills invoke exist
+  portability  pass   registration portability

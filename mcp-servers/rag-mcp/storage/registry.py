@@ -184,6 +184,19 @@ class Registry:
             )
         return doc_id
 
+    def publish_replica(self, staging: str, stable: str, rows: list) -> None:
+        """Replace one replica's registry generation in a single transaction."""
+        with self._lock, self._conn:
+            self._conn.execute("DELETE FROM documents WHERE collection = ? AND kind = 'replica'", (stable,))
+            for row_id, content_hash, chunk_count in rows:
+                cursor = self._conn.execute(
+                    """UPDATE documents SET collection=?, content_hash=?, chunk_count=?,
+                       ingest_status='ready', error=NULL
+                       WHERE id=? AND collection=? AND kind='replica'""",
+                    (stable, content_hash, chunk_count, row_id, staging))
+                if cursor.rowcount != 1:
+                    raise RuntimeError("Replica staging registry row is missing")
+
     def delete_by_collection(self, collection: str) -> int:
         """Delete every documents row for a given collection value (used by
         replication's full-replace re-sync and by replica deletion, feature 065)."""
@@ -210,9 +223,20 @@ class Registry:
         chunk_count: int,
         page_count: Optional[int] = None,
         redaction_counts: Optional[Dict[str, int]] = None,
+        content_hash: Optional[str] = None,
+        replace_ids: tuple = (),
     ) -> None:
         """Flip a document to 'ready' in one transaction (atomic commit point)."""
         with self._lock, self._conn:
+            # Staged replacement hashes avoid the (content_hash, kind) unique
+            # constraint while the previous ready version remains available.
+            # Retire old registry rows and publish the real hash atomically.
+            if replace_ids:
+                self._conn.executemany("DELETE FROM documents WHERE id = ? AND id != ?",
+                                       [(old_id, doc_id) for old_id in replace_ids])
+            if content_hash is not None:
+                self._conn.execute("UPDATE documents SET content_hash = ? WHERE id = ?",
+                                   (content_hash, doc_id))
             self._conn.execute(
                 """UPDATE documents
                    SET ingest_status = 'ready', chunk_count = ?, page_count = ?,

@@ -293,3 +293,9 @@ Record every phase in GAIT:
 python3 $MCP_CALL "python3 -u $GAIT_MCP_SCRIPT" gait_record_turn \
   '{"input":{"role":"assistant","content":"INCIDENT P1: R1 unreachable. Phase 1 declared, Phase 2 IC assigned @engineer1, Phase 3 automated investigation shows R1 crash, Phase 4 monitoring recovery, Phase 5 resolved after 34 min. INC0012345 closed.","artifacts":[]}}'
 ```
+
+## Failure Behavior
+
+- If a tool call fails with an authentication or connection error, check that `GAIT_MCP_SCRIPT`, `SERVICENOW_MCP_SCRIPT` are set and valid before assuming a data or device problem.
+- On a tool error (timeout, unreachable host, malformed response), report the failure and its error message directly to the user rather than fabricating or guessing at results.
+- For a confirmed read-only call, check connectivity and retry once if appropriate. For any call that changes state or sends a message, a timeout does not prove the action failed: inspect current state or delivery status before retrying, preserve the required approval/change gates, and do not repeat an action whose outcome is unknown.

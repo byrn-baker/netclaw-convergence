@@ -1,0 +1,36 @@
+
+> netclaw-hud@1.0.0 build
+> vite build
+
+vite v6.4.3 building for production...
+transforming...
+✓ 144 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/assessment.html                              0.62 kB │ gzip:   0.33 kB
+dist/index.html                                   0.91 kB │ gzip:   0.44 kB
+dist/canvas.html                                  0.93 kB │ gzip:   0.47 kB
+dist/.vite/manifest.json                          3.52 kB │ gzip:   0.64 kB
+dist/classic.html                                 7.31 kB │ gzip:   2.32 kB
+dist/assets/dashboard-BBe7BF5X.css               20.35 kB │ gzip:   5.30 kB
+dist/assets/classic-CIYztu53.css                 25.76 kB │ gzip:   6.05 kB
+dist/assets/TerminalLane-CSPUhnzX.css            39.12 kB │ gzip:   8.60 kB
+dist/assets/modulepreload-polyfill-B5Qt9EMX.js    0.71 kB │ gzip:   0.40 kB
+dist/assets/preload-helper-ckwbz45p.js            1.14 kB │ gzip:   0.66 kB
+dist/assets/assessment-BWttyU1I.js                1.15 kB │ gzip:   0.71 kB
+dist/assets/Scene-BkYLYzAv.js                     3.93 kB │ gzip:   2.09 kB
+dist/assets/ResultLane-BITqQyI7.js                8.05 kB │ gzip:   2.85 kB
+dist/assets/dashboard-uUkr80eI.js                10.39 kB │ gzip:   4.06 kB
+dist/assets/ConfigReviewLane-DtQpckVD.js         15.85 kB │ gzip:   5.42 kB
+dist/assets/client-BvckCBpw.js                  142.92 kB │ gzip:  45.78 kB
+dist/assets/canvas-Cdi-RN1P.js                  195.14 kB │ gzip:  60.89 kB
+dist/assets/classic-BEQpfLdY.js                 301.76 kB │ gzip: 120.23 kB
+dist/assets/hud-DdBI6UnK.js                     481.00 kB │ gzip: 116.61 kB
+dist/assets/TerminalLane-Bbsir_pY.js            510.58 kB │ gzip: 138.01 kB
+dist/assets/OrbitControls-Db5D7vkw.js           559.95 kB │ gzip: 140.52 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 1.14s

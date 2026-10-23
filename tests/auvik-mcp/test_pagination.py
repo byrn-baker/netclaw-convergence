@@ -1,5 +1,7 @@
 """Tests for utils/pagination.py (cursor extraction and page merging)."""
 
+import pytest
+
 from utils.pagination import next_cursor_url, merge_page
 
 _NEXT_URL = "https://x/v1/inventory/device/info?page[after]=ABC&page[first]=300"
@@ -38,8 +40,8 @@ def test_merge_page_appends_to_existing():
 
 
 def test_merge_page_no_data_key():
-    result = merge_page([], {})
-    assert result == []
+    with pytest.raises(ValueError):
+        merge_page([], {})
 
 
 def test_merge_page_empty_data():

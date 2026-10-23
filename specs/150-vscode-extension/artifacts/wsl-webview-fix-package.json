@@ -1,0 +1,11 @@
+{
+  "publisher": "NetClaw",
+  "name": "netclaw",
+  "version": "0.1.0",
+  "source": "153e4f7238b4bdc737e06556217f361a03b6877e",
+  "sha256": "d26a8d3bc08b9fcb69fa891bc7a6678ae998d119e6783bc533f47499e1170fee",
+  "bytes": 2349138,
+  "artifact": "netclaw-0.1.0-wsl-webview-fix.vsix",
+  "qualification": "WSL replacement candidate; original preserved. Packaged editor retest pending; do not publish.",
+  "assistantPayloadIdenticalToOriginal": true
+}

@@ -1,0 +1,120 @@
+.terminal-enrichment-popover {
+  --tep-panel: #14202d;
+  --tep-line: #2a3b4b;
+  --tep-text: #e4edf7;
+  --tep-muted: #a6b8ca;
+  position: fixed;
+  z-index: 10000;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  max-width: calc(100vw - 24px);
+  overflow: hidden;
+  box-sizing: border-box;
+  border: 1px solid #3b5265;
+  border-radius: 9px;
+  background: #0e1823;
+  color: var(--tep-text);
+  box-shadow: 0 16px 48px #000a, 0 0 0 1px #0005;
+  font: 12px/1.6 "Segoe UI", system-ui, sans-serif;
+  text-align: left;
+  letter-spacing: normal;
+  color-scheme: dark;
+  overscroll-behavior: contain;
+  pointer-events: auto;
+  container-type: inline-size;
+}
+
+.terminal-enrichment-popover[data-placement="docked"] {
+  max-width: none;
+  border-radius: 0 0 6px 0;
+  border-left: 1px solid #3b6470;
+  box-shadow: -8px 0 20px #0003;
+}
+.terminal-enrichment-popover[data-contained="true"] {
+  /* Keep even the visual shadow inside the terminal's content bounds. */
+  box-shadow: inset 0 0 0 1px #ffffff05;
+}
+.terminal-enrichment-popover .tep-dock-label { display: block; margin-bottom: 7px; color: #8dcac7; font-size: 10px; font-weight: 650; letter-spacing: .1em; text-transform: uppercase; }
+@container (max-width: 580px) {
+  .terminal-enrichment-popover .tep-tile-grid { grid-template-columns: minmax(0, 1fr); }
+}
+
+.terminal-enrichment-popover *,
+.terminal-enrichment-popover *::before,
+.terminal-enrichment-popover *::after { box-sizing: border-box; }
+.terminal-enrichment-popover h3,
+.terminal-enrichment-popover h4,
+.terminal-enrichment-popover p { margin: 0; }
+.terminal-enrichment-popover button,
+.terminal-enrichment-popover input { font: inherit; }
+.terminal-enrichment-popover button { cursor: pointer; }
+.terminal-enrichment-popover button:disabled { opacity: .5; cursor: default; }
+.terminal-enrichment-popover button:focus-visible,
+.terminal-enrichment-popover input:focus-visible,
+.terminal-enrichment-popover a:focus-visible { outline: 2px solid #89e5db; outline-offset: 2px; }
+
+.terminal-enrichment-popover .tep-header {
+  display: flex;
+  flex: none;
+  align-items: start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 18px;
+  border-bottom: 1px solid var(--tep-line);
+  background: #12202d;
+}
+.terminal-enrichment-popover .tep-heading { min-width: 0; }
+.terminal-enrichment-popover .tep-heading h3 { font: 600 20px/1.4 "Cascadia Mono", Consolas, monospace; letter-spacing: -.03em; overflow-wrap: anywhere; }
+.terminal-enrichment-popover .tep-heading p { margin-top: 3px; color: var(--tep-muted); font-size: 11px; overflow-wrap: anywhere; }
+.terminal-enrichment-popover .tep-actions { display: flex; flex: none; gap: 6px; }
+.terminal-enrichment-popover .tep-actions button { padding: 5px 9px; min-height: 30px; border: 1px solid #3a5063; border-radius: 5px; background: transparent; color: #c2d2e2; font-size: 11px; }
+.terminal-enrichment-popover .tep-actions button:hover { background: #264654; }
+.terminal-enrichment-popover .tep-actions button[aria-pressed="true"] { border-color: #55b9a9; background: #1c443f; color: #b9fff0; }
+.terminal-enrichment-popover .tep-demo-banner { display: flex; flex: none; flex-wrap: wrap; align-items: baseline; gap: 3px 10px; padding: 8px 14px; border-bottom: 1px solid #785c2c; background: #342919; color: #ffe4ac; }
+.terminal-enrichment-popover .tep-demo-banner strong { font-size: 10px; letter-spacing: .065em; }
+.terminal-enrichment-popover .tep-demo-banner span { font-size: 10px; }
+.terminal-enrichment-popover .tep-content { flex: 1; min-height: 0; min-width: 0; overflow-y: auto; overflow-x: hidden; padding: 16px; scrollbar-gutter: stable; scrollbar-width: thin; scrollbar-color: #41566b transparent; overscroll-behavior: contain; }
+.terminal-enrichment-popover .tep-tile-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.terminal-enrichment-popover .tep-tile { min-width: 0; padding: 14px; border: 1px solid var(--tep-line); border-radius: 7px; background: var(--tep-panel); overflow-wrap: anywhere; }
+.terminal-enrichment-popover .tep-tile h4 { margin-bottom: 10px; font-size: 12px; font-weight: 600; color: #dae6f2; }
+.terminal-enrichment-popover .tep-tile p + p { margin-top: 7px; }
+.terminal-enrichment-popover .tep-tile dl { display: grid; grid-template-columns: minmax(65px, .7fr) minmax(0, 1.3fr); gap: 5px 9px; margin: 0; }
+.terminal-enrichment-popover .tep-tile dt { color: var(--tep-muted); }
+.terminal-enrichment-popover .tep-tile dd { margin: 0; overflow-wrap: anywhere; }
+.terminal-enrichment-popover .tep-provenance { margin-top: 12px; padding-top: 9px; border-top: 1px solid #263847; color: #9aafc4; font-size: 10px; line-height: 1.6; }
+.terminal-enrichment-popover .tep-footer { display:flex; justify-content:space-between; gap:8px; flex-wrap:wrap; flex-shrink:0; padding:9px 16px; border-top:1px solid var(--tep-line); color:#9db0c4; font-size:10px; background:#101c28; }
+.terminal-enrichment-popover .tep-section-header { display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:12px; flex-wrap:wrap; }
+.terminal-enrichment-popover .tep-section-header h4 { margin:0; }
+.terminal-enrichment-popover .tep-note { color:var(--tep-muted); font-size:11px; }
+.terminal-enrichment-popover .topology-context,
+.terminal-enrichment-popover .obs-context { border:0; padding:0; background:transparent; }
+.terminal-enrichment-popover .topology-context + .obs-context { border-top:1px solid var(--tep-line); padding-top:18px; margin-top:4px; }
+.terminal-enrichment-popover .topology-observation,
+.terminal-enrichment-popover .obs-evidence-grid article { background:var(--tep-panel); border-color:var(--tep-line); padding:13px; }
+.terminal-enrichment-popover .topology-observation > strong { color:#dfebf6; font-size:12px; font-weight:600; }
+.terminal-enrichment-popover .topology-observation > dl { margin-top:10px; }
+.terminal-enrichment-popover .topology-identifiers > section { margin-top:18px; }
+.terminal-enrichment-popover .topology-identifiers > section > h4 { font-size:10px; font-weight:650; color:#9db2c7; letter-spacing:.065em; text-transform:uppercase; margin-bottom:9px; }
+.terminal-enrichment-popover .topology-current,
+.terminal-enrichment-popover .topology-stale,
+.terminal-enrichment-popover .obs-badge { border-radius:4px; padding:2px 5px; font-size:9px; letter-spacing:.025em; line-height:1.6; }
+.terminal-enrichment-popover .topology-manage,
+.terminal-enrichment-popover .obs-context button { margin:0; font-size:10px; padding:5px 8px; border:1px solid #3c5367; border-radius:5px; background:transparent; color:#b3dcd9; }
+.terminal-enrichment-popover details { padding:9px 11px; border:1px solid var(--tep-line); border-radius:6px; background:#121f2b; color:var(--tep-muted); }
+.terminal-enrichment-popover summary { cursor:pointer; font-size:11px; color:#c0d1e1; }
+.terminal-enrichment-popover .obs-evidence-grid { margin-top:12px; }
+@container (max-width: 580px) {
+  .terminal-enrichment-popover .tep-tile-grid,
+  .terminal-enrichment-popover .topology-fact-grid,
+  .terminal-enrichment-popover .obs-evidence-grid { grid-template-columns:minmax(0,1fr); }
+  .terminal-enrichment-popover .tep-header { padding:14px; }
+  .terminal-enrichment-popover .tep-content { padding:12px; }
+  .terminal-enrichment-popover .tep-heading h3 { font-size:18px; }
+}
+
+@media (max-width: 600px) {
+  .terminal-enrichment-popover .tep-tile-grid { grid-template-columns: minmax(0, 1fr); }
+  .terminal-enrichment-popover .tep-header { gap: 8px; padding: 10px; }
+  .terminal-enrichment-popover .tep-heading h3 { font-size: 14px; }
+}

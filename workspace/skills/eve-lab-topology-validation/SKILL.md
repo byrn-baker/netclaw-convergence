@@ -19,3 +19,8 @@ Use this skill for the **final QA and delivery** phase of topology work.
 - Do not approve build work while unresolved gate items remain.
 - State PASS, WARN, or FAIL directly.
 - Put unresolved items in the final risks/open-questions section; do not silently skip them.
+
+## Failure Behavior
+
+- On a tool error (timeout, unreachable host, malformed response), report the failure and its error message directly to the user rather than fabricating or guessing at results.
+- For a confirmed read-only call, check connectivity and retry once if appropriate. For any call that changes state or sends a message, a timeout does not prove the action failed: inspect current state or delivery status before retrying, preserve the required approval/change gates, and do not repeat an action whose outcome is unknown.

@@ -13,40 +13,45 @@ from _harness import FAILURES, check, repo, run, skip  # noqa: F401
 
 CEILING = 5000
 EXPECTED_TOOLS = {"zabbix_api", "zabbix_api_docs", "zabbix_api_list"}
-VENV_PY = repo("mcp-servers", "zabbix-mcp", ".venv", "bin", "python")
+VENV_PY = os.environ.get(
+    "NETCLAW_ZABBIX_VENV_PY",
+    repo("mcp-servers", "zabbix-mcp", ".venv", "bin", "python"),
+)
 
 PROBE = r'''
 import asyncio, json, os, sys
-from mcp import ClientSession, StdioServerParameters
-from mcp.client.stdio import stdio_client
+from fastmcp import Client
+from fastmcp.client.transports import StdioTransport
 async def main():
     env = dict(os.environ)
-    env.setdefault("ZABBIX_URL", "http://127.0.0.1:1")
-    env.setdefault("ZABBIX_TOKEN", "placeholder")
+    env["ZABBIX_URL"] = "http://127.0.0.1:1"
+    env["ZABBIX_TOKEN"] = "placeholder"
     env["READ_ONLY"] = "true"
-    p = StdioServerParameters(command=sys.executable,
-                              args=["-m", "zabbix_mcp_server.server"], env=env)
-    async with stdio_client(p) as (r, w):
-        async with ClientSession(r, w) as s:
-            await s.initialize()
-            tools = (await s.list_tools()).tools
-            m = "\n".join(f"{t.name}\n{t.description or ''}\n{t.inputSchema}" for t in tools)
-            print(json.dumps({"names": [t.name for t in tools],
-                              "chars": len(m), "lines": m.count("\n")}))
+    catalogs = []
+    for mode in ('legacy', '2026-07-28'):
+        transport = StdioTransport(command=sys.executable,
+                                   args=["-u", sys.argv[1]], env=env)
+        async with Client(transport, mode=mode) as client:
+            tools = await client.list_tools()
+            catalogs.append([t.model_dump(mode='json') for t in tools])
+    assert catalogs[0] == catalogs[1], 'protocol catalogs differ'
+    m = "\n".join(f"{t.name}\n{t.description or ''}\n{t.input_schema}" for t in tools)
+    print(json.dumps({"names": [t.name for t in tools],
+                      "chars": len(m), "lines": m.count("\n")}))
 asyncio.run(main())
 '''
 
 def _probe():
     if not os.path.exists(VENV_PY):
         return None
-    out = subprocess.run([VENV_PY, "-c", PROBE], capture_output=True, text=True, timeout=120)
+    out = subprocess.run([VENV_PY, "-c", PROBE, repo("scripts", "zabbix-stdio.py")], capture_output=True, text=True, timeout=120)
     if out.returncode != 0:
-        return None
+        raise RuntimeError(f"Installed Zabbix MCP manifest probe failed (exit {out.returncode})")
     import json
     for line in reversed(out.stdout.strip().splitlines()):
         if line.startswith("{"):
             return json.loads(line)
-    return None
+    raise RuntimeError("Installed Zabbix MCP manifest probe returned no JSON")
 
 _CACHE = {}
 

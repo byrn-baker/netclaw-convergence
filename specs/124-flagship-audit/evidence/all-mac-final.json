@@ -1,0 +1,1288 @@
+{
+  "counts": {
+    "BLOCKED_DEPENDENCY": 0,
+    "ERROR": 0,
+    "FAIL": 0,
+    "NEEDS_DOCKER": 2,
+    "NEEDS_LIVE_CREDENTIALS": 7,
+    "PASS": 23
+  },
+  "exit_code": 0,
+  "generated_at": "2026-09-26T23:01:28.023508+00:00",
+  "results": [
+    {
+      "capabilities": [],
+      "command": [
+        "bash",
+        "tests/analysis/run-tests.sh"
+      ],
+      "detail": "offline contracts passed",
+      "duration_seconds": 4.143489416997909,
+      "environment": {
+        "fingerprint": "87d3ae4cf8a99ab8576ff3b6a32dafaebbf82721b8da8de079e0102d503b158a",
+        "path": ".contract-test-envs/analysis"
+      },
+      "exit_code": 0,
+      "status": "PASS",
+      "suite": "analysis",
+      "test_runs": [
+        {
+          "command": [
+            "bash",
+            "tests/analysis/run-tests.sh"
+          ],
+          "exit_code": 0,
+          "output": "=== Path allowlist: NetClaw's own stores are never readable ===\n  ok   the memory store is denied\n  ok   the RAG store is denied\n  ok   the federation store is denied\n  ok   the GAIT audit trail is denied\n  ok   ssh and cloud credential dirs are denied\n  ok   the denial reason explains itself rather than just refusing\n  ok   an NSM run directory is NOT denied\n  ok   a path outside every allowed root is rejected\n\n=== Statement screen: only reads, one at a time ===\n  ok   SELECT is accepted\n  ok   WITH is accepted\n  ok   a trailing semicolon is fine\n  ok   a stacked second statement is refused\n  ok   DROP is refused\n  ok   INSERT is refused\n  ok   UPDATE is refused\n  ok   DELETE is refused\n  ok   CREATE is refused\n  ok   ATTACH is refused\n  ok   COPY is refused\n  ok   INSTALL is refused\n  ok   LOAD is refused\n  ok   SET is refused\n  ok   PRAGMA is refused\n  ok   the ATTACH refusal names the stores it protects\n\n=== DuckDB-level lockdown (the real boundary) ===\n  ok   after lockdown DuckDB refuses every filesystem and network escape\n  ok   a materialised table is still queryable after lockdown\n  ok   the loader builds a TABLE, never a VIEW (a view dies at lockdown)\n  ok   a runaway query is interrupted rather than hanging forever\n  ok   truncation is reported, not silently hidden\n  ok   a query before lockdown is refused outright\n  ok   loading a dataset after lockdown is refused\n\n=== Empty-input honesty ===\n  ok   an empty file is skipped rather than loaded as a rowless dataset\n\n=== Summary ===\n  passed: 32\n  failed: 0\n  skipped: 0\n  all analysis-mcp contract tests passed"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        {
+          "detail": "missing: ANTA_PASSWORD, ANTA_TEST_HOST, ANTA_USERNAME",
+          "kind": "live",
+          "names": [
+            "ANTA_PASSWORD",
+            "ANTA_TEST_HOST",
+            "ANTA_USERNAME"
+          ],
+          "status": "NEEDS_LIVE_CREDENTIALS"
+        }
+      ],
+      "command": [
+        "bash",
+        "tests/anta/run-tests.sh"
+      ],
+      "detail": "offline contracts passed",
+      "duration_seconds": 0.10105525000108173,
+      "environment": {
+        "fingerprint": "4ce1072fd03f4ff806702e9f3c04a1dcfe21e9f3816813d0a6fe654c4e94d95e",
+        "path": "mcp-servers/anta-mcp/.venv"
+      },
+      "exit_code": 0,
+      "status": "PASS",
+      "suite": "anta",
+      "test_runs": [
+        {
+          "command": [
+            "bash",
+            "tests/anta/run-tests.sh"
+          ],
+          "exit_code": 0,
+          "output": "=== verdict model (stdlib only, always runs) ===\n  ok   - BGP inactive reclassified to not_applicable\n  ok   - unsupported command reclassified\n  ok   - genuine mismatch stays fail\n  ok   - NTP desync stays fail\n  ok   - success -> pass\n  ok   - skipped -> skipped\n  ok   - error -> error\n  ok   - unrecognised status does not become a pass\n  ok   - five counts kept separate\n  ok   - not_applicable is not counted as fail\n  ok   - skipped is not counted as pass\n  ok   - health percentage refused\n  ok   - unknown verdict rejected\n  ok   - unreachable yields error with zero results\n  ok   - empty selection is not a pass\n  ok   - envelope carries device, timestamp and tls disclosure\n  ok   - unattributed result rejected\n\n=== read-only posture (source scan, always runs) ===\n  ok   - no configuration path in server source\n  ok   - no credential is returned to callers\n\n=== live (skips without venv or device) ===\n  skip - live tests (ANTA_TEST_HOST not set)\n\npassed: 19  failed: 0  skipped: 1"
+        }
+      ]
+    },
+    {
+      "capabilities": [],
+      "command": [
+        "/Users/john.capobianco/netclaw/.contract-test-envs/auvik-mcp/bin/python",
+        "-m",
+        "pytest",
+        "tests/auvik-mcp"
+      ],
+      "detail": "offline contracts passed",
+      "duration_seconds": 7.356100041997706,
+      "environment": {
+        "fingerprint": "18edcc310c90449758a3a1d26fc52cf90acb32d8213ab8ab6f6d10486c16e737",
+        "path": ".contract-test-envs/auvik-mcp"
+      },
+      "exit_code": 0,
+      "status": "PASS",
+      "suite": "auvik-mcp",
+      "test_runs": [
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/auvik-mcp/bin/python",
+            "-m",
+            "pytest",
+            "tests/auvik-mcp"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw/tests/auvik-mcp\nconfigfile: pytest.ini\nplugins: platformdirs-4.12.0, asyncio-0.26.0, anyio-4.15.1\nasyncio: mode=Mode.AUTO, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function\ncollected 381 items\n\ntests/auvik-mcp/test_alerts.py ......................                    [  5%]\ntests/auvik-mcp/test_client_429.py .....                                 [  7%]\ntests/auvik-mcp/test_client_get.py ............                          [ 10%]\ntests/auvik-mcp/test_client_get_all.py .......                           [ 12%]\ntests/auvik-mcp/test_constants.py ..................                     [ 16%]\ntests/auvik-mcp/test_inventory.py ...................................... [ 26%]\n................................                                         [ 35%]\ntests/auvik-mcp/test_lifecycle.py .....................................  [ 44%]\ntests/auvik-mcp/test_models.py ......................................... [ 55%]\n................                                                         [ 59%]\ntests/auvik-mcp/test_pagination.py ..........                            [ 62%]\ntests/auvik-mcp/test_performance.py .................................... [ 71%]\n.....................                                                    [ 77%]\ntests/auvik-mcp/test_rate_limiter.py .......                             [ 79%]\ntests/auvik-mcp/test_resolve_or_error.py ...........                     [ 82%]\ntests/auvik-mcp/test_resolve_tenants.py ..............                   [ 85%]\ntests/auvik-mcp/test_resolver.py ..............                          [ 89%]\ntests/auvik-mcp/test_resolver_network_tenant.py ............             [ 92%]\ntests/auvik-mcp/test_server_registration.py .................            [ 97%]\ntests/auvik-mcp/test_tenant_resolution_integration.py ........           [ 99%]\ntests/auvik-mcp/test_toon_helper.py ...                                  [100%]\n\n============================= 381 passed in 7.04s =============================="
+        }
+      ]
+    },
+    {
+      "capabilities": [],
+      "command": [
+        "bash",
+        "tests/bgp-intel/run-tests.sh"
+      ],
+      "detail": "offline contracts passed",
+      "duration_seconds": 3.8029162080019887,
+      "environment": {
+        "fingerprint": "f3937f07dbc393453fb878327eab087802aeb8cf6da20962e0be1f01c50474b4",
+        "path": ".contract-test-envs/bgp-intel"
+      },
+      "exit_code": 0,
+      "status": "PASS",
+      "suite": "bgp-intel",
+      "test_runs": [
+        {
+          "command": [
+            "bash",
+            "tests/bgp-intel/run-tests.sh"
+          ],
+          "exit_code": 0,
+          "output": "==============================================================\n  outcomes    \u2014 the four RPKI states (FR-002/003/004, SC-004/005)\n==============================================================\nRPKI distinction contract tests (no network required)\n\ntest_four_states_are_distinct\n  PASS  four distinct (state, reason) combinations exist\n  PASS  invalid/as != invalid/length\n\ntest_only_invalid_is_a_finding\n  PASS  valid is not a finding\n  PASS  not_found is NOT a finding\n  PASS  invalid/as IS a finding\n  PASS  invalid/length IS a finding\n\ntest_not_found_never_reads_as_a_problem\n  PASS  not_found output omits 'invalid'\n  PASS  not_found output omits 'suspicious'\n  PASS  not_found output omits 'unverified'\n  PASS  not_found says it is normal\n  PASS  not_found says it is not a finding\n\ntest_rfc6811_vocabulary_is_reported\n  PASS  not_found reports RFC 6811 'NotFound'\n  PASS  valid reports 'Valid'\n\ntest_corroboration_is_never_implied\n  PASS  corroborated is literally False\n  PASS  output omits 'confirmed'\n  PASS  output omits 'cross-checked'\n  PASS  output omits 'independently verified'\n  PASS  output says 'not corroborated'\n  PASS  output names the validator\n\ntest_validation_unavailable_is_not_not_found\n  PASS  distinct outcome values\n  PASS  VALIDATION_UNAVAILABLE is not an RpkiState\n\ntest_source_failure_is_not_no_record\n  PASS  four failure-ish outcomes remain distinct\n\ntest_invalid_names_what_the_roa_authorises\n  PASS  authorised origin extracted\n  PASS  caveat names the permitted AS\n  PASS  maxLength extracted\n  PASS  length caveat mentions misconfiguration\n\ntest_ripestat_vocabulary_translation\n  PASS  unknown -> not_found\n  PASS  translation is recorded\n  PASS  translation is stated in caveats\n  PASS  invalid_asn -> (invalid, as)\n\ntest_wire_spelling_is_accepted\n  PASS  hyphenated wire form maps to NOT_FOUND\n  PASS  enum member uses the underscore\n\nall outcome contract tests passed\n\n==============================================================\n  envelope    \u2014 provenance + GAIT (FR-019/021/022, SC-012/013/014)\n==============================================================\nenvelope + audit contract tests (no network required)\n\ntest_every_response_names_its_source\n  PASS  source present\n  PASS  retrieved_at present\n  PASS  outcome present\n  PASS  caveats is a list\n\ntest_sourceless_response_is_an_error\n  PASS  source='' rejected\n  PASS  source='   ' rejected\n  PASS  source=None rejected\n\ntest_merged_answers_carry_per_element_provenance\n  PASS  each section keeps its own source\n  PASS  sources_consulted lists both\n\ntest_failed_section_is_named_inside_the_report\n  PASS  failed section named in caveats\n  PASS  caveat says failure not absence\n\ntest_source_failure_never_reads_as_no_record\n  PASS  outcome is a failure\n  PASS  failure names the source\n  PASS  caveat distinguishes failure from absence\n\ntest_local_refusal_makes_no_request\n  PASS  outcome is input_refused\n  PASS  source is local\n  PASS  caveat says no request was made\n\ntest_cache_reports_age\n  PASS  cached flag set\n  PASS  age reported and rounded\n  PASS  uncached reports no age\n\ntest_every_operation_is_audited\n  PASS  three operations -> three records\n  PASS  refusal and failure both audited\n  PASS  records name the component\n  PASS  records carry cached flag\n\nall envelope contract tests passed\n\n==============================================================\n  validate    \u2014 local refusal as disclosure control (FR-028, SC-015)\n==============================================================\ninput refusal contract tests (no network \u2014 that IS the test)\n\ntest_private_and_reserved_v4_refused\n  PASS  refuses RFC1918 /8 (10.0.0.1)\n  PASS  refuses RFC1918 /16 (192.168.2.130)\n  PASS  refuses RFC1918 /12 (172.16.5.5)\n  PASS  refuses loopback (127.0.0.1)\n  PASS  refuses link-local (169.254.1.1)\n  PASS  refuses CGNAT (100.64.0.1)\n  PASS  refuses multicast (224.0.0.1)\n  PASS  refuses TEST-NET-1 documentation (192.0.2.5)\n  PASS  refuses TEST-NET-2 documentation (198.51.100.5)\n  PASS  refuses TEST-NET-3 documentation (203.0.113.5)\n  PASS  refuses this-network (0.0.0.0)\n\ntest_private_and_reserved_v6_refused\n  PASS  refuses v6 loopback (::1)\n  PASS  refuses v6 unique-local (fc00::1)\n  PASS  refuses v6 link-local (fe80::1)\n  PASS  refuses v6 documentation (2001:db8::1)\n  PASS  refuses v6 multicast (ff02::1)\n\ntest_public_addresses_accepted\n  PASS  accepts public 8.8.8.8\n  PASS  accepts public 1.1.1.0/24\n  PASS  accepts public 193.0.6.139\n  PASS  accepts public 2606:4700::/32\n  PASS  accepts public 2001:67c:2e8::\n\ntest_malformed_input_rejected_with_a_reason\n  PASS  rejects garbage\n  PASS  rejects impossible v4 prefix length\n  PASS  rejects empty\n  PASS  rejects octet out of range\n\ntest_asn_normalisation\n  PASS  AS13335 -> AS13335\n  PASS  13335 -> AS13335\n  PASS  as13335 -> AS13335\n  PASS  rejects AS0 reserved by RFC 7607\n  PASS  rejects non-numeric\n  PASS  rejects beyond 32-bit\n\ntest_resource_classification\n  PASS  ASN classified\n  PASS  IP classified as prefix\n  PASS  bare IP becomes host prefix\n\ntest_country_codes\n  PASS  nl -> NL\n  PASS  rejects 'NLD'\n  PASS  rejects 'N'\n  PASS  rejects '12'\n\nall validation contract tests passed\n\n==============================================================\n  rate limit  \u2014 sliding window + TTL cache (FR-023/026, SC-016a/017)\n==============================================================\nrate limit + cache contract tests (stubbed transport, no external network)\n\ntest_requests_to_one_source_are_never_concurrent\n  PASS  6 requests were made\n  PASS  max concurrency to one source is 1\n  PASS  no overlapping request intervals\n\ntest_no_one_second_window_exceeds_the_ceiling\n  PASS  9 requests were made\n  PASS  no 1s window holds more than 4 requests\n  PASS  the ceiling is genuinely exercised\n\ntest_different_sources_are_not_serialised_against_each_other\n  PASS  three different sources proceed in parallel\n\ntest_cache_hit_avoids_a_request_and_reports_age\n  PASS  first call is not cached\n  PASS  second call is cached\n  PASS  cached call reports an age\n  PASS  only one request actually left\n\ntest_fresh_bypasses_the_cache\n  PASS  fresh=True issued a second request\n\ntest_ttls_are_per_source\n  PASS  RPKI TTL is 5 minutes\n  PASS  RDAP TTL is 24 hours\n  PASS  RPKI expires far sooner than RDAP\n  PASS  routing sits between them\n\ntest_max_rps_cannot_be_raised\n  PASS  attempt to raise is clamped\n  PASS  lowering is honoured\n\nall rate-limit and cache contract tests passed\n\n==============================================================\n  surface     \u2014 read-only + <= 5,000 token ceiling (FR-034/027a)\n==============================================================\nBGP-intel manifest budget (FR-027a)\n  tools registered : 10\n  serialised bytes : 4,793\n  measured tokens  : 1,409   [char-estimate (conservative)]\n  ceiling          : 5,000\n  headroom         : 3,591\n\n  for scale, the community server this replaces:\n    duksh/peerglass                42 tools (9 phases)\n      (incl. DNS censorship, TLS/CT logs, satellite tracking \u2014\n       a charter far beyond R9; see research R1)\n\n  read-only surface (FR-034): OK\n\nPASS: manifest is within budget (1,409 <= 5,000).\n\n==============================================================\n  ALL SUITES PASSED"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        {
+          "detail": "missing: CATC_TEST_EMPTY_HOST, CATC_TEST_HOST, CATC_TEST_PASS, CATC_TEST_USER",
+          "kind": "live",
+          "names": [
+            "CATC_TEST_EMPTY_HOST",
+            "CATC_TEST_HOST",
+            "CATC_TEST_PASS",
+            "CATC_TEST_USER"
+          ],
+          "status": "NEEDS_LIVE_CREDENTIALS"
+        }
+      ],
+      "command": [
+        "bash",
+        "tests/catc/run-tests.sh"
+      ],
+      "detail": "offline contracts passed",
+      "duration_seconds": 0.6617101670017291,
+      "environment": {
+        "fingerprint": "4d9946bfae2bae414eb0229dcf73e97d386af86be20784187a16c0c07d16aad0",
+        "path": ".contract-test-envs/catc"
+      },
+      "exit_code": 0,
+      "status": "PASS",
+      "suite": "catc",
+      "test_runs": [
+        {
+          "command": [
+            "bash",
+            "tests/catc/run-tests.sh"
+          ],
+          "exit_code": 0,
+          "output": "==============================================================\n  catalogue \u2014 514 read-only ops, 8 groups, manifest <= 5,000 (FR-001..006)\n==============================================================\n\ntest_all_eight_groups_exist\n  PASS  group 'devices' exists and is non-empty\n  PASS  group 'sites' exists and is non-empty\n  PASS  group 'wireless' exists and is non-empty\n  PASS  group 'health' exists and is non-empty\n  PASS  group 'compliance' exists and is non-empty\n  PASS  group 'software' exists and is non-empty\n  PASS  group 'events' exists and is non-empty\n  PASS  group 'other' exists and is non-empty\n\ntest_every_operation_is_readonly\n  PASS  every catalogued operation is GET\n  PASS  the upstream mutating operation is excluded\n\ntest_operation_count_is_pinned\n        catalogued operations: 514\n  PASS  catalogue holds 514 read-only operations\n\ntest_every_operation_is_dispatchable\n  PASS  devices: every operation has uri and method\n  PASS  sites: every operation has uri and method\n  PASS  wireless: every operation has uri and method\n  PASS  health: every operation has uri and method\n  PASS  compliance: every operation has uri and method\n  PASS  software: every operation has uri and method\n  PASS  events: every operation has uri and method\n  PASS  other: every operation has uri and method\n\ntest_no_duplicate_operations_across_groups\n  PASS  no operation appears in two groups\n\ntest_manifest_under_ceiling\n        manifest: 1828 / 5000 tokens (6968 chars), 10 tools\n  PASS  manifest <= 5000 tokens\n  PASS  exactly 10 tools exposed\n  PASS  8 group dispatchers plus find and describe\n  PASS  no write-shaped tool name\n\nall catalogue and manifest tests passed\n\n==============================================================\n  LIVE \u2014 SKIPPED (set CATC_TEST_HOST, CATC_TEST_USER, CATC_TEST_PASS)\n  Static tests prove the catalogue is right.\n  Only the live suite proves an empty appliance reads differently\n  from an empty network \u2014 which is why this feature exists.\n==============================================================\n\n==============================================================\n  ALL SUITES PASSED"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        {
+          "detail": "missing: CISCO_CLIENT_ID, CISCO_CLIENT_SECRET",
+          "kind": "live",
+          "names": [
+            "CISCO_CLIENT_ID",
+            "CISCO_CLIENT_SECRET"
+          ],
+          "status": "NEEDS_LIVE_CREDENTIALS"
+        }
+      ],
+      "command": [
+        "bash",
+        "tests/cisco-psirt/run-tests.sh"
+      ],
+      "detail": "offline contracts passed",
+      "duration_seconds": 1.9713378749984258,
+      "environment": {
+        "fingerprint": "e312a2ae461cf7d1720ae6db4a6de9a8070a688b3359c4bdd0db0710d314b9a9",
+        "path": ".contract-test-envs/cisco-psirt"
+      },
+      "exit_code": 0,
+      "status": "PASS",
+      "suite": "cisco-psirt",
+      "test_runs": [
+        {
+          "command": [
+            "bash",
+            "tests/cisco-psirt/run-tests.sh"
+          ],
+          "exit_code": 0,
+          "output": "### Dependencies (bounded pins, spec 077) ###\n  ok   httpx importable by /Users/john.capobianco/netclaw/.contract-test-envs/cisco-psirt/bin/python\n  ok   mcp.server.fastmcp importable (the submodule mcp 2.0 removed)\n  ok   requirements.txt bounds mcp below 2.0\n  ok   requirements.txt bounds httpx below 1.0\n\n### Server loads and exposes its tools ###\n  ok   server.py imports and defines all six tools\n  ok   no device-transport import anywhere (FR-018)\n  ok   auth.py writes nothing to disk (FR-007)\n\n=== Version normalisation + OSType table (T018) ===\n### Per-family version formats (every row a measured live 200) ###\n  ok   iosxe '17.3.1' -> '17.3.1'\n  ok   iosxe '17.03.01' -> '17.03.01'\n  ok   iosxe '17.3(1)' -> '17.3.1'\n  ok   iosxe '17.3.1a' -> '17.3.1a'\n  ok   ios '15.2(4)E' -> '15.2(4)E'\n  ok   ios '15.2.4E' -> '15.2(4)E'\n  ok   ios '15.2(4)E10' -> '15.2(4)E10'\n  ok   nxos '9.3(5)' -> '9.3(5)'\n  ok   nxos '9.3.5' -> '9.3(5)'\n  ok   asa '9.16.1' -> '9.16.1'\n  ok   asa '9.16(1)' -> '9.16.1'\n  ok   ftd '7.0.1' -> '7.0.1'\n  ok   fmc '7.0.1' -> '7.0.1'\n  ok   aci '15.2(3e)' -> '15.2(3e)'\n  ok   aci '15.2.3e' -> '15.2(3e)'\n\n### Banner extraction \u2014 real `show version` output ###\n  ok   iosxe banner -> '17.03.01'\n  ok   iosxe banner -> '17.3.1'\n  ok   ios banner -> '15.2(4)E10'\n  ok   paren_token_not_truncated (9.3(5) does not become 9.3)\n\n### FR-009a: a parse failure is NEVER an empty advisory list ###\n  ok   'garbage' -> normalisation_failed\n  ok   'garbage' explains why\n  ok   '' -> normalisation_failed\n  ok   '' explains why\n  ok   None -> normalisation_failed\n  ok   None explains why\n  ok   '   ' -> normalisation_failed\n  ok   '   ' explains why\n  ok   'no digits here' -> normalisation_failed\n  ok   'no digits here' explains why\n  ok   'Version unknown' -> normalisation_failed\n  ok   'Version unknown' explains why\n\n### FR-004: iosxr is refused, not attempted ###\n  ok   iosxr unsupported\n  ok   iosxr reason mentions 404\n  ok   iosxr reason offers check_cve\n  ok   ios-xr points at 'iosxr'\n  ok   nx-os points at 'nxos'\n  ok   ios-xe points at 'iosxe'\n  ok   apic points at 'aci'\n\n### FR-004a: the support and verification tables ###\n  ok   exactly seven supported OSTypes\n  ok   iosxr absent from the supported set\n  ok   every supported family has a format rule\n  ok   every verified family is supported\n  ok   iosxe is verified\n  ok   aci carries a collection note (switch vs APIC version)\n\n### Case and whitespace tolerance ###\n  ok   uppercase ostype accepted\n  ok   padded ostype accepted\n  ok   padded version normalises\n\n47 passed, 0 failed\n  ok   Version normalisation + OSType table (T018)\n\n=== Cache, rate budget, outcome typing (T018/T024) ===\n### FR-012: cache round trip ###\n  ok   first lookup is a miss\n  ok   first lookup called the API\n  ok   repeat lookup is a hit\n  ok   repeat lookup did NOT call the API\n  ok   hit reports cache_age_seconds\n  ok   hit returns the same advisories\n\n### FR-012: the cache survives a restart ###\n  ok   served from disk after restart\n  ok   no API call after restart\n\n### FR-012a/c: refresh bypasses AND says so ###\n  ok   refresh reports cache=refreshed\n  ok   refresh did call the API\n\n### FR-012b: an expired entry is a miss ###\n  ok   expired entry is a miss\n  ok   expired entry triggered a refetch\n\n### A corrupt cache file must never fail a lookup ###\n  ok   corrupt entry falls back to a live call\n  ok   corrupt entry still returns advisories\n\n### Cache keys cannot escape the cache directory ###\n  ok   path traversal is neutralised\n\n### FR-013: de-duplication before anything else (SC-004/004a) ###\n  ok   dedupe collapses duplicates\n  ok   dedupe records every position\n  ok   60 devices produce 60 results\n  ok   12 distinct versions reported\n  ok   only 12 API calls made, not 60\n  ok   saving is reported\n  ok   every device names itself\n  ok   sweep warns that none_published is not 'secure'\n\n### FR-011: one device's failure does not abort the sweep ###\n  ok   good device answered\n  ok   unparseable device -> normalisation_failed\n  ok   iosxr device -> unsupported_ostype\n  ok   the fourth device still ran\n\n### The five outcomes, and the distinction that matters (SC-006/008b) ###\n  ok   empty list -> none_published\n  ok   none_published carries a caveat\n  ok   caveat denies 'secure' explicitly\n  ok   unparseable -> normalisation_failed\n  ok   normalisation_failed has NO version_normalised\n  ok   normalisation_failed says nothing was checked\n  ok   normalisation_failed is NOT none_published\n  ok   normalisation_failed suggests the right format\n  ok   iosxr -> unsupported_ostype\n  ok   iosxr lists the supported set\n  ok   non-Cisco -> unsupported_ostype (FR-010)\n  ok   non-Cisco names the vendor and points at nvd-cve\n\n### FR-005: every result is attributable ###\n  ok   check_version stamps server=cisco-psirt\n  ok   sweep stamps server=cisco-psirt\n  ok   unsupported stamps server=cisco-psirt\n\n### FR-007 / SC-009: no credential in any output ###\n  ok   test-id-not-... absent from every result\n  ok   test-secret-... absent from every result\n  ok   status reports auth state without the token\n  ok   status exposes the rate budget\n  ok   status lists supported and verified sets\n  ok   status declares read_only\n  ok   status records what is unavailable and why\n\n### FR-013: the limiter paces bursts ###\n  ok   a 6th call within one second is delayed\n  ok   remaining budget decreases\n\n### FR-006 / SC-007: a token expiring mid-operation is refreshed silently ###\n  ok   first bearer() acquires a token\n  ok   second bearer() reuses it (no wasted call)\n  ok   a token inside the margin is refreshed proactively\n  ok   the refreshed token is a new one\n  ok   no exception surfaced to the caller\n  ok   an expired token is replaced, not raised on\n  ok   missing credentials are reported by variable NAME\n  ok   unconfigured bearer() raises AuthError naming the variables\n  ok   the error tells the operator where to register\n\n### FR-018: the tool surface is read-only ###\n  ok   all six tools are present\n  ok   no tool name implies a write\n\n62 passed, 0 failed\n  ok   Cache, rate budget, outcome typing (T018/T024)\n\n### No live call was made by this suite ###\n  ok   CISCO_CLIENT_ID unset in this shell \u2014 no live call was possible\n\n======================================\n PASS: 10   FAIL: 0\n======================================"
+        }
+      ]
+    },
+    {
+      "capabilities": [],
+      "command": [
+        "/Users/john.capobianco/netclaw/.contract-test-envs/contract/bin/python",
+        "-m",
+        "pytest",
+        "tests/contract"
+      ],
+      "detail": "offline contracts passed",
+      "duration_seconds": 0.235954584000865,
+      "environment": {
+        "fingerprint": "bc6d8850317cf3e31725d0b4898996fc82c08624c7404ef535a3428943a96f0d",
+        "path": ".contract-test-envs/contract"
+      },
+      "exit_code": 0,
+      "status": "PASS",
+      "suite": "contract",
+      "test_runs": [
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/contract/bin/python",
+            "-m",
+            "pytest",
+            "tests/contract"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\ncollected 39 items\n\ntests/contract/test_mcp_tools.py ....................................... [100%]\n\n============================== 39 passed in 0.08s =============================="
+        }
+      ]
+    },
+    {
+      "capabilities": [],
+      "command": [
+        "bash",
+        "tests/document/run-tests.sh"
+      ],
+      "detail": "offline contracts passed",
+      "duration_seconds": 1.520342541996797,
+      "environment": {
+        "fingerprint": "fe90a802bcf1c32788bff56486b4449b35e14c58b455883faedca46dd82b4f40",
+        "path": ".contract-test-envs/document"
+      },
+      "exit_code": 0,
+      "status": "PASS",
+      "suite": "document",
+      "test_runs": [
+        {
+          "command": [
+            "bash",
+            "tests/document/run-tests.sh"
+          ],
+          "exit_code": 0,
+          "output": "==============================================================\n  tagged values \u2014 the three shapes, refusals (FR-001/002/005c/007, SC-002/003)\n==============================================================\n\ntest_value_requires_a_source\n  PASS  a value without 'src' is refused\n  PASS  the refusal is typed as refused_unattributed\n  PASS  the message names the field path\n  PASS  an empty src is refused\n  PASS  a value with a src is accepted\n\ntest_bare_scalars_are_refused\n  PASS  bare int 5 is refused\n  PASS  bare str 'up' is refused\n  PASS  bare bool True is refused\n  PASS  bare NoneType None is refused\n  PASS  bare list ['a'] is refused\n  PASS  the refusal shows the accepted shapes\n\ntest_exactly_one_discriminator\n  PASS  no discriminator is refused\n  PASS  two discriminators are refused\n\ntest_gaps_require_a_reason\n  PASS  'unavailable' with an empty reason is refused\n  PASS  'unavailable' with a reason is accepted\n  PASS  'failed' with an empty reason is refused\n  PASS  'failed' with a reason is accepted\n\ntest_as_of_must_be_iso\n  PASS  non-ISO as_of is refused\n  PASS  ISO as_of '2026-08-03' is accepted\n  PASS  ISO as_of '2026-08-03T14:02:00Z' is accepted\n  PASS  ISO as_of '2026-08-03T14:02:00+02:00' is accepted\n\ntest_the_three_shapes_render_differently\n  PASS  three shapes render to three distinct strings\n  PASS  empty-value says the source was consulted\n  PASS  unavailable is labelled NOT AVAILABLE\n  PASS  failed is labelled RETRIEVAL FAILED\n  PASS  unavailable carries its reason\n  PASS  failed carries its reason\n  PASS  unavailable does not render as a plausible blank\n  PASS  failed does not render as a plausible blank\n  PASS  empty does not render as a plausible blank\n\ntest_null_is_not_missing\n  PASS  an explicit null renders as (null), not as blank\n  PASS  (null) differs from NOT AVAILABLE\n\ntest_source_and_as_of_render_visibly\n  PASS  source names the tool\n  PASS  source names the device\n  PASS  as_of is the SOURCE's time\n  PASS  a source with no as_of says so rather than borrowing the generation time\n\ntest_disagreement_detection\n  PASS  differing values from two sources are flagged\n  PASS  the caveat names both sources\n  PASS  the caveat says NetClaw did not reconcile\n  PASS  agreeing sources are not flagged\n  PASS  one source alone is not a disagreement\n\nall tagged value tests passed\n\n==============================================================\n  output paths  \u2014 O_EXCL, never overwrite (FR-016..020, SC-012/013/014)\n==============================================================\n\ntest_same_second_writes_do_not_collide\n  PASS  two writes produce two distinct paths\n  PASS  the first file still exists\n  PASS  the first file is byte-identical after the second write\n  PASS  the first write has no collision suffix\n  PASS  the second write records a collision suffix\n  PASS  the second file carries the suffix in its name\n\ntest_reported_path_is_the_real_one\n  PASS  the reported path exists on disk\n  PASS  the reported size matches\n  PASS  created_at is stamped\n\ntest_filenames_are_timestamped_and_sanitised\n  PASS  path traversal is sanitised out of the filename\n  PASS  the kind prefixes the filename\n  PASS  a UTC timestamp is present\n  PASS  the file landed in the output dir\n\ntest_unwritable_directory_is_reported_not_worked_around\n  PASS  an unwritable output dir raises OutputUnwritable\n  PASS  nothing was written to a fallback location\n\ntest_list_outputs\n  PASS  all outputs are listed\n  PASS  filtering by kind works\n  PASS  entries carry a kind\n\nall output path tests passed\n\n==============================================================\n  sanitize      \u2014 untrusted text is not a formula (FR-026, SC-015)\n==============================================================\n\ntest_no_formula_survives_into_the_file\n  PASS  no <f> element anywhere in the worksheet XML\n  PASS  hostile strings are stored as inline text\n\ntest_values_round_trip_uncorrupted\n  PASS  header row was found\n  PASS  '=1+1' round-trips exactly\n  PASS  '=1+1' is typed as a string\n  PASS  \"=cmd|'/c calc'!A0\" round-trips exactly\n  PASS  \"=cmd|'/c calc'!A0\" is typed as a string\n  PASS  '@SUM(1,1)' round-trips exactly\n  PASS  '@SUM(1,1)' is typed as a string\n  PASS  '+1+1' round-trips exactly\n  PASS  '+1+1' is typed as a string\n  PASS  '-1+1' round-trips exactly\n  PASS  '-1+1' is typed as a string\n  PASS  '=HYPERLINK(\"http://evil\",\"click\")' round-trips exactly\n  PASS  '=HYPERLINK(\"http://evil\",\"click\")' is typed as a string\n\ntest_numbers_stay_numbers\n  PASS  integer stayed numeric\n  PASS  float stayed numeric\n\ntest_control_characters_are_stripped\n  PASS  NUL is stripped\n  PASS  BEL is stripped\n  PASS  printable text survives\n  PASS  newlines and tabs survive\n\nall sanitize tests passed\n\n==============================================================\n  provenance    \u2014 REOPENED files carry stamp + sources (FR-006..010, SC-009/010)\n==============================================================\n\ntest_docx_carries_the_stamp_and_sources\n  PASS  the footer names NetClaw\n  PASS  the footer carries a generation time\n  PASS  the footer appears on every page (section footer)\n  PASS  a Sources section exists\n  PASS  the Sources section lists fgt_system_status\n  PASS  the Sources section lists fgt_list_interfaces\n  PASS  tables carry a Source column\n  PASS  tables carry an As of column\n  PASS  the source's own as-of is in the document\n  PASS  the source's as-of is distinguishable from the generation time\n  PASS  no data row has an empty Source cell (row starts 'Hostname')\n  PASS  no data row has an empty Source cell (row starts 'Serial')\n  PASS  no data row has an empty Source cell (row starts 'port1')\n  PASS  no data row has an empty Source cell (row starts '(no source reached')\n  PASS  no data row has an empty Source cell (row starts 'fgt_list_interface')\n  PASS  no data row has an empty Source cell (row starts 'fgt_system_status')\n\ntest_xlsx_carries_the_stamp_and_sources\n  PASS  a Sources sheet exists\n  PASS  the banner names NetClaw\n  PASS  the banner carries a generation time\n  PASS  a Source column was appended\n  PASS  an As of column was appended\n  PASS  the data row carries its source\n  PASS  the source's own as-of is in the sheet\n  PASS  the Sources sheet lists the tool\n\ntest_pptx_source_is_in_a_shape_not_only_notes\n  PASS  a Sources slide exists\n  PASS  slide 0 carries the stamp in a SHAPE\n  PASS  slide 1 carries the stamp in a SHAPE\n  PASS  slide 2 carries the stamp in a SHAPE\n  PASS  the figure's source is in a visible shape\n  PASS  notes are additive, not the mechanism\n\ntest_a_caller_cannot_omit_provenance\n  PASS  emitting an artefact with an empty ledger raises\n  PASS  a non-artefact response still carries generated_at\n  PASS  a non-artefact response still carries generated_by\n  PASS  a caller cannot choose generated_by\n\ntest_gait_records_successes_and_refusals\n  PASS  the audit log was created\n  PASS  at least two records were written\n  PASS  the success is audited\n  PASS  the REFUSAL is audited\n  PASS  record for docx_write names the component\n  PASS  record for docx_write/written_with_gaps carries a timestamp\n  PASS  record for docx_write names the component\n  PASS  record for docx_write/refused_template carries a timestamp\n\ntest_provenance_survives_the_forwarding_path\n  PASS  attribution is in the document body, not only in metadata\n  PASS  a copied table still carries its source\n  PASS  no Word comment part carries the provenance\n\nall provenance tests passed\n\n==============================================================\n  no fabricate  \u2014 gaps explicit, bounds stated, templates refused (FR-001..005)\n==============================================================\n\ntest_gaps_render_explicitly_in_the_document\n  PASS  an unavailable field says NOT AVAILABLE\n  PASS  its reason is in the document\n  PASS  a failed field says RETRIEVAL FAILED\n  PASS  its reason is in the document\n  PASS  a genuinely-empty source value says (empty)\n  PASS  unavailable and failed are textually distinct\n  PASS  the document contains no 'N/A' placeholder\n  PASS  the document contains no 'n/a' placeholder\n  PASS  the document contains no 'TBD' placeholder\n  PASS  the document contains no 'Unknown' placeholder\n  PASS  the document contains no 'None' placeholder\n  PASS  the document contains no '--' placeholder\n\ntest_a_gapped_document_cannot_report_as_clean\n  PASS  the caller passed ok and got written_with_gaps\n  PASS  the gap count is reported\n  PASS  a caveat states the document is incomplete\n  PASS  a genuinely complete document reports ok\n\ntest_failed_devices_are_rows_not_omissions\n  PASS  fgt-02 appears in the sheet\n  PASS  fgt-03 appears in the sheet\n  PASS  failed rows are marked as failed\n  PASS  the banner reports attempted\n  PASS  the banner reports the failures\n  PASS  the banner distinguishes returned data\n  PASS  a caveat names the unreached devices\n  PASS  a failed row with no reason is refused\n\ntest_admin_and_oper_state_stay_separate\n  PASS  a merged 'Status' column is refused\n  PASS  the refusal is typed\n  PASS  the refusal explains the distinction\n  PASS  a merged 'state' column is refused\n  PASS  a merged 'Up/Down' column is refused\n  PASS  a merged 'link status' column is refused\n  PASS  a summary column alongside both real columns is allowed\n\ntest_all_three_office_formats_refuse_a_template\n  PASS  docx_write refuses a template\n  PASS  docx_write's refusal is typed\n  PASS  docx_write's refusal explains why\n  PASS  xlsx_write refuses a template\n  PASS  xlsx_write's refusal is typed\n  PASS  xlsx_write's refusal explains why\n  PASS  pptx_write refuses a template\n  PASS  pptx_write's refusal is typed\n  PASS  pptx_write's refusal explains why\n  PASS  the alias 'template_path' is also refused\n  PASS  the alias 'base_document' is also refused\n\ntest_bounds_are_stated_inside_the_document\n  PASS  docx truncation is flagged on the stamp\n  PASS  the docx states its bound INSIDE the document\n  PASS  the bound value is in the document\n  PASS  pptx truncation is flagged\n  PASS  the deck states its bound on a slide\n  PASS  xlsx truncation is flagged\n  PASS  the sheet states its bound\n\ntest_disagreeing_sources_are_both_rendered\n  PASS  the first value is present\n  PASS  the second value is present\n  PASS  the disagreement is called out\n  PASS  both sources are named\n  PASS  a caveat reports it\n  PASS  NetClaw says it did not reconcile\n\ntest_prose_asserting_a_figure_is_flagged\n  PASS  a bare figure in prose is flagged\n  PASS  the caveat names the block index\n  PASS  dates, tickets, IPs, versions and ordinals are NOT flagged\n\nall no-fabrication tests passed\n\n==============================================================\n  pdf forms     \u2014 named fields, unfilled + unmatched (FR-024/024a/024b, SC-008)\n==============================================================\nwarning: The `fitz` API is deprecated and will be removed in future. Use `import pymupdf` instead.\n\ntest_inspect_lists_real_field_names\n  PASS  a form is reported fillable\n  PASS  every field is discovered\n  PASS  the field count matches\n  PASS  field kinds are mapped\n\ntest_non_fillable_is_reported_not_faked\n  PASS  a plain PDF is reported not fillable\n  PASS  the message explains why nothing was written\n  PASS  filling a non-fillable PDF is refused\n  PASS  NO output file was produced\n\ntest_values_land_in_the_right_named_fields\n  PASS  the fill succeeded\n  PASS  change_number landed in its own field\n  PASS  risk_level landed in its own field\n  PASS  untouched fields are genuinely empty\n\ntest_unfilled_and_unmatched_are_both_reported\n  PASS  filled lists only what was written\n  PASS  an unavailable value leaves the field unfilled\n  PASS  a field with no data at all is unfilled\n  PASS  a supplied key matching no field is reported\n  PASS  the unavailable field is EMPTY, not filled with the reason\n  PASS  no guess was written to complete the form\n  PASS  a caveat names the unfilled fields\n  PASS  a caveat names the unmatched value\n  PASS  the provenance limitation is stated\n\ntest_the_input_pdf_is_never_modified\n  PASS  the input PDF is byte-identical afterwards\n  PASS  a new file was produced\n  PASS  the new file differs from the input\n\ntest_fill_values_go_through_the_same_typed_gate\n  PASS  a bare scalar is refused even for a PDF form\n  PASS  the refusal is typed\n  PASS  a value without src is refused\n\ntest_missing_pdf_is_reported\n  PASS  a nonexistent PDF is refused\n  PASS  typed as source_missing\n\nall PDF form tests passed\n\n==============================================================\n  surface       \u2014 read-only guard + <= 5,000 token ceiling (FR-033/038a, SC-025)\n==============================================================\nwarning: The `fitz` API is deprecated and will be removed in future. Use `import pymupdf` instead.\n\ntest_manifest_is_under_the_ceiling\n  measured manifest: 1272 / 5000 tokens (4808 chars)\n  PASS  manifest is <= 5000 tokens\n  PASS  the tool count is what the contract says\n\ntest_no_tool_accepts_an_infrastructure_parameter\n  PASS  docx_write accepts no device/credential/ticket parameter\n  PASS  xlsx_write accepts no device/credential/ticket parameter\n  PASS  pptx_write accepts no device/credential/ticket parameter\n  PASS  pdf_inspect_form accepts no device/credential/ticket parameter\n  PASS  pdf_fill_form accepts no device/credential/ticket parameter\n  PASS  list_documents accepts no device/credential/ticket parameter\n\ntest_no_description_claims_an_infrastructure_change\n  PASS  docx_write claims no infrastructure change\n  PASS  xlsx_write claims no infrastructure change\n  PASS  pptx_write claims no infrastructure change\n  PASS  pdf_inspect_form claims no infrastructure change\n  PASS  pdf_fill_form claims no infrastructure change\n  PASS  list_documents claims no infrastructure change\n\ntest_the_guard_is_not_vacuous\n  PASS  the parameter guard rejects a device_host parameter\n  PASS  the description guard rejects an infrastructure claim\n  PASS  the ceiling check rejects an oversized manifest\n\ntest_every_tool_routes_through_the_chokepoint\n  PASS  six tools are defined\n  PASS  docx_write returns through the chokepoint\n  PASS  xlsx_write returns through the chokepoint\n  PASS  pptx_write returns through the chokepoint\n  PASS  pdf_inspect_form returns through the chokepoint\n  PASS  pdf_fill_form returns through the chokepoint\n  PASS  list_documents returns through the chokepoint\n  PASS  writers.docx_writer does not audit directly\n  PASS  writers.xlsx_writer does not audit directly\n  PASS  writers.pptx_writer does not audit directly\n  PASS  writers.pdf_writer does not audit directly\n\nall manifest and surface tests passed\n\n==============================================================\n  ALL SUITES PASSED"
+        }
+      ]
+    },
+    {
+      "capabilities": [],
+      "command": [
+        "/Users/john.capobianco/netclaw/.contract-test-envs/first-party-mcp/bin/python",
+        "-m",
+        "pytest",
+        "mcp-servers/protocol-mcp/tests",
+        "mcp-servers/zoom-rtms-mcp/tests",
+        "mcp-servers/gns3-mcp-server/tests"
+      ],
+      "detail": "offline contracts passed",
+      "duration_seconds": 17.64272341600008,
+      "environment": {
+        "fingerprint": "538a94490ac396e5d8822dca22ca637c9a8e1c2ce2704a4403e6b235fced8547",
+        "path": ".contract-test-envs/first-party-mcp"
+      },
+      "exit_code": 0,
+      "status": "PASS",
+      "suite": "first-party-mcp",
+      "test_runs": [
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/first-party-mcp/bin/python",
+            "-m",
+            "pytest",
+            "mcp-servers/gns3-mcp-server/tests/test_gns3_mcp_server.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\nplugins: asyncio-1.4.0, platformdirs-4.12.0, anyio-4.15.1\nasyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function\ncollected 30 items\n\nmcp-servers/gns3-mcp-server/tests/test_gns3_mcp_server.py .............. [ 46%]\n................                                                         [100%]\n\n=============================== warnings summary ===============================\nmcp-servers/gns3-mcp-server/tests/test_gns3_mcp_server.py::TestGNS3ErrorHandling::test_gns3_error_to_dict\n  /Users/john.capobianco/netclaw/.contract-test-envs/first-party-mcp/lib/python3.12/site-packages/fastmcp/server/auth/providers/jwt.py:10: AuthlibDeprecationWarning: authlib.jose module is deprecated, please use joserfc instead.\n  It will be compatible before version 2.0.0.\n    from authlib.jose import JsonWebKey, JsonWebToken\n\nmcp-servers/gns3-mcp-server/tests/test_gns3_mcp_server.py::TestGNS3ErrorHandling::test_gns3_error_to_dict\n  /Users/john.capobianco/netclaw/.contract-test-envs/first-party-mcp/lib/python3.12/site-packages/authlib/integrations/httpx_client/assertion_client.py:5: AuthlibDeprecationWarning: The httpx module is deprecated; please use httpx2 instead.\n    from ._compat import httpx2\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n======================== 30 passed, 2 warnings in 0.65s ========================"
+        },
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/first-party-mcp/bin/python",
+            "-m",
+            "pytest",
+            "mcp-servers/protocol-mcp/tests/test_agent_prioritisation.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw/mcp-servers/protocol-mcp\nconfigfile: pytest.ini\nplugins: asyncio-1.4.0, platformdirs-4.12.0, anyio-4.15.1\nasyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function\ncollected 2 items\n\nmcp-servers/protocol-mcp/tests/test_agent_prioritisation.py ..           [100%]\n\n============================== 2 passed in 0.35s ==============================="
+        },
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/first-party-mcp/bin/python",
+            "-m",
+            "pytest",
+            "mcp-servers/protocol-mcp/tests/test_gateway_ws_client.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw/mcp-servers/protocol-mcp\nconfigfile: pytest.ini\nplugins: asyncio-1.4.0, platformdirs-4.12.0, anyio-4.15.1\nasyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function\ncollected 6 items\n\nmcp-servers/protocol-mcp/tests/test_gateway_ws_client.py ......          [100%]\n\n============================== 6 passed in 8.06s ==============================="
+        },
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/first-party-mcp/bin/python",
+            "-m",
+            "pytest",
+            "mcp-servers/protocol-mcp/tests/test_run_agent_turn_dispatch.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw/mcp-servers/protocol-mcp\nconfigfile: pytest.ini\nplugins: asyncio-1.4.0, platformdirs-4.12.0, anyio-4.15.1\nasyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function\ncollected 3 items\n\nmcp-servers/protocol-mcp/tests/test_run_agent_turn_dispatch.py ...       [100%]\n\n============================== 3 passed in 1.03s ==============================="
+        },
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/first-party-mcp/bin/python",
+            "-m",
+            "pytest",
+            "mcp-servers/protocol-mcp/tests/test_run_agent_turn_origin.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw/mcp-servers/protocol-mcp\nconfigfile: pytest.ini\nplugins: asyncio-1.4.0, platformdirs-4.12.0, anyio-4.15.1\nasyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function\ncollected 3 items\n\nmcp-servers/protocol-mcp/tests/test_run_agent_turn_origin.py ...         [100%]\n\n============================== 3 passed in 0.02s ==============================="
+        },
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/first-party-mcp/bin/python",
+            "-m",
+            "pytest",
+            "mcp-servers/protocol-mcp/tests/test_zoom_channel.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw/mcp-servers/protocol-mcp\nconfigfile: pytest.ini\nplugins: asyncio-1.4.0, platformdirs-4.12.0, anyio-4.15.1\nasyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function\ncollected 2 items\n\nmcp-servers/protocol-mcp/tests/test_zoom_channel.py ..                   [100%]\n\n============================== 2 passed in 0.12s ==============================="
+        },
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/first-party-mcp/bin/python",
+            "-m",
+            "pytest",
+            "mcp-servers/zoom-rtms-mcp/tests/test_extractor.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\nplugins: asyncio-1.4.0, platformdirs-4.12.0, anyio-4.15.1\nasyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function\ncollected 8 items\n\nmcp-servers/zoom-rtms-mcp/tests/test_extractor.py ........               [100%]\n\n============================== 8 passed in 0.01s ==============================="
+        },
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/first-party-mcp/bin/python",
+            "-m",
+            "pytest",
+            "mcp-servers/zoom-rtms-mcp/tests/test_panel_auth.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\nplugins: asyncio-1.4.0, platformdirs-4.12.0, anyio-4.15.1\nasyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function\ncollected 3 items\n\nmcp-servers/zoom-rtms-mcp/tests/test_panel_auth.py ...                   [100%]\n\n============================== 3 passed in 0.05s ==============================="
+        },
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/first-party-mcp/bin/python",
+            "-m",
+            "pytest",
+            "mcp-servers/zoom-rtms-mcp/tests/test_webhook.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\nplugins: asyncio-1.4.0, platformdirs-4.12.0, anyio-4.15.1\nasyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function\ncollected 3 items\n\nmcp-servers/zoom-rtms-mcp/tests/test_webhook.py ...                      [100%]\n\n============================== 3 passed in 0.02s ==============================="
+        },
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/first-party-mcp/bin/python",
+            "-m",
+            "pytest",
+            "mcp-servers/zoom-rtms-mcp/tests/test_webhook_auth.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\nplugins: asyncio-1.4.0, platformdirs-4.12.0, anyio-4.15.1\nasyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function\ncollected 11 items\n\nmcp-servers/zoom-rtms-mcp/tests/test_webhook_auth.py ...........         [100%]\n\n============================== 11 passed in 5.59s =============================="
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        {
+          "detail": "missing: FORTIANALYZER_API_TOKEN, FORTIANALYZER_HOST, FORTIGATE_API_TOKEN, FORTIGATE_HOST, FORTIMANAGER_API_TOKEN, FORTIMANAGER_HOST",
+          "kind": "live",
+          "names": [
+            "FORTIANALYZER_API_TOKEN",
+            "FORTIANALYZER_HOST",
+            "FORTIGATE_API_TOKEN",
+            "FORTIGATE_HOST",
+            "FORTIMANAGER_API_TOKEN",
+            "FORTIMANAGER_HOST"
+          ],
+          "status": "NEEDS_LIVE_CREDENTIALS"
+        }
+      ],
+      "command": [
+        "bash",
+        "tests/fortinet/run-tests.sh"
+      ],
+      "detail": "offline contracts passed",
+      "duration_seconds": 0.2459093750003376,
+      "environment": {
+        "fingerprint": "e502f785ac6bf37e010ac4bda356ce78126909c0dff6d8e26fe26943c3c50975",
+        "path": ".contract-test-envs/fortinet"
+      },
+      "exit_code": 0,
+      "status": "PASS",
+      "suite": "fortinet",
+      "test_runs": [
+        {
+          "command": [
+            "bash",
+            "tests/fortinet/run-tests.sh"
+          ],
+          "exit_code": 0,
+          "output": "==============================================================\n  envelope    \u2014 plane/scope attribution (FR-005/009, SC-002a)\n==============================================================\nenvelope contract tests (no appliance required)\n\ntest_every_response_carries_plane_and_scope\n  PASS  manager response carries plane\n  PASS  manager response carries adom\n  PASS  response carries a timestamp\n  PASS  response carries its source\n\ntest_missing_scope_is_an_error_not_an_unqualified_result\n  PASS  manager without adom -> scope_indeterminate\n  PASS  indeterminate scope drops the data\n  PASS  device without vdom -> scope_indeterminate\n  PASS  analyzer without a full window -> scope_indeterminate\n\ntest_each_plane_requires_its_own_scope\n  PASS  device with device+vdom is ok\n  PASS  analyzer with a window is ok\n\ntest_unreachable_plane_is_named_and_carries_no_data\n  PASS  unreachable -> plane_unreachable\n  PASS  unreachable names the plane\n  PASS  unreachable carries no data\n  PASS  unreachable leaves a note\n\ntest_the_two_write_gates_are_distinct_values\n  PASS  approval and change-record refusals differ\n  PASS  read-only refusal is distinct from both\n\ntest_no_logs_is_not_the_same_as_unused\n  PASS  no_logs_in_window is its own outcome\n\ntest_plane_cannot_be_spoofed_by_a_caller\n  PASS  Plane is a closed enum\n\nall envelope contract tests passed\n\n==============================================================\n  audit       \u2014 GAIT trail (FR-023, Principle IV, SC-011)\n==============================================================\nGAIT audit contract tests (no appliance required)\n\ntest_every_response_emits_exactly_one_record\n  PASS  one response -> one record\n  PASS  record names the tool\n  PASS  record names the plane\n  PASS  record carries the outcome\n  PASS  record carries a timestamp\n  PASS  record identifies the component\n\ntest_refusals_are_audited_too\n  PASS  both refusals audited\n  PASS  refusal outcomes recorded distinctly\n\ntest_unreachable_plane_is_audited\n  PASS  unreachable audited\n  PASS  outcome recorded\n\ntest_no_credential_reaches_the_audit_trail\n  PASS  token value absent from trail\n  PASS  scope secret redacted\n  PASS  payload not written to the trail at all\n\ntest_scope_and_source_are_recorded\n  PASS  record written\n  PASS  source recorded\n  PASS  window recorded in scope\n  PASS  no_logs_in_window preserved, not flattened to ok\n\nall audit contract tests passed\n\n==============================================================\n  credentials \u2014 by-name-only disclosure (FR-029, SC-012)\n==============================================================\ncredential contract tests (no appliance required)\n\ntest_missing_credential_names_the_variable\n  PASS  names the host variable\n  PASS  names the token variable\n  PASS  names the plane\n\ntest_no_secret_value_appears_in_any_error\n  PASS  token value absent from error\n  PASS  still names the missing host var\n\ntest_repr_does_not_leak_the_token\n  PASS  repr redacts the token\n  PASS  str redacts the token\n  PASS  f-string redacts the token\n  PASS  host is still visible\n  PASS  bare host gains https scheme\n\ntest_tls_verification_defaults_on\n  PASS  verify_ssl defaults True\n  PASS  verify_ssl honours 'false'\n  PASS  verify_ssl honours 'FALSE'\n  PASS  verify_ssl honours '0'\n  PASS  verify_ssl honours 'no'\n  PASS  verify_ssl honours 'off'\n  PASS  verify_ssl back on when true\n\ntest_writes_default_off\n  PASS  writes_allowed defaults False\n  PASS  writes_allowed honours true\n  PASS  writes_allowed('yes') == True\n  PASS  writes_allowed('maybe') == False\n  PASS  writes_allowed('') == False\n  PASS  writes_allowed('1 ') == True\n\ntest_absent_plane_is_a_deployment_fact_not_a_failure\n  PASS  no planes configured -> empty list\n  PASS  only the configured plane is reported\n\nall credential contract tests passed\n\n==============================================================\n  device plane \u2014 admin vs link, VPN phase 1 vs 2 (FR-015/016)\n==============================================================\ndevice-plane distinction tests (no appliance required)\n\ntest_admin_down_is_not_link_down\n  PASS  admin-up + link-up reads healthy\n  PASS  admin-DOWN with live carrier is reported admin_status=down\n  PASS  that interface still shows link=True (why monitor alone misleads)\n  PASS  admin-up + link-down is flagged\n  PASS  admin-down interfaces are named in notes\n  PASS  role is populated from config\n\ntest_missing_config_does_not_imply_enabled\n  PASS  admin_status is None, not 'up'\n  PASS  notes say admin status is unknown, not assumed\n\ntest_vpn_phases_reported_separately\n  PASS  phase1 and phase2 are separate fields\n  PASS  phase1 up while phase2 down is representable\n  PASS  per-selector detail is preserved\n  PASS  no single collapsed 'status' field exists\n\ntest_no_tunnels_is_none_defined_not_all_down\n  PASS  empty tunnel list is 'none defined'\n  PASS  and explicitly not 'all down'\n\nall device-plane distinction tests passed\n\n==============================================================\n  ALL SUITES PASSED"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        {
+          "detail": "missing: GLOBALPING_TOKEN",
+          "kind": "live",
+          "names": [
+            "GLOBALPING_TOKEN"
+          ],
+          "status": "NEEDS_LIVE_CREDENTIALS"
+        }
+      ],
+      "command": [
+        "bash",
+        "tests/globalping/run-tests.sh"
+      ],
+      "detail": "offline contracts passed",
+      "duration_seconds": 0.7449897919977957,
+      "environment": {
+        "fingerprint": null,
+        "path": null
+      },
+      "exit_code": 0,
+      "status": "PASS",
+      "suite": "globalping",
+      "test_runs": [
+        {
+          "command": [
+            "bash",
+            "tests/globalping/run-tests.sh"
+          ],
+          "exit_code": 0,
+          "output": "### Registration (FR-001, FR-002) ###\n  ok   registered at the official endpoint\n  ok   bearer auth by variable reference\n  ok   no literal token in config (FR-003, SC-009)\n  ok   no vendored server directory (FR-001, research R1)\n  ok   remote entry has no local command/args\n\n### The skill exists and documents the capability (FR-004, FR-005) ###\n  ok   SKILL.md present\n  ok   documents the 'ping' measurement tool\n  ok   documents the 'traceroute' measurement tool\n  ok   documents the 'dns' measurement tool\n  ok   documents the 'mtr' measurement tool\n  ok   documents the 'http' measurement tool\n  ok   documents the 'limits' meta tool\n  ok   documents the 'locations' meta tool\n\n### The three-way distinction \u2014 the point of the feature (FR-006, FR-007) ###\n  ok   names no_probes_found explicitly\n  ok   says no_probes_found means the measurement did not run (FR-006)\n  ok   forbids reporting no_probes_found as an outage (FR-006)\n  ok   suggests a broader filter (FR-006a)\n  ok   treats 0-of-N successful as a positive finding (FR-007)\n\n### Outside-in boundary, refused locally (FR-009, FR-010) ###\n  ok   names 10.0.0.0/8 as refused\n  ok   names 172.16.0.0/12 as refused\n  ok   names 192.168.0.0/16 as refused\n  ok   names localhost as refused\n  ok   names fe80::/10 as refused\n  ok   explains WHY refusal is local, not just that it is (FR-009)\n  ok   names the internal tools to use instead (FR-009a)\n\n### Location syntax, including the vendor's broken example (FR-011, FR-011a) ###\n  ok   documents '+' as AND\n  ok   warns that a comma-string fails (FR-011)\n  ok   names AS13335 (FR-011a)\n  ok   explains AS13335 has no probes rather than bad syntax (FR-011a)\n  ok   notes it is the vendor's own example (FR-011a)\n\n### Budget model \u2014 charged PER PROBE (FR-013, FR-013a) ###\n  ok   documents the 500/hour authenticated budget\n  ok   documents the 250/hour unauthenticated budget\n  ok   states cost equals probe count (FR-013a)\n  ok   notes meta calls are free (FR-013a)\n  ok   the corrected 'breadth is free' claim is absent (R4 correction)\n  ok   directs right-sizing limit rather than maximising it (FR-013a)\n\n### Attribution and composition (FR-008, FR-015, FR-016) ###\n  ok   requires location attribution (FR-008)\n  ok   forbids generalising one probe to a region (FR-008a)\n  ok   states the ThousandEyes boundary (FR-015, SC-010)\n  ok   states the gtrace boundary (FR-016, SC-010)\n  ok   requires DNS disagreement reported as a split (SC-005)\n\n### The analytics field and credential hygiene (FR-012, XIII) ###\n  ok   documents the context field (FR-012)\n  ok   discloses that context leaves NetClaw (FR-012a)\n  ok   lists what must never go in context (FR-012)\n  ok   records that omission is accepted but not relied on (FR-012b)\n  ok   warns that limits output echoes a token fragment (XIII)\n  ok   states measurement-not-scanning (FR-018)\n\n### No literal token anywhere in tracked files (SC-009) ###\n  ok   GLOBALPING_TOKEN unset \u2014 nothing to leak in this shell\n\n======================================\n PASS: 48   FAIL: 0\n======================================"
+        }
+      ]
+    },
+    {
+      "capabilities": [],
+      "command": [
+        "/Users/john.capobianco/netclaw/.contract-test-envs/halo-mcp/bin/python",
+        "-m",
+        "pytest",
+        "tests/halo-mcp"
+      ],
+      "detail": "offline contracts passed",
+      "duration_seconds": 0.9618815829999221,
+      "environment": {
+        "fingerprint": "d404f85656ca53d052900b925bf926fcb1c22d49be4e7b84bed12af789ed40ee",
+        "path": ".contract-test-envs/halo-mcp"
+      },
+      "exit_code": 0,
+      "status": "PASS",
+      "suite": "halo-mcp",
+      "test_runs": [
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/halo-mcp/bin/python",
+            "-m",
+            "pytest",
+            "tests/halo-mcp"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw/tests/halo-mcp\nconfigfile: pytest.ini\nplugins: platformdirs-4.12.0, asyncio-0.26.0, anyio-4.15.1\nasyncio: mode=Mode.AUTO, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function\ncollected 130 items\n\ntests/halo-mcp/test_client.py .....................                      [ 16%]\ntests/halo-mcp/test_client_get_all.py ........                           [ 22%]\ntests/halo-mcp/test_pagination.py ......                                 [ 26%]\ntests/halo-mcp/test_resolver.py ......................                   [ 43%]\ntests/halo-mcp/test_server_registration.py .............                 [ 53%]\ntests/halo-mcp/test_tools_assets.py .........                            [ 60%]\ntests/halo-mcp/test_tools_context.py .........                           [ 67%]\ntests/halo-mcp/test_tools_create_change_request.py .............         [ 77%]\ntests/halo-mcp/test_tools_fields.py ....                                 [ 80%]\ntests/halo-mcp/test_tools_knowledge.py ....                              [ 83%]\ntests/halo-mcp/test_tools_ticket_types.py .........                      [ 90%]\ntests/halo-mcp/test_tools_tickets.py ............                        [100%]\n\n============================= 130 passed in 0.65s =============================="
+        }
+      ]
+    },
+    {
+      "capabilities": [],
+      "command": [
+        "/Users/john.capobianco/netclaw/.contract-test-envs/integration/bin/python",
+        "-m",
+        "pytest",
+        "tests/integration"
+      ],
+      "detail": "offline contracts passed",
+      "duration_seconds": 10.101347083000292,
+      "environment": {
+        "fingerprint": "379e69eb4f02d5ee65bd87f816f29ad30a660de04e0e628e961dbd8c2bd8aa22",
+        "path": ".contract-test-envs/integration"
+      },
+      "exit_code": 0,
+      "status": "PASS",
+      "suite": "integration",
+      "test_runs": [
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/integration/bin/python",
+            "-m",
+            "pytest",
+            "tests/integration/test_comfyui_topology_viz.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\nplugins: asyncio-1.4.0, platformdirs-4.12.0, anyio-4.15.1\nasyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function\ncollected 3 items\n\ntests/integration/test_comfyui_topology_viz.py s..                       [100%]\n\n========================= 2 passed, 1 skipped in 0.24s ========================="
+        },
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/integration/bin/python",
+            "-m",
+            "pytest",
+            "tests/integration/test_federated_topology_viz.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\nplugins: asyncio-1.4.0, platformdirs-4.12.0, anyio-4.15.1\nasyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function\ncollected 4 items\n\ntests/integration/test_federated_topology_viz.py ssss                    [100%]\n\n============================== 4 skipped in 0.22s =============================="
+        },
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/integration/bin/python",
+            "-m",
+            "pytest",
+            "tests/integration/test_memory_mcp.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\nplugins: asyncio-1.4.0, platformdirs-4.12.0, anyio-4.15.1\nasyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function\ncollected 18 items\n\ntests/integration/test_memory_mcp.py ..................                  [100%]\n\n============================== 18 passed in 0.41s =============================="
+        },
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/integration/bin/python",
+            "-m",
+            "pytest",
+            "tests/integration/test_rag_eval.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\nplugins: asyncio-1.4.0, platformdirs-4.12.0, anyio-4.15.1\nasyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function\ncollected 3 items\n\ntests/integration/test_rag_eval.py sss                                   [100%]\n\n============================== 3 skipped in 0.01s =============================="
+        },
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/integration/bin/python",
+            "-m",
+            "pytest",
+            "tests/integration/test_rag_mcp.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\nplugins: asyncio-1.4.0, platformdirs-4.12.0, anyio-4.15.1\nasyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function\ncollected 18 items\n\ntests/integration/test_rag_mcp.py ..................                     [100%]\n\n=============================== warnings summary ===============================\n.contract-test-envs/integration/lib/python3.12/site-packages/fastmcp/server/auth/providers/jwt.py:10\n  /Users/john.capobianco/netclaw/.contract-test-envs/integration/lib/python3.12/site-packages/fastmcp/server/auth/providers/jwt.py:10: AuthlibDeprecationWarning: authlib.jose module is deprecated, please use joserfc instead.\n  It will be compatible before version 2.0.0.\n    from authlib.jose import JsonWebKey, JsonWebToken\n\n.contract-test-envs/integration/lib/python3.12/site-packages/authlib/integrations/httpx_client/assertion_client.py:5\n  /Users/john.capobianco/netclaw/.contract-test-envs/integration/lib/python3.12/site-packages/authlib/integrations/httpx_client/assertion_client.py:5: AuthlibDeprecationWarning: The httpx module is deprecated; please use httpx2 instead.\n    from ._compat import httpx2\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n======================== 18 passed, 2 warnings in 0.83s ========================"
+        },
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/integration/bin/python",
+            "-m",
+            "pytest",
+            "tests/integration/test_threejs_network_viz.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\nplugins: asyncio-1.4.0, platformdirs-4.12.0, anyio-4.15.1\nasyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function\ncollected 3 items\n\ntests/integration/test_threejs_network_viz.py ...                        [100%]\n\n============================== 3 passed in 3.13s ==============================="
+        },
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/integration/bin/python",
+            "-m",
+            "pytest",
+            "tests/integration/test_ue5_mcp.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\nplugins: asyncio-1.4.0, platformdirs-4.12.0, anyio-4.15.1\nasyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function\ncollected 75 items\n\ntests/integration/test_ue5_mcp.py sssssssssss..........sssssss.......... [ 50%]\n.....................................                                    [100%]\n\n=============================== warnings summary ===============================\ntests/integration/test_ue5_mcp.py:477\n  /Users/john.capobianco/netclaw/tests/integration/test_ue5_mcp.py:477: PytestUnknownMarkWarning: Unknown pytest.mark.timeout - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html\n    @pytest.mark.timeout(120)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n================== 57 passed, 18 skipped, 1 warning in 3.78s ==================="
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        {
+          "detail": "missing: K8S_TEST_KUBECONFIG, K8S_TEST_LIMITED_KUBECONFIG",
+          "kind": "live",
+          "names": [
+            "K8S_TEST_KUBECONFIG",
+            "K8S_TEST_LIMITED_KUBECONFIG"
+          ],
+          "status": "NEEDS_LIVE_CREDENTIALS"
+        }
+      ],
+      "command": [
+        "bash",
+        "tests/k8s/run-tests.sh"
+      ],
+      "detail": "offline contracts passed",
+      "duration_seconds": 0.8712635410010989,
+      "environment": {
+        "fingerprint": "0d8348e1006ef3d5dda69422dc9e16c42471b9d8cfc3d3655ad0e778f7d0774c",
+        "path": ".contract-test-envs/k8s"
+      },
+      "exit_code": 0,
+      "status": "PASS",
+      "suite": "k8s",
+      "test_runs": [
+        {
+          "command": [
+            "bash",
+            "tests/k8s/run-tests.sh"
+          ],
+          "exit_code": 0,
+          "output": "==============================================================\n  config    \u2014 read-only forced, Secrets denied, kubeconfig explicit (FR-019..022)\n==============================================================\n\ntest_read_only_is_forced\n  PASS  read_only is set true in NetClaw's own config\n  PASS  the config explains that enforcement is at registration time\n\ntest_toolset_is_trimmed\n  PASS  toolsets is restricted to core\n  PASS  nodes_log is disabled\n  PASS  nodes_stats_summary is disabled\n  PASS  nodes_top is disabled\n  PASS  pods_top is disabled\n  PASS  pods_log is disabled\n  PASS  projects_list is disabled\n  PASS  the config records WHY trimming is required\n\ntest_secrets_are_denied\n  PASS  a denied_resources block exists\n  PASS  Secret is the denied kind\n  PASS  the config notes upstream's default is permissive\n\ntest_registration_is_explicit_not_ambient\n  PASS  the config file is passed explicitly\n  PASS  a kubeconfig is passed explicitly\n  PASS  the kubeconfig comes from an env var, not a literal path\n  PASS  no literal token or cert material in the registration\n\ntest_no_context_switching_tool_is_configured\n  PASS  no configuration_switch enabled\n  PASS  no contexts_set enabled\n  PASS  no kubectl_context enabled\n\ntest_no_mutation_toolsets\n  PASS  toolset 'helm' not enabled\n  PASS  toolset 'config_write' not enabled\n  PASS  toolset 'write' not enabled\n\nall config enforcement tests passed\n\n==============================================================\n  skills    \u2014 a followable preflight, six absences, boundaries (SC-002/004/020)\n==============================================================\n\ntest_frontmatter\n  PASS  k8s-network-policy declares name:\n  PASS  k8s-network-policy declares description:\n  PASS  k8s-network-policy declares version:\n  PASS  k8s-network-policy declares license:\n  PASS  k8s-network-policy declares tags:\n  PASS  k8s-network-policy declares user-invocable:\n  PASS  k8s-network-policy's description has a 'Use when' clause\n  PASS  k8s-service-path declares name:\n  PASS  k8s-service-path declares description:\n  PASS  k8s-service-path declares version:\n  PASS  k8s-service-path declares license:\n  PASS  k8s-service-path declares tags:\n  PASS  k8s-service-path declares user-invocable:\n  PASS  k8s-service-path's description has a 'Use when' clause\n  PASS  k8s-workload-inventory declares name:\n  PASS  k8s-workload-inventory declares description:\n  PASS  k8s-workload-inventory declares version:\n  PASS  k8s-workload-inventory declares license:\n  PASS  k8s-workload-inventory declares tags:\n  PASS  k8s-workload-inventory declares user-invocable:\n  PASS  k8s-workload-inventory's description has a 'Use when' clause\n\ntest_no_policy_means_permitted\n  PASS  the default-allow consequence is stated\n  PASS  it is framed as a finding, not an observation\n  PASS  default-allow is named explicitly\n\ntest_preflight_procedure_exists\n  PASS  a numbered procedure exists\n  PASS  the preflight uses can-i\n  PASS  can-i comes before the listing step\n  PASS  a 'no' answer changes behaviour, not just the wording\n\ntest_narrowing_is_shown_not_just_warned\n  PASS  the skill shows the reproduced evidence\n  PASS  the audit-lie framing is present\n\ntest_six_absences\n  PASS  absence cause 'Permission insufficient' is covered\n  PASS  absence cause 'Namespace does not exist' is covered\n  PASS  absence cause 'Namespace exists but is empty' is covered\n  PASS  absence cause 'Selector matched nothing' is covered\n  PASS  absence cause 'CRD not installed' is covered\n  PASS  absence cause 'Cluster unreachable' is covered\n  PASS  the selector must be shown so a typo is visible\n\ntest_scope_and_cluster_must_be_stated\n  PASS  k8s-network-policy requires stating the scope\n  PASS  k8s-service-path requires stating the scope\n  PASS  k8s-workload-inventory requires stating the scope\n  PASS  k8s-network-policy requires naming which cluster answered\n  PASS  k8s-workload-inventory requires naming which cluster answered\n\ntest_service_path_diagnoses\n  PASS  links must be marked checked or not checked\n  PASS  'no endpoints' is called a symptom not a diagnosis\n  PASS  selector-matches-no-pods is a named diagnosis\n  PASS  ready vs not-ready is distinguished\n  PASS  a non-existent ingress backend is called out\n\ntest_inventory_rules\n  PASS  Running is distinguished from Ready\n  PASS  non-running pods must not be omitted\n  PASS  event retention is treated as an empty-result trap\n\ntest_traffic_is_not_permission\n  PASS  observed traffic vs declared policy is distinguished\n\ntest_boundaries_in_every_skill\n  PASS  k8s-network-policy names the kubeshark boundary/posture\n  PASS  k8s-network-policy names the prometheus boundary/posture\n  PASS  k8s-network-policy names the read-only boundary/posture\n  PASS  k8s-service-path names the kubeshark boundary/posture\n  PASS  k8s-service-path names the prometheus boundary/posture\n  PASS  k8s-service-path names the read-only boundary/posture\n  PASS  k8s-workload-inventory names the kubeshark boundary/posture\n  PASS  k8s-workload-inventory names the prometheus boundary/posture\n  PASS  k8s-workload-inventory names the read-only boundary/posture\n\nall skill procedure tests passed\n\n==============================================================\n  manifest  \u2014 7 tools, <= 5,000 tokens, checksum matches (FR-037, SC-018)\n==============================================================\n\ntest_under_ceiling\n        measured manifest: 1643 / 5000 tokens (6484 chars)\n  PASS  manifest <= 5000 tokens\n\ntest_surface_is_exactly_seven\n  PASS  exactly 7 tools\n  PASS  the surface matches what was verified\n\ntest_no_write_or_context_tool\n  PASS  no write-shaped or context-switching tool is exposed\n\ntest_checksum_recorded\n  PASS  the installed binary matches the recorded SHA-256\n\nall manifest and surface tests passed\n\n==============================================================\n  LIVE \u2014 SKIPPED (set K8S_TEST_KUBECONFIG, and K8S_TEST_LIMITED_KUBECONFIG)\n  Static tests prove the config and skills are right.\n  Only the live suite proves the server actually behaves as described.\n==============================================================\n\n==============================================================\n  ALL SUITES PASSED"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        {
+          "detail": "service unavailable: tcp://127.0.0.1:2222",
+          "kind": "docker-service",
+          "names": [],
+          "status": "NEEDS_DOCKER"
+        }
+      ],
+      "command": [
+        "bash",
+        "tests/multivendor/run-tests.sh"
+      ],
+      "detail": "offline contracts passed",
+      "duration_seconds": 2.0049609580019023,
+      "environment": {
+        "fingerprint": "0701502d501907a0a23b822a36743cc1ac0cafeb0c633be4225e9f49791370b6",
+        "path": "mcp-servers/multivendor-cli-mcp/.venv"
+      },
+      "exit_code": 0,
+      "status": "PASS",
+      "suite": "multivendor",
+      "test_runs": [
+        {
+          "command": [
+            "bash",
+            "tests/multivendor/run-tests.sh"
+          ],
+          "exit_code": 0,
+          "output": "### Dependency isolation (FR-030a/c) ###\n  ok   venv imports nornir\n  ok   nornir absent from system interpreter\n  ok   venv imports napalm\n  ok   napalm absent from system interpreter\n  ok   venv imports netmiko\n  ok   netmiko absent from system interpreter\n  ok   venv imports jdiff\n  ok   jdiff absent from system interpreter\n\n=== Command filter contract (FR-022/023/029) ===\n=== Ordering: chaining is rejected BEFORE the allowlist (contract) ===\n  ok   'show version; write erase' is DENIED\n  ok     ...and denied for CHAINING, not denylist\n  ok   chaining via shell AND denied\n  ok   chaining via shell OR denied\n  ok   chaining via redirection denied\n  ok   chaining via input redirection denied\n  ok   chaining via backtick denied\n  ok   chaining via substitution denied\n  ok   chaining via embedded newline denied\n  ok   chaining via background denied\n\n=== A single pipe is a display filter, not a bypass ===\n  ok   'show run | include bgp' is ALLOWED\n\n=== Read-only mode blocks non-allowlisted verbs (FR-022) ===\n  ok   'configure terminal' denied in read-only\n  ok   'set interfaces ge-0/0/0 disable' denied in read-only\n  ok   'commit' denied in read-only\n  ok   'show version' allowed in read-only\n\n=== Denylist fires per platform, not just Cisco (FR-023, SC-008) ===\n  ok   [cisco_ios] 'write erase' denied even in WRITE mode\n  ok   [cisco_ios] 'reload' denied even in WRITE mode\n  ok   [juniper_junos] 'request system zeroize' denied even in WRITE mode\n  ok   [vyos] 'delete interfaces eth0' denied even in WRITE mode\n  ok   [mikrotik_routeros] '/system reset-configuration' denied even in WRITE mode\n  ok   [nokia_srlinux] 'tools system configuration' denied even in WRITE mode\n  ok   [dell_sonic] 'config erase' denied even in WRITE mode\n  ok   [extreme_exos] 'unconfigure switch' denied even in WRITE mode\n  ok   [huawei_vrp] 'reset saved-configuration' denied even in WRITE mode\n  ok   [ubiquiti_edge] 'format' denied even in WRITE mode\n  ok   [linux] 'rm -rf /' denied even in WRITE mode\n\n=== Substring false positives are NOT blocked ===\n  ok   'show reload-reason' allowed (contains 'reload' but verb is 'show')\n  ok   'show system uptime' allowed on vyos (contains 'system')\n\n=== Unmodelled platforms still get the universal baseline ===\n  ok   'reload' denied on an unmodelled platform\n  ok     ...and reported as unmodelled\n  ok   universal deny is non-empty for unknown platform\n  ok   is_modelled('cisco_ios') is True\n  ok   is_modelled(None) is False\n\n=== Shell escape is denied everywhere ===\n  ok   'bash' denied\n  ok   'sh' denied\n  ok   'shell' denied\n  ok   'start-shell' denied\n  ok   'run bash' denied\n\n=== Case and whitespace cannot evade the denylist ===\n  ok   'RELOAD' denied\n  ok   '  reload  ' denied\n  ok   'ReLoAd' denied\n  ok   'WRITE   ERASE' denied\n\n=== Degenerate input ===\n  ok   empty command denied\n  ok   whitespace-only denied\n  ok   over-long command denied\n\n=== Default mode is read-only when unspecified (FR-022) ===\n  ok   omitting mode yields read-only behaviour\n\n  passed: 46\n  failed: 0\n  SUITE PASS (Command filter contract (FR-022/023/029))\n\n=== Inventory sources contract (FR-017*) ===\n=== Operator inventory loads, and reports its source (FR-017c) ===\n  ok   3 devices parsed\n  ok   all report source=operator\n  ok   hostname parsed\n  ok   platform parsed\n  ok   groups parsed as a list\n  ok   per-device credential_ref honoured (FR-020)\n\n=== owning_server is computed per device (FR-009/FR-011) ===\n  ok   mikrotik owned by this server\n  ok   cisco_xe owned by pyats\n\n=== Credentials are REJECTED in any inventory source (FR-017d, SC-006) ===\n  ok   'password' in inventory is rejected\n  ok   'enable_secret' in inventory is rejected\n  ok   'api_key' in inventory is rejected\n  ok   'private_key' in inventory is rejected\n  ok   'token' in inventory is rejected\n  ok   'credential_ref' itself is NOT treated as a secret\n  ok   'password' is treated as a secret\n\n=== Generated vs operator files are never confused (FR-017a/b) ===\n  ok   generated file is detected as generated\n  ok   operator file is NOT detected as generated\n  ok   loading a GENERATED file as operator is refused\n  ok   loading an OPERATOR file as generated is refused\n  ok   generated devices report source=generated\n  ok   the marker key is not parsed as a device\n\n=== Absent devices are reported, never guessed (FR-021) ===\n  ok   missing device raises, naming it\n  ok   present device is found\n\n=== Malformed inventory fails loudly ===\n  ok   no hostname rejected\n  ok   not key: value rejected\n\n=== Routing: writes single-pathed, normalized reads permitted (FR-008/009/010) ===\n  ok   WRITE to cisco_xe refused\n  ok     ...naming pyats as owner\n  ok     ...with a reason mentioning one write path\n  ok   NORMALIZED_READ on cisco_xe PERMITTED (the exception)\n  ok   RAW_READ on cisco_xe refused\n  ok   WRITE to juniper_junos refused naming junos-mcp\n  ok   WRITE to 'mikrotik_routeros' permitted (unowned)\n  ok   WRITE to 'vyos' permitted (unowned)\n  ok   WRITE to 'sonic' permitted (unowned)\n  ok   WRITE to 'nokia_srlinux' permitted (unowned)\n  ok   WRITE to None permitted (unowned)\n  ok   refusal payload has status=refused\n  ok   refusal payload names owning_server\n\n=== Credentials: env fallback works without Vault (FR-018, SC-007a) ===\n  ok   no credential configured -> clear error\n  ok     ...error says secrets must not be in inventory\n  ok   env credential resolves with NO Vault configured\n  ok     ...and reports path=environment (FR-018a)\n  ok   posture() exposes no secret\n  ok   repr() redacts secrets\n  ok   str() redacts secrets\n  ok   reference-scoped credential overrides the generic one (FR-020)\n  ok   generic reference still resolves generically\n\n  passed: 47\n  failed: 0\n  SUITE PASS (Inventory sources contract (FR-017*))\n\n### Summary ###\n  suites/checks passed: 10\n  failed: 0\n  all multivendor tests passed"
+        }
+      ]
+    },
+    {
+      "capabilities": [],
+      "command": [
+        "/Users/john.capobianco/netclaw/.contract-test-envs/n2n/bin/python",
+        "-m",
+        "pytest",
+        "tests/n2n"
+      ],
+      "detail": "offline contracts passed",
+      "duration_seconds": 39.55544324999937,
+      "environment": {
+        "fingerprint": "385596b075708500e2ac69f7d5ffbece964d09dae4ea79cead5f7f77d58f645d",
+        "path": ".contract-test-envs/n2n"
+      },
+      "exit_code": 0,
+      "status": "PASS",
+      "suite": "n2n",
+      "test_runs": [
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/n2n/bin/python",
+            "-m",
+            "pytest",
+            "tests/n2n"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\nplugins: anyio-4.15.1\ncollected 478 items\n\ntests/n2n/test_acme_060.py ..                                            [  0%]\ntests/n2n/test_authorization.py ........                                 [  2%]\ntests/n2n/test_benign_disconnect_100.py .............                    [  4%]\ntests/n2n/test_certs_060.py .............                                [  7%]\ntests/n2n/test_cold_start.py ...                                         [  8%]\ntests/n2n/test_consent.py .....                                          [  9%]\ntests/n2n/test_controls_failclosed.py .......                            [ 10%]\ntests/n2n/test_dead_peer_dampening_100.py ...........................    [ 16%]\ntests/n2n/test_delegation_bypass_guard.py .......                        [ 17%]\ntests/n2n/test_durable_services.py ....                                  [ 18%]\ntests/n2n/test_edge_approval.py ......                                   [ 19%]\ntests/n2n/test_edge_approvals_list.py ...                                [ 20%]\ntests/n2n/test_edge_ask.py ...........                                   [ 22%]\ntests/n2n/test_edge_ask_timeout.py ............                          [ 25%]\ntests/n2n/test_edge_capture.py .....                                     [ 26%]\ntests/n2n/test_edge_enrollment.py .....                                  [ 27%]\ntests/n2n/test_edge_gate_108.py .....                                    [ 28%]\ntests/n2n/test_edge_heartbeat.py ..                                      [ 28%]\ntests/n2n/test_edge_push.py .....                                        [ 29%]\ntests/n2n/test_edge_push_wake_signal.py ....                             [ 30%]\ntests/n2n/test_edge_result_push_after_reconnect.py ........              [ 32%]\ntests/n2n/test_edge_ws_frame_size.py .....                               [ 33%]\ntests/n2n/test_en2n_auth_baseline_060.py ...                             [ 34%]\ntests/n2n/test_en2n_regression.py .....                                  [ 35%]\ntests/n2n/test_endpoint_persistence_063.py ...                           [ 35%]\ntests/n2n/test_endpoint_reannounce.py ..                                 [ 36%]\ntests/n2n/test_endpoint_stability_108.py ...                             [ 36%]\ntests/n2n/test_enrollment.py ......                                      [ 38%]\ntests/n2n/test_ergonomics.py ...                                         [ 38%]\ntests/n2n/test_fault_isolation.py ....                                   [ 39%]\ntests/n2n/test_faults_edge_liveness.py ..                                [ 39%]\ntests/n2n/test_forget_endpoint_100.py ................                   [ 43%]\ntests/n2n/test_framing.py ...                                            [ 43%]\ntests/n2n/test_gait_emit.py .....                                        [ 44%]\ntests/n2n/test_gateway_openclaw_resolve.py ...                           [ 45%]\ntests/n2n/test_gateway_rpc_cleanup.py .                                  [ 45%]\ntests/n2n/test_hub_attestation_060.py ..                                 [ 46%]\ntests/n2n/test_inbound_log_enrichment_100.py .....................       [ 50%]\ntests/n2n/test_internal_tls_security.py ..                               [ 51%]\ntests/n2n/test_internal_transport.py ...                                 [ 51%]\ntests/n2n/test_inventory.py .....                                        [ 52%]\ntests/n2n/test_invocation_chat.py ..                                     [ 53%]\ntests/n2n/test_knowledge_cards.py .........                              [ 55%]\ntests/n2n/test_knowledge_routing.py .........                            [ 56%]\ntests/n2n/test_log_dampening_config_100.py ......................        [ 61%]\ntests/n2n/test_logfilter_eof_100.py .................                    [ 65%]\ntests/n2n/test_member_delegation.py ....                                 [ 65%]\ntests/n2n/test_member_liveness_shared.py ..........                      [ 67%]\ntests/n2n/test_members_endpoint_edge_liveness.py .                       [ 68%]\ntests/n2n/test_metadata_seam_063.py ...                                  [ 68%]\ntests/n2n/test_negotiate.py ....                                         [ 69%]\ntests/n2n/test_outbound_outcome_100.py ................                  [ 73%]\ntests/n2n/test_patch_upgrade_060.py .                                    [ 73%]\ntests/n2n/test_posture.py ...........                                    [ 75%]\ntests/n2n/test_posture_certsec_060.py .                                  [ 75%]\ntests/n2n/test_pq_posture_063.py .......                                 [ 77%]\ntests/n2n/test_protocol_hardening.py ...................                 [ 81%]\ntests/n2n/test_quarantine.py ...                                         [ 81%]\ntests/n2n/test_reconnect.py ....                                         [ 82%]\ntests/n2n/test_replication_identity.py ....                              [ 83%]\ntests/n2n/test_replication_lifecycle.py ......                           [ 84%]\ntests/n2n/test_replication_manifest_batch.py .......                     [ 86%]\ntests/n2n/test_replication_provenance.py ...                             [ 86%]\ntests/n2n/test_risk.py ...........                                       [ 89%]\ntests/n2n/test_robustness.py ....                                        [ 89%]\ntests/n2n/test_rotation_060.py ..                                        [ 90%]\ntests/n2n/test_routing.py ......                                         [ 91%]\ntests/n2n/test_scope_enforcement.py ....                                 [ 92%]\ntests/n2n/test_secured_federation_060.py ...                             [ 93%]\ntests/n2n/test_starttls_upgrade_060.py .                                 [ 93%]\ntests/n2n/test_tasks.py .......                                          [ 94%]\ntests/n2n/test_tls_auth_060.py ....                                      [ 95%]\ntests/n2n/test_transport_field_108.py .......                            [ 97%]\ntests/n2n/test_transport_posture_108.py ......                           [ 98%]\ntests/n2n/test_trust_hardening_060.py .....                              [ 99%]\ntests/n2n/test_two_daemon_loopback.py .                                  [ 99%]\ntests/n2n/test_zoom_resource_limits.py ..                                [100%]\n\n=============================== warnings summary ===============================\ntests/n2n/test_certs_060.py::test_verify_rejects_expired_leaf_with_clock_hint\n  /Users/john.capobianco/netclaw/tests/n2n/test_certs_060.py:63: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).\n    future = datetime.datetime.utcnow() + datetime.timedelta(days=3)\n\ntests/n2n/test_edge_enrollment.py: 1 warning\ntests/n2n/test_en2n_auth_baseline_060.py: 2 warnings\ntests/n2n/test_endpoint_persistence_063.py: 1 warning\ntests/n2n/test_enrollment.py: 8 warnings\ntests/n2n/test_hub_attestation_060.py: 1 warning\ntests/n2n/test_internal_tls_security.py: 1 warning\ntests/n2n/test_internal_transport.py: 4 warnings\ntests/n2n/test_member_delegation.py: 3 warnings\ntests/n2n/test_quarantine.py: 4 warnings\ntests/n2n/test_routing.py: 8 warnings\ntests/n2n/test_secured_federation_060.py: 2 warnings\ntests/n2n/test_two_daemon_loopback.py: 1 warning\n  /Users/john.capobianco/netclaw/mcp-servers/protocol-mcp/bgp/federation/risk.py:114: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).\n    now = datetime.datetime.utcnow()\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n====================== 478 passed, 37 warnings in 39.22s ======================="
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        {
+          "detail": "docker daemon is available",
+          "kind": "docker-daemon",
+          "names": [],
+          "status": "AVAILABLE"
+        }
+      ],
+      "command": [
+        "bash",
+        "tests/nsm/run-tests.sh"
+      ],
+      "detail": "offline contracts passed",
+      "duration_seconds": 3.1198770419978246,
+      "environment": {
+        "fingerprint": "105ed9737cd65bc0f8406162653095d18928a63cd798e32f65b64aed49830af7",
+        "path": ".contract-test-envs/nsm"
+      },
+      "exit_code": 0,
+      "status": "PASS",
+      "suite": "nsm",
+      "test_runs": [
+        {
+          "command": [
+            "bash",
+            "tests/nsm/run-tests.sh"
+          ],
+          "exit_code": 0,
+          "output": "=== Chokepoint: a finding cannot travel without its posture ===\n  ok   an alert verdict without Suricata posture is refused\n  ok   Zeek findings without checksum posture are refused\n  ok   an alert verdict WITH posture is allowed\n\n=== Inert detector: 0 alerts must not read as clean ===\n  ok   0 signatures yields state INERT\n  ok   an empty alert list from an INERT detector is wrapped with NOT_A_CLEAN_RESULT\n  ok   0 (integer) from an INERT detector is also wrapped\n  ok   an ARMED detector reporting no alerts is NOT wrapped\n  ok   INERT posture carries a remedy\n\n=== Zeek checksum posture ===\n  ok   validation on + invalid checksums seen yields PACKETS_DISCARDED\n  ok   PACKETS_DISCARDED carries a remedy\n  ok   validation off yields IGNORING_CHECKSUMS and no remedy\n\n=== Input validation: an empty capture must not read as empty traffic ===\n  ok   a missing capture raises rather than returning nothing\n  ok   a zero-byte capture is refused explicitly\n  ok   a directory is refused explicitly\n\n=== Pinning: images must be digest-pinned, never floating tags ===\n  ok   both images are pinned by sha256 digest\n  ok   no :latest tag anywhere in the runner\n\n=== Tool surface stays under the manifest ceiling ===\n  ok   6 tools, manifest under 2000 tokens\n\n=== Live analysis against the committed fixture (needs docker) ===\n  ok   ignore_checksums=true sees http.log and 2 connections\n  ok   Zeek's own default LOSES http.log and miscounts connections (3 not 2)\n\n=== Summary ===\n  passed: 19\n  failed: 0\n  skipped: 0\n  all nsm-mcp contract tests passed"
+        }
+      ]
+    },
+    {
+      "capabilities": [],
+      "command": [
+        "bash",
+        "tests/reconcile/run-tests.sh"
+      ],
+      "detail": "offline contracts passed",
+      "duration_seconds": 4.674142332998599,
+      "environment": {
+        "fingerprint": null,
+        "path": null
+      },
+      "exit_code": 0,
+      "status": "PASS",
+      "suite": "reconcile",
+      "test_runs": [
+        {
+          "command": [
+            "bash",
+            "tests/reconcile/run-tests.sh"
+          ],
+          "exit_code": 0,
+          "output": "=== Clean repository: every surface reconciled ===\n  ok   reconcile-mcp.py exits 0 on a reconciled tree (declaration surfaces) (exit 0)\n  ok   verify-catalog-coverage.py exits 0 (exit 0)\n  ok   verify-inventory-counts.py exits 0 (exit 0)\n  ok   check-mcp-portability.py exits 0 (exit 0)\n\n=== Portability surface: a machine-specific path must fail ===\n  ok   a /home/ path fails the portability check (exit 1)\n  ok   the failure names the offending entry\n  ok   the failure states what is wrong\n\n=== Portability surface: legitimate system paths must NOT fail (FR-004) ===\n  ok   /usr/bin/python3 and npx package specs pass (exit 0)\n\n=== Portability surface: --warn-only suppresses the failure exit ===\n  ok   --warn-only exits 0 despite findings (exit 0)\n\n=== Cannot-run is distinguishable from inconsistent (exit 2) ===\n  ok   a missing config yields exit 2, not 1 (exit 2)\n  ok   an unparseable config yields exit 2, not 1 (exit 2)\n\n=== Orchestrator aggregates a surface failure (FR-008) ===\n  ok   orchestrator exits 1 when the portability surface fails (exit 1)\n  ok   orchestrator --warn-only exits 0 despite a failing surface (exit 0)\n\n=== Orchestrator reports exit 2 when a check script is missing ===\n  ok   a missing check script yields exit 2 (exit 2)\n\n=== Dependency-pin surface (spec 077 / R0a) ===\n  ok   check-dependency-pins.py passes on a clean tree (exit 0)\n  ok   unbounded pin + submodule import fails (exit 1)\n  ok   the failure names the offending server\n  ok   the failure explains why it matters\n  ok   bounding the pin clears it (exit 0)\n  ok   bare pip3 install fails (exit 1)\n  ok   the failure names the remedy\n  ok   pip in a comment or log string is not a finding (exit 0)\n  ok   --warn-only exits 0 despite findings (exit 0)\n\n--- startup surface ---\n  ok   a server that blocks on stdio is not a failure (timeout != broken) (exit 0)\n  ok   a server with a missing module fails (exit 1)\n  ok   the finding names the server\n  ok   the finding names the missing module\n  ok   a registered server with no entry point fails (exit 1)\n  ok   the finding distinguishes absent file from missing module\n  ok   --warn-only exits 0 despite startup findings (exit 0)\n  ok   a server in STARTUP_EXCEPTIONS is suppressed (exit 0)\n  ok   a remote server is skipped, not failed (exit 0)\n\n--- meraki capability-id surface ---\n  ok   a real reachable capability ID passes (exit 0)\n  ok   an invented capability ID fails (exit 1)\n  ok   the finding says the ID cannot succeed anywhere\n  ok   the finding names the invented ID\n  ok   an unmarked mutating ID fails (exit 1)\n  ok   a mutating ID marked unreachable is allowed (exit 0)\n  ok   an unmarked deprecated ID fails (exit 1)\n  ok   the finding distinguishes deprecated from nonexistent\n  ok   --warn-only exits 0 despite meraki-id findings (exit 0)\n  ok   the shipped Meraki skills cite only real capability IDs (exit 0)\n\n--- pip helper (PEP 668 + legibility) ---\n  ok   PEP 668 refusal does not override system packages (exit 1)\n  ok   the managed-environment refusal is actionable\n  ok   a genuine install failure returns non-zero (exit 1)\n  ok   the real pip error is not swallowed\n  ok   the failure names what it was installing\n  ok   install-steps.sh has no --break-system-packages call sites left (exit 1)\n  ok   a component whose vendored directory was never cloned is skipped (exit 0)\n  ok   a wrong path inside an EXISTING vendored directory still fails (exit 1)\n  ok   a dead server FAILS reconciliation (startup is not warn-only) (exit 1)\n  ok   a missing runtime data file is distinguished from a missing entry point\n\n--- package-reference surface ---\n  ok   a verified existing package passes (exit 0)\n  ok   a package that does not exist fails (exit 1)\n  ok   the finding says the package cannot work\n  ok   the finding names the skill that invokes it\n  ok   an unverified package reference fails rather than passing silently (exit 1)\n  ok   the finding distinguishes unverified from nonexistent\n  ok   a pinned @version suffix resolves to the same package (exit 0)\n  ok   prose after npx is not treated as a package (exit 0)\n  ok   a reference marked as nonexistent is allowed as history (exit 0)\n  ok   --warn-only exits 0 despite package findings (exit 0)\n  ok   a missing manifest yields exit 2, not a false pass (exit 2)\n  ok   every package the shipped skills invoke is verified to exist (exit 0)\n\n=== Summary ===\n  passed: 64\n  failed: 0\n  all reconciliation contract tests passed"
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        {
+          "detail": "service unavailable: http://127.0.0.1:8000/redfish/v1",
+          "kind": "docker-service",
+          "names": [],
+          "status": "NEEDS_DOCKER"
+        }
+      ],
+      "command": [
+        "bash",
+        "tests/redfish/run-tests.sh"
+      ],
+      "detail": "offline contracts passed",
+      "duration_seconds": 0.6588764590014762,
+      "environment": {
+        "fingerprint": "80dee29c56ac4c6c2ba961b661666af2aa50c34d512c1957669dd0494d084d6e",
+        "path": ".contract-test-envs/redfish"
+      },
+      "exit_code": 0,
+      "status": "PASS",
+      "suite": "redfish",
+      "test_runs": [
+        {
+          "command": [
+            "bash",
+            "tests/redfish/run-tests.sh"
+          ],
+          "exit_code": 0,
+          "output": "=== The verdict: what a BMC reading establishes about the host ===\n  ok   an unreachable BMC yields host_state UNKNOWN, never 'down'\n  ok   the unreachable verdict names the conclusion NOT to draw\n  ok   PowerState Off is reported as a FACT about the host\n  ok   PowerState On carries the caveat that the OS may be hung\n  ok   an unrecognised PowerState is UNREPORTED, not guessed\n  ok   a hardware fault is reported as independent of OS state\n  ok   deriving a host state from an unreachable BMC is refused\n  ok   emitting a host claim without a verdict is refused\n  ok   a host claim WITH a verdict is allowed\n\n=== Read-only is enforced at the transport ===\n  ok   the client implements no verb but GET\n  ok   ComputerSystem.Reset is never invoked anywhere in the server\n  ok   an unset endpoint refuses rather than guessing an address\n\n=== Live against the DMTF mockup (needs httpx + container) ===\n  skip live mockup assertions (no Redfish mock on :8000)\n  skip reachable-BMC verdict against real Redfish\n\n=== Empty results must not read as good news ===\n  ok   TLS verification being off is disclosed, not silent\n\n=== Summary ===\n  passed: 13\n  failed: 0\n  skipped: 2\n  all redfish-mcp contract tests passed"
+        }
+      ]
+    },
+    {
+      "capabilities": [],
+      "command": [
+        "bash",
+        "tests/runner/run-tests.sh"
+      ],
+      "detail": "offline contracts passed",
+      "duration_seconds": 0.705445374998817,
+      "environment": {
+        "fingerprint": null,
+        "path": null
+      },
+      "exit_code": 0,
+      "status": "PASS",
+      "suite": "runner",
+      "test_runs": [
+        {
+          "command": [
+            "bash",
+            "tests/runner/run-tests.sh"
+          ],
+          "exit_code": 0,
+          "output": "PASS real manifest declares every discovered shell and pytest suite -- shell=['analysis', 'anta', 'bgp-intel', 'catc', 'cisco-psirt', 'document', 'fortinet', 'globalping', 'k8s', 'multivendor', 'nsm', 'reconcile', 'redfish', 'runner', 'zabbix'] pytest=['auvik-mcp', 'contract', 'halo-mcp', 'integration', 'n2n', 'unit'] discovered_pytest=['auvik-mcp', 'contract', 'halo-mcp', 'integration', 'n2n', 'unit']\n  PASS undeclared suite is rejected -- manifest/discovery mismatch: [shell] tests/* directories with run-tests.sh but no manifest entry: gamma\n  PASS matrix is sorted and deterministic -- {'include': [{'suite': 'alpha', 'python': '3.10'}, {'suite': 'beta', 'python': '3.10'}]}\n  PASS aggregate exit contract distinguishes fail/block/capability gaps -- []\n  PASS preflight keeps dependency/live/docker states separate -- alpha={'suite': 'alpha', 'status': 'PASS', 'exit_code': None, 'duration_seconds': 0.0, 'command': ['bash', 'tests/alpha/run-tests.sh'], 'environment': {'path': None, 'fingerprint': None}, 'capabilities': [{'status': 'NEEDS_LIVE_CREDENTIALS', 'kind': 'live', 'names': ['ALPHA_TOKEN'], 'detail': 'missing: ALPHA_TOKEN'}], 'detail': 'offline dependencies available'} beta={'suite': 'beta', 'status': 'BLOCKED_DEPENDENCY', 'exit_code': None, 'duration_seconds': 0.0, 'command': ['bash', 'tests/beta/run-tests.sh'], 'environment': {'path': '.contract-test-envs/beta', 'fingerprint': None}, 'capabilities': [{'status': 'NEEDS_DOCKER', 'kind': 'docker-daemon', 'names': [], 'detail': 'docker executable is not installed'}], 'detail': 'isolated interpreter is missing: .contract-test-envs/beta/bin/python'}\n  PASS credential values are absent from structured and human output -- {\"suite\": \"alpha\", \"status\": \"PASS\", \"exit_code\": null, \"duration_seconds\": 0.0, \"command\": [\"bash\", \"tests/alpha/run-tests.sh\"], \"environment\": {\"path\": null, \"fingerprint\": null}, \"capabilities\": [{\"status\": \"AVAILABLE\", \"kind\": \"live\", \"names\": [\"ALPHA_TOKEN\"], \"detail\": \"fake live source\"}], \"detail\": \"offline dependencies available\"}PASS                 alpha             0.00s  offline dependencies availablehttps://[REDACTED]@example.invalid/simple\n  PASS default execution strips live credentials from the harness -- {'suite': 'alpha', 'status': 'PASS', 'exit_code': 0, 'duration_seconds': 0.016591542000242043, 'command': ['/Users/john.capobianco/.pyenv/versions/3.10.14/bin/python3', '-c', \"import os,sys; sys.exit(1 if os.environ.get('ALPHA_TOKEN') else 0)\"], 'environment': {'path': None, 'fingerprint': None}, 'capabilities': [{'status': 'AVAILABLE', 'kind': 'live', 'names': ['ALPHA_TOKEN'], 'detail': 'fake live source'}], 'detail': 'offline contracts passed', 'test_runs': [{'command': ['/Users/john.capobianco/.pyenv/versions/3.10.14/bin/python3', '-c', \"import os,sys; sys.exit(1 if os.environ.get('ALPHA_TOKEN') else 0)\"], 'exit_code': 0, 'output': ''}]}\n  PASS preparation is isolated, fingerprinted, and detects stale metadata -- prepared={'suite': 'beta', 'status': 'PASS', 'exit_code': None, 'duration_seconds': 0.0, 'command': ['bash', 'tests/beta/run-tests.sh'], 'environment': {'path': '.contract-test-envs/beta', 'fingerprint': 'e180b5a655469c7225b05ddec7d66b1db0e41818cb7b91fd3e103924292c3778'}, 'capabilities': [{'status': 'AVAILABLE', 'kind': 'docker-daemon', 'names': [], 'detail': 'docker daemon is available'}], 'detail': 'offline dependencies available'} stale={'suite': 'beta', 'status': 'BLOCKED_DEPENDENCY', 'exit_code': None, 'duration_seconds': 0.0, 'command': ['bash', 'tests/beta/run-tests.sh'], 'environment': {'path': '.contract-test-envs/beta', 'fingerprint': 'f79baae2e489f0e1c02a059de10f0d6994775877f848d90fcf6b3dcdf5ab7d2d'}, 'capabilities': [{'status': 'AVAILABLE', 'kind': 'docker-daemon', 'names': [], 'detail': 'docker daemon is available'}], 'detail': 'isolated environment is missing or stale; run with --prepare'}\n  PASS checksum mismatch is refused during preparation and preflight -- prepare=alpha: artifact SHA-256 mismatch; expected a4c233db7e34f52c216d04e4375cac4a44868ea80b4cec9149c370b717a57135, got 484098986fe9bcdb6b00ad5e013ae45c99744c65deebb3459bba985c3f7a83bd preflight={'suite': 'alpha', 'status': 'BLOCKED_DEPENDENCY', 'exit_code': None, 'duration_seconds': 0.0, 'command': ['bash', 'tests/alpha/run-tests.sh'], 'environment': {'path': None, 'fingerprint': None}, 'capabilities': [], 'detail': 'artifact checksum mismatch: artifacts/probe; run with --prepare'}\n  PASS missing pinned image is NEEDS_DOCKER, not an assertion failure -- {'status': 'NEEDS_DOCKER', 'kind': 'docker-image', 'names': [], 'detail': 'pinned images unavailable: example/image@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'}\n  PASS pytest suite runs under its own isolated interpreter -- ['/private/var/folders/ln/99pzcfd950j6vxf7gbfjjm5w0000gq/T/tmp24x5pykc/.contract-test-envs/gamma/bin/python', '-m', 'pytest', 'tests/gamma']\n  PASS pytest suite with a missing path is rejected -- suite gamma.paths does not exist: tests/does-not-exist\n  PASS pytest suite carrying a shell command is rejected -- suite gamma.command is not valid for a pytest suite\n  PASS tests/* directory holding tests but no entry is rejected -- manifest/discovery mismatch: [pytest] tests/* directories holding tests but no manifest entry: delta\n  PASS holding a suite out of CI without a reason is rejected -- suite alpha.ci.reason is required when a suite is held out of CI\n  PASS held-out suite leaves the matrix but keeps its reason -- included=['alpha', 'beta'] held=[{'suite': 'gamma', 'kind': 'pytest', 'reason': 'fake held-out suite'}]\n  PASS fingerprint covers kind and paths -- before=72d2ae0dcbff4ae9354a47697d2d45dc81fef14cc3d6bf5cc1b5f3db7eed0091 after=b9aae2c5351f7f78899680adbc255830b3050fd4f095a651d2ae279c090ffd91\n  PASS isolated plugins keep namespaces and failures remain visible\n  PASS invalid and empty isolation rejected\n\nrunner contracts: 19 passed, 0 failed"
+        }
+      ]
+    },
+    {
+      "capabilities": [],
+      "command": [
+        "/Users/john.capobianco/netclaw/.contract-test-envs/token-budget/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_budget_policy.py",
+        "tests/test_gcf_serializer.py",
+        "tests/test_session_budget.py"
+      ],
+      "detail": "offline contracts passed",
+      "duration_seconds": 0.2294426249973185,
+      "environment": {
+        "fingerprint": "709dfbe656c9a2e64ef0eae71ad8a2095730f68ad3c4e4877a29dd24f1d5190e",
+        "path": ".contract-test-envs/token-budget"
+      },
+      "exit_code": 0,
+      "status": "PASS",
+      "suite": "token-budget",
+      "test_runs": [
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/token-budget/bin/python",
+            "-m",
+            "pytest",
+            "tests/test_budget_policy.py",
+            "tests/test_gcf_serializer.py",
+            "tests/test_session_budget.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\ncollected 65 items\n\ntests/test_budget_policy.py .....................                        [ 32%]\ntests/test_gcf_serializer.py .....................                       [ 64%]\ntests/test_session_budget.py .......................                     [100%]\n\n============================== 65 passed in 0.07s =============================="
+        }
+      ]
+    },
+    {
+      "capabilities": [],
+      "command": [
+        "/Users/john.capobianco/netclaw/.contract-test-envs/unit/bin/python",
+        "-m",
+        "pytest",
+        "tests/unit"
+      ],
+      "detail": "offline contracts passed",
+      "duration_seconds": 13.849873332997959,
+      "environment": {
+        "fingerprint": "cc7cb4fa755e07ae78a7dfc5695e8e62ad1f5bb76eb88e6a5096468147e7c844",
+        "path": ".contract-test-envs/unit"
+      },
+      "exit_code": 0,
+      "status": "PASS",
+      "suite": "unit",
+      "test_runs": [
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/unit/bin/python",
+            "-m",
+            "pytest",
+            "tests/unit/test_chroma_store.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\nplugins: platformdirs-4.12.0, anyio-4.15.1\ncollected 10 items\n\ntests/unit/test_chroma_store.py ......s...                               [100%]\n\n========================= 9 passed, 1 skipped in 0.37s ========================="
+        },
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/unit/bin/python",
+            "-m",
+            "pytest",
+            "tests/unit/test_comfyui_concurrency_guard.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\nplugins: platformdirs-4.12.0, anyio-4.15.1\ncollected 2 items\n\ntests/unit/test_comfyui_concurrency_guard.py ..                          [100%]\n\n============================== 2 passed in 0.24s ==============================="
+        },
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/unit/bin/python",
+            "-m",
+            "pytest",
+            "tests/unit/test_comfyui_empty_topology.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\nplugins: platformdirs-4.12.0, anyio-4.15.1\ncollected 1 item\n\ntests/unit/test_comfyui_empty_topology.py .                              [100%]\n\n============================== 1 passed in 0.23s ==============================="
+        },
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/unit/bin/python",
+            "-m",
+            "pytest",
+            "tests/unit/test_comfyui_failure_classification.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\nplugins: platformdirs-4.12.0, anyio-4.15.1\ncollected 5 items\n\ntests/unit/test_comfyui_failure_classification.py .....                  [100%]\n\n============================== 5 passed in 0.24s ==============================="
+        },
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/unit/bin/python",
+            "-m",
+            "pytest",
+            "tests/unit/test_comfyui_freeform_link_parsing.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\nplugins: platformdirs-4.12.0, anyio-4.15.1\ncollected 2 items\n\ntests/unit/test_comfyui_freeform_link_parsing.py ..                      [100%]\n\n============================== 2 passed in 0.01s ==============================="
+        },
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/unit/bin/python",
+            "-m",
+            "pytest",
+            "tests/unit/test_comfyui_generation_contract.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\nplugins: platformdirs-4.12.0, anyio-4.15.1\ncollected 2 items\n\ntests/unit/test_comfyui_generation_contract.py ..                        [100%]\n\n============================== 2 passed in 0.24s ==============================="
+        },
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/unit/bin/python",
+            "-m",
+            "pytest",
+            "tests/unit/test_comfyui_model_selection.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\nplugins: platformdirs-4.12.0, anyio-4.15.1\ncollected 3 items\n\ntests/unit/test_comfyui_model_selection.py ...                           [100%]\n\n============================== 3 passed in 0.19s ==============================="
+        },
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/unit/bin/python",
+            "-m",
+            "pytest",
+            "tests/unit/test_comfyui_prompt_builder.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\nplugins: platformdirs-4.12.0, anyio-4.15.1\ncollected 5 items\n\ntests/unit/test_comfyui_prompt_builder.py .....                          [100%]\n\n============================== 5 passed in 0.01s ==============================="
+        },
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/unit/bin/python",
+            "-m",
+            "pytest",
+            "tests/unit/test_comfyui_source_failures.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\nplugins: platformdirs-4.12.0, anyio-4.15.1\ncollected 2 items\n\ntests/unit/test_comfyui_source_failures.py ..                            [100%]\n\n============================== 2 passed in 0.24s ==============================="
+        },
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/unit/bin/python",
+            "-m",
+            "pytest",
+            "tests/unit/test_decorative_labeling.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\nplugins: platformdirs-4.12.0, anyio-4.15.1\ncollected 4 items\n\ntests/unit/test_decorative_labeling.py ....                              [100%]\n\n============================== 4 passed in 0.01s ==============================="
+        },
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/unit/bin/python",
+            "-m",
+            "pytest",
+            "tests/unit/test_embedder.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\nplugins: platformdirs-4.12.0, anyio-4.15.1\ncollected 13 items\n\ntests/unit/test_embedder.py ............s                                [100%]\n\n======================== 12 passed, 1 skipped in 0.04s ========================="
+        },
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/unit/bin/python",
+            "-m",
+            "pytest",
+            "tests/unit/test_env_writer.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\nplugins: platformdirs-4.12.0, anyio-4.15.1\ncollected 7 items\n\ntests/unit/test_env_writer.py .......                                    [100%]\n\n============================== 7 passed in 0.07s ==============================="
+        },
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/unit/bin/python",
+            "-m",
+            "pytest",
+            "tests/unit/test_fantastical_prompt_builder.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\nplugins: platformdirs-4.12.0, anyio-4.15.1\ncollected 10 items\n\ntests/unit/test_fantastical_prompt_builder.py ..........                 [100%]\n\n============================== 10 passed in 0.01s =============================="
+        },
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/unit/bin/python",
+            "-m",
+            "pytest",
+            "tests/unit/test_federated_generation_routing.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\nplugins: platformdirs-4.12.0, anyio-4.15.1\ncollected 9 items\n\ntests/unit/test_federated_generation_routing.py .........                [100%]\n\n============================== 9 passed in 0.24s ==============================="
+        },
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/unit/bin/python",
+            "-m",
+            "pytest",
+            "tests/unit/test_hud_access_migration.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\nplugins: platformdirs-4.12.0, anyio-4.15.1\ncollected 13 items\n\ntests/unit/test_hud_access_migration.py .............                    [100%]\n\n============================== 13 passed in 0.02s =============================="
+        },
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/unit/bin/python",
+            "-m",
+            "pytest",
+            "tests/unit/test_image_style_mcp.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\nplugins: platformdirs-4.12.0, anyio-4.15.1\ncollected 7 items\n\ntests/unit/test_image_style_mcp.py .......                               [100%]\n\n============================== 7 passed in 0.19s ==============================="
+        },
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/unit/bin/python",
+            "-m",
+            "pytest",
+            "tests/unit/test_in2n_transport_migration.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\nplugins: platformdirs-4.12.0, anyio-4.15.1\ncollected 2 items\n\ntests/unit/test_in2n_transport_migration.py ..                           [100%]\n\n============================== 2 passed in 0.03s ==============================="
+        },
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/unit/bin/python",
+            "-m",
+            "pytest",
+            "tests/unit/test_installer_constraints.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\nplugins: platformdirs-4.12.0, anyio-4.15.1\ncollected 3 items\n\ntests/unit/test_installer_constraints.py ...                             [100%]\n\n============================== 3 passed in 0.29s ==============================="
+        },
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/unit/bin/python",
+            "-m",
+            "pytest",
+            "tests/unit/test_mobile_bundle_gate.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\nplugins: platformdirs-4.12.0, anyio-4.15.1\ncollected 3 items\n\ntests/unit/test_mobile_bundle_gate.py ...                                [100%]\n\n============================== 3 passed in 0.02s ==============================="
+        },
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/unit/bin/python",
+            "-m",
+            "pytest",
+            "tests/unit/test_pyats_http_bridge.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\nplugins: platformdirs-4.12.0, anyio-4.15.1\ncollected 5 items\n\ntests/unit/test_pyats_http_bridge.py .....                               [100%]\n\n============================== 5 passed in 0.74s ==============================="
+        },
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/unit/bin/python",
+            "-m",
+            "pytest",
+            "tests/unit/test_rag_chunker.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\nplugins: platformdirs-4.12.0, anyio-4.15.1\ncollected 8 items\n\ntests/unit/test_rag_chunker.py ........                                  [100%]\n\n============================== 8 passed in 0.02s ==============================="
+        },
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/unit/bin/python",
+            "-m",
+            "pytest",
+            "tests/unit/test_rag_hybrid.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\nplugins: platformdirs-4.12.0, anyio-4.15.1\ncollected 12 items\n\ntests/unit/test_rag_hybrid.py ............                               [100%]\n\n============================== 12 passed in 0.10s =============================="
+        },
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/unit/bin/python",
+            "-m",
+            "pytest",
+            "tests/unit/test_rag_ingest_guards.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\nplugins: platformdirs-4.12.0, anyio-4.15.1\ncollected 9 items\n\ntests/unit/test_rag_ingest_guards.py .........                           [100%]\n\n=============================== warnings summary ===============================\ntests/unit/test_rag_ingest_guards.py::test_invalid_linked_scope_never_ingests[text/html-<a href=\"/next\">next</a>]\n  /Users/john.capobianco/netclaw/.contract-test-envs/unit/lib/python3.12/site-packages/fastmcp/server/auth/providers/jwt.py:10: AuthlibDeprecationWarning: authlib.jose module is deprecated, please use joserfc instead.\n  It will be compatible before version 2.0.0.\n    from authlib.jose import JsonWebKey, JsonWebToken\n\ntests/unit/test_rag_ingest_guards.py::test_invalid_linked_scope_never_ingests[text/html-<a href=\"/next\">next</a>]\n  /Users/john.capobianco/netclaw/.contract-test-envs/unit/lib/python3.12/site-packages/authlib/integrations/httpx_client/assertion_client.py:5: AuthlibDeprecationWarning: The httpx module is deprecated; please use httpx2 instead.\n    from ._compat import httpx2\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n======================== 9 passed, 2 warnings in 1.56s ========================="
+        },
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/unit/bin/python",
+            "-m",
+            "pytest",
+            "tests/unit/test_rag_parsers.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\nplugins: platformdirs-4.12.0, anyio-4.15.1\ncollected 9 items\n\ntests/unit/test_rag_parsers.py .........                                 [100%]\n\n============================== 9 passed in 0.04s ==============================="
+        },
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/unit/bin/python",
+            "-m",
+            "pytest",
+            "tests/unit/test_rag_registry.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\nplugins: platformdirs-4.12.0, anyio-4.15.1\ncollected 10 items\n\ntests/unit/test_rag_registry.py ..........                               [100%]\n\n============================== 10 passed in 0.04s =============================="
+        },
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/unit/bin/python",
+            "-m",
+            "pytest",
+            "tests/unit/test_rag_scrubber.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\nplugins: platformdirs-4.12.0, anyio-4.15.1\ncollected 6 items\n\ntests/unit/test_rag_scrubber.py ......                                   [100%]\n\n============================== 6 passed in 0.01s ==============================="
+        },
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/unit/bin/python",
+            "-m",
+            "pytest",
+            "tests/unit/test_rag_url.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\nplugins: platformdirs-4.12.0, anyio-4.15.1\ncollected 6 items\n\ntests/unit/test_rag_url.py ......                                        [100%]\n\n============================== 6 passed in 0.06s ==============================="
+        },
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/unit/bin/python",
+            "-m",
+            "pytest",
+            "tests/unit/test_redfish_tls.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\nplugins: platformdirs-4.12.0, anyio-4.15.1\ncollected 5 items\n\ntests/unit/test_redfish_tls.py .....                                     [100%]\n\n============================== 5 passed in 0.05s ==============================="
+        },
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/unit/bin/python",
+            "-m",
+            "pytest",
+            "tests/unit/test_sqlite_store.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\nplugins: platformdirs-4.12.0, anyio-4.15.1\ncollected 37 items\n\ntests/unit/test_sqlite_store.py .....................................    [100%]\n\n============================== 37 passed in 0.05s =============================="
+        },
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/unit/bin/python",
+            "-m",
+            "pytest",
+            "tests/unit/test_threejs_assets.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\nplugins: platformdirs-4.12.0, anyio-4.15.1\ncollected 10 items\n\ntests/unit/test_threejs_assets.py ..........                             [100%]\n\n============================== 10 passed in 0.19s =============================="
+        },
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/unit/bin/python",
+            "-m",
+            "pytest",
+            "tests/unit/test_threejs_freeform.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\nplugins: platformdirs-4.12.0, anyio-4.15.1\ncollected 6 items\n\ntests/unit/test_threejs_freeform.py ......                               [100%]\n\n============================== 6 passed in 0.01s ==============================="
+        },
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/unit/bin/python",
+            "-m",
+            "pytest",
+            "tests/unit/test_threejs_layout.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\nplugins: platformdirs-4.12.0, anyio-4.15.1\ncollected 5 items\n\ntests/unit/test_threejs_layout.py .....                                  [100%]\n\n============================== 5 passed in 0.08s ==============================="
+        },
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/unit/bin/python",
+            "-m",
+            "pytest",
+            "tests/unit/test_threejs_materials.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\nplugins: platformdirs-4.12.0, anyio-4.15.1\ncollected 4 items\n\ntests/unit/test_threejs_materials.py ....                                [100%]\n\n============================== 4 passed in 0.01s ==============================="
+        },
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/unit/bin/python",
+            "-m",
+            "pytest",
+            "tests/unit/test_threejs_scene_builder.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\nplugins: platformdirs-4.12.0, anyio-4.15.1\ncollected 9 items\n\ntests/unit/test_threejs_scene_builder.py .........                       [100%]\n\n============================== 9 passed in 0.02s ==============================="
+        },
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/unit/bin/python",
+            "-m",
+            "pytest",
+            "tests/unit/test_threejs_sources.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\nplugins: platformdirs-4.12.0, anyio-4.15.1\ncollected 6 items\n\ntests/unit/test_threejs_sources.py ......                                [100%]\n\n============================== 6 passed in 0.01s ==============================="
+        },
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/unit/bin/python",
+            "-m",
+            "pytest",
+            "tests/unit/test_topology_diagram_mcp.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\nplugins: platformdirs-4.12.0, anyio-4.15.1\ncollected 6 items\n\ntests/unit/test_topology_diagram_mcp.py ......                           [100%]\n\n============================== 6 passed in 0.35s ==============================="
+        },
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/unit/bin/python",
+            "-m",
+            "pytest",
+            "tests/unit/test_twilio_webhook_security.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\nplugins: platformdirs-4.12.0, anyio-4.15.1\ncollected 8 items\n\ntests/unit/test_twilio_webhook_security.py ........                      [100%]\n\n============================== 8 passed in 0.09s ==============================="
+        },
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/unit/bin/python",
+            "-m",
+            "pytest",
+            "tests/unit/test_voice_auth_migration.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\nplugins: platformdirs-4.12.0, anyio-4.15.1\ncollected 4 items\n\ntests/unit/test_voice_auth_migration.py ....                             [100%]\n\n============================== 4 passed in 0.02s ==============================="
+        },
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/unit/bin/python",
+            "-m",
+            "pytest",
+            "tests/unit/test_worldlabs_marble_mcp.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\nplugins: platformdirs-4.12.0, anyio-4.15.1\ncollected 21 items\n\ntests/unit/test_worldlabs_marble_mcp.py .....................            [100%]\n\n============================== 21 passed in 0.22s =============================="
+        },
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/unit/bin/python",
+            "-m",
+            "pytest",
+            "tests/unit/test_zoom_auth_migration.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\nplugins: platformdirs-4.12.0, anyio-4.15.1\ncollected 2 items\n\ntests/unit/test_zoom_auth_migration.py ..                                [100%]\n\n============================== 2 passed in 0.02s ==============================="
+        }
+      ]
+    },
+    {
+      "capabilities": [
+        {
+          "detail": "missing: ZABBIX_TOKEN, ZABBIX_URL",
+          "kind": "live",
+          "names": [
+            "ZABBIX_TOKEN",
+            "ZABBIX_URL"
+          ],
+          "status": "NEEDS_LIVE_CREDENTIALS"
+        }
+      ],
+      "command": [
+        "bash",
+        "tests/zabbix/run-tests.sh"
+      ],
+      "detail": "offline contracts passed",
+      "duration_seconds": 1.2678547499999695,
+      "environment": {
+        "fingerprint": "f1edc759ae983f1cd218fa719e9ab4cc73d6d6b4cf59899a98da03abd2dd2e47",
+        "path": "mcp-servers/zabbix-mcp/.venv"
+      },
+      "exit_code": 0,
+      "status": "PASS",
+      "suite": "zabbix",
+      "test_runs": [
+        {
+          "command": [
+            "bash",
+            "tests/zabbix/run-tests.sh"
+          ],
+          "exit_code": 0,
+          "output": "==============================================================\n  read-only  \u2014 forced by NetClaw, deny-list non-vacuous (FR-021a/b, SC-018a/b)\n==============================================================\n\ntest_read_only_is_set_explicitly\n  PASS  READ_ONLY is present in NetClaw's own registration\n  PASS  READ_ONLY is literally 'true', not a passthrough variable\n\ntest_upstream_default_is_still_inverted\n  PASS  upstream library still defaults read-only to True\n  PASS  upstream launcher still defaults read-only to False (the reason we force it)\n\ntest_denylist_present_and_covers_every_destructive_verb\n  PASS  a deny-list is configured\n  PASS  deny-list covers 'delete'\n  PASS  deny-list covers 'create'\n  PASS  deny-list covers 'update'\n  PASS  deny-list covers 'massdelete'\n  PASS  deny-list covers 'massupdate'\n  PASS  deny-list covers 'import'\n  PASS  deny-list covers 'acknowledge'\n\ntest_denylist_is_not_vacuous\n  PASS  host.delete matches at least one deny pattern\n  PASS  template.delete matches at least one deny pattern\n  PASS  action.update matches at least one deny pattern\n  PASS  event.acknowledge matches at least one deny pattern\n  PASS  host.get is NOT denied (deny-list is not over-broad)\n  PASS  item.get is NOT denied (deny-list is not over-broad)\n  PASS  history.get is NOT denied (deny-list is not over-broad)\n  PASS  trend.get is NOT denied (deny-list is not over-broad)\n  PASS  problem.get is NOT denied (deny-list is not over-broad)\n\ntest_tls_and_no_literal_credentials\n  PASS  VERIFY_SSL is configured\n  PASS  ZABBIX_URL is a ${VAR} passthrough, not a literal\n  PASS  ZABBIX_TOKEN is a ${VAR} passthrough, not a literal\n\ntest_no_write_path_is_advertised\n  PASS  zabbix-metrics-history states it is read-only\n  PASS  zabbix-problem-review states it is read-only\n  PASS  zabbix-availability states it is read-only\n\nall read-only enforcement tests passed\n\n==============================================================\n  venv       \u2014 fastmcp 3.x isolated from five <3 pins (FR-037a/b/c, SC-026/027)\n==============================================================\n\ntest_venv_exists_and_holds_fastmcp_3\n  PASS  the venv resolves fastmcp 3.x\n  PASS  the venv has the vendored package installed\n\ntest_runtime_excludes_system_packages\n  PASS  runtime has a distinct virtualenv prefix\n  PASS  runtime excludes user site packages\n  PASS  runtime excludes system site packages\n\ntest_installer_never_uses_bare_venv\n  PASS  no executable line calls bare `python3 -m venv`\n  PASS  the installer uses netclaw_venv_create or uv\n  PASS  the installer explains why the venv exists\n\ntest_registration_points_at_the_venv\n  PASS  the registered command is the venv interpreter\n  PASS  the command path is repo-relative\n\ntest_venv_is_gitignored\n  PASS  the venv is git-ignored\n  PASS  the vendored source is NOT ignored\n\nall venv isolation tests passed\n\n==============================================================\n  skills     \u2014 a followable PROCEDURE, not a warning (FR-006a, FR-045..049)\n==============================================================\n\ntest_frontmatter_matches_the_schema\n  PASS  zabbix-metrics-history has frontmatter\n  PASS  zabbix-metrics-history declares name:\n  PASS  zabbix-metrics-history declares description:\n  PASS  zabbix-metrics-history declares version:\n  PASS  zabbix-metrics-history declares license:\n  PASS  zabbix-metrics-history declares tags:\n  PASS  zabbix-metrics-history declares user-invocable:\n  PASS  zabbix-metrics-history's description ends with a 'Use when' clause\n  PASS  zabbix-problem-review has frontmatter\n  PASS  zabbix-problem-review declares name:\n  PASS  zabbix-problem-review declares description:\n  PASS  zabbix-problem-review declares version:\n  PASS  zabbix-problem-review declares license:\n  PASS  zabbix-problem-review declares tags:\n  PASS  zabbix-problem-review declares user-invocable:\n  PASS  zabbix-problem-review's description ends with a 'Use when' clause\n  PASS  zabbix-availability has frontmatter\n  PASS  zabbix-availability declares name:\n  PASS  zabbix-availability declares description:\n  PASS  zabbix-availability declares version:\n  PASS  zabbix-availability declares license:\n  PASS  zabbix-availability declares tags:\n  PASS  zabbix-availability declares user-invocable:\n  PASS  zabbix-availability's description ends with a 'Use when' clause\n\ntest_the_value_type_procedure_is_ordered_and_concrete\n  PASS  item.get is mentioned before history.get\n  PASS  the procedure is numbered, not prose\n  PASS  it names the actual default the API uses\n  PASS  it gives the value_type table so the agent can look the value up\n  PASS  it quantifies how common the trap is\n\ntest_type_splitting_is_required\n  PASS  mixing value types is explicitly prohibited\n  PASS  the remedy is given, not just the hazard\n\ntest_the_retention_router_is_a_decision_table\n  PASS  trend.get is covered\n  PASS  routing is presented as a decision table\n  PASS  aggregates must be declared as hourly\n  PASS  boundary-spanning is covered\n\ntest_all_five_absences_are_distinguished\n  PASS  absence cause 'Wrong value type' is named\n  PASS  absence cause 'Aged out' is named\n  PASS  absence cause 'Retention disabled' is named\n  PASS  absence cause 'Never collected' is named\n  PASS  absence cause 'Genuinely idle' is named\n  PASS  retention-disabled is called a configuration fact\n  PASS  never-collected is called a finding\n  PASS  history=0 and trends=0 are both covered\n\ntest_availability_never_asserts_a_device_is_down\n  PASS  the wording rule is the headline\n  PASS  it requires attributing to the NMS\n  PASS  it requires a timestamp on every observation\n  PASS  not-monitored is distinguished from unreachable\n  PASS  flapping is distinguished from sustained down\n\ntest_problem_review_separates_empty_from_unreachable\n  PASS  empty vs unreachable is called out\n  PASS  acknowledgement is not resolution\n  PASS  duration is required, not just onset\n\ntest_every_skill_states_all_five_boundaries\n  PASS  zabbix-metrics-history names the prometheus/grafana boundary\n  PASS  zabbix-metrics-history names the snmptrap (push vs poll) boundary\n  PASS  zabbix-metrics-history names the ipfix (flows vs counters) boundary\n  PASS  zabbix-metrics-history names the SaaS monitoring boundary\n  PASS  zabbix-metrics-history names the device-reading skills boundary\n  PASS  zabbix-problem-review names the prometheus/grafana boundary\n  PASS  zabbix-problem-review names the snmptrap (push vs poll) boundary\n  PASS  zabbix-problem-review names the ipfix (flows vs counters) boundary\n  PASS  zabbix-problem-review names the SaaS monitoring boundary\n  PASS  zabbix-problem-review names the device-reading skills boundary\n  PASS  zabbix-availability names the prometheus/grafana boundary\n  PASS  zabbix-availability names the snmptrap (push vs poll) boundary\n  PASS  zabbix-availability names the ipfix (flows vs counters) boundary\n  PASS  zabbix-availability names the SaaS monitoring boundary\n  PASS  zabbix-availability names the device-reading skills boundary\n\ntest_the_enforcement_limitation_is_stated\n  PASS  the metrics skill warns that nothing structurally prevents the traps\n  PASS  the absence of a per-call audit trail is stated\n\nall skill procedure tests passed\n\n==============================================================\n  manifest   \u2014 <= 5,000 tokens, 3-tool surface stable (FR-044, SC-021/030)\n==============================================================\n\ntest_manifest_under_ceiling\n        measured manifest: 862 / 5000 tokens (3218 chars)\n  PASS  manifest is <= 5000 tokens\n\ntest_tool_surface_is_stable\n  PASS  exactly three tools are exposed\n  PASS  the tool names are the expected ones\n\ntest_no_write_shaped_tool_appeared\n  PASS  no tool name implies a write\n\nall manifest and surface tests passed\n\n==============================================================\n  LIVE traps \u2014 SKIPPED (set ZABBIX_URL and ZABBIX_TOKEN)\n  Static tests prove the skill SAYS the right thing.\n  Only the live suite proves following it gives the right ANSWER.\n==============================================================\n\n==============================================================\n  ALL SUITES PASSED"
+        }
+      ]
+    }
+  ],
+  "schema_version": 1
+}

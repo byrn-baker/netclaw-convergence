@@ -24,12 +24,14 @@ import os
 import pkgutil
 import sys
 
-from mcp.server.fastmcp import FastMCP
+from fastmcp_tasks import TasksExtension
+from fastmcp import FastMCP
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import verdict as V  # noqa: E402
 
 mcp = FastMCP("anta-mcp")
+mcp.add_extension(TasksExtension(name="netclaw-anta-mcp", concurrency=1))
 
 _CATALOGUE: dict[str, dict] = {}
 
@@ -132,7 +134,7 @@ def anta_describe_test(test: str) -> dict:
     }
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def anta_run_tests(
     host: str,
     tests: list[str] | None = None,
@@ -158,7 +160,7 @@ async def anta_run_tests(
                 "hint": "credentials are never passed as tool arguments"}
 
     if verify_tls is None:
-        verify_tls = os.environ.get("ANTA_VERIFY_TLS", "false").lower() == "true"
+        verify_tls = os.environ.get("ANTA_VERIFY_TLS", "true").lower() not in ("0", "false", "no")
 
     cat = _load_catalogue()
     selected = []
@@ -183,47 +185,59 @@ async def anta_run_tests(
 
 
 async def _run(host, selected, inputs, username, password, enable_pw, verify_tls, port) -> dict:
-    from anta.device import AsyncEOSDevice
+    from anta.device import AsyncEOSDevice, SSLParameters
+
+    class TrustedSSLParameters(SSLParameters):
+        def create_ssl_context(self, *, trust_env=True):
+            context = super().create_ssl_context(trust_env=trust_env)
+            ca_bundle = os.environ.get("ANTA_CA_BUNDLE")
+            if self.verify and ca_bundle:
+                context.load_verify_locations(cafile=ca_bundle)
+            return context
 
     dev = AsyncEOSDevice(
         host=host, username=username, password=password, name=host,
         enable_password=enable_pw, enable=bool(enable_pw),
-        port=port, insecure=not verify_tls, disable_cache=True,
+        port=port, insecure=False, disable_cache=True,
+        ssl_params=TrustedSSLParameters(verify=verify_tls, check_hostname=verify_tls),
         timeout=float(os.environ.get("ANTA_TIMEOUT", "30")),
     )
     try:
-        await dev.refresh()
-    except Exception as e:  # noqa: BLE001
-        return V.unreachable(host, f"{type(e).__name__}: {e}", tls_verified=verify_tls)
-    if not dev.established:
-        return V.unreachable(host, "device did not establish an eAPI session",
-                             tls_verified=verify_tls)
-
-    results = []
-    for e in selected:
-        entry = {"test": e["name"], "category": e["category"], "device": host}
         try:
-            t = e["cls"](device=dev, inputs=inputs.get(e["name"]) or None)
-            await t.test()
-            r = t.result
-            outcome, note = V.classify(str(r.result), list(r.messages or []))
-            entry["verdict"] = outcome
-            if r.messages:
-                entry["messages"] = list(r.messages)
-            if note:
-                entry["note"] = note
-        except Exception as exc:  # noqa: BLE001
-            msg = str(exc)
-            if "input" in msg.lower() and ("required" in msg.lower() or "missing" in msg.lower()):
-                entry["verdict"] = V.SKIPPED
-                entry["note"] = "required inputs not supplied"
-                entry["required_inputs"] = _input_schema(e["cls"])
-            else:
-                entry["verdict"] = V.ERROR
-                entry["messages"] = [f"{type(exc).__name__}: {msg}"]
-        results.append(entry)
+            await dev.refresh()
+        except Exception as e:  # noqa: BLE001
+            return V.unreachable(host, f"{type(e).__name__}: {e}", tls_verified=verify_tls)
+        if not dev.established:
+            return V.unreachable(host, "device did not establish an eAPI session",
+                                 tls_verified=verify_tls)
 
-    return V.envelope(host, results, tls_verified=verify_tls)
+        results = []
+        for e in selected:
+            entry = {"test": e["name"], "category": e["category"], "device": host}
+            try:
+                t = e["cls"](device=dev, inputs=inputs.get(e["name"]) or None)
+                await t.test()
+                r = t.result
+                outcome, note = V.classify(str(r.result), list(r.messages or []))
+                entry["verdict"] = outcome
+                if r.messages:
+                    entry["messages"] = list(r.messages)
+                if note:
+                    entry["note"] = note
+            except Exception as exc:  # noqa: BLE001
+                msg = str(exc)
+                if "input" in msg.lower() and ("required" in msg.lower() or "missing" in msg.lower()):
+                    entry["verdict"] = V.SKIPPED
+                    entry["note"] = "required inputs not supplied"
+                    entry["required_inputs"] = _input_schema(e["cls"])
+                else:
+                    entry["verdict"] = V.ERROR
+                    entry["messages"] = [f"{type(exc).__name__}: {msg}"]
+            results.append(entry)
+
+        return V.envelope(host, results, tls_verified=verify_tls)
+    finally:
+        await dev.disconnect()
 
 
 @mcp.tool()
@@ -242,7 +256,7 @@ def anta_status() -> dict:
         "catalogue_categories": len(cats),
         "largest_categories": dict(sorted(cats.items(), key=lambda x: -x[1])[:8]),
         "credentials_configured": bool(username and password),
-        "verify_tls_default": os.environ.get("ANTA_VERIFY_TLS", "false"),
+        "verify_tls_default": os.environ.get("ANTA_VERIFY_TLS", "true"),
         "read_only": True,
         "note": "discovery tools contact no device; only anta_run_tests does",
     }

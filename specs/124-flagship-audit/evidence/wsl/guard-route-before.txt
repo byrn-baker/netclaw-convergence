@@ -1,0 +1,74 @@
+FFFFF                                                                    [100%]
+=================================== FAILURES ===================================
+__________ test_disabled_guard_mode_refuses_even_with_reachable_proxy __________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7d320eeb50f0>
+tmp_path = PosixPath('/tmp/pytest-of-johncapobianco/pytest-169/test_disabled_guard_mode_refus0')
+
+    def test_disabled_guard_mode_refuses_even_with_reachable_proxy(monkeypatch, tmp_path):
+        config, security = setup(monkeypatch, tmp_path)
+        security.write_text('{"security":{"mode":"hobby"}}')
+>       assert asyncio.run(controls.defenseclaw_available())[0] is False
+E       assert True is False
+
+tests/n2n/test_guard_route.py:29: AssertionError
+__________________ test_direct_model_refuses[anthropic/model] __________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7d320ee07950>
+tmp_path = PosixPath('/tmp/pytest-of-johncapobianco/pytest-169/test_direct_model_refuses_anth0')
+model = 'anthropic/model'
+
+    @pytest.mark.parametrize('model', ['anthropic/model', 'model'])
+    def test_direct_model_refuses(monkeypatch, tmp_path, model):
+        setup(monkeypatch, tmp_path, model)
+>       assert asyncio.run(controls.defenseclaw_available())[0] is False
+E       assert True is False
+
+tests/n2n/test_guard_route.py:35: AssertionError
+_______________________ test_direct_model_refuses[model] _______________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7d320eb83650>
+tmp_path = PosixPath('/tmp/pytest-of-johncapobianco/pytest-169/test_direct_model_refuses_mode0')
+model = 'model'
+
+    @pytest.mark.parametrize('model', ['anthropic/model', 'model'])
+    def test_direct_model_refuses(monkeypatch, tmp_path, model):
+        setup(monkeypatch, tmp_path, model)
+>       assert asyncio.run(controls.defenseclaw_available())[0] is False
+E       assert True is False
+
+tests/n2n/test_guard_route.py:35: AssertionError
+_______ test_guarded_route_accepts_but_explicit_direct_override_refuses ________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7d320ee73790>
+tmp_path = PosixPath('/tmp/pytest-of-johncapobianco/pytest-169/test_guarded_route_accepts_but0')
+
+    def test_guarded_route_accepts_but_explicit_direct_override_refuses(monkeypatch, tmp_path):
+        setup(monkeypatch, tmp_path)
+        assert asyncio.run(controls.defenseclaw_available())[0] is True
+>       with pytest.raises(gateway.EnforcementRefused):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE EnforcementRefused
+
+tests/n2n/test_guard_route.py:41: Failed
+_________________ test_direct_fallback_and_remote_proxy_refuse _________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7d320ebf8270>
+tmp_path = PosixPath('/tmp/pytest-of-johncapobianco/pytest-169/test_direct_fallback_and_remot0')
+
+    def test_direct_fallback_and_remote_proxy_refuse(monkeypatch, tmp_path):
+        config, _ = setup(monkeypatch, tmp_path)
+        data = json.loads(config.read_text())
+        data['agents']['defaults']['model']['fallbacks'] = ['anthropic/direct']
+        config.write_text(json.dumps(data))
+>       assert asyncio.run(controls.defenseclaw_available())[0] is False
+E       assert True is False
+
+tests/n2n/test_guard_route.py:50: AssertionError
+=========================== short test summary info ============================
+FAILED tests/n2n/test_guard_route.py::test_disabled_guard_mode_refuses_even_with_reachable_proxy
+FAILED tests/n2n/test_guard_route.py::test_direct_model_refuses[anthropic/model]
+FAILED tests/n2n/test_guard_route.py::test_direct_model_refuses[model] - asse...
+FAILED tests/n2n/test_guard_route.py::test_guarded_route_accepts_but_explicit_direct_override_refuses
+FAILED tests/n2n/test_guard_route.py::test_direct_fallback_and_remote_proxy_refuse
+5 failed in 0.08s

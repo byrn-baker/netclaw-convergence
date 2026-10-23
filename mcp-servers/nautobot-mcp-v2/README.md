@@ -46,7 +46,8 @@ Replaces the v1 mcp-nautobot (5 IPAM-only REST tools) with 13 tools covering dev
 |----------|----------|---------|-------------|
 | `NAUTOBOT_URL` | Yes | — | Nautobot base URL (e.g., `https://nautobot.internal.byrnbaker.me`) |
 | `NAUTOBOT_TOKEN` | Yes | — | API token with read+write permissions |
-| `NAUTOBOT_VERIFY_SSL` | No | `false` | Verify SSL certificates |
+| `NAUTOBOT_VERIFY_SSL` | No | `true` | Verify SSL certificates; false is an explicit lab exception |
+| `NAUTOBOT_CA_BUNDLE` | No | System trust | Private PEM CA bundle |
 | `NAUTOBOT_TIMEOUT` | No | `30` | Request timeout in seconds |
 | `ITSM_ENABLED` | No | `false` | Enable ITSM gating for writes |
 | `ITSM_LAB_MODE` | No | `true` | Bypass ITSM gating for lab use |
@@ -63,7 +64,7 @@ pip install -r requirements.txt
 ```bash
 export NAUTOBOT_URL="https://nautobot.internal.byrnbaker.me"
 export NAUTOBOT_TOKEN="your-token"
-export NAUTOBOT_VERIFY_SSL="false"
+export NAUTOBOT_VERIFY_SSL="true"
 python3 -u server.py
 ```
 

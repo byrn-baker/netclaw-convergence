@@ -1,0 +1,244 @@
+{
+  "observedOn": "2026-10-11",
+  "status": "final-wsl-rag-delta-passed-publication-held",
+  "baseCommit": "8d4c5baff100b37feec39f35c87682bc6f18fca8",
+  "requiredAncestryVerified": true,
+  "artifact": {
+    "extensionId": "NetClaw.netclaw",
+    "version": "0.1.0",
+    "file": "netclaw-0.1.0-mac-final.vsix",
+    "source": "c2a145946d331f7bc3d8c528c768d06998bb19d4",
+    "sha256": "b13bdfe68c4086bd22edb7521d87443837127f1c70addae08e302b352725c6b8",
+    "bytes": 2349725,
+    "zipEntries": 25,
+    "installedPayloadFilesMatched": 23,
+    "excludedOnlyEditorPackageMetadata": true,
+    "rebuilt": false,
+    "changedEntriesFromPriorWslArtifact": [
+      "extension/changelog.md",
+      "extension/readme.md",
+      "extension/resources/rag.js",
+      "extension/dist/extension.cjs"
+    ],
+    "assistantPayloadUnchanged": true,
+    "laterSourceChanges": "Only excluded editor test/runner files; no packaged product input change."
+  },
+  "platform": {
+    "windows": "10.0.26300.9550",
+    "vscode": "1.141.0",
+    "vscodeCommit": "2a59476c9bfcb90b3ddc372c36762471b7dfad1c",
+    "remoteWslExtension": "0.104.3",
+    "wsl": "3.0.1.0",
+    "linux": "Ubuntu 26.04 LTS",
+    "kernel": "6.18.40.1-microsoft-standard-WSL2",
+    "distributionDisplayName": "Ubuntu-22.04",
+    "actualExtensionHost": {
+      "platform": "linux",
+      "remoteName": "wsl",
+      "privateExtensionsAndStorage": true
+    },
+    "hudSourceVersion": "1.9.0",
+    "hudSourceCommit": "8d4c5baff100b37feec39f35c87682bc6f18fca8",
+    "hudRuntime": "existing OpenClaw",
+    "hudNode": "24.19.0",
+    "isolatedRagPython": "3.12.10",
+    "hudReady": true,
+    "hudExecutionVerifiedFlag": false,
+    "hudRestarted": false
+  },
+  "liveRag": {
+    "fixtureId": "doc_0e84d3b40932",
+    "fixtureTitle": "spec150-wsl-rag-20261011-b7a3d92e.md",
+    "fixtureIngestStatus": "ready",
+    "fixtureChunks": 1,
+    "inventoryAndSourceCitation": true,
+    "refreshImmediatelyDisablesAllControls": true,
+    "explicitSearchAfterRefresh": true,
+    "pendingHideReveal": {
+      "time": "2026-10-11T17:28:17.588Z",
+      "whilePending": {
+        "status": "Waiting for the knowledge operation\u2026",
+        "allControlsDisabled": true
+      },
+      "recovered": true,
+      "explicitSearchCompleted": true,
+      "fixtureCitationPresent": true,
+      "providerRequestSent": false
+    },
+    "providerCalls": 0,
+    "uploadConfirmed": false,
+    "corpusDeletedOrReindexed": false,
+    "documentCountBeforeAfter": 2,
+    "totalChunksBeforeAfter": 1056,
+    "queryCountBefore": 22,
+    "queryCountAfter": 24,
+    "explicitLiveSearches": 2,
+    "cancelFixtureAbsent": true
+  },
+  "isolatedFixture": {
+    "time": "2026-10-11T17:26:14.625Z",
+    "fixture": "unchanged HUD with isolated corpus and delay/error proxy",
+    "checks": [
+      {
+        "name": "isolated real RAG initial inventory",
+        "status": "Collections refreshed."
+      },
+      {
+        "name": "refresh overlap and hide/reveal during pending read",
+        "allControlsDisabledOnReveal": true,
+        "revealStatus": "Waiting for the knowledge operation\u2026",
+        "after": "Collections refreshed.",
+        "calls": [
+          {
+            "method": "GET",
+            "path": "/api/rag/documents",
+            "status": 200
+          },
+          {
+            "method": "GET",
+            "path": "/api/rag/stats",
+            "status": 200
+          }
+        ]
+      },
+      {
+        "name": "explicit search after revealed read",
+        "status": "Collection 'documents' is empty \u2014 nothing indexed yet.",
+        "calls": [
+          {
+            "method": "POST",
+            "path": "/api/rag/search",
+            "status": 200
+          }
+        ]
+      },
+      {
+        "name": "delayed error releases controls",
+        "status": "NetClaw refused /api/rag/documents (HTTP 503). Spec150 isolated delayed RAG failure",
+        "calls": [
+          {
+            "method": "GET",
+            "path": "/api/rag/documents",
+            "status": 503
+          }
+        ]
+      },
+      {
+        "name": "explicit search error releases controls; no implicit retry",
+        "calls": [
+          {
+            "method": "POST",
+            "path": "/api/rag/search",
+            "status": 503
+          }
+        ]
+      },
+      {
+        "name": "disconnect during pending read stays invalid after late completion",
+        "allControlsDisabled": true,
+        "status": "Request timed out or connection closed. A submitted operation may still be running; it was not retried.",
+        "calls": [
+          {
+            "method": "GET",
+            "path": "/api/rag/documents",
+            "status": 200
+          }
+        ]
+      }
+    ],
+    "providerCalls": 0,
+    "implicitRetries": 0,
+    "uploadRequests": 0
+  },
+  "nativeCancellation": {
+    "time": "2026-10-11T17:27:39.877Z",
+    "checks": [
+      {
+        "stage": "file selection",
+        "cancelled": true,
+        "controlsRecovered": true
+      },
+      {
+        "stage": "category",
+        "cancelled": true,
+        "controlsRecovered": true
+      },
+      {
+        "stage": "review",
+        "cancelled": true,
+        "controlsRecovered": true
+      }
+    ],
+    "requests": 0,
+    "uploads": 0,
+    "controlsRecovered": true
+  },
+  "localChecks": {
+    "ragDomRegression": {
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0
+    },
+    "specArtifacts": "passed: 134 specs, 4 legacy exceptions",
+    "releaseMetadata": "passed: 1.9.0",
+    "releaseMetadataTests": "passed: 6",
+    "mcpDeclarationSurfaces": "passed: catalog, dependencies, docs, meraki-ids, packages, portability",
+    "standaloneMacEditorRunnerUsed": false
+  },
+  "preservation": {
+    "protectedFileObservations": 15,
+    "allUnchangedAfterValidation": true,
+    "ownerExtensionUnchangedDuringValidation": true,
+    "ownerStatusUnchangedDuringValidation": true,
+    "hudGatewayCoreFederationIdentitiesUnchanged": true,
+    "independentlyVaryingServices": [
+      "netclaw-ddns-zoom.service",
+      "netclaw-ddns.service",
+      "netclaw-zoom-rtms-mcp.service"
+    ],
+    "editorDebugPortClosed": true,
+    "fixtureHudStopped": true,
+    "temporaryConnectionProfilesRemoved": 2,
+    "originalValidationProfileRetained": true,
+    "temporaryEditorHookRestoredToOriginalAbsence": true,
+    "activeNodeRagRepairsAndBackupsRetained": true
+  },
+  "ownerRequestedCleanup": {
+    "netclawUninstalledNormallyAfterValidation": true,
+    "wslCliInventoriesWithoutNetClaw": 2,
+    "windowsRegistriesWithoutNetClaw": 3,
+    "savedPrivateExtensionStateRetained": true,
+    "untrackedFilesBefore": 6681,
+    "untrackedFilesAfter": 0,
+    "backupTreeRelocatedOutsideRepositoryWithVerifiedContent": true,
+    "rollbackPlanUpdatedToRelocatedBackup": true,
+    "activeTestbedEditPreserved": true,
+    "ownerWindowReload": "owner confirmed saved work and reloaded VS Code"
+  },
+  "limitations": [
+    "Existing OpenClaw scope only; no new live Hermes, reboot, second distro, Remote SSH, device writes, peer operations or mobile qualification.",
+    "Prior full WSL assistant/provider/lifecycle matrix retained; unchanged inputs and no relevant failure did not require repeating it.",
+    "Prior Copilot Allow all deviation and fresh Default permissions/Allow Once recheck remain explicit.",
+    "Previous Mac1.102 CLI inventory anomaly and longer-session Claude config diff limitation remain in historical evidence.",
+    "Faults/delay injected by a private read-only proxy in front of an unchanged isolated HUD with an empty disposable RAG corpus; not owner HUD failures."
+  ],
+  "driverObservations": [
+    "First file-picker attempt did not await remote directory population; corrected selection used the normal populated list. Final category/review cancellation passed.",
+    "First disconnect observer waited for transient Connection changed text; normal abort error replaced it. Corrected observer asserted disabled controls through late completion. No product change."
+  ],
+  "completion": {
+    "spec150FinalValidationCompleteForDocumentedScope": true,
+    "furtherMacHandoffRequired": false,
+    "productBytesChanged": false,
+    "spec151Started": false
+  },
+  "publication": {
+    "heldByOwner": true,
+    "T023": "unchecked",
+    "marketplacePublished": false,
+    "githubReleaseCreated": false,
+    "releaseVersionTagCreated": false,
+    "publisherCredentialsUsed": false,
+    "blogPublished": false
+  }
+}

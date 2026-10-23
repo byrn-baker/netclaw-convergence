@@ -1,0 +1,2138 @@
+{
+  "schema_version": 1,
+  "fastmcp": "4.0.11",
+  "mcp": "2.3.0",
+  "components": {
+    "aci": {
+      "directory": "ACI_MCP",
+      "reviewed_commit": "724e47d89edc725a51f1b4f6b0b2849da249309c",
+      "patches": [
+        {
+          "path": "aci_mcp/main.py",
+          "before_sha256": "c0f27c07952989b051238a609d684216257ad37915978a2df48380295af2c18c",
+          "after_sha256": "16e353dd66fdd46dc8696c726f7b0290fe3d7f4dfe81a363d4dfbf5b402021e8",
+          "edits": [
+            {
+              "start": 8367,
+              "old": "            tools_dict = await mcp.get_tools()\n",
+              "new": "            tools_dict = await mcp.list_tools()\n"
+            }
+          ]
+        }
+      ],
+      "verification": "aci: pass"
+    },
+    "fmc": {
+      "directory": "CiscoFMC-MCP-server-community",
+      "reviewed_commit": "2158388a017da47ac76433cf53027d96238ba91c",
+      "patches": [
+        {
+          "path": "requirements.txt",
+          "before_sha256": "194b06564e503c72ce5c690340cc800831eb6a112718dc7b462b7c5d762528d7",
+          "after_sha256": "d89455c74eeb61df1ad6ca15ebc206e70db103bde9c0ba81086e29712466087b",
+          "edits": [
+            {
+              "start": 0,
+              "old": "fastmcp>=2.3.0\n",
+              "new": "fastmcp==4.0.11\nmcp==2.3.0\n"
+            }
+          ]
+        }
+      ],
+      "verification": "fmc: pass"
+    },
+    "ise": {
+      "directory": "ISE_MCP",
+      "reviewed_commit": "1374165ab332ac51c64462f2495d0b8b4347a7bc",
+      "patches": [
+        {
+          "path": "requirements.txt",
+          "before_sha256": "5b4af044e93f528c805c5fb4dc9aa82915d45076f1bdc2d715a7bf695d643438",
+          "after_sha256": "22ae82cdae9f15e1d3a01f6078dae622e52a8cebe9f9eb16a88e8c3c247853f6",
+          "edits": [
+            {
+              "start": 0,
+              "old": "",
+              "new": "fastmcp==4.0.11\nmcp==2.3.0\n"
+            },
+            {
+              "start": 23,
+              "old": "fastmcp\n",
+              "new": ""
+            },
+            {
+              "start": 46,
+              "old": "aiolimiter",
+              "new": "aiolimiter\n"
+            }
+          ]
+        }
+      ],
+      "verification": "ise: pass"
+    },
+    "wikipedia": {
+      "directory": "Wikipedia_MCP",
+      "reviewed_commit": "0cd4b24e92419d03e6999d23e776c2826d75b7cd",
+      "patches": [
+        {
+          "path": "requirements.txt",
+          "before_sha256": "12f899cf97d1e6d75b018f018e25ab8859fa331e0ee05f9b37313e889a931513",
+          "after_sha256": "6989cbb1928e0a5edd798289575cbc3c3bd6a793065b1dada2ba66da67c729b1",
+          "edits": [
+            {
+              "start": 7,
+              "old": "",
+              "new": "==4.0.11\nmcp==2.3.0"
+            },
+            {
+              "start": 26,
+              "old": "",
+              "new": "\n\nfastmcp-tasks==4.0.11\n"
+            }
+          ],
+          "variants": [
+            {
+              "before_sha256": "90e1b4e454fce02f7f89f777c1775127053de421961ac2ece6d351f9e7caff5f",
+              "edits": [
+                {
+                  "start": 46,
+                  "old": "",
+                  "new": "\nfastmcp-tasks==4.0.11\n"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "path": "main.py",
+          "before_sha256": "6030dde8e99ac0d870da91308d501e673e2865dcc76ceada1b9d03a56c7f3bc3",
+          "after_sha256": "11ec9db0002b1b68f5f36e8cbfc4ac343adc8590cab71b716e086fa55fbc6032",
+          "edits": [
+            {
+              "start": 14,
+              "old": "",
+              "new": "\nfrom fastmcp_tasks import TasksExtension\nfrom functools import wraps\nfrom fastmcp.utilities.async_utils import call_sync_fn_in_threadpool"
+            },
+            {
+              "start": 484,
+              "old": "",
+              "new": "mcp.add_extension(TasksExtension(name=\"netclaw-wikipedia\", concurrency=1))\n\n\ndef _task_tool(**options):\n    \"\"\"NetClaw spec 142: preserve upstream callables and offload blocking reads.\"\"\"\n    def register(fn):\n        @wraps(fn)\n        async def run(*args, **kwargs):\n            return await call_sync_fn_in_threadpool(fn, *args, **kwargs)\n        mcp.tool(task=True, **options)(run)\n        return fn\n    return register\n\n"
+            },
+            {
+              "start": 894,
+              "old": "mcp.",
+              "new": "_task_"
+            },
+            {
+              "start": 1186,
+              "old": "mcp.",
+              "new": "_task_"
+            },
+            {
+              "start": 1493,
+              "old": "mcp.",
+              "new": "_task_"
+            },
+            {
+              "start": 1777,
+              "old": "mcp.",
+              "new": "_task_"
+            },
+            {
+              "start": 2074,
+              "old": "mcp.",
+              "new": "_task_"
+            },
+            {
+              "start": 2370,
+              "old": "mcp.",
+              "new": "_task_"
+            },
+            {
+              "start": 2694,
+              "old": "mcp.",
+              "new": "_task_"
+            },
+            {
+              "start": 3012,
+              "old": "mcp.",
+              "new": "_task_"
+            },
+            {
+              "start": 3289,
+              "old": "mcp.",
+              "new": "_task_"
+            },
+            {
+              "start": 3588,
+              "old": "mcp.",
+              "new": "_task_"
+            },
+            {
+              "start": 3877,
+              "old": "mcp.",
+              "new": "_task_"
+            },
+            {
+              "start": 4174,
+              "old": "mcp.",
+              "new": "_task_"
+            },
+            {
+              "start": 4572,
+              "old": "mcp.",
+              "new": "_task_"
+            }
+          ]
+        }
+      ],
+      "verification": "Spec 141 framework catalog passed; spec 142 Tasks validation recorded separately.",
+      "task_tools": [
+        "check_page_exists",
+        "disambiguation_options",
+        "get_categories",
+        "get_content",
+        "get_html",
+        "get_images",
+        "get_links",
+        "get_page_id",
+        "get_references",
+        "get_summary",
+        "get_title",
+        "get_url",
+        "search_pages"
+      ]
+    },
+    "catalyst-center-legacy": {
+      "directory": "catalyst-center-mcp",
+      "reviewed_commit": "481ca28bd0e6d6325187e4c1d7f7eac584f952b3",
+      "patches": [
+        {
+          "path": "requirements.txt",
+          "before_sha256": "dc6515b34f85e3dc2c2adeb906e4459d73c0fa71817d67d10ea039aa57c12580",
+          "after_sha256": "0533a0d76131469459d53e914a39f786429642d5d0898c3fe4c530a98379b581",
+          "edits": [
+            {
+              "start": 0,
+              "old": "fastmcp>=0.1.0\n",
+              "new": "fastmcp==4.0.11\nmcp==2.3.0\n"
+            },
+            {
+              "start": 47,
+              "old": "python-dotenv>=1.0.0",
+              "new": "python-dotenv>=1.0.0\n"
+            }
+          ]
+        }
+      ],
+      "verification": "catalyst-center-legacy: pass"
+    },
+    "sdwan": {
+      "directory": "cisco-sdwan-mcp",
+      "reviewed_commit": "fe2fdf6d0dae4bfde37f7e00176a9fbda63645a7",
+      "patches": [
+        {
+          "path": "sdwan_mcp_server.py",
+          "before_sha256": "4297fbf0969f936d5a53f69ea8ab365aee2d3163d0929dddcea5b92761ee1097",
+          "after_sha256": "63dadf336fd9c755afea498b1b5731112e763dc93870b80f14bb448b5ed5f599",
+          "edits": [
+            {
+              "start": 44,
+              "old": "",
+              "new": "\nfrom fastmcp_tasks import TasksExtension\nfrom functools import wraps\nfrom fastmcp.utilities.async_utils import call_sync_fn_in_threadpool"
+            },
+            {
+              "start": 689,
+              "old": "",
+              "new": "\n\nmcp.add_extension(TasksExtension(name=\"netclaw-sdwan\", concurrency=1))\n\n\ndef _task_tool(**options):\n    \"\"\"NetClaw spec 142: preserve upstream callables and offload blocking reads.\"\"\"\n    def register(fn):\n        @wraps(fn)\n        async def run(*args, **kwargs):\n            return await call_sync_fn_in_threadpool(fn, *args, **kwargs)\n        mcp.tool(task=True, **options)(run)\n        return fn\n    return register"
+            },
+            {
+              "start": 3673,
+              "old": "mcp.",
+              "new": "_task_"
+            },
+            {
+              "start": 3982,
+              "old": "mcp.",
+              "new": "_task_"
+            },
+            {
+              "start": 4319,
+              "old": "mcp.",
+              "new": "_task_"
+            },
+            {
+              "start": 4865,
+              "old": "mcp.",
+              "new": "_task_"
+            },
+            {
+              "start": 5335,
+              "old": "mcp.",
+              "new": "_task_"
+            },
+            {
+              "start": 5607,
+              "old": "mcp.",
+              "new": "_task_"
+            },
+            {
+              "start": 5888,
+              "old": "mcp.",
+              "new": "_task_"
+            },
+            {
+              "start": 13974,
+              "old": "mcp.",
+              "new": "_task_"
+            },
+            {
+              "start": 14196,
+              "old": "mcp.",
+              "new": "_task_"
+            },
+            {
+              "start": 14373,
+              "old": "mcp.",
+              "new": "_task_"
+            },
+            {
+              "start": 14820,
+              "old": "mcp.",
+              "new": "_task_"
+            },
+            {
+              "start": 15111,
+              "old": "mcp.",
+              "new": "_task_"
+            },
+            {
+              "start": 15359,
+              "old": "mcp.",
+              "new": "_task_"
+            },
+            {
+              "start": 15781,
+              "old": "mcp.",
+              "new": "_task_"
+            },
+            {
+              "start": 16041,
+              "old": "mcp.",
+              "new": "_task_"
+            }
+          ]
+        }
+      ],
+      "verification": "Spec 141 framework catalog passed; spec 142 Tasks validation recorded separately.",
+      "task_tools": [
+        "get_alarms",
+        "get_bfd_sessions",
+        "get_centralized_policies",
+        "get_control_connections",
+        "get_device_template_details",
+        "get_device_templates",
+        "get_devices",
+        "get_events",
+        "get_feature_template_details",
+        "get_feature_templates",
+        "get_interface_stats",
+        "get_omp_routes",
+        "get_running_config",
+        "get_template_variables",
+        "get_wan_edge_inventory"
+      ]
+    },
+    "containerlab": {
+      "directory": "clab-mcp-server",
+      "reviewed_commit": "0252f5c97fb88a8931fa10957adba5302e9c8e11",
+      "patches": [
+        {
+          "path": "requirements.txt",
+          "before_sha256": "3cca05589cb276b67fa3d02db481e3e8e5e040213f8385b5e7a06f358a3fcd9f",
+          "after_sha256": "558ffd8fea5f167125cb8db9ad3b620fb64d08a5208758f9aa6a37daaf1740bd",
+          "edits": [
+            {
+              "start": 0,
+              "old": "fastmcp\n",
+              "new": "fastmcp==4.0.11\nmcp==2.3.0\n"
+            }
+          ]
+        }
+      ],
+      "verification": "containerlab: pass"
+    },
+    "f5": {
+      "directory": "f5-mcp-server",
+      "reviewed_commit": "89ef9d763d923e3728741c50b3a3602d9f96b166",
+      "patches": [
+        {
+          "path": "F5MCPserver.py",
+          "before_sha256": "fadc7adf21405f5a8ce078585e7539058bb07ddc5b76df4f17d75e8806bb1037",
+          "after_sha256": "c5a83014ce09089afeb9e9aa1e92d06eb101711cb4e3d889119e8ced8421c38c",
+          "edits": [
+            {
+              "start": 92,
+              "old": "from mcp.server.fastmcp import FastMCP\n",
+              "new": "from fastmcp import FastMCP\n"
+            }
+          ]
+        },
+        {
+          "path": "requirements.txt",
+          "before_sha256": "5a56c6ee96d80d4579ff5a7776ab357dd115bcee5098eee8bba4dca44b6a0be5",
+          "after_sha256": "7153d817c0ff45c4863e524082d5700f78c0c82ad53a8006e7fcc932383167d0",
+          "edits": [
+            {
+              "start": 0,
+              "old": "",
+              "new": "fastmcp==4.0.11\nmcp==2.3.0\n"
+            },
+            {
+              "start": 17,
+              "old": "mcp==1.4.1\npython-dotenv==1.0.1\n",
+              "new": "python-dotenv>=1.1,<2\n"
+            }
+          ]
+        }
+      ],
+      "verification": "f5: pass"
+    },
+    "gait": {
+      "directory": "gait_mcp",
+      "reviewed_commit": "d17cab9b10428f6d7cecd8a4f0a537ec6943981b",
+      "patches": [
+        {
+          "path": "gait_mcp.py",
+          "before_sha256": "08214a3f51479dce7504b5ef8c9f589ad262735ff685fc00ca06c75764531838",
+          "after_sha256": "adc47eefdefe8a3e5d3039b8dd7489e6e17dbbc112ba33501f046fd80831a508",
+          "edits": [
+            {
+              "start": 1462,
+              "old": "    from mcp.server.fastmcp import FastMCP\n",
+              "new": "    from fastmcp import FastMCP\n"
+            },
+            {
+              "start": 37114,
+              "old": "        tools = mcp._tool_manager._tools\n",
+              "new": "        import asyncio\n        tools = {tool.name: tool for tool in asyncio.run(mcp.list_tools())}\n"
+            },
+            {
+              "start": 37885,
+              "old": "        uvicorn.run(mcp.sse_app(), host=host, port=port)\n",
+              "new": "        uvicorn.run(mcp.http_app(transport=\"sse\"), host=host, port=port)\n"
+            }
+          ]
+        },
+        {
+          "path": "pyproject.toml",
+          "before_sha256": "760fed00c25f2e91fa11b7eeeff37b4332432c13eeb230cb9673e063c048a116",
+          "after_sha256": "79c85f4ce9e78c0e4420d68b4f60163d44e407ad282d802f42912e026dc00bfd",
+          "edits": [
+            {
+              "start": 248,
+              "old": "    \"mcp\",\n    \"fastmcp\",\n",
+              "new": "    \"mcp==2.3.0\",\n    \"fastmcp==4.0.11\",\n"
+            }
+          ]
+        }
+      ],
+      "verification": "gait: pass"
+    },
+    "humanrail": {
+      "directory": "humanrail-mcp-server",
+      "reviewed_commit": "2b1bd40f2a5dae97569037f0303a38e324954ac3",
+      "patches": [
+        {
+          "path": "pyproject.toml",
+          "before_sha256": "6b574ded9b49a946bc8953d9fd1bcbd2fc1dd7fa81fcc1c53081e511832a6fd9",
+          "after_sha256": "4591e379907e1d8a3bdb3f473e2c046ed3d72a5bf39dec4f3e9b4a80847db8ac",
+          "edits": [
+            {
+              "start": 303,
+              "old": "keywords = [\"mcp\", \"humanrail\", \"human-in-the-loop\", \"ai-agents\", \"task-routing\"]\n",
+              "new": "keywords = [\"mcp==2.3.0\", \"humanrail\", \"human-in-the-loop\", \"ai-agents\", \"task-routing\"]\n"
+            },
+            {
+              "start": 637,
+              "old": "    \"mcp[cli]>=1.0.0\",\n",
+              "new": "    \"fastmcp==4.0.11\",\n    \"mcp==2.3.0\",\n"
+            }
+          ]
+        },
+        {
+          "path": "server.py",
+          "before_sha256": "b960ebfadd7dc05c2f3ca1cd9ffa8b219de6c9e0c333996031547942c93ae13b",
+          "after_sha256": "dde2b521d978de32e83f22fa86ba5af52a93b4edaf80774eaa4a7949357799e7",
+          "edits": [
+            {
+              "start": 623,
+              "old": "from mcp.server.fastmcp import FastMCP\n",
+              "new": "from fastmcp import FastMCP\n"
+            },
+            {
+              "start": 1322,
+              "old": "    host=\"127.0.0.1\",\n    port=8100,\n",
+              "new": ""
+            }
+          ]
+        }
+      ],
+      "verification": "humanrail: pass"
+    },
+    "infrahub": {
+      "directory": "infrahub-mcp",
+      "reviewed_commit": "bb2207f26c41238125df56af7476450a37752ad5",
+      "patches": [
+        {
+          "path": "pyproject.toml",
+          "before_sha256": "23043974520d060a44844797cbbc073aa36e9f23149765b636d8f2a1b6fb56e0",
+          "after_sha256": "7337ec090ce7d84422cf9403c8a28fc45084455133367aea6b3591fb4e4d5b51",
+          "edits": [
+            {
+              "start": 168,
+              "old": "    \"fastmcp>=2.10.5\",\n",
+              "new": "    \"fastmcp==4.0.11\",\n"
+            }
+          ]
+        },
+        {
+          "path": "src/infrahub_mcp/server.py",
+          "before_sha256": "f98416616b2e49f7a110985bf7c8df26539e9a5f600f1aed5f259a3af3b3d292",
+          "after_sha256": "a9573993b4f079e9a93b799bad6d74f761fcc1824a9ccc133f840559d43d9bb9",
+          "edits": [
+            {
+              "start": 497,
+              "old": "async def app_lifespan(server: FastMCP) -> AsyncIterator[AppContext]:  # noqa: ARG001, RUF029\n",
+              "new": "async def app_lifespan(server: FastMCP) -> AsyncIterator[dict]:  # noqa: ARG001, RUF029\n"
+            },
+            {
+              "start": 717,
+              "old": "        yield AppContext(client=client)\n",
+              "new": "        yield {\"client\": client}\n"
+            }
+          ]
+        },
+        {
+          "path": "src/infrahub_mcp/tools/branch.py",
+          "before_sha256": "233a4d4a2d6dc12ad3882dca2ea4c8a5df9f6219e60afbaba1692be1182c08be",
+          "after_sha256": "a52adbfc5e9e8cb4ef3621691a15f8b1ebe6e6d318c19aa9b7440e766497ee10",
+          "edits": [
+            {
+              "start": 1090,
+              "old": "    client: InfrahubClient = ctx.request_context.lifespan_context.client\n",
+              "new": "    client: InfrahubClient = ctx.lifespan_context[\"client\"]\n"
+            },
+            {
+              "start": 1856,
+              "old": "    client: InfrahubClient = ctx.request_context.lifespan_context.client\n",
+              "new": "    client: InfrahubClient = ctx.lifespan_context[\"client\"]\n"
+            }
+          ]
+        },
+        {
+          "path": "src/infrahub_mcp/tools/gql.py",
+          "before_sha256": "f5bcffa331fb2a7fc149583e18014b2fe694e0bdefa94aca006b402cfad235e8",
+          "after_sha256": "50c7b3aa7f9d752b1bd262d560faa7cfc997f0de6390f6bec16373213a697f3b",
+          "edits": [
+            {
+              "start": 630,
+              "old": "    client: InfrahubClient = ctx.request_context.lifespan_context.client\n",
+              "new": "    client: InfrahubClient = ctx.lifespan_context[\"client\"]\n"
+            },
+            {
+              "start": 1544,
+              "old": "    client: InfrahubClient = ctx.request_context.lifespan_context.client\n",
+              "new": "    client: InfrahubClient = ctx.lifespan_context[\"client\"]\n"
+            }
+          ]
+        },
+        {
+          "path": "src/infrahub_mcp/tools/nodes.py",
+          "before_sha256": "4e617d0aeaecc72be1b89f5237de7788e1505e5c899a7f9e73b2cbb3cded206f",
+          "after_sha256": "0107c503a152972ebc4c4f916b38e549b3498acde8e8c7bb0f3a5f3ef59763c4",
+          "edits": [
+            {
+              "start": 1763,
+              "old": "    client: InfrahubClient = ctx.request_context.lifespan_context.client\n",
+              "new": "    client: InfrahubClient = ctx.lifespan_context[\"client\"]\n"
+            },
+            {
+              "start": 5007,
+              "old": "    client: InfrahubClient = ctx.request_context.lifespan_context.client\n",
+              "new": "    client: InfrahubClient = ctx.lifespan_context[\"client\"]\n"
+            },
+            {
+              "start": 7213,
+              "old": "    client: InfrahubClient = ctx.request_context.lifespan_context.client\n",
+              "new": "    client: InfrahubClient = ctx.lifespan_context[\"client\"]\n"
+            }
+          ]
+        },
+        {
+          "path": "src/infrahub_mcp/tools/schema.py",
+          "before_sha256": "947ac4c753d1ea321033cb9efd48146a866ca1987f527a7ab99b1c7ffe9e167c",
+          "after_sha256": "e64110d98fba2bb92bd980d7d057c8c23d87d444eba5d120baeb57a7d90f5e3e",
+          "edits": [
+            {
+              "start": 1060,
+              "old": "    client: InfrahubClient = ctx.request_context.lifespan_context.client\n",
+              "new": "    client: InfrahubClient = ctx.lifespan_context[\"client\"]\n"
+            },
+            {
+              "start": 2550,
+              "old": "    client: InfrahubClient = ctx.request_context.lifespan_context.client\n",
+              "new": "    client: InfrahubClient = ctx.lifespan_context[\"client\"]\n"
+            },
+            {
+              "start": 4410,
+              "old": "    client: InfrahubClient = ctx.request_context.lifespan_context.client\n",
+              "new": "    client: InfrahubClient = ctx.lifespan_context[\"client\"]\n"
+            }
+          ]
+        }
+      ],
+      "verification": "infrahub: pass"
+    },
+    "arista-cvp": {
+      "directory": "mcp-cvp-fun",
+      "reviewed_commit": "0f3e3accb12bf68aa61eea591716f0a94e7453d7",
+      "patches": [
+        {
+          "path": "mcp_server_rest.py",
+          "before_sha256": "852878f00646f49c1846e24eb5432267066c6a8085c068ffd9bcbc5698ffd74e",
+          "after_sha256": "0ba960582c6bcc6007b3c54718015704fe7fa8196ab62c1bc78f4445e9656eeb",
+          "edits": [
+            {
+              "start": 81,
+              "old": "#     \"mcp.server.fastmcp\",\n#     \"dotenv\",\n",
+              "new": "#     \"fastmcp==4.0.11\",\n#     \"python-dotenv\",\n"
+            },
+            {
+              "start": 143,
+              "old": "# [tool.uv]\n# exclude-newer = \"2024-08-05T00:00:00Z\"\n",
+              "new": ""
+            },
+            {
+              "start": 239,
+              "old": "from mcp.server.fastmcp import FastMCP\n",
+              "new": "from fastmcp import FastMCP\n"
+            },
+            {
+              "start": 392,
+              "old": "    filename='/home/admin/app.log',                # Log file name\n",
+              "new": "    stream=sys.stderr,  # MCP diagnostics never require a foreign home directory\n"
+            }
+          ],
+          "variants": [
+            {
+              "before_sha256": "a6c766ca5888d8d85184989baf8afe578026da7166fcffa5e40d7b574f70f933",
+              "edits": [
+                {
+                  "start": 20,
+                  "old": "# /// script\n# requires-python = \">=3.12\"\n# dependencies = [\n#     \"mcp.server.fastmcp\",\n#     \"dotenv\",\n#     \"httpx\"\n# ]\n# [tool.uv]\n# exclude-newer = \"2024-08-05T00:00:00Z\"\n# ///\n\nfrom typing import Any\nimport httpx\nfrom mcp.server.fastmcp import FastMCP\nimport sys, os , json\nfrom dotenv import load_dotenv\nimport uuid\nimport logging\nimport time\n\nos.makedirs(os.path.dirname(os.environ.get('CVP_LOG_FILE',\n    os.path.join(os.path.expanduser('~'), '.openclaw', 'logs', 'x'))),\n    exist_ok=True)\nlogging.basicConfig(\n    filename=os.environ.get('CVP_LOG_FILE',\n        os.path.join(os.path.expanduser('~'), '.openclaw', 'logs',\n                     'arista-cvp-mcp.log')),  # patched by NetClaw spec 090\n    level=logging.INFO,                # Minimum log level\n    format='%(asctime)s - %(levelname)s - %(message)s'  # Log message format\n)\n\n",
+                  "new": "# /// script\n# requires-python = \">=3.12\"\n# dependencies = [\n#     \"fastmcp==4.0.11\",\n#     \"python-dotenv\",\n#     \"httpx\"\n# ]\n# ///\n\nfrom typing import Any\nimport httpx\nfrom fastmcp import FastMCP\nimport sys, os , json\nfrom dotenv import load_dotenv\nimport uuid\nimport logging\nimport time\n\nlogging.basicConfig(\n    stream=sys.stderr,  # MCP diagnostics never require a foreign home directory\n    level=logging.INFO,                # Minimum log level\n    format='%(asctime)s - %(levelname)s - %(message)s'  # Log message format\n)\n\n"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "verification": "arista-cvp: pass"
+    },
+    "nvd-cve": {
+      "directory": "mcp-nvd",
+      "reviewed_commit": "568a603946715b7b3d520556841d826d2f73a222",
+      "patches": [
+        {
+          "path": "mcp_nvd/main.py",
+          "before_sha256": "d3ba6fd40e3749a2d095fd025382cd8029d97e2fd4f3534d80ccbf7bf834c189",
+          "after_sha256": "90029f88fd97c8abab72504dc81624e5b686b1a01e1187e588802df259114566",
+          "edits": [
+            {
+              "start": 31,
+              "old": "from starlette.applications import Starlette\nfrom mcp.server.sse import SseServerTransport\nfrom starlette.requests import Request\nfrom starlette.routing import Mount, Route\nfrom mcp.server import Server\n",
+              "new": ""
+            },
+            {
+              "start": 265,
+              "old": "\ndef create_starlette_app(mcp_server: Server, *, debug: bool = False) -> Starlette:\n    \"\"\"Create a Starlette application that can serve the provided mcp server with SSE.\"\"\"\n    sse = SseServerTransport(\"/messages/\")\n\n    async def handle_sse(request: Request) -> None:\n        async with sse.connect_sse(\n                request.scope,\n                request.receive,\n                request._send,  # noqa: SLF001\n        ) as (read_stream, write_stream):\n            await mcp_server.run(\n                read_stream,\n                write_stream,\n                mcp_server.create_initialization_options(),\n            )\n\n    return Starlette(\n        debug=debug,\n        routes=[\n            Route(\"/sse\", endpoint=handle_sse),\n            Mount(\"/messages/\", app=sse.handle_post_message),\n        ],\n    )\n",
+              "new": ""
+            },
+            {
+              "start": 1815,
+              "old": "        mcp_server = mcp._mcp_server  # noqa: WPS437\n        starlette_app = create_starlette_app(mcp_server, debug=True)\n",
+              "new": "        starlette_app = mcp.http_app(transport=\"sse\")\n"
+            }
+          ]
+        },
+        {
+          "path": "mcp_nvd/server.py",
+          "before_sha256": "a7964bc665856fc7d91ae54b71eb1739e81eaa493079722ca9c6474977093039",
+          "after_sha256": "5b61ac140c2bae3e1b5a0b5d46cf935a2817e172110dd4005cc5571c4bcd5a5a",
+          "edits": [
+            {
+              "start": 1068,
+              "old": "",
+              "new": "fast"
+            },
+            {
+              "start": 1071,
+              "old": ".",
+              "new": "_ta"
+            },
+            {
+              "start": 1073,
+              "old": "",
+              "new": "ks import TasksExt"
+            },
+            {
+              "start": 1074,
+              "old": "",
+              "new": "nsion\nf"
+            },
+            {
+              "start": 1075,
+              "old": "ver.",
+              "new": "om "
+            },
+            {
+              "start": 1731,
+              "old": "",
+              "new": ")\n\nmcp.add_extension(TasksExtension(name=\"netclaw-nvd-cve\""
+            },
+            {
+              "start": 1733,
+              "old": "depe",
+              "new": "co"
+            },
+            {
+              "start": 1738,
+              "old": "d",
+              "new": "curr"
+            },
+            {
+              "start": 1742,
+              "old": "ies",
+              "new": "y"
+            },
+            {
+              "start": 1746,
+              "old": "deps",
+              "new": "1)"
+            },
+            {
+              "start": 6514,
+              "old": "",
+              "new": "task=True"
+            },
+            {
+              "start": 7020,
+              "old": "",
+              "new": "task=True"
+            }
+          ],
+          "variants": [
+            {
+              "before_sha256": "8ffd516b107b89901442187d9e400806a5b4fd621b7a54904126912384382c9d",
+              "edits": [
+                {
+                  "start": 1075,
+                  "old": "",
+                  "new": "_tasks import TasksExtension\nfrom fastmcp"
+                },
+                {
+                  "start": 1720,
+                  "old": "",
+                  "new": ")\n\nmcp.add_extension(TasksExtension(name=\"netclaw-nvd-cve\", concurrency=1)"
+                },
+                {
+                  "start": 6484,
+                  "old": "",
+                  "new": "task=True"
+                },
+                {
+                  "start": 6990,
+                  "old": "",
+                  "new": "task=True"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "path": "pyproject.toml",
+          "before_sha256": "e552f7d9f4a6487545cd315fa3b80fea24b81eb101fe5188be474e69c49fcdd1",
+          "after_sha256": "5fed26b65354452146fb61fa06390ce7b4f5a8701fb791e1513057584e56b89b",
+          "edits": [
+            {
+              "start": 182,
+              "old": "",
+              "new": "   \"fastmcp==4.0.11\",\n    \"fastmcp-tasks==4.0.11\",\n "
+            },
+            {
+              "start": 204,
+              "old": ">",
+              "new": ""
+            },
+            {
+              "start": 206,
+              "old": "1",
+              "new": "=2"
+            },
+            {
+              "start": 208,
+              "old": "0",
+              "new": "3"
+            },
+            {
+              "start": 444,
+              "old": "",
+              "new": "==2.3.0"
+            }
+          ],
+          "variants": [
+            {
+              "before_sha256": "d05522e32f7252e62cce46afc872b7ba8ca1121a4a49470e1b95dcd92aa86bbf",
+              "edits": [
+                {
+                  "start": 193,
+                  "old": "",
+                  "new": "==4.0.11\",\n    \"fastmcp-tasks"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "verification": "Spec 141 framework catalog passed; spec 142 Tasks validation recorded separately.",
+      "task_tools": [
+        "get_cve",
+        "search_cve"
+      ]
+    },
+    "meraki": {
+      "directory": "meraki-magic-mcp-community",
+      "reviewed_commit": "b846cfa9b60e7ccacc473bbcb0151ee99f5ff3aa",
+      "patches": [
+        {
+          "path": "meraki-mcp-dynamic.py",
+          "before_sha256": "321768398767b91e409b84e59510ea7c6fc80ee9be1654709d88895a62dec98a",
+          "after_sha256": "a4a5552a81e50b691a90999a982934e9e0f5ae788cbd22300ac7895fae7154d2",
+          "edits": [
+            {
+              "start": 206,
+              "old": "from mcp.server.fastmcp import FastMCP\n",
+              "new": "from fastmcp import FastMCP\n"
+            },
+            {
+              "start": 630,
+              "old": "mcp = FastMCP(\"Meraki Magic MCP - Full API\", host=MCP_HOST, port=MCP_PORT)\n",
+              "new": "mcp = FastMCP(\"Meraki Magic MCP - Full API\")\n"
+            },
+            {
+              "start": 31024,
+              "old": "app = mcp.streamable_http_app() if MCP_TRANSPORT in (\"http\", \"streamable-http\") else None\n",
+              "new": "app = mcp.http_app(stateless_http=True) if MCP_TRANSPORT in (\"http\", \"streamable-http\") else None\n"
+            },
+            {
+              "start": 31432,
+              "old": "    mcp.run(transport=transport)\n",
+              "new": "    mcp.run(transport=transport, **({\"host\": MCP_HOST, \"port\": MCP_PORT} if transport != \"stdio\" else {}))\n"
+            }
+          ]
+        },
+        {
+          "path": "meraki-mcp.py",
+          "before_sha256": "44fc4142d5b7944246022809e3ea0faa1f15061713572ec34c4458eed91481a7",
+          "after_sha256": "d527e4f11f3e1caa1ea2c1aa3522663b95798fb38c6947e66c72b849f407b956",
+          "edits": [
+            {
+              "start": 190,
+              "old": "from mcp.server.fastmcp import FastMCP\n",
+              "new": "from fastmcp import FastMCP\n"
+            },
+            {
+              "start": 587,
+              "old": "mcp = FastMCP(\"Meraki Magic MCP\", host=MCP_HOST, port=MCP_PORT)\n",
+              "new": "mcp = FastMCP(\"Meraki Magic MCP\")\n"
+            },
+            {
+              "start": 39689,
+              "old": "app = mcp.streamable_http_app() if MCP_TRANSPORT in (\"http\", \"streamable-http\") else None\n",
+              "new": "app = mcp.http_app(stateless_http=True) if MCP_TRANSPORT in (\"http\", \"streamable-http\") else None\n"
+            },
+            {
+              "start": 40086,
+              "old": "    mcp.run(transport=transport)\n",
+              "new": "    mcp.run(transport=transport, **({\"host\": MCP_HOST, \"port\": MCP_PORT} if transport != \"stdio\" else {}))\n"
+            }
+          ]
+        },
+        {
+          "path": "pyproject.toml",
+          "before_sha256": "a65141bfc79c1b28c1a1c84a9fcd84f9ad4102c71cdb51b0b4445a9426d01cb7",
+          "after_sha256": "463196e315f9dfa02a717cbd589023dc1e79c73aa86e77c9f93ec55bbf425447",
+          "edits": [
+            {
+              "start": 161,
+              "old": "    \"fastmcp>=2.14.5\",\n    \"mcp[cli]>=1.8.0\",\n",
+              "new": "    \"fastmcp==4.0.11\",\n    \"mcp==2.3.0\",\n"
+            }
+          ]
+        },
+        {
+          "path": "requirements.txt",
+          "before_sha256": "81ead8cd8c5338c0cf61ec16a0363de1502399388113a057d8c33f2f12ca20ee",
+          "after_sha256": "45692803e0a41e48dc78d4818e4283c4126336daea9e81cdb7082ccfd5a39b8c",
+          "edits": [
+            {
+              "start": 0,
+              "old": "",
+              "new": "fastmcp==4.0.11\nmcp==2.3.0\n"
+            },
+            {
+              "start": 207,
+              "old": "fastmcp==2.2.10\n",
+              "new": ""
+            },
+            {
+              "start": 382,
+              "old": "mcp==1.7.1\n",
+              "new": ""
+            },
+            {
+              "start": 437,
+              "old": "openapi-pydantic==0.5.1\n",
+              "new": ""
+            },
+            {
+              "start": 508,
+              "old": "pydantic==2.11.4\npydantic-settings==2.9.1\npydantic_core==2.33.2\n",
+              "new": ""
+            },
+            {
+              "start": 755,
+              "old": "sse-starlette==2.3.4\nstarlette==0.46.2\n",
+              "new": ""
+            }
+          ]
+        }
+      ],
+      "verification": "retired"
+    },
+    "netbox": {
+      "directory": "netbox-mcp-server",
+      "reviewed_commit": "14ec2fe7fb7d1f998eb2bfc50aaa67382447cdd5",
+      "patches": [
+        {
+          "path": "pyproject.toml",
+          "before_sha256": "216013ba9a571affbd522975c2b61f2f46d0d7951e6bc63117530e082b94109d",
+          "after_sha256": "fdc8bd73973a9cf70611d8c506abdd0bbe1f6ee5453082027d0a1e14efcbbb44",
+          "edits": [
+            {
+              "start": 284,
+              "old": ">",
+              "new": ""
+            },
+            {
+              "start": 286,
+              "old": "2.1",
+              "new": "="
+            },
+            {
+              "start": 292,
+              "old": "",
+              "new": ".11\""
+            },
+            {
+              "start": 293,
+              "old": "<3",
+              "new": "\n    \"fastmcp-tasks==4.0.11"
+            }
+          ],
+          "variants": [
+            {
+              "before_sha256": "a45894f71ba7bdbe824321406460d18e42eed81fc5718b3dbe03f0d93a4f4e2b",
+              "edits": [
+                {
+                  "start": 284,
+                  "old": "",
+                  "new": "==4.0.11\",\n    \"fastmcp-tasks"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "path": "src/netbox_mcp_server/server.py",
+          "before_sha256": "277fceaca20bf0a3dc4b29d035c3c9d84152a4dcfcfa388ef5e3ce669d9c491c",
+          "after_sha256": "0d18915e1ee1f7c2bc20fae08d8690c7362ff10aa507a52dfbbfd5372366fc50",
+          "edits": [
+            {
+              "start": 76,
+              "old": "",
+              "new": "\nfrom fastmcp_tasks import TasksExtension\nfrom functools import wraps\nfrom fastmcp.utilities.async_utils import call_sync_fn_in_threadpool"
+            },
+            {
+              "start": 3280,
+              "old": "",
+              "new": "\nmcp.add_extension(TasksExtension(name=\"netclaw-netbox\", concurrency=1))\n\n\ndef _task_tool(**options):\n    \"\"\"NetClaw spec 142: preserve upstream callables and offload blocking reads.\"\"\"\n    def register(fn):\n        @wraps(fn)\n        async def run(*args, **kwargs):\n            return await call_sync_fn_in_threadpool(fn, *args, **kwargs)\n        mcp.tool(task=True, **options)(run)\n        return fn\n    return register\n"
+            },
+            {
+              "start": 4924,
+              "old": "mcp.",
+              "new": "_task_"
+            },
+            {
+              "start": 9962,
+              "old": "mcp.",
+              "new": "_task_"
+            },
+            {
+              "start": 9970,
+              "old": "",
+              "new": "()"
+            },
+            {
+              "start": 12135,
+              "old": "mcp.",
+              "new": "_task_"
+            },
+            {
+              "start": 12143,
+              "old": "",
+              "new": "()"
+            },
+            {
+              "start": 15098,
+              "old": "mcp.",
+              "new": "_task_"
+            }
+          ],
+          "variants": [
+            {
+              "before_sha256": "96f31267e410e44a11da5af455044024cd33668fb5ebae515ca3be7839170604",
+              "edits": [
+                {
+                  "start": 10524,
+                  "old": "mcp.",
+                  "new": "_task_"
+                },
+                {
+                  "start": 10532,
+                  "old": "",
+                  "new": "()"
+                },
+                {
+                  "start": 12697,
+                  "old": "mcp.",
+                  "new": "_task_"
+                },
+                {
+                  "start": 12705,
+                  "old": "",
+                  "new": "()"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "verification": "Spec 141 framework catalog passed; spec 142 Tasks validation recorded separately.",
+      "task_tools": [
+        "netbox_get_changelogs",
+        "netbox_get_object_by_id",
+        "netbox_get_objects",
+        "netbox_search_objects"
+      ]
+    },
+    "radkit": {
+      "directory": "radkit-mcp-server-community",
+      "reviewed_commit": "cc84063d9c705ca778f03b32abb7296daff64121",
+      "patches": [
+        {
+          "path": "pyproject.toml",
+          "before_sha256": "32e8c9431041432a05410fdb893eca565811dc3bb556c68eba3e8d410b70b586",
+          "after_sha256": "067a71601834e828b6de76c23b2ca5a2851327853fefeb4276949383d155e8e6",
+          "edits": [
+            {
+              "start": 230,
+              "old": "keywords = [\"cisco\", \"radkit\", \"mcp\", \"fastmcp\", \"network\", \"automation\", \"snmp\"]\n",
+              "new": "keywords = [\"cisco\", \"radkit\", \"mcp==2.3.0\", \"fastmcp==4.0.11\", \"network\", \"automation\", \"snmp\"]\n"
+            },
+            {
+              "start": 968,
+              "old": "    \"fastmcp==2.13.1\",\n",
+              "new": "    \"fastmcp==4.0.11\",\n"
+            }
+          ]
+        }
+      ],
+      "verification": "radkit: error"
+    },
+    "subnet-calc": {
+      "directory": "subnet-calculator-mcp",
+      "reviewed_commit": "5178da6f83ebd894fa7331a62e1087ec9550751b",
+      "patches": [
+        {
+          "path": "servers/subnetcalculator_mcp.py",
+          "before_sha256": "bfb8bb548aa7096c0b2324a3798c581ce917a26388aa6193ae66eb0708e7dd45",
+          "after_sha256": "0738c88ac2eac2dca52de398034ab8701d5d6bc164a93f906b6ee3a5fde824ee",
+          "edits": [
+            {
+              "start": 111,
+              "old": "from mcp.server.fastmcp import FastMCP\n",
+              "new": "from fastmcp import FastMCP\n"
+            }
+          ]
+        }
+      ],
+      "verification": "subnet-calc: pass"
+    },
+    "te-community": {
+      "directory": "thousandeyes-mcp-community",
+      "reviewed_commit": "cdb8fcc087d5f594b5764324afb6d6c3e181534f",
+      "patches": [
+        {
+          "path": "requirements.txt",
+          "before_sha256": "591961e67f781725d19fe69999c264fefa577a5867f117074178f590637c5b2e",
+          "after_sha256": "bb114a56918bf0d07b1f76421b02f39c4253c350b59e3f2a88c1903321144673",
+          "edits": [
+            {
+              "start": 0,
+              "old": "",
+              "new": "fastmcp==4.0.11\nmcp==2.3.0\n"
+            },
+            {
+              "start": 15,
+              "old": "mcp>=1.13\n",
+              "new": ""
+            }
+          ]
+        },
+        {
+          "path": "src/server.py",
+          "before_sha256": "c6ebf6e854f209ff5a92d821946534756e16c9c0673aa0969d453aa496062788",
+          "after_sha256": "2c67bd914117d226eaad926496c71de9e33aa54afce3772f0f04c5f5f48f221a",
+          "edits": [
+            {
+              "start": 660,
+              "old": "from mcp.server.fastmcp import FastMCP\n",
+              "new": "from fastmcp import FastMCP\n"
+            }
+          ]
+        }
+      ],
+      "verification": "te-community: pass"
+    },
+    "uml": {
+      "directory": "uml-mcp",
+      "reviewed_commit": "0a30a1cdd797be805c96d80b089a3ef36092885f",
+      "patches": [
+        {
+          "path": "mcp_core/server/fastmcp_wrapper.py",
+          "before_sha256": "c9e0a81efa7255e1453cf506939a87a41bde41a8632721299a99cc2b7f4f3752",
+          "after_sha256": "19db51cfbd210e73660adbd9e366e67a9f4b5bb1afcc667571eaf0b240bc8a2f",
+          "edits": [
+            {
+              "start": 1404,
+              "old": "                from fastmcp.context import Context  # type: ignore[attr-defined]\n",
+              "new": "                from fastmcp import Context  # type: ignore[attr-defined]\n"
+            }
+          ]
+        },
+        {
+          "path": "requirements.txt",
+          "before_sha256": "acc330aa6bbf71b1a3dad382f700df141d3ff5b07365d329ab6e5349886ef8f0",
+          "after_sha256": "f4ed40da8ab0be61e8893aac19bfb0994dc1504090aad8ca215c19cbc4339612",
+          "edits": [
+            {
+              "start": 0,
+              "old": "",
+              "new": "fastmcp==4.0.11\nmcp==2.3.0\n"
+            },
+            {
+              "start": 47,
+              "old": "fastapi>=0.128.0\n",
+              "new": "fastapi>=0.141.1,<0.200\n"
+            },
+            {
+              "start": 343,
+              "old": "mcp>=1.2.0\n",
+              "new": ""
+            },
+            {
+              "start": 394,
+              "old": "fastmcp>=2.3.1,<4\n",
+              "new": ""
+            }
+          ]
+        },
+        {
+          "path": "mcp_core/core/server.py",
+          "before_sha256": "8e1428da6482a9002b5f4fda45261e902d04e78b5b1a0a8462175eadafa6a544",
+          "after_sha256": "e0a6034227930d0b31c8293739a9e9beba4364a081e08f1d2a6aebe6d54fec33",
+          "edits": [
+            {
+              "start": 679,
+              "old": "    # Stateless HTTP: recommended for multi-worker or horizontally scaled deployments\n    stateless_http = os.environ.get(\"FASTMCP_STATELESS_HTTP\", \"\").lower() in (\n        \"1\",\n        \"true\",\n        \"yes\",\n    )\n\n",
+              "new": ""
+            },
+            {
+              "start": 991,
+              "old": "    server = FastMCP(MCP_SETTINGS.server_name, stateless_http=stateless_http)\n",
+              "new": "    server = FastMCP(MCP_SETTINGS.server_name)\n"
+            },
+            {
+              "start": 2618,
+              "old": "        server.run_http(host=host, port=port)\n",
+              "new": "        server.run(transport=\"http\", host=host, port=port, stateless_http=True)\n"
+            }
+          ]
+        },
+        {
+          "path": "pyproject.toml",
+          "before_sha256": "e7eac3a75eca48cfd234563bd6de51ee5de543652edc6de9ea57489b916347ad",
+          "after_sha256": "1348933274bb6bf3a79a93d378229a7aecb3da8af6750ce8e27fa6e7d66db3ce",
+          "edits": [
+            {
+              "start": 564,
+              "old": "fastapi = \"^0.128.0\"\n",
+              "new": "fastapi = \">=0.141.1,<0.200\"\n"
+            },
+            {
+              "start": 625,
+              "old": "rich = \"^14.0.0\"\n",
+              "new": "rich = \">=14,<16\"\n"
+            },
+            {
+              "start": 677,
+              "old": "python-multipart = \"^0.0.22\"\n",
+              "new": "python-multipart = \">=0.0.26,<0.1\"\n"
+            },
+            {
+              "start": 731,
+              "old": "starlette = \"^0.52.0\"\n",
+              "new": "starlette = \">=1.0.1,<2\"\n"
+            },
+            {
+              "start": 1008,
+              "old": "fastmcp = \">=2.3.1,<4\"\nmcp = \"^1.2.0\"\n",
+              "new": "fastmcp = \"==4.0.11\"\nmcp = \"==2.3.0\"\n"
+            }
+          ]
+        }
+      ],
+      "verification": "uml: pass"
+    },
+    "percepxion": {
+      "directory": "percepxion-mcp-server",
+      "reviewed_commit": "533fdc981f0457043e948204db216e2b8a4076f5",
+      "patches": [
+        {
+          "path": "pyproject.toml",
+          "before_sha256": "bd155770b1d6ddc82500932eddab6eb3acac636f0d109d733a303b1d3e077d01",
+          "after_sha256": "b9b626266845bf5009072e4b7ddd6be9bdf2b8c0940eb124e1c6d0654d0702ba",
+          "edits": [
+            {
+              "start": 267,
+              "old": "  \"fastmcp>=3.1.0,<4.0\",\n",
+              "new": "  \"fastmcp==4.0.11\",\n  \"mcp==2.3.0\",\n"
+            }
+          ]
+        }
+      ],
+      "verification": "percepxion: pass"
+    },
+    "slc": {
+      "directory": "slc-mcp-server",
+      "reviewed_commit": "c5ba7f6bff56b23123c4bed5f39f48a5b19f35ad",
+      "patches": [
+        {
+          "path": "pyproject.toml",
+          "before_sha256": "3682cef73cf584b47679d245670610e21103c10c18576319487a3cc1451ae2f2",
+          "after_sha256": "c10cd759edf0bc9c3925adfa185e99bccd4ea7dd8dd95fdfbd620ed39a581c9c",
+          "edits": [
+            {
+              "start": 264,
+              "old": "  \"fastmcp>=3.3.1,<4\",\n",
+              "new": "  \"fastmcp==4.0.11\",\n  \"mcp==2.3.0\",\n"
+            }
+          ]
+        }
+      ],
+      "verification": "slc: pass"
+    },
+    "nmap": {
+      "directory": "nmap-mcp",
+      "reviewed_commit": "b14990e08bf9d30da3ab6292ba27c83ecdd92b25",
+      "patches": [
+        {
+          "path": "requirements.txt",
+          "before_sha256": "0065867ddaf122909db57ab15944db091b7b85ca7c00fea7794732945970f0ea",
+          "after_sha256": "395058fef75dbbbdd21b7e0e6cffa36130bfc3b92b2a8373bdb9df3869c6198d",
+          "edits": [
+            {
+              "start": 0,
+              "old": "fastmcp>=2.0.0\n",
+              "new": "fastmcp==4.0.11\nmcp==2.3.0\n"
+            }
+          ]
+        }
+      ],
+      "verification": "nmap: pass"
+    },
+    "aruba-cx": {
+      "directory": "aruba-cx-mcp",
+      "reviewed_commit": "fb4130d6cac7a6749cb4f53cf71e04f97b1fe867",
+      "patches": [
+        {
+          "path": "mcp-servers/aruba-cx-mcp/requirements.txt",
+          "before_sha256": "948573f2e534fec4fb12dccb29879022631c8278d9a8d354ca2b7ec1d3d15111",
+          "after_sha256": "1c780074ce79b016a23e59b84ac285690d4e0554cff8cdae20630411cade3b06",
+          "edits": [
+            {
+              "start": 0,
+              "old": "fastmcp\n",
+              "new": "fastmcp==4.0.11\nmcp==2.3.0\n"
+            }
+          ]
+        }
+      ],
+      "verification": "aruba-cx: pass"
+    },
+    "aap": {
+      "directory": "AAP-Enterprise-MCP-Server",
+      "reviewed_commit": "f4f850a47f3e23d5394a79e20bb707b7760c7692",
+      "patches": [
+        {
+          "path": "ansible-lint.py",
+          "before_sha256": "819af5cd23fff1cd492ab10d58629b2e581144b434b13b78bc55eb26ff7aaee1",
+          "after_sha256": "8955325ceea2e3ba2d7020d6f2ece1e5e6ef9235cff4c84a1afcea133c166b5a",
+          "edits": [
+            {
+              "start": 140,
+              "old": "from mcp.server.fastmcp import FastMCP\n",
+              "new": "from fastmcp import FastMCP\n"
+            }
+          ]
+        },
+        {
+          "path": "ansible.py",
+          "before_sha256": "b954f1c8ceb644edaeea461eaa7e093067dd195b9bf7069f77003e4075703d92",
+          "after_sha256": "c7ebdc373c3b43799ee926d4c8648765bb3531ce18f2c48144c0ff764c25cf3f",
+          "edits": [
+            {
+              "start": 38,
+              "old": "from mcp.server.fastmcp import FastMCP\n",
+              "new": "from fastmcp import FastMCP\n"
+            }
+          ]
+        },
+        {
+          "path": "redhat_docs.py",
+          "before_sha256": "a682b5a6a4598dbe069b847770fe17b1fdb22c4c76601b65c0d200aab6df2a4f",
+          "after_sha256": "e84867b4ded9baa3323ad72347f750e629a5e7cb67ee3d2e15b7a321b53164fe",
+          "edits": [
+            {
+              "start": 616,
+              "old": "from mcp.server.fastmcp import FastMCP\n",
+              "new": "from fastmcp import FastMCP\n"
+            }
+          ]
+        },
+        {
+          "path": "eda.py",
+          "before_sha256": "03cbd0908982c6262906f1f97121fa99ef0a82bd327afb6236c434da73e15b5a",
+          "after_sha256": "5c3da1a8eacf91405b7ca42999c2205549dac2c9b1bc20294c24bcc582a27b95",
+          "edits": [
+            {
+              "start": 38,
+              "old": "from mcp.server.fastmcp import FastMCP\n",
+              "new": "from fastmcp import FastMCP\n"
+            }
+          ]
+        },
+        {
+          "path": "pyproject.toml",
+          "before_sha256": "1f6d3f3946241b8597a875f6a4145537a8fe077be521ed0166d67ff363fdd0d8",
+          "after_sha256": "d92ed4e52cfae0405484036f7d1a467550aa389f96537a83106cd4d635fd8083",
+          "edits": [
+            {
+              "start": 961,
+              "old": "",
+              "new": "    \"fastmcp==4.0.11\",\n"
+            },
+            {
+              "start": 982,
+              "old": "    \"mcp[cli]>=1.9.4\",\n",
+              "new": "    \"mcp==2.3.0\",\n"
+            }
+          ]
+        }
+      ],
+      "verification": "aap-ansible: pass; aap-eda: pass; aap-lint: pass; aap-docs: pass"
+    },
+    "fwrule": {
+      "directory": "fwrule-mcp",
+      "reviewed_commit": "3bd52d79919b0aa5124e5d34fcbb12fb6112accd",
+      "patches": [
+        {
+          "path": "pyproject.toml",
+          "before_sha256": "a97f4797f9bb773a09d0689a25913594d15a47fd324fe897d10d45caecde21a8",
+          "after_sha256": "ff96d3addc3b9bb0152f41cb3e0fea17b4c1da57f629f3a8a2dbb57a448f1e16",
+          "edits": [
+            {
+              "start": 290,
+              "old": "    \"fastmcp>=2.0\",\n",
+              "new": "    \"mcp==2.3.0\",\n    \"fastmcp==4.0.11\",\n"
+            }
+          ]
+        }
+      ],
+      "verification": "fwrule: pass"
+    },
+    "prometheus": {
+      "directory": "prometheus-mcp-server",
+      "reviewed_commit": "667555aae98fe19bf4f95855050c6a263fb1118d",
+      "patches": [
+        {
+          "path": "pyproject.toml",
+          "before_sha256": "e16605e23b65a4d5de0fd8c31b70093e73626c2e9fed03d9fea1c9d0c0d89be0",
+          "after_sha256": "4d8acebaeef120dcc1f8aabd472dfb34439d49a86a32ae424f158e69ed0deabb",
+          "edits": [
+            {
+              "start": 178,
+              "old": "",
+              "new": "    \"mcp==2.3.0\",\n"
+            },
+            {
+              "start": 257,
+              "old": "    \"fastmcp>=3.1.0\",\n",
+              "new": "    \"fastmcp==4.0.11\",\n"
+            }
+          ]
+        }
+      ],
+      "verification": "prometheus: pass"
+    },
+    "prisma-sdwan": {
+      "directory": "prisma-sdwan-mcp",
+      "reviewed_commit": "6d945395c53bf681f28e89c859e3039c83c91ccc",
+      "patches": [
+        {
+          "path": "requirements.txt",
+          "before_sha256": "103f2d8051e005779b4a764e4b95c46a0bba7788e821aac4f57a98c0218fc247",
+          "after_sha256": "89d6a5d5037180d481b31a2607134d3b86110c9f8898cf262d566bd6252fe00e",
+          "edits": [
+            {
+              "start": 0,
+              "old": "fastmcp==3.4.4\n",
+              "new": "fastmcp==4.0.11\nmcp==2.3.0\n"
+            }
+          ]
+        },
+        {
+          "path": "pyproject.toml",
+          "before_sha256": "5bfde0ee3352e6a151507cd2344568ce1b317a096c97c8562af2b66cac220c32",
+          "after_sha256": "9add588aca31aab307d212b43cef7fa693edb01ceebe512eb6a0c6d910f1df8e",
+          "edits": [
+            {
+              "start": 272,
+              "old": "  \"fastmcp==3.4.4\",\n",
+              "new": "    \"mcp==2.3.0\",\n  \"fastmcp==4.0.11\",\n"
+            }
+          ]
+        }
+      ],
+      "verification": "prisma-sdwan: pass"
+    },
+    "cml": {
+      "directory": "cml-mcp",
+      "reviewed_commit": "ffc70aa9e3ddc348ba31a379a3ecb20fa6868d6d",
+      "patches": [
+        {
+          "path": "pyproject.toml",
+          "before_sha256": "1a0c80a3226ae1ede64173a1078f7d3bd014494152078dc9c2c6a78affe2f461",
+          "after_sha256": "ac86a01f4ee64e7df8894cd429e44eda23f9e90a53589d682a75afd8d93b2e23",
+          "edits": [
+            {
+              "start": 508,
+              "old": "",
+              "new": "    \"mcp==2.3.0\",\n"
+            },
+            {
+              "start": 521,
+              "old": "    \"fastmcp>=3.1.1,<4\",\n",
+              "new": "    \"fastmcp==4.0.11\",\n"
+            }
+          ]
+        },
+        {
+          "path": "src/cml_mcp/tools/users_groups.py",
+          "before_sha256": "23611b4b0ef23cbd81825c1b08a1584eefff7d757e9f32fd95a1039f9bbcf995",
+          "after_sha256": "0f476c356087fdea249a4ca3bfcb69fa729c5d9979dcce3cda7307827f697fd4",
+          "edits": [
+            {
+              "start": 1523,
+              "old": "from mcp.shared.exceptions import McpError\n",
+              "new": "from mcp.shared.exceptions import MCPError\n"
+            },
+            {
+              "start": 7091,
+              "old": "            except McpError as me:\n",
+              "new": "            except MCPError as me:\n"
+            },
+            {
+              "start": 11856,
+              "old": "            except McpError as me:\n",
+              "new": "            except MCPError as me:\n"
+            }
+          ]
+        },
+        {
+          "path": "src/cml_mcp/tools/middleware.py",
+          "before_sha256": "12d39479b405f0cb9a24c8191bfea9a2ade941bccfe0b786022b0daa38651a96",
+          "after_sha256": "0d05e5a2a95aa72a094a5eb7d93f0622cfd01cc791baaf3e96c43e8ebd619bdd",
+          "edits": [
+            {
+              "start": 1735,
+              "old": "from mcp.shared.exceptions import McpError\n",
+              "new": "from mcp.shared.exceptions import MCPError\n"
+            },
+            {
+              "start": 5262,
+              "old": "            raise McpError(\n",
+              "new": "            raise MCPError.from_error_data(\n"
+            },
+            {
+              "start": 6133,
+              "old": "            raise McpError(\n",
+              "new": "            raise MCPError.from_error_data(\n"
+            },
+            {
+              "start": 6465,
+              "old": "                raise McpError(\n",
+              "new": "                raise MCPError.from_error_data(\n"
+            },
+            {
+              "start": 6927,
+              "old": "                raise McpError(\n",
+              "new": "                raise MCPError.from_error_data(\n"
+            },
+            {
+              "start": 9876,
+              "old": "                raise McpError(\n",
+              "new": "                raise MCPError.from_error_data(\n"
+            },
+            {
+              "start": 11909,
+              "old": "                raise McpError(\n",
+              "new": "                raise MCPError.from_error_data(\n"
+            },
+            {
+              "start": 12349,
+              "old": "                raise McpError(\n",
+              "new": "                raise MCPError.from_error_data(\n"
+            },
+            {
+              "start": 12866,
+              "old": "                raise McpError(\n",
+              "new": "                raise MCPError.from_error_data(\n"
+            },
+            {
+              "start": 13420,
+              "old": "                raise McpError(\n",
+              "new": "                raise MCPError.from_error_data(\n"
+            },
+            {
+              "start": 14083,
+              "old": "                raise McpError(\n",
+              "new": "                raise MCPError.from_error_data(\n"
+            },
+            {
+              "start": 14702,
+              "old": "                    raise McpError(\n",
+              "new": "                    raise MCPError.from_error_data(\n"
+            },
+            {
+              "start": 15353,
+              "old": "                    raise McpError(\n",
+              "new": "                    raise MCPError.from_error_data(\n"
+            },
+            {
+              "start": 16309,
+              "old": "                raise McpError(ErrorData(message=f\"Unauthorized: {str(e)}\", code=-31002))\n",
+              "new": "                raise MCPError.from_error_data(ErrorData(message=f\"Unauthorized: {str(e)}\", code=-31002))\n"
+            }
+          ]
+        },
+        {
+          "path": "src/cml_mcp/tools/dependencies.py",
+          "before_sha256": "228c2d61aed6d019a34e273b4b09ca85acf186cb1ec49d78eafff4ff61f9a4ed",
+          "after_sha256": "a60a13bf138a2f36ab4b7c2e67fc87e1ed39dacae94cb286b80faab1c0d5011e",
+          "edits": [
+            {
+              "start": 1495,
+              "old": "from mcp.shared.exceptions import McpError\n",
+              "new": "from mcp.shared.exceptions import MCPError\n"
+            },
+            {
+              "start": 5249,
+              "old": "    except McpError as me:\n",
+              "new": "    except MCPError as me:\n"
+            }
+          ]
+        }
+      ],
+      "verification": "cml: pass"
+    },
+    "itential": {
+      "directory": "itential-mcp",
+      "reviewed_commit": "1b730c83bf34c4958bb5d334e2a50e667e6d0450",
+      "patches": [
+        {
+          "path": "pyproject.toml",
+          "before_sha256": "48fb468b34e6cfc5377819ac249ba76a7fe1c44c3f91b40e3e87a0d95035ada8",
+          "after_sha256": "a7d9944744e119ad7bd5d73f4ef563db7bb5e2ee9b11d36eef831357172cbf6b",
+          "edits": [
+            {
+              "start": 86,
+              "old": "    \"fastmcp>=3.4.1,<4\",\n",
+              "new": "    \"mcp==2.3.0\",\n    \"fastmcp==4.0.11\",\n"
+            },
+            {
+              "start": 1167,
+              "old": "constraint-dependencies = [\"cryptography>=50.0.0,<51\", \"mcp>=1.28.1,<2\", \"pydantic-settings>=2.14.2\"]\n",
+              "new": "constraint-dependencies = [\"cryptography>=50.0.0,<51\", \"mcp==2.3.0\", \"pydantic-settings>=2.14.2\"]\n"
+            }
+          ]
+        },
+        {
+          "path": "src/itential_mcp/tools/device_groups.py",
+          "before_sha256": "3950c6f1c5cfe819eae9f3482fdba305a037b6144be6b6e8b2ea88e4f7691fa6",
+          "after_sha256": "6c12535073f4623b2007393e1ef84033ce2bc25da894ffdd9961e10f0fe41c81",
+          "edits": [
+            {
+              "start": 1463,
+              "old": "    client = ctx.request_context.lifespan_context.get(\"client\")\n",
+              "new": "    client = ctx.lifespan_context.get(\"client\")\n"
+            },
+            {
+              "start": 3360,
+              "old": "    client = ctx.request_context.lifespan_context.get(\"client\")\n",
+              "new": "    client = ctx.lifespan_context.get(\"client\")\n"
+            },
+            {
+              "start": 5612,
+              "old": "    client = ctx.request_context.lifespan_context.get(\"client\")\n",
+              "new": "    client = ctx.lifespan_context.get(\"client\")\n"
+            },
+            {
+              "start": 7597,
+              "old": "    client = ctx.request_context.lifespan_context.get(\"client\")\n",
+              "new": "    client = ctx.lifespan_context.get(\"client\")\n"
+            }
+          ]
+        },
+        {
+          "path": "src/itential_mcp/tools/compliance_reports.py",
+          "before_sha256": "5e0016f46e803fb0cc1a370d47e83b0a3ecbf63f8ec8558f37f397ec148abfb8",
+          "after_sha256": "1a3c5b6b42e370cb1e37fd066254e97ca833d3664f269a0687e10e3acd90099e",
+          "edits": [
+            {
+              "start": 1673,
+              "old": "    client = ctx.request_context.lifespan_context.get(\"client\")\n",
+              "new": "    client = ctx.lifespan_context.get(\"client\")\n"
+            },
+            {
+              "start": 3492,
+              "old": "    client = ctx.request_context.lifespan_context.get(\"client\")\n",
+              "new": "    client = ctx.lifespan_context.get(\"client\")\n"
+            }
+          ]
+        },
+        {
+          "path": "src/itential_mcp/tools/operations_manager.py",
+          "before_sha256": "824b99a0c938a432e9a41fa8f4982da368f57aeb71615875f4ce94a90503fdcb",
+          "after_sha256": "fcf8d8048d450cad53e1a8eb28b4995db1238bd869541e057364aadcd064e82b",
+          "edits": [
+            {
+              "start": 2707,
+              "old": "    client = ctx.request_context.lifespan_context.get(\"client\")\n",
+              "new": "    client = ctx.lifespan_context.get(\"client\")\n"
+            },
+            {
+              "start": 4975,
+              "old": "    client = ctx.request_context.lifespan_context.get(\"client\")\n",
+              "new": "    client = ctx.lifespan_context.get(\"client\")\n"
+            },
+            {
+              "start": 7312,
+              "old": "    client = ctx.request_context.lifespan_context.get(\"client\")\n",
+              "new": "    client = ctx.lifespan_context.get(\"client\")\n"
+            },
+            {
+              "start": 9725,
+              "old": "    client = ctx.request_context.lifespan_context.get(\"client\")\n",
+              "new": "    client = ctx.lifespan_context.get(\"client\")\n"
+            },
+            {
+              "start": 12778,
+              "old": "    client = ctx.request_context.lifespan_context.get(\"client\")\n",
+              "new": "    client = ctx.lifespan_context.get(\"client\")\n"
+            },
+            {
+              "start": 17166,
+              "old": "    client = ctx.request_context.lifespan_context.get(\"client\")\n",
+              "new": "    client = ctx.lifespan_context.get(\"client\")\n"
+            },
+            {
+              "start": 19153,
+              "old": "    client = ctx.request_context.lifespan_context.get(\"client\")\n",
+              "new": "    client = ctx.lifespan_context.get(\"client\")\n"
+            },
+            {
+              "start": 22471,
+              "old": "    client = ctx.request_context.lifespan_context.get(\"client\")\n",
+              "new": "    client = ctx.lifespan_context.get(\"client\")\n"
+            },
+            {
+              "start": 26302,
+              "old": "    client = ctx.request_context.lifespan_context.get(\"client\")\n",
+              "new": "    client = ctx.lifespan_context.get(\"client\")\n"
+            }
+          ]
+        },
+        {
+          "path": "src/itential_mcp/tools/workflow_engine.py",
+          "before_sha256": "1c51ea148fa8a73528ea8f4755bbafd1389fb9f633f38a2738a4703768a802fe",
+          "after_sha256": "5ce8d330e03f8569bc7b135822bd33ff488e34d369e34b24334dd9f8c6256b69",
+          "edits": [
+            {
+              "start": 1614,
+              "old": "    client = ctx.request_context.lifespan_context.get(\"client\")\n",
+              "new": "    client = ctx.lifespan_context.get(\"client\")\n"
+            },
+            {
+              "start": 5631,
+              "old": "    client = ctx.request_context.lifespan_context.get(\"client\")\n",
+              "new": "    client = ctx.lifespan_context.get(\"client\")\n"
+            }
+          ]
+        },
+        {
+          "path": "src/itential_mcp/tools/health.py",
+          "before_sha256": "ad971ece169174dc58178ce0c0ab6bafd1a958d763451eeb46afb4150d50e6bf",
+          "after_sha256": "66a6df9b48046e844d87ebb8e743f88851dfc4b8c703010355eca8e6f38d3855",
+          "edits": [
+            {
+              "start": 2016,
+              "old": "    client = ctx.request_context.lifespan_context.get(\"client\")\n",
+              "new": "    client = ctx.lifespan_context.get(\"client\")\n"
+            }
+          ]
+        },
+        {
+          "path": "src/itential_mcp/tools/command_templates.py",
+          "before_sha256": "ddc1028110160a054147c7c0fed411bbc6568586eca67c0a9bce0363350eb225",
+          "after_sha256": "b116bf5a1f0b3c50a763dbc5dedca640cd9bddbd99353f472e64b8ab1a8fae94",
+          "edits": [
+            {
+              "start": 1310,
+              "old": "    client = ctx.request_context.lifespan_context.get(\"client\")\n",
+              "new": "    client = ctx.lifespan_context.get(\"client\")\n"
+            },
+            {
+              "start": 2854,
+              "old": "    client = ctx.request_context.lifespan_context.get(\"client\")\n",
+              "new": "    client = ctx.lifespan_context.get(\"client\")\n"
+            },
+            {
+              "start": 4906,
+              "old": "    client = ctx.request_context.lifespan_context.get(\"client\")\n",
+              "new": "    client = ctx.lifespan_context.get(\"client\")\n"
+            },
+            {
+              "start": 6880,
+              "old": "    client = ctx.request_context.lifespan_context.get(\"client\")\n",
+              "new": "    client = ctx.lifespan_context.get(\"client\")\n"
+            },
+            {
+              "start": 11865,
+              "old": "    client = ctx.request_context.lifespan_context.get(\"client\")\n",
+              "new": "    client = ctx.lifespan_context.get(\"client\")\n"
+            },
+            {
+              "start": 16945,
+              "old": "    client = ctx.request_context.lifespan_context.get(\"client\")\n",
+              "new": "    client = ctx.lifespan_context.get(\"client\")\n"
+            }
+          ]
+        },
+        {
+          "path": "src/itential_mcp/tools/applications.py",
+          "before_sha256": "ab54bfa9cff0c0582430247ac9ee8f7ea3ca4c89cc8beec1742886a938b44759",
+          "after_sha256": "d442263b6fdeaf80785dd82fc87ae63cdabb42cb6c123bea62b616374777d727",
+          "edits": [
+            {
+              "start": 1069,
+              "old": "    client = ctx.request_context.lifespan_context.get(\"client\")\n",
+              "new": "    client = ctx.lifespan_context.get(\"client\")\n"
+            },
+            {
+              "start": 3080,
+              "old": "    client = ctx.request_context.lifespan_context.get(\"client\")\n",
+              "new": "    client = ctx.lifespan_context.get(\"client\")\n"
+            },
+            {
+              "start": 4748,
+              "old": "    client = ctx.request_context.lifespan_context.get(\"client\")\n",
+              "new": "    client = ctx.lifespan_context.get(\"client\")\n"
+            },
+            {
+              "start": 6567,
+              "old": "    client = ctx.request_context.lifespan_context.get(\"client\")\n",
+              "new": "    client = ctx.lifespan_context.get(\"client\")\n"
+            }
+          ]
+        },
+        {
+          "path": "src/itential_mcp/tools/lifecycle_manager.py",
+          "before_sha256": "ddcd87b3819b89381817414564e98ee565edf08736376d4f434ac071c7157555",
+          "after_sha256": "3b9e1de1e2689ea4670daa35296318ad9ce970ce8def1bb49a0b817758128945",
+          "edits": [
+            {
+              "start": 1414,
+              "old": "    client = ctx.request_context.lifespan_context.get(\"client\")\n",
+              "new": "    client = ctx.lifespan_context.get(\"client\")\n"
+            },
+            {
+              "start": 3567,
+              "old": "    client = ctx.request_context.lifespan_context.get(\"client\")\n",
+              "new": "    client = ctx.lifespan_context.get(\"client\")\n"
+            },
+            {
+              "start": 5205,
+              "old": "    client = ctx.request_context.lifespan_context.get(\"client\")\n",
+              "new": "    client = ctx.lifespan_context.get(\"client\")\n"
+            },
+            {
+              "start": 8167,
+              "old": "    client = ctx.request_context.lifespan_context.get(\"client\")\n",
+              "new": "    client = ctx.lifespan_context.get(\"client\")\n"
+            },
+            {
+              "start": 10233,
+              "old": "    client = ctx.request_context.lifespan_context.get(\"client\")\n",
+              "new": "    client = ctx.lifespan_context.get(\"client\")\n"
+            },
+            {
+              "start": 12685,
+              "old": "    client = ctx.request_context.lifespan_context.get(\"client\")\n",
+              "new": "    client = ctx.lifespan_context.get(\"client\")\n"
+            },
+            {
+              "start": 16192,
+              "old": "    client = ctx.request_context.lifespan_context.get(\"client\")\n",
+              "new": "    client = ctx.lifespan_context.get(\"client\")\n"
+            }
+          ]
+        },
+        {
+          "path": "src/itential_mcp/tools/agent_session_manager.py",
+          "before_sha256": "6b71335428ac30ba351c25a8f2cb64ae5f929d43e164b02139ede0514c94829d",
+          "after_sha256": "66f769eb37e988a421978241fd47c55478ecbee0b4759189d07e7814ce2109ed",
+          "edits": [
+            {
+              "start": 8185,
+              "old": "    client = ctx.request_context.lifespan_context.get(\"client\")\n",
+              "new": "    client = ctx.lifespan_context.get(\"client\")\n"
+            },
+            {
+              "start": 11299,
+              "old": "    client = ctx.request_context.lifespan_context.get(\"client\")\n",
+              "new": "    client = ctx.lifespan_context.get(\"client\")\n"
+            },
+            {
+              "start": 17024,
+              "old": "    client = ctx.request_context.lifespan_context.get(\"client\")\n",
+              "new": "    client = ctx.lifespan_context.get(\"client\")\n"
+            },
+            {
+              "start": 23172,
+              "old": "    client = ctx.request_context.lifespan_context.get(\"client\")\n",
+              "new": "    client = ctx.lifespan_context.get(\"client\")\n"
+            },
+            {
+              "start": 26658,
+              "old": "    client = ctx.request_context.lifespan_context.get(\"client\")\n",
+              "new": "    client = ctx.lifespan_context.get(\"client\")\n"
+            }
+          ]
+        },
+        {
+          "path": "src/itential_mcp/tools/templates.py",
+          "before_sha256": "5c028b33098494cde74c1676e4b851afa278ed6921094d307044827d817bcf66",
+          "after_sha256": "0519ab1d7596200326377da82422b458bc9c8cf5111dad6bafaf1ce879aa404a",
+          "edits": [
+            {
+              "start": 2243,
+              "old": "    client = ctx.request_context.lifespan_context.get(\"client\")\n",
+              "new": "    client = ctx.lifespan_context.get(\"client\")\n"
+            },
+            {
+              "start": 4451,
+              "old": "    client = ctx.request_context.lifespan_context.get(\"client\")\n",
+              "new": "    client = ctx.lifespan_context.get(\"client\")\n"
+            },
+            {
+              "start": 8225,
+              "old": "    client = ctx.request_context.lifespan_context.get(\"client\")\n",
+              "new": "    client = ctx.lifespan_context.get(\"client\")\n"
+            },
+            {
+              "start": 11840,
+              "old": "    client = ctx.request_context.lifespan_context.get(\"client\")\n",
+              "new": "    client = ctx.lifespan_context.get(\"client\")\n"
+            }
+          ]
+        },
+        {
+          "path": "src/itential_mcp/tools/gateway_manager.py",
+          "before_sha256": "26de758546895fae6100fb3a7dd629a0a0bfbd370410c91aee51eac6e82839a3",
+          "after_sha256": "eb1261c225c5100c63c406451beba51dce55f21df4d3955153b2cd424f58ab2a",
+          "edits": [
+            {
+              "start": 2723,
+              "old": "    client = ctx.request_context.lifespan_context.get(\"client\")\n",
+              "new": "    client = ctx.lifespan_context.get(\"client\")\n"
+            },
+            {
+              "start": 4198,
+              "old": "    client = ctx.request_context.lifespan_context.get(\"client\")\n",
+              "new": "    client = ctx.lifespan_context.get(\"client\")\n"
+            },
+            {
+              "start": 7033,
+              "old": "    client = ctx.request_context.lifespan_context.get(\"client\")\n",
+              "new": "    client = ctx.lifespan_context.get(\"client\")\n"
+            },
+            {
+              "start": 9237,
+              "old": "    client = ctx.request_context.lifespan_context.get(\"client\")\n",
+              "new": "    client = ctx.lifespan_context.get(\"client\")\n"
+            },
+            {
+              "start": 15964,
+              "old": "    client = ctx.request_context.lifespan_context.get(\"client\")\n",
+              "new": "    client = ctx.lifespan_context.get(\"client\")\n"
+            }
+          ]
+        },
+        {
+          "path": "src/itential_mcp/tools/configuration_manager.py",
+          "before_sha256": "a230287dfcecacb51f205c69b13b2e1b2a74e1bf43354f9693dfe4aabd11bef5",
+          "after_sha256": "51e6b4b9de14d2695544a055d7fc74115325494af87857a37c01067d56abb35b",
+          "edits": [
+            {
+              "start": 1697,
+              "old": "    client = ctx.request_context.lifespan_context.get(\"client\")\n",
+              "new": "    client = ctx.lifespan_context.get(\"client\")\n"
+            }
+          ]
+        },
+        {
+          "path": "src/itential_mcp/tools/inventory_manager.py",
+          "before_sha256": "4e2040207d29c4ac3fcbc852682d7af6983e8f86a82ba1520a69f1e5274fc07e",
+          "after_sha256": "78b43eb06b5bc998c41025fa2956dfe96c16157fce79f0cedda023e8c739a159",
+          "edits": [
+            {
+              "start": 1456,
+              "old": "    client = ctx.request_context.lifespan_context.get(\"client\")\n",
+              "new": "    client = ctx.lifespan_context.get(\"client\")\n"
+            },
+            {
+              "start": 3193,
+              "old": "    client = ctx.request_context.lifespan_context.get(\"client\")\n",
+              "new": "    client = ctx.lifespan_context.get(\"client\")\n"
+            },
+            {
+              "start": 5549,
+              "old": "    client = ctx.request_context.lifespan_context.get(\"client\")\n",
+              "new": "    client = ctx.lifespan_context.get(\"client\")\n"
+            },
+            {
+              "start": 8097,
+              "old": "    client = ctx.request_context.lifespan_context.get(\"client\")\n",
+              "new": "    client = ctx.lifespan_context.get(\"client\")\n"
+            },
+            {
+              "start": 9562,
+              "old": "    client = ctx.request_context.lifespan_context.get(\"client\")\n",
+              "new": "    client = ctx.lifespan_context.get(\"client\")\n"
+            }
+          ]
+        },
+        {
+          "path": "src/itential_mcp/tools/projects.py",
+          "before_sha256": "ca6972c5f37318ac9ef5adb3865917d988150182aad42f6cafc21f70c032e42a",
+          "after_sha256": "a1081f93526c97e93179e25f03b9ad1ce20814d4771c44f4fca3ef6d909ab4c1",
+          "edits": [
+            {
+              "start": 1282,
+              "old": "    client = ctx.request_context.lifespan_context.get(\"client\")\n",
+              "new": "    client = ctx.lifespan_context.get(\"client\")\n"
+            },
+            {
+              "start": 2887,
+              "old": "    client = ctx.request_context.lifespan_context.get(\"client\")\n",
+              "new": "    client = ctx.lifespan_context.get(\"client\")\n"
+            }
+          ]
+        },
+        {
+          "path": "src/itential_mcp/tools/golden_config.py",
+          "before_sha256": "910e2217870451df7d8a3373f4e6b95f0d6a774b63f29e1f6df2a24f4b2dda11",
+          "after_sha256": "c0e7911115a4b07b8159fbba18ee757d531fb051322ecd97c3887d761483876c",
+          "edits": [
+            {
+              "start": 1649,
+              "old": "    client = ctx.request_context.lifespan_context.get(\"client\")\n",
+              "new": "    client = ctx.lifespan_context.get(\"client\")\n"
+            },
+            {
+              "start": 4074,
+              "old": "    client = ctx.request_context.lifespan_context.get(\"client\")\n",
+              "new": "    client = ctx.lifespan_context.get(\"client\")\n"
+            },
+            {
+              "start": 6630,
+              "old": "    client = ctx.request_context.lifespan_context.get(\"client\")\n",
+              "new": "    client = ctx.lifespan_context.get(\"client\")\n"
+            }
+          ]
+        },
+        {
+          "path": "src/itential_mcp/tools/devices.py",
+          "before_sha256": "c31bb8084fa561aadb943900f60ababa5ae2dc202c7190f028fa68f5648ea496",
+          "after_sha256": "86dcb0c631b99c9cfb41d43968fee4e4f91624d60936e35dc762dbb1a5bc1609",
+          "edits": [
+            {
+              "start": 1241,
+              "old": "    client = ctx.request_context.lifespan_context.get(\"client\")\n",
+              "new": "    client = ctx.lifespan_context.get(\"client\")\n"
+            },
+            {
+              "start": 2330,
+              "old": "    client = ctx.request_context.lifespan_context.get(\"client\")\n",
+              "new": "    client = ctx.lifespan_context.get(\"client\")\n"
+            },
+            {
+              "start": 4064,
+              "old": "    client = ctx.request_context.lifespan_context.get(\"client\")\n",
+              "new": "    client = ctx.lifespan_context.get(\"client\")\n"
+            },
+            {
+              "start": 5588,
+              "old": "    client = ctx.request_context.lifespan_context.get(\"client\")\n",
+              "new": "    client = ctx.lifespan_context.get(\"client\")\n"
+            }
+          ]
+        },
+        {
+          "path": "src/itential_mcp/tools/integrations.py",
+          "before_sha256": "76b1a42ae0db88cb98712cf06a35864bf54274f55bdf67bb90fe99b36a1867e9",
+          "after_sha256": "d432049265fd6382eab00a1102ef54222ce803e2efe9b2ec6fae5f68840c7a73",
+          "edits": [
+            {
+              "start": 1893,
+              "old": "    client = ctx.request_context.lifespan_context.get(\"client\")\n",
+              "new": "    client = ctx.lifespan_context.get(\"client\")\n"
+            },
+            {
+              "start": 3398,
+              "old": "    client = ctx.request_context.lifespan_context.get(\"client\")\n",
+              "new": "    client = ctx.lifespan_context.get(\"client\")\n"
+            },
+            {
+              "start": 5555,
+              "old": "    client = ctx.request_context.lifespan_context.get(\"client\")\n",
+              "new": "    client = ctx.lifespan_context.get(\"client\")\n"
+            }
+          ]
+        },
+        {
+          "path": "src/itential_mcp/tools/compliance_plans.py",
+          "before_sha256": "efa8b5f0e72b9fc169e001b1daede63a641b6395710678d54cbd1ee5f29bdef2",
+          "after_sha256": "90cf364d3a580af0beb33e72851ae997e975f549396dfd206fd8c1a36cee02f4",
+          "edits": [
+            {
+              "start": 1230,
+              "old": "    client = ctx.request_context.lifespan_context.get(\"client\")\n",
+              "new": "    client = ctx.lifespan_context.get(\"client\")\n"
+            },
+            {
+              "start": 2630,
+              "old": "    client = ctx.request_context.lifespan_context.get(\"client\")\n",
+              "new": "    client = ctx.lifespan_context.get(\"client\")\n"
+            }
+          ]
+        },
+        {
+          "path": "src/itential_mcp/tools/adapters.py",
+          "before_sha256": "81c9ad4f836c430c261a3d4f520c29b7523edefe45672b28f9c62a78bb83cea1",
+          "after_sha256": "00c6541a301b66baf9717c605fd9f53e5d0da944db6b80fa69cc8590b3651ac0",
+          "edits": [
+            {
+              "start": 933,
+              "old": "    client = ctx.request_context.lifespan_context.get(\"client\")\n",
+              "new": "    client = ctx.lifespan_context.get(\"client\")\n"
+            },
+            {
+              "start": 2854,
+              "old": "    client = ctx.request_context.lifespan_context.get(\"client\")\n",
+              "new": "    client = ctx.lifespan_context.get(\"client\")\n"
+            },
+            {
+              "start": 4462,
+              "old": "    client = ctx.request_context.lifespan_context.get(\"client\")\n",
+              "new": "    client = ctx.lifespan_context.get(\"client\")\n"
+            },
+            {
+              "start": 6183,
+              "old": "    client = ctx.request_context.lifespan_context.get(\"client\")\n",
+              "new": "    client = ctx.lifespan_context.get(\"client\")\n"
+            }
+          ]
+        },
+        {
+          "path": "src/itential_mcp/bindings/service.py",
+          "before_sha256": "9e0cb33541d05f48272cb521bf894fb95ea608dee176a63a237933290dd39210",
+          "after_sha256": "81b51093f6a4a322167566b0851e4446a505dab02044e37a3d525002bacd09ad",
+          "edits": [
+            {
+              "start": 2200,
+              "old": "    platform_client = ctx.request_context.lifespan_context.get(\"client\")\n",
+              "new": "    platform_client = ctx.lifespan_context.get(\"client\")\n"
+            }
+          ]
+        },
+        {
+          "path": "src/itential_mcp/bindings/endpoint.py",
+          "before_sha256": "20888f8e22f2620ae966ac6869a74e960a0c604724afe9c24d3a099c3430d28d",
+          "after_sha256": "00ce1fd7090ae334f16033fcca0e96f8c3e27e986d14c1928b3090074f66c961",
+          "edits": [
+            {
+              "start": 3097,
+              "old": "    platform_client = ctx.request_context.lifespan_context.get(\"client\")\n",
+              "new": "    platform_client = ctx.lifespan_context.get(\"client\")\n"
+            }
+          ]
+        }
+      ],
+      "verification": "itential: pass"
+    }
+  }
+}

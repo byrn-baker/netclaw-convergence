@@ -1,0 +1,5 @@
+{
+  "http_status": 200,
+  "expected_marker": true,
+  "response_nonempty": true
+}

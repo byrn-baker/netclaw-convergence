@@ -1,6 +1,6 @@
 ---
 name: catc-troubleshoot
-description: "Catalyst Center troubleshooting workflows - device unreachable investigation, client connectivity issues, interface down analysis, site-wide outage triage, wireless roaming problems, integration with pyATS for CLI-level diagnostics. Use when a device is unreachable, a user reports connectivity problems, an interface is down, a site has an outage, or wireless clients have roaming issues."
+description: "Catalyst Center troubleshooting workflows - device unreachable investigation, client connectivity issues, interface down analysis, site-wide outage triage, wireless roaming problems, integration with pyATS for CLI-level diagnostics. Use when the device is managed by Catalyst Center and you want its controller/assurance view: a device is unreachable, a user reports connectivity problems, an interface is down, a site has an outage, or wireless clients have roaming issues. For direct CLI-level troubleshooting on devices not managed by Catalyst Center, use `pyats-troubleshoot` instead."
 license: Apache-2.0
 user-invocable: true
 metadata:
@@ -601,5 +601,10 @@ Preventive Measures
 After completing any troubleshooting session, record the findings and resolution in GAIT:
 
 ```bash
-python3 $MCP_CALL "python3 -u $GAIT_MCP_SCRIPT" gait_record_turn '{"input":{"role":"assistant","content":"Troubleshooting: Site-wide outage at Global/USA/NYC/Floor3. Root cause: Failing SFP on DIST-SW-NYC Te1/0/1. Impact: 335 clients, 5 access switches unreachable for 47 minutes. Resolution: SFP replaced, services restored. Preventive: Redundant uplink recommended.","artifacts":[]}}'
+python3 $MCP_CALL "python3 -u $GAIT_MCP_SCRIPT" gait_record_turn '{"user_text":"Example only: replace with the actual authorized request.","assistant_text":"Troubleshooting: Site-wide outage at Global/USA/NYC/Floor3. Root cause: Failing SFP on DIST-SW-NYC Te1/0/1. Impact: 335 clients, 5 access switches unreachable for 47 minutes. Resolution: SFP replaced, services restored. Preventive: Redundant uplink recommended.","artifacts":[]}'
 ```
+
+Audit examples are illustrative. Replace request, outcomes, identifiers and counts
+with observed session evidence; do not record these example results as facts.
+Inspect MCP `isError`, returned `ok`, and the recorded turn with `gait_show` when
+validating a new client/schema. Follow gait-session-tracking for branch checkout.

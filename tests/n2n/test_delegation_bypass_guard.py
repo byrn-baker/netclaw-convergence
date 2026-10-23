@@ -85,34 +85,36 @@ def test_gateway_stall_extends_window_and_completes(monkeypatch, tmp_path):
     still complete (previously it died on the hard timeout)."""
     import bgp.federation.gateway as gw
 
-    fake = tmp_path / "openclaw"
-    fake.write_text("#!/bin/sh\nsleep 3\n"
-                    "echo '{\"result\":{\"payloads\":[{\"text\":\"late-ok\"}]}}'\n")
-    fake.chmod(0o755)
-    monkeypatch.setenv("PATH", f"{tmp_path}:" + __import__("os").environ["PATH"])
+    class Client:
+        async def call(self, method, params, timeout_s):
+            async def result():
+                await asyncio.sleep(0.15)
+                return {"result": {"payloads": [{"text": "late-ok"}]}}
+            return await asyncio.wait_for(result(), timeout=timeout_s)
 
+    async def client():
+        return Client()
+    monkeypatch.setattr(gw.gateway_ws, "get_gateway_ws_client", client)
     stalls = []
-
     def on_stall(waited):
         stalls.append(waited)
-        return 10  # operator approval window
-
+        return 1
     reply, _ = asyncio.run(gw.run_agent_turn(
-        "hi", timeout_s=2, on_stall=on_stall, stall_after_s=1))
+        "hi", timeout_s=0.1, on_stall=on_stall, stall_after_s=0.03))
     assert reply == "late-ok"
-    assert stalls == [1]
+    assert stalls == [0.03]
 
 
-def test_gateway_stall_timeout_without_extension(monkeypatch, tmp_path):
+def test_gateway_stall_timeout_without_extension(monkeypatch):
     import bgp.federation.gateway as gw
-
-    fake = tmp_path / "openclaw"
-    fake.write_text("#!/bin/sh\nsleep 30\n")
-    fake.chmod(0o755)
-    monkeypatch.setenv("PATH", f"{tmp_path}:" + __import__("os").environ["PATH"])
-
+    class Client:
+        async def call(self, method, params, timeout_s):
+            await asyncio.sleep(10)
+    async def client():
+        return Client()
+    monkeypatch.setattr(gw.gateway_ws, "get_gateway_ws_client", client)
     with pytest.raises(asyncio.TimeoutError):
-        asyncio.run(gw.run_agent_turn("hi", timeout_s=1, stall_after_s=5))
+        asyncio.run(gw.run_agent_turn("hi", timeout_s=0.03, stall_after_s=5))
 
 
 def test_exec_skill_stall_bridges_approval_notification(tmp_path):

@@ -1,0 +1,58 @@
+FFF                                                                      [100%]
+=================================== FAILURES ===================================
+_____________ test_duplicate_request_ids_preserve_distinct_results _____________
+
+manager = <bgp.federation.manager.FederationManager object at 0x780da0e51940>
+
+    def test_duplicate_request_ids_preserve_distinct_results(manager):
+        audit = Auditor(manager)
+        first = audit.store_result('peer-chosen-id', {'output_text':'original'})
+        second = audit.store_result('peer-chosen-id', {'output_text':'later'})
+>       assert first != second
+E       AssertionError: assert '/tmp/pytest-of-johncapobianco/pytest-217/test_duplicate_request_ids_pre0/n2n/results/peer-chosen-id.json' != '/tmp/pytest-of-johncapobianco/pytest-217/test_duplicate_request_ids_pre0/n2n/results/peer-chosen-id.json'
+
+tests/n2n/test_result_persistence.py:13: AssertionError
+_________________ test_failed_storage_never_returns_reference __________________
+
+manager = <bgp.federation.manager.FederationManager object at 0x780da0ff2210>
+tmp_path = PosixPath('/tmp/pytest-of-johncapobianco/pytest-217/test_failed_storage_never_retu0')
+
+    def test_failed_storage_never_returns_reference(manager, tmp_path):
+        audit = Auditor(manager)
+        bad = tmp_path/'not-a-directory'
+        bad.write_text('sentinel')
+        audit.results_dir = bad
+>       with pytest.raises(OSError): audit.store_result('id', {'output_text':'fixture'})
+             ^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE OSError
+
+tests/n2n/test_result_persistence.py:24: Failed
+------------------------------ Captured log call -------------------------------
+WARNING  n2n.audit:audit.py:47 Could not store result id: [Errno 20] Not a directory: '/tmp/pytest-of-johncapobianco/pytest-217/test_failed_storage_never_retu0/not-a-directory/id.json'
+__________ test_task_reaches_failed_state_even_if_error_storage_fails __________
+
+manager = <bgp.federation.manager.FederationManager object at 0x780da0ff2e90>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x780da0edcb00>
+
+    def test_task_reaches_failed_state_even_if_error_storage_fails(manager, monkeypatch):
+        audit = Auditor(manager)
+        tm = TaskManager(manager, audit)
+        task = tm.create(direction='inbound', peer_identity='fixture', target_type='skill', target_name='fixture')
+        def fail(*args): raise OSError('fixture storage failure')
+        monkeypatch.setattr(audit, 'store_result', fail)
+        async def run():
+            async def worker(progress): return 'completed work', 0
+            await asyncio.gather(tm.run(task,worker),return_exceptions=True)
+        asyncio.run(run())
+>       assert tm.status(task)['state'] == 'failed'
+E       AssertionError: assert 'working' == 'failed'
+E
+E         - failed
+E         + working
+
+tests/n2n/test_result_persistence.py:38: AssertionError
+=========================== short test summary info ============================
+FAILED tests/n2n/test_result_persistence.py::test_duplicate_request_ids_preserve_distinct_results
+FAILED tests/n2n/test_result_persistence.py::test_failed_storage_never_returns_reference
+FAILED tests/n2n/test_result_persistence.py::test_task_reaches_failed_state_even_if_error_storage_fails
+3 failed in 0.08s

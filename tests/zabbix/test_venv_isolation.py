@@ -1,16 +1,17 @@
 """The dedicated venv, and proof it does not disturb the system interpreter.
 Spec 083, FR-037a/b/c, SC-026/027.
 
-This is not hygiene. The vendored server requires fastmcp 3.x; FIVE NetClaw servers pin
-fastmcp<3. A shared install breaks all five — spec 076's cryptography incident verbatim.
+Spec 141 pins FastMCP 4 / MCP 2 in a dedicated runtime. Legacy low-level SDK
+consumers still require isolation from these framework dependencies.
 """
 from __future__ import annotations
 import json, os, re, subprocess
 from _harness import FAILURES, check, read, repo, run, skip  # noqa: F401
 
-PINNED_BELOW_3 = ["netbox-mcp-server", "CiscoFMC-MCP-server-community",
-                  "Wikipedia_MCP", "rag-mcp", "ISE_MCP"]
-VENV_PY = repo("mcp-servers", "zabbix-mcp", ".venv", "bin", "python")
+VENV_PY = os.environ.get(
+    "NETCLAW_ZABBIX_VENV_PY",
+    repo("mcp-servers", "zabbix-mcp", ".venv", "bin", "python"),
+)
 
 def _version(python_exe: str, dist: str) -> str | None:
     out = subprocess.run([python_exe, "-c",
@@ -18,45 +19,30 @@ def _version(python_exe: str, dist: str) -> str | None:
         capture_output=True, text=True)
     return out.stdout.strip() if out.returncode == 0 else None
 
-def test_venv_exists_and_holds_fastmcp_3():
+def test_venv_exists_and_holds_modern_framework():
     if not os.path.exists(VENV_PY):
         skip("venv checks", "venv not built — run the installer")
         return
     v = _version(VENV_PY, "fastmcp")
-    check("the venv resolves fastmcp 3.x", bool(v) and v.startswith("3."), f"got {v}")
+    check("the venv resolves pinned FastMCP", v == "4.0.11", f"got {v}")
+    check("the venv resolves pinned MCP SDK", _version(VENV_PY, "mcp") == "2.3.0")
     check("the venv has the vendored package installed",
           _version(VENV_PY, "zabbix-mcp-server") is not None, "not installed")
 
-def test_system_interpreter_is_untouched():
-    import importlib.metadata as md
-    try:
-        sysv = md.version("fastmcp")
-    except Exception:
-        skip("system fastmcp check", "fastmcp not installed system-wide")
+def test_runtime_excludes_system_packages():
+    if not os.path.exists(VENV_PY):
+        skip("venv isolation", "venv not built")
         return
-    check("the SYSTEM interpreter still resolves fastmcp 2.x", sysv.startswith("2."),
-          f"got {sysv} — installing the Zabbix server leaked into the shared interpreter, "
-          f"which breaks {', '.join(PINNED_BELOW_3)}")
-
-def test_the_five_pinned_servers_are_still_satisfied():
-    import importlib.metadata as md
-    try:
-        sysv = md.version("fastmcp")
-    except Exception:
-        skip("pinned-server check", "fastmcp not installed system-wide")
-        return
-    major = int(sysv.split(".")[0])
-    for server in PINNED_BELOW_3:
-        found = False
-        for fn in ("pyproject.toml", "requirements.txt"):
-            p = repo("mcp-servers", server, fn)
-            if os.path.exists(p):
-                if re.search(r"fastmcp[^\n]*<\s*3", open(p, encoding="utf-8").read()):
-                    found = True
-        check(f"{server} still declares fastmcp<3", found,
-              "its pin vanished — either it was relaxed, or this list is stale")
-    check(f"the installed system fastmcp ({sysv}) satisfies <3", major < 3,
-          "all five pinned servers are now unsatisfiable")
+    probe = subprocess.run([VENV_PY, "-c", "import json,sys,site; print(json.dumps({'prefix':sys.prefix,'base':sys.base_prefix,'user_site':site.ENABLE_USER_SITE}))"],
+                           capture_output=True, text=True, check=True)
+    state = json.loads(probe.stdout)
+    check("runtime has a distinct virtualenv prefix", state["prefix"] != state["base"])
+    check("runtime excludes user site packages", state["user_site"] is False)
+    cfg = os.path.join(state["prefix"], "pyvenv.cfg")
+    with open(cfg, encoding="utf-8") as fh:
+        config = dict(line.strip().split("=", 1) for line in fh if "=" in line)
+    config = {k.strip(): v.strip().lower() for k, v in config.items()}
+    check("runtime excludes system site packages", config.get("include-system-site-packages") == "false")
 
 def test_installer_never_uses_bare_venv():
     steps = read("scripts", "lib", "install-steps.sh")
@@ -75,10 +61,16 @@ def test_installer_never_uses_bare_venv():
     check("no executable line calls bare `python3 -m venv`", not offenders,
           f"bare venv fails on hosts without ensurepip (spec 077 hazard #3, hit live in "
           f"Phase 0). Offending line(s): {offenders}")
-    check("the installer uses netclaw_venv_create or uv",
-          "netclaw_venv_create" in fn or "uv venv" in fn, "no supported venv creation path")
+    helper = read("scripts", "lib", "pip-helper.sh")
+    component_helper = re.search(r"^netclaw_component_venv\(\) \{.*?^}", helper, re.M | re.S)
+    delegates_creation = ("netclaw_component_venv" in fn and component_helper
+                          and "netclaw_venv_create" in component_helper[0]
+                          and '_netclaw_require_python' in component_helper[0])
+    check("the installer uses a supported isolated venv creation path",
+          "netclaw_venv_create" in fn or "uv venv" in fn or delegates_creation,
+          "no supported venv creation path")
     check("the installer explains why the venv exists",
-          "fastmcp" in fn and ("<3" in fn or "3.x" in fn),
+          "isolated" in fn.lower() and "fastmcp" in fn.lower(),
           "without the rationale a maintainer will 'simplify' it away")
 
 def test_registration_points_at_the_venv():
@@ -102,8 +94,7 @@ def test_venv_is_gitignored():
                          capture_output=True, cwd=repo()).returncode != 0,
           "the vendored tree is invisible to git")
 
-TESTS = [test_venv_exists_and_holds_fastmcp_3, test_system_interpreter_is_untouched,
-         test_the_five_pinned_servers_are_still_satisfied, test_installer_never_uses_bare_venv,
+TESTS = [test_venv_exists_and_holds_modern_framework, test_runtime_excludes_system_packages, test_installer_never_uses_bare_venv,
          test_registration_points_at_the_venv, test_venv_is_gitignored]
 
 if __name__ == "__main__":

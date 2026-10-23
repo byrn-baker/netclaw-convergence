@@ -1,0 +1,4 @@
+# Spec 141: isolated FastMCP runtime.
+fastmcp==4.0.11
+fastmcp-slim==4.0.11
+mcp==2.3.0

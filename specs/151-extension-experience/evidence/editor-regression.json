@@ -1,0 +1,29 @@
+{
+  "editor": "1.102.0",
+  "packageMode": "development extension",
+  "checks": [
+    "actual extension activation",
+    "saved host-local profile",
+    "source HUD identity binding",
+    "mismatched identity rejected",
+    "actual VS Code MCP definition launches bundled adapter with Electron; cached disable enforced (not Copilot inference)",
+    "actual overview rendering in dark/light/high contrast",
+    "actual composer -> source HUD -> synthetic gateway -> rendered reply",
+    "hidden Overview and Chat restore and accept refresh without resending work",
+    "Canvas branch without dispatch",
+    "integrated RAG panel; backend may be unavailable in fixture",
+    "hidden Canvas restores both lanes and accepts save/open",
+    "bundled local Avatar",
+    "target switch invalidates webview"
+  ],
+  "screenshots": [
+    "/var/folders/ln/99pzcfd950j6vxf7gbfjjm5w0000gq/T/netclaw150-client-editor-e5c44E/Default-Dark-Modern.png",
+    "/var/folders/ln/99pzcfd950j6vxf7gbfjjm5w0000gq/T/netclaw150-client-editor-e5c44E/Default-Light-Modern.png",
+    "/var/folders/ln/99pzcfd950j6vxf7gbfjjm5w0000gq/T/netclaw150-client-editor-e5c44E/Default-High-Contrast.png",
+    "/var/folders/ln/99pzcfd950j6vxf7gbfjjm5w0000gq/T/netclaw150-client-editor-e5c44E/chat.png",
+    "/var/folders/ln/99pzcfd950j6vxf7gbfjjm5w0000gq/T/netclaw150-client-editor-e5c44E/canvas.png",
+    "/var/folders/ln/99pzcfd950j6vxf7gbfjjm5w0000gq/T/netclaw150-client-editor-e5c44E/rag.png",
+    "/var/folders/ln/99pzcfd950j6vxf7gbfjjm5w0000gq/T/netclaw150-client-editor-e5c44E/avatar.png"
+  ],
+  "scope": "Actual desktop extension against source HUD with synthetic local gateway; no real provider/device/WSL claim."
+}

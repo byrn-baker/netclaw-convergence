@@ -8,7 +8,7 @@ Environment Variables:
     NAUTOBOT_URL          — Nautobot instance URL (required)
     NAUTOBOT_TOKEN        — Nautobot API token (required)
     NAUTOBOT_TIMEOUT      — API request timeout in seconds (default: 60)
-    NAUTOBOT_VERIFY_SSL   — Verify SSL certificates (default: false)
+    NAUTOBOT_VERIFY_SSL   — Verify SSL certificates (default: true)
     GOLDEN_CONFIG_POLL_INTERVAL — Seconds between job status polls (default: 5)
     GOLDEN_CONFIG_JOB_TIMEOUT   — Max seconds to wait for job completion (default: 300)
     ITSM_ENABLED          — Require ServiceNow CR for write ops (default: false)
@@ -25,7 +25,8 @@ from typing import Optional
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from mcp.server.fastmcp import FastMCP
+from fastmcp_tasks import TasksExtension
+from fastmcp import FastMCP
 
 from nautobot_client import NautobotClient, NautobotError
 from job_runner import (
@@ -51,6 +52,7 @@ for var in ("NAUTOBOT_URL", "NAUTOBOT_TOKEN"):
         sys.exit(1)
 
 mcp = FastMCP("nautobot-golden-config-mcp")
+mcp.add_extension(TasksExtension(name="netclaw-nautobot-golden-config-mcp", concurrency=1))
 client = NautobotClient()
 
 ITSM_ENABLED = os.environ.get("ITSM_ENABLED", "false").lower() == "true"
@@ -311,7 +313,7 @@ async def golden_config_remediate(
 # ═══════════════════════════════════════════════════════════════════════
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def golden_config_get_intended(device: str) -> str:
     """Get the rendered intended config for a device.
 
@@ -340,7 +342,7 @@ async def golden_config_get_intended(device: str) -> str:
         return json.dumps({"error": str(e)})
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def golden_config_get_backup(device: str) -> str:
     """Get the latest backup config for a device.
 
@@ -368,7 +370,7 @@ async def golden_config_get_backup(device: str) -> str:
         return json.dumps({"error": str(e)})
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def golden_config_get_compliance_diff(device: str) -> str:
     """Get the compliance diff for a device — what's missing and what's extra per feature.
 
@@ -414,7 +416,7 @@ async def golden_config_get_compliance_diff(device: str) -> str:
         return json.dumps({"error": str(e)})
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def golden_config_get_compliance_summary(
     device: Optional[str] = None,
     feature: Optional[str] = None,
@@ -470,7 +472,7 @@ async def golden_config_get_compliance_summary(
 # ═══════════════════════════════════════════════════════════════════════
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def golden_config_get_templates(device: Optional[str] = None) -> str:
     """List golden config templates that apply to a device (based on platform/role).
 
@@ -524,7 +526,7 @@ async def golden_config_get_templates(device: Optional[str] = None) -> str:
         return json.dumps({"error": str(e)})
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def golden_config_render_preview(device: str) -> str:
     """Render a preview of what the intended config would look like for a device.
 
@@ -555,7 +557,7 @@ async def golden_config_render_preview(device: str) -> str:
         return json.dumps({"error": str(e)})
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def golden_config_get_device_context(device: str) -> str:
     """Get the merged config context for a device as golden config templates see it.
 
@@ -733,7 +735,7 @@ async def golden_config_update_template(
 # ═══════════════════════════════════════════════════════════════════════
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def golden_config_get_settings() -> str:
     """Get the current golden config settings — repos, path templates, SoT query, scope.
 

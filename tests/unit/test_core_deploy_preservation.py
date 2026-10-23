@@ -1,0 +1,86 @@
+"""Run the real deployment function against a synthetic operator workspace."""
+import importlib.util
+import os
+from pathlib import Path
+import subprocess
+
+ROOT = Path(__file__).resolve().parents[2]
+spec = importlib.util.spec_from_file_location('deploy_env_writer', ROOT / 'scripts/write-env.py')
+writer = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(writer)
+
+
+def deploy(tmp_path):
+    repo = tmp_path / "checkout & pipe|quote' space"
+    repo.mkdir(exist_ok=True)
+    (repo / 'workspace/skills/example').mkdir(parents=True, exist_ok=True)
+    (repo / 'workspace/skills/example/SKILL.md').write_text('new skill\n')
+    (repo / 'testbed').mkdir(exist_ok=True)
+    (repo / 'testbed/testbed.yaml').write_text('devices: {}\n')
+    for name in ('SOUL.md', 'USER.md', 'TOOLS.md'):
+        (repo / name).write_text('repository default\n')
+    runtime = tmp_path / '.openclaw'
+    script = '''
+set -eu
+source scripts/lib/common.sh
+source scripts/lib/install-steps.sh
+NETCLAW_DIR="$FIXTURE_REPO"
+define_paths
+RUNTIME_HOME="$FIXTURE_RUNTIME"
+RUNTIME_WORKSPACE="$RUNTIME_HOME/workspace"
+RUNTIME_SKILLS="$RUNTIME_WORKSPACE/skills"
+RUNTIME_ENV="$RUNTIME_HOME/.env"
+core_deploy
+'''
+    result = subprocess.run(['bash', '-c', script], cwd=ROOT,
+        env={**os.environ, 'FIXTURE_REPO': str(repo), 'FIXTURE_RUNTIME': str(runtime)},
+        capture_output=True, text=True, timeout=30)
+    assert result.returncode == 0, result.stderr
+    return repo, runtime
+
+
+def test_real_deploy_literal_private_environment_and_repeat(tmp_path):
+    repo, runtime = deploy(tmp_path)
+    env = runtime / '.env'
+    for _ in range(2):
+        values = writer.values(env.read_text())
+        assert values['PYATS_MCP_SCRIPT'] == str(repo / 'scripts/pyats-stdio.py')
+        assert env.stat().st_mode & 0o777 == 0o600
+        deploy(tmp_path)
+
+
+def test_upgrade_preserves_persona_testbed_and_custom_stores(tmp_path):
+    runtime = tmp_path / '.openclaw'
+    workspace = runtime / 'workspace'
+    (workspace / 'testbed').mkdir(parents=True)
+    for name in ('SOUL.md', 'USER.md', 'TOOLS.md'):
+        (workspace / name).write_text('operator notes\n')
+    testbed = workspace / 'testbed/testbed.yaml'
+    testbed.write_text('operator testbed\n')
+    (runtime / '.env').write_text('RAG_DATA_DIR=/custom/rag\nMEMORY_DATA_DIR=/custom/memory\nPYATS_TESTBED_PATH=/custom/testbed.yaml\n')
+    deploy(tmp_path)
+    for name in ('SOUL.md', 'USER.md', 'TOOLS.md'):
+        assert (workspace / name).read_text() == 'operator notes\n'
+    assert not testbed.is_symlink()
+    assert testbed.read_text() == 'operator testbed\n'
+    values = writer.values((runtime / '.env').read_text())
+    assert values['RAG_DATA_DIR'] == '/custom/rag'
+    assert values['MEMORY_DATA_DIR'] == '/custom/memory'
+    assert values['PYATS_TESTBED_PATH'] == '/custom/testbed.yaml'
+
+
+def test_upgrade_retains_skill_original_and_ignores_custom_only_file(tmp_path):
+    runtime = tmp_path / '.openclaw'
+    skill = runtime / 'workspace/skills/example/SKILL.md'
+    skill.parent.mkdir(parents=True)
+    skill.write_text('operator skill\n')
+    custom = skill.parent / 'custom.md'
+    custom.write_text('operator .openclaw custom\n')
+    deploy(tmp_path)
+    assert skill.read_text() == 'new skill\n'
+    assert custom.read_text() == 'operator .openclaw custom\n'
+    generations = list((runtime / 'skill-deployment-backups').glob('deploy-*'))
+    assert len(generations) == 1
+    assert (generations[0] / 'originals/example/SKILL.md').read_text() == 'operator skill\n'
+    deploy(tmp_path)
+    assert len(list((runtime / 'skill-deployment-backups').glob('deploy-*'))) == 1

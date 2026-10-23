@@ -9,6 +9,8 @@ metadata:
 
 # Subnet Calculator (IPv4 + IPv6)
 
+Installer note: native registration and the documented MCP_CALL invocation share the installed component launcher. Check `readiness.json` before first use; failed discovery is not device state. Existing write approvals still apply.
+
 ## Available Tools
 
 ### 1. `subnet_calculator` — IPv4 Subnet Details
@@ -220,3 +222,9 @@ python3 $MCP_CALL "python3 -u $SUBNET_MCP_SCRIPT" subnet_calculator '{"cidr":"10
 # Then configure the interface
 PYATS_TESTBED_PATH=$PYATS_TESTBED_PATH python3 $MCP_CALL "${PYATS_PYTHON:-python3} -u $PYATS_MCP_SCRIPT" pyats_configure_device '{"device_name":"R1","config_commands":["interface GigabitEthernet2","ip address 10.1.1.1 255.255.255.252","no shutdown"]}'
 ```
+
+## Failure Behavior
+
+- If a tool call fails with an authentication or connection error, check that `MCP_CALL`, `PYATS_MCP_SCRIPT`, `SUBNET_MCP_SCRIPT` are set and valid before assuming a data or device problem.
+- On a tool error (timeout, unreachable host, malformed response), report the failure and its error message directly to the user rather than fabricating or guessing at results.
+- For a confirmed read-only call, check connectivity and retry once if appropriate. For any call that changes state or sends a message, a timeout does not prove the action failed: inspect current state or delivery status before retrying, preserve the required approval/change gates, and do not repeat an action whose outcome is unknown.

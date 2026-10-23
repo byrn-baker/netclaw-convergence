@@ -102,3 +102,9 @@ Review an asset and everything around it:
 - **Halo == HaloPSA == HaloITSM** — identical behavior for both editions.
 - **GAIT logging is mandatory** for all queries.
 - **Escalate, don't mutate.** If the context implies a change, route it through **halo-change-request** (preview -> confirm -> submit); never try to write from this skill.
+
+## Failure Behavior
+
+- If a tool call fails with an authentication or connection error, check that `HALO_BASE_URL`, `HALO_CLIENT_ID`, `HALO_CLIENT_SECRET` are set and valid before assuming a data or device problem.
+- On a tool error (timeout, unreachable host, malformed response), report the failure and its error message directly to the user rather than fabricating or guessing at results.
+- For a confirmed read-only call, check connectivity and retry once if appropriate. For any call that changes state or sends a message, a timeout does not prove the action failed: inspect current state or delivery status before retrying, preserve the required approval/change gates, and do not repeat an action whose outcome is unknown.

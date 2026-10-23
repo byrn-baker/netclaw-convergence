@@ -94,6 +94,7 @@ def _fetch_with_curl(
     url: str,
     timeout: float,
     verify: bool,
+    max_bytes: int,
 ) -> Tuple[bytes, str]:
     """Fetch via system curl (HTTP/2 ALPN). UniFi OS often hangs on httpx HTTP/2.
 
@@ -117,6 +118,8 @@ def _fetch_with_curl(
             "-sS",
             "-L",
             "--http2",
+            "--max-filesize",
+            str(max_bytes),
             "--max-time",
             str(max_time),
             "--connect-timeout",
@@ -163,7 +166,9 @@ def _fetch_with_curl(
 
         try:
             with open(body_path, "rb") as fh:
-                body = fh.read()
+                body = fh.read(max_bytes + 1)
+            if len(body) > max_bytes:
+                raise FetchError(f"Document exceeds the {max_bytes}-byte download limit")
         except OSError as exc:
             raise FetchError(f"curl produced no body for {url}: {exc}") from exc
 
@@ -183,6 +188,7 @@ def _fetch_with_httpx(
     url: str,
     timeout: float,
     verify: bool,
+    max_bytes: int,
 ) -> Tuple[bytes, str]:
     import httpx
 
@@ -191,19 +197,25 @@ def _fetch_with_httpx(
         "User-Agent": "NetClaw-rag-url/1.0 (+local Knowledge ingest)",
         "Accept": "text/html,application/xhtml+xml,application/json;q=0.9,*/*;q=0.8",
     }
-    use_http2 = _httpx_http2_available()
-    with httpx.Client(
-        http2=use_http2,
-        verify=verify,
-        timeout=timeout_cfg,
-        follow_redirects=True,
-        headers=headers,
-        trust_env=not is_private_or_local_host(url),
-    ) as client:
-        resp = client.get(url)
+    options = dict(timeout=timeout_cfg, follow_redirects=True, headers=headers)
+    def read_response(resp):
         resp.raise_for_status()
-    content_type = resp.headers.get("content-type", "").split(";")[0].strip().lower()
-    return resp.content, content_type
+        content_type = resp.headers.get("content-type", "").split(";")[0].strip().lower()
+        chunks, size = [], 0
+        for chunk in resp.iter_bytes(chunk_size=min(65536, max_bytes + 1)):
+            size += len(chunk)
+            if size > max_bytes:
+                raise FetchError(f"Document exceeds the {max_bytes}-byte download limit")
+            chunks.append(chunk)
+        return b"".join(chunks), content_type
+
+    if verify and not is_private_or_local_host(url):
+        with httpx.stream("GET", url, **options) as resp:
+            return read_response(resp)
+    with httpx.Client(http2=_httpx_http2_available(), verify=verify,
+                      trust_env=not is_private_or_local_host(url)) as client:
+        with client.stream("GET", url, **options) as resp:
+            return read_response(resp)
 
 
 def _looks_like_http_status_error(exc: BaseException) -> bool:
@@ -219,6 +231,7 @@ def fetch(
     url: str,
     timeout: float = 30.0,
     verify_ssl: Optional[bool] = None,
+    max_bytes: int = 100 * 1024 * 1024,
 ) -> Tuple[bytes, str]:
     """Fetch a URL. Returns (content_bytes, content_type). Errors verbatim.
 
@@ -231,6 +244,8 @@ def fetch(
       * System ``curl --http2`` is reliable — used first for private/local hosts,
         and as a fallback when httpx times out on public hosts.
     """
+    if max_bytes <= 0:
+        raise FetchError("Document byte limit must be positive")
     verify = resolve_verify_ssl(url, verify_ssl)
     private = is_private_or_local_host(url)
     has_curl = _curl_available()
@@ -254,8 +269,10 @@ def fetch(
         for attempt in range(attempts_per):
             try:
                 if transport == "curl":
-                    return _fetch_with_curl(url, timeout=timeout, verify=verify)
-                return _fetch_with_httpx(url, timeout=timeout, verify=verify)
+                    return _fetch_with_curl(url, timeout=timeout, verify=verify, max_bytes=max_bytes)
+                return _fetch_with_httpx(url, timeout=timeout, verify=verify, max_bytes=max_bytes)
+            except FetchError:
+                raise
             except Exception as exc:
                 last_exc = exc
                 errors.append(f"{transport}#{attempt + 1}: {exc}")

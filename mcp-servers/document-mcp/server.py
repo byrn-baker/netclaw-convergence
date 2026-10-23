@@ -33,7 +33,9 @@ from typing import Any
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from mcp.server.fastmcp import FastMCP  # noqa: E402
+from fastmcp_tasks import TasksExtension
+from fastmcp.utilities.async_utils import call_sync_fn_in_threadpool
+from fastmcp import FastMCP  # noqa: E402
 
 import envelope  # noqa: E402
 import output  # noqa: E402
@@ -42,6 +44,7 @@ from provenance import DocumentStamp, SourceLedger  # noqa: E402
 from writers import docx_writer, pdf_writer, pptx_writer, xlsx_writer  # noqa: E402
 
 mcp = FastMCP("document-mcp")
+mcp.add_extension(TasksExtension(name="netclaw-document-mcp", concurrency=1))
 
 
 def _write(kind: str, tool: str, payload: dict[str, Any], builder) -> dict:
@@ -149,7 +152,7 @@ async def pptx_write(
     )
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def pdf_inspect_form(path: str) -> dict:
     """List the named fields of a fillable PDF, so data is mapped to fields that exist.
 
@@ -159,7 +162,7 @@ async def pdf_inspect_form(path: str) -> dict:
     """
     tool = "pdf_inspect_form"
     try:
-        result = pdf_writer.inspect(path)
+        result = await call_sync_fn_in_threadpool(pdf_writer.inspect, path)
     except ValueRefused as exc:
         return envelope.refused(tool=tool, reason=str(exc), outcome=exc.outcome, query={"path": path})
     if result["outcome"] is Outcome.NOT_FILLABLE:

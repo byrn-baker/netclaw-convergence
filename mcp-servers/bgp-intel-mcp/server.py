@@ -28,7 +28,8 @@ from typing import Any
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from mcp.server.fastmcp import FastMCP  # noqa: E402
+from fastmcp_tasks import TasksExtension
+from fastmcp import FastMCP  # noqa: E402
 
 import envelope  # noqa: E402
 import validate  # noqa: E402
@@ -36,13 +37,14 @@ from sources import atlas, peeringdb, rdap, rpki, routing  # noqa: E402
 from validate import InputRefused  # noqa: E402
 
 mcp = FastMCP("bgp-intel-mcp")
+mcp.add_extension(TasksExtension(name="netclaw-bgp-intel-mcp", concurrency=1))
 
 
 # ---------------------------------------------------------------------------
 # RPKI — 1 tool
 # ---------------------------------------------------------------------------
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def rpki_validate(prefix: str, origin_asn: str, fresh: bool = False) -> dict:
     """Is this prefix legitimately announced by this AS? RPKI origin validation.
 
@@ -74,7 +76,7 @@ async def rpki_validate(prefix: str, origin_asn: str, fresh: bool = False) -> di
 # Registry (RDAP) — 2 tools
 # ---------------------------------------------------------------------------
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def registry_lookup(resource: str) -> dict:
     """Who is this IP, prefix or ASN allocated to? Registry record via RDAP.
 
@@ -92,7 +94,7 @@ async def registry_lookup(resource: str) -> dict:
     return await rdap.lookup(kind, value, tool="registry_lookup")
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def registry_abuse_contact(resource: str) -> dict:
     """Abuse contact for an IP, prefix or ASN. The common incident-response ask."""
     try:
@@ -122,7 +124,7 @@ async def registry_abuse_contact(resource: str) -> dict:
 # Routing — 2 tools
 # ---------------------------------------------------------------------------
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def routing_as_overview(asn: str, fresh: bool = False) -> dict:
     """Holder and allocation status for an ASN, and whether it is announced at all."""
     try:
@@ -134,7 +136,7 @@ async def routing_as_overview(asn: str, fresh: bool = False) -> dict:
     return await routing.as_overview(value, fresh=fresh)
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def routing_announced_prefixes(asn: str, fresh: bool = False) -> dict:
     """What prefixes does this AS announce, and how widely are they seen?
 
@@ -154,7 +156,7 @@ async def routing_announced_prefixes(asn: str, fresh: bool = False) -> dict:
 # Peering — 2 tools
 # ---------------------------------------------------------------------------
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def peering_network(asn: str, fresh: bool = False) -> dict:
     """This AS's PeeringDB record: network type, traffic profile, peering policy.
 
@@ -168,7 +170,7 @@ async def peering_network(asn: str, fresh: bool = False) -> dict:
     return await peeringdb.network(value, fresh=fresh)
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def peering_presence(asn: str, fresh: bool = False) -> dict:
     """Which IXPs and facilities does this AS report being present at?
 
@@ -185,7 +187,7 @@ async def peering_presence(asn: str, fresh: bool = False) -> dict:
 # Atlas — 2 tools, deliberately narrow
 # ---------------------------------------------------------------------------
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def atlas_anchors(country: str, fresh: bool = False) -> dict:
     """RIPE Atlas anchors in a country — stable, always-on measurement targets.
 
@@ -199,7 +201,7 @@ async def atlas_anchors(country: str, fresh: bool = False) -> dict:
     return await atlas.anchors(value, fresh=fresh)
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def atlas_probe_count(asn: str, fresh: bool = False) -> dict:
     """How many RIPE Atlas probes are inside this AS? Can it be measured from within?"""
     try:
@@ -213,7 +215,7 @@ async def atlas_probe_count(asn: str, fresh: bool = False) -> dict:
 # Composite — 1 tool
 # ---------------------------------------------------------------------------
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def resource_report(resource: str, origin_asn: str = "") -> dict:
     """Everything known about an internet resource: registry, routing, peering, RPKI.
 

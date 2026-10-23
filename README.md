@@ -4,7 +4,128 @@
 
 # NetClaw
 
-A CCIE-level AI network engineering coworker. Built on [OpenClaw](https://github.com/openclaw/openclaw) with Anthropic Claude, 224 skills, and 168 MCP integrations for complete network automation with ITSM gating, source-of-truth reconciliation, immutable audit trails, gNMI streaming telemetry, NetFlow/IPFIX flow telemetry, Canvas/A2UI inline network visualizations, packet capture analysis, GitHub config-as-code, GitLab DevOps (issues, merge requests, pipelines, repositories, wikis), Jenkins CI/CD (job monitoring, build triggering, log analysis, SCM tracking), Chrome DevTools browser automation (visualization render QA, controller GUI gap-filling, undocumented API discovery, headless or watchable-headed), Computer Use full-desktop automation (legacy desktop-only tools with no browser or API path, virtual XFCE desktop with VNC/noVNC Watch Mode), Cisco CML lab simulation, ContainerLab containerized network labs, Cisco NSO orchestration, Cisco SD-WAN vManage monitoring, Grafana observability (dashboards, Prometheus, Loki, alerting, incidents), Prometheus direct PromQL monitoring, Kubeshark Kubernetes traffic analysis, Cisco Meraki Dashboard management, Cisco ThousandEyes network intelligence, AWS and Azure cloud networking, Cisco Secure Firewall policy auditing, Check Point Security (15 MCPs: policy, threat intel, gateway, SASE, malware), Itential network orchestration, Juniper JunOS device automation, Arista CloudVision Portal monitoring, F5 BIG-IP pyATS iControl REST coverage, Infoblox DDI, Palo Alto Panorama, FortiManager, Batfish offline configuration analysis, UML diagram generation, EVPN/VXLAN fabric workflows, live BGP/OSPF control-plane participation, nmap network scanning, gtrace path analysis and IP enrichment, Slack-native operations, Cisco WebEx-native operations, Microsoft 365 integration, Twilio voice/SMS, Twitter/X integration, Claroty OT/IoT asset management, Forward Networks digital twin, Ollama local LLM routing, an offline agentic RAG document knowledge base (cited answers from user-uploaded vendor guides and standards), layered Memory MCP, MemPalace persistent AI memory, and Lantronix Percepxion/SLC out-of-band console-server management (fleet-wide and direct single-device).
+A CCIE-level AI network engineering coworker that runs on [OpenClaw](https://github.com/openclaw/openclaw) or [Hermes](https://github.com/NousResearch/hermes-agent), with **249 skills and 177 MCP integrations** in its catalog. Investigate live networks, learn from your own documentation, coordinate specialist agents, and carry out approved changes with baselines, verification and an immutable audit trail. Available tools and HUD controls depend on the selected runtime and installed components.
+
+Work from chat, the visual HUD, your phone, or a Zoom meeting. Start with one NetClaw, or build [a risk of specialist NetClaws](#a-risk-of-netclaws-in2n) behind a single Border.
+
+**Start here:** [Choose a runtime](#hermes-or-openclaw) · [Install](#quick-install) · [Capabilities](#what-it-does) · [RAG](#rag--answers-grounded-in-your-documents) · [GCF](#gcf--compact-network-evidence) · [Mobile](#netclaw-mobile--your-network-in-your-pocket) · [Zoom](#zoom--network-investigations-in-the-meeting) · [VS Code](#vs-code-extension) · [HUD](#visual-hud) · [Jev](#optional-jev-science-officer)
+
+**Project:** [Source version 1.9.0 — unpublished](VERSION) · [Release notes](docs/releases/1.9.0.md) · [Contributing — numbered specs + Spec Kit](CONTRIBUTING.md) · [Changelog](CHANGELOG.md)
+
+**VS Code:** [Install NetClaw](https://marketplace.visualstudio.com/items?itemName=NetClaw.netclaw) or [explore the VS Code Extension](#vs-code-extension): a native workbench for your existing NetClaw, with Chat, Canvas, RAG, Testbed management, per-MCP configuration and reviewed security controls.
+
+**Reference:** [Architecture](#architecture) · [MCP servers](#mcp-servers-176) · [Skills](#skills-237) · [Workflows](#standard-workflows) · [Safety](#safety)
+
+## Hermes or OpenClaw?
+
+Choose the agent runtime during installation. Both can use the shared NetClaw HUD for
+Chat, branching Canvas investigations, local Avatar and browser-owned conversation history.
+Your choice persists across launches; an existing OpenClaw installation keeps its default.
+
+| Choose | Why use it? | Current shared HUD behavior |
+|---|---|---|
+| **OpenClaw** (default) | You want NetClaw's established gateway workflows and its broader existing HUD controls, or already run OpenClaw. | Uses your configured gateway, with model/effort controls and installed tools subject to existing permissions and change control. |
+| **Hermes** | You prefer the Hermes agent, CLI and skill ecosystem, or already deploy Hermes and want the same NetClaw workspace. | Uses your selected Hermes home and configured provider/model through a dedicated protected companion. The first qualified HUD tool is the read-only subnet calculator and its installed skill. |
+
+Hermes runtime installation includes the selected NetClaw MCP servers and skills. The
+protected HUD companion admits only reviewed tools: installing another MCP does not
+automatically enable it in HUD conversations. Attachments, configuration APPLY,
+per-conversation model/effort overrides and hosted Avatar are unavailable in this first
+Hermes HUD release. Local Avatar is supported. See the [Hermes setup and capability guide](docs/HERMES-HUD.md).
+
+**Connection:** the browser on `:3000` talks to the HUD API on `:3001`. For Hermes, the
+API uses a private MCP bridge and an authenticated companion on loopback `:8643`;
+it does not connect directly to or restart your ordinary Hermes gateway. Hermes HUD
+acceptance passed on Mac and Ubuntu under Windows WSL2; native Windows uses WSL.
+
+Spec 148 delivers the shared HUD connection. **NetClaw 1.8.0 / spec149 adds Hermes
+iN2N/eN2N and Mobile Ask Border** through protected execution. The initial qualified
+profile is subnet calculation; media attachments and production Hermes confinement
+remain unavailable. See [setup, mobile versions and tested scope](docs/HERMES-FEDERATION.md).
+[Runtime installation details](#agent-runtime--openclaw-or-hermes) · [Acceptance and exact tested platforms](specs/148-hermes-hud-integration/closure.md)
+
+The function-first HUD opens on standard Chat, with a Chat / Canvas interface switch,
+selected-runtime operations panels, Basic/Advanced presentation and detailed Jev views.
+OpenClaw also offers its native interface in a separate tab. Saved conversations survive
+refresh; runtime and usage indicators show available evidence rather than assumed values.
+See the [HUD guide](docs/HUD-FUNCTION-FIRST.md) for the broader workspace.
+
+## RAG — answers grounded in your documents
+
+Teach NetClaw your vendor guides, standards, customer designs and runbooks. Upload through Slack or the HUD RAG panel, ingest a local file, or preview a URL crawl before importing it. PDF, Markdown, HTML, text and modern Office formats are supported; legacy Office conversion uses optional LibreOffice.
+
+Hybrid semantic and keyword search, local reranking and structure-aware chunks return **cited passages with document, section and page context**. Retrieval runs locally after the models are installed. NetClaw can refine a search within a bounded budget and report when the corpus cannot answer. Uploaded knowledge stays separate from the agent's experiential memory; captured network snapshots are opt-in and carry their age.
+
+Try: *“Using our uploaded design guide, explain the intended BGP policy and cite the relevant sections.”* Then ask for a live device check to compare intent with current state.
+
+[Setup, formats and retrieval pipeline](mcp-servers/rag-mcp/README.md) · [Consented knowledge sharing between peers](N2N-PEERING-NETCLAWS.md)
+
+## GCF — compact network evidence
+
+GCF gives participating MCP integrations a compact representation of structured tool results: tabular encoding for repeated records, graph encoding for topology, and optional session references and deltas for repeated queries. This reduces repetitive payload text so more useful network evidence can fit into a model's context. The serializer retains source data and falls back to JSON when encoding fails.
+
+Choose `NETCLAW_GCF_MODE=full`, `graph`, `generic` or `off`; session/delta behavior also requires the caller to enable it. Savings depend on the payload and model. The recorded 1,000-node fixture used **98,859 graph-output characters versus 139,881 compact-JSON characters** (about 29% less); serializer token counts use a characters/4 estimate, not a model tokenizer or a guaranteed billing reduction.
+
+Optional: `NETCLAW_TABULAR_FORMAT=bpp` encodes flat, non-graph results (the payloads that would otherwise use the GCF generic profile) with [bpp](https://github.com/E7lektronXF/bpp) instead. It requires `pip install bpp-format`, is off by default, never affects graph, session or delta encoding, and falls back to GCF generic if bpp is missing or its round trip is not lossless.
+
+[Serializer and mode reference](src/netclaw_tokens/gcf_serializer.py) · [Recorded benchmark](specs/124-flagship-audit/evidence/gcf-cost-cached.json) · [Reproduce the benchmark](benchmarks/audit124/gcf_cost.py)
+
+## NetClaw Mobile — your network in your pocket
+
+The Flutter client brings the Border to **iOS and Android**. Enroll with a single-use QR token, ask by text or voice, scan a device QR/deep link, and receive answers with the responding claw identified. A dashboard, conversation history, feed and approvals view keep the operator connected away from the desk.
+
+Resolve approval requests with device biometrics and attach camera/microphone captures to an investigation. The phone is an NCFED edge member with device-native capabilities; the Border handles agent reasoning. Explicit notifications can reach a connected phone, with platform push fallback when configured. Existing authorization and audit rules still apply.
+
+[Build, enroll and use Mobile](mobile/netclaw-mobile/README.md) · [iOS release checklist](mobile/netclaw-mobile/APP-STORE-ROADMAP.md) · [Android release checklist](mobile/netclaw-mobile/PLAY-STORE-ROADMAP.md)
+
+## Zoom — network investigations in the meeting
+
+Bring NetClaw into an incident call through **Zoom Realtime Media Streams**. With listening enabled, transcript and chat context can trigger network investigations through the existing Border and specialist routing. The Zoom App side panel shows status and returned evidence, with an optional camera overlay.
+
+Live meeting context and historical meeting search serve different purposes: RTMS supplies the current conversation; the official Zoom Meetings MCP can supply prior meeting context where configured. Historical connectivity is environment-dependent. Meeting requests retain the same device-write approval gates as other channels.
+
+[RTMS setup, tools and deployment boundaries](mcp-servers/zoom-rtms-mcp/README.md) · [Meeting intelligence specification](specs/118-zoom-meeting-intelligence/spec.md)
+
+## Function-first HUD
+
+Start with standard Chat, switch to Canvas for branching investigations, or open the native
+OpenClaw interface in a separate tab. The local operations workspace also provides Claw/MCP drill-downs,
+reported LLMs, Jev assessments, RAG uploads and retrieval, Tokenomics, service Logs,
+masked Configuration, Security mode/enforcement panels, and Documentation. Basic/Advanced presentation and optional
+Three.js views keep evidence accessible. See the [HUD guide](docs/HUD-FUNCTION-FIRST.md).
+The service remains local to the host; the new UI does not change its access controls.
+
+## VS Code Extension
+
+Bring your existing NetClaw into **Visual Studio Code**. The [NetClaw extension](https://marketplace.visualstudio.com/items?itemName=NetClaw.netclaw) gives you a themed operations workbench alongside your code, configuration and documentation. It connects to the NetClaw you already run on OpenClaw or Hermes; available actions follow that runtime's capabilities.
+
+**Install:** search Extensions for **NetClaw** by publisher **NetClaw**, or use:
+
+```bash
+code --install-extension NetClaw.netclaw
+```
+
+Use VS Code **1.102 or later** on macOS or Linux. On Windows, open your intended WSL distribution and install the extension **in WSL**. Existing Remote SSH workspaces are supported; loopback addresses refer to the extension host. Browser VS Code and native Windows runtime hosting are not supported.
+
+Start your NetClaw HUD, open the NetClaw Activity Bar, and choose **Add existing NetClaw**. Give the connection a friendly nickname such as `My Mac lab`, enter its HUD **API** address—normally `http://127.0.0.1:3001`—and review the returned installation identity. Start the updated HUD to enable full Testbed and scoped MCP editing; updating the extension alone cannot add those API routes.
+
+| Work in the editor | What you can do |
+| --- | --- |
+| **Chat, Canvas and Avatar** | Talk to the selected runtime, branch investigations and use bundled local characters beside the same Chat. Select file/context content explicitly. |
+| **RAG knowledge** | Browse collections, upload selected documents and search cited passages with source and staleness context. |
+| **Testbed inventory** | Add, edit and remove devices through cards or advanced YAML. Import YAML, JSON or basic CSV, preview changes, review saves, export and inspect recovery copies. |
+| **MCP configuration** | Open integration-specific fields, keep/replace/clear values, inspect shared settings and review supported setup actions. Existing secret values stay private. |
+| **DefenseClaw and OpenShell** | Inspect status, permissions, redacted policy YAML and logs. Review supported connector tool rules or sandbox network-policy changes, with explicit acknowledgment when protection may weaken. |
+| **Operations and federation** | Inspect reported Risk/peer state, BGP relationships, tokenomics, logs, audit evidence, mobile/edge and Science Officer observations. |
+| **Copilot, Claude Code and Codex** | Opt into the scoped assistant interface for inspection/proposals and separately enable delegated NetClaw requests. Existing runtime authorization still applies. |
+
+Cards, labeled forms, search and filters follow light, dark and high-contrast editor themes. The interactive 3D BGP view uses reported sessions and includes an accessible list. It does not infer physical cabling or health.
+
+Changes retain their review boundaries: Testbed saves do not connect devices, saved MCP configuration does not prove endpoint access, and stored security policy does not prove traffic enforcement. Supported actions depend on the installed runtime and native CLI capabilities.
+
+**VS Code 1.1.0 (Spec152):** the upper Connections panel now opens the six runtime workspace Markdown files for reading, reviewed edits and upload/overwrite, with no delete. It also provides reviewed Start/Stop/Restart for the selected installation’s verified owned services, offline Start and Save & Restart. This is not in Marketplace 1.0.1. See [workspace controls and prerequisites](extensions/netclaw-vscode/README.md#workspace-files-and-claw-controls) and [verification](specs/152-workspace-claw-controls/verification.md). Source 1.11.0 supplies the required HUD discovery and native helper. See [release verification and platform limits](specs/152-workspace-claw-controls/release-verification.md), including WSL regular-file acceptance and intentional symlink refusal.
+
+[Extension guide and setup](extensions/netclaw-vscode/README.md) · [Privacy](extensions/netclaw-vscode/PRIVACY.md) · [Exact 0.1.1 qualification and platform scope](specs/151-extension-experience/production-readiness.md)
 
 ## Resources
 
@@ -66,10 +187,71 @@ Scripted / non-interactive installs:
 ./scripts/install.sh --list                       # see all components & profiles
 ```
 
+The installer reports the host OS, version, architecture and component Python,
+then checks the selected components before installing packages or changing runtime
+configuration. Known unsupported components are disabled in the custom checklist;
+explicit selections and profiles fail with all detected blockers rather than
+silently dropping components. A full selection can therefore be blocked on macOS.
+
+```bash
+./scripts/install.sh --runtime hermes --preflight --components "forward panorama zabbix zoom-rtms"
+./scripts/install.sh --preflight --all             # report all declared prerequisites; no installation
+```
+
+Preflight checks declared Python bounds, native SDK platforms, external commands,
+Forward's Go/CGO toolchain and Docker daemon availability. It does not prove package
+resolution or vendor connectivity. Existing Python 3.12 is preferred for component
+runtimes unless `NETCLAW_PY` is explicitly set; `python3` on PATH must still be 3.10+.
+See [Python compatibility and prerequisites](docs/PYTHON-RUNTIME-MIGRATION.md).
+### Filled `.env` and first-time setup
+
+You can fill credentials before installing: copy `.env.example` to `.env` in the
+NetClaw checkout, then edit and uncomment the settings you need. The installer
+imports supported settings into `~/.openclaw/.env` **before onboarding starts**
+(`~/.hermes/.env` for Hermes). It resolves the checkout path regardless of where
+you run the installer. Existing runtime assignments, including empty ones, win;
+conflicts are listed by variable name without printing values.
+
+Onboarding still chooses your provider, model, gateway and channels. Reuse
+detected credentials when the runtime offers that choice. Filling an API key
+does not supply those other choices. Onboarding failure now stops installation
+with an error instead of reporting completion.
+
+For an existing installation, import without reinstalling components:
+
+```bash
+python3 scripts/import-env.py             # preview; writes nothing
+python3 scripts/import-env.py --apply     # add missing runtime settings
+# Hermes: add --runtime hermes to both commands
+```
+
+If OpenClaw has not been configured, continue with `openclaw onboard --install-daemon`.
+For an already-running gateway, run `openclaw gateway restart` to load newly
+imported settings. `./scripts/setup.sh` also imports before its platform questions;
+skip platforms that are already configured. To replace an existing runtime value,
+edit the runtime `.env` deliberately; import never overwrites it.
+
+The importer accepts single-line dotenv assignments declared in `.env.example`,
+keeps their literal syntax, skips blank values and obvious placeholders such as
+`changeme`/`sk-ant-...`, and never executes or expands them. Quote values containing
+`#`. Unknown names are reported for manual runtime configuration; malformed or
+multiline records fail before any write. Destination writes are atomic with mode
+`0600`; symlinks are refused. Generated MCP launcher paths remain installer-managed.
+An inherited process variable can still take precedence over either dotenv file.
+
+For a custom OpenClaw state directory, export `OPENCLAW_STATE_DIR` before import,
+installation and later OpenClaw commands; `OPENCLAW_CONFIG_PATH` can select its
+config file. For Hermes use `HERMES_HOME`. NetClaw retains its historical
+`OPENCLAW_HOME` state-directory fallback in the installer/importer; prefer
+`OPENCLAW_STATE_DIR` for consistency with upstream OpenClaw.
+
+Current OpenClaw intentionally filters provider keys from a working-directory
+`.env`; the durable runtime file is the appropriate location for them. See
+[OpenClaw environment precedence](https://docs.openclaw.ai/help/environment).
+
 ### Agent runtime — OpenClaw or Hermes
 
-NetClaw runs on top of an agent runtime. **OpenClaw** is the default and the
-fully-integrated path. You can instead run NetClaw on
+NetClaw runs on top of an agent runtime. **OpenClaw** is the default. You can also run NetClaw on
 **[Hermes](https://github.com/NousResearch/hermes-agent)** (Nous Research's
 self-improving agent). The interactive installer asks which runtime to use;
 scripted installs pick it explicitly:
@@ -97,10 +279,15 @@ absolute, `${VAR}` resolved from the shared `.env`, merged non-destructively).
 Inspect the result with `hermes mcp list`.
 
 > **Scope:** the runtime choice covers install, onboarding, gateway, MCP
-> registration, skills, and credentials. The **n2n/iN2N federation subsystem**
-> (mesh daemon, protocol peering, risk federation) is OpenClaw-native and is not
-> yet ported to Hermes — the `netclaw` launcher switches only its `tui` entry and
-> state-dir base to follow the chosen runtime.
+> registration, skills, credentials and the shared HUD. Hermes HUD conversations
+> use the protected companion's qualified tools. **Spec149 / 1.8.0** adds protected Hermes iN2N/eN2N execution and Mobile Ask Border.
+> See [qualification and compatibility](docs/HERMES-FEDERATION.md); installed does not mean qualified.
+
+For the shared HUD, install `--runtime hermes --add "subnet-calc hermes-hud"`,
+then run `./scripts/netclaw hud select hermes "$HOME/.hermes"` and
+`./scripts/netclaw hud`. See [Hermes HUD setup and limits](docs/HERMES-HUD.md).
+The eight-tool conversation bridge is HUD-private and excluded from agent-native
+registrations. Windows uses the Linux launcher inside Ubuntu on WSL2.
 
 ## A Risk of NetClaws (iN2N)
 
@@ -111,7 +298,7 @@ a single **Border Claw**. You talk only to the Border; it routes each request to
 the member that owns the capability (a CML claw, a pyATS claw, an Azure claw…) and
 returns the result.
 
-- **Focus & token economy** — each member carries a handful of skills, not 190.
+- **Focus & token economy** — each member carries only the skills it needs.
 - **Least privilege** — each member gets *only* its integration's secrets.
 - **One door** — the Border is the single interface, single external identity, and
   single audit trail; members dial it outbound (no ngrok, no mesh, no inbound
@@ -254,24 +441,58 @@ claw
 ## Visual HUD
 
 <p align="center">
-  <img src="ui/netclaw-visual/logos/netclawvisualhud.png" alt="NetClaw Visual HUD — 3D Network Operations Dashboard" width="800">
+  <img src="ui/netclaw-visual/logos/netclawvisualhud.png" alt="NetClaw Visual HUD — operations workspace" width="800">
 </p>
 
-NetClaw includes a Three.js 3D operations dashboard that computes its integration and skill inventory live from the codebase (currently 168 MCP integrations and 224 skills) each time it's opened, alongside your device fleet and live BGP peering topology — so the dashboard never drifts out of sync with what's actually installed. Chat with NetClaw directly from the browser, watch integrations light up as tools execute, and inspect every node in the graph. The Canvas/A2UI visualization skill renders inline topology maps, health dashboards, alert cards, change timelines, config diffs, path traces, and health scorecards directly in the chat interface.
+The capability catalogue covers currently 177 MCP integrations and 249 skills; configured entries are not proof of live connectivity.
+
+The function-first HUD opens on standard Chat, with an operations dashboard and a preserved, branching
+**Canvas** workspace. Inspect internal Claws, mobile edges and external neighbours;
+drill into reported MCPs and LLM identities; compare Jev evidence; upload/search RAG;
+review token usage, estimates and budgets; inspect LAB/production mode, DefenseClaw and OpenShell; filter service logs; and browse guides,
+CLI declarations, MCP signatures and the HUD OpenAPI reference. Three.js views are
+optional companions to the panels and tables. Configured capabilities, recorded
+usage and estimates stay distinct from verified live state.
+
+On Windows, start the gateway and Visual HUD together by double-clicking
+`Start-NetClaw.cmd`, or from PowerShell:
+
+```powershell
+.\Start-NetClaw.ps1
+```
+
+The launcher verifies Node.js, npm, and OpenClaw; installs Visual HUD
+dependencies on the first run; avoids starting duplicate services; waits for
+the configured gateway port plus ports 3000 and 3001; and opens Canvas Chat. Use
+`.\Start-NetClaw.ps1 -Interface HUD` to open the main dashboard instead,
+or add `-NoBrowser` when you only want to start the services.
 
 ```bash
 cd ui/netclaw-visual
 npm install
-npm run dev                   # opens at http://localhost:3000
+npm run dev                   # then open http://localhost:3000
 ```
 
 Requires the OpenClaw gateway to be running for live chat (`openclaw gateway run`).
+After updating your checkout, run `scripts/upgrade-hud.sh --check` from the repository
+root, then `scripts/upgrade-hud.sh --apply` to rebuild. Add `--install-deps` only when
+the lockfile dependencies need installation. This helper preserves configuration,
+security modes and Canvas storage; it does not pull Git or restart services.
 
-**[Full setup guide, peering instructions, and feature documentation >>>](ui/netclaw-visual/README.md)**
+[HUD guide](docs/HUD-FUNCTION-FIRST.md) · [Logging guide](docs/LOGGING-GUIDE.md) · [Security modes](docs/SECURITY-MODES.md) ·
+[CLI/interface reference](docs/reference/CLI-REFERENCE.md) · [HUD OpenAPI](docs/reference/hud-openapi.json) ·
+[Setup and legacy utilities](ui/netclaw-visual/README.md)
 
 ---
 
 ## What It Does
+
+<details>
+<summary>Full platform capability overview</summary>
+
+A CCIE-level AI network engineering coworker. Built on [OpenClaw](https://github.com/openclaw/openclaw) with Anthropic Claude, 249 skills, and 177 MCP integrations for complete network automation with ITSM gating, source-of-truth reconciliation, immutable audit trails, gNMI streaming telemetry, NetFlow/IPFIX flow telemetry, Canvas/A2UI inline network visualizations, packet capture analysis, GitHub config-as-code, GitLab DevOps (issues, merge requests, pipelines, repositories, wikis), Jenkins CI/CD (job monitoring, build triggering, log analysis, SCM tracking), Chrome DevTools browser automation (visualization render QA, controller GUI gap-filling, undocumented API discovery, headless or watchable-headed), Computer Use full-desktop automation (legacy desktop-only tools with no browser or API path, virtual XFCE desktop with VNC/noVNC Watch Mode), Cisco CML lab simulation, ContainerLab containerized network labs, Cisco NSO orchestration, Cisco SD-WAN vManage monitoring, Grafana observability (dashboards, Prometheus, Loki, alerting, incidents), Prometheus direct PromQL monitoring, Kubeshark Kubernetes traffic analysis, Cisco Meraki Dashboard management, Cisco ThousandEyes network intelligence, AWS and Azure cloud networking, Cisco Secure Firewall policy auditing, Check Point Security (15 MCPs: policy, threat intel, gateway, SASE, malware), Itential network orchestration, Juniper JunOS device automation, Arista CloudVision Portal monitoring, F5 BIG-IP pyATS iControl REST coverage, Infoblox DDI, Palo Alto Panorama, FortiManager, Batfish offline configuration analysis, UML diagram generation, EVPN/VXLAN fabric workflows, live BGP/OSPF control-plane participation, OSPF/IS-IS link-state and BGP topology analysis over stored Topolograph snapshots, nmap network scanning, gtrace path analysis and IP enrichment, Slack-native operations, Cisco WebEx-native operations, Microsoft 365 integration, Twilio voice/SMS, Twitter/X integration, Claroty OT/IoT asset management, Forward Networks digital twin, Ollama local LLM routing, an offline agentic RAG document knowledge base (cited answers from user-uploaded vendor guides and standards), layered Memory MCP, MemPalace persistent AI memory, and Lantronix Percepxion/SLC out-of-band console-server management (fleet-wide and direct single-device).
+
+</details>
 
 NetClaw is an autonomous network engineering agent powered by Claude that can:
 
@@ -330,7 +551,7 @@ NetClaw is an autonomous network engineering agent powered by Claude that can:
 - **Stream** gNMI telemetry from Cisco IOS-XR, Juniper, Arista, and Nokia SR OS devices — structured YANG model queries, SAMPLE/ON_CHANGE subscriptions, ITSM-gated configuration changes, YANG capability browsing, and gNMI-vs-CLI state comparison
 - **Audit** every action in an immutable Git-based trail (GAIT) — there is always an answer to "what did the AI do and why"
 - **Track** token consumption and cost in real-time — every interaction displays input/output tokens, USD cost, and GCF savings. Session-level tracking with per-tool breakdown. Powered by Anthropic's `count_tokens()` API with local estimation fallback
-- **Optimize** token usage with GCF encoding — all MCP server responses use [GCF](https://gcformat.com) (Graph Compact Format) for 55-83% token savings on network data. Auto-detects graph-shaped data (devices + links/sessions) and uses graph profile with local IDs and edge arrows. Session deduplication tracks previously-sent symbols across calls (91% savings by call 3). Delta encoding sends only changes on re-queries (99% savings). Configurable via `NETCLAW_GCF_MODE`: `full` (default), `graph`, `generic`, or `off`. JSON fallback on any error
+- **Encode** tool responses with [GCF](https://gcformat.com) (Graph Compact Format), with JSON fallback. Generic encoding is checked for a lossless round trip. Graph summaries and deltas retain a complete authoritative source snapshot so metrics, errors, timestamps, and other fields are never silently dropped. Savings depend on the payload and mode; earlier 91–99% figures described reduced graph projections, not complete operational evidence. Configure `NETCLAW_GCF_MODE` as `full` (default), `graph`, `generic`, or `off`.
 - **Remember** across sessions with [MemPalace](https://github.com/milla-jovovich/mempalace) — semantic search across all past sessions, temporal knowledge graph for network facts (upgrades, peer changes, maintenance windows) with validity windows, cross-domain navigation between wings, and per-agent diaries. Complements OpenClaw's file-based daily logs (`memory/YYYY-MM-DD.md`) with structured, searchable long-term memory — *"GAIT records what happened. MemPalace remembers why."*
 - **Secure** production deployments with [DefenseClaw](https://github.com/cisco-ai-defense/defenseclaw) — Cisco AI Defense enterprise security: OpenShell kernel-level sandbox (Landlock, seccomp, namespaces), component scanning before execution, CodeGuard static analysis, LLM prompt/completion inspection, runtime guardrails, SQLite audit logging with SIEM export (Splunk HEC, OTLP) for SOC2/PCI-DSS/HIPAA compliance
 
@@ -412,10 +633,36 @@ NetClaw integrates with Check Point's enterprise security platform through **15 
 
 ---
 
+## Optional Jev Science Officer
+
+Border can consult Jev for evidence review, specialist selection, answer review,
+diagnostic advice, change-plan review and incident triage. It invents typed questions
+from the current human request and member evidence, then explains whether Jev's
+assessment supported, challenged or changed the recommendation. Jev remains advisory;
+existing device and change-approval gates retain authority.
+
+Enable the **Jev Science Officer** installer component and configure a TypeSafe key or
+compatible endpoint. Defaults are **$5/day** and **$0.25/use case**, with operator setup
+and settings overrides. Sanitized evidence is the default; additional private hosted
+disclosure needs exact scoped approval. See [setup, privacy and interpretation](docs/JEV-SCIENCE-OFFICER.md).
+The RISK view shows the dedicated advisor separately from execution members.
+
 ## Architecture
 
 ```
-Human (Slack / WebEx / WebChat) --> NetClaw (CCIE Agent on OpenClaw)
+Human (Slack / WebEx / WebChat / Mobile / Zoom) --> NetClaw (CCIE Agent on OpenClaw)
+                                |
+                                |-- KNOWLEDGE & CONTEXT:
+                                |     MCP: RAG             --> Local document retrieval with citations
+                                |     GCF serializer       --> Compact table/graph evidence for participating MCPs
+                                |
+                                |-- EDGE & MEETINGS:
+                                |     NCFED Mobile         --> Phone chat, notifications, biometrics, capture
+                                |     Zoom RTMS + App      --> Meeting context, investigations, evidence panel
+                                |
+                                |-- SCIENCE OFFICER (optional):
+                                |     MCP: Jev --> typed advisory probabilities / compatible endpoint
+                                |                  dynamic questions; no execution authority
                                 |
                                 |-- DEVICE AUTOMATION:
                                 |     MCP: pyATS           --> IOS-XE / NX-OS / IOS-XR devices
@@ -536,7 +783,15 @@ NetClaw ships with the full set of OpenClaw workspace markdown files. These are 
 
 ---
 
-## MCP Servers (168)
+### NetClaw Pal
+
+The HUD's fourth Chat interface, **Avatar**, offers selectable local John and Lobster 3D characters beside the existing Chat, preserving its configured model, conversation and approvals. Rotate, pan and zoom the character; enable the Mac system voice for local audio-reactive animation. Cloned voice, dedicated microphone input and custom-avatar import are follow-on work. Tavus remains an experimental, disabled-by-default stock-video foundation with its own key, bounded Free allowance and restricted agent; live hosted acceptance is pending. See [setup, recording guidance and limitations](docs/TAVUS-PAL.md) and [spec 144](specs/144-tavus-netclaw-pal/spec.md).
+
+## MCP Servers (177)
+
+**Existing voice installations:** complete the [voice authentication migration](docs/VOICE-SECURITY.md) before restarting the upgraded Twilio webhook service. Callbacks now require valid signatures; alert triggers require a separate bearer token.
+
+**FastMCP modernization:** see the [upgrade, rollback and compatibility guide](docs/FASTMCP-UPGRADE.md) for spec 141 and the remaining external exceptions.
 
 > Adding one? Follow **[docs/ADDING-AN-MCP.md](docs/ADDING-AN-MCP.md)** and run
 > `python3 scripts/reconcile-mcp.py` before pushing — CI enforces it.
@@ -552,8 +807,8 @@ NetClaw ships with the full set of OpenClaw workspace markdown files. These are 
 | 5 | Cisco ISE | [automateyournetwork/ISE_MCP](https://github.com/automateyournetwork/ISE_MCP) | stdio (Python) | Identity policy, posture, TrustSec, endpoint control |
 | 6 | NetBox | [netboxlabs/netbox-mcp-server](https://github.com/netboxlabs/netbox-mcp-server) | stdio (Python) | Read-write DCIM/IPAM source of truth |
 | 7 | Nautobot | [aiopnet/mcp-nautobot](https://github.com/aiopnet/mcp-nautobot) | stdio (Python) | IPAM source of truth — IP addresses, prefixes, VRF/tenant/site filtering (5 tools, alternative to NetBox) |
-| 8 | OpsMill Infrahub | [opsmill/infrahub-mcp](https://github.com/opsmill/infrahub-mcp) | stdio (Python) | Schema-driven SoT: nodes, search, GraphQL queries, and branch-isolated writes via Proposed Changes (10 tools + resources/prompts) | `INFRAHUB_ADDRESS`, `INFRAHUB_API_TOKEN` |
-| 9 | Itential IAP | [itential/itential-mcp](https://github.com/itential/itential-mcp) | stdio (Python) | Network automation orchestration: config mgmt, compliance, workflows, golden config, lifecycle (65+ tools) | `ITENTIAL_MCP_PLATFORM_HOST`, `ITENTIAL_MCP_PLATFORM_USER`, `ITENTIAL_MCP_PLATFORM_PASSWORD` |
+| 8 | OpsMill Infrahub | [opsmill/infrahub-mcp](https://github.com/opsmill/infrahub-mcp) | stdio (Python) | Schema-driven SoT: nodes, search, GraphQL queries, and branch-isolated writes via Proposed Changes (10 tools + resources/prompts). Setup: `INFRAHUB_ADDRESS`, `INFRAHUB_API_TOKEN` |
+| 9 | Itential IAP | [itential/itential-mcp](https://github.com/itential/itential-mcp) | stdio (Python) | Network automation orchestration: config mgmt, compliance, workflows, golden config, lifecycle (65+ tools). Setup: `ITENTIAL_MCP_PLATFORM_HOST`, `ITENTIAL_MCP_PLATFORM_USER`, `ITENTIAL_MCP_PLATFORM_PASSWORD` |
 | 10 | ServiceNow | [echelon-ai-labs/servicenow-mcp](https://github.com/echelon-ai-labs/servicenow-mcp) | stdio (Python) | Incidents, change requests, CMDB |
 | 11 | Microsoft Graph | [@anthropic-ai/microsoft-graph-mcp](https://www.npmjs.com/package/@anthropic-ai/microsoft-graph-mcp) | npx | OneDrive, SharePoint, Visio, Teams, Exchange via Graph API |
 | 12 | GitHub | [github/github-mcp-server](https://github.com/github/github-mcp-server) | Docker (Go) | Issues, PRs, code search, Actions, config-as-code workflows |
@@ -634,12 +889,11 @@ NetClaw ships with the full set of OpenClaw workspace markdown files. These are 
 | 91 | Nautobot v2 | Built-in (`nautobot-mcp-v2`, registered as `nautobot-mcp`) | stdio (Python) | Enhanced Nautobot 3.1.0 integration — GraphQL reads, REST writes, ITSM-gated changes, live-vs-SoT reconciliation (13 tools) |
 | 92 | Nautobot Golden Config | Built-in (`nautobot-golden-config-mcp`) | stdio (Python) | Golden-config compliance job runner for Nautobot |
 | 93 | Nautobot Routing | Built-in (`nautobot-routing-mcp`) | stdio (Python) | BGP/routing data queries against Nautobot |
-| 94-108 | Check Point Security Suite | Check Point MCP suite (`chkp-*`, 15 servers) | stdio/HTTP (Node) | Quantum, Harmony SASE, gateway management, threat intelligence, and policy insights — 15 individually-registered servers (policy, threat intel, gateway, SASE, malware; see "Check Point Security Integration" section below) (60+ tools) |
+| 94-108 | Check Point Security Suite | Check Point MCP suite (`chkp-*`, 15 servers) | stdio/HTTP (Node) | Quantum, Harmony SASE, gateway management, threat intelligence, and policy insights — 15 individually-registered servers (policy, threat intel, gateway, SASE, malware; see [Check Point Security Integration](#check-point-security-integration)) (60+ tools) |
 | 109 | Chrome DevTools | [ChromeDevTools/chrome-devtools-mcp](https://github.com/ChromeDevTools/chrome-devtools-mcp) | stdio (Node, npx) | Controlled browser automation/inspection — visualization render QA (screenshot + console check), controller GUI gap-filling, undocumented vendor API discovery via network-request capture, general web-GUI automation. No credentials; auth via one-time manual sign-in into a persistent Chrome profile (~20 tools used across 2 skills) |
 | 110 | Chrome DevTools (Watch Mode) | [ChromeDevTools/chrome-devtools-mcp](https://github.com/ChromeDevTools/chrome-devtools-mcp) | stdio (Node, npx) | Same server, headed (`--headless=false`) instead of headless — a real Chrome window opens wherever NetClaw runs, so an operator can watch it navigate/click/read live (e.g. via Slack: "watch it log into the NetBox demo and create a site"). Works on any host with a display (Mac, Linux desktop, WSL2 with WSLg); no OS-specific code |
 | 111 | Computer Use | OpenClaw ClawHub skill (`computer-use`, installed via `openclaw skills install`, not `config/openclaw.json`) | Script-based (bash + xdotool, `DISPLAY=:99`) | Full-desktop automation for legacy tools with no browser or API path — virtual Xvfb+XFCE desktop, 17 mouse/keyboard/screenshot actions, VNC/noVNC live-viewing (loopback-only) for Watch Mode. No credentials (used by 1 skill) |
-| 112 | N2N Federation | Built-in (`n2n-mcp`) | stdio (Python) | NetClaw-to-NetClaw federation over the BGP mesh via the new **NCFED** protocol (JSON-RPC 2.0, MCP + A2A semantics) — mutual-consent capability exchange, default-deny remote tool/skill invocation with approvals/budgets/audit, claw-to-claw chat, plus **async task delegation, channel auto-reconnect, endpoint auto-re-announce, and version negotiation** for self-healing reliability. Plus **iN2N — "a risk of NetClaws"**: one operator's group of focused member claws behind a single Border Claw (routing, least-privilege per-member secrets, cold/on-demand members, any provider/model incl. local Ollama), plus **feature 057 production enforcement** (fail-closed OpenShell sandbox + DefenseClaw guard + GAIT git audit, durable systemd services, honest `n2n_posture`/`n2n_faults`). Federated knowledge (feature 064): peers advertise RAG collections as content-free capability-card entries; `n2n_knowledge_query`/`n2n_knowledge_route` get a cited answer from the authoritative peer with no document content leaving its owner. Chroma-to-chroma vector replication (feature 065): with a separate, explicit `knowledge_replica` grant, `n2n_replicate`/`n2n_replicate_resync`/`n2n_replicate_delete` copy a consenting peer's already-embedded collection directly into your own local Chroma store (async job, no re-embedding, refused up front on an embedding-model mismatch or an oversized collection). NetClaw Mobile edge nodes (feature 066): a Border can enroll a phone (Flutter, iOS+Android) via QR-coded single-use token over a new WebSocket-over-TLS transport, reusing the same domain-verified/self-signed credential and pinned-key trust model as every other member — the phone carries no agent runtime, satisfying the base health-monitoring floor via built-in heartbeat/self-status instead of a delivered skill. `n2n_notify_phone` explicitly pushes a text/voice/image message to a connected device (never a blanket mirror of channel traffic); a disconnected device falls back to a platform push notification (FCM/APNs). NetClaw Mobile command channel (feature 067): the reverse direction — a phone's typed, spoken, or QR/deep-link-triggered request is bridged into a real agent turn (the same mechanism claw-to-claw chat already uses) with the operator's own local trust, no new MCP tool, and answered/delegated/routed exactly as a Slack or CLI request would be, with clear attribution of whichever claw actually answered. NetClaw Mobile biometrics and capture (feature 068): also no new MCP tool — approval requests you already trigger now also push to a connected phone for device-biometric approve/deny (`resolve_approval` with `via="biometric"`, same grant/audit semantics), and a phone can both attach a camera/mic capture to its own request and be selected as the target of a Border-initiated `n2n_delegate` when it's the only member advertising that capture capability, via the same capability-routing every other member uses (39 tools). See [N2N-PEERING-NETCLAWS.md](N2N-PEERING-NETCLAWS.md) (external) and [docs/N2N-RISK.md](docs/N2N-RISK.md) (internal/risk) |
-
+| 112 | N2N Federation | Built-in (`n2n-mcp`) | stdio (Python) | NetClaw-to-NetClaw federation over the BGP mesh via the new **NCFED** protocol (JSON-RPC 2.0, MCP + A2A semantics) — mutual-consent capability exchange, default-deny remote tool/skill invocation with approvals/budgets/audit, claw-to-claw chat, plus **async task delegation, channel auto-reconnect, endpoint auto-re-announce, and version negotiation** for self-healing reliability. Plus **iN2N — "a risk of NetClaws"**: one operator's group of focused member claws behind a single Border Claw (routing, least-privilege per-member secrets, cold/on-demand members, any provider/model incl. local Ollama), plus **feature 057 production enforcement** (host-level member confinement + DefenseClaw guard + GAIT git audit, durable systemd services, honest `n2n_posture`/`n2n_faults`). Federated knowledge (feature 064): peers advertise RAG collections as content-free capability-card entries; `n2n_knowledge_query`/`n2n_knowledge_route` get a cited answer from the authoritative peer with no document content leaving its owner. Chroma-to-chroma vector replication (feature 065): with a separate, explicit `knowledge_replica` grant, `n2n_replicate`/`n2n_replicate_resync`/`n2n_replicate_delete` copy a consenting peer's already-embedded collection directly into your own local Chroma store (async job, no re-embedding, refused up front on an embedding-model mismatch or an oversized collection). NetClaw Mobile edge nodes (feature 066): a Border can enroll a phone (Flutter, iOS+Android) via QR-coded single-use token over a new WebSocket-over-TLS transport, reusing the same domain-verified/self-signed credential and pinned-key trust model as every other member — the phone carries no agent runtime, satisfying the base health-monitoring floor via built-in heartbeat/self-status instead of a delivered skill. `n2n_notify_phone` explicitly pushes a text/voice/image message to a connected device (never a blanket mirror of channel traffic); a disconnected device falls back to a platform push notification (FCM/APNs). NetClaw Mobile command channel (feature 067): the reverse direction — a phone's typed, spoken, or QR/deep-link-triggered request is bridged into a real agent turn (the same mechanism claw-to-claw chat already uses) with the operator's own local trust, no new MCP tool, and answered/delegated/routed exactly as a Slack or CLI request would be, with clear attribution of whichever claw actually answered. NetClaw Mobile biometrics and capture (feature 068): also no new MCP tool — approval requests you already trigger now also push to a connected phone for device-biometric approve/deny (`resolve_approval` with `via="biometric"`, same grant/audit semantics), and a phone can both attach a camera/mic capture to its own request and be selected as the target of a Border-initiated `n2n_delegate` when it's the only member advertising that capture capability, via the same capability-routing every other member uses (39 tools). See [N2N-PEERING-NETCLAWS.md](N2N-PEERING-NETCLAWS.md) (external) and [docs/N2N-RISK.md](docs/N2N-RISK.md) (internal/risk) |
 | 113 | RAG Knowledge Base | Built-in (`rag-mcp`) | stdio (Python) | Offline agentic document knowledge base — user-uploaded vendor guides/standards/customer docs, hybrid dense+BM25 retrieval with reciprocal rank fusion and local cross-encoder reranking, mandatory citations, structure-aware chunking, opt-in secret-scrubbed snapshots with always-visible staleness. Strictly separate from Memory MCP (10 tools) |
 | 114 | Auvik | Built-in | stdio (Python) | Read-only Auvik network monitoring — device and network inventory, alerts, lifecycle/warranty tracking, and performance statistics across MSP tenants (20 tools) |
 | 115 | HaloPSA / HaloITSM | Built-in (`halo-mcp`) | stdio (Python) | HaloPSA/HaloITSM (one API): open change requests via a single gated confirm-before-submit write, and review assets and their related tickets, ticket types/fields, clients/sites/users/contracts, and KB for context. OAuth2 client-credentials (18 tools: 17 read + 1 gated write) |
@@ -657,6 +911,15 @@ NetClaw ships with the full set of OpenClaw workspace markdown files. These are 
 | 127 | Lantronix Percepxion | [Lantronix/percepxion-mcp-server](https://github.com/Lantronix/percepxion-mcp-server) | stdio (Python, dedicated venv) | **Fleet-wide OOB console-server management, external/on-demand** — device inventory, firmware compliance/rollout, config mgmt, Smart Groups, security audit, async CLI dispatch with output retrieval across the Percepxion SaaS platform (37 tools). Actively co-developed by Lantronix, not vendored — see [spec 104](specs/104-percepxion-oob-integration/spec.md) |
 | 128 | Lantronix SLC direct | [Lantronix/slc-mcp-server](https://github.com/Lantronix/slc-mcp-server) | stdio (Python, dedicated venv) | **Direct, synchronous single-device OOB console-server access, external/on-demand** — port status, session management, synchronous CLI output, cellular status against individual SLC9000/SLC8000 console servers (37 tools). Same repo family and venv reasoning as Percepxion above — see [spec 104](specs/104-percepxion-oob-integration/spec.md) |
 | 129 | ComfyUI | [shawnrushefsky/comfyui-mcp](https://github.com/shawnrushefsky/comfyui-mcp) | stdio (Node.js) | AI image generation backend for the `comfyui-topology-viz` skill — model discovery, built-in text-to-image template selection, async workflow submission and polling against a self-hosted ComfyUI instance (41 tools; this skill uses a subset: `get_status`, `list_models`, `search_templates`, `get_template`, `run_workflow`, `get_task_result`) |
+| 130 | Topology Diagram | NetClaw-authored (`mcp-servers/topology-diagram-mcp`) | stdio (Python) | **Federated topology viz, Stage A** (spec 121) — deterministic, correct-by-construction network diagram rendering (real role icons, real labels, real connections; networkx + Pillow, no diffusion model) from a topology snapshot. One tool: `render_structural`. Runs on the `johns-risk/viz` federation member, invoked from Border via `n2n/tools/call` — never in-process on Border |
+| 131 | Image Style | NetClaw-authored (`mcp-servers/image-style-mcp`) | stdio (Python) | **Federated topology viz, Stage B** (spec 121) — applies an image-edit diffusion model (Qwen-Image-Edit-2509 GGUF, pending the FR-015 fidelity spike) to restyle Stage A's already-correct diagram without altering structure. One tool: `style_image`. Talks to ComfyUI directly via REST (not through `comfyui-mcp`'s known-broken task tracker). Same member as Stage A |
+| 132 | World Labs Marble | NetClaw-authored (`mcp-servers/worldlabs-marble-mcp`) | stdio (Python) | **AI-augmented fantastical topology viz** (spec 122) — thin, fully stateless proxy to World Labs' Marble world-generation API. Three tools: `generate_world` (the one credit-spending operation, guarded by a required `user_confirmed` argument), `check_generation_status`, `get_world` (durable fallback for an expired operation record). Runs standalone on Border, no federation member required. Explicitly decorative — reuses `topology-diagram-mcp`'s accurate diagram as the authoritative artifact, never a replacement for it |
+| 134 | Topolograph | [Vadims06/topolograph-mcp-server](https://github.com/Vadims06/topolograph-mcp-server) | HTTP (remote) | **OSPF/IS-IS link-state and BGP topology analysis, read-only** — reasons over the whole area's LSDB from a stored Topolograph snapshot: shortest/backup path, per-area nodes/edges with role flags, edge and node failure simulation, MPLS-TE/CSPF feasibility, a topology-change event timeline, plus BGP speakers/sessions/route search, VRF/VPN inventory, and BGP-to-IGP graph binding (27 read tools). Remote HTTP against the operator's own Topolograph instance (`TOPOLOGRAPH_MCP_URL`), bearer `TOPOLOGRAPH_API_TOKEN`. Not vendored — fronts an operator-run API developed upstream. The server runs `TOPOLOGRAPH_MCP_READ_ONLY=true`, so mutation tools (`upload_graph`, `*_lsp`) are absent from `tools/list`; NetClaw scopes further with `defenseclaw tool allow`. See [spec 119](specs/119-topolograph-mcp-onboarding/spec.md) (IGP) and [spec 120](specs/120-topolograph-bgp-mcp-onboarding/spec.md) (BGP) |
+| 135 | Jev Science Officer | Built-in (`jev-mcp`) | stdio (Python, isolated venv) | Optional dynamic Noul/Choice/Score advisor; status, evaluate and assessment tools; persistent budgets and scoped disclosure approval (3 tools) |
+
+| 136 | Equinix Fabric + Network Edge | [Official MCP](https://mcp.equinix.com/fabric) | stdio policy/OAuth bridge to HTTP | Provider inventory and gated create/update/actions. No delete tools. [Guide](docs/EQUINIX.md) |
+| 137 | Tavus Pal | Built-in (`tavus-pal-mcp`) | stdio (Python, isolated venv; HUD-invoked) | Optional stock-face voice companion; one `pal_query` tool targets an all-tools-denied NetClaw agent. No main-agent registration or device access. [Guide](docs/TAVUS-PAL.md) |
+
 ### Additional Server Notes
 
 All MCP servers communicate via stdio (JSON-RPC 2.0) through `scripts/mcp-call.py`, except where noted below (HTTP/remote endpoints).
@@ -690,11 +953,25 @@ All MCP servers communicate via stdio (JSON-RPC 2.0) through `scripts/mcp-call.p
 - **SuzieQ** — stdio (5 read-only tools for network state queries, assertions, summaries, unique value discovery, and path tracing across 20+ network tables via the SuzieQ REST API)
 - **GNS3** — FastMCP stdio (26 tools for GNS3 network lab management — projects, nodes, links, packet capture, and snapshots via REST API v3). No persistent connections, no port management
 - **RAG Knowledge Base** — FastMCP stdio (10 tools for the offline document knowledge base: multi-format ingestion via Slack/HUD/URL, hybrid dense+BM25 retrieval with local reranking and mandatory citations, HIIL-gated corpus management, opt-in secret-scrubbed snapshots). Data at `~/.openclaw/rag/`, fully offline after install, strictly separate from Memory MCP
+- **Topolograph** (`topolograph-mcp`) — remote HTTP endpoint against the operator's own Topolograph instance (`TOPOLOGRAPH_MCP_URL`, default `https://topolograph.com/mcp`), bearer `TOPOLOGRAPH_API_TOKEN`. 27 read-only tools: 13 for OSPF/IS-IS link-state topology analysis over stored snapshots — path computation, failure simulation, MPLS-TE/CSPF, event timeline — plus 14 for BGP topology (speakers, sessions, route search, VRF/VPN inventory, BGP-to-IGP graph binding; requires Topolograph >= 2.69). Mutation tools are hidden server-side (`TOPOLOGRAPH_MCP_READ_ONLY=true`); the client allowlist is set with `defenseclaw tool allow` (see [spec 119](specs/119-topolograph-mcp-onboarding/spec.md), [spec 120](specs/120-topolograph-bgp-mcp-onboarding/spec.md))
 - **Zoom RTMS** (`zoom-rtms-mcp`) — FastMCP stdio, 9 tools (see [spec 118](specs/118-zoom-meeting-intelligence/spec.md)). Ingests live meeting transcript/chat/active-speaker/screen-share signals via Zoom's Realtime Media Streams (no Meeting SDK bot — Zoom reserves that for human participants), recognizes network-investigation questions with a deterministic extractor, and routes them into the existing Border/NCFED routing path via a new loopback-only `bgp/federation/zoom_channel.py` channel. Feeds a Zoom App side panel (avatar + live status + evidence) with an optional Layers API camera overlay. Pairs with the official Zoom Meetings MCP (remote/OAuth, historical meeting search) via the `zoom-meeting-context` skill. No new device-write approval mechanism — reuses NetClaw's existing gate unchanged for anything a meeting participant asks that would change configuration.
 
 ---
 
-## Skills (224)
+## Skills (249)
+
+### Jev Science Officer (6)
+
+| Skill | Advisory purpose |
+| --- | --- |
+| jev-evidence-review | Judge support for current claims using source observations |
+| jev-specialist-advice | Compare eligible capabilities for the current request |
+| jev-answer-review | Review a draft against the human request and evidence |
+| jev-diagnostic-advice | Compare hypotheses and read-only next observations |
+| jev-change-review | Identify gaps in proposed impact, rollback and verification |
+| jev-incident-triage | Advise on observed impact and escalation need |
+
+Questions are authored dynamically; none of these skills executes a network change.
 
 ### pyATS Device Skills (9)
 
@@ -818,7 +1095,7 @@ All MCP servers communicate via stdio (JSON-RPC 2.0) through `scripts/mcp-call.p
 
 | Skill | What It Does |
 |-------|-------------|
-| **clab-lab-management** | Containerized network lab lifecycle via ContainerLab API (6 tools): authenticate with clab-api-server, list running labs, deploy multi-vendor topologies (SR Linux, cEOS, IOS XR, NX-OS, FTDv, FRR, cRPD, generic Linux), inspect lab details with management IPs, execute commands on individual or all nodes, and graceful lab destruction with cleanup. Supports spine-leaf fabrics, multi-vendor interop labs, and protocol testing topologies. Requires ContainerLab API server running (Docker or native). GAIT audit trail. |
+| **clab-lab-management** | Containerized network lab lifecycle via ContainerLab API (6 tools): authenticate with clab-api-server, list running labs, deploy multi-vendor topologies (SR Linux, cEOS, IOS XR/XE, NX-OS, FTDv, FRR, cRPD, generic Linux), inspect lab details with management IPs, execute commands on individual or all nodes, and graceful lab destruction with cleanup. Supports spine-leaf fabrics, multi-vendor interop labs, and protocol testing topologies. Auto-authentication on every tool call with a PAM-authenticated Linux user. Requires ContainerLab API server running (Docker or native). GAIT audit trail. |
 
 ### GNS3 Skills (5)
 
@@ -921,12 +1198,6 @@ All MCP servers communicate via stdio (JSON-RPC 2.0) through `scripts/mcp-call.p
 |-------|-------------|
 | **protocol-participation** | Live BGP/OSPF/GRE control-plane participation (10 tools): BGP peer status, Loc-RIB query, route injection/withdrawal, LOCAL_PREF adjustment, OSPF neighbor listing, LSDB query, interface cost adjustment, GRE tunnel status, consolidated protocol summary. Peers with real routers over GRE tunnels using native BGP-4 (RFC 4271) and OSPFv3 (RFC 5340) speakers. Route mutations gated by ServiceNow CR (unless `NETCLAW_LAB_MODE=true`). Docker-based FRR lab testbed included for testing. GAIT audit trail. |
 
-### ContainerLab Skills (1)
-
-| Skill | What It Does |
-|-------|-------------|
-| **clab-lab-management** | ContainerLab network lab lifecycle management via ContainerLab API (6 tools): authenticate, list existing labs, deploy new topologies (SR Linux, cEOS, FRR, Cisco IOS-XR/XE/NX-OS/FTDv, Juniper cRPD, generic Linux), inspect running labs (node status, management IPs), execute commands on lab nodes, and gracefully destroy labs with cleanup. Auto-authentication on every tool call. Requires ContainerLab API server running with PAM-authenticated Linux user. GAIT audit trail. |
-
 ### Cisco SD-WAN Skills (1)
 
 | Skill | What It Does |
@@ -956,6 +1227,11 @@ All MCP servers communicate via stdio (JSON-RPC 2.0) through `scripts/mcp-call.p
 | Skill | What It Does |
 |-------|-------------|
 | **suzieq-observability** | SuzieQ network observability (5 read-only tools): query current and historical network state from 20+ tables (`suzieq_show`), get aggregated statistics and summary views (`suzieq_summarize`), run validation assertions for BGP/OSPF/interface/EVPN health (`suzieq_assert`), discover distinct values and distributions for any column (`suzieq_unique`), trace hop-by-hop forwarding paths between endpoints (`suzieq_path`). Supports time-travel queries via start_time/end_time for historical analysis. Wraps SuzieQ REST API via async httpx client with stdio transport. GAIT audit trail. |
+
+### Zoom Meeting Intelligence Skills (1)
+
+| Skill | What It Does |
+|-------|-------------|
 | **zoom-meeting-context** | Zoom meeting historical correlation (spec 118): searches the official Zoom Meetings MCP for a prior, real meeting referenced during a live call ("didn't we see this before?"), states plainly when nothing relevant is found, and compares what was discussed then against the network's current actual state via NetClaw's existing routing. Read-only — any configuration-change request, however it arrives, still goes through NetClaw's existing device-write approval gate unchanged. |
 
 ### Lantronix OOB Skills (1)
@@ -1080,7 +1356,8 @@ All MCP servers communicate via stdio (JSON-RPC 2.0) through `scripts/mcp-call.p
 | **uml-diagram** | [UML MCP](https://github.com/antoinebou12/uml-mcp) (stdio) | 27+ UML/diagram types via Kroki — class, sequence, nwdiag, rackdiag, packetdiag, C4, Mermaid, D2, Graphviz, ERD, BPMN |
 | **blender-3d-viz** | [blender-mcp](https://github.com/ahujasid/blender-mcp) (uvx) | 3D network topology visualization — draw CDP/LLDP topologies in Blender, color by device type (router=blue, switch=green, firewall=red), add labels, export PNG/video |
 | **threejs-network-viz** | Vendored Three.js r147 + [gregkop/sketchfab-mcp-server](https://github.com/gregkop/sketchfab-mcp-server) (optional) | Browser-based 3D network topology visualization — the recommended alternative to `blender-3d-viz`/`ue5-network-viz` when you don't want a desktop engine: single self-contained HTML file, no build/server/GPU required. True interface-as-child-of-device scene graph, interface-to-interface link cables, role/state color legend, composes any of 8 topology-source integrations or a freeform description, optional CC0-verified real-3D-model stencils |
-| **comfyui-topology-viz** | [shawnrushefsky/comfyui-mcp](https://github.com/shawnrushefsky/comfyui-mcp) (Node) | AI-generated stylized still images of a network topology via a self-hosted ComfyUI instance — one flat "flashy" illustration per request, reusing the same 8-source-plus-freeform topology model as `threejs-network-viz`. Checks installed checkpoints before generating and reports distinctly when none are usable; no NetClaw-imposed generation timeout; one job in flight at a time. Stills only in v1 — video/animation is a likely follow-on |
+| **comfyui-topology-viz** | [shawnrushefsky/comfyui-mcp](https://github.com/shawnrushefsky/comfyui-mcp) (Node), `topology-diagram-mcp`, `image-style-mcp` | AI-generated stylized still images of a network topology — same request phrasing, now internally routed (spec 121) to a federated two-stage pipeline (deterministic structural diagram + diffusion restyle, on the `johns-risk/viz` member) with spec 120's original Flux+ControlNet pipeline as the automatic fallback for freeform requests or member unreachability. Response indicates which path (`federated`/`federated_partial`/`fallback`) produced the image. Checks installed checkpoints before generating and reports distinctly when none are usable; no NetClaw-imposed generation timeout; one job in flight at a time. Stills only in v1 — video/animation is a likely follow-on |
+| **worldlabs-topology-viz** | `worldlabs-marble-mcp`, `topology-diagram-mcp` (reused unmodified) | AI-augmented, explorable 3D "world" visualization of a real network topology via World Labs Marble (spec 122) — free, instant, no-cost themed prompt preview (repeatable with a different theme) plus, only after explicit two-layer confirmation (conversational and code-level), a real credit-spending world generation. Explicitly decorative: every result carries a fixed statement that it is an artistic interpretation, never an accurate diagram, alongside the real structural diagram it was derived from. Confirmed generation attempts are GAIT-audited |
 
 ### Auvik Network Monitoring Skills (4)
 
@@ -1210,6 +1487,11 @@ Both `browser-gui-inspect` and `desktop-gui-inspect` support Watch Mode — just
 |-------|---------|
 | **memory** | Persistent context across NetClaw sessions through structured facts, semantic search, and entity relationships |
 | **mempalace** | MemPalace AI memory — persistent memory across sessions, past-decision search, temporal network facts via knowledge graph, specialist agent diaries |
+
+### RAG Knowledge Base Skills (1)
+
+| Skill | What It Does |
+|-------|-------------|
 | **rag** | RAG knowledge base — ingest vendor guides/standards/customer docs (Slack/HUD/URL), agentic cited retrieval with four-source routing, opt-in secret-scrubbed snapshots |
 
 ### DevNet Content Search Skills (2)
@@ -1218,6 +1500,12 @@ Both `browser-gui-inspect` and `desktop-gui-inspect` support Watch Mode — just
 |-------|---------|
 | **devnet-catalyst-search** | Search Cisco Catalyst Center API documentation for device management and policy automation |
 | **devnet-meraki-search** | Search Cisco Meraki API documentation and lookup specific operations |
+
+### Tavus Pal Skill (1)
+
+| Skill | Purpose |
+|-------|---------|
+| **tavus-pal** | Set up the optional stock-face companion, Free allowance, browser-local icon and interrupted-call recovery |
 
 ### Voice Skills (5)
 
@@ -1305,7 +1593,7 @@ NetClaw's WebEx support is **bidirectional**:
 ### Prerequisites
 
 - A **Cisco WebEx account** (free or paid)
-- **Node.js 18+** and **OpenClaw 2026.3.x** (already installed if you ran `install.sh`)
+- **Node.js 24.16+ (24.x) or 26.1+** and a compatible **OpenClaw** (already installed if you ran `install.sh`)
 - **ngrok** (free tier works) — only required for local/development setups where the gateway is not publicly reachable
 
 ### Step 1: Create a WebEx Bot
@@ -1632,7 +1920,7 @@ Create an IAM policy with these permissions and attach it to your NetClaw IAM us
 
 - AWS account with IAM user (programmatic access)
 - `graphviz` for architecture diagrams: `apt install graphviz` or `brew install graphviz`
-- `uv` (installed automatically by `install.sh`) for running AWS MCP servers via `uvx`
+- `uv` and `uvx` on PATH before installation for running AWS MCP servers
 
 #### Cost Notes
 
@@ -2380,7 +2668,7 @@ netclaw/
 ├── MISSION01.md                          # Completed — core pyATS + 11 skills
 ├── MISSION02.md                          # Completed — full platform, 78 skills, 32 MCP
 ├── workspace/
-│   └── skills/                           # 223 skill definitions (source of truth)
+│   └── skills/                           # 249 skill definitions (source of truth)
 │       ├── pyats-network/                # Core device automation (8 MCP tools)
 │       ├── pyats-health-check/           # Health + NetBox cross-ref + pCall
 │       ├── pyats-routing/                # OSPF, BGP, EIGRP, IS-IS analysis
@@ -2548,9 +2836,9 @@ netclaw/
 The installer is an interactive TUI (pure bash — works over SSH, degrades gracefully without a TTY). Install logic lives in `scripts/lib/` (`common.sh` helpers, `tui.sh` interface, `catalog.sh` component catalog + profiles, `install-steps.sh` one install function per component).
 
 1. **Pick your components** — choose an install profile (Recommended, Cisco, Multivendor, Cloud, Security, Labs, Observability, Minimal, Everything) or hand-pick from all 72 components in a categorized multi-select checklist. Re-running the installer preselects what you already have.
-2. **Checks prerequisites** — Node.js >= 18, Python 3, pip3, git, npx — offers to run the install commands for anything missing (apt/dnf/yum/pacman/apk/brew), and handles PEP 668 externally-managed Pythons so pip installs work on modern distros
+2. **Checks prerequisites** — runtime-specific Node compatibility, Python/component bounds, npm, git and selected uv/Go/Docker/native tools before mutation. Python dependencies use isolated environments; system package protections remain enabled.
 3. **Installs OpenClaw** — `npm install -g openclaw@latest`
-4. **Runs OpenClaw onboard** — AI provider, gateway, channels, daemon service — then verifies the gateway service actually started (systemd unit / LaunchAgent / port probe) and offers a retry with diagnostics if it didn't
+4. **Imports filled `.env` settings, then runs OpenClaw onboard** — preserves existing runtime values; configures AI provider, gateway, channels and daemon service; stops on wizard failure, then verifies the gateway service actually started (systemd unit / LaunchAgent / port probe) and offers a retry with diagnostics if it didn't
 5. **Installs the selected MCP servers** — each component clones/pip-installs/pulls exactly what it needs (`./scripts/install.sh --list` shows every component and what it provides)
 6. **Deploys skills + workspace files** — copies all skills and the SOUL/AGENTS/IDENTITY/USER/TOOLS/HEARTBEAT files to `~/.openclaw/workspace/`
 7. **Writes the component manifest** — your selection is saved to `~/.openclaw/netclaw-components.conf` so `setup.sh` only prompts for credentials that matter
@@ -2589,7 +2877,7 @@ The `%ENV{NETCLAW_PASSWORD}` syntax pulls credentials from environment variables
 
 ## Prerequisites
 
-- Node.js >= 18 (>= 22 recommended for OpenClaw)
+- OpenClaw: Node.js **>=24.16.0 <25 or >=26.1.0**; Node 26 is recommended. Use a Node version manager if your distro ships an older release. Hermes keeps a separate Node floor for its Node-based components. See [installer readiness](docs/INSTALLER-READINESS.md).
 - Python 3.x with pip3
 - git
 - Network devices accessible via SSH (for pyATS)
@@ -2934,3 +3222,7 @@ See `examples/` for detailed workflow walkthroughs.
 | [049-merge-modular-installer](specs/049-merge-modular-installer/) | Complete | Merged a community-contributed modular TUI installer (PR #96 by @calcuttin) — `scripts/lib/catalog.sh` (component catalog) + `scripts/lib/tui.sh` + `scripts/lib/install-steps.sh`, replacing the monolithic `install.sh` with a thin dispatcher. Retrofitted spec 048's Chrome DevTools component into the new catalog, backfilled 9 previously undocumented catalog gaps, added `scripts/verify-catalog-coverage.py`, and amended the constitution to 1.2.0 (Principle XI now references the modular installer files). Pushed directly to the contributor's fork branch to preserve attribution. |
 | [050-computer-use-desktop](specs/050-computer-use-desktop/) | Complete | Integrated OpenClaw's own ClawHub `computer-use` skill (Xvfb+XFCE virtual desktop, 17 xdotool-driven actions) as a full-desktop automation capability for legacy tools with no browser or API path — new `desktop-gui-inspect` skill (read/confirm only, VNC/noVNC Watch Mode) plus a `computer-use` installer catalog entry. Live testing caught and fixed two real upstream/environment bugs: generated VNC/noVNC systemd units were not loopback-only by default (now patched and verified via `ss -tlnp` on every install, per FR-004) and the installed skill's action scripts were non-executable (`chmod +x` now applied automatically). Counts now 189 skills, 111 MCP integrations (verified via `scripts/verify-inventory-counts.py`). |
 | [062-rag-mcp](specs/062-rag-mcp/) | Complete | Added the Agentic RAG Knowledge Base: a fully offline `rag-mcp` FastMCP server (10 tools) where users teach NetClaw by uploading documents via Slack attachment, the new HUD Knowledge panel, or URL (confirmed depth-1 crawl). Structure-aware chunking with breadcrumbs, hybrid dense (bge-small) + BM25 retrieval fused by RRF and reranked by a local cross-encoder, mandatory citations on every retrieved claim, honest-miss behavior with a 3-rounds-per-sub-query budget, HIIL-gated delete/re-index, and opt-in secret-scrubbed snapshots with always-visible staleness. SOUL.md/TOOLS.md/memory-skill updates encode the four-source knowledge hierarchy (parametric / Memory / RAG / live MCP) — the RAG store at `~/.openclaw/rag/` is strictly separate from Memory MCP. 65 offline tests; golden-set evaluation harness ships with the format only (operator supplies real documents). Counts now 191 skills, 113 MCP integrations. |
+
+## Asynchronous MCP Tasks
+
+Optional Tasks support covers 298 tools across 35 integrations, led by 22 pyATS SSH/automation tools. Task-aware clients receive handles and poll; other clients retain foreground results. pyATS retains completed results in SQLite; the other enabled FastMCP integrations default to ephemeral memory. Approval, baseline and verification controls still apply. See [Tasks guide](docs/MCP-TASKS.md) for exact coverage, cancellation, storage and rollout limits.

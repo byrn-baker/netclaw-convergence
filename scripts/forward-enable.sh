@@ -29,13 +29,8 @@ FORWARD_BLOOM_INDEX_PATH="$FORWARD_STATE_DIR/bloom-indexes"
 FORWARD_CACHE_PATH="$FORWARD_STATE_DIR/cache"
 
 set_env_var() {
-    local key="$1" val="$2"
-    local tmp
-    [ -z "$val" ] && return
-    tmp="$(mktemp)"
-    grep -v "^${key}=" "$OPENCLAW_ENV" > "$tmp" 2>/dev/null || true
-    printf '%s=%s\n' "$key" "$val" >> "$tmp"
-    mv "$tmp" "$OPENCLAW_ENV"
+    [ -n "$2" ] || return 0
+    printf '%s' "$2" | python3 "$NETCLAW_DIR/scripts/write-env.py" "$OPENCLAW_ENV" "$1"
 }
 
 set_env_placeholder() {
@@ -113,7 +108,7 @@ fi
 
 log_step "2/5 Installing forward-mcp..."
 mkdir -p "$MCP_DIR" "$OPENCLAW_DIR" "$FORWARD_LOCK_DIR" "$FORWARD_BLOOM_INDEX_PATH" "$FORWARD_CACHE_PATH"
-[ -f "$OPENCLAW_ENV" ] || touch "$OPENCLAW_ENV"
+[ -f "$OPENCLAW_ENV" ] || (umask 077; touch "$OPENCLAW_ENV")
 
 log_info "Using forward-mcp repo: $FORWARD_MCP_REPO"
 log_info "Using forward-mcp ref: $FORWARD_MCP_REF"
@@ -188,7 +183,8 @@ if python3 "$NETCLAW_DIR/scripts/mcp-call.py" \
     get_default_settings '{}' >/dev/null; then
     log_info "forward-mcp responded to get_default_settings"
 else
-    log_warn "Smoke test failed. Check $FORWARD_MCP_BIN and Forward environment variables."
+    log_error "Smoke test failed. Check $FORWARD_MCP_BIN and Forward environment variables."
+    exit 1
 fi
 
 echo ""

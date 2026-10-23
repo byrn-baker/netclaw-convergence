@@ -34,6 +34,21 @@ py() {
 
 if (cd "$SRV" && python3 -c 'import duckdb' 2>/dev/null); then HAVE_DUCKDB=1; else HAVE_DUCKDB=0; fi
 
+py "denied symlink target remains denied inside a broad allowed root" '
+import loader, tempfile
+from pathlib import Path
+from unittest.mock import patch
+with tempfile.TemporaryDirectory() as tmp:
+    root = Path(tmp).resolve()
+    secret = root / ".openclaw/memory/fixture.json"
+    secret.parent.mkdir(parents=True)
+    secret.write_text("{\"synthetic\": true}")
+    link = root / "export.json"
+    link.symlink_to(secret)
+    with patch.object(loader, "roots", return_value=[str(root)]):
+        found, notes = loader.discover()
+    print("PASS" if not found and any("export.json" in note for note in notes) else "denied symlink was loaded")'
+
 echo "=== Path allowlist: NetClaw's own stores are never readable ==="
 
 # Pure stdlib -- always runs, including in CI.

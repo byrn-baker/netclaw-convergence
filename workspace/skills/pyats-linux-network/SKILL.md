@@ -203,3 +203,9 @@ PYATS_TESTBED_PATH=$PYATS_TESTBED_PATH python3 $MCP_CALL "${PYATS_PYTHON:-python
 - **Gate network changes behind ServiceNow** — if extending to write operations, require a Change Request
 - **Cross-reference with SoT** — always compare discovered IPs and routes against NetBox/Nautobot
 - **Record in GAIT** — every command execution must be logged
+
+## Failure Behavior
+
+- If a tool call fails with an authentication or connection error, check that `PYATS_MCP_SCRIPT`, `PYATS_TESTBED_PATH` are set and valid before assuming a data or device problem.
+- On a tool error (timeout, unreachable host, malformed response), report the failure and its error message directly to the user rather than fabricating or guessing at results.
+- For a confirmed read-only call, check connectivity and retry once if appropriate. For any call that changes state or sends a message, a timeout does not prove the action failed: inspect current state or delivery status before retrying, preserve the required approval/change gates, and do not repeat an action whose outcome is unknown.

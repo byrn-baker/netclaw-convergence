@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:async';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -305,7 +306,10 @@ class _EnrollmentGateState extends State<EnrollmentGate> {
         keyFingerprint: stored.keyFingerprint,
         identity: _identity,
       );
-      if (!mounted) return;
+      if (!mounted) {
+        await client.close();
+        return;
+      }
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (_) => HomeShell(client: client, stored: stored)),
       );
@@ -425,16 +429,21 @@ class _HomeShellState extends State<HomeShell> {
   LocalNotifications? _localNotifications;
   bool _localNotificationsPermissionDenied = false;
   NotificationDeepLink? _notificationDeepLink;
+  StreamSubscription<RemoteMessage>? _foregroundPushSubscription;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(_badgeLifecycleObserver);
     getApplicationDocumentsDirectory().then((dir) async {
+      if (!mounted) return;
       final feedStore = MessageFeedStore(dir);
-      final askClient = EdgeAskClient(widget.client);
       final conversationStore = ConversationStore(dir);
+      final askClient = EdgeAskClient(widget.client, store: conversationStore);
       final approvalClient = ApprovalClient(widget.client);
+      // Own these before the first await so disposal cannot miss them.
+      _askClient = askClient;
+      _approvalClient = approvalClient;
       // 103/US3: an approval may have arrived and been ACKed to the Border
       // during a headless BGAppRefreshTask window, where no live
       // ApprovalClient existed to hold it in memory -- PendingApprovalStore
@@ -604,13 +613,15 @@ class _HomeShellState extends State<HomeShell> {
           setState(() => _tab = 2); // Feed
         },
       );
+      _notificationDeepLink = notificationDeepLink;
       await localNotifications.initialize(
-        onResponse: (response) => handleNotificationResponse(
+        onResponse: (response) => mounted ? handleNotificationResponse(
           response,
           approvalClient: approvalClient,
           deepLink: notificationDeepLink,
-        ),
+        ) : Future<void>.value(),
       );
+      if (!mounted) return;
       final permissionGranted = await localNotifications.requestPermission();
       if (mounted) {
         setState(() {
@@ -635,7 +646,9 @@ class _HomeShellState extends State<HomeShell> {
         _recomputeBadge();
       };
 
+      if (!mounted) return;
       await capabilities.register();
+      if (!mounted) return;
       setState(() {
         _feedStore = feedStore;
         _askClient = askClient;
@@ -813,7 +826,9 @@ class _HomeShellState extends State<HomeShell> {
   void _wireForegroundPushIngest() {
     final store = _feedStore;
     if (store == null) return;
-    FirebaseMessaging.onMessage.listen((remote) async {
+    _foregroundPushSubscription?.cancel();
+    _foregroundPushSubscription = FirebaseMessaging.onMessage.listen((remote) async {
+      if (!mounted) return;
       final outcome = await ingestPushPayload(
         remote.data,
         store: store,
@@ -836,6 +851,13 @@ class _HomeShellState extends State<HomeShell> {
   void dispose() {
     WidgetsBinding.instance.removeObserver(_badgeLifecycleObserver);
     _reconnectSupervisor?.stop();
+    _deepLinkListener?.dispose();
+    _notificationDeepLink?.dispose();
+    _foregroundPushSubscription?.cancel();
+    const MethodChannel('ca.automateyournetwork.netclaw/watch_relay').setMethodCallHandler(null);
+    unawaited(widget.client.close().catchError((Object error) {
+      debugPrint('edge client close failed: $error');
+    }));
     _askClient?.dispose();
     _approvalClient?.dispose();
     super.dispose();
@@ -886,6 +908,7 @@ class _HomeShellState extends State<HomeShell> {
     final pages = [
       DashboardScreen(
         snapshot: buildDashboardSnapshot(
+                border: widget.client.border,
           connected: _connected,
           stored: widget.stored,
           feedStore: _feedStore,

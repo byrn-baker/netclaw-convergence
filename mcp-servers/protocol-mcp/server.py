@@ -19,7 +19,9 @@ import subprocess
 import sys
 from typing import Optional
 
-from mcp.server.fastmcp import FastMCP
+from fastmcp_tasks import TasksExtension
+from fastmcp.utilities.async_utils import call_sync_fn_in_threadpool
+from fastmcp import FastMCP
 
 # Add netclaw_tokens to path for GCF serialization
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "src"))
@@ -143,6 +145,7 @@ async def _ensure_init():
 # FastMCP server
 # ---------------------------------------------------------------------------
 mcp = FastMCP("protocol-mcp")
+mcp.add_extension(TasksExtension(name="netclaw-protocol-mcp", concurrency=1))
 
 
 # ── BGP tools ──────────────────────────────────────────────────────────────
@@ -180,7 +183,7 @@ async def _daemon_post(path: str, body: dict) -> Optional[dict]:
     return None
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def bgp_get_peers() -> str:
     """List BGP peer sessions with state, AS, IP, uptime, and prefix counts.
 
@@ -212,7 +215,7 @@ async def bgp_get_peers() -> str:
     return _gcf_dumps({"peers": peers, "count": len(peers), "source": "in-process speaker"})
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def bgp_get_rib(prefix: Optional[str] = None) -> str:
     """Query the Loc-RIB. Optionally filter by prefix (e.g. '10.0.0.0/24').
 
@@ -302,7 +305,7 @@ async def bgp_adjust_local_pref(network: str, local_pref: int) -> str:
 
 # ── OSPF tools ─────────────────────────────────────────────────────────────
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def ospf_get_neighbors() -> str:
     """List OSPF neighbors with state, address, priority, and router ID."""
     await _ensure_init()
@@ -312,7 +315,7 @@ async def ospf_get_neighbors() -> str:
     return _gcf_dumps({"neighbors": neighbors, "count": len(neighbors)})
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def ospf_get_lsdb() -> str:
     """Query the OSPF Link State Database (LSDB)."""
     await _ensure_init()
@@ -340,13 +343,13 @@ async def ospf_adjust_cost(interface: str, cost: int) -> str:
 
 # ── GRE tools ──────────────────────────────────────────────────────────────
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def gre_tunnel_status() -> str:
     """Check GRE tunnel status via system commands (ip tunnel show, ip addr show)."""
     tunnels = []
     try:
         # ip tunnel show
-        result = subprocess.run(
+        result = await call_sync_fn_in_threadpool(subprocess.run,
             ["ip", "tunnel", "show"],
             capture_output=True, text=True, timeout=5,
         )
@@ -355,7 +358,7 @@ async def gre_tunnel_status() -> str:
                 tunnels.append(line.strip())
 
         # ip addr show for tunnel interfaces
-        result2 = subprocess.run(
+        result2 = await call_sync_fn_in_threadpool(subprocess.run,
             ["ip", "-br", "addr", "show"],
             capture_output=True, text=True, timeout=5,
         )
@@ -374,7 +377,7 @@ async def gre_tunnel_status() -> str:
 
 # ── Meta tools ─────────────────────────────────────────────────────────────
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def protocol_summary() -> str:
     """Consolidated BGP + OSPF + GRE state summary."""
     await _ensure_init()

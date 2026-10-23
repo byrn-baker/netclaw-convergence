@@ -1,0 +1,14 @@
+.genie-json { flex: 1; min-height: 0; display: flex; flex-direction: column; overflow: auto; background: #090e14; color: #d6deeb; font: 12px/1.5 system-ui, sans-serif; }
+.genie-controls { display: flex; align-items: end; flex-wrap: wrap; gap: 10px; padding: 12px; border-bottom: 1px solid #263847; }
+.genie-controls label { display: grid; gap: 4px; color: #a3b5c8; }
+.genie-controls label:first-child { flex: 1; min-width: 180px; }
+.genie-controls input, .genie-controls select, .genie-controls button { box-sizing: border-box; height: 32px; border: 1px solid #466370; border-radius: 5px; padding: 5px 9px; font: inherit; background: #142431; color: #e4edf7; }
+.genie-controls button { background: #0e7c7b; cursor: pointer; }
+.genie-controls button:disabled { opacity: .5; cursor: default; }
+.genie-note, .genie-error { margin: 8px 12px; font-size: 11px; color: #9cb3c8; }
+.genie-error { color: #ff9d9d; }
+.genie-json > pre { flex: 1; min-height: 120px; overflow: auto; margin: 0; padding: 12px; font: 12px/1.5 Consolas, monospace; white-space: pre-wrap; overflow-wrap: anywhere; }
+.genie-empty { flex: 1; padding: 24px; color: #9cb3c8; }
+.genie-setup { flex: none; border-top: 1px solid #263847; padding: 10px 12px; color: #9cb3c8; }
+.genie-setup summary { cursor: pointer; }
+.genie-setup pre { max-height: 180px; overflow: auto; white-space: pre-wrap; overflow-wrap: anywhere; }

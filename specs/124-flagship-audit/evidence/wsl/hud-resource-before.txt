@@ -1,0 +1,29 @@
+✖ real HUD server rejects hostile HTTP and WebSocket requests before fixture access (199.109878ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 274.831244
+
+✖ failing tests:
+
+test at src/security/server-access.test.js:33:1
+✖ real HUD server rejects hostile HTTP and WebSocket requests before fixture access (199.109878ms)
+  AssertionError [ERR_ASSERTION]: /api/skill/..%2f..%2foutside
+
+  200 !== 404
+
+      at TestContext.<anonymous> (file://<repo>/ui/netclaw-visual/src/security/server-access.test.js:77:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+      at async Test.run (node:internal/test_runner/test:1113:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 200,
+    expected: 404,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

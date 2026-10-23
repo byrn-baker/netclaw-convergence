@@ -1,0 +1,42 @@
+{
+  "counts": {
+    "BLOCKED_DEPENDENCY": 0,
+    "ERROR": 0,
+    "FAIL": 1,
+    "NEEDS_DOCKER": 0,
+    "NEEDS_LIVE_CREDENTIALS": 0,
+    "PASS": 0
+  },
+  "exit_code": 1,
+  "generated_at": "2026-09-26T23:32:14.140873+00:00",
+  "results": [
+    {
+      "capabilities": [],
+      "command": [
+        "bash",
+        "tests/analysis/run-tests.sh"
+      ],
+      "detail": "harness exited 1",
+      "duration_seconds": 4.341764000000694,
+      "environment": {
+        "fingerprint": "87d3ae4cf8a99ab8576ff3b6a32dafaebbf82721b8da8de079e0102d503b158a",
+        "path": ".contract-test-envs/analysis"
+      },
+      "exit_code": 1,
+      "output": "FAIL denied symlink target remains denied inside a broad allowed root -- got: denied symlink was loaded\n=== Path allowlist: NetClaw's own stores are never readable ===\n  ok   the memory store is denied\n  ok   the RAG store is denied\n  ok   the federation store is denied\n  ok   the GAIT audit trail is denied\n  ok   ssh and cloud credential dirs are denied\n  ok   the denial reason explains itself rather than just refusing\n  ok   an NSM run directory is NOT denied\n  ok   a path outside every allowed root is rejected\n\n=== Statement screen: only reads, one at a time ===\n  ok   SELECT is accepted\n  ok   WITH is accepted\n  ok   a trailing semicolon is fine\n  ok   a stacked second statement is refused\n  ok   DROP is refused\n  ok   INSERT is refused\n  ok   UPDATE is refused\n  ok   DELETE is refused\n  ok   CREATE is refused\n  ok   ATTACH is refused\n  ok   COPY is refused\n  ok   INSTALL is refused\n  ok   LOAD is refused\n  ok   SET is refused\n  ok   PRAGMA is refused\n  ok   the ATTACH refusal names the stores it protects\n\n=== DuckDB-level lockdown (the real boundary) ===\n  ok   after lockdown DuckDB refuses every filesystem and network escape\n  ok   a materialised table is still queryable after lockdown\n  ok   the loader builds a TABLE, never a VIEW (a view dies at lockdown)\n  ok   a runaway query is interrupted rather than hanging forever\n  ok   truncation is reported, not silently hidden\n  ok   a query before lockdown is refused outright\n  ok   loading a dataset after lockdown is refused\n\n=== Empty-input honesty ===\n  ok   an empty file is skipped rather than loaded as a rowless dataset\n\n=== Summary ===\n  passed: 32\n  failed: 1\n  skipped: 0",
+      "status": "FAIL",
+      "suite": "analysis",
+      "test_runs": [
+        {
+          "command": [
+            "bash",
+            "tests/analysis/run-tests.sh"
+          ],
+          "exit_code": 1,
+          "output": "FAIL denied symlink target remains denied inside a broad allowed root -- got: denied symlink was loaded\n=== Path allowlist: NetClaw's own stores are never readable ===\n  ok   the memory store is denied\n  ok   the RAG store is denied\n  ok   the federation store is denied\n  ok   the GAIT audit trail is denied\n  ok   ssh and cloud credential dirs are denied\n  ok   the denial reason explains itself rather than just refusing\n  ok   an NSM run directory is NOT denied\n  ok   a path outside every allowed root is rejected\n\n=== Statement screen: only reads, one at a time ===\n  ok   SELECT is accepted\n  ok   WITH is accepted\n  ok   a trailing semicolon is fine\n  ok   a stacked second statement is refused\n  ok   DROP is refused\n  ok   INSERT is refused\n  ok   UPDATE is refused\n  ok   DELETE is refused\n  ok   CREATE is refused\n  ok   ATTACH is refused\n  ok   COPY is refused\n  ok   INSTALL is refused\n  ok   LOAD is refused\n  ok   SET is refused\n  ok   PRAGMA is refused\n  ok   the ATTACH refusal names the stores it protects\n\n=== DuckDB-level lockdown (the real boundary) ===\n  ok   after lockdown DuckDB refuses every filesystem and network escape\n  ok   a materialised table is still queryable after lockdown\n  ok   the loader builds a TABLE, never a VIEW (a view dies at lockdown)\n  ok   a runaway query is interrupted rather than hanging forever\n  ok   truncation is reported, not silently hidden\n  ok   a query before lockdown is refused outright\n  ok   loading a dataset after lockdown is refused\n\n=== Empty-input honesty ===\n  ok   an empty file is skipped rather than loaded as a rowless dataset\n\n=== Summary ===\n  passed: 32\n  failed: 1\n  skipped: 0"
+        }
+      ]
+    }
+  ],
+  "schema_version": 1
+}

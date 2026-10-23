@@ -1,0 +1,1107 @@
+{
+  "editor": "1.102.0",
+  "packageMode": "source development; isolated native observer",
+  "checks": [
+    "Native nickname/API prompts and installation binding",
+    "All21 generic domain views: semantic title/purpose/cards or explicit source failure",
+    "Guided create \u2192 read-only preview \u2192 native review \u2192 verified isolated save",
+    "Unsaved YAML draft survives live light/dark/high-contrast changes",
+    "Native mode switch keeps unsaved work",
+    "Scoped MCP native review, secret replacement, verified save and private reset",
+    "MCP responsive widths,200% zoom and keyboard-only field selection; reduced-motion emulation",
+    "defenseclaw: native scope binding, editable rules, cancel preservation, weakening acknowledgment and verified fixture write",
+    "openshell: native scope binding, editable rules, cancel preservation, weakening acknowledgment and verified fixture write",
+    "Repeated graph refresh keeps one canvas and current selection",
+    "Reported BGP node selection/controls and WebGL-loss text fallback",
+    "Actual editor500-entry search: 2.9ms after debounce",
+    "Every view family checked in three themes/widths, 200% zoom, keyboard focus and reduced motion",
+    "Connection invalidation clears sensitive drafts"
+  ],
+  "matrix": [
+    {
+      "view": "overview",
+      "state": "Observed result"
+    },
+    {
+      "view": "overview",
+      "theme": "Default Light Modern",
+      "width": 360,
+      "viewport": 360,
+      "scroll": 360,
+      "client": 360
+    },
+    {
+      "view": "overview",
+      "theme": "Default Dark Modern",
+      "width": 700,
+      "viewport": 700,
+      "scroll": 700,
+      "client": 700
+    },
+    {
+      "view": "overview",
+      "theme": "Default High Contrast",
+      "width": 1200,
+      "viewport": 1200,
+      "scroll": 1200,
+      "client": 1200
+    },
+    {
+      "view": "overview",
+      "zoom": "200%",
+      "keyboard": "focus and Tab",
+      "motion": "reduced"
+    },
+    {
+      "view": "estate",
+      "state": "Observed result"
+    },
+    {
+      "view": "estate",
+      "theme": "Default Light Modern",
+      "width": 360,
+      "viewport": 360,
+      "scroll": 360,
+      "client": 360
+    },
+    {
+      "view": "estate",
+      "theme": "Default Dark Modern",
+      "width": 700,
+      "viewport": 700,
+      "scroll": 700,
+      "client": 700
+    },
+    {
+      "view": "estate",
+      "theme": "Default High Contrast",
+      "width": 1200,
+      "viewport": 1200,
+      "scroll": 1200,
+      "client": 1200
+    },
+    {
+      "view": "estate",
+      "zoom": "200%",
+      "keyboard": "focus and Tab",
+      "motion": "reduced"
+    },
+    {
+      "view": "peers",
+      "state": "Observed result"
+    },
+    {
+      "view": "peers",
+      "theme": "Default Light Modern",
+      "width": 360,
+      "viewport": 360,
+      "scroll": 360,
+      "client": 360
+    },
+    {
+      "view": "peers",
+      "theme": "Default Dark Modern",
+      "width": 700,
+      "viewport": 700,
+      "scroll": 700,
+      "client": 700
+    },
+    {
+      "view": "peers",
+      "theme": "Default High Contrast",
+      "width": 1200,
+      "viewport": 1200,
+      "scroll": 1200,
+      "client": 1200
+    },
+    {
+      "view": "peers",
+      "zoom": "200%",
+      "keyboard": "focus and Tab",
+      "motion": "reduced"
+    },
+    {
+      "view": "mobile",
+      "state": "Observed result"
+    },
+    {
+      "view": "mobile",
+      "theme": "Default Light Modern",
+      "width": 360,
+      "viewport": 360,
+      "scroll": 360,
+      "client": 360
+    },
+    {
+      "view": "mobile",
+      "theme": "Default Dark Modern",
+      "width": 700,
+      "viewport": 700,
+      "scroll": 700,
+      "client": 700
+    },
+    {
+      "view": "mobile",
+      "theme": "Default High Contrast",
+      "width": 1200,
+      "viewport": 1200,
+      "scroll": 1200,
+      "client": 1200
+    },
+    {
+      "view": "mobile",
+      "zoom": "200%",
+      "keyboard": "focus and Tab",
+      "motion": "reduced"
+    },
+    {
+      "view": "science",
+      "state": "Observed result"
+    },
+    {
+      "view": "science",
+      "theme": "Default Light Modern",
+      "width": 360,
+      "viewport": 360,
+      "scroll": 360,
+      "client": 360
+    },
+    {
+      "view": "science",
+      "theme": "Default Dark Modern",
+      "width": 700,
+      "viewport": 700,
+      "scroll": 700,
+      "client": 700
+    },
+    {
+      "view": "science",
+      "theme": "Default High Contrast",
+      "width": 1200,
+      "viewport": 1200,
+      "scroll": 1200,
+      "client": 1200
+    },
+    {
+      "view": "science",
+      "zoom": "200%",
+      "keyboard": "focus and Tab",
+      "motion": "reduced"
+    },
+    {
+      "view": "topology",
+      "state": "Observed result"
+    },
+    {
+      "view": "topology",
+      "theme": "Default Light Modern",
+      "width": 360,
+      "viewport": 360,
+      "scroll": 360,
+      "client": 360
+    },
+    {
+      "view": "topology",
+      "theme": "Default Dark Modern",
+      "width": 700,
+      "viewport": 700,
+      "scroll": 700,
+      "client": 700
+    },
+    {
+      "view": "topology",
+      "theme": "Default High Contrast",
+      "width": 1200,
+      "viewport": 1200,
+      "scroll": 1200,
+      "client": 1200
+    },
+    {
+      "view": "topology",
+      "zoom": "200%",
+      "keyboard": "focus and Tab",
+      "motion": "reduced"
+    },
+    {
+      "view": "operations",
+      "state": "Observed result"
+    },
+    {
+      "view": "operations",
+      "theme": "Default Light Modern",
+      "width": 360,
+      "viewport": 360,
+      "scroll": 360,
+      "client": 360
+    },
+    {
+      "view": "operations",
+      "theme": "Default Dark Modern",
+      "width": 700,
+      "viewport": 700,
+      "scroll": 700,
+      "client": 700
+    },
+    {
+      "view": "operations",
+      "theme": "Default High Contrast",
+      "width": 1200,
+      "viewport": 1200,
+      "scroll": 1200,
+      "client": 1200
+    },
+    {
+      "view": "operations",
+      "zoom": "200%",
+      "keyboard": "focus and Tab",
+      "motion": "reduced"
+    },
+    {
+      "view": "gait",
+      "state": "Observed result"
+    },
+    {
+      "view": "gait",
+      "theme": "Default Light Modern",
+      "width": 360,
+      "viewport": 360,
+      "scroll": 360,
+      "client": 360
+    },
+    {
+      "view": "gait",
+      "theme": "Default Dark Modern",
+      "width": 700,
+      "viewport": 700,
+      "scroll": 700,
+      "client": 700
+    },
+    {
+      "view": "gait",
+      "theme": "Default High Contrast",
+      "width": 1200,
+      "viewport": 1200,
+      "scroll": 1200,
+      "client": 1200
+    },
+    {
+      "view": "gait",
+      "zoom": "200%",
+      "keyboard": "focus and Tab",
+      "motion": "reduced"
+    },
+    {
+      "view": "integrations",
+      "state": "Observed result"
+    },
+    {
+      "view": "integrations",
+      "theme": "Default Light Modern",
+      "width": 360,
+      "viewport": 360,
+      "scroll": 360,
+      "client": 360
+    },
+    {
+      "view": "integrations",
+      "theme": "Default Dark Modern",
+      "width": 700,
+      "viewport": 700,
+      "scroll": 700,
+      "client": 700
+    },
+    {
+      "view": "integrations",
+      "theme": "Default High Contrast",
+      "width": 1200,
+      "viewport": 1200,
+      "scroll": 1200,
+      "client": 1200
+    },
+    {
+      "view": "integrations",
+      "zoom": "200%",
+      "keyboard": "focus and Tab",
+      "motion": "reduced"
+    },
+    {
+      "view": "skills",
+      "state": "Observed result"
+    },
+    {
+      "view": "skills",
+      "theme": "Default Light Modern",
+      "width": 360,
+      "viewport": 360,
+      "scroll": 360,
+      "client": 360
+    },
+    {
+      "view": "skills",
+      "theme": "Default Dark Modern",
+      "width": 700,
+      "viewport": 700,
+      "scroll": 700,
+      "client": 700
+    },
+    {
+      "view": "skills",
+      "theme": "Default High Contrast",
+      "width": 1200,
+      "viewport": 1200,
+      "scroll": 1200,
+      "client": 1200
+    },
+    {
+      "view": "skills",
+      "zoom": "200%",
+      "keyboard": "focus and Tab",
+      "motion": "reduced"
+    },
+    {
+      "view": "settings",
+      "state": "Observed result"
+    },
+    {
+      "view": "settings",
+      "theme": "Default Light Modern",
+      "width": 360,
+      "viewport": 360,
+      "scroll": 360,
+      "client": 360
+    },
+    {
+      "view": "settings",
+      "theme": "Default Dark Modern",
+      "width": 700,
+      "viewport": 700,
+      "scroll": 700,
+      "client": 700
+    },
+    {
+      "view": "settings",
+      "theme": "Default High Contrast",
+      "width": 1200,
+      "viewport": 1200,
+      "scroll": 1200,
+      "client": 1200
+    },
+    {
+      "view": "settings",
+      "zoom": "200%",
+      "keyboard": "focus and Tab",
+      "motion": "reduced"
+    },
+    {
+      "view": "configuration",
+      "state": "Observed result"
+    },
+    {
+      "view": "configuration",
+      "theme": "Default Light Modern",
+      "width": 360,
+      "viewport": 360,
+      "scroll": 360,
+      "client": 360
+    },
+    {
+      "view": "configuration",
+      "theme": "Default Dark Modern",
+      "width": 700,
+      "viewport": 700,
+      "scroll": 700,
+      "client": 700
+    },
+    {
+      "view": "configuration",
+      "theme": "Default High Contrast",
+      "width": 1200,
+      "viewport": 1200,
+      "scroll": 1200,
+      "client": 1200
+    },
+    {
+      "view": "configuration",
+      "zoom": "200%",
+      "keyboard": "focus and Tab",
+      "motion": "reduced"
+    },
+    {
+      "view": "tokenomics",
+      "state": "Observed result"
+    },
+    {
+      "view": "tokenomics",
+      "theme": "Default Light Modern",
+      "width": 360,
+      "viewport": 360,
+      "scroll": 360,
+      "client": 360
+    },
+    {
+      "view": "tokenomics",
+      "theme": "Default Dark Modern",
+      "width": 700,
+      "viewport": 700,
+      "scroll": 700,
+      "client": 700
+    },
+    {
+      "view": "tokenomics",
+      "theme": "Default High Contrast",
+      "width": 1200,
+      "viewport": 1200,
+      "scroll": 1200,
+      "client": 1200
+    },
+    {
+      "view": "tokenomics",
+      "zoom": "200%",
+      "keyboard": "focus and Tab",
+      "motion": "reduced"
+    },
+    {
+      "view": "budget",
+      "state": "Observed result"
+    },
+    {
+      "view": "budget",
+      "theme": "Default Light Modern",
+      "width": 360,
+      "viewport": 360,
+      "scroll": 360,
+      "client": 360
+    },
+    {
+      "view": "budget",
+      "theme": "Default Dark Modern",
+      "width": 700,
+      "viewport": 700,
+      "scroll": 700,
+      "client": 700
+    },
+    {
+      "view": "budget",
+      "theme": "Default High Contrast",
+      "width": 1200,
+      "viewport": 1200,
+      "scroll": 1200,
+      "client": 1200
+    },
+    {
+      "view": "budget",
+      "zoom": "200%",
+      "keyboard": "focus and Tab",
+      "motion": "reduced"
+    },
+    {
+      "view": "security",
+      "state": "Observed result \u00b7 choose a native target to inspect and edit its security rules."
+    },
+    {
+      "view": "security",
+      "theme": "Default Light Modern",
+      "width": 360,
+      "viewport": 360,
+      "scroll": 360,
+      "client": 360
+    },
+    {
+      "view": "security",
+      "theme": "Default Dark Modern",
+      "width": 700,
+      "viewport": 700,
+      "scroll": 700,
+      "client": 700
+    },
+    {
+      "view": "security",
+      "theme": "Default High Contrast",
+      "width": 1200,
+      "viewport": 1200,
+      "scroll": 1200,
+      "client": 1200
+    },
+    {
+      "view": "security",
+      "zoom": "200%",
+      "keyboard": "focus and Tab",
+      "motion": "reduced"
+    },
+    {
+      "view": "openshell",
+      "state": "Observed result \u00b7 choose a native target to inspect and edit its security rules."
+    },
+    {
+      "view": "openshell",
+      "theme": "Default Light Modern",
+      "width": 360,
+      "viewport": 360,
+      "scroll": 360,
+      "client": 360
+    },
+    {
+      "view": "openshell",
+      "theme": "Default Dark Modern",
+      "width": 700,
+      "viewport": 700,
+      "scroll": 700,
+      "client": 700
+    },
+    {
+      "view": "openshell",
+      "theme": "Default High Contrast",
+      "width": 1200,
+      "viewport": 1200,
+      "scroll": 1200,
+      "client": 1200
+    },
+    {
+      "view": "openshell",
+      "zoom": "200%",
+      "keyboard": "focus and Tab",
+      "motion": "reduced"
+    },
+    {
+      "view": "knowledge",
+      "state": "NetClaw refused /api/rag/stats (HTTP 500). /Applications/Xcode.app/Contents/Developer/usr/bin/python3: can't open file '/private/var/folders/ln/99pzcfd950j6vxf7gbfjjm5w0000gq/T/netclaw150-unchanged-hud-Av4MbF/scripts/mcp-call.py': [Errno 2] No such file or directory\n"
+    },
+    {
+      "view": "knowledge",
+      "theme": "Default Light Modern",
+      "width": 360,
+      "viewport": 360,
+      "scroll": 360,
+      "client": 360
+    },
+    {
+      "view": "knowledge",
+      "theme": "Default Dark Modern",
+      "width": 700,
+      "viewport": 700,
+      "scroll": 700,
+      "client": 700
+    },
+    {
+      "view": "knowledge",
+      "theme": "Default High Contrast",
+      "width": 1200,
+      "viewport": 1200,
+      "scroll": 1200,
+      "client": 1200
+    },
+    {
+      "view": "knowledge",
+      "zoom": "200%",
+      "keyboard": "focus and Tab",
+      "motion": "reduced"
+    },
+    {
+      "view": "documentation",
+      "state": "Observed result"
+    },
+    {
+      "view": "documentation",
+      "theme": "Default Light Modern",
+      "width": 360,
+      "viewport": 360,
+      "scroll": 360,
+      "client": 360
+    },
+    {
+      "view": "documentation",
+      "theme": "Default Dark Modern",
+      "width": 700,
+      "viewport": 700,
+      "scroll": 700,
+      "client": 700
+    },
+    {
+      "view": "documentation",
+      "theme": "Default High Contrast",
+      "width": 1200,
+      "viewport": 1200,
+      "scroll": 1200,
+      "client": 1200
+    },
+    {
+      "view": "documentation",
+      "zoom": "200%",
+      "keyboard": "focus and Tab",
+      "motion": "reduced"
+    },
+    {
+      "view": "reference",
+      "state": "Observed result"
+    },
+    {
+      "view": "reference",
+      "theme": "Default Light Modern",
+      "width": 360,
+      "viewport": 360,
+      "scroll": 360,
+      "client": 360
+    },
+    {
+      "view": "reference",
+      "theme": "Default Dark Modern",
+      "width": 700,
+      "viewport": 700,
+      "scroll": 700,
+      "client": 700
+    },
+    {
+      "view": "reference",
+      "theme": "Default High Contrast",
+      "width": 1200,
+      "viewport": 1200,
+      "scroll": 1200,
+      "client": 1200
+    },
+    {
+      "view": "reference",
+      "zoom": "200%",
+      "keyboard": "focus and Tab",
+      "motion": "reduced"
+    },
+    {
+      "view": "logs",
+      "state": "Observed result"
+    },
+    {
+      "view": "logs",
+      "theme": "Default Light Modern",
+      "width": 360,
+      "viewport": 360,
+      "scroll": 360,
+      "client": 360
+    },
+    {
+      "view": "logs",
+      "theme": "Default Dark Modern",
+      "width": 700,
+      "viewport": 700,
+      "scroll": 700,
+      "client": 700
+    },
+    {
+      "view": "logs",
+      "theme": "Default High Contrast",
+      "width": 1200,
+      "viewport": 1200,
+      "scroll": 1200,
+      "client": 1200
+    },
+    {
+      "view": "logs",
+      "zoom": "200%",
+      "keyboard": "focus and Tab",
+      "motion": "reduced"
+    },
+    {
+      "view": "intent",
+      "state": "Observed result"
+    },
+    {
+      "view": "intent",
+      "theme": "Default Light Modern",
+      "width": 360,
+      "viewport": 360,
+      "scroll": 360,
+      "client": 360
+    },
+    {
+      "view": "intent",
+      "theme": "Default Dark Modern",
+      "width": 700,
+      "viewport": 700,
+      "scroll": 700,
+      "client": 700
+    },
+    {
+      "view": "intent",
+      "theme": "Default High Contrast",
+      "width": 1200,
+      "viewport": 1200,
+      "scroll": 1200,
+      "client": 1200
+    },
+    {
+      "view": "intent",
+      "zoom": "200%",
+      "keyboard": "focus and Tab",
+      "motion": "reduced"
+    },
+    {
+      "view": "testbed-cards",
+      "theme": "Default Light Modern",
+      "width": 360,
+      "viewport": 360,
+      "scroll": 360,
+      "client": 360
+    },
+    {
+      "view": "testbed-cards",
+      "theme": "Default Dark Modern",
+      "width": 700,
+      "viewport": 700,
+      "scroll": 700,
+      "client": 700
+    },
+    {
+      "view": "testbed-cards",
+      "theme": "Default High Contrast",
+      "width": 1200,
+      "viewport": 1200,
+      "scroll": 1200,
+      "client": 1200
+    },
+    {
+      "view": "testbed-cards",
+      "zoom": "200%",
+      "keyboard": "focus and Tab",
+      "motion": "reduced"
+    },
+    {
+      "view": "testbed-yaml",
+      "theme": "Default Light Modern",
+      "width": 360,
+      "viewport": 360,
+      "scroll": 360,
+      "client": 360
+    },
+    {
+      "view": "testbed-yaml",
+      "theme": "Default Dark Modern",
+      "width": 700,
+      "viewport": 700,
+      "scroll": 700,
+      "client": 700
+    },
+    {
+      "view": "testbed-yaml",
+      "theme": "Default High Contrast",
+      "width": 1200,
+      "viewport": 1200,
+      "scroll": 1200,
+      "client": 1200
+    },
+    {
+      "view": "testbed-yaml",
+      "zoom": "200%",
+      "keyboard": "focus and Tab",
+      "motion": "reduced"
+    },
+    {
+      "view": "mcp-fields",
+      "theme": "Default Light Modern",
+      "width": 360,
+      "viewport": 360,
+      "scroll": 360,
+      "client": 360
+    },
+    {
+      "view": "mcp-fields",
+      "theme": "Default Dark Modern",
+      "width": 700,
+      "viewport": 700,
+      "scroll": 700,
+      "client": 700
+    },
+    {
+      "view": "mcp-fields",
+      "theme": "Default High Contrast",
+      "width": 1200,
+      "viewport": 1200,
+      "scroll": 1200,
+      "client": 1200
+    },
+    {
+      "view": "mcp-fields",
+      "zoom": "200%",
+      "keyboard": "focus and Tab",
+      "motion": "reduced"
+    },
+    {
+      "view": "mcp",
+      "targetWidth": 360,
+      "viewport": 360,
+      "scroll": 360,
+      "client": 360
+    },
+    {
+      "view": "mcp",
+      "targetWidth": 700,
+      "viewport": 700,
+      "scroll": 700,
+      "client": 700
+    },
+    {
+      "view": "mcp",
+      "targetWidth": 1200,
+      "viewport": 1200,
+      "scroll": 1200,
+      "client": 1200
+    },
+    {
+      "view": "defenseclaw-controls",
+      "theme": "Default Light Modern",
+      "width": 360,
+      "viewport": 360,
+      "scroll": 360,
+      "client": 360
+    },
+    {
+      "view": "defenseclaw-controls",
+      "theme": "Default Dark Modern",
+      "width": 700,
+      "viewport": 700,
+      "scroll": 700,
+      "client": 700
+    },
+    {
+      "view": "defenseclaw-controls",
+      "theme": "Default High Contrast",
+      "width": 1200,
+      "viewport": 1200,
+      "scroll": 1200,
+      "client": 1200
+    },
+    {
+      "view": "defenseclaw-controls",
+      "zoom": "200%",
+      "keyboard": "focus and Tab",
+      "motion": "reduced"
+    },
+    {
+      "view": "openshell-controls",
+      "theme": "Default Light Modern",
+      "width": 360,
+      "viewport": 360,
+      "scroll": 360,
+      "client": 360
+    },
+    {
+      "view": "openshell-controls",
+      "theme": "Default Dark Modern",
+      "width": 700,
+      "viewport": 700,
+      "scroll": 700,
+      "client": 700
+    },
+    {
+      "view": "openshell-controls",
+      "theme": "Default High Contrast",
+      "width": 1200,
+      "viewport": 1200,
+      "scroll": 1200,
+      "client": 1200
+    },
+    {
+      "view": "openshell-controls",
+      "zoom": "200%",
+      "keyboard": "focus and Tab",
+      "motion": "reduced"
+    },
+    {
+      "view": "topology-populated",
+      "theme": "Default Light Modern",
+      "width": 360,
+      "viewport": 360,
+      "scroll": 360,
+      "client": 360
+    },
+    {
+      "view": "topology-populated",
+      "theme": "Default Dark Modern",
+      "width": 700,
+      "viewport": 700,
+      "scroll": 700,
+      "client": 700
+    },
+    {
+      "view": "topology-populated",
+      "theme": "Default High Contrast",
+      "width": 1200,
+      "viewport": 1200,
+      "scroll": 1200,
+      "client": 1200
+    },
+    {
+      "view": "topology-populated",
+      "zoom": "200%",
+      "keyboard": "focus and Tab",
+      "motion": "reduced"
+    },
+    {
+      "view": "integrations",
+      "entries": 500,
+      "settledRenderMs": 2.900000035762787
+    },
+    {
+      "view": "chat",
+      "theme": "Default Light Modern",
+      "width": 360,
+      "viewport": 360,
+      "scroll": 360,
+      "client": 360
+    },
+    {
+      "view": "chat",
+      "theme": "Default Dark Modern",
+      "width": 700,
+      "viewport": 700,
+      "scroll": 700,
+      "client": 700
+    },
+    {
+      "view": "chat",
+      "theme": "Default High Contrast",
+      "width": 1200,
+      "viewport": 1200,
+      "scroll": 1200,
+      "client": 1200
+    },
+    {
+      "view": "chat",
+      "zoom": "200%",
+      "keyboard": "focus and Tab",
+      "motion": "reduced"
+    },
+    {
+      "view": "canvas",
+      "theme": "Default Light Modern",
+      "width": 360,
+      "viewport": 360,
+      "scroll": 360,
+      "client": 360
+    },
+    {
+      "view": "canvas",
+      "theme": "Default Dark Modern",
+      "width": 700,
+      "viewport": 700,
+      "scroll": 700,
+      "client": 700
+    },
+    {
+      "view": "canvas",
+      "theme": "Default High Contrast",
+      "width": 1200,
+      "viewport": 1200,
+      "scroll": 1200,
+      "client": 1200
+    },
+    {
+      "view": "canvas",
+      "zoom": "200%",
+      "keyboard": "focus and Tab",
+      "motion": "reduced"
+    },
+    {
+      "view": "rag",
+      "theme": "Default Light Modern",
+      "width": 360,
+      "viewport": 360,
+      "scroll": 360,
+      "client": 360
+    },
+    {
+      "view": "rag",
+      "theme": "Default Dark Modern",
+      "width": 700,
+      "viewport": 700,
+      "scroll": 700,
+      "client": 700
+    },
+    {
+      "view": "rag",
+      "theme": "Default High Contrast",
+      "width": 1200,
+      "viewport": 1200,
+      "scroll": 1200,
+      "client": 1200
+    },
+    {
+      "view": "rag",
+      "zoom": "200%",
+      "keyboard": "focus and Tab",
+      "motion": "reduced"
+    },
+    {
+      "view": "avatar",
+      "theme": "Default Light Modern",
+      "width": 360,
+      "viewport": 360,
+      "scroll": 360,
+      "client": 360
+    },
+    {
+      "view": "avatar",
+      "theme": "Default Dark Modern",
+      "width": 700,
+      "viewport": 700,
+      "scroll": 700,
+      "client": 700
+    },
+    {
+      "view": "avatar",
+      "theme": "Default High Contrast",
+      "width": 1200,
+      "viewport": 1200,
+      "scroll": 1200,
+      "client": 1200
+    },
+    {
+      "view": "avatar",
+      "zoom": "200%",
+      "keyboard": "focus and Tab",
+      "motion": "reduced"
+    }
+  ],
+  "screenshots": [
+    "domain-overview.png",
+    "domain-estate.png",
+    "domain-peers.png",
+    "domain-mobile.png",
+    "domain-science.png",
+    "domain-topology.png",
+    "domain-operations.png",
+    "domain-gait.png",
+    "domain-integrations.png",
+    "domain-skills.png",
+    "domain-settings.png",
+    "domain-configuration.png",
+    "domain-tokenomics.png",
+    "domain-budget.png",
+    "domain-security.png",
+    "domain-openshell.png",
+    "domain-knowledge.png",
+    "domain-documentation.png",
+    "domain-reference.png",
+    "domain-logs.png",
+    "domain-intent.png",
+    "testbed-cards.png",
+    "testbed-Default-Light-Modern.png",
+    "testbed-Default-Dark-Modern.png",
+    "testbed-Default-High-Contrast.png",
+    "mcp-fields-light.png",
+    "mcp-width-360.png",
+    "mcp-width-700.png",
+    "mcp-width-1200.png",
+    "mcp-zoom200.png",
+    "defenseclaw-review.png",
+    "defenseclaw-controls.png",
+    "defenseclaw-forms.png",
+    "openshell-review.png",
+    "openshell-controls.png",
+    "openshell-forms.png",
+    "topology-3d.png",
+    "integration-cards.png",
+    "family-chat.png",
+    "family-canvas.png",
+    "family-rag.png",
+    "family-avatar.png"
+  ],
+  "scope": "Mac only, synthetic data/HUD, no provider or device calls, no package/live deployment"
+}

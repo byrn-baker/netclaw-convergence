@@ -1,0 +1,10 @@
+# Security perimeter research — owner amendment
+
+Read on 2026-10-11. Existing repository posture endpoints are observations only; broad historical enable/disable scripts include install, global config and process effects and are unsuitable as scoped rule editors. Local DefenseClaw/OpenShell CLIs were not found on PATH; their live enforcement is not qualified by source inspection.
+
+Primary upstream source snapshots (public source only, temporary checkouts; no installation/activation):
+
+- [DefenseClaw CLI source](https://github.com/cisco-ai-defense/defenseclaw/tree/9cfb8bb49325f82ffed933b992658ae5c2c87a92/cli/defenseclaw), [CLI reference](https://github.com/cisco-ai-defense/defenseclaw/blob/9cfb8bb49325f82ffed933b992658ae5c2c87a92/docs-site/content/docs/reference/cli.mdx). Modern tools are connector-scoped or global; source/MCP scoping can be audit-only. `config set --expect-sha256` preserves native validation and managed-device restrictions. `status --json` distinguishes authenticated sidecar state from configured posture; alerts have bounded JSON output. Do not copy older skill command examples blindly.
+- [OpenShell CLI source](https://github.com/NVIDIA/OpenShell/tree/eeba0e7954c0fb4d8e9e2e29d1bfa68e290eb8b3/crates/openshell-cli), [policy example](https://github.com/NVIDIA/OpenShell/blob/eeba0e7954c0fb4d8e9e2e29d1bfa68e290eb8b3/examples/sandbox-policy-quickstart/policy.yaml). Explicit gateway/workspace flags avoid last-used target state. Full effective and base policy JSON are separate; provider-composed rules must not be copied into editable base policy. Network edits replace only the network section of the preserved base document. Policy set supports waiting but exposes no expected-revision flag.
+
+Decision: native extension-host adapter, no new arbitrary-exec HUD endpoint. Support actual discovered capabilities and schemas; never equate modern source support with installed availability. Keep original CLI validation authoritative and document external-writer limits. The operator approved rules/enforcement settings, not lifecycle control. Read-only unsupported views are an explicit compatibility state, not fake successful controls.

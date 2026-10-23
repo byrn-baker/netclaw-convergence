@@ -14,30 +14,35 @@ void main() {
   // Same mobile_scanner mocking widget_test.dart already needs -- without
   // this, EnrollmentScreen (shown after the explainer is dismissed) throws
   // MissingPluginException the instant it mounts under flutter_test.
-  const scannerMethodChannel = MethodChannel('dev.steenbakker.mobile_scanner/scanner/method');
-  const scannerEventChannel = MethodChannel('dev.steenbakker.mobile_scanner/scanner/event');
-  const deviceOrientationChannel =
-      MethodChannel('dev.steenbakker.mobile_scanner/scanner/deviceOrientation');
+  const scannerMethodChannel = MethodChannel(
+    'dev.steenbakker.mobile_scanner/scanner/method',
+  );
+  const scannerEventChannel = MethodChannel(
+    'dev.steenbakker.mobile_scanner/scanner/event',
+  );
+  const deviceOrientationChannel = MethodChannel(
+    'dev.steenbakker.mobile_scanner/scanner/deviceOrientation',
+  );
 
   setUp(() {
     debugDefaultTargetPlatformOverride = TargetPlatform.linux;
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(scannerMethodChannel, (call) async {
-      switch (call.method) {
-        case 'state':
-          return 1;
-        case 'start':
-          return <String, Object?>{
-            'textureId': 0,
-            'cameraDirection': 0,
-            'numberOfCameras': 1,
-            'currentTorchState': -1,
-            'size': {'width': 100.0, 'height': 100.0},
-          };
-        default:
-          return null;
-      }
-    });
+          switch (call.method) {
+            case 'state':
+              return 1;
+            case 'start':
+              return <String, Object?>{
+                'textureId': 0,
+                'cameraDirection': 0,
+                'numberOfCameras': 1,
+                'currentTorchState': -1,
+                'size': {'width': 100.0, 'height': 100.0},
+              };
+            default:
+              return null;
+          }
+        });
     for (final channel in [scannerEventChannel, deviceOrientationChannel]) {
       TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
           .setMockMethodCallHandler(channel, (call) async => null);
@@ -45,7 +50,11 @@ void main() {
   });
 
   tearDown(() {
-    for (final channel in [scannerMethodChannel, scannerEventChannel, deviceOrientationChannel]) {
+    for (final channel in [
+      scannerMethodChannel,
+      scannerEventChannel,
+      deviceOrientationChannel,
+    ]) {
       TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
           .setMockMethodCallHandler(channel, null);
     }
@@ -62,83 +71,159 @@ void main() {
     }
   }
 
-  testWidgets('FR-001: a fresh install with no enrollment shows the explainer before the scanner',
-      (tester) async {
+  testWidgets('late reconnect after gate disposal closes its client', (
+    tester,
+  ) async {
+    final connected = Completer<EdgeClient>();
+    final client = _LifecycleClient();
     late Directory dir;
     await tester.runAsync(() async {
-      dir = await Directory.systemTemp.createTemp('ncfed_explainer_test_');
-      await tester.pumpWidget(MaterialApp(
-        home: EnrollmentGate(documentsDirectory: () async => dir),
-      ));
+      dir = await Directory.systemTemp.createTemp('ncfed_lifecycle_');
+      await EnrollmentStore(dir).save(
+        const StoredEnrollment(
+          memberId: 'risk/fixture',
+          keyFingerprint: 'fixture',
+          borderHost: 'example.test',
+          borderPort: 8443,
+          clawDomain: 'example.test',
+        ),
+      );
+      await tester.pumpWidget(
+        MaterialApp(
+          home: EnrollmentGate(
+            documentsDirectory: () async => dir,
+            reconnect:
+                (
+                  payload, {
+                  required memberId,
+                  required keyFingerprint,
+                  required identity,
+                }) => connected.future,
+          ),
+        ),
+      );
+      await settle(tester);
+      await tester.pumpWidget(const SizedBox());
+      connected.complete(client);
       await settle(tester);
     });
     addTearDown(() => dir.delete(recursive: true));
-
-    expect(find.text('Scan Border QR Code'), findsNothing);
-    expect(find.textContaining('NetClaw Border server'), findsOneWidget);
-    // Must happen before this test function returns -- flutter_test's own
-    // end-of-test invariant check runs before tearDown()/addTearDown() fires.
+    expect(client.closeCount, 1);
     debugDefaultTargetPlatformOverride = null;
   });
 
   testWidgets(
-      'the AI-data-sharing consent checkbox must be checked before Continue is enabled',
-      (tester) async {
-    late Directory dir;
-    await tester.runAsync(() async {
-      dir = await Directory.systemTemp.createTemp('ncfed_explainer_test_');
-      await tester.pumpWidget(MaterialApp(
-        home: EnrollmentGate(documentsDirectory: () async => dir),
-      ));
-      await settle(tester);
-    });
-    addTearDown(() => dir.delete(recursive: true));
+    'FR-001: a fresh install with no enrollment shows the explainer before the scanner',
+    (tester) async {
+      late Directory dir;
+      await tester.runAsync(() async {
+        dir = await Directory.systemTemp.createTemp('ncfed_explainer_test_');
+        await tester.pumpWidget(
+          MaterialApp(
+            home: EnrollmentGate(documentsDirectory: () async => dir),
+          ),
+        );
+        await settle(tester);
+      });
+      addTearDown(() => dir.delete(recursive: true));
 
-    final button =
-        tester.widget<FilledButton>(find.widgetWithText(FilledButton, 'Agree and Continue'));
-    expect(button.onPressed, isNull, reason: 'disabled until the checkbox is checked');
+      expect(find.text('Scan Border QR Code'), findsNothing);
+      expect(find.textContaining('NetClaw Border server'), findsOneWidget);
+      // Must happen before this test function returns -- flutter_test's own
+      // end-of-test invariant check runs before tearDown()/addTearDown() fires.
+      debugDefaultTargetPlatformOverride = null;
+    },
+  );
 
-    await tester.ensureVisible(find.byType(CheckboxListTile));
-    await tester.tap(find.byType(CheckboxListTile));
-    await tester.pump();
-    await tester.ensureVisible(find.text('Agree and Continue'));
-    await tester.tap(find.text('Agree and Continue'));
-    await tester.pump();
+  testWidgets(
+    'the AI-data-sharing consent checkbox must be checked before Continue is enabled',
+    (tester) async {
+      late Directory dir;
+      await tester.runAsync(() async {
+        dir = await Directory.systemTemp.createTemp('ncfed_explainer_test_');
+        await tester.pumpWidget(
+          MaterialApp(
+            home: EnrollmentGate(documentsDirectory: () async => dir),
+          ),
+        );
+        await settle(tester);
+      });
+      addTearDown(() => dir.delete(recursive: true));
 
-    expect(find.text('Scan Border QR Code'), findsOneWidget);
-    debugDefaultTargetPlatformOverride = null;
-  });
+      final button = tester.widget<FilledButton>(
+        find.widgetWithText(FilledButton, 'Agree and Continue'),
+      );
+      expect(
+        button.onPressed,
+        isNull,
+        reason: 'disabled until the checkbox is checked',
+      );
 
-  testWidgets('FR-002: an already-enrolled launch skips the explainer entirely', (tester) async {
-    late Directory dir;
-    // Never completes -- this test only needs the gate to reach its
-    // "reconnecting" state (set the instant store.load() resolves, before
-    // reconnect() is even called), not for reconnection to actually
-    // succeed or fail. A real EdgeClient.reconnect() would attempt a real
-    // network connection that outlives the test itself.
-    final neverCompletes = Completer<EdgeClient>();
-    await tester.runAsync(() async {
-      dir = await Directory.systemTemp.createTemp('ncfed_explainer_test_');
-      await EnrollmentStore(dir).save(const StoredEnrollment(
-        memberId: 'risk/test-member',
-        keyFingerprint: 'deadbeef',
-        borderHost: 'border.example.com',
-        borderPort: 8443,
-        clawDomain: 'border.example.com',
-      ));
-      await tester.pumpWidget(MaterialApp(
-        home: EnrollmentGate(
-          documentsDirectory: () async => dir,
-          reconnect: (payload, {required memberId, required keyFingerprint, required identity}) =>
-              neverCompletes.future,
-        ),
-      ));
-      await settle(tester);
-    });
-    addTearDown(() => dir.delete(recursive: true));
+      await tester.ensureVisible(find.byType(CheckboxListTile));
+      await tester.tap(find.byType(CheckboxListTile));
+      await tester.pump();
+      await tester.ensureVisible(find.text('Agree and Continue'));
+      await tester.tap(find.text('Agree and Continue'));
+      await tester.pump();
 
-    expect(find.textContaining('NetClaw Border server'), findsNothing);
-    expect(find.text('Continue'), findsNothing);
-    debugDefaultTargetPlatformOverride = null;
-  });
+      expect(find.text('Scan Border QR Code'), findsOneWidget);
+      debugDefaultTargetPlatformOverride = null;
+    },
+  );
+
+  testWidgets(
+    'FR-002: an already-enrolled launch skips the explainer entirely',
+    (tester) async {
+      late Directory dir;
+      // Never completes -- this test only needs the gate to reach its
+      // "reconnecting" state (set the instant store.load() resolves, before
+      // reconnect() is even called), not for reconnection to actually
+      // succeed or fail. A real EdgeClient.reconnect() would attempt a real
+      // network connection that outlives the test itself.
+      final neverCompletes = Completer<EdgeClient>();
+      await tester.runAsync(() async {
+        dir = await Directory.systemTemp.createTemp('ncfed_explainer_test_');
+        await EnrollmentStore(dir).save(
+          const StoredEnrollment(
+            memberId: 'risk/test-member',
+            keyFingerprint: 'deadbeef',
+            borderHost: 'border.example.com',
+            borderPort: 8443,
+            clawDomain: 'border.example.com',
+          ),
+        );
+        await tester.pumpWidget(
+          MaterialApp(
+            home: EnrollmentGate(
+              documentsDirectory: () async => dir,
+              reconnect:
+                  (
+                    payload, {
+                    required memberId,
+                    required keyFingerprint,
+                    required identity,
+                  }) => neverCompletes.future,
+            ),
+          ),
+        );
+        await settle(tester);
+      });
+      addTearDown(() => dir.delete(recursive: true));
+
+      expect(find.textContaining('NetClaw Border server'), findsNothing);
+      expect(find.text('Continue'), findsNothing);
+      debugDefaultTargetPlatformOverride = null;
+    },
+  );
+}
+
+class _LifecycleClient implements EdgeClient {
+  int closeCount = 0;
+  @override
+  Future<void> close() async {
+    closeCount++;
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }

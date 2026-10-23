@@ -6,6 +6,8 @@ plus on-demand 'snapshot_<label>_<ISO8601>' (FR-015), cosine space.
 """
 
 import logging
+import hashlib
+import threading
 from typing import Any, Dict, List, Optional
 
 log = logging.getLogger(__name__)
@@ -21,6 +23,7 @@ class ChromaStore:
         # doesn't pay that cost on every cold MCP-catalog build.
         self._chroma_dir = chroma_dir
         self._client = None
+        self._promotion_lock = threading.RLock()
 
     def _ensure_client(self):
         if self._client is None:
@@ -33,18 +36,38 @@ class ChromaStore:
         return self._client
 
     def _collection(self, name: str):
-        return self._ensure_client().get_or_create_collection(
-            name=name, metadata={"hnsw:space": "cosine"}
-        )
+        with self._promotion_lock:
+            self._recover_promotion(name)
+            return self._ensure_client().get_or_create_collection(
+                name=name, metadata={"hnsw:space": "cosine"}
+            )
+
+    @staticmethod
+    def _rollback_name(name: str) -> str:
+        return 'netclaw-rollback-' + hashlib.sha256(name.encode()).hexdigest()[:32]
+
+    def _existing_collection(self, name: str):
+        # Chroma releases return either names or Collection objects here.
+        # Avoid catching a generic storage error as "does not exist".
+        client = self._ensure_client()
+        names = {getattr(item, 'name', item) for item in client.list_collections()}
+        return client.get_collection(name) if name in names else None
+
+    def _recover_promotion(self, name: str) -> None:
+        # A process can exit between the two collection renames. Restore the
+        # retained generation before get_or_create could manufacture emptiness.
+        if self._existing_collection(name) is None:
+            previous = self._existing_collection(self._rollback_name(name))
+            if previous is None:
+                return
+            previous.modify(name=name)
 
     def collection_names(self) -> List[str]:
         return [c.name for c in self._ensure_client().list_collections()]
 
     def count(self, collection: str) -> int:
-        try:
-            return self._collection(collection).count()
-        except Exception:
-            return 0
+        # An unavailable index is not evidence of an empty corpus.
+        return self._collection(collection).count()
 
     def add_chunks(
         self,
@@ -168,13 +191,29 @@ class ChromaStore:
             ids=ids, embeddings=embeddings, documents=texts, metadatas=clean
         )
 
-    def promote_staging(self, staging_name: str, stable_name: str) -> None:
-        """Atomic-enough rename-on-verify for re-sync (D7): drop the previous
-        stable collection (if any), then rename the verified staging collection
-        into the stable name every query/replicate call actually addresses."""
-        try:
-            self._ensure_client().delete_collection(stable_name)
-        except Exception:
-            pass
-        staging = self._collection(staging_name)
-        staging.modify(name=stable_name)
+    def promote_staging(self, staging_name: str, stable_name: str, on_promote=None) -> None:
+        """Retain the previous corpus until an existing staging corpus promotes."""
+        if staging_name == stable_name:
+            raise ValueError('Staging and stable collections must differ')
+        with self._promotion_lock:
+            client = self._ensure_client()
+            staging = client.get_collection(staging_name)  # never create empty staging
+            self._recover_promotion(stable_name)
+            rollback = self._rollback_name(stable_name)
+            if self._existing_collection(rollback) is not None:
+                raise RuntimeError('Previous replica generation retained; inspect recovery state before promotion')
+            previous = self._existing_collection(stable_name)
+            if previous is not None:
+                previous.modify(name=rollback)
+            try:
+                staging.modify(name=stable_name)
+                if on_promote is not None:
+                    on_promote()
+            except BaseException:
+                if self._existing_collection(stable_name) is not None:
+                    staging.modify(name=staging_name)
+                if previous is not None:
+                    previous.modify(name=stable_name)
+                raise
+            if previous is not None:
+                client.delete_collection(rollback)

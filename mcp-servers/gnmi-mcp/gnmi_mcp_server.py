@@ -24,6 +24,9 @@ import sys
 from datetime import datetime, timezone
 from typing import Any, Optional
 
+from functools import wraps
+from fastmcp.utilities.async_utils import call_sync_fn_in_threadpool
+from fastmcp_tasks import TasksExtension
 from fastmcp import FastMCP
 
 # Add current directory and netclaw_tokens to path
@@ -78,8 +81,19 @@ logger = logging.getLogger("gnmi-mcp")
 
 mcp = FastMCP(
     "gNMI Streaming Telemetry MCP Server",
-    description="gNMI Get, Set, Subscribe, and Capabilities operations for multi-vendor network devices",
+    instructions="gNMI Get, Set, Subscribe, and Capabilities operations for multi-vendor network devices",
 )
+mcp.add_extension(TasksExtension(name="netclaw-gnmi-mcp", concurrency=1))
+
+
+def _task_tool(fn):
+    """Register a threaded MCP task while preserving the direct Python callable."""
+    @wraps(fn)
+    async def run(*args, **kwargs):
+        return await call_sync_fn_in_threadpool(fn, *args, **kwargs)
+    mcp.tool(task=True)(run)
+    return fn
+
 
 # Load targets and create shared client wrapper
 _targets = load_targets_from_env()
@@ -114,7 +128,7 @@ def _gait_log(operation: str, **kwargs: Any) -> None:
 # Tool 1: gnmi_get  (T013, T015, T016, T017, T018)
 # ===================================================================
 
-@mcp.tool()
+@_task_tool
 def gnmi_get(
     target: str,
     paths: list[str],
@@ -488,7 +502,7 @@ def gnmi_get_subscription_updates(
 # Tool 7: gnmi_capabilities  (T032, T034, T035)
 # ===================================================================
 
-@mcp.tool()
+@_task_tool
 def gnmi_capabilities(target: str) -> str:
     """Retrieve supported YANG models, versions, and encodings from a device via gNMI Capabilities RPC.
 
@@ -549,7 +563,7 @@ def gnmi_capabilities(target: str) -> str:
 # Tool 8: gnmi_browse_yang_paths  (T033, T035)
 # ===================================================================
 
-@mcp.tool()
+@_task_tool
 def gnmi_browse_yang_paths(
     target: str,
     module: str,
@@ -615,7 +629,7 @@ _COMPARISON_MAP: dict[str, dict[str, Any]] = {
 }
 
 
-@mcp.tool()
+@_task_tool
 def gnmi_compare_with_cli(target: str, data_type: str) -> str:
     """Compare gNMI-retrieved state with CLI-retrieved state for validation.
 

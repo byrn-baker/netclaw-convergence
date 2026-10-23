@@ -27,7 +27,10 @@ from __future__ import annotations
 import os
 import sys
 
-from mcp.server.fastmcp import FastMCP
+from functools import wraps
+from fastmcp.utilities.async_utils import call_sync_fn_in_threadpool
+from fastmcp_tasks import TasksExtension
+from fastmcp import FastMCP
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
@@ -36,6 +39,17 @@ from verdict import (VerdictError, emit, host_verdict,  # noqa: E402
                      unreachable_verdict)
 
 mcp = FastMCP("redfish-mcp")
+mcp.add_extension(TasksExtension(name="netclaw-redfish-mcp", concurrency=1))
+
+
+def _task_tool(fn):
+    """Register a threaded MCP task while preserving the direct Python callable."""
+    @wraps(fn)
+    async def run(*args, **kwargs):
+        return await call_sync_fn_in_threadpool(fn, *args, **kwargs)
+    mcp.tool(task=True)(run)
+    return fn
+
 
 ROOT = "/redfish/v1"
 
@@ -49,7 +63,7 @@ def _gaps(c: RedfishClient) -> list[str] | None:
     return [note] if note else None
 
 
-@mcp.tool()
+@_task_tool
 def redfish_status(endpoint: str | None = None) -> dict:
     """Check whether the BMC answers, and what that does and does not tell you.
 
@@ -77,7 +91,7 @@ def redfish_status(endpoint: str | None = None) -> dict:
                 gaps=_gaps(c))
 
 
-@mcp.tool()
+@_task_tool
 def redfish_systems(endpoint: str | None = None) -> dict:
     """Report each computer system's power state, hardware health, CPU and memory summary.
 
@@ -123,7 +137,7 @@ def redfish_systems(endpoint: str | None = None) -> dict:
                 data={"count": len(systems)}, gaps=_gaps(c))
 
 
-@mcp.tool()
+@_task_tool
 def redfish_thermal_power(endpoint: str | None = None) -> dict:
     """Report chassis temperatures, fans, power consumption and PSU state.
 
@@ -184,7 +198,7 @@ def redfish_thermal_power(endpoint: str | None = None) -> dict:
                 data={"chassis": out, "count": len(out)}, gaps=gaps)
 
 
-@mcp.tool()
+@_task_tool
 def redfish_managers(endpoint: str | None = None) -> dict:
     """Report the BMC's own firmware version, model and health.
 
@@ -218,7 +232,7 @@ def redfish_managers(endpoint: str | None = None) -> dict:
                 data={"managers": mgrs, "count": len(mgrs)}, gaps=gaps)
 
 
-@mcp.tool()
+@_task_tool
 def redfish_firmware(endpoint: str | None = None) -> dict:
     """List firmware inventory from the UpdateService.
 
@@ -256,7 +270,7 @@ def redfish_firmware(endpoint: str | None = None) -> dict:
                 data={"firmware": items, "count": len(items)}, gaps=gaps)
 
 
-@mcp.tool()
+@_task_tool
 def redfish_logs(endpoint: str | None = None, limit: int = 50) -> dict:
     """Read BMC event/SEL log entries.
 

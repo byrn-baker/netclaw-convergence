@@ -58,6 +58,25 @@ def test_border_and_standalone_allow_en2n(tmp_path):
     svc.manager.close()
 
 
+def test_unavailable_role_refuses_both_external_directions(tmp_path, monkeypatch):
+    import asyncio
+    from unittest.mock import AsyncMock, MagicMock
+    svc = _svc(tmp_path/'unavailable')
+    monkeypatch.setattr(svc.risk, 'role', MagicMock(side_effect=RuntimeError('role store unavailable')))
+    dial = AsyncMock()
+    monkeypatch.setattr(asyncio, 'open_connection', dial)
+    writer = MagicMock()
+    try:
+        assert not svc._en2n_allowed()
+        asyncio.run(svc.open_channel(65099, '9.9.9.9', '127.0.0.1', 1))
+        asyncio.run(svc.accept_channel(65099, '9.9.9.9', MagicMock(), writer))
+        dial.assert_not_called()
+        writer.write.assert_not_called()
+        writer.close.assert_called_once()
+    finally:
+        svc.manager.close()
+
+
 def test_peer_inventory_never_leaks_members(tmp_path):
     """FR-016/SC-005: the eN2N inventory a peer receives contains no member-level
     identities/topology — the risk presents only the Border identity."""

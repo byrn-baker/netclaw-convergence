@@ -1,0 +1,7956 @@
+{
+  "limitations": [
+    "Regex security hits are unconfirmed candidates, not vulnerabilities.",
+    "Static tool extraction omits dynamic/external schemas; absence is not a defect.",
+    "No semantic or live review completion is implied."
+  ],
+  "mcp_files_scanned": [
+    "mcp-servers/analysis-mcp/loader.py",
+    "mcp-servers/analysis-mcp/sandbox.py",
+    "mcp-servers/analysis-mcp/server.py",
+    "mcp-servers/anta-mcp/server.py",
+    "mcp-servers/anta-mcp/verdict.py",
+    "mcp-servers/auvik-mcp/__init__.py",
+    "mcp-servers/auvik-mcp/auvik_mcp_server.py",
+    "mcp-servers/auvik-mcp/clients/__init__.py",
+    "mcp-servers/auvik-mcp/clients/auvik_client.py",
+    "mcp-servers/auvik-mcp/models/__init__.py",
+    "mcp-servers/auvik-mcp/models/responses.py",
+    "mcp-servers/auvik-mcp/tools/__init__.py",
+    "mcp-servers/auvik-mcp/tools/alerts.py",
+    "mcp-servers/auvik-mcp/tools/inventory.py",
+    "mcp-servers/auvik-mcp/tools/lifecycle.py",
+    "mcp-servers/auvik-mcp/tools/performance.py",
+    "mcp-servers/auvik-mcp/utils/__init__.py",
+    "mcp-servers/auvik-mcp/utils/constants.py",
+    "mcp-servers/auvik-mcp/utils/pagination.py",
+    "mcp-servers/auvik-mcp/utils/rate_limiter.py",
+    "mcp-servers/auvik-mcp/utils/resolver.py",
+    "mcp-servers/auvik-mcp/utils/toon_helper.py",
+    "mcp-servers/azure-network-mcp/__init__.py",
+    "mcp-servers/azure-network-mcp/azure_network_mcp_server.py",
+    "mcp-servers/azure-network-mcp/clients/__init__.py",
+    "mcp-servers/azure-network-mcp/clients/azure_client.py",
+    "mcp-servers/azure-network-mcp/compliance/__init__.py",
+    "mcp-servers/azure-network-mcp/compliance/cis_azure.py",
+    "mcp-servers/azure-network-mcp/models/__init__.py",
+    "mcp-servers/azure-network-mcp/models/responses.py",
+    "mcp-servers/azure-network-mcp/tools/__init__.py",
+    "mcp-servers/azure-network-mcp/tools/app_gateway.py",
+    "mcp-servers/azure-network-mcp/tools/dns.py",
+    "mcp-servers/azure-network-mcp/tools/expressroute.py",
+    "mcp-servers/azure-network-mcp/tools/firewall.py",
+    "mcp-servers/azure-network-mcp/tools/load_balancer.py",
+    "mcp-servers/azure-network-mcp/tools/network_watcher.py",
+    "mcp-servers/azure-network-mcp/tools/nsg.py",
+    "mcp-servers/azure-network-mcp/tools/private_link.py",
+    "mcp-servers/azure-network-mcp/tools/route_table.py",
+    "mcp-servers/azure-network-mcp/tools/vnet.py",
+    "mcp-servers/azure-network-mcp/tools/vpn_gateway.py",
+    "mcp-servers/azure-network-mcp/utils/__init__.py",
+    "mcp-servers/azure-network-mcp/utils/constants.py",
+    "mcp-servers/azure-network-mcp/utils/gcf_helper.py",
+    "mcp-servers/azure-network-mcp/utils/pagination.py",
+    "mcp-servers/azure-network-mcp/utils/rate_limiter.py",
+    "mcp-servers/batfish-mcp/batfish_mcp_server.py",
+    "mcp-servers/bgp-intel-mcp/envelope.py",
+    "mcp-servers/bgp-intel-mcp/http_client.py",
+    "mcp-servers/bgp-intel-mcp/outcomes.py",
+    "mcp-servers/bgp-intel-mcp/server.py",
+    "mcp-servers/bgp-intel-mcp/sources/__init__.py",
+    "mcp-servers/bgp-intel-mcp/sources/atlas.py",
+    "mcp-servers/bgp-intel-mcp/sources/peeringdb.py",
+    "mcp-servers/bgp-intel-mcp/sources/rdap.py",
+    "mcp-servers/bgp-intel-mcp/sources/routing.py",
+    "mcp-servers/bgp-intel-mcp/sources/rpki.py",
+    "mcp-servers/bgp-intel-mcp/validate.py",
+    "mcp-servers/catc-mcp/server.py",
+    "mcp-servers/cisco-psirt-mcp/auth.py",
+    "mcp-servers/cisco-psirt-mcp/cache.py",
+    "mcp-servers/cisco-psirt-mcp/normalise.py",
+    "mcp-servers/cisco-psirt-mcp/psirt.py",
+    "mcp-servers/cisco-psirt-mcp/ratelimit.py",
+    "mcp-servers/cisco-psirt-mcp/server.py",
+    "mcp-servers/claroty-mcp/__init__.py",
+    "mcp-servers/claroty-mcp/claroty_mcp_server.py",
+    "mcp-servers/claroty-mcp/clients/__init__.py",
+    "mcp-servers/claroty-mcp/clients/claroty_client.py",
+    "mcp-servers/claroty-mcp/models/__init__.py",
+    "mcp-servers/claroty-mcp/models/responses.py",
+    "mcp-servers/claroty-mcp/tools/__init__.py",
+    "mcp-servers/claroty-mcp/tools/alerts.py",
+    "mcp-servers/claroty-mcp/tools/audit_governance.py",
+    "mcp-servers/claroty-mcp/tools/devices.py",
+    "mcp-servers/claroty-mcp/tools/servers_ot.py",
+    "mcp-servers/claroty-mcp/tools/sites_edge.py",
+    "mcp-servers/claroty-mcp/tools/user_actions.py",
+    "mcp-servers/claroty-mcp/tools/vulnerabilities.py",
+    "mcp-servers/claroty-mcp/utils/__init__.py",
+    "mcp-servers/claroty-mcp/utils/gcf_helper.py",
+    "mcp-servers/claroty-mcp/utils/itsm_gate.py",
+    "mcp-servers/claroty-mcp/utils/rate_limiter.py",
+    "mcp-servers/claroty-mcp/utils/xdome_constants.py",
+    "mcp-servers/document-mcp/envelope.py",
+    "mcp-servers/document-mcp/guards.py",
+    "mcp-servers/document-mcp/outcomes.py",
+    "mcp-servers/document-mcp/output.py",
+    "mcp-servers/document-mcp/provenance.py",
+    "mcp-servers/document-mcp/sanitize.py",
+    "mcp-servers/document-mcp/server.py",
+    "mcp-servers/document-mcp/writers/__init__.py",
+    "mcp-servers/document-mcp/writers/docx_writer.py",
+    "mcp-servers/document-mcp/writers/pdf_writer.py",
+    "mcp-servers/document-mcp/writers/pptx_writer.py",
+    "mcp-servers/document-mcp/writers/xlsx_writer.py",
+    "mcp-servers/eve-ng-mcp-server/eve_client.py",
+    "mcp-servers/eve-ng-mcp-server/eve_console.py",
+    "mcp-servers/eve-ng-mcp-server/eve_ng_mcp_server.py",
+    "mcp-servers/eve-ng-mcp-server/mcp_init.py",
+    "mcp-servers/eve-ng-mcp-server/tests/test_eve_live_health.py",
+    "mcp-servers/eve-ng-mcp-server/tests/test_eve_skills_smoke.py",
+    "mcp-servers/eve-ng-mcp-server/tools_config.py",
+    "mcp-servers/eve-ng-mcp-server/tools_console_exec.py",
+    "mcp-servers/eve-ng-mcp-server/tools_lab.py",
+    "mcp-servers/eve-ng-mcp-server/tools_network.py",
+    "mcp-servers/eve-ng-mcp-server/tools_node.py",
+    "mcp-servers/fortinet-mcp/credentials.py",
+    "mcp-servers/fortinet-mcp/envelope.py",
+    "mcp-servers/fortinet-mcp/gates.py",
+    "mcp-servers/fortinet-mcp/planes/__init__.py",
+    "mcp-servers/fortinet-mcp/planes/analyzer.py",
+    "mcp-servers/fortinet-mcp/planes/device.py",
+    "mcp-servers/fortinet-mcp/planes/manager.py",
+    "mcp-servers/fortinet-mcp/server.py",
+    "mcp-servers/fortinet-mcp/transport/__init__.py",
+    "mcp-servers/fortinet-mcp/transport/jsonrpc.py",
+    "mcp-servers/fortinet-mcp/transport/rest.py",
+    "mcp-servers/gnmi-mcp/__init__.py",
+    "mcp-servers/gnmi-mcp/gnmi_client.py",
+    "mcp-servers/gnmi-mcp/gnmi_mcp_server.py",
+    "mcp-servers/gnmi-mcp/itsm_gate.py",
+    "mcp-servers/gnmi-mcp/models.py",
+    "mcp-servers/gnmi-mcp/subscription_manager.py",
+    "mcp-servers/gnmi-mcp/vendor_dialects.py",
+    "mcp-servers/gnmi-mcp/yang_utils.py",
+    "mcp-servers/gns3-mcp-server/gns3_mcp_server.py",
+    "mcp-servers/gns3-mcp-server/tests/__init__.py",
+    "mcp-servers/gns3-mcp-server/tests/test_gns3_mcp_server.py",
+    "mcp-servers/halo-mcp/__init__.py",
+    "mcp-servers/halo-mcp/clients/__init__.py",
+    "mcp-servers/halo-mcp/clients/halo_client.py",
+    "mcp-servers/halo-mcp/halo_mcp_server.py",
+    "mcp-servers/halo-mcp/models/__init__.py",
+    "mcp-servers/halo-mcp/models/responses.py",
+    "mcp-servers/halo-mcp/tools/__init__.py",
+    "mcp-servers/halo-mcp/tools/_common.py",
+    "mcp-servers/halo-mcp/tools/assets.py",
+    "mcp-servers/halo-mcp/tools/context.py",
+    "mcp-servers/halo-mcp/tools/fields.py",
+    "mcp-servers/halo-mcp/tools/knowledge.py",
+    "mcp-servers/halo-mcp/tools/ticket_types.py",
+    "mcp-servers/halo-mcp/tools/tickets.py",
+    "mcp-servers/halo-mcp/utils/__init__.py",
+    "mcp-servers/halo-mcp/utils/constants.py",
+    "mcp-servers/halo-mcp/utils/pagination.py",
+    "mcp-servers/halo-mcp/utils/rate_limiter.py",
+    "mcp-servers/halo-mcp/utils/resolver.py",
+    "mcp-servers/halo-mcp/utils/toon_helper.py",
+    "mcp-servers/image-style-mcp/server.py",
+    "mcp-servers/ipfix-mcp/__init__.py",
+    "mcp-servers/ipfix-mcp/flow_parser.py",
+    "mcp-servers/ipfix-mcp/gait_logger.py",
+    "mcp-servers/ipfix-mcp/ipfix_mcp_server.py",
+    "mcp-servers/ipfix-mcp/message_store.py",
+    "mcp-servers/ipfix-mcp/models.py",
+    "mcp-servers/ipfix-mcp/rate_limiter.py",
+    "mcp-servers/ipfix-mcp/udp_receiver.py",
+    "mcp-servers/memory-mcp/embeddings/__init__.py",
+    "mcp-servers/memory-mcp/embeddings/embedder.py",
+    "mcp-servers/memory-mcp/memory_mcp_server.py",
+    "mcp-servers/memory-mcp/storage/__init__.py",
+    "mcp-servers/memory-mcp/storage/chroma_store.py",
+    "mcp-servers/memory-mcp/storage/sqlite_store.py",
+    "mcp-servers/multivendor-cli-mcp/credentials.py",
+    "mcp-servers/multivendor-cli-mcp/inventory/__init__.py",
+    "mcp-servers/multivendor-cli-mcp/inventory/generated.py",
+    "mcp-servers/multivendor-cli-mcp/inventory/live_sot.py",
+    "mcp-servers/multivendor-cli-mcp/inventory/operator.py",
+    "mcp-servers/multivendor-cli-mcp/inventory/sources.py",
+    "mcp-servers/multivendor-cli-mcp/policy/__init__.py",
+    "mcp-servers/multivendor-cli-mcp/policy/filter.py",
+    "mcp-servers/multivendor-cli-mcp/policy/platform_deny.py",
+    "mcp-servers/multivendor-cli-mcp/routing.py",
+    "mcp-servers/multivendor-cli-mcp/server.py",
+    "mcp-servers/multivendor-cli-mcp/tools/__init__.py",
+    "mcp-servers/multivendor-cli-mcp/tools/change.py",
+    "mcp-servers/multivendor-cli-mcp/tools/facts.py",
+    "mcp-servers/multivendor-cli-mcp/tools/fleet.py",
+    "mcp-servers/multivendor-cli-mcp/tools/raw.py",
+    "mcp-servers/n2n-mcp/server.py",
+    "mcp-servers/nautobot-golden-config-mcp/__init__.py",
+    "mcp-servers/nautobot-golden-config-mcp/job_runner.py",
+    "mcp-servers/nautobot-golden-config-mcp/nautobot_client.py",
+    "mcp-servers/nautobot-golden-config-mcp/server.py",
+    "mcp-servers/nautobot-mcp-v2/cisco_design_reference.py",
+    "mcp-servers/nautobot-mcp-v2/nautobot_client.py",
+    "mcp-servers/nautobot-mcp-v2/reconcile.py",
+    "mcp-servers/nautobot-mcp-v2/server.py",
+    "mcp-servers/nautobot-routing-mcp/__init__.py",
+    "mcp-servers/nautobot-routing-mcp/bgp_helpers.py",
+    "mcp-servers/nautobot-routing-mcp/nautobot_client.py",
+    "mcp-servers/nautobot-routing-mcp/server.py",
+    "mcp-servers/nsm-mcp/envelope.py",
+    "mcp-servers/nsm-mcp/runner.py",
+    "mcp-servers/nsm-mcp/server.py",
+    "mcp-servers/ollama-mcp/metrics.py",
+    "mcp-servers/ollama-mcp/models.py",
+    "mcp-servers/ollama-mcp/ollama_client.py",
+    "mcp-servers/ollama-mcp/router.py",
+    "mcp-servers/ollama-mcp/server.py",
+    "mcp-servers/packet-buddy-mcp/server.py",
+    "mcp-servers/protocol-mcp/bgp-daemon-v2.py",
+    "mcp-servers/protocol-mcp/bgp-daemon.py",
+    "mcp-servers/protocol-mcp/bgp/__init__.py",
+    "mcp-servers/protocol-mcp/bgp/address_family.py",
+    "mcp-servers/protocol-mcp/bgp/agent.py",
+    "mcp-servers/protocol-mcp/bgp/attributes.py",
+    "mcp-servers/protocol-mcp/bgp/capabilities.py",
+    "mcp-servers/protocol-mcp/bgp/communities.py",
+    "mcp-servers/protocol-mcp/bgp/constants.py",
+    "mcp-servers/protocol-mcp/bgp/errors.py",
+    "mcp-servers/protocol-mcp/bgp/federation/__init__.py",
+    "mcp-servers/protocol-mcp/bgp/federation/acme.py",
+    "mcp-servers/protocol-mcp/bgp/federation/audit.py",
+    "mcp-servers/protocol-mcp/bgp/federation/authorization.py",
+    "mcp-servers/protocol-mcp/bgp/federation/certs.py",
+    "mcp-servers/protocol-mcp/bgp/federation/channel.py",
+    "mcp-servers/protocol-mcp/bgp/federation/chat.py",
+    "mcp-servers/protocol-mcp/bgp/federation/chroma_store_bridge.py",
+    "mcp-servers/protocol-mcp/bgp/federation/controls.py",
+    "mcp-servers/protocol-mcp/bgp/federation/edge.py",
+    "mcp-servers/protocol-mcp/bgp/federation/edge_queue.py",
+    "mcp-servers/protocol-mcp/bgp/federation/gait.py",
+    "mcp-servers/protocol-mcp/bgp/federation/gateway.py",
+    "mcp-servers/protocol-mcp/bgp/federation/gateway_ws.py",
+    "mcp-servers/protocol-mcp/bgp/federation/internal_channel.py",
+    "mcp-servers/protocol-mcp/bgp/federation/inventory.py",
+    "mcp-servers/protocol-mcp/bgp/federation/invocation.py",
+    "mcp-servers/protocol-mcp/bgp/federation/knowledge.py",
+    "mcp-servers/protocol-mcp/bgp/federation/logfilter.py",
+    "mcp-servers/protocol-mcp/bgp/federation/manager.py",
+    "mcp-servers/protocol-mcp/bgp/federation/negotiate.py",
+    "mcp-servers/protocol-mcp/bgp/federation/posture.py",
+    "mcp-servers/protocol-mcp/bgp/federation/push_notify.py",
+    "mcp-servers/protocol-mcp/bgp/federation/replication.py",
+    "mcp-servers/protocol-mcp/bgp/federation/risk.py",
+    "mcp-servers/protocol-mcp/bgp/federation/rotation.py",
+    "mcp-servers/protocol-mcp/bgp/federation/router.py",
+    "mcp-servers/protocol-mcp/bgp/federation/service.py",
+    "mcp-servers/protocol-mcp/bgp/federation/tasks.py",
+    "mcp-servers/protocol-mcp/bgp/federation/tls.py",
+    "mcp-servers/protocol-mcp/bgp/federation/transport_health.py",
+    "mcp-servers/protocol-mcp/bgp/federation/zoom_channel.py",
+    "mcp-servers/protocol-mcp/bgp/flap_damping.py",
+    "mcp-servers/protocol-mcp/bgp/flowspec.py",
+    "mcp-servers/protocol-mcp/bgp/fsm.py",
+    "mcp-servers/protocol-mcp/bgp/graceful_restart.py",
+    "mcp-servers/protocol-mcp/bgp/kernel.py",
+    "mcp-servers/protocol-mcp/bgp/messages.py",
+    "mcp-servers/protocol-mcp/bgp/path_selection.py",
+    "mcp-servers/protocol-mcp/bgp/policy.py",
+    "mcp-servers/protocol-mcp/bgp/rib.py",
+    "mcp-servers/protocol-mcp/bgp/route_reflection.py",
+    "mcp-servers/protocol-mcp/bgp/rpki.py",
+    "mcp-servers/protocol-mcp/bgp/session.py",
+    "mcp-servers/protocol-mcp/bgp/speaker.py",
+    "mcp-servers/protocol-mcp/bgp/tun.py",
+    "mcp-servers/protocol-mcp/bgp/tunnel.py",
+    "mcp-servers/protocol-mcp/connectors/__init__.py",
+    "mcp-servers/protocol-mcp/connectors/bgp_connector.py",
+    "mcp-servers/protocol-mcp/connectors/ospf_connector.py",
+    "mcp-servers/protocol-mcp/gre/__init__.py",
+    "mcp-servers/protocol-mcp/gre/constants.py",
+    "mcp-servers/protocol-mcp/gre/header.py",
+    "mcp-servers/protocol-mcp/gre/manager.py",
+    "mcp-servers/protocol-mcp/gre/tunnel.py",
+    "mcp-servers/protocol-mcp/ospfv3/__init__.py",
+    "mcp-servers/protocol-mcp/ospfv3/constants.py",
+    "mcp-servers/protocol-mcp/ospfv3/interface.py",
+    "mcp-servers/protocol-mcp/ospfv3/lsa.py",
+    "mcp-servers/protocol-mcp/ospfv3/lsdb.py",
+    "mcp-servers/protocol-mcp/ospfv3/neighbor.py",
+    "mcp-servers/protocol-mcp/ospfv3/packets.py",
+    "mcp-servers/protocol-mcp/ospfv3/speaker.py",
+    "mcp-servers/protocol-mcp/server.py",
+    "mcp-servers/protocol-mcp/tests/__init__.py",
+    "mcp-servers/protocol-mcp/tests/test_agent_prioritisation.py",
+    "mcp-servers/protocol-mcp/tests/test_gateway_ws_client.py",
+    "mcp-servers/protocol-mcp/tests/test_run_agent_turn_dispatch.py",
+    "mcp-servers/protocol-mcp/tests/test_run_agent_turn_origin.py",
+    "mcp-servers/protocol-mcp/tests/test_zoom_channel.py",
+    "mcp-servers/rag-mcp/config.py",
+    "mcp-servers/rag-mcp/embeddings/__init__.py",
+    "mcp-servers/rag-mcp/embeddings/embedder.py",
+    "mcp-servers/rag-mcp/ingestion/__init__.py",
+    "mcp-servers/rag-mcp/ingestion/chunker.py",
+    "mcp-servers/rag-mcp/ingestion/parsers.py",
+    "mcp-servers/rag-mcp/ingestion/url_fetcher.py",
+    "mcp-servers/rag-mcp/rag_mcp_server.py",
+    "mcp-servers/rag-mcp/retrieval/__init__.py",
+    "mcp-servers/rag-mcp/retrieval/hybrid.py",
+    "mcp-servers/rag-mcp/retrieval/reranker.py",
+    "mcp-servers/rag-mcp/scrubber.py",
+    "mcp-servers/rag-mcp/storage/__init__.py",
+    "mcp-servers/rag-mcp/storage/bm25_store.py",
+    "mcp-servers/rag-mcp/storage/chroma_store.py",
+    "mcp-servers/rag-mcp/storage/registry.py",
+    "mcp-servers/redfish-mcp/client.py",
+    "mcp-servers/redfish-mcp/server.py",
+    "mcp-servers/redfish-mcp/verdict.py",
+    "mcp-servers/snmptrap-mcp/__init__.py",
+    "mcp-servers/snmptrap-mcp/gait_logger.py",
+    "mcp-servers/snmptrap-mcp/message_store.py",
+    "mcp-servers/snmptrap-mcp/models.py",
+    "mcp-servers/snmptrap-mcp/rate_limiter.py",
+    "mcp-servers/snmptrap-mcp/snmptrap_mcp_server.py",
+    "mcp-servers/snmptrap-mcp/trap_parser.py",
+    "mcp-servers/snmptrap-mcp/udp_receiver.py",
+    "mcp-servers/suzieq-mcp/server.py",
+    "mcp-servers/suzieq-mcp/suzieq_client.py",
+    "mcp-servers/syslog-mcp/__init__.py",
+    "mcp-servers/syslog-mcp/gait_logger.py",
+    "mcp-servers/syslog-mcp/message_store.py",
+    "mcp-servers/syslog-mcp/models.py",
+    "mcp-servers/syslog-mcp/rate_limiter.py",
+    "mcp-servers/syslog-mcp/syslog_mcp_server.py",
+    "mcp-servers/syslog-mcp/syslog_parser.py",
+    "mcp-servers/syslog-mcp/tcp_receiver.py",
+    "mcp-servers/syslog-mcp/udp_receiver.py",
+    "mcp-servers/topology-diagram-mcp/server.py",
+    "mcp-servers/tts-mcp/server.py",
+    "mcp-servers/twilio-voice-mcp/alert_triggers.py",
+    "mcp-servers/twilio-voice-mcp/context_manager.py",
+    "mcp-servers/twilio-voice-mcp/guardrails.py",
+    "mcp-servers/twilio-voice-mcp/server.py",
+    "mcp-servers/twilio-voice-mcp/speech_formatter.py",
+    "mcp-servers/twilio-voice-mcp/webhook_server.py",
+    "mcp-servers/twitter-mcp/__init__.py",
+    "mcp-servers/twitter-mcp/guardrails.py",
+    "mcp-servers/twitter-mcp/mentions.py",
+    "mcp-servers/twitter-mcp/replies.py",
+    "mcp-servers/twitter-mcp/server.py",
+    "mcp-servers/twitter-mcp/tweet_threading.py",
+    "mcp-servers/worldlabs-marble-mcp/server.py",
+    "mcp-servers/zabbix-mcp/vendor/zabbix-mcp-server/scripts/start_server.py",
+    "mcp-servers/zabbix-mcp/vendor/zabbix-mcp-server/scripts/test_server.py",
+    "mcp-servers/zabbix-mcp/vendor/zabbix-mcp-server/src/zabbix_mcp_server/__init__.py",
+    "mcp-servers/zabbix-mcp/vendor/zabbix-mcp-server/src/zabbix_mcp_server/api_docs_scraper.py",
+    "mcp-servers/zabbix-mcp/vendor/zabbix-mcp-server/src/zabbix_mcp_server/client.py",
+    "mcp-servers/zabbix-mcp/vendor/zabbix-mcp-server/src/zabbix_mcp_server/config.py",
+    "mcp-servers/zabbix-mcp/vendor/zabbix-mcp-server/src/zabbix_mcp_server/server.py",
+    "mcp-servers/zabbix-mcp/vendor/zabbix-mcp-server/src/zabbix_mcp_server/utils.py",
+    "mcp-servers/zoom-rtms-mcp/__init__.py",
+    "mcp-servers/zoom-rtms-mcp/extractor.py",
+    "mcp-servers/zoom-rtms-mcp/models.py",
+    "mcp-servers/zoom-rtms-mcp/panel_feed.py",
+    "mcp-servers/zoom-rtms-mcp/recognition.py",
+    "mcp-servers/zoom-rtms-mcp/rtms_listener.py",
+    "mcp-servers/zoom-rtms-mcp/server.py",
+    "mcp-servers/zoom-rtms-mcp/tests/__init__.py",
+    "mcp-servers/zoom-rtms-mcp/tests/test_extractor.py",
+    "mcp-servers/zoom-rtms-mcp/tests/test_webhook.py",
+    "mcp-servers/zoom-rtms-mcp/webhook.py",
+    "mcp-servers/zoom-rtms-mcp/zoom_channel_client.py"
+  ],
+  "python_parse_errors": [],
+  "security_candidates": [
+    {
+      "path": "mcp-servers/analysis-mcp/server.py",
+      "line": 76,
+      "rule": "CG-SQL-001",
+      "candidate_severity": "HIGH"
+    },
+    {
+      "path": "mcp-servers/analysis-mcp/server.py",
+      "line": 82,
+      "rule": "CG-SQL-001",
+      "candidate_severity": "HIGH"
+    },
+    {
+      "path": "mcp-servers/analysis-mcp/server.py",
+      "line": 133,
+      "rule": "CG-SQL-001",
+      "candidate_severity": "HIGH"
+    },
+    {
+      "path": "mcp-servers/eve-ng-mcp-server/eve_ng_mcp_server.py",
+      "line": 10,
+      "rule": "CG-EXEC-003",
+      "candidate_severity": "HIGH"
+    },
+    {
+      "path": "mcp-servers/eve-ng-mcp-server/eve_ng_mcp_server.py",
+      "line": 35,
+      "rule": "CG-EXEC-003",
+      "candidate_severity": "HIGH"
+    },
+    {
+      "path": "mcp-servers/protocol-mcp/bgp/federation/manager.py",
+      "line": 315,
+      "rule": "CG-SQL-001",
+      "candidate_severity": "HIGH"
+    },
+    {
+      "path": "mcp-servers/protocol-mcp/bgp/federation/manager.py",
+      "line": 388,
+      "rule": "CG-SQL-001",
+      "candidate_severity": "HIGH"
+    },
+    {
+      "path": "mcp-servers/protocol-mcp/bgp/federation/manager.py",
+      "line": 404,
+      "rule": "CG-SQL-001",
+      "candidate_severity": "HIGH"
+    },
+    {
+      "path": "mcp-servers/protocol-mcp/bgp/federation/tasks.py",
+      "line": 174,
+      "rule": "CG-SQL-001",
+      "candidate_severity": "HIGH"
+    },
+    {
+      "path": "mcp-servers/protocol-mcp/bgp/federation/tls.py",
+      "line": 84,
+      "rule": "CG-TLS-001",
+      "candidate_severity": "MEDIUM"
+    },
+    {
+      "path": "mcp-servers/protocol-mcp/bgp/federation/tls.py",
+      "line": 216,
+      "rule": "CG-TLS-001",
+      "candidate_severity": "MEDIUM"
+    },
+    {
+      "path": "mcp-servers/rag-mcp/storage/registry.py",
+      "line": 285,
+      "rule": "CG-SQL-001",
+      "candidate_severity": "HIGH"
+    },
+    {
+      "path": "mcp-servers/rag-mcp/storage/registry.py",
+      "line": 299,
+      "rule": "CG-SQL-001",
+      "candidate_severity": "HIGH"
+    }
+  ],
+  "static_tool_definitions": {
+    "analysis_status": [
+      {
+        "path": "mcp-servers/analysis-mcp/server.py",
+        "line": 94,
+        "parameters": [],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "analysis_datasets": [
+      {
+        "path": "mcp-servers/analysis-mcp/server.py",
+        "line": 123,
+        "parameters": [],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "analysis_query": [
+      {
+        "path": "mcp-servers/analysis-mcp/server.py",
+        "line": 145,
+        "parameters": [
+          "sql",
+          "max_rows"
+        ],
+        "required": [
+          "sql"
+        ],
+        "kwargs": false
+      }
+    ],
+    "anta_list_tests": [
+      {
+        "path": "mcp-servers/anta-mcp/server.py",
+        "line": 85,
+        "parameters": [
+          "category",
+          "keyword",
+          "limit"
+        ],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "anta_describe_test": [
+      {
+        "path": "mcp-servers/anta-mcp/server.py",
+        "line": 114,
+        "parameters": [
+          "test"
+        ],
+        "required": [
+          "test"
+        ],
+        "kwargs": false
+      }
+    ],
+    "anta_run_tests": [
+      {
+        "path": "mcp-servers/anta-mcp/server.py",
+        "line": 136,
+        "parameters": [
+          "host",
+          "tests",
+          "category",
+          "inputs",
+          "verify_tls",
+          "port"
+        ],
+        "required": [
+          "host"
+        ],
+        "kwargs": false
+      }
+    ],
+    "anta_status": [
+      {
+        "path": "mcp-servers/anta-mcp/server.py",
+        "line": 242,
+        "parameters": [],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "auvik_list_devices": [
+      {
+        "path": "mcp-servers/auvik-mcp/auvik_mcp_server.py",
+        "line": 146,
+        "parameters": [
+          "detail_level",
+          "device",
+          "device_type",
+          "make_model",
+          "vendor_name",
+          "online_status",
+          "modified_after",
+          "not_seen_since",
+          "networks",
+          "state_known",
+          "tenants",
+          "page_first",
+          "fetch_all",
+          "raw"
+        ],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "auvik_list_networks": [
+      {
+        "path": "mcp-servers/auvik-mcp/auvik_mcp_server.py",
+        "line": 195,
+        "parameters": [
+          "detail_level",
+          "network",
+          "network_type",
+          "scan_status",
+          "devices",
+          "modified_after",
+          "scope",
+          "tenants",
+          "page_first",
+          "fetch_all",
+          "raw"
+        ],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "auvik_list_interfaces": [
+      {
+        "path": "mcp-servers/auvik-mcp/auvik_mcp_server.py",
+        "line": 233,
+        "parameters": [
+          "interface",
+          "parent_device",
+          "interface_type",
+          "admin_status",
+          "operational_status",
+          "modified_after",
+          "tenants",
+          "page_first",
+          "fetch_all",
+          "raw"
+        ],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "auvik_list_components": [
+      {
+        "path": "mcp-servers/auvik-mcp/auvik_mcp_server.py",
+        "line": 269,
+        "parameters": [
+          "component",
+          "device",
+          "current_status",
+          "modified_after",
+          "tenants",
+          "page_first",
+          "fetch_all",
+          "raw"
+        ],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "auvik_list_tenants": [
+      {
+        "path": "mcp-servers/auvik-mcp/auvik_mcp_server.py",
+        "line": 300,
+        "parameters": [
+          "detail",
+          "tenant_domain_prefix",
+          "available_tenants",
+          "raw"
+        ],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "auvik_list_entity_notes": [
+      {
+        "path": "mcp-servers/auvik-mcp/auvik_mcp_server.py",
+        "line": 324,
+        "parameters": [
+          "entity",
+          "entity_type",
+          "last_modified_by",
+          "modified_after",
+          "tenants",
+          "page_first",
+          "fetch_all",
+          "raw"
+        ],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "auvik_list_entity_audits": [
+      {
+        "path": "mcp-servers/auvik-mcp/auvik_mcp_server.py",
+        "line": 356,
+        "parameters": [
+          "audit_id",
+          "user",
+          "category",
+          "status",
+          "modified_after",
+          "tenants",
+          "page_first",
+          "fetch_all",
+          "raw"
+        ],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "auvik_get_usage": [
+      {
+        "path": "mcp-servers/auvik-mcp/auvik_mcp_server.py",
+        "line": 389,
+        "parameters": [
+          "scope",
+          "device",
+          "from_date",
+          "thru_date",
+          "tenants",
+          "raw"
+        ],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "auvik_verify_credentials": [
+      {
+        "path": "mcp-servers/auvik-mcp/auvik_mcp_server.py",
+        "line": 417,
+        "parameters": [],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "auvik_list_alerts": [
+      {
+        "path": "mcp-servers/auvik-mcp/auvik_mcp_server.py",
+        "line": 433,
+        "parameters": [
+          "alert_id",
+          "entity",
+          "severity",
+          "status",
+          "dismissed",
+          "dispatched",
+          "detected_time_after",
+          "detected_time_before",
+          "alert_definition_id",
+          "alert_specification_id",
+          "tenants",
+          "page_first",
+          "fetch_all",
+          "raw"
+        ],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "auvik_list_device_lifecycle": [
+      {
+        "path": "mcp-servers/auvik-mcp/auvik_mcp_server.py",
+        "line": 484,
+        "parameters": [
+          "device",
+          "sales_availability",
+          "software_maintenance_status",
+          "security_software_maintenance_status",
+          "last_support_status",
+          "tenants",
+          "page_first",
+          "fetch_all",
+          "raw"
+        ],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "auvik_list_device_warranty": [
+      {
+        "path": "mcp-servers/auvik-mcp/auvik_mcp_server.py",
+        "line": 519,
+        "parameters": [
+          "device",
+          "covered_under_warranty",
+          "covered_under_service",
+          "tenants",
+          "page_first",
+          "fetch_all",
+          "raw"
+        ],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "auvik_list_configurations": [
+      {
+        "path": "mcp-servers/auvik-mcp/auvik_mcp_server.py",
+        "line": 548,
+        "parameters": [
+          "config_id",
+          "device",
+          "backup_time_after",
+          "backup_time_before",
+          "is_running",
+          "tenants",
+          "page_first",
+          "fetch_all",
+          "raw"
+        ],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "auvik_get_device_statistics": [
+      {
+        "path": "mcp-servers/auvik-mcp/auvik_mcp_server.py",
+        "line": 587,
+        "parameters": [
+          "stat_id",
+          "availability",
+          "from_time",
+          "interval",
+          "thru_time",
+          "device",
+          "device_type",
+          "omit_undiscovered",
+          "tenants",
+          "page_first",
+          "fetch_all",
+          "raw"
+        ],
+        "required": [
+          "stat_id"
+        ],
+        "kwargs": false
+      }
+    ],
+    "auvik_get_interface_statistics": [
+      {
+        "path": "mcp-servers/auvik-mcp/auvik_mcp_server.py",
+        "line": 635,
+        "parameters": [
+          "stat_id",
+          "from_time",
+          "interval",
+          "thru_time",
+          "interface",
+          "interface_type",
+          "parent_device",
+          "tenants",
+          "page_first",
+          "fetch_all",
+          "raw"
+        ],
+        "required": [
+          "stat_id"
+        ],
+        "kwargs": false
+      }
+    ],
+    "auvik_get_service_statistics": [
+      {
+        "path": "mcp-servers/auvik-mcp/auvik_mcp_server.py",
+        "line": 674,
+        "parameters": [
+          "stat_id",
+          "from_time",
+          "interval",
+          "thru_time",
+          "service_id",
+          "tenants",
+          "page_first",
+          "fetch_all",
+          "raw"
+        ],
+        "required": [
+          "stat_id"
+        ],
+        "kwargs": false
+      }
+    ],
+    "auvik_get_component_statistics": [
+      {
+        "path": "mcp-servers/auvik-mcp/auvik_mcp_server.py",
+        "line": 708,
+        "parameters": [
+          "component_type",
+          "stat_id",
+          "from_time",
+          "interval",
+          "thru_time",
+          "component_id",
+          "parent_device",
+          "tenants",
+          "page_first",
+          "fetch_all",
+          "raw"
+        ],
+        "required": [
+          "component_type",
+          "stat_id"
+        ],
+        "kwargs": false
+      }
+    ],
+    "auvik_get_oid_statistics": [
+      {
+        "path": "mcp-servers/auvik-mcp/auvik_mcp_server.py",
+        "line": 751,
+        "parameters": [
+          "device",
+          "device_type",
+          "oid",
+          "tenants",
+          "page_first",
+          "fetch_all",
+          "raw"
+        ],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "auvik_list_snmp_poller_settings": [
+      {
+        "path": "mcp-servers/auvik-mcp/auvik_mcp_server.py",
+        "line": 780,
+        "parameters": [
+          "tenants",
+          "poller_id",
+          "with_devices",
+          "device",
+          "use_as",
+          "type",
+          "device_type",
+          "make_model",
+          "vendor_name",
+          "oid",
+          "name",
+          "page_first",
+          "fetch_all",
+          "raw"
+        ],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "auvik_get_snmp_poller_history": [
+      {
+        "path": "mcp-servers/auvik-mcp/auvik_mcp_server.py",
+        "line": 825,
+        "parameters": [
+          "value_type",
+          "tenants",
+          "from_time",
+          "thru_time",
+          "interval",
+          "compact",
+          "snmp_poller_setting_id",
+          "device",
+          "page_first",
+          "fetch_all",
+          "raw"
+        ],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "batfish_upload_snapshot": [
+      {
+        "path": "mcp-servers/batfish-mcp/batfish_mcp_server.py",
+        "line": 244,
+        "parameters": [
+          "snapshot_name",
+          "configs",
+          "config_path",
+          "network"
+        ],
+        "required": [
+          "snapshot_name"
+        ],
+        "kwargs": false
+      }
+    ],
+    "batfish_validate_config": [
+      {
+        "path": "mcp-servers/batfish-mcp/batfish_mcp_server.py",
+        "line": 316,
+        "parameters": [
+          "snapshot_name",
+          "network"
+        ],
+        "required": [
+          "snapshot_name"
+        ],
+        "kwargs": false
+      }
+    ],
+    "batfish_test_reachability": [
+      {
+        "path": "mcp-servers/batfish-mcp/batfish_mcp_server.py",
+        "line": 406,
+        "parameters": [
+          "snapshot_name",
+          "src_ip",
+          "dst_ip",
+          "protocol",
+          "dst_port",
+          "src_port",
+          "network"
+        ],
+        "required": [
+          "snapshot_name",
+          "src_ip",
+          "dst_ip"
+        ],
+        "kwargs": false
+      }
+    ],
+    "batfish_trace_acl": [
+      {
+        "path": "mcp-servers/batfish-mcp/batfish_mcp_server.py",
+        "line": 506,
+        "parameters": [
+          "snapshot_name",
+          "device",
+          "filter_name",
+          "src_ip",
+          "dst_ip",
+          "protocol",
+          "dst_port",
+          "network"
+        ],
+        "required": [
+          "snapshot_name",
+          "device",
+          "filter_name",
+          "src_ip",
+          "dst_ip"
+        ],
+        "kwargs": false
+      }
+    ],
+    "batfish_diff_configs": [
+      {
+        "path": "mcp-servers/batfish-mcp/batfish_mcp_server.py",
+        "line": 624,
+        "parameters": [
+          "reference_snapshot",
+          "candidate_snapshot",
+          "include_routes",
+          "include_reachability",
+          "network"
+        ],
+        "required": [
+          "reference_snapshot",
+          "candidate_snapshot"
+        ],
+        "kwargs": false
+      }
+    ],
+    "batfish_check_compliance": [
+      {
+        "path": "mcp-servers/batfish-mcp/batfish_mcp_server.py",
+        "line": 980,
+        "parameters": [
+          "snapshot_name",
+          "policy_type",
+          "network"
+        ],
+        "required": [
+          "snapshot_name",
+          "policy_type"
+        ],
+        "kwargs": false
+      }
+    ],
+    "batfish_list_snapshots": [
+      {
+        "path": "mcp-servers/batfish-mcp/batfish_mcp_server.py",
+        "line": 1043,
+        "parameters": [
+          "network"
+        ],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "batfish_delete_snapshot": [
+      {
+        "path": "mcp-servers/batfish-mcp/batfish_mcp_server.py",
+        "line": 1075,
+        "parameters": [
+          "snapshot_name",
+          "network"
+        ],
+        "required": [
+          "snapshot_name"
+        ],
+        "kwargs": false
+      }
+    ],
+    "rpki_validate": [
+      {
+        "path": "mcp-servers/bgp-intel-mcp/server.py",
+        "line": 46,
+        "parameters": [
+          "prefix",
+          "origin_asn",
+          "fresh"
+        ],
+        "required": [
+          "prefix",
+          "origin_asn"
+        ],
+        "kwargs": false
+      }
+    ],
+    "registry_lookup": [
+      {
+        "path": "mcp-servers/bgp-intel-mcp/server.py",
+        "line": 78,
+        "parameters": [
+          "resource"
+        ],
+        "required": [
+          "resource"
+        ],
+        "kwargs": false
+      }
+    ],
+    "registry_abuse_contact": [
+      {
+        "path": "mcp-servers/bgp-intel-mcp/server.py",
+        "line": 96,
+        "parameters": [
+          "resource"
+        ],
+        "required": [
+          "resource"
+        ],
+        "kwargs": false
+      }
+    ],
+    "routing_as_overview": [
+      {
+        "path": "mcp-servers/bgp-intel-mcp/server.py",
+        "line": 126,
+        "parameters": [
+          "asn",
+          "fresh"
+        ],
+        "required": [
+          "asn"
+        ],
+        "kwargs": false
+      }
+    ],
+    "routing_announced_prefixes": [
+      {
+        "path": "mcp-servers/bgp-intel-mcp/server.py",
+        "line": 138,
+        "parameters": [
+          "asn",
+          "fresh"
+        ],
+        "required": [
+          "asn"
+        ],
+        "kwargs": false
+      }
+    ],
+    "peering_network": [
+      {
+        "path": "mcp-servers/bgp-intel-mcp/server.py",
+        "line": 158,
+        "parameters": [
+          "asn",
+          "fresh"
+        ],
+        "required": [
+          "asn"
+        ],
+        "kwargs": false
+      }
+    ],
+    "peering_presence": [
+      {
+        "path": "mcp-servers/bgp-intel-mcp/server.py",
+        "line": 172,
+        "parameters": [
+          "asn",
+          "fresh"
+        ],
+        "required": [
+          "asn"
+        ],
+        "kwargs": false
+      }
+    ],
+    "atlas_anchors": [
+      {
+        "path": "mcp-servers/bgp-intel-mcp/server.py",
+        "line": 189,
+        "parameters": [
+          "country",
+          "fresh"
+        ],
+        "required": [
+          "country"
+        ],
+        "kwargs": false
+      }
+    ],
+    "atlas_probe_count": [
+      {
+        "path": "mcp-servers/bgp-intel-mcp/server.py",
+        "line": 203,
+        "parameters": [
+          "asn",
+          "fresh"
+        ],
+        "required": [
+          "asn"
+        ],
+        "kwargs": false
+      }
+    ],
+    "resource_report": [
+      {
+        "path": "mcp-servers/bgp-intel-mcp/server.py",
+        "line": 217,
+        "parameters": [
+          "resource",
+          "origin_asn"
+        ],
+        "required": [
+          "resource"
+        ],
+        "kwargs": false
+      }
+    ],
+    "catc_find": [
+      {
+        "path": "mcp-servers/catc-mcp/server.py",
+        "line": 252,
+        "parameters": [
+          "query",
+          "group",
+          "limit"
+        ],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "catc_describe_operation": [
+      {
+        "path": "mcp-servers/catc-mcp/server.py",
+        "line": 279,
+        "parameters": [
+          "operation"
+        ],
+        "required": [
+          "operation"
+        ],
+        "kwargs": false
+      }
+    ],
+    "check_version": [
+      {
+        "path": "mcp-servers/cisco-psirt-mcp/server.py",
+        "line": 121,
+        "parameters": [
+          "ostype",
+          "version",
+          "refresh"
+        ],
+        "required": [
+          "ostype",
+          "version"
+        ],
+        "kwargs": false
+      }
+    ],
+    "check_versions": [
+      {
+        "path": "mcp-servers/cisco-psirt-mcp/server.py",
+        "line": 194,
+        "parameters": [
+          "devices",
+          "refresh"
+        ],
+        "required": [
+          "devices"
+        ],
+        "kwargs": false
+      }
+    ],
+    "check_cve": [
+      {
+        "path": "mcp-servers/cisco-psirt-mcp/server.py",
+        "line": 247,
+        "parameters": [
+          "cve",
+          "refresh"
+        ],
+        "required": [
+          "cve"
+        ],
+        "kwargs": false
+      }
+    ],
+    "check_advisory": [
+      {
+        "path": "mcp-servers/cisco-psirt-mcp/server.py",
+        "line": 280,
+        "parameters": [
+          "advisory_id"
+        ],
+        "required": [
+          "advisory_id"
+        ],
+        "kwargs": false
+      }
+    ],
+    "list_recent": [
+      {
+        "path": "mcp-servers/cisco-psirt-mcp/server.py",
+        "line": 301,
+        "parameters": [
+          "severity",
+          "start_date",
+          "end_date"
+        ],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "psirt_status": [
+      {
+        "path": "mcp-servers/cisco-psirt-mcp/server.py",
+        "line": 336,
+        "parameters": [],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "docx_write": [
+      {
+        "path": "mcp-servers/document-mcp/server.py",
+        "line": 78,
+        "parameters": [
+          "title",
+          "blocks",
+          "output_id",
+          "template"
+        ],
+        "required": [
+          "title",
+          "blocks"
+        ],
+        "kwargs": false
+      }
+    ],
+    "xlsx_write": [
+      {
+        "path": "mcp-servers/document-mcp/server.py",
+        "line": 105,
+        "parameters": [
+          "sheets",
+          "output_id",
+          "template"
+        ],
+        "required": [
+          "sheets"
+        ],
+        "kwargs": false
+      }
+    ],
+    "pptx_write": [
+      {
+        "path": "mcp-servers/document-mcp/server.py",
+        "line": 128,
+        "parameters": [
+          "title",
+          "slides",
+          "output_id",
+          "template"
+        ],
+        "required": [
+          "title",
+          "slides"
+        ],
+        "kwargs": false
+      }
+    ],
+    "pdf_inspect_form": [
+      {
+        "path": "mcp-servers/document-mcp/server.py",
+        "line": 153,
+        "parameters": [
+          "path"
+        ],
+        "required": [
+          "path"
+        ],
+        "kwargs": false
+      }
+    ],
+    "pdf_fill_form": [
+      {
+        "path": "mcp-servers/document-mcp/server.py",
+        "line": 181,
+        "parameters": [
+          "path",
+          "values",
+          "output_id"
+        ],
+        "required": [
+          "path",
+          "values"
+        ],
+        "kwargs": false
+      }
+    ],
+    "list_documents": [
+      {
+        "path": "mcp-servers/document-mcp/server.py",
+        "line": 226,
+        "parameters": [
+          "kind",
+          "limit"
+        ],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "eve_get_node_config": [
+      {
+        "path": "mcp-servers/eve-ng-mcp-server/tools_config.py",
+        "line": 93,
+        "parameters": [
+          "lab_path",
+          "node"
+        ],
+        "required": [
+          "lab_path",
+          "node"
+        ],
+        "kwargs": false
+      }
+    ],
+    "eve_set_node_startup_mode": [
+      {
+        "path": "mcp-servers/eve-ng-mcp-server/tools_config.py",
+        "line": 122,
+        "parameters": [
+          "lab_path",
+          "node",
+          "enabled"
+        ],
+        "required": [
+          "lab_path",
+          "node",
+          "enabled"
+        ],
+        "kwargs": false
+      }
+    ],
+    "eve_set_node_config": [
+      {
+        "path": "mcp-servers/eve-ng-mcp-server/tools_config.py",
+        "line": 148,
+        "parameters": [
+          "lab_path",
+          "node",
+          "config"
+        ],
+        "required": [
+          "lab_path",
+          "node",
+          "config"
+        ],
+        "kwargs": false
+      }
+    ],
+    "eve_export_node_config": [
+      {
+        "path": "mcp-servers/eve-ng-mcp-server/tools_config.py",
+        "line": 180,
+        "parameters": [
+          "lab_path",
+          "node"
+        ],
+        "required": [
+          "lab_path",
+          "node"
+        ],
+        "kwargs": false
+      }
+    ],
+    "eve_export_all_node_configs": [
+      {
+        "path": "mcp-servers/eve-ng-mcp-server/tools_config.py",
+        "line": 203,
+        "parameters": [
+          "lab_path"
+        ],
+        "required": [
+          "lab_path"
+        ],
+        "kwargs": false
+      }
+    ],
+    "eve_list_config_summaries": [
+      {
+        "path": "mcp-servers/eve-ng-mcp-server/tools_config.py",
+        "line": 223,
+        "parameters": [
+          "lab_path",
+          "page",
+          "page_size"
+        ],
+        "required": [
+          "lab_path"
+        ],
+        "kwargs": false
+      }
+    ],
+    "eve_get_all_configs": [
+      {
+        "path": "mcp-servers/eve-ng-mcp-server/tools_config.py",
+        "line": 267,
+        "parameters": [
+          "lab_path",
+          "page",
+          "page_size"
+        ],
+        "required": [
+          "lab_path"
+        ],
+        "kwargs": false
+      }
+    ],
+    "eve_wipe_node_config": [
+      {
+        "path": "mcp-servers/eve-ng-mcp-server/tools_config.py",
+        "line": 320,
+        "parameters": [
+          "lab_path",
+          "node"
+        ],
+        "required": [
+          "lab_path",
+          "node"
+        ],
+        "kwargs": false
+      }
+    ],
+    "eve_discover_node": [
+      {
+        "path": "mcp-servers/eve-ng-mcp-server/tools_console_exec.py",
+        "line": 24,
+        "parameters": [
+          "lab_path",
+          "node"
+        ],
+        "required": [
+          "lab_path",
+          "node"
+        ],
+        "kwargs": false
+      }
+    ],
+    "eve_exec_ios": [
+      {
+        "path": "mcp-servers/eve-ng-mcp-server/tools_console_exec.py",
+        "line": 55,
+        "parameters": [
+          "lab_path",
+          "node",
+          "commands",
+          "config_mode",
+          "save",
+          "command_timeout",
+          "wait"
+        ],
+        "required": [
+          "lab_path",
+          "node",
+          "commands"
+        ],
+        "kwargs": false
+      }
+    ],
+    "eve_exec_junos": [
+      {
+        "path": "mcp-servers/eve-ng-mcp-server/tools_console_exec.py",
+        "line": 106,
+        "parameters": [
+          "lab_path",
+          "node",
+          "commands",
+          "command_timeout",
+          "wait"
+        ],
+        "required": [
+          "lab_path",
+          "node",
+          "commands"
+        ],
+        "kwargs": false
+      }
+    ],
+    "eve_exec_vpcs": [
+      {
+        "path": "mcp-servers/eve-ng-mcp-server/tools_console_exec.py",
+        "line": 143,
+        "parameters": [
+          "lab_path",
+          "node",
+          "commands",
+          "command_timeout",
+          "dhcp_timeout",
+          "prompt_timeout"
+        ],
+        "required": [
+          "lab_path",
+          "node",
+          "commands"
+        ],
+        "kwargs": false
+      }
+    ],
+    "eve_exec_eos": [
+      {
+        "path": "mcp-servers/eve-ng-mcp-server/tools_console_exec.py",
+        "line": 185,
+        "parameters": [
+          "lab_path",
+          "node",
+          "commands",
+          "config_mode",
+          "save",
+          "command_timeout",
+          "wait"
+        ],
+        "required": [
+          "lab_path",
+          "node",
+          "commands"
+        ],
+        "kwargs": false
+      }
+    ],
+    "eve_exec_nxos": [
+      {
+        "path": "mcp-servers/eve-ng-mcp-server/tools_console_exec.py",
+        "line": 235,
+        "parameters": [
+          "lab_path",
+          "node",
+          "commands",
+          "config_mode",
+          "save",
+          "command_timeout",
+          "wait"
+        ],
+        "required": [
+          "lab_path",
+          "node",
+          "commands"
+        ],
+        "kwargs": false
+      }
+    ],
+    "eve_status": [
+      {
+        "path": "mcp-servers/eve-ng-mcp-server/tools_lab.py",
+        "line": 23,
+        "parameters": [],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "eve_auth": [
+      {
+        "path": "mcp-servers/eve-ng-mcp-server/tools_lab.py",
+        "line": 36,
+        "parameters": [],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "eve_list_images": [
+      {
+        "path": "mcp-servers/eve-ng-mcp-server/tools_lab.py",
+        "line": 49,
+        "parameters": [
+          "node_type",
+          "page",
+          "page_size"
+        ],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "eve_list_labs": [
+      {
+        "path": "mcp-servers/eve-ng-mcp-server/tools_lab.py",
+        "line": 105,
+        "parameters": [
+          "folder",
+          "page",
+          "page_size"
+        ],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "eve_get_lab": [
+      {
+        "path": "mcp-servers/eve-ng-mcp-server/tools_lab.py",
+        "line": 132,
+        "parameters": [
+          "lab_path"
+        ],
+        "required": [
+          "lab_path"
+        ],
+        "kwargs": false
+      }
+    ],
+    "eve_create_lab": [
+      {
+        "path": "mcp-servers/eve-ng-mcp-server/tools_lab.py",
+        "line": 150,
+        "parameters": [
+          "name",
+          "folder",
+          "description",
+          "version",
+          "author"
+        ],
+        "required": [
+          "name"
+        ],
+        "kwargs": false
+      }
+    ],
+    "eve_delete_lab": [
+      {
+        "path": "mcp-servers/eve-ng-mcp-server/tools_lab.py",
+        "line": 188,
+        "parameters": [
+          "lab_path"
+        ],
+        "required": [
+          "lab_path"
+        ],
+        "kwargs": false
+      }
+    ],
+    "eve_export_lab": [
+      {
+        "path": "mcp-servers/eve-ng-mcp-server/tools_lab.py",
+        "line": 207,
+        "parameters": [
+          "lab_path"
+        ],
+        "required": [
+          "lab_path"
+        ],
+        "kwargs": false
+      }
+    ],
+    "eve_import_lab": [
+      {
+        "path": "mcp-servers/eve-ng-mcp-server/tools_lab.py",
+        "line": 248,
+        "parameters": [
+          "archive_path",
+          "folder"
+        ],
+        "required": [
+          "archive_path"
+        ],
+        "kwargs": false
+      }
+    ],
+    "eve_get_topology": [
+      {
+        "path": "mcp-servers/eve-ng-mcp-server/tools_network.py",
+        "line": 14,
+        "parameters": [
+          "lab_path"
+        ],
+        "required": [
+          "lab_path"
+        ],
+        "kwargs": false
+      }
+    ],
+    "eve_list_networks": [
+      {
+        "path": "mcp-servers/eve-ng-mcp-server/tools_network.py",
+        "line": 32,
+        "parameters": [
+          "lab_path",
+          "page",
+          "page_size"
+        ],
+        "required": [
+          "lab_path"
+        ],
+        "kwargs": false
+      }
+    ],
+    "eve_create_network": [
+      {
+        "path": "mcp-servers/eve-ng-mcp-server/tools_network.py",
+        "line": 65,
+        "parameters": [
+          "lab_path",
+          "name",
+          "network_type",
+          "visibility",
+          "left",
+          "top"
+        ],
+        "required": [
+          "lab_path",
+          "name"
+        ],
+        "kwargs": false
+      }
+    ],
+    "eve_delete_network": [
+      {
+        "path": "mcp-servers/eve-ng-mcp-server/tools_network.py",
+        "line": 123,
+        "parameters": [
+          "lab_path",
+          "network"
+        ],
+        "required": [
+          "lab_path",
+          "network"
+        ],
+        "kwargs": false
+      }
+    ],
+    "eve_list_node_interfaces": [
+      {
+        "path": "mcp-servers/eve-ng-mcp-server/tools_network.py",
+        "line": 145,
+        "parameters": [
+          "lab_path",
+          "node"
+        ],
+        "required": [
+          "lab_path",
+          "node"
+        ],
+        "kwargs": false
+      }
+    ],
+    "eve_connect_interface": [
+      {
+        "path": "mcp-servers/eve-ng-mcp-server/tools_network.py",
+        "line": 167,
+        "parameters": [
+          "lab_path",
+          "node",
+          "interface_id",
+          "network"
+        ],
+        "required": [
+          "lab_path",
+          "node",
+          "interface_id",
+          "network"
+        ],
+        "kwargs": false
+      }
+    ],
+    "eve_list_node_types": [
+      {
+        "path": "mcp-servers/eve-ng-mcp-server/tools_network.py",
+        "line": 221,
+        "parameters": [
+          "page",
+          "page_size"
+        ],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "eve_list_nodes": [
+      {
+        "path": "mcp-servers/eve-ng-mcp-server/tools_node.py",
+        "line": 83,
+        "parameters": [
+          "lab_path",
+          "page",
+          "page_size"
+        ],
+        "required": [
+          "lab_path"
+        ],
+        "kwargs": false
+      }
+    ],
+    "eve_get_node": [
+      {
+        "path": "mcp-servers/eve-ng-mcp-server/tools_node.py",
+        "line": 133,
+        "parameters": [
+          "lab_path",
+          "node"
+        ],
+        "required": [
+          "lab_path",
+          "node"
+        ],
+        "kwargs": false
+      }
+    ],
+    "eve_create_node": [
+      {
+        "path": "mcp-servers/eve-ng-mcp-server/tools_node.py",
+        "line": 156,
+        "parameters": [
+          "lab_path",
+          "name",
+          "node_type",
+          "template",
+          "image",
+          "left",
+          "top",
+          "ram",
+          "ethernet",
+          "serial",
+          "console",
+          "cpu",
+          "icon",
+          "node_id"
+        ],
+        "required": [
+          "lab_path",
+          "name",
+          "node_type",
+          "template"
+        ],
+        "kwargs": false
+      }
+    ],
+    "eve_delete_node": [
+      {
+        "path": "mcp-servers/eve-ng-mcp-server/tools_node.py",
+        "line": 242,
+        "parameters": [
+          "lab_path",
+          "node"
+        ],
+        "required": [
+          "lab_path",
+          "node"
+        ],
+        "kwargs": false
+      }
+    ],
+    "eve_start_node": [
+      {
+        "path": "mcp-servers/eve-ng-mcp-server/tools_node.py",
+        "line": 264,
+        "parameters": [
+          "lab_path",
+          "node"
+        ],
+        "required": [
+          "lab_path",
+          "node"
+        ],
+        "kwargs": false
+      }
+    ],
+    "eve_stop_node": [
+      {
+        "path": "mcp-servers/eve-ng-mcp-server/tools_node.py",
+        "line": 298,
+        "parameters": [
+          "lab_path",
+          "node"
+        ],
+        "required": [
+          "lab_path",
+          "node"
+        ],
+        "kwargs": false
+      }
+    ],
+    "eve_start_lab": [
+      {
+        "path": "mcp-servers/eve-ng-mcp-server/tools_node.py",
+        "line": 327,
+        "parameters": [
+          "lab_path"
+        ],
+        "required": [
+          "lab_path"
+        ],
+        "kwargs": false
+      }
+    ],
+    "eve_stop_lab": [
+      {
+        "path": "mcp-servers/eve-ng-mcp-server/tools_node.py",
+        "line": 369,
+        "parameters": [
+          "lab_path"
+        ],
+        "required": [
+          "lab_path"
+        ],
+        "kwargs": false
+      }
+    ],
+    "eve_wipe_node": [
+      {
+        "path": "mcp-servers/eve-ng-mcp-server/tools_node.py",
+        "line": 407,
+        "parameters": [
+          "lab_path",
+          "node"
+        ],
+        "required": [
+          "lab_path",
+          "node"
+        ],
+        "kwargs": false
+      }
+    ],
+    "fgt_system_status": [
+      {
+        "path": "mcp-servers/fortinet-mcp/server.py",
+        "line": 58,
+        "parameters": [
+          "vdom"
+        ],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "fgt_list_interfaces": [
+      {
+        "path": "mcp-servers/fortinet-mcp/server.py",
+        "line": 69,
+        "parameters": [
+          "vdom"
+        ],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "fgt_get_routes": [
+      {
+        "path": "mcp-servers/fortinet-mcp/server.py",
+        "line": 80,
+        "parameters": [
+          "vdom",
+          "protocol"
+        ],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "fgt_vpn_tunnels": [
+      {
+        "path": "mcp-servers/fortinet-mcp/server.py",
+        "line": 91,
+        "parameters": [
+          "vdom"
+        ],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "fgt_get_policies": [
+      {
+        "path": "mcp-servers/fortinet-mcp/server.py",
+        "line": 106,
+        "parameters": [
+          "vdom"
+        ],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "fgt_compare_with_manager": [
+      {
+        "path": "mcp-servers/fortinet-mcp/server.py",
+        "line": 117,
+        "parameters": [
+          "adom",
+          "package",
+          "vdom"
+        ],
+        "required": [
+          "adom",
+          "package"
+        ],
+        "kwargs": false
+      }
+    ],
+    "fmg_list_adoms": [
+      {
+        "path": "mcp-servers/fortinet-mcp/server.py",
+        "line": 199,
+        "parameters": [],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "fmg_list_devices": [
+      {
+        "path": "mcp-servers/fortinet-mcp/server.py",
+        "line": 208,
+        "parameters": [
+          "adom"
+        ],
+        "required": [
+          "adom"
+        ],
+        "kwargs": false
+      }
+    ],
+    "fmg_list_policy_packages": [
+      {
+        "path": "mcp-servers/fortinet-mcp/server.py",
+        "line": 217,
+        "parameters": [
+          "adom"
+        ],
+        "required": [
+          "adom"
+        ],
+        "kwargs": false
+      }
+    ],
+    "fmg_get_policy_package": [
+      {
+        "path": "mcp-servers/fortinet-mcp/server.py",
+        "line": 226,
+        "parameters": [
+          "adom",
+          "package"
+        ],
+        "required": [
+          "adom",
+          "package"
+        ],
+        "kwargs": false
+      }
+    ],
+    "fmg_search_rules": [
+      {
+        "path": "mcp-servers/fortinet-mcp/server.py",
+        "line": 235,
+        "parameters": [
+          "adom",
+          "package",
+          "src",
+          "dst",
+          "service",
+          "object_name"
+        ],
+        "required": [
+          "adom",
+          "package"
+        ],
+        "kwargs": false
+      }
+    ],
+    "fmg_resolve_object": [
+      {
+        "path": "mcp-servers/fortinet-mcp/server.py",
+        "line": 250,
+        "parameters": [
+          "adom",
+          "name",
+          "obj_type"
+        ],
+        "required": [
+          "adom",
+          "name"
+        ],
+        "kwargs": false
+      }
+    ],
+    "fmg_get_revisions": [
+      {
+        "path": "mcp-servers/fortinet-mcp/server.py",
+        "line": 262,
+        "parameters": [
+          "adom",
+          "package"
+        ],
+        "required": [
+          "adom",
+          "package"
+        ],
+        "kwargs": false
+      }
+    ],
+    "fmg_preview_install": [
+      {
+        "path": "mcp-servers/fortinet-mcp/server.py",
+        "line": 271,
+        "parameters": [
+          "adom",
+          "package",
+          "target"
+        ],
+        "required": [
+          "adom",
+          "package"
+        ],
+        "kwargs": false
+      }
+    ],
+    "faz_query_logs": [
+      {
+        "path": "mcp-servers/fortinet-mcp/server.py",
+        "line": 284,
+        "parameters": [
+          "adom",
+          "filter_expr",
+          "window_start",
+          "window_end",
+          "limit",
+          "offset"
+        ],
+        "required": [
+          "adom",
+          "filter_expr"
+        ],
+        "kwargs": false
+      }
+    ],
+    "faz_fetch_more": [
+      {
+        "path": "mcp-servers/fortinet-mcp/server.py",
+        "line": 303,
+        "parameters": [
+          "adom",
+          "filter_expr",
+          "window_start",
+          "window_end",
+          "offset",
+          "limit"
+        ],
+        "required": [
+          "adom",
+          "filter_expr",
+          "window_start",
+          "window_end",
+          "offset"
+        ],
+        "kwargs": false
+      }
+    ],
+    "faz_policy_activity": [
+      {
+        "path": "mcp-servers/fortinet-mcp/server.py",
+        "line": 318,
+        "parameters": [
+          "adom",
+          "policyid",
+          "window_start",
+          "window_end"
+        ],
+        "required": [
+          "adom",
+          "policyid"
+        ],
+        "kwargs": false
+      }
+    ],
+    "faz_list_devices": [
+      {
+        "path": "mcp-servers/fortinet-mcp/server.py",
+        "line": 336,
+        "parameters": [
+          "adom"
+        ],
+        "required": [
+          "adom"
+        ],
+        "kwargs": false
+      }
+    ],
+    "fmg_check_change_record": [
+      {
+        "path": "mcp-servers/fortinet-mcp/server.py",
+        "line": 349,
+        "parameters": [
+          "change_request"
+        ],
+        "required": [
+          "change_request"
+        ],
+        "kwargs": false
+      }
+    ],
+    "fmg_install_package": [
+      {
+        "path": "mcp-servers/fortinet-mcp/server.py",
+        "line": 362,
+        "parameters": [
+          "adom",
+          "package",
+          "target",
+          "approved_by",
+          "change_request",
+          "is_lab"
+        ],
+        "required": [
+          "adom",
+          "package",
+          "target"
+        ],
+        "kwargs": false
+      }
+    ],
+    "fortinet_posture": [
+      {
+        "path": "mcp-servers/fortinet-mcp/server.py",
+        "line": 423,
+        "parameters": [],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "gnmi_get": [
+      {
+        "path": "mcp-servers/gnmi-mcp/gnmi_mcp_server.py",
+        "line": 118,
+        "parameters": [
+          "target",
+          "paths",
+          "encoding",
+          "data_type"
+        ],
+        "required": [
+          "target",
+          "paths"
+        ],
+        "kwargs": false
+      }
+    ],
+    "gnmi_set": [
+      {
+        "path": "mcp-servers/gnmi-mcp/gnmi_mcp_server.py",
+        "line": 196,
+        "parameters": [
+          "target",
+          "change_request_number",
+          "updates",
+          "replaces",
+          "deletes"
+        ],
+        "required": [
+          "target",
+          "change_request_number"
+        ],
+        "kwargs": false
+      }
+    ],
+    "gnmi_subscribe": [
+      {
+        "path": "mcp-servers/gnmi-mcp/gnmi_mcp_server.py",
+        "line": 349,
+        "parameters": [
+          "target",
+          "paths",
+          "mode",
+          "sample_interval_seconds"
+        ],
+        "required": [
+          "target",
+          "paths",
+          "mode"
+        ],
+        "kwargs": false
+      }
+    ],
+    "gnmi_unsubscribe": [
+      {
+        "path": "mcp-servers/gnmi-mcp/gnmi_mcp_server.py",
+        "line": 415,
+        "parameters": [
+          "subscription_id"
+        ],
+        "required": [
+          "subscription_id"
+        ],
+        "kwargs": false
+      }
+    ],
+    "gnmi_get_subscriptions": [
+      {
+        "path": "mcp-servers/gnmi-mcp/gnmi_mcp_server.py",
+        "line": 446,
+        "parameters": [],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "gnmi_get_subscription_updates": [
+      {
+        "path": "mcp-servers/gnmi-mcp/gnmi_mcp_server.py",
+        "line": 462,
+        "parameters": [
+          "subscription_id",
+          "max_updates"
+        ],
+        "required": [
+          "subscription_id"
+        ],
+        "kwargs": false
+      }
+    ],
+    "gnmi_capabilities": [
+      {
+        "path": "mcp-servers/gnmi-mcp/gnmi_mcp_server.py",
+        "line": 492,
+        "parameters": [
+          "target"
+        ],
+        "required": [
+          "target"
+        ],
+        "kwargs": false
+      }
+    ],
+    "gnmi_browse_yang_paths": [
+      {
+        "path": "mcp-servers/gnmi-mcp/gnmi_mcp_server.py",
+        "line": 553,
+        "parameters": [
+          "target",
+          "module",
+          "depth"
+        ],
+        "required": [
+          "target",
+          "module"
+        ],
+        "kwargs": false
+      }
+    ],
+    "gnmi_compare_with_cli": [
+      {
+        "path": "mcp-servers/gnmi-mcp/gnmi_mcp_server.py",
+        "line": 619,
+        "parameters": [
+          "target",
+          "data_type"
+        ],
+        "required": [
+          "target",
+          "data_type"
+        ],
+        "kwargs": false
+      }
+    ],
+    "gnmi_list_targets": [
+      {
+        "path": "mcp-servers/gnmi-mcp/gnmi_mcp_server.py",
+        "line": 785,
+        "parameters": [],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "gns3_list_templates": [
+      {
+        "path": "mcp-servers/gns3-mcp-server/gns3_mcp_server.py",
+        "line": 362,
+        "parameters": [],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "gns3_list_computes": [
+      {
+        "path": "mcp-servers/gns3-mcp-server/gns3_mcp_server.py",
+        "line": 388,
+        "parameters": [],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "gns3_list_projects": [
+      {
+        "path": "mcp-servers/gns3-mcp-server/gns3_mcp_server.py",
+        "line": 421,
+        "parameters": [],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "gns3_create_project": [
+      {
+        "path": "mcp-servers/gns3-mcp-server/gns3_mcp_server.py",
+        "line": 448,
+        "parameters": [
+          "name",
+          "auto_open",
+          "auto_close",
+          "auto_start"
+        ],
+        "required": [
+          "name"
+        ],
+        "kwargs": false
+      }
+    ],
+    "gns3_get_project": [
+      {
+        "path": "mcp-servers/gns3-mcp-server/gns3_mcp_server.py",
+        "line": 491,
+        "parameters": [
+          "project_id"
+        ],
+        "required": [
+          "project_id"
+        ],
+        "kwargs": false
+      }
+    ],
+    "gns3_open_project": [
+      {
+        "path": "mcp-servers/gns3-mcp-server/gns3_mcp_server.py",
+        "line": 527,
+        "parameters": [
+          "project_id"
+        ],
+        "required": [
+          "project_id"
+        ],
+        "kwargs": false
+      }
+    ],
+    "gns3_close_project": [
+      {
+        "path": "mcp-servers/gns3-mcp-server/gns3_mcp_server.py",
+        "line": 556,
+        "parameters": [
+          "project_id"
+        ],
+        "required": [
+          "project_id"
+        ],
+        "kwargs": false
+      }
+    ],
+    "gns3_delete_project": [
+      {
+        "path": "mcp-servers/gns3-mcp-server/gns3_mcp_server.py",
+        "line": 585,
+        "parameters": [
+          "project_id"
+        ],
+        "required": [
+          "project_id"
+        ],
+        "kwargs": false
+      }
+    ],
+    "gns3_clone_project": [
+      {
+        "path": "mcp-servers/gns3-mcp-server/gns3_mcp_server.py",
+        "line": 613,
+        "parameters": [
+          "project_id",
+          "new_name",
+          "reset_mac_addresses"
+        ],
+        "required": [
+          "project_id",
+          "new_name"
+        ],
+        "kwargs": false
+      }
+    ],
+    "gns3_export_project": [
+      {
+        "path": "mcp-servers/gns3-mcp-server/gns3_mcp_server.py",
+        "line": 653,
+        "parameters": [
+          "project_id",
+          "include_snapshots",
+          "include_images",
+          "compression"
+        ],
+        "required": [
+          "project_id"
+        ],
+        "kwargs": false
+      }
+    ],
+    "gns3_import_project": [
+      {
+        "path": "mcp-servers/gns3-mcp-server/gns3_mcp_server.py",
+        "line": 698,
+        "parameters": [
+          "file_path",
+          "name"
+        ],
+        "required": [
+          "file_path"
+        ],
+        "kwargs": false
+      }
+    ],
+    "gns3_list_nodes": [
+      {
+        "path": "mcp-servers/gns3-mcp-server/gns3_mcp_server.py",
+        "line": 746,
+        "parameters": [
+          "project_id"
+        ],
+        "required": [
+          "project_id"
+        ],
+        "kwargs": false
+      }
+    ],
+    "gns3_create_node": [
+      {
+        "path": "mcp-servers/gns3-mcp-server/gns3_mcp_server.py",
+        "line": 781,
+        "parameters": [
+          "project_id",
+          "template",
+          "name",
+          "x",
+          "y",
+          "compute_id"
+        ],
+        "required": [
+          "project_id",
+          "template"
+        ],
+        "kwargs": false
+      }
+    ],
+    "gns3_start_node": [
+      {
+        "path": "mcp-servers/gns3-mcp-server/gns3_mcp_server.py",
+        "line": 835,
+        "parameters": [
+          "project_id",
+          "node_id"
+        ],
+        "required": [
+          "project_id",
+          "node_id"
+        ],
+        "kwargs": false
+      }
+    ],
+    "gns3_stop_node": [
+      {
+        "path": "mcp-servers/gns3-mcp-server/gns3_mcp_server.py",
+        "line": 870,
+        "parameters": [
+          "project_id",
+          "node_id"
+        ],
+        "required": [
+          "project_id",
+          "node_id"
+        ],
+        "kwargs": false
+      }
+    ],
+    "gns3_suspend_node": [
+      {
+        "path": "mcp-servers/gns3-mcp-server/gns3_mcp_server.py",
+        "line": 905,
+        "parameters": [
+          "project_id",
+          "node_id"
+        ],
+        "required": [
+          "project_id",
+          "node_id"
+        ],
+        "kwargs": false
+      }
+    ],
+    "gns3_reload_node": [
+      {
+        "path": "mcp-servers/gns3-mcp-server/gns3_mcp_server.py",
+        "line": 940,
+        "parameters": [
+          "project_id",
+          "node_id"
+        ],
+        "required": [
+          "project_id",
+          "node_id"
+        ],
+        "kwargs": false
+      }
+    ],
+    "gns3_bulk_node_action": [
+      {
+        "path": "mcp-servers/gns3-mcp-server/gns3_mcp_server.py",
+        "line": 975,
+        "parameters": [
+          "project_id",
+          "action"
+        ],
+        "required": [
+          "project_id",
+          "action"
+        ],
+        "kwargs": false
+      }
+    ],
+    "gns3_get_node_console": [
+      {
+        "path": "mcp-servers/gns3-mcp-server/gns3_mcp_server.py",
+        "line": 1012,
+        "parameters": [
+          "project_id",
+          "node_id"
+        ],
+        "required": [
+          "project_id",
+          "node_id"
+        ],
+        "kwargs": false
+      }
+    ],
+    "gns3_list_links": [
+      {
+        "path": "mcp-servers/gns3-mcp-server/gns3_mcp_server.py",
+        "line": 1063,
+        "parameters": [
+          "project_id"
+        ],
+        "required": [
+          "project_id"
+        ],
+        "kwargs": false
+      }
+    ],
+    "gns3_create_link": [
+      {
+        "path": "mcp-servers/gns3-mcp-server/gns3_mcp_server.py",
+        "line": 1111,
+        "parameters": [
+          "project_id",
+          "node1",
+          "port1",
+          "node2",
+          "port2"
+        ],
+        "required": [
+          "project_id",
+          "node1",
+          "port1",
+          "node2",
+          "port2"
+        ],
+        "kwargs": false
+      }
+    ],
+    "gns3_delete_link": [
+      {
+        "path": "mcp-servers/gns3-mcp-server/gns3_mcp_server.py",
+        "line": 1169,
+        "parameters": [
+          "project_id",
+          "link_id"
+        ],
+        "required": [
+          "project_id",
+          "link_id"
+        ],
+        "kwargs": false
+      }
+    ],
+    "gns3_isolate_node": [
+      {
+        "path": "mcp-servers/gns3-mcp-server/gns3_mcp_server.py",
+        "line": 1193,
+        "parameters": [
+          "project_id",
+          "node_id",
+          "isolate"
+        ],
+        "required": [
+          "project_id",
+          "node_id",
+          "isolate"
+        ],
+        "kwargs": false
+      }
+    ],
+    "gns3_start_capture": [
+      {
+        "path": "mcp-servers/gns3-mcp-server/gns3_mcp_server.py",
+        "line": 1243,
+        "parameters": [
+          "project_id",
+          "link_id",
+          "capture_file_name"
+        ],
+        "required": [
+          "project_id",
+          "link_id"
+        ],
+        "kwargs": false
+      }
+    ],
+    "gns3_stop_capture": [
+      {
+        "path": "mcp-servers/gns3-mcp-server/gns3_mcp_server.py",
+        "line": 1283,
+        "parameters": [
+          "project_id",
+          "link_id"
+        ],
+        "required": [
+          "project_id",
+          "link_id"
+        ],
+        "kwargs": false
+      }
+    ],
+    "gns3_get_capture": [
+      {
+        "path": "mcp-servers/gns3-mcp-server/gns3_mcp_server.py",
+        "line": 1317,
+        "parameters": [
+          "project_id",
+          "link_id"
+        ],
+        "required": [
+          "project_id",
+          "link_id"
+        ],
+        "kwargs": false
+      }
+    ],
+    "gns3_list_snapshots": [
+      {
+        "path": "mcp-servers/gns3-mcp-server/gns3_mcp_server.py",
+        "line": 1354,
+        "parameters": [
+          "project_id"
+        ],
+        "required": [
+          "project_id"
+        ],
+        "kwargs": false
+      }
+    ],
+    "gns3_create_snapshot": [
+      {
+        "path": "mcp-servers/gns3-mcp-server/gns3_mcp_server.py",
+        "line": 1385,
+        "parameters": [
+          "project_id",
+          "name"
+        ],
+        "required": [
+          "project_id",
+          "name"
+        ],
+        "kwargs": false
+      }
+    ],
+    "gns3_restore_snapshot": [
+      {
+        "path": "mcp-servers/gns3-mcp-server/gns3_mcp_server.py",
+        "line": 1417,
+        "parameters": [
+          "project_id",
+          "snapshot_id"
+        ],
+        "required": [
+          "project_id",
+          "snapshot_id"
+        ],
+        "kwargs": false
+      }
+    ],
+    "gns3_delete_snapshot": [
+      {
+        "path": "mcp-servers/gns3-mcp-server/gns3_mcp_server.py",
+        "line": 1457,
+        "parameters": [
+          "project_id",
+          "snapshot_id"
+        ],
+        "required": [
+          "project_id",
+          "snapshot_id"
+        ],
+        "kwargs": false
+      }
+    ],
+    "halo_list_ticket_types": [
+      {
+        "path": "mcp-servers/halo-mcp/halo_mcp_server.py",
+        "line": 174,
+        "parameters": [
+          "can_create_only",
+          "customer",
+          "showcounts",
+          "raw"
+        ],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "halo_get_ticket_type": [
+      {
+        "path": "mcp-servers/halo-mcp/halo_mcp_server.py",
+        "line": 198,
+        "parameters": [
+          "ticket_type",
+          "raw"
+        ],
+        "required": [
+          "ticket_type"
+        ],
+        "kwargs": false
+      }
+    ],
+    "halo_list_fields": [
+      {
+        "path": "mcp-servers/halo-mcp/halo_mcp_server.py",
+        "line": 215,
+        "parameters": [
+          "custom_only",
+          "raw"
+        ],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "halo_get_field": [
+      {
+        "path": "mcp-servers/halo-mcp/halo_mcp_server.py",
+        "line": 227,
+        "parameters": [
+          "field",
+          "raw"
+        ],
+        "required": [
+          "field"
+        ],
+        "kwargs": false
+      }
+    ],
+    "halo_get_ticket": [
+      {
+        "path": "mcp-servers/halo-mcp/halo_mcp_server.py",
+        "line": 236,
+        "parameters": [
+          "ticket",
+          "raw"
+        ],
+        "required": [
+          "ticket"
+        ],
+        "kwargs": false
+      }
+    ],
+    "halo_list_tickets": [
+      {
+        "path": "mcp-servers/halo-mcp/halo_mcp_server.py",
+        "line": 247,
+        "parameters": [
+          "ticket_type",
+          "customer",
+          "asset_id",
+          "status",
+          "open_only",
+          "search",
+          "raw"
+        ],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "halo_get_ticket_actions": [
+      {
+        "path": "mcp-servers/halo-mcp/halo_mcp_server.py",
+        "line": 275,
+        "parameters": [
+          "ticket",
+          "raw"
+        ],
+        "required": [
+          "ticket"
+        ],
+        "kwargs": false
+      }
+    ],
+    "halo_get_asset_tickets": [
+      {
+        "path": "mcp-servers/halo-mcp/halo_mcp_server.py",
+        "line": 281,
+        "parameters": [
+          "asset",
+          "open_only",
+          "raw"
+        ],
+        "required": [
+          "asset"
+        ],
+        "kwargs": false
+      }
+    ],
+    "halo_create_change_request": [
+      {
+        "path": "mcp-servers/halo-mcp/halo_mcp_server.py",
+        "line": 293,
+        "parameters": [
+          "summary",
+          "details",
+          "ticket_type",
+          "customer",
+          "site",
+          "user",
+          "asset",
+          "custom_fields",
+          "submit",
+          "raw"
+        ],
+        "required": [
+          "summary",
+          "details",
+          "ticket_type"
+        ],
+        "kwargs": false
+      }
+    ],
+    "halo_get_asset": [
+      {
+        "path": "mcp-servers/halo-mcp/halo_mcp_server.py",
+        "line": 338,
+        "parameters": [
+          "asset",
+          "raw"
+        ],
+        "required": [
+          "asset"
+        ],
+        "kwargs": false
+      }
+    ],
+    "halo_list_assets": [
+      {
+        "path": "mcp-servers/halo-mcp/halo_mcp_server.py",
+        "line": 344,
+        "parameters": [
+          "customer",
+          "assettype_id",
+          "search",
+          "raw"
+        ],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "halo_get_asset_relationships": [
+      {
+        "path": "mcp-servers/halo-mcp/halo_mcp_server.py",
+        "line": 357,
+        "parameters": [
+          "asset",
+          "raw"
+        ],
+        "required": [
+          "asset"
+        ],
+        "kwargs": false
+      }
+    ],
+    "halo_list_clients": [
+      {
+        "path": "mcp-servers/halo-mcp/halo_mcp_server.py",
+        "line": 366,
+        "parameters": [
+          "search",
+          "raw"
+        ],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "halo_list_sites": [
+      {
+        "path": "mcp-servers/halo-mcp/halo_mcp_server.py",
+        "line": 372,
+        "parameters": [
+          "customer",
+          "search",
+          "raw"
+        ],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "halo_list_users": [
+      {
+        "path": "mcp-servers/halo-mcp/halo_mcp_server.py",
+        "line": 380,
+        "parameters": [
+          "customer",
+          "site_id",
+          "search",
+          "raw"
+        ],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "halo_list_contracts": [
+      {
+        "path": "mcp-servers/halo-mcp/halo_mcp_server.py",
+        "line": 393,
+        "parameters": [
+          "customer",
+          "raw"
+        ],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "halo_list_kb_articles": [
+      {
+        "path": "mcp-servers/halo-mcp/halo_mcp_server.py",
+        "line": 402,
+        "parameters": [
+          "search",
+          "raw"
+        ],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "halo_get_kb_article": [
+      {
+        "path": "mcp-servers/halo-mcp/halo_mcp_server.py",
+        "line": 408,
+        "parameters": [
+          "article",
+          "raw"
+        ],
+        "required": [
+          "article"
+        ],
+        "kwargs": false
+      }
+    ],
+    "style_image": [
+      {
+        "path": "mcp-servers/image-style-mcp/server.py",
+        "line": 211,
+        "parameters": [
+          "image_base64",
+          "style_prompt",
+          "negative_prompt"
+        ],
+        "required": [
+          "image_base64",
+          "style_prompt"
+        ],
+        "kwargs": false
+      }
+    ],
+    "memory_record_fact": [
+      {
+        "path": "mcp-servers/memory-mcp/memory_mcp_server.py",
+        "line": 120,
+        "parameters": [
+          "entity",
+          "key",
+          "value",
+          "metadata"
+        ],
+        "required": [
+          "entity",
+          "key",
+          "value"
+        ],
+        "kwargs": false
+      }
+    ],
+    "memory_get_facts": [
+      {
+        "path": "mcp-servers/memory-mcp/memory_mcp_server.py",
+        "line": 150,
+        "parameters": [
+          "entity",
+          "key"
+        ],
+        "required": [
+          "entity"
+        ],
+        "kwargs": false
+      }
+    ],
+    "memory_invalidate": [
+      {
+        "path": "mcp-servers/memory-mcp/memory_mcp_server.py",
+        "line": 171,
+        "parameters": [
+          "fact_id",
+          "reason"
+        ],
+        "required": [
+          "fact_id",
+          "reason"
+        ],
+        "kwargs": false
+      }
+    ],
+    "memory_timeline": [
+      {
+        "path": "mcp-servers/memory-mcp/memory_mcp_server.py",
+        "line": 197,
+        "parameters": [
+          "entity",
+          "after",
+          "before",
+          "key"
+        ],
+        "required": [
+          "entity"
+        ],
+        "kwargs": false
+      }
+    ],
+    "memory_store_session": [
+      {
+        "path": "mcp-servers/memory-mcp/memory_mcp_server.py",
+        "line": 222,
+        "parameters": [
+          "summary",
+          "entities",
+          "topics",
+          "session_id"
+        ],
+        "required": [
+          "summary"
+        ],
+        "kwargs": false
+      }
+    ],
+    "memory_recall": [
+      {
+        "path": "mcp-servers/memory-mcp/memory_mcp_server.py",
+        "line": 253,
+        "parameters": [
+          "query",
+          "top_k",
+          "min_score",
+          "after",
+          "topics"
+        ],
+        "required": [
+          "query"
+        ],
+        "kwargs": false
+      }
+    ],
+    "memory_record_decision": [
+      {
+        "path": "mcp-servers/memory-mcp/memory_mcp_server.py",
+        "line": 283,
+        "parameters": [
+          "context",
+          "decision",
+          "rationale",
+          "entities",
+          "cr_number",
+          "gait_ref"
+        ],
+        "required": [
+          "context",
+          "decision",
+          "rationale",
+          "entities"
+        ],
+        "kwargs": false
+      }
+    ],
+    "memory_get_decisions": [
+      {
+        "path": "mcp-servers/memory-mcp/memory_mcp_server.py",
+        "line": 317,
+        "parameters": [
+          "entity",
+          "after",
+          "before",
+          "limit"
+        ],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "memory_link_entities": [
+      {
+        "path": "mcp-servers/memory-mcp/memory_mcp_server.py",
+        "line": 342,
+        "parameters": [
+          "subject",
+          "predicate",
+          "object",
+          "metadata"
+        ],
+        "required": [
+          "subject",
+          "predicate",
+          "object"
+        ],
+        "kwargs": false
+      }
+    ],
+    "memory_query_graph": [
+      {
+        "path": "mcp-servers/memory-mcp/memory_mcp_server.py",
+        "line": 378,
+        "parameters": [
+          "entity",
+          "direction",
+          "predicate",
+          "depth"
+        ],
+        "required": [
+          "entity"
+        ],
+        "kwargs": false
+      }
+    ],
+    "server_info": [
+      {
+        "path": "mcp-servers/multivendor-cli-mcp/server.py",
+        "line": 82,
+        "parameters": [],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "check_command_policy": [
+      {
+        "path": "mcp-servers/multivendor-cli-mcp/server.py",
+        "line": 112,
+        "parameters": [
+          "command",
+          "platform"
+        ],
+        "required": [
+          "command"
+        ],
+        "kwargs": false
+      }
+    ],
+    "list_devices": [
+      {
+        "path": "mcp-servers/multivendor-cli-mcp/server.py",
+        "line": 138,
+        "parameters": [
+          "group",
+          "platform"
+        ],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "check_device_readiness": [
+      {
+        "path": "mcp-servers/multivendor-cli-mcp/server.py",
+        "line": 166,
+        "parameters": [
+          "device"
+        ],
+        "required": [
+          "device"
+        ],
+        "kwargs": false
+      }
+    ],
+    "run_command": [
+      {
+        "path": "mcp-servers/multivendor-cli-mcp/server.py",
+        "line": 209,
+        "parameters": [
+          "device",
+          "command",
+          "timeout_s"
+        ],
+        "required": [
+          "device",
+          "command"
+        ],
+        "kwargs": false
+      }
+    ],
+    "check_reachability": [
+      {
+        "path": "mcp-servers/multivendor-cli-mcp/server.py",
+        "line": 224,
+        "parameters": [
+          "device"
+        ],
+        "required": [
+          "device"
+        ],
+        "kwargs": false
+      }
+    ],
+    "get_facts": [
+      {
+        "path": "mcp-servers/multivendor-cli-mcp/server.py",
+        "line": 234,
+        "parameters": [
+          "device",
+          "getters",
+          "timeout_s"
+        ],
+        "required": [
+          "device"
+        ],
+        "kwargs": false
+      }
+    ],
+    "run_fleet": [
+      {
+        "path": "mcp-servers/multivendor-cli-mcp/server.py",
+        "line": 253,
+        "parameters": [
+          "target",
+          "command",
+          "getters",
+          "max_workers",
+          "timeout_s"
+        ],
+        "required": [
+          "target"
+        ],
+        "kwargs": false
+      }
+    ],
+    "apply_config": [
+      {
+        "path": "mcp-servers/multivendor-cli-mcp/server.py",
+        "line": 273,
+        "parameters": [
+          "device",
+          "config",
+          "change_request",
+          "approved_by"
+        ],
+        "required": [
+          "device",
+          "config"
+        ],
+        "kwargs": false
+      }
+    ],
+    "check_change_request": [
+      {
+        "path": "mcp-servers/multivendor-cli-mcp/server.py",
+        "line": 293,
+        "parameters": [
+          "change_request"
+        ],
+        "required": [
+          "change_request"
+        ],
+        "kwargs": false
+      }
+    ],
+    "n2n_status": [
+      {
+        "path": "mcp-servers/n2n-mcp/server.py",
+        "line": 70,
+        "parameters": [],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "n2n_posture": [
+      {
+        "path": "mcp-servers/n2n-mcp/server.py",
+        "line": 77,
+        "parameters": [],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "n2n_faults": [
+      {
+        "path": "mcp-servers/n2n-mcp/server.py",
+        "line": 87,
+        "parameters": [],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "n2n_consent": [
+      {
+        "path": "mcp-servers/n2n-mcp/server.py",
+        "line": 103,
+        "parameters": [
+          "peer",
+          "display_name",
+          "host",
+          "port"
+        ],
+        "required": [
+          "peer"
+        ],
+        "kwargs": false
+      }
+    ],
+    "n2n_kill": [
+      {
+        "path": "mcp-servers/n2n-mcp/server.py",
+        "line": 134,
+        "parameters": [
+          "peer"
+        ],
+        "required": [
+          "peer"
+        ],
+        "kwargs": false
+      }
+    ],
+    "n2n_knowledge_route": [
+      {
+        "path": "mcp-servers/n2n-mcp/server.py",
+        "line": 150,
+        "parameters": [
+          "query"
+        ],
+        "required": [
+          "query"
+        ],
+        "kwargs": false
+      }
+    ],
+    "n2n_knowledge_query": [
+      {
+        "path": "mcp-servers/n2n-mcp/server.py",
+        "line": 168,
+        "parameters": [
+          "peer",
+          "collection_id",
+          "query"
+        ],
+        "required": [
+          "peer",
+          "collection_id",
+          "query"
+        ],
+        "kwargs": false
+      }
+    ],
+    "n2n_peer_capabilities": [
+      {
+        "path": "mcp-servers/n2n-mcp/server.py",
+        "line": 187,
+        "parameters": [
+          "peer",
+          "query"
+        ],
+        "required": [
+          "peer"
+        ],
+        "kwargs": false
+      }
+    ],
+    "n2n_compare_capabilities": [
+      {
+        "path": "mcp-servers/n2n-mcp/server.py",
+        "line": 205,
+        "parameters": [
+          "peer"
+        ],
+        "required": [
+          "peer"
+        ],
+        "kwargs": false
+      }
+    ],
+    "n2n_set_visibility": [
+      {
+        "path": "mcp-servers/n2n-mcp/server.py",
+        "line": 224,
+        "parameters": [
+          "item_type",
+          "item_name",
+          "visibility",
+          "peers"
+        ],
+        "required": [
+          "item_type",
+          "item_name",
+          "visibility"
+        ],
+        "kwargs": false
+      }
+    ],
+    "n2n_grant": [
+      {
+        "path": "mcp-servers/n2n-mcp/server.py",
+        "line": 244,
+        "parameters": [
+          "peer",
+          "target_type",
+          "target_name",
+          "requires_approval",
+          "timeout_s"
+        ],
+        "required": [
+          "peer",
+          "target_type",
+          "target_name"
+        ],
+        "kwargs": false
+      }
+    ],
+    "n2n_revoke_grant": [
+      {
+        "path": "mcp-servers/n2n-mcp/server.py",
+        "line": 271,
+        "parameters": [
+          "grant_id"
+        ],
+        "required": [
+          "grant_id"
+        ],
+        "kwargs": false
+      }
+    ],
+    "n2n_list_grants": [
+      {
+        "path": "mcp-servers/n2n-mcp/server.py",
+        "line": 282,
+        "parameters": [
+          "peer"
+        ],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "n2n_invoke": [
+      {
+        "path": "mcp-servers/n2n-mcp/server.py",
+        "line": 298,
+        "parameters": [
+          "peer",
+          "target_type",
+          "target_name",
+          "arguments",
+          "input_text"
+        ],
+        "required": [
+          "peer",
+          "target_type",
+          "target_name"
+        ],
+        "kwargs": false
+      }
+    ],
+    "n2n_chat": [
+      {
+        "path": "mcp-servers/n2n-mcp/server.py",
+        "line": 324,
+        "parameters": [
+          "peer",
+          "message",
+          "session_id"
+        ],
+        "required": [
+          "peer",
+          "message"
+        ],
+        "kwargs": false
+      }
+    ],
+    "n2n_approvals": [
+      {
+        "path": "mcp-servers/n2n-mcp/server.py",
+        "line": 345,
+        "parameters": [],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "n2n_approve": [
+      {
+        "path": "mcp-servers/n2n-mcp/server.py",
+        "line": 352,
+        "parameters": [
+          "approval_id"
+        ],
+        "required": [
+          "approval_id"
+        ],
+        "kwargs": false
+      }
+    ],
+    "n2n_deny": [
+      {
+        "path": "mcp-servers/n2n-mcp/server.py",
+        "line": 363,
+        "parameters": [
+          "approval_id"
+        ],
+        "required": [
+          "approval_id"
+        ],
+        "kwargs": false
+      }
+    ],
+    "n2n_notify_phone": [
+      {
+        "path": "mcp-servers/n2n-mcp/server.py",
+        "line": 376,
+        "parameters": [
+          "peer",
+          "content",
+          "kind"
+        ],
+        "required": [
+          "peer",
+          "content"
+        ],
+        "kwargs": false
+      }
+    ],
+    "n2n_audit": [
+      {
+        "path": "mcp-servers/n2n-mcp/server.py",
+        "line": 397,
+        "parameters": [
+          "peer",
+          "limit"
+        ],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "n2n_config": [
+      {
+        "path": "mcp-servers/n2n-mcp/server.py",
+        "line": 414,
+        "parameters": [
+          "peer",
+          "chat_enabled",
+          "daily_requests",
+          "daily_tokens",
+          "rate_per_min"
+        ],
+        "required": [
+          "peer"
+        ],
+        "kwargs": false
+      }
+    ],
+    "n2n_delegate": [
+      {
+        "path": "mcp-servers/n2n-mcp/server.py",
+        "line": 443,
+        "parameters": [
+          "peer",
+          "target_name",
+          "input_text",
+          "target_type"
+        ],
+        "required": [
+          "peer",
+          "target_name"
+        ],
+        "kwargs": false
+      }
+    ],
+    "n2n_task_status": [
+      {
+        "path": "mcp-servers/n2n-mcp/server.py",
+        "line": 464,
+        "parameters": [
+          "task_id"
+        ],
+        "required": [
+          "task_id"
+        ],
+        "kwargs": false
+      }
+    ],
+    "n2n_task_result": [
+      {
+        "path": "mcp-servers/n2n-mcp/server.py",
+        "line": 471,
+        "parameters": [
+          "task_id"
+        ],
+        "required": [
+          "task_id"
+        ],
+        "kwargs": false
+      }
+    ],
+    "n2n_task_cancel": [
+      {
+        "path": "mcp-servers/n2n-mcp/server.py",
+        "line": 478,
+        "parameters": [
+          "task_id"
+        ],
+        "required": [
+          "task_id"
+        ],
+        "kwargs": false
+      }
+    ],
+    "n2n_replicate": [
+      {
+        "path": "mcp-servers/n2n-mcp/server.py",
+        "line": 486,
+        "parameters": [
+          "peer",
+          "collection_id"
+        ],
+        "required": [
+          "peer",
+          "collection_id"
+        ],
+        "kwargs": false
+      }
+    ],
+    "n2n_replicate_resync": [
+      {
+        "path": "mcp-servers/n2n-mcp/server.py",
+        "line": 508,
+        "parameters": [
+          "peer",
+          "collection_id"
+        ],
+        "required": [
+          "peer",
+          "collection_id"
+        ],
+        "kwargs": false
+      }
+    ],
+    "n2n_replicate_delete": [
+      {
+        "path": "mcp-servers/n2n-mcp/server.py",
+        "line": 527,
+        "parameters": [
+          "peer",
+          "collection_id"
+        ],
+        "required": [
+          "peer",
+          "collection_id"
+        ],
+        "kwargs": false
+      }
+    ],
+    "n2n_health": [
+      {
+        "path": "mcp-servers/n2n-mcp/server.py",
+        "line": 544,
+        "parameters": [],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "n2n_connect": [
+      {
+        "path": "mcp-servers/n2n-mcp/server.py",
+        "line": 552,
+        "parameters": [
+          "peer",
+          "host",
+          "port",
+          "display_name"
+        ],
+        "required": [
+          "peer",
+          "host",
+          "port"
+        ],
+        "kwargs": false
+      }
+    ],
+    "n2n_forget_endpoint": [
+      {
+        "path": "mcp-servers/n2n-mcp/server.py",
+        "line": 569,
+        "parameters": [
+          "peer",
+          "actor"
+        ],
+        "required": [
+          "peer"
+        ],
+        "kwargs": false
+      }
+    ],
+    "n2n_set_edge_gate": [
+      {
+        "path": "mcp-servers/n2n-mcp/server.py",
+        "line": 595,
+        "parameters": [
+          "peer",
+          "edge_gate"
+        ],
+        "required": [
+          "peer",
+          "edge_gate"
+        ],
+        "kwargs": false
+      }
+    ],
+    "n2n_trust": [
+      {
+        "path": "mcp-servers/n2n-mcp/server.py",
+        "line": 614,
+        "parameters": [
+          "peer",
+          "tools",
+          "chat"
+        ],
+        "required": [
+          "peer"
+        ],
+        "kwargs": false
+      }
+    ],
+    "n2n_risk_status": [
+      {
+        "path": "mcp-servers/n2n-mcp/server.py",
+        "line": 632,
+        "parameters": [],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "n2n_member_list": [
+      {
+        "path": "mcp-servers/n2n-mcp/server.py",
+        "line": 640,
+        "parameters": [],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "n2n_member_health": [
+      {
+        "path": "mcp-servers/n2n-mcp/server.py",
+        "line": 647,
+        "parameters": [
+          "member_id"
+        ],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "n2n_member_add": [
+      {
+        "path": "mcp-servers/n2n-mcp/server.py",
+        "line": 659,
+        "parameters": [
+          "name",
+          "profile",
+          "specialty",
+          "ttl_seconds",
+          "launch_cmd",
+          "on_demand"
+        ],
+        "required": [
+          "name"
+        ],
+        "kwargs": false
+      }
+    ],
+    "n2n_enroll_token": [
+      {
+        "path": "mcp-servers/n2n-mcp/server.py",
+        "line": 694,
+        "parameters": [
+          "label",
+          "ttl_seconds"
+        ],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "n2n_member_remove": [
+      {
+        "path": "mcp-servers/n2n-mcp/server.py",
+        "line": 707,
+        "parameters": [
+          "member_id"
+        ],
+        "required": [
+          "member_id"
+        ],
+        "kwargs": false
+      }
+    ],
+    "n2n_route": [
+      {
+        "path": "mcp-servers/n2n-mcp/server.py",
+        "line": 715,
+        "parameters": [
+          "request_text",
+          "target_hint"
+        ],
+        "required": [
+          "request_text"
+        ],
+        "kwargs": false
+      }
+    ],
+    "golden_config_generate_intended": [
+      {
+        "path": "mcp-servers/nautobot-golden-config-mcp/server.py",
+        "line": 95,
+        "parameters": [
+          "device"
+        ],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "golden_config_backup": [
+      {
+        "path": "mcp-servers/nautobot-golden-config-mcp/server.py",
+        "line": 119,
+        "parameters": [
+          "device"
+        ],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "golden_config_compliance": [
+      {
+        "path": "mcp-servers/nautobot-golden-config-mcp/server.py",
+        "line": 143,
+        "parameters": [
+          "device"
+        ],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "golden_config_full_pipeline": [
+      {
+        "path": "mcp-servers/nautobot-golden-config-mcp/server.py",
+        "line": 191,
+        "parameters": [
+          "device"
+        ],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "golden_config_remediate": [
+      {
+        "path": "mcp-servers/nautobot-golden-config-mcp/server.py",
+        "line": 257,
+        "parameters": [
+          "device",
+          "cr_number"
+        ],
+        "required": [
+          "device"
+        ],
+        "kwargs": false
+      }
+    ],
+    "golden_config_get_intended": [
+      {
+        "path": "mcp-servers/nautobot-golden-config-mcp/server.py",
+        "line": 315,
+        "parameters": [
+          "device"
+        ],
+        "required": [
+          "device"
+        ],
+        "kwargs": false
+      }
+    ],
+    "golden_config_get_backup": [
+      {
+        "path": "mcp-servers/nautobot-golden-config-mcp/server.py",
+        "line": 344,
+        "parameters": [
+          "device"
+        ],
+        "required": [
+          "device"
+        ],
+        "kwargs": false
+      }
+    ],
+    "golden_config_get_compliance_diff": [
+      {
+        "path": "mcp-servers/nautobot-golden-config-mcp/server.py",
+        "line": 372,
+        "parameters": [
+          "device"
+        ],
+        "required": [
+          "device"
+        ],
+        "kwargs": false
+      }
+    ],
+    "golden_config_get_compliance_summary": [
+      {
+        "path": "mcp-servers/nautobot-golden-config-mcp/server.py",
+        "line": 418,
+        "parameters": [
+          "device",
+          "feature"
+        ],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "golden_config_get_templates": [
+      {
+        "path": "mcp-servers/nautobot-golden-config-mcp/server.py",
+        "line": 474,
+        "parameters": [
+          "device"
+        ],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "golden_config_render_preview": [
+      {
+        "path": "mcp-servers/nautobot-golden-config-mcp/server.py",
+        "line": 528,
+        "parameters": [
+          "device"
+        ],
+        "required": [
+          "device"
+        ],
+        "kwargs": false
+      }
+    ],
+    "golden_config_get_device_context": [
+      {
+        "path": "mcp-servers/nautobot-golden-config-mcp/server.py",
+        "line": 559,
+        "parameters": [
+          "device"
+        ],
+        "required": [
+          "device"
+        ],
+        "kwargs": false
+      }
+    ],
+    "golden_config_update_device_context": [
+      {
+        "path": "mcp-servers/nautobot-golden-config-mcp/server.py",
+        "line": 586,
+        "parameters": [
+          "device",
+          "key",
+          "value",
+          "cr_number"
+        ],
+        "required": [
+          "device",
+          "key",
+          "value"
+        ],
+        "kwargs": false
+      }
+    ],
+    "golden_config_update_template": [
+      {
+        "path": "mcp-servers/nautobot-golden-config-mcp/server.py",
+        "line": 692,
+        "parameters": [
+          "path",
+          "content",
+          "commit_message",
+          "cr_number"
+        ],
+        "required": [
+          "path",
+          "content"
+        ],
+        "kwargs": false
+      }
+    ],
+    "golden_config_get_settings": [
+      {
+        "path": "mcp-servers/nautobot-golden-config-mcp/server.py",
+        "line": 737,
+        "parameters": [],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "golden_config_create_compliance_feature": [
+      {
+        "path": "mcp-servers/nautobot-golden-config-mcp/server.py",
+        "line": 770,
+        "parameters": [
+          "name",
+          "description",
+          "cr_number"
+        ],
+        "required": [
+          "name"
+        ],
+        "kwargs": false
+      }
+    ],
+    "golden_config_create_compliance_rule": [
+      {
+        "path": "mcp-servers/nautobot-golden-config-mcp/server.py",
+        "line": 801,
+        "parameters": [
+          "feature",
+          "platform",
+          "match_config",
+          "config_ordered",
+          "config_remediation",
+          "description",
+          "cr_number"
+        ],
+        "required": [
+          "feature",
+          "platform",
+          "match_config"
+        ],
+        "kwargs": false
+      }
+    ],
+    "nautobot_test_connection": [
+      {
+        "path": "mcp-servers/nautobot-mcp-v2/server.py",
+        "line": 71,
+        "parameters": [],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "nautobot_get_devices": [
+      {
+        "path": "mcp-servers/nautobot-mcp-v2/server.py",
+        "line": 90,
+        "parameters": [
+          "name",
+          "location",
+          "role",
+          "platform",
+          "status",
+          "q",
+          "limit",
+          "offset"
+        ],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "nautobot_get_interfaces": [
+      {
+        "path": "mcp-servers/nautobot-mcp-v2/server.py",
+        "line": 122,
+        "parameters": [
+          "device",
+          "name",
+          "type",
+          "enabled",
+          "status",
+          "has_ip_addresses",
+          "limit",
+          "offset"
+        ],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "nautobot_get_vlans": [
+      {
+        "path": "mcp-servers/nautobot-mcp-v2/server.py",
+        "line": 158,
+        "parameters": [
+          "vid",
+          "name",
+          "location",
+          "vlan_group",
+          "status",
+          "limit",
+          "offset"
+        ],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "nautobot_get_prefixes": [
+      {
+        "path": "mcp-servers/nautobot-mcp-v2/server.py",
+        "line": 188,
+        "parameters": [
+          "prefix",
+          "status",
+          "location",
+          "tenant",
+          "limit",
+          "offset"
+        ],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "nautobot_get_ip_addresses": [
+      {
+        "path": "mcp-servers/nautobot-mcp-v2/server.py",
+        "line": 217,
+        "parameters": [
+          "address",
+          "status",
+          "q",
+          "limit",
+          "offset"
+        ],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "nautobot_get_cables": [
+      {
+        "path": "mcp-servers/nautobot-mcp-v2/server.py",
+        "line": 244,
+        "parameters": [
+          "device",
+          "status",
+          "limit",
+          "offset"
+        ],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "nautobot_graphql": [
+      {
+        "path": "mcp-servers/nautobot-mcp-v2/server.py",
+        "line": 321,
+        "parameters": [
+          "query",
+          "variables"
+        ],
+        "required": [
+          "query"
+        ],
+        "kwargs": false
+      }
+    ],
+    "nautobot_create_ip_address": [
+      {
+        "path": "mcp-servers/nautobot-mcp-v2/server.py",
+        "line": 343,
+        "parameters": [
+          "address",
+          "status",
+          "device",
+          "interface",
+          "dns_name",
+          "description",
+          "tenant",
+          "namespace",
+          "cr_number"
+        ],
+        "required": [
+          "address"
+        ],
+        "kwargs": false
+      }
+    ],
+    "nautobot_create_vlan": [
+      {
+        "path": "mcp-servers/nautobot-mcp-v2/server.py",
+        "line": 393,
+        "parameters": [
+          "vid",
+          "name",
+          "status",
+          "location",
+          "vlan_group",
+          "tenant",
+          "description",
+          "cr_number"
+        ],
+        "required": [
+          "vid",
+          "name"
+        ],
+        "kwargs": false
+      }
+    ],
+    "nautobot_create_prefix": [
+      {
+        "path": "mcp-servers/nautobot-mcp-v2/server.py",
+        "line": 439,
+        "parameters": [
+          "prefix",
+          "status",
+          "location",
+          "tenant",
+          "namespace",
+          "description",
+          "cr_number"
+        ],
+        "required": [
+          "prefix"
+        ],
+        "kwargs": false
+      }
+    ],
+    "nautobot_update_object": [
+      {
+        "path": "mcp-servers/nautobot-mcp-v2/server.py",
+        "line": 517,
+        "parameters": [
+          "object_type",
+          "identifier",
+          "updates",
+          "cr_number"
+        ],
+        "required": [
+          "object_type",
+          "identifier",
+          "updates"
+        ],
+        "kwargs": false
+      }
+    ],
+    "nautobot_reconcile": [
+      {
+        "path": "mcp-servers/nautobot-mcp-v2/server.py",
+        "line": 619,
+        "parameters": [
+          "device_name",
+          "live_interfaces"
+        ],
+        "required": [
+          "device_name",
+          "live_interfaces"
+        ],
+        "kwargs": false
+      }
+    ],
+    "cisco_design_reference": [
+      {
+        "path": "mcp-servers/nautobot-mcp-v2/server.py",
+        "line": 664,
+        "parameters": [
+          "feature"
+        ],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "golden_config_get_template": [
+      {
+        "path": "mcp-servers/nautobot-mcp-v2/server.py",
+        "line": 689,
+        "parameters": [
+          "template_path"
+        ],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "nautobot_get_golden_configs": [
+      {
+        "path": "mcp-servers/nautobot-mcp-v2/server.py",
+        "line": 725,
+        "parameters": [
+          "device",
+          "limit",
+          "offset"
+        ],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "nautobot_get_config_compliance": [
+      {
+        "path": "mcp-servers/nautobot-mcp-v2/server.py",
+        "line": 757,
+        "parameters": [
+          "device",
+          "limit",
+          "offset"
+        ],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "nautobot_get_compliance_rules": [
+      {
+        "path": "mcp-servers/nautobot-mcp-v2/server.py",
+        "line": 791,
+        "parameters": [
+          "limit",
+          "offset"
+        ],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "nautobot_get_golden_config_settings": [
+      {
+        "path": "mcp-servers/nautobot-mcp-v2/server.py",
+        "line": 820,
+        "parameters": [],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "nautobot_get_git_repositories": [
+      {
+        "path": "mcp-servers/nautobot-mcp-v2/server.py",
+        "line": 836,
+        "parameters": [],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "nautobot_get_graphql_queries": [
+      {
+        "path": "mcp-servers/nautobot-mcp-v2/server.py",
+        "line": 848,
+        "parameters": [],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "nautobot_create_compliance_feature": [
+      {
+        "path": "mcp-servers/nautobot-mcp-v2/server.py",
+        "line": 860,
+        "parameters": [
+          "name",
+          "slug",
+          "description",
+          "cr_number"
+        ],
+        "required": [
+          "name"
+        ],
+        "kwargs": false
+      }
+    ],
+    "nautobot_create_compliance_rule": [
+      {
+        "path": "mcp-servers/nautobot-mcp-v2/server.py",
+        "line": 886,
+        "parameters": [
+          "feature",
+          "platform",
+          "match_config",
+          "config_type",
+          "config_ordered",
+          "config_remediation",
+          "description",
+          "cr_number"
+        ],
+        "required": [
+          "feature",
+          "platform",
+          "match_config"
+        ],
+        "kwargs": false
+      }
+    ],
+    "nautobot_create_git_repository": [
+      {
+        "path": "mcp-servers/nautobot-mcp-v2/server.py",
+        "line": 939,
+        "parameters": [
+          "name",
+          "remote_url",
+          "provided_contents",
+          "branch",
+          "cr_number"
+        ],
+        "required": [
+          "name",
+          "remote_url",
+          "provided_contents"
+        ],
+        "kwargs": false
+      }
+    ],
+    "nautobot_create_graphql_query": [
+      {
+        "path": "mcp-servers/nautobot-mcp-v2/server.py",
+        "line": 974,
+        "parameters": [
+          "name",
+          "query",
+          "cr_number"
+        ],
+        "required": [
+          "name",
+          "query"
+        ],
+        "kwargs": false
+      }
+    ],
+    "nautobot_update_golden_config_setting": [
+      {
+        "path": "mcp-servers/nautobot-mcp-v2/server.py",
+        "line": 996,
+        "parameters": [
+          "setting_id",
+          "updates",
+          "cr_number"
+        ],
+        "required": [
+          "setting_id",
+          "updates"
+        ],
+        "kwargs": false
+      }
+    ],
+    "nautobot_run_job": [
+      {
+        "path": "mcp-servers/nautobot-mcp-v2/server.py",
+        "line": 1039,
+        "parameters": [
+          "job_id",
+          "data",
+          "cr_number"
+        ],
+        "required": [
+          "job_id"
+        ],
+        "kwargs": false
+      }
+    ],
+    "nautobot_get_job_result": [
+      {
+        "path": "mcp-servers/nautobot-mcp-v2/server.py",
+        "line": 1062,
+        "parameters": [
+          "job_result_id"
+        ],
+        "required": [
+          "job_result_id"
+        ],
+        "kwargs": false
+      }
+    ],
+    "nautobot_list_jobs": [
+      {
+        "path": "mcp-servers/nautobot-mcp-v2/server.py",
+        "line": 1083,
+        "parameters": [
+          "q",
+          "limit"
+        ],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "nautobot_enable_job": [
+      {
+        "path": "mcp-servers/nautobot-mcp-v2/server.py",
+        "line": 1102,
+        "parameters": [
+          "job_id",
+          "enable_all",
+          "enabled"
+        ],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "nautobot_sync_git_repository": [
+      {
+        "path": "mcp-servers/nautobot-mcp-v2/server.py",
+        "line": 1151,
+        "parameters": [
+          "repository_id",
+          "cr_number"
+        ],
+        "required": [
+          "repository_id"
+        ],
+        "kwargs": false
+      }
+    ],
+    "nautobot_update_git_repository": [
+      {
+        "path": "mcp-servers/nautobot-mcp-v2/server.py",
+        "line": 1171,
+        "parameters": [
+          "repository_id",
+          "updates",
+          "cr_number"
+        ],
+        "required": [
+          "repository_id",
+          "updates"
+        ],
+        "kwargs": false
+      }
+    ],
+    "nautobot_get_config_contexts": [
+      {
+        "path": "mcp-servers/nautobot-mcp-v2/server.py",
+        "line": 1210,
+        "parameters": [
+          "name",
+          "limit"
+        ],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "nautobot_get_config_context_detail": [
+      {
+        "path": "mcp-servers/nautobot-mcp-v2/server.py",
+        "line": 1238,
+        "parameters": [
+          "config_context_id"
+        ],
+        "required": [
+          "config_context_id"
+        ],
+        "kwargs": false
+      }
+    ],
+    "nautobot_create_config_context": [
+      {
+        "path": "mcp-servers/nautobot-mcp-v2/server.py",
+        "line": 1249,
+        "parameters": [
+          "name",
+          "data",
+          "roles",
+          "locations",
+          "platforms",
+          "description",
+          "cr_number"
+        ],
+        "required": [
+          "name",
+          "data"
+        ],
+        "kwargs": false
+      }
+    ],
+    "nautobot_update_config_context": [
+      {
+        "path": "mcp-servers/nautobot-mcp-v2/server.py",
+        "line": 1300,
+        "parameters": [
+          "config_context_id",
+          "updates",
+          "cr_number"
+        ],
+        "required": [
+          "config_context_id",
+          "updates"
+        ],
+        "kwargs": false
+      }
+    ],
+    "nautobot_get_dynamic_group_members": [
+      {
+        "path": "mcp-servers/nautobot-mcp-v2/server.py",
+        "line": 1329,
+        "parameters": [
+          "dynamic_group_id"
+        ],
+        "required": [
+          "dynamic_group_id"
+        ],
+        "kwargs": false
+      }
+    ],
+    "nautobot_create_secret": [
+      {
+        "path": "mcp-servers/nautobot-mcp-v2/server.py",
+        "line": 1347,
+        "parameters": [
+          "name",
+          "provider",
+          "parameters",
+          "description",
+          "cr_number"
+        ],
+        "required": [
+          "name",
+          "provider",
+          "parameters"
+        ],
+        "kwargs": false
+      }
+    ],
+    "nautobot_create_secrets_group": [
+      {
+        "path": "mcp-servers/nautobot-mcp-v2/server.py",
+        "line": 1383,
+        "parameters": [
+          "name",
+          "description",
+          "cr_number"
+        ],
+        "required": [
+          "name"
+        ],
+        "kwargs": false
+      }
+    ],
+    "nautobot_add_secret_to_group": [
+      {
+        "path": "mcp-servers/nautobot-mcp-v2/server.py",
+        "line": 1404,
+        "parameters": [
+          "secrets_group_id",
+          "secret_id",
+          "access_type",
+          "secret_type",
+          "cr_number"
+        ],
+        "required": [
+          "secrets_group_id",
+          "secret_id",
+          "access_type",
+          "secret_type"
+        ],
+        "kwargs": false
+      }
+    ],
+    "nautobot_get_firewall_policies": [
+      {
+        "path": "mcp-servers/nautobot-mcp-v2/server.py",
+        "line": 1439,
+        "parameters": [
+          "device",
+          "limit",
+          "offset"
+        ],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "nautobot_get_firewall_zones": [
+      {
+        "path": "mcp-servers/nautobot-mcp-v2/server.py",
+        "line": 1479,
+        "parameters": [
+          "limit",
+          "offset"
+        ],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "nautobot_get_nat_policies": [
+      {
+        "path": "mcp-servers/nautobot-mcp-v2/server.py",
+        "line": 1502,
+        "parameters": [
+          "limit",
+          "offset"
+        ],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "nautobot_get_bgp_routing": [
+      {
+        "path": "mcp-servers/nautobot-mcp-v2/server.py",
+        "line": 1535,
+        "parameters": [
+          "device",
+          "limit",
+          "offset"
+        ],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "nautobot_get_autonomous_systems": [
+      {
+        "path": "mcp-servers/nautobot-mcp-v2/server.py",
+        "line": 1578,
+        "parameters": [
+          "limit",
+          "offset"
+        ],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "nautobot_get_ospf_routing": [
+      {
+        "path": "mcp-servers/nautobot-mcp-v2/server.py",
+        "line": 1603,
+        "parameters": [
+          "limit",
+          "offset"
+        ],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "nautobot_get_virtual_machines": [
+      {
+        "path": "mcp-servers/nautobot-mcp-v2/server.py",
+        "line": 1636,
+        "parameters": [
+          "name",
+          "cluster",
+          "role",
+          "status",
+          "limit",
+          "offset"
+        ],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "nautobot_create_virtual_machine": [
+      {
+        "path": "mcp-servers/nautobot-mcp-v2/server.py",
+        "line": 1667,
+        "parameters": [
+          "name",
+          "cluster",
+          "role",
+          "status",
+          "vcpus",
+          "memory",
+          "disk",
+          "comments",
+          "cr_number"
+        ],
+        "required": [
+          "name",
+          "cluster"
+        ],
+        "kwargs": false
+      }
+    ],
+    "nautobot_create_vm_interface": [
+      {
+        "path": "mcp-servers/nautobot-mcp-v2/server.py",
+        "line": 1723,
+        "parameters": [
+          "virtual_machine",
+          "name",
+          "enabled",
+          "description",
+          "cr_number"
+        ],
+        "required": [
+          "virtual_machine",
+          "name"
+        ],
+        "kwargs": false
+      }
+    ],
+    "nautobot_assign_ip_to_vm": [
+      {
+        "path": "mcp-servers/nautobot-mcp-v2/server.py",
+        "line": 1762,
+        "parameters": [
+          "virtual_machine",
+          "interface",
+          "address",
+          "status",
+          "namespace",
+          "set_primary",
+          "cr_number"
+        ],
+        "required": [
+          "virtual_machine",
+          "interface",
+          "address"
+        ],
+        "kwargs": false
+      }
+    ],
+    "nautobot_create": [
+      {
+        "path": "mcp-servers/nautobot-mcp-v2/server.py",
+        "line": 2122,
+        "parameters": [
+          "object_type",
+          "data",
+          "cr_number"
+        ],
+        "required": [
+          "object_type",
+          "data"
+        ],
+        "kwargs": false
+      }
+    ],
+    "nautobot_delete": [
+      {
+        "path": "mcp-servers/nautobot-mcp-v2/server.py",
+        "line": 2223,
+        "parameters": [
+          "object_type",
+          "identifier",
+          "cr_number"
+        ],
+        "required": [
+          "object_type",
+          "identifier"
+        ],
+        "kwargs": false
+      }
+    ],
+    "nautobot_get_schema": [
+      {
+        "path": "mcp-servers/nautobot-mcp-v2/server.py",
+        "line": 2321,
+        "parameters": [
+          "object_type"
+        ],
+        "required": [
+          "object_type"
+        ],
+        "kwargs": false
+      }
+    ],
+    "nautobot_get_device_config_context": [
+      {
+        "path": "mcp-servers/nautobot-mcp-v2/server.py",
+        "line": 2376,
+        "parameters": [
+          "device"
+        ],
+        "required": [
+          "device"
+        ],
+        "kwargs": false
+      }
+    ],
+    "nautobot_create_bgp_peering": [
+      {
+        "path": "mcp-servers/nautobot-mcp-v2/server.py",
+        "line": 2405,
+        "parameters": [
+          "device",
+          "local_ip",
+          "peer_ip",
+          "peer_asn",
+          "peer_group",
+          "local_asn",
+          "description",
+          "address_families"
+        ],
+        "required": [
+          "device",
+          "local_ip",
+          "peer_ip",
+          "peer_asn"
+        ],
+        "kwargs": false
+      }
+    ],
+    "nautobot_create_interface": [
+      {
+        "path": "mcp-servers/nautobot-mcp-v2/server.py",
+        "line": 2528,
+        "parameters": [
+          "device",
+          "name",
+          "interface_type",
+          "ip_address",
+          "description",
+          "enabled"
+        ],
+        "required": [
+          "device",
+          "name"
+        ],
+        "kwargs": false
+      }
+    ],
+    "nautobot_create_autonomous_system": [
+      {
+        "path": "mcp-servers/nautobot-mcp-v2/server.py",
+        "line": 2609,
+        "parameters": [
+          "asn",
+          "description"
+        ],
+        "required": [
+          "asn"
+        ],
+        "kwargs": false
+      }
+    ],
+    "nautobot_create_bgp_peer_group": [
+      {
+        "path": "mcp-servers/nautobot-mcp-v2/server.py",
+        "line": 2636,
+        "parameters": [
+          "name",
+          "device",
+          "remote_asn",
+          "source_interface",
+          "description",
+          "address_families"
+        ],
+        "required": [
+          "name",
+          "device"
+        ],
+        "kwargs": false
+      }
+    ],
+    "nautobot_render_device_config": [
+      {
+        "path": "mcp-servers/nautobot-mcp-v2/server.py",
+        "line": 2708,
+        "parameters": [
+          "device"
+        ],
+        "required": [
+          "device"
+        ],
+        "kwargs": false
+      }
+    ],
+    "routing_get_bgp_summary": [
+      {
+        "path": "mcp-servers/nautobot-routing-mcp/server.py",
+        "line": 70,
+        "parameters": [
+          "device"
+        ],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "routing_get_bgp_peers": [
+      {
+        "path": "mcp-servers/nautobot-routing-mcp/server.py",
+        "line": 137,
+        "parameters": [
+          "device"
+        ],
+        "required": [
+          "device"
+        ],
+        "kwargs": false
+      }
+    ],
+    "routing_get_bgp_peer_detail": [
+      {
+        "path": "mcp-servers/nautobot-routing-mcp/server.py",
+        "line": 193,
+        "parameters": [
+          "device",
+          "peer_ip"
+        ],
+        "required": [
+          "device",
+          "peer_ip"
+        ],
+        "kwargs": false
+      }
+    ],
+    "routing_get_peer_groups": [
+      {
+        "path": "mcp-servers/nautobot-routing-mcp/server.py",
+        "line": 237,
+        "parameters": [
+          "device"
+        ],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "routing_get_autonomous_systems": [
+      {
+        "path": "mcp-servers/nautobot-routing-mcp/server.py",
+        "line": 289,
+        "parameters": [],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "routing_create_autonomous_system": [
+      {
+        "path": "mcp-servers/nautobot-routing-mcp/server.py",
+        "line": 307,
+        "parameters": [
+          "asn",
+          "description",
+          "cr_number"
+        ],
+        "required": [
+          "asn"
+        ],
+        "kwargs": false
+      }
+    ],
+    "routing_create_routing_instance": [
+      {
+        "path": "mcp-servers/nautobot-routing-mcp/server.py",
+        "line": 340,
+        "parameters": [
+          "device",
+          "asn",
+          "router_id",
+          "cr_number"
+        ],
+        "required": [
+          "device",
+          "asn"
+        ],
+        "kwargs": false
+      }
+    ],
+    "routing_create_peering": [
+      {
+        "path": "mcp-servers/nautobot-routing-mcp/server.py",
+        "line": 391,
+        "parameters": [
+          "device",
+          "local_ip",
+          "peer_ip",
+          "peer_asn",
+          "peer_group",
+          "afi",
+          "description",
+          "cr_number"
+        ],
+        "required": [
+          "device",
+          "local_ip",
+          "peer_ip",
+          "peer_asn"
+        ],
+        "kwargs": false
+      }
+    ],
+    "routing_delete_peering": [
+      {
+        "path": "mcp-servers/nautobot-routing-mcp/server.py",
+        "line": 506,
+        "parameters": [
+          "device",
+          "peer_ip",
+          "cr_number"
+        ],
+        "required": [
+          "device",
+          "peer_ip"
+        ],
+        "kwargs": false
+      }
+    ],
+    "routing_create_peer_group": [
+      {
+        "path": "mcp-servers/nautobot-routing-mcp/server.py",
+        "line": 543,
+        "parameters": [
+          "device",
+          "name",
+          "remote_asn",
+          "source_interface",
+          "afi",
+          "description",
+          "cr_number"
+        ],
+        "required": [
+          "device",
+          "name"
+        ],
+        "kwargs": false
+      }
+    ],
+    "routing_delete_peer_group": [
+      {
+        "path": "mcp-servers/nautobot-routing-mcp/server.py",
+        "line": 616,
+        "parameters": [
+          "device",
+          "name",
+          "cr_number"
+        ],
+        "required": [
+          "device",
+          "name"
+        ],
+        "kwargs": false
+      }
+    ],
+    "routing_add_peer_to_group": [
+      {
+        "path": "mcp-servers/nautobot-routing-mcp/server.py",
+        "line": 645,
+        "parameters": [
+          "device",
+          "peer_ip",
+          "group",
+          "cr_number"
+        ],
+        "required": [
+          "device",
+          "peer_ip",
+          "group"
+        ],
+        "kwargs": false
+      }
+    ],
+    "routing_remove_peer_from_group": [
+      {
+        "path": "mcp-servers/nautobot-routing-mcp/server.py",
+        "line": 683,
+        "parameters": [
+          "device",
+          "peer_ip",
+          "cr_number"
+        ],
+        "required": [
+          "device",
+          "peer_ip"
+        ],
+        "kwargs": false
+      }
+    ],
+    "routing_reconcile_bgp": [
+      {
+        "path": "mcp-servers/nautobot-routing-mcp/server.py",
+        "line": 724,
+        "parameters": [
+          "device",
+          "live_peers"
+        ],
+        "required": [
+          "device",
+          "live_peers"
+        ],
+        "kwargs": false
+      }
+    ],
+    "nsm_status": [
+      {
+        "path": "mcp-servers/nsm-mcp/server.py",
+        "line": 69,
+        "parameters": [],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "nsm_update_rules": [
+      {
+        "path": "mcp-servers/nsm-mcp/server.py",
+        "line": 95,
+        "parameters": [],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "nsm_analyze": [
+      {
+        "path": "mcp-servers/nsm-mcp/server.py",
+        "line": 111,
+        "parameters": [
+          "pcap",
+          "ignore_checksums"
+        ],
+        "required": [
+          "pcap"
+        ],
+        "kwargs": false
+      }
+    ],
+    "nsm_sessions": [
+      {
+        "path": "mcp-servers/nsm-mcp/server.py",
+        "line": 151,
+        "parameters": [
+          "pcap",
+          "ignore_checksums",
+          "limit",
+          "service"
+        ],
+        "required": [
+          "pcap"
+        ],
+        "kwargs": false
+      }
+    ],
+    "nsm_protocol_log": [
+      {
+        "path": "mcp-servers/nsm-mcp/server.py",
+        "line": 183,
+        "parameters": [
+          "pcap",
+          "log",
+          "ignore_checksums",
+          "limit",
+          "uid"
+        ],
+        "required": [
+          "pcap",
+          "log"
+        ],
+        "kwargs": false
+      }
+    ],
+    "nsm_alerts": [
+      {
+        "path": "mcp-servers/nsm-mcp/server.py",
+        "line": 212,
+        "parameters": [
+          "pcap",
+          "limit",
+          "min_severity"
+        ],
+        "required": [
+          "pcap"
+        ],
+        "kwargs": false
+      }
+    ],
+    "list_pcaps": [
+      {
+        "path": "mcp-servers/packet-buddy-mcp/server.py",
+        "line": 56,
+        "parameters": [],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "pcap_summary": [
+      {
+        "path": "mcp-servers/packet-buddy-mcp/server.py",
+        "line": 74,
+        "parameters": [
+          "pcap_file"
+        ],
+        "required": [
+          "pcap_file"
+        ],
+        "kwargs": false
+      }
+    ],
+    "pcap_protocol_hierarchy": [
+      {
+        "path": "mcp-servers/packet-buddy-mcp/server.py",
+        "line": 92,
+        "parameters": [
+          "pcap_file"
+        ],
+        "required": [
+          "pcap_file"
+        ],
+        "kwargs": false
+      }
+    ],
+    "pcap_conversations": [
+      {
+        "path": "mcp-servers/packet-buddy-mcp/server.py",
+        "line": 103,
+        "parameters": [
+          "pcap_file",
+          "layer"
+        ],
+        "required": [
+          "pcap_file"
+        ],
+        "kwargs": false
+      }
+    ],
+    "pcap_endpoints": [
+      {
+        "path": "mcp-servers/packet-buddy-mcp/server.py",
+        "line": 118,
+        "parameters": [
+          "pcap_file",
+          "layer"
+        ],
+        "required": [
+          "pcap_file"
+        ],
+        "kwargs": false
+      }
+    ],
+    "pcap_filter": [
+      {
+        "path": "mcp-servers/packet-buddy-mcp/server.py",
+        "line": 133,
+        "parameters": [
+          "pcap_file",
+          "display_filter",
+          "max_packets"
+        ],
+        "required": [
+          "pcap_file",
+          "display_filter"
+        ],
+        "kwargs": false
+      }
+    ],
+    "pcap_packet_detail": [
+      {
+        "path": "mcp-servers/packet-buddy-mcp/server.py",
+        "line": 150,
+        "parameters": [
+          "pcap_file",
+          "packet_number"
+        ],
+        "required": [
+          "pcap_file",
+          "packet_number"
+        ],
+        "kwargs": false
+      }
+    ],
+    "pcap_dns_queries": [
+      {
+        "path": "mcp-servers/packet-buddy-mcp/server.py",
+        "line": 168,
+        "parameters": [
+          "pcap_file"
+        ],
+        "required": [
+          "pcap_file"
+        ],
+        "kwargs": false
+      }
+    ],
+    "pcap_http_requests": [
+      {
+        "path": "mcp-servers/packet-buddy-mcp/server.py",
+        "line": 186,
+        "parameters": [
+          "pcap_file"
+        ],
+        "required": [
+          "pcap_file"
+        ],
+        "kwargs": false
+      }
+    ],
+    "pcap_to_json": [
+      {
+        "path": "mcp-servers/packet-buddy-mcp/server.py",
+        "line": 206,
+        "parameters": [
+          "pcap_file",
+          "display_filter",
+          "max_packets"
+        ],
+        "required": [
+          "pcap_file"
+        ],
+        "kwargs": false
+      }
+    ],
+    "pcap_expert_info": [
+      {
+        "path": "mcp-servers/packet-buddy-mcp/server.py",
+        "line": 224,
+        "parameters": [
+          "pcap_file"
+        ],
+        "required": [
+          "pcap_file"
+        ],
+        "kwargs": false
+      }
+    ],
+    "save_pcap_from_base64": [
+      {
+        "path": "mcp-servers/packet-buddy-mcp/server.py",
+        "line": 235,
+        "parameters": [
+          "filename",
+          "base64_data"
+        ],
+        "required": [
+          "filename",
+          "base64_data"
+        ],
+        "kwargs": false
+      }
+    ],
+    "bgp_get_peers": [
+      {
+        "path": "mcp-servers/protocol-mcp/server.py",
+        "line": 184,
+        "parameters": [],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "bgp_get_rib": [
+      {
+        "path": "mcp-servers/protocol-mcp/server.py",
+        "line": 216,
+        "parameters": [
+          "prefix"
+        ],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "bgp_inject_route": [
+      {
+        "path": "mcp-servers/protocol-mcp/server.py",
+        "line": 235,
+        "parameters": [
+          "network",
+          "next_hop",
+          "as_path",
+          "local_pref"
+        ],
+        "required": [
+          "network"
+        ],
+        "kwargs": false
+      }
+    ],
+    "bgp_withdraw_route": [
+      {
+        "path": "mcp-servers/protocol-mcp/server.py",
+        "line": 271,
+        "parameters": [
+          "network"
+        ],
+        "required": [
+          "network"
+        ],
+        "kwargs": false
+      }
+    ],
+    "bgp_adjust_local_pref": [
+      {
+        "path": "mcp-servers/protocol-mcp/server.py",
+        "line": 289,
+        "parameters": [
+          "network",
+          "local_pref"
+        ],
+        "required": [
+          "network",
+          "local_pref"
+        ],
+        "kwargs": false
+      }
+    ],
+    "ospf_get_neighbors": [
+      {
+        "path": "mcp-servers/protocol-mcp/server.py",
+        "line": 306,
+        "parameters": [],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "ospf_get_lsdb": [
+      {
+        "path": "mcp-servers/protocol-mcp/server.py",
+        "line": 316,
+        "parameters": [],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "ospf_adjust_cost": [
+      {
+        "path": "mcp-servers/protocol-mcp/server.py",
+        "line": 326,
+        "parameters": [
+          "interface",
+          "cost"
+        ],
+        "required": [
+          "interface",
+          "cost"
+        ],
+        "kwargs": false
+      }
+    ],
+    "gre_tunnel_status": [
+      {
+        "path": "mcp-servers/protocol-mcp/server.py",
+        "line": 344,
+        "parameters": [],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "protocol_summary": [
+      {
+        "path": "mcp-servers/protocol-mcp/server.py",
+        "line": 378,
+        "parameters": [],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "rag_ingest": [
+      {
+        "path": "mcp-servers/rag-mcp/rag_mcp_server.py",
+        "line": 286,
+        "parameters": [
+          "file_path",
+          "doc_type",
+          "title",
+          "version",
+          "source"
+        ],
+        "required": [
+          "file_path"
+        ],
+        "kwargs": false
+      }
+    ],
+    "rag_ingest_base64": [
+      {
+        "path": "mcp-servers/rag-mcp/rag_mcp_server.py",
+        "line": 327,
+        "parameters": [
+          "filename",
+          "content_base64",
+          "doc_type",
+          "title",
+          "version"
+        ],
+        "required": [
+          "filename",
+          "content_base64"
+        ],
+        "kwargs": false
+      }
+    ],
+    "rag_ingest_url": [
+      {
+        "path": "mcp-servers/rag-mcp/rag_mcp_server.py",
+        "line": 444,
+        "parameters": [
+          "url",
+          "mode",
+          "include_linked",
+          "scope_token",
+          "doc_type",
+          "title"
+        ],
+        "required": [
+          "url"
+        ],
+        "kwargs": false
+      }
+    ],
+    "rag_search": [
+      {
+        "path": "mcp-servers/rag-mcp/rag_mcp_server.py",
+        "line": 599,
+        "parameters": [
+          "query",
+          "k",
+          "collection",
+          "filters",
+          "round",
+          "sub_query_id"
+        ],
+        "required": [
+          "query"
+        ],
+        "kwargs": false
+      }
+    ],
+    "rag_list": [
+      {
+        "path": "mcp-servers/rag-mcp/rag_mcp_server.py",
+        "line": 699,
+        "parameters": [
+          "kind"
+        ],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "rag_stats": [
+      {
+        "path": "mcp-servers/rag-mcp/rag_mcp_server.py",
+        "line": 733,
+        "parameters": [],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "rag_update_metadata": [
+      {
+        "path": "mcp-servers/rag-mcp/rag_mcp_server.py",
+        "line": 761,
+        "parameters": [
+          "document_id",
+          "doc_type",
+          "title",
+          "version"
+        ],
+        "required": [
+          "document_id"
+        ],
+        "kwargs": false
+      }
+    ],
+    "rag_delete": [
+      {
+        "path": "mcp-servers/rag-mcp/rag_mcp_server.py",
+        "line": 799,
+        "parameters": [
+          "document_id",
+          "confirmed"
+        ],
+        "required": [
+          "document_id"
+        ],
+        "kwargs": false
+      }
+    ],
+    "rag_reindex": [
+      {
+        "path": "mcp-servers/rag-mcp/rag_mcp_server.py",
+        "line": 828,
+        "parameters": [
+          "document_id",
+          "confirmed"
+        ],
+        "required": [
+          "document_id"
+        ],
+        "kwargs": false
+      }
+    ],
+    "rag_snapshot": [
+      {
+        "path": "mcp-servers/rag-mcp/rag_mcp_server.py",
+        "line": 933,
+        "parameters": [
+          "label",
+          "content",
+          "source_description",
+          "devices",
+          "commands",
+          "capture_ts"
+        ],
+        "required": [
+          "label",
+          "content",
+          "source_description"
+        ],
+        "kwargs": false
+      }
+    ],
+    "redfish_status": [
+      {
+        "path": "mcp-servers/redfish-mcp/server.py",
+        "line": 53,
+        "parameters": [
+          "endpoint"
+        ],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "redfish_systems": [
+      {
+        "path": "mcp-servers/redfish-mcp/server.py",
+        "line": 81,
+        "parameters": [
+          "endpoint"
+        ],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "redfish_thermal_power": [
+      {
+        "path": "mcp-servers/redfish-mcp/server.py",
+        "line": 127,
+        "parameters": [
+          "endpoint"
+        ],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "redfish_managers": [
+      {
+        "path": "mcp-servers/redfish-mcp/server.py",
+        "line": 188,
+        "parameters": [
+          "endpoint"
+        ],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "redfish_firmware": [
+      {
+        "path": "mcp-servers/redfish-mcp/server.py",
+        "line": 222,
+        "parameters": [
+          "endpoint"
+        ],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "redfish_logs": [
+      {
+        "path": "mcp-servers/redfish-mcp/server.py",
+        "line": 260,
+        "parameters": [
+          "endpoint",
+          "limit"
+        ],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "suzieq_show": [
+      {
+        "path": "mcp-servers/suzieq-mcp/server.py",
+        "line": 236,
+        "parameters": [
+          "table",
+          "namespace",
+          "hostname",
+          "columns",
+          "start_time",
+          "end_time",
+          "view",
+          "filters"
+        ],
+        "required": [
+          "table"
+        ],
+        "kwargs": false
+      }
+    ],
+    "suzieq_summarize": [
+      {
+        "path": "mcp-servers/suzieq-mcp/server.py",
+        "line": 320,
+        "parameters": [
+          "table",
+          "namespace",
+          "hostname",
+          "start_time",
+          "end_time"
+        ],
+        "required": [
+          "table"
+        ],
+        "kwargs": false
+      }
+    ],
+    "suzieq_assert": [
+      {
+        "path": "mcp-servers/suzieq-mcp/server.py",
+        "line": 376,
+        "parameters": [
+          "table",
+          "namespace",
+          "hostname"
+        ],
+        "required": [
+          "table"
+        ],
+        "kwargs": false
+      }
+    ],
+    "suzieq_unique": [
+      {
+        "path": "mcp-servers/suzieq-mcp/server.py",
+        "line": 423,
+        "parameters": [
+          "table",
+          "column",
+          "namespace",
+          "hostname"
+        ],
+        "required": [
+          "table",
+          "column"
+        ],
+        "kwargs": false
+      }
+    ],
+    "suzieq_path": [
+      {
+        "path": "mcp-servers/suzieq-mcp/server.py",
+        "line": 478,
+        "parameters": [
+          "namespace",
+          "source",
+          "destination",
+          "vrf"
+        ],
+        "required": [
+          "namespace",
+          "source",
+          "destination"
+        ],
+        "kwargs": false
+      }
+    ],
+    "render_structural": [
+      {
+        "path": "mcp-servers/topology-diagram-mcp/server.py",
+        "line": 222,
+        "parameters": [
+          "snapshot_id",
+          "devices",
+          "links"
+        ],
+        "required": [
+          "snapshot_id",
+          "devices",
+          "links"
+        ],
+        "kwargs": false
+      }
+    ],
+    "text_to_speech": [
+      {
+        "path": "mcp-servers/tts-mcp/server.py",
+        "line": 62,
+        "parameters": [
+          "text",
+          "voice",
+          "output_format"
+        ],
+        "required": [
+          "text"
+        ],
+        "kwargs": false
+      }
+    ],
+    "list_voices": [
+      {
+        "path": "mcp-servers/tts-mcp/server.py",
+        "line": 109,
+        "parameters": [
+          "language"
+        ],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "generate_world": [
+      {
+        "path": "mcp-servers/worldlabs-marble-mcp/server.py",
+        "line": 163,
+        "parameters": [
+          "text_prompt",
+          "display_name",
+          "user_confirmed",
+          "image_base64",
+          "image_extension",
+          "model"
+        ],
+        "required": [
+          "text_prompt",
+          "display_name",
+          "user_confirmed"
+        ],
+        "kwargs": false
+      }
+    ],
+    "check_generation_status": [
+      {
+        "path": "mcp-servers/worldlabs-marble-mcp/server.py",
+        "line": 200,
+        "parameters": [
+          "operation_id"
+        ],
+        "required": [
+          "operation_id"
+        ],
+        "kwargs": false
+      }
+    ],
+    "get_world": [
+      {
+        "path": "mcp-servers/worldlabs-marble-mcp/server.py",
+        "line": 211,
+        "parameters": [
+          "world_id"
+        ],
+        "required": [
+          "world_id"
+        ],
+        "kwargs": false
+      }
+    ],
+    "zabbix_api": [
+      {
+        "path": "mcp-servers/zabbix-mcp/vendor/zabbix-mcp-server/src/zabbix_mcp_server/server.py",
+        "line": 84,
+        "parameters": [
+          "method",
+          "params"
+        ],
+        "required": [
+          "method"
+        ],
+        "kwargs": false
+      }
+    ],
+    "zabbix_api_docs": [
+      {
+        "path": "mcp-servers/zabbix-mcp/vendor/zabbix-mcp-server/src/zabbix_mcp_server/server.py",
+        "line": 173,
+        "parameters": [
+          "method",
+          "version",
+          "timeout"
+        ],
+        "required": [
+          "method"
+        ],
+        "kwargs": false
+      }
+    ],
+    "zabbix_api_list": [
+      {
+        "path": "mcp-servers/zabbix-mcp/vendor/zabbix-mcp-server/src/zabbix_mcp_server/server.py",
+        "line": 206,
+        "parameters": [
+          "object"
+        ],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "zoom_enable_listening": [
+      {
+        "path": "mcp-servers/zoom-rtms-mcp/server.py",
+        "line": 88,
+        "parameters": [
+          "meeting_id"
+        ],
+        "required": [
+          "meeting_id"
+        ],
+        "kwargs": false
+      }
+    ],
+    "zoom_disable_listening": [
+      {
+        "path": "mcp-servers/zoom-rtms-mcp/server.py",
+        "line": 115,
+        "parameters": [
+          "meeting_uuid"
+        ],
+        "required": [
+          "meeting_uuid"
+        ],
+        "kwargs": false
+      }
+    ],
+    "zoom_list_active_meetings": [
+      {
+        "path": "mcp-servers/zoom-rtms-mcp/server.py",
+        "line": 122,
+        "parameters": [],
+        "required": [],
+        "kwargs": false
+      }
+    ],
+    "zoom_meeting_status": [
+      {
+        "path": "mcp-servers/zoom-rtms-mcp/server.py",
+        "line": 132,
+        "parameters": [
+          "meeting_uuid"
+        ],
+        "required": [
+          "meeting_uuid"
+        ],
+        "kwargs": false
+      }
+    ],
+    "zoom_recent_transcript": [
+      {
+        "path": "mcp-servers/zoom-rtms-mcp/server.py",
+        "line": 141,
+        "parameters": [
+          "meeting_uuid",
+          "minutes"
+        ],
+        "required": [
+          "meeting_uuid"
+        ],
+        "kwargs": false
+      }
+    ],
+    "zoom_recent_chat": [
+      {
+        "path": "mcp-servers/zoom-rtms-mcp/server.py",
+        "line": 152,
+        "parameters": [
+          "meeting_uuid",
+          "minutes"
+        ],
+        "required": [
+          "meeting_uuid"
+        ],
+        "kwargs": false
+      }
+    ],
+    "zoom_active_speaker": [
+      {
+        "path": "mcp-servers/zoom-rtms-mcp/server.py",
+        "line": 163,
+        "parameters": [
+          "meeting_uuid"
+        ],
+        "required": [
+          "meeting_uuid"
+        ],
+        "kwargs": false
+      }
+    ],
+    "zoom_live_context": [
+      {
+        "path": "mcp-servers/zoom-rtms-mcp/server.py",
+        "line": 172,
+        "parameters": [
+          "meeting_uuid"
+        ],
+        "required": [
+          "meeting_uuid"
+        ],
+        "kwargs": false
+      }
+    ],
+    "zoom_search_historical_meetings": [
+      {
+        "path": "mcp-servers/zoom-rtms-mcp/server.py",
+        "line": 198,
+        "parameters": [
+          "query",
+          "time_hint"
+        ],
+        "required": [
+          "query"
+        ],
+        "kwargs": false
+      }
+    ]
+  },
+  "skills": [
+    {
+      "path": "workspace/skills/aap-automation/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/aap-eda/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/aap-lint/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/aci-change-deploy/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [
+        "TOOL_NAME",
+        "create_change_request",
+        "add_change_task",
+        "add_change_task",
+        "add_change_task",
+        "submit_change_for_approval",
+        "get_change_request_details",
+        "list_change_requests",
+        "update_change_request",
+        "update_change_request",
+        "update_change_request",
+        "update_change_request",
+        "gait_record_turn",
+        "create_change_request",
+        "submit_change_for_approval",
+        "get_change_request_details",
+        "update_change_request",
+        "gait_record_turn"
+      ],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/aci-fabric-audit/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [
+        "gait_record_turn",
+        "markmap_generate",
+        "open_drawio_mermaid"
+      ],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/anta-validation/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/arista-cvp/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/aruba-cx-config/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/aruba-cx-interfaces/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/aruba-cx-switching/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/aruba-cx-system/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/atlassian-itsm/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/auvik-inventory/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/auvik-lifecycle/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/auvik-network-alerts/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/auvik-performance/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/aws-architecture-diagram/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/aws-cloud-monitoring/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/aws-cost-ops/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/aws-network-ops/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/aws-security-audit/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/azure-network-ops/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/azure-security-audit/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/batfish-config-analysis/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/bgp-registry-intel/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/blender-3d-viz/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/browser-gui-inspect/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/browser-viz-verify/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/canvas-network-viz/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/catalyst-center-readonly/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/catc-client-ops/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [
+        "gait_record_turn"
+      ],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/catc-inventory/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [
+        "gait_record_turn"
+      ],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/catc-troubleshoot/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [
+        "gait_record_turn"
+      ],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/checkpoint/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/cisco-psirt-advisories/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [
+        "run_show_command",
+        "device_run_command",
+        "check_version",
+        "check_version",
+        "check_cve",
+        "check_advisory",
+        "list_recent",
+        "psirt_status"
+      ],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/clab-lab-management/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [
+        "listLabs",
+        "deployLab",
+        "inspectLab",
+        "execCommand",
+        "destroyLab"
+      ],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/claroty-asset-inventory/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/claroty-ot-topology/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/claroty-risk-triage/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/cloudflare-analytics/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/cloudflare-dns/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/cloudflare-security/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/cloudflare-workers/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/cloudflare-zerotrust/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/cml-admin/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/cml-lab-lifecycle/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/cml-node-operations/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/cml-packet-capture/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/cml-topology-builder/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/comfyui-topology-viz/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/datadog-apm/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/datadog-incidents/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/datadog-logs/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/datadog-metrics/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/defenseclaw-ops/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/desktop-gui-inspect/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/devnet-catalyst-search/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/devnet-meraki-search/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/document-generation/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/drawio-diagram/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [
+        "open_drawio_mermaid",
+        "open_drawio_xml",
+        "open_drawio_csv",
+        "open_drawio_mermaid",
+        "open_drawio_mermaid",
+        "open_drawio_mermaid"
+      ],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/elasticsearch-logs/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/eve-lab-topology-build/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/eve-lab-topology-design/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/eve-lab-topology-discovery/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/eve-lab-topology-validation/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/eve-ng-config-ops/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/eve-ng-console-ops/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/eve-ng-lab-management/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/eve-ng-node-operations/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/evpn-vxlan-fabric/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/f5-config-mgmt/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [
+        "create_change_request",
+        "get_change_request_details",
+        "update_change_request",
+        "update_change_request",
+        "gait_record_turn"
+      ],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/f5-health-check/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [
+        "gait_record_turn"
+      ],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/f5-troubleshoot/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [
+        "gait_record_turn"
+      ],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/fmc-firewall-ops/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/fortianalyzer-ops/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/fortigate-ops/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/fortimanager-ops/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/forward/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/fwrule-analyzer/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/gait-session-tracking/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [
+        "gait_status",
+        "gait_init",
+        "gait_branch",
+        "gait_checkout",
+        "gait_record_turn",
+        "gait_log",
+        "gait_show",
+        "gait_pin",
+        "gait_record_turn",
+        "gait_branch",
+        "gait_checkout",
+        "gait_status",
+        "gait_record_turn",
+        "gait_log",
+        "gait_record_turn",
+        "gait_record_turn",
+        "gait_record_turn",
+        "gait_record_turn"
+      ],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/gcp-cloud-logging/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/gcp-cloud-monitoring/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/gcp-compute-ops/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/github-ops/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/gitlab-devops/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/globalping-external-checks/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/gnmi-telemetry/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/gns3-link-management/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/gns3-node-operations/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/gns3-packet-capture/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/gns3-project-lifecycle/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/gns3-snapshot-ops/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/grafana-observability/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/gtrace-ip-enrichment/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [
+        "TOOL_NAME",
+        "asn_lookup",
+        "geo_lookup",
+        "reverse_dns",
+        "asn_lookup",
+        "geo_lookup",
+        "reverse_dns"
+      ],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/gtrace-path-analysis/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [
+        "TOOL_NAME",
+        "traceroute",
+        "traceroute",
+        "mtr",
+        "globalping",
+        "traceroute",
+        "traceroute"
+      ],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/halo-asset-context/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/halo-change-request/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/halo-ticket-context/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/hardware-health-check/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/humanrail-escalation/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [
+        "get_interface_brief",
+        "get_bgp_summary"
+      ],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/infoblox-ddi/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [
+        "TOOL_NAME"
+      ],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/infrahub-sot/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/ipfabric/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/ipfix-receiver/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/ise-incident-response/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [
+        "TOOL_NAME",
+        "TOOL_NAME",
+        "endpoints",
+        "active_sessions",
+        "network_access_authorization_rules",
+        "network_access_authentication_rules",
+        "network_access_policy_set",
+        "profiler_profiles",
+        "identity_groups",
+        "endpoints",
+        "active_sessions",
+        "create_incident",
+        "create_incident",
+        "add_comment",
+        "gait_record_turn",
+        "endpoints",
+        "active_sessions",
+        "network_access_authorization_rules",
+        "profiler_profiles",
+        "identity_groups",
+        "trustsec_sgts",
+        "endpoints",
+        "active_sessions"
+      ],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/ise-posture-audit/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [
+        "gait_record_turn",
+        "markmap_customize"
+      ],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/itential-automation/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/jenkins-cicd/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/junos-network/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/k8s-network-policy/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/k8s-service-path/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/k8s-workload-inventory/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/kepner-tregoe-network-troubleshooting/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/kubeshark-traffic/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/markmap-viz/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [
+        "markmap_generate",
+        "markmap_from_outline",
+        "markmap_get_structure",
+        "markmap_render_file",
+        "markmap_customize",
+        "markmap_generate",
+        "markmap_customize"
+      ],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/memory/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/mempalace/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [
+        "mempalace_status",
+        "mempalace_get_aaak_spec",
+        "mempalace_search",
+        "mempalace_list_wings",
+        "mempalace_list_rooms",
+        "mempalace_get_taxonomy",
+        "mempalace_check_duplicate",
+        "mempalace_add_drawer",
+        "mempalace_delete_drawer",
+        "mempalace_kg_add",
+        "mempalace_kg_query",
+        "mempalace_kg_invalidate",
+        "mempalace_kg_timeline",
+        "mempalace_kg_stats",
+        "mempalace_traverse",
+        "mempalace_find_tunnels",
+        "mempalace_graph_stats",
+        "mempalace_diary_write",
+        "mempalace_diary_read",
+        "mempalace_status",
+        "mempalace_search",
+        "mempalace_kg_add",
+        "mempalace_add_drawer",
+        "mempalace_diary_write",
+        "gait_record_turn"
+      ],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/meraki-monitoring/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/meraki-network-ops/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/meraki-security-appliance/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/meraki-switch-ops/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/meraki-wireless-ops/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/msgraph-files/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/msgraph-visio/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/multivendor-device-query/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/multivendor-fleet-ops/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/multivendor-raw-cli/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/n2n-federation/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/nautobot-sot/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/netbox-reconcile/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [
+        "TOOL_NAME",
+        "netbox_get_objects",
+        "netbox_get_objects",
+        "netbox_get_objects",
+        "netbox_get_objects",
+        "netbox_get_objects",
+        "create_incident",
+        "create_incident",
+        "markmap_generate",
+        "gait_record_turn",
+        "gait_show",
+        "netbox_get_objects",
+        "netbox_get_changelogs"
+      ],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/network-data-analysis/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/network-report-documents/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/nmap-network-scan/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [
+        "TOOL_NAME",
+        "nmap_ping_scan",
+        "nmap_arp_discovery",
+        "nmap_top_ports",
+        "nmap_syn_scan",
+        "nmap_tcp_scan",
+        "nmap_udp_scan"
+      ],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/nmap-scan-management/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [
+        "TOOL_NAME",
+        "nmap_custom_scan",
+        "nmap_custom_scan",
+        "nmap_custom_scan",
+        "nmap_custom_scan",
+        "nmap_list_scans",
+        "nmap_get_scan",
+        "nmap_top_ports",
+        "nmap_top_ports",
+        "nmap_get_scan",
+        "nmap_get_scan"
+      ],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/nmap-service-detection/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [
+        "TOOL_NAME",
+        "nmap_service_detection",
+        "nmap_os_detection",
+        "nmap_full_recon",
+        "nmap_vuln_scan",
+        "nmap_script_scan",
+        "nmap_script_scan",
+        "nmap_script_scan",
+        "nmap_script_scan"
+      ],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/nsm-ids-triage/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/nsm-session-pivot/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/nso-device-ops/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/nso-service-mgmt/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/nvd-cve/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [
+        "gait_record_turn"
+      ],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/packet-analysis/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/pagerduty-incidents/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/pagerduty-oncall/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/pagerduty-orchestration/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/pagerduty-services/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/paloalto-panorama/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [
+        "TOOL_NAME"
+      ],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/percepxion-oob/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/prisma-sdwan-apps/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/prisma-sdwan-config/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/prisma-sdwan-status/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/prisma-sdwan-topology/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/prometheus-monitoring/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/protocol-participation/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/pyats-asa-firewall/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/pyats-config-mgmt/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [
+        "create_change_request",
+        "submit_change_for_approval",
+        "get_change_request_details",
+        "list_incidents",
+        "update_change_request",
+        "update_change_request",
+        "gait_record_turn"
+      ],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/pyats-dynamic-test/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/pyats-f5-ltm/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/pyats-f5-platform/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/pyats-health-check/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [
+        "netbox_get_objects",
+        "netbox_get_objects",
+        "gait_record_turn"
+      ],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/pyats-junos-interfaces/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/pyats-junos-routing/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/pyats-junos-system/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/pyats-linux-network/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/pyats-linux-system/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/pyats-linux-vmware/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/pyats-network/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/pyats-parallel-ops/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/pyats-routing/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/pyats-security/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [
+        "search_cves",
+        "gait_record_turn"
+      ],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/pyats-topology/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [
+        "netbox_get_objects",
+        "netbox_get_objects",
+        "netbox_get_objects",
+        "gait_record_turn"
+      ],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/pyats-troubleshoot/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [
+        "netbox_get_objects",
+        "netbox_get_objects",
+        "netbox_get_objects",
+        "gait_record_turn"
+      ],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/radkit-remote-access/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/rag/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [
+        "rag_ingest_base64"
+      ],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/rfc-lookup/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [
+        "get_rfc",
+        "search_rfcs",
+        "get_rfc_section"
+      ],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/sdwan-ops/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [
+        "get_devices",
+        "get_alarms",
+        "get_bfd_sessions",
+        "get_omp_routes",
+        "get_device_templates",
+        "get_centralized_policies",
+        "get_running_config"
+      ],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/servicenow-change-workflow/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [
+        "TOOL_NAME",
+        "list_incidents",
+        "list_change_requests",
+        "create_change_request",
+        "add_change_task",
+        "add_change_task",
+        "add_change_task",
+        "gait_record_turn",
+        "submit_change_for_approval",
+        "get_change_request_details",
+        "approve_change",
+        "update_change_request",
+        "update_change_request",
+        "update_change_request",
+        "update_change_request",
+        "create_incident",
+        "update_change_request",
+        "update_change_request",
+        "gait_record_turn",
+        "gait_show",
+        "create_change_request",
+        "submit_change_for_approval"
+      ],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/slack-incident-workflow/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [
+        "create_incident",
+        "gait_record_turn"
+      ],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/slack-network-alerts/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/slack-report-delivery/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/slack-user-context/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/slack-voice-interface/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [
+        "text_to_speech",
+        "list_voices"
+      ],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/snmptrap-receiver/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/splunk-indexes/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/splunk-saved/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/splunk-search/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/subnet-calculator/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [
+        "subnet_calculator",
+        "subnet_calculator_v6",
+        "subnet_calculator_auto",
+        "subnet_calculator_auto",
+        "subnet_calculator",
+        "subnet_calculator",
+        "subnet_calculator_v6",
+        "subnet_calculator",
+        "subnet_calculator",
+        "subnet_calculator",
+        "subnet_calculator",
+        "subnet_calculator_v6",
+        "subnet_calculator_v6",
+        "subnet_calculator_v6",
+        "subnet_calculator_v6",
+        "subnet_calculator_v6",
+        "subnet_calculator",
+        "subnet_calculator",
+        "subnet_calculator_v6",
+        "subnet_calculator"
+      ],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/suzieq-observability/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/syslog-receiver/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/te-network-monitoring/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/te-path-analysis/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/telemetry-ops/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/terraform-operations/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/terraform-registry/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/terraform-workspaces/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/threejs-network-viz/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/token-tracker/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/topolograph-bgp-analysis/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/topolograph-igp-analysis/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/twilio-daily-briefing/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/twilio-emergency-call/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/twilio-inbound-voice/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/twilio-outbound-call/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/twitter-check/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/twitter-heartbeat/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/twitter-respond/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/twitter-share/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/ue5-network-viz/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/uml-diagram/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/vault-mounts/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/vault-pki/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/vault-secrets/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/webex-incident-workflow/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [
+        "create_incident",
+        "gait_record_turn"
+      ],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/webex-network-alerts/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/webex-report-delivery/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/webex-user-context/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/webex-voice-interface/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [
+        "text_to_speech",
+        "list_voices"
+      ],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/wikipedia-research/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [
+        "search_pages",
+        "get_summary",
+        "get_content",
+        "get_references",
+        "get_categories",
+        "check_page_exists",
+        "get_content",
+        "get_content",
+        "get_summary",
+        "get_content",
+        "search_pages",
+        "get_summary",
+        "get_summary",
+        "get_summary",
+        "get_summary",
+        "get_summary",
+        "get_summary",
+        "search_pages",
+        "search_pages",
+        "get_summary",
+        "get_summary",
+        "get_summary",
+        "get_summary",
+        "get_summary",
+        "get_summary",
+        "get_summary",
+        "get_summary",
+        "search_pages",
+        "check_page_exists",
+        "get_summary",
+        "get_content",
+        "get_references",
+        "get_categories"
+      ],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/worldlabs-topology-viz/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/zabbix-availability/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/zabbix-metrics-history/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/zabbix-problem-review/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/zoom-meeting-context/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/zscaler-identity/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/zscaler-insights/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/zscaler-zdx/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/zscaler-zia/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    },
+    {
+      "path": "workspace/skills/zscaler-zpa/SKILL.md",
+      "frontmatter_errors": [],
+      "literal_tool_examples": [],
+      "schema_candidates": []
+    }
+  ]
+}

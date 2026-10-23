@@ -196,7 +196,7 @@ python3 $MCP_CALL "$SERVICENOW_MCP_SCRIPT" add_comment '{"incident_id":"INC00100
 Record the full incident response session in GAIT:
 
 ```bash
-python3 $MCP_CALL "python3 -u $GAIT_MCP_SCRIPT" gait_record_turn '{"input":{"role":"assistant","content":"ISE Incident Response completed. Target: [MAC]. Investigation: auth history reviewed, posture assessed, profile verified. Risk: [HIGH/MEDIUM/LOW]. Recommendation: [QUARANTINE/MONITOR]. Human decision: [AUTHORIZED/DECLINED]. Action: [endpoint quarantined / monitoring only]. ServiceNow: INC0010001 created.","artifacts":[]}}'
+python3 $MCP_CALL "python3 -u $GAIT_MCP_SCRIPT" gait_record_turn '{"user_text":"Example only: replace with the actual authorized request.","assistant_text":"ISE Incident Response completed. Target: [MAC]. Investigation: auth history reviewed, posture assessed, profile verified. Risk: [HIGH/MEDIUM/LOW]. Recommendation: [QUARANTINE/MONITOR]. Human decision: [AUTHORIZED/DECLINED]. Action: [endpoint quarantined / monitoring only]. ServiceNow: INC0010001 created.","artifacts":[]}'
 ```
 
 ## Example: Full Investigation Flow
@@ -263,3 +263,14 @@ Use this checklist to ensure no step is skipped:
 - Use **servicenow-change-workflow** if the incident reveals a policy gap that requires an ISE authorization rule change (separate CR required)
 - Use **gait-session-tracking** to maintain the immutable audit trail across the full incident lifecycle
 - Use **markmap-viz** to visualize the endpoint's access path (SGT assignment, AuthZ rule, VLAN, dACL)
+
+## Failure Behavior
+
+- If a tool call fails with an authentication or connection error, check that `GAIT_MCP_SCRIPT`, `ISE_BASE`, `ISE_MCP_SCRIPT`, `ISE_PASSWORD`, `ISE_USERNAME`, `SERVICENOW_MCP_SCRIPT` are set and valid before assuming a data or device problem.
+- On a tool error (timeout, unreachable host, malformed response), report the failure and its error message directly to the user rather than fabricating or guessing at results.
+- For a confirmed read-only call, check connectivity and retry once if appropriate. For any call that changes state or sends a message, a timeout does not prove the action failed: inspect current state or delivery status before retrying, preserve the required approval/change gates, and do not repeat an action whose outcome is unknown.
+
+Audit examples are illustrative. Replace request, outcomes, identifiers and counts
+with observed session evidence; do not record these example results as facts.
+Inspect MCP `isError`, returned `ok`, and the recorded turn with `gait_show` when
+validating a new client/schema. Follow gait-session-tracking for branch checkout.

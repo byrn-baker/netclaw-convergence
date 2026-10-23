@@ -1,0 +1,106 @@
+...FF                                                                    [100%]
+=================================== FAILURES ===================================
+_______ test_incomplete_resolution_is_not_absence_or_unique_match[auvik] _______
+
+vendor = 'auvik'
+
+    @pytest.mark.parametrize('vendor', ['auvik','halo'])
+    def test_incomplete_resolution_is_not_absence_or_unique_match(vendor):
+        code = r'''
+    import asyncio
+    from utils import resolver
+    VENDOR = '__VENDOR__'
+    async def run():
+        resolve = resolver.resolve_device if VENDOR == 'auvik' else resolver.resolve_client
+        class Client:
+            async def get_all(self, *args, **kwargs): return self.page
+        client = Client()
+        for page in [{'items':[], 'error':'fixture upstream failure'},
+                     {'items':[{'id':'123456','name':'fixture','attributes':{'deviceName':'fixture'}}], 'truncated':True}]:
+            client.page = page
+            result = await resolve(client, 'fixture')
+            identifier, error = resolver.resolve_or_error(result, 'device')
+            assert identifier is None and error['error']['code'] == 'UpstreamError', (identifier, error)
+        client.page = {'items':[], 'truncated':False}
+        result = await resolve(client, 'fixture')
+        assert resolver.resolve_or_error(result, 'device')[1]['error']['code'] == 'NotFound'
+    asyncio.run(run())
+    '''.replace('__VENDOR__', vendor)
+        result = subprocess.run([sys.executable,'-c',code],env={**os.environ,'PYTHONPATH':str(ROOT/'mcp-servers'/f'{vendor}-mcp')},capture_output=True,text=True)
+>       assert result.returncode == 0, result.stderr
+E       AssertionError: Traceback (most recent call last):
+E           File "<string>", line 19, in <module>
+E             asyncio.run(run())
+E             ~~~~~~~~~~~^^^^^^^
+E           File "/usr/lib/python3.14/asyncio/runners.py", line 204, in run
+E             return runner.run(main)
+E                    ~~~~~~~~~~^^^^^^
+E           File "/usr/lib/python3.14/asyncio/runners.py", line 127, in run
+E             return self._loop.run_until_complete(task)
+E                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+E           File "/usr/lib/python3.14/asyncio/base_events.py", line 719, in run_until_complete
+E             return future.result()
+E                    ~~~~~~~~~~~~~^^
+E           File "<string>", line 15, in run
+E             assert identifier is None and error['error']['code'] == 'UpstreamError', (identifier, error)
+E                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E         AssertionError: (None, {'error': {'code': 'NotFound', 'message': 'No device found matching the given identifier.', 'details': None}})
+E
+E       assert 1 == 0
+E        +  where 1 = CompletedProcess(args=['/usr/bin/python3', '-c', "\nimport asyncio\nfrom utils import resolver\nVENDOR = 'auvik'\nasyn...r\': {\'code\': \'NotFound\', \'message\': \'No device found matching the given identifier.\', \'details\': None}})\n').returncode
+
+tests/unit/test_vendor_list_failures.py:78: AssertionError
+_______ test_incomplete_resolution_is_not_absence_or_unique_match[halo] ________
+
+vendor = 'halo'
+
+    @pytest.mark.parametrize('vendor', ['auvik','halo'])
+    def test_incomplete_resolution_is_not_absence_or_unique_match(vendor):
+        code = r'''
+    import asyncio
+    from utils import resolver
+    VENDOR = '__VENDOR__'
+    async def run():
+        resolve = resolver.resolve_device if VENDOR == 'auvik' else resolver.resolve_client
+        class Client:
+            async def get_all(self, *args, **kwargs): return self.page
+        client = Client()
+        for page in [{'items':[], 'error':'fixture upstream failure'},
+                     {'items':[{'id':'123456','name':'fixture','attributes':{'deviceName':'fixture'}}], 'truncated':True}]:
+            client.page = page
+            result = await resolve(client, 'fixture')
+            identifier, error = resolver.resolve_or_error(result, 'device')
+            assert identifier is None and error['error']['code'] == 'UpstreamError', (identifier, error)
+        client.page = {'items':[], 'truncated':False}
+        result = await resolve(client, 'fixture')
+        assert resolver.resolve_or_error(result, 'device')[1]['error']['code'] == 'NotFound'
+    asyncio.run(run())
+    '''.replace('__VENDOR__', vendor)
+        result = subprocess.run([sys.executable,'-c',code],env={**os.environ,'PYTHONPATH':str(ROOT/'mcp-servers'/f'{vendor}-mcp')},capture_output=True,text=True)
+>       assert result.returncode == 0, result.stderr
+E       AssertionError: Traceback (most recent call last):
+E           File "<string>", line 19, in <module>
+E             asyncio.run(run())
+E             ~~~~~~~~~~~^^^^^^^
+E           File "/usr/lib/python3.14/asyncio/runners.py", line 204, in run
+E             return runner.run(main)
+E                    ~~~~~~~~~~^^^^^^
+E           File "/usr/lib/python3.14/asyncio/runners.py", line 127, in run
+E             return self._loop.run_until_complete(task)
+E                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+E           File "/usr/lib/python3.14/asyncio/base_events.py", line 719, in run_until_complete
+E             return future.result()
+E                    ~~~~~~~~~~~~~^^
+E           File "<string>", line 15, in run
+E             assert identifier is None and error['error']['code'] == 'UpstreamError', (identifier, error)
+E                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E         AssertionError: (None, {'error': {'code': 'NotFound', 'message': 'No device matched the supplied value.', 'details': None}})
+E
+E       assert 1 == 0
+E        +  where 1 = CompletedProcess(args=['/usr/bin/python3', '-c', "\nimport asyncio\nfrom utils import resolver\nVENDOR = 'halo'\nasync..., {\'error\': {\'code\': \'NotFound\', \'message\': \'No device matched the supplied value.\', \'details\': None}})\n').returncode
+
+tests/unit/test_vendor_list_failures.py:78: AssertionError
+=========================== short test summary info ============================
+FAILED tests/unit/test_vendor_list_failures.py::test_incomplete_resolution_is_not_absence_or_unique_match[auvik]
+FAILED tests/unit/test_vendor_list_failures.py::test_incomplete_resolution_is_not_absence_or_unique_match[halo]
+2 failed, 3 passed in 0.84s

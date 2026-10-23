@@ -1,0 +1,159 @@
+FFFF                                                                     [100%]
+=================================== FAILURES ===================================
+_______ test_enable_writer_roundtrip[checkpoint-enable.sh-_set_env_var] ________
+
+tmp_path = PosixPath('/tmp/pytest-of-johncapobianco/pytest-259/test_enable_writer_roundtrip_c0')
+filename = 'checkpoint-enable.sh', function = '_set_env_var'
+
+    @pytest.mark.parametrize('filename,function',[('checkpoint-enable.sh','_set_env_var'),('ipfabric-enable.sh','_set_env_var'),('forward-enable.sh','set_env_var')])
+    def test_enable_writer_roundtrip(tmp_path, filename, function):
+        source=(ROOT/'scripts'/filename).read_text()
+        body=re.search(r'^'+function+r'\(\) \{.*?^}',source,re.M|re.S)[0]
+        path=tmp_path/'.env';path.write_text('TOKEN=old\nUNRELATED=keep\n')
+        value='literal&pipe|dollar$ quote"x" apostrophe\' slash\\'
+        code='set -eu\nNETCLAW_DIR="$FIXTURE_ROOT"\nOPENCLAW_ENV="$FIXTURE_ENV"\n'+body+'\n'+function+' TOKEN "$FIXTURE_VALUE"'
+        proc=subprocess.run(['bash','-c',code],env={**os.environ,'FIXTURE_ROOT':str(ROOT),'FIXTURE_ENV':str(path),'FIXTURE_VALUE':value},capture_output=True,text=True)
+>       assert proc.returncode==0,proc.stderr
+E       AssertionError: sed: -e expression #1, char 32: unknown option to `s'
+E
+E       assert 1 == 0
+E        +  where 1 = CompletedProcess(args=['bash', '-c', 'set -eu\nNETCLAW_DIR="$FIXTURE_ROOT"\nOPENCLAW_ENV="$FIXTURE_ENV"\n_set_env_var(...ar TOKEN "$FIXTURE_VALUE"'], returncode=1, stdout='', stderr="sed: -e expression #1, char 32: unknown option to `s'\n").returncode
+
+tests/unit/test_standalone_enable_credentials.py:15: AssertionError
+________ test_enable_writer_roundtrip[ipfabric-enable.sh-_set_env_var] _________
+
+tmp_path = PosixPath('/tmp/pytest-of-johncapobianco/pytest-259/test_enable_writer_roundtrip_i0')
+filename = 'ipfabric-enable.sh', function = '_set_env_var'
+
+    @pytest.mark.parametrize('filename,function',[('checkpoint-enable.sh','_set_env_var'),('ipfabric-enable.sh','_set_env_var'),('forward-enable.sh','set_env_var')])
+    def test_enable_writer_roundtrip(tmp_path, filename, function):
+        source=(ROOT/'scripts'/filename).read_text()
+        body=re.search(r'^'+function+r'\(\) \{.*?^}',source,re.M|re.S)[0]
+        path=tmp_path/'.env';path.write_text('TOKEN=old\nUNRELATED=keep\n')
+        value='literal&pipe|dollar$ quote"x" apostrophe\' slash\\'
+        code='set -eu\nNETCLAW_DIR="$FIXTURE_ROOT"\nOPENCLAW_ENV="$FIXTURE_ENV"\n'+body+'\n'+function+' TOKEN "$FIXTURE_VALUE"'
+        proc=subprocess.run(['bash','-c',code],env={**os.environ,'FIXTURE_ROOT':str(ROOT),'FIXTURE_ENV':str(path),'FIXTURE_VALUE':value},capture_output=True,text=True)
+>       assert proc.returncode==0,proc.stderr
+E       AssertionError: sed: -e expression #1, char 32: unknown option to `s'
+E
+E       assert 1 == 0
+E        +  where 1 = CompletedProcess(args=['bash', '-c', 'set -eu\nNETCLAW_DIR="$FIXTURE_ROOT"\nOPENCLAW_ENV="$FIXTURE_ENV"\n_set_env_var(...ar TOKEN "$FIXTURE_VALUE"'], returncode=1, stdout='', stderr="sed: -e expression #1, char 32: unknown option to `s'\n").returncode
+
+tests/unit/test_standalone_enable_credentials.py:15: AssertionError
+_________ test_enable_writer_roundtrip[forward-enable.sh-set_env_var] __________
+
+tmp_path = PosixPath('/tmp/pytest-of-johncapobianco/pytest-259/test_enable_writer_roundtrip_f0')
+filename = 'forward-enable.sh', function = 'set_env_var'
+
+    @pytest.mark.parametrize('filename,function',[('checkpoint-enable.sh','_set_env_var'),('ipfabric-enable.sh','_set_env_var'),('forward-enable.sh','set_env_var')])
+    def test_enable_writer_roundtrip(tmp_path, filename, function):
+        source=(ROOT/'scripts'/filename).read_text()
+        body=re.search(r'^'+function+r'\(\) \{.*?^}',source,re.M|re.S)[0]
+        path=tmp_path/'.env';path.write_text('TOKEN=old\nUNRELATED=keep\n')
+        value='literal&pipe|dollar$ quote"x" apostrophe\' slash\\'
+        code='set -eu\nNETCLAW_DIR="$FIXTURE_ROOT"\nOPENCLAW_ENV="$FIXTURE_ENV"\n'+body+'\n'+function+' TOKEN "$FIXTURE_VALUE"'
+        proc=subprocess.run(['bash','-c',code],env={**os.environ,'FIXTURE_ROOT':str(ROOT),'FIXTURE_ENV':str(path),'FIXTURE_VALUE':value},capture_output=True,text=True)
+        assert proc.returncode==0,proc.stderr
+>       assert writer.values(path.read_text())=={'TOKEN':value,'UNRELATED':'keep'}
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/unit/test_standalone_enable_credentials.py:16:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+scripts/write-env.py:44: in values
+    result[match[1]] = ' '.join(shlex.split(raw, comments=True))
+                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../.local/share/uv/python/cpython-3.12.10-linux-x86_64-gnu/lib/python3.12/shlex.py:313: in split
+    return list(lex)
+           ^^^^^^^^^
+../.local/share/uv/python/cpython-3.12.10-linux-x86_64-gnu/lib/python3.12/shlex.py:300: in __next__
+    token = self.get_token()
+            ^^^^^^^^^^^^^^^^
+../.local/share/uv/python/cpython-3.12.10-linux-x86_64-gnu/lib/python3.12/shlex.py:109: in get_token
+    raw = self.read_token()
+          ^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <shlex.shlex object at 0x7ef4630508c0>
+
+    def read_token(self):
+        quoted = False
+        escapedstate = ' '
+        while True:
+            if self.punctuation_chars and self._pushback_chars:
+                nextchar = self._pushback_chars.pop()
+            else:
+                nextchar = self.instream.read(1)
+            if nextchar == '\n':
+                self.lineno += 1
+            if self.debug >= 3:
+                print("shlex: in state %r I see character: %r" % (self.state,
+                                                                  nextchar))
+            if self.state is None:
+                self.token = ''        # past end of file
+                break
+            elif self.state == ' ':
+                if not nextchar:
+                    self.state = None  # end of file
+                    break
+                elif nextchar in self.whitespace:
+                    if self.debug >= 2:
+                        print("shlex: I see whitespace in whitespace state")
+                    if self.token or (self.posix and quoted):
+                        break   # emit current token
+                    else:
+                        continue
+                elif nextchar in self.commenters:
+                    self.instream.readline()
+                    self.lineno += 1
+                elif self.posix and nextchar in self.escape:
+                    escapedstate = 'a'
+                    self.state = nextchar
+                elif nextchar in self.wordchars:
+                    self.token = nextchar
+                    self.state = 'a'
+                elif nextchar in self.punctuation_chars:
+                    self.token = nextchar
+                    self.state = 'c'
+                elif nextchar in self.quotes:
+                    if not self.posix:
+                        self.token = nextchar
+                    self.state = nextchar
+                elif self.whitespace_split:
+                    self.token = nextchar
+                    self.state = 'a'
+                else:
+                    self.token = nextchar
+                    if self.token or (self.posix and quoted):
+                        break   # emit current token
+                    else:
+                        continue
+            elif self.state in self.quotes:
+                quoted = True
+                if not nextchar:      # end of file
+                    if self.debug >= 2:
+                        print("shlex: I see EOF in quotes state")
+                    # XXX what error should be raised here?
+>                   raise ValueError("No closing quotation")
+E                   ValueError: No closing quotation
+
+../.local/share/uv/python/cpython-3.12.10-linux-x86_64-gnu/lib/python3.12/shlex.py:191: ValueError
+________________________ test_peering_prompt_is_literal ________________________
+
+tmp_path = PosixPath('/tmp/pytest-of-johncapobianco/pytest-259/test_peering_prompt_is_literal0')
+
+    def test_peering_prompt_is_literal(tmp_path):
+        source=(ROOT/'scripts/peering-setup.sh').read_text();body=re.search(r'^ask\(\) \{.*?^}',source,re.M|re.S)[0]
+        marker=tmp_path/'executed';value=f'$(touch {marker})'
+        proc=subprocess.run(['bash','-c','set -eu\nCYAN= NC= DIM=\n'+body+'\nask ANSWER label\nprintf "\\n%s" "$ANSWER"'],input=value+'\n',capture_output=True,text=True)
+>       assert not marker.exists()
+E       AssertionError: assert not True
+E        +  where True = exists()
+E        +    where exists = PosixPath('/tmp/pytest-of-johncapobianco/pytest-259/test_peering_prompt_is_literal0/executed').exists
+
+tests/unit/test_standalone_enable_credentials.py:23: AssertionError
+=========================== short test summary info ============================
+FAILED tests/unit/test_standalone_enable_credentials.py::test_enable_writer_roundtrip[checkpoint-enable.sh-_set_env_var]
+FAILED tests/unit/test_standalone_enable_credentials.py::test_enable_writer_roundtrip[ipfabric-enable.sh-_set_env_var]
+FAILED tests/unit/test_standalone_enable_credentials.py::test_enable_writer_roundtrip[forward-enable.sh-set_env_var]
+FAILED tests/unit/test_standalone_enable_credentials.py::test_peering_prompt_is_literal
+4 failed in 0.09s

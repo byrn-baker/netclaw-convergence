@@ -1,0 +1,48 @@
+{
+  "counts": {
+    "BLOCKED_DEPENDENCY": 0,
+    "ERROR": 0,
+    "FAIL": 0,
+    "NEEDS_DOCKER": 1,
+    "NEEDS_LIVE_CREDENTIALS": 0,
+    "PASS": 1
+  },
+  "exit_code": 0,
+  "generated_at": "2026-09-26T22:48:57.838306+00:00",
+  "results": [
+    {
+      "capabilities": [
+        {
+          "detail": "service unavailable: http://127.0.0.1:8000/redfish/v1",
+          "kind": "docker-service",
+          "names": [],
+          "status": "NEEDS_DOCKER"
+        }
+      ],
+      "command": [
+        "bash",
+        "tests/redfish/run-tests.sh"
+      ],
+      "detail": "offline contracts passed",
+      "duration_seconds": 1.5029567920028057,
+      "environment": {
+        "fingerprint": "80dee29c56ac4c6c2ba961b661666af2aa50c34d512c1957669dd0494d084d6e",
+        "path": ".contract-test-envs/redfish"
+      },
+      "exit_code": 0,
+      "status": "PASS",
+      "suite": "redfish",
+      "test_runs": [
+        {
+          "command": [
+            "bash",
+            "tests/redfish/run-tests.sh"
+          ],
+          "exit_code": 0,
+          "output": "=== The verdict: what a BMC reading establishes about the host ===\n  ok   an unreachable BMC yields host_state UNKNOWN, never 'down'\n  ok   the unreachable verdict names the conclusion NOT to draw\n  ok   PowerState Off is reported as a FACT about the host\n  ok   PowerState On carries the caveat that the OS may be hung\n  ok   an unrecognised PowerState is UNREPORTED, not guessed\n  ok   a hardware fault is reported as independent of OS state\n  ok   deriving a host state from an unreachable BMC is refused\n  ok   emitting a host claim without a verdict is refused\n  ok   a host claim WITH a verdict is allowed\n\n=== Read-only is enforced at the transport ===\n  ok   the client implements no verb but GET\n  ok   ComputerSystem.Reset is never invoked anywhere in the server\n  ok   an unset endpoint refuses rather than guessing an address\n\n=== Live against the DMTF mockup (needs httpx + container) ===\n  skip live mockup assertions (no Redfish mock on :8000)\n  skip reachable-BMC verdict against real Redfish\n\n=== Empty results must not read as good news ===\n  ok   TLS verification being off is disclosed, not silent\n\n=== Summary ===\n  passed: 13\n  failed: 0\n  skipped: 2\n  all redfish-mcp contract tests passed"
+        }
+      ]
+    }
+  ],
+  "schema_version": 1
+}

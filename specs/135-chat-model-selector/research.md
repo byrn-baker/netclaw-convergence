@@ -1,0 +1,2 @@
+# Research
+StandardChat has no selector; /api/chat sets model=openclaw and an agent header. Installed OpenClaw gateway/openai-http-api.md documents x-openclaw-model for backend overrides with shared-secret authentication. /v1/models lists agents, not provider models. Use the selected agent's model/defaults and configured agents.defaults.models as the allowlist. This host currently configures one model. Asked the operator which additional models they want without blocking the UI implementation.

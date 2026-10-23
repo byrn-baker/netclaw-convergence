@@ -51,10 +51,10 @@ run_suite() {
 echo "### Dependencies (bounded pins, spec 077) ###"
 "$PY" -c "import httpx" >/dev/null 2>&1
 check "httpx importable by $PY" $?
-"$PY" -c "import mcp.server.fastmcp" >/dev/null 2>&1
-check "mcp.server.fastmcp importable (the submodule mcp 2.0 removed)" $?
-grep -qE '^mcp>=.*,<2' "$SERVER_DIR/requirements.txt"
-check "requirements.txt bounds mcp below 2.0" $?
+"$PY" -c "import fastmcp" >/dev/null 2>&1
+check "standalone fastmcp importable" $?
+grep -qE '^mcp==2\.' "$SERVER_DIR/requirements.txt"
+check "requirements.txt pins tested MCP 2" $?
 grep -qE '^httpx>=.*,<1' "$SERVER_DIR/requirements.txt"
 check "requirements.txt bounds httpx below 1.0" $?
 echo

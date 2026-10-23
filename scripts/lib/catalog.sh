@@ -5,6 +5,7 @@
 # in lib/install-steps.sh. Order here = display order in the checklist.
 
 CATALOG=(
+    "hermes-hud|Runtime|Hermes HUD bridge|Private HUD conversation bridge; isolated pinned Hermes companion (8 private tools)"
     "pyats|Device Automation|Cisco pyATS|Cisco device CLI + Genie parsers (core device automation)"
     "junos|Device Automation|Juniper JunOS|PyEZ/NETCONF CLI, config mgmt, Jinja2 templates (10 tools)"
     "arista-cvp|Device Automation|Arista CloudVision|Device inventory, events, connectivity monitor, tags (4 tools)"
@@ -53,6 +54,7 @@ CATALOG=(
     "aws|Cloud|AWS|VPC, Transit GW, CloudWatch, IAM, CloudTrail, costs (6 servers)"
     "azure|Cloud|Azure Network|VNets, NSGs, ExpressRoute, VPN, Firewall, LB, DNS (bundled)"
     "gcp|Cloud|Google Cloud|Compute, Monitoring, Logging, Resource Manager (4 remote)"
+    "equinix|Cloud|Equinix Fabric + Network Edge|Official hosted MCP, browser OAuth, inventory and gated Fabric operations"
     "cloudflare|Cloud|Cloudflare|DNS analytics, security, Zero Trust, Workers (remote)"
     "terraform|Cloud|Terraform Cloud|Workspaces, runs, state, variables (remote)"
     "vault|Cloud|HashiCorp Vault|KV, PKI, transit, auth methods (remote)"
@@ -73,6 +75,7 @@ CATALOG=(
     "zabbix|Observability|Zabbix SNMP-Poller NMS|Polled metric history, problems and device availability from a self-hosted Zabbix. Read-only. Answers what something WAS doing over time — the layer NetClaw had no source for"
     "bgp-intel|Observability|BGP & Registry Intelligence|RPKI origin validation, RDAP ownership, PeeringDB peering, routing visibility (public APIs, no credentials)"
     "globalping|Observability|Globalping|Outside-in measurement from ~4800 global probes — ping, traceroute, DNS, MTR, HTTP (remote, no install)"
+    "topolograph|Observability|Topolograph|OSPF/IS-IS link-state and BGP topology analysis — shortest/backup path, edge/node failure simulation, MPLS-TE/CSPF, event timeline, BGP sessions/routes/VRF inventory (remote HTTP, read-only, no install)"
     "telemetry-receivers|Observability|Telemetry Receivers|SNMP trap, syslog, IPFIX/NetFlow receivers over UDP (3 servers)"
     "auvik|Observability|Auvik|Read-only network monitoring — inventory, alerts, lifecycle, performance (bundled, 20 tools)"
 
@@ -105,10 +108,12 @@ CATALOG=(
     "ue5|Analysis & Diagrams|Unreal Engine 5|3D digital twin (requires UE5.8+ with MCP plugin)"
     "threejs-viz|Analysis & Diagrams|Three.js Network Viz|Browser-based 3D topology, no desktop app/GPU (optional Sketchfab real-stencil mode)"
     "comfyui-viz|Analysis & Diagrams|ComfyUI Topology Visualization|AI-generated stylized topology stills via a self-hosted ComfyUI instance"
+    "worldlabs-marble|Analysis & Diagrams|World Labs Fantastical Topology Viz|Free themed prompt preview + (credits-spending, confirmation-gated) explorable 3D world generation via World Labs Marble (spec 122)"
     "chrome-devtools|Analysis & Diagrams|Chrome DevTools|Browser automation/inspection — visualization QA, controller GUI gap-fill, API discovery, Watch Mode (2 servers)"
     "computer-use|Analysis & Diagrams|Computer Use|Full-desktop automation for API-less/browser-less targets — Xvfb+XFCE virtual desktop, 17 actions, VNC Watch Mode (via ClawHub)"
 
     "tts|Voice & Social|Text-to-Speech|edge-tts voice replies for Slack/WebEx (2 tools)"
+    "tavus-pal|Voice & Social|Tavus Pal|Optional Free-plan stock-face HUD companion; isolated NetClaw agent, disabled by default (1 tool)"
     "twitter|Voice & Social|Twitter/X|Tweet posting, threads, heartbeat (bundled)"
     "twilio|Voice & Social|Twilio|Core API (SMS/messaging) plus bidirectional voice calls, emergency alerts (2 servers)"
     "zoom-rtms|Voice & Social|Zoom Meeting Intelligence|Realtime Media Streams meeting listener, live investigation routing, Zoom App panel + camera-overlay avatar (spec 118, 9 tools)"
@@ -119,6 +124,7 @@ CATALOG=(
     "document|Platform Services|Document Generation|Change-record .docx, audit .xlsx, exec .pptx and PDF form filling from real NetClaw data — per-element provenance, never fabricates a blank"
     "rag-mcp|Platform Services|RAG Knowledge Base|Offline document knowledge base — hybrid retrieval, citations, opt-in snapshots (ChromaDB + BM25 + local reranker)"
     "ollama|Platform Services|Ollama Domain Experts|Delegates structured tasks to local Ollama models on your own GPU (10 tools)"
+    "jev|Platform Services|Jev Science Officer|Optional probabilistic advisor — dynamic Noul, Choice and Score assessments; explicit activation, bounded budgets"
     "humanrail|Platform Services|HumanRail|Human-in-the-loop escalation and approvals"
 )
 
@@ -151,15 +157,15 @@ catalog_has() {
 PROFILE_MINIMAL="pyats gait subnet-calc drawio-rfc"
 
 PROFILE_RECOMMENDED="bgp-intel pyats gait netbox servicenow nvd-cve subnet-calc wikipedia markmap \
-drawio-rfc uml packet-buddy nmap gtrace globalping batfish protocol n2n tts chrome-devtools rag-mcp document"
+drawio-rfc uml packet-buddy nmap gtrace globalping suzieq batfish protocol n2n tts chrome-devtools rag-mcp document jev"
 
 PROFILE_CISCO="pyats gait netbox servicenow aci ise catc meraki sdwan cml fmc \
 radkit te-community te-official nvd-cve cisco-psirt subnet-calc drawio-rfc uml packet-buddy"
 
 PROFILE_MULTIVENDOR="pyats junos anta arista-cvp aruba-cx f5 fortinet multivendor-cli netbox nautobot gait servicenow \
-fwrule subnet-calc drawio-rfc uml packet-buddy percepxion slc"
+fwrule subnet-calc drawio-rfc uml packet-buddy percepxion slc topolograph"
 
-PROFILE_CLOUD="aws azure gcp cloudflare terraform vault github gait drawio-rfc uml subnet-calc"
+PROFILE_CLOUD="aws azure gcp equinix cloudflare terraform vault github gait drawio-rfc uml subnet-calc"
 
 PROFILE_SECURITY="ise fmc panorama fortinet bgp-intel checkpoint claroty zscaler nvd-cve cisco-psirt nmap \
 fwrule gait servicenow"

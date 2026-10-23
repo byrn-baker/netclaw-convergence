@@ -1,0 +1,187 @@
+[
+  {
+    "integration": "aci",
+    "status": "foreground",
+    "reason": "Mixed vendor operations: per-tool authorization, blocking I/O and replay/cancellation behavior have not yet been accepted for background execution; existing foreground behavior retained."
+  },
+  {
+    "integration": "fmc",
+    "status": "foreground",
+    "reason": "Mixed vendor operations: per-tool authorization, blocking I/O and replay/cancellation behavior have not yet been accepted for background execution; existing foreground behavior retained."
+  },
+  {
+    "integration": "ise",
+    "status": "foreground",
+    "reason": "Mixed vendor operations: per-tool authorization, blocking I/O and replay/cancellation behavior have not yet been accepted for background execution; existing foreground behavior retained."
+  },
+  {
+    "integration": "wikipedia",
+    "status": "tasks-enabled",
+    "reason": "Reviewed explicit read registrations; catalog verified in both protocol modes."
+  },
+  {
+    "integration": "catalyst-center-legacy",
+    "status": "retired",
+    "reason": "Retains spec 141 disposition; no Tasks runtime claimed."
+  },
+  {
+    "integration": "sdwan",
+    "status": "tasks-enabled",
+    "reason": "Reviewed explicit read registrations; catalog verified in both protocol modes."
+  },
+  {
+    "integration": "containerlab",
+    "status": "foreground",
+    "reason": "Lab lifecycle mutations and process cancellation need task-specific acceptance."
+  },
+  {
+    "integration": "f5",
+    "status": "foreground",
+    "reason": "Mixed vendor operations: per-tool authorization, blocking I/O and replay/cancellation behavior have not yet been accepted for background execution; existing foreground behavior retained."
+  },
+  {
+    "integration": "gait",
+    "status": "foreground",
+    "reason": "Audit mutations require ordered durable writes, not generic queue redelivery."
+  },
+  {
+    "integration": "humanrail",
+    "status": "foreground",
+    "reason": "Human approval lifecycle and caller binding require a dedicated Tasks design."
+  },
+  {
+    "integration": "infrahub",
+    "status": "foreground",
+    "reason": "Lifespan-bound client/context and mutations require execution-lifecycle tests."
+  },
+  {
+    "integration": "arista-cvp",
+    "status": "foreground",
+    "reason": "Context-dependent source variants and controller jobs require task-specific acceptance."
+  },
+  {
+    "integration": "nvd-cve",
+    "status": "tasks-enabled",
+    "reason": "Reviewed explicit read registrations; catalog verified in both protocol modes."
+  },
+  {
+    "integration": "meraki",
+    "status": "retired",
+    "reason": "Retains spec 141 disposition; no Tasks runtime claimed."
+  },
+  {
+    "integration": "netbox",
+    "status": "tasks-enabled",
+    "reason": "Reviewed explicit read registrations; catalog verified in both protocol modes."
+  },
+  {
+    "integration": "radkit",
+    "status": "validation-blocked",
+    "reason": "Retains spec 141 disposition; no Tasks runtime claimed."
+  },
+  {
+    "integration": "subnet-calc",
+    "status": "foreground",
+    "reason": "Short deterministic local computations retain foreground execution."
+  },
+  {
+    "integration": "te-community",
+    "status": "foreground",
+    "reason": "Mixed vendor operations: per-tool authorization, blocking I/O and replay/cancellation behavior have not yet been accepted for background execution; existing foreground behavior retained."
+  },
+  {
+    "integration": "uml",
+    "status": "foreground",
+    "reason": "HTTP authentication/task owner mapping has not been accepted for this external launcher."
+  },
+  {
+    "integration": "percepxion",
+    "status": "foreground",
+    "reason": "Mixed vendor operations: per-tool authorization, blocking I/O and replay/cancellation behavior have not yet been accepted for background execution; existing foreground behavior retained."
+  },
+  {
+    "integration": "slc",
+    "status": "foreground",
+    "reason": "Mixed vendor operations: per-tool authorization, blocking I/O and replay/cancellation behavior have not yet been accepted for background execution; existing foreground behavior retained."
+  },
+  {
+    "integration": "nmap",
+    "status": "foreground",
+    "reason": "Scan subprocess cancellation and target authorization require dedicated acceptance."
+  },
+  {
+    "integration": "aruba-cx",
+    "status": "foreground",
+    "reason": "Mixed vendor operations: per-tool authorization, blocking I/O and replay/cancellation behavior have not yet been accepted for background execution; existing foreground behavior retained."
+  },
+  {
+    "integration": "aap",
+    "status": "foreground",
+    "reason": "Remote automation already has a job lifecycle; avoid an unreviewed second submission lifecycle."
+  },
+  {
+    "integration": "fwrule",
+    "status": "foreground",
+    "reason": "Mixed vendor operations: per-tool authorization, blocking I/O and replay/cancellation behavior have not yet been accepted for background execution; existing foreground behavior retained."
+  },
+  {
+    "integration": "prometheus",
+    "status": "foreground",
+    "reason": "Mixed vendor operations: per-tool authorization, blocking I/O and replay/cancellation behavior have not yet been accepted for background execution; existing foreground behavior retained."
+  },
+  {
+    "integration": "prisma-sdwan",
+    "status": "foreground",
+    "reason": "Mixed vendor operations: per-tool authorization, blocking I/O and replay/cancellation behavior have not yet been accepted for background execution; existing foreground behavior retained."
+  },
+  {
+    "integration": "cml",
+    "status": "foreground",
+    "reason": "Mixed vendor operations: per-tool authorization, blocking I/O and replay/cancellation behavior have not yet been accepted for background execution; existing foreground behavior retained."
+  },
+  {
+    "integration": "itential",
+    "status": "foreground",
+    "reason": "Remote orchestration lifecycle and state-changing dispatch need dedicated acceptance."
+  },
+  {
+    "integration": "aws-network",
+    "status": "foreground",
+    "reason": "Mixed vendor operations: per-tool authorization, blocking I/O and replay/cancellation behavior have not yet been accepted for background execution; existing foreground behavior retained."
+  },
+  {
+    "integration": "nso",
+    "status": "foreground",
+    "reason": "Mixed vendor operations: per-tool authorization, blocking I/O and replay/cancellation behavior have not yet been accepted for background execution; existing foreground behavior retained."
+  },
+  {
+    "integration": "infoblox",
+    "status": "foreground",
+    "reason": "Mixed vendor operations: per-tool authorization, blocking I/O and replay/cancellation behavior have not yet been accepted for background execution; existing foreground behavior retained."
+  },
+  {
+    "integration": "atlassian",
+    "status": "native-port-pending",
+    "reason": "Retains spec 141 disposition; no Tasks runtime claimed."
+  },
+  {
+    "integration": "aws-cost-explorer",
+    "status": "native-port-pending",
+    "reason": "Retains spec 141 disposition; no Tasks runtime claimed."
+  },
+  {
+    "integration": "aws-diagram",
+    "status": "native-port-pending",
+    "reason": "Retains spec 141 disposition; no Tasks runtime claimed."
+  },
+  {
+    "integration": "pagerduty",
+    "status": "native-port-pending",
+    "reason": "Retains spec 141 disposition; no Tasks runtime claimed."
+  },
+  {
+    "integration": "blender",
+    "status": "native-port-pending",
+    "reason": "Retains spec 141 disposition; no Tasks runtime claimed."
+  }
+]

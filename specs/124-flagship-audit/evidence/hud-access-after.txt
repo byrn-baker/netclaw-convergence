@@ -1,0 +1,12 @@
+✔ local CLI, both configured origins and IPv6 loopback are accepted (0.377625ms)
+✔ untrusted connections and rebinding/opaque/malformed origins are denied (0.087125ms)
+✔ ports are bounded, distinct and explicitly configurable (0.419583ms)
+✔ real HUD server rejects hostile HTTP and WebSocket requests before fixture access (83.967834ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 127.183125

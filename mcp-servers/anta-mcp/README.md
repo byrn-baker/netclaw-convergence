@@ -63,8 +63,9 @@ That switch has no BGP. Counted as a failure, it claims a BGP fault where there 
 an absence rendered as a finding, the same class as spec 091's inert Suricata, 094's BMC timeout,
 096's capped count and 095's empty Mist org.
 
-The rule is **deliberately narrow**: only messages clearly indicating an inactive feature or an
-unsupported command are reclassified, the original message is always preserved, and anything
+The rule requires complete recognized command-unavailable diagnostics in **every** message.
+Inactive interfaces, unsupported hardware, missing expected configuration and mixed failures
+remain failures. The original messages are always preserved, and anything
 uncertain stays `fail`. An over-eager rule would hide real failures, which is worse than the problem
 it solves.
 
@@ -77,7 +78,7 @@ it solves.
 |---|---|
 | `ANTA_USERNAME` / `ANTA_PASSWORD` | device credentials — **environment only**, never tool arguments, never returned |
 | `ANTA_ENABLE_PASSWORD` | optional, for tests needing enable mode |
-| `ANTA_VERIFY_TLS` | default `false` (lab switches ship self-signed certs) — **always disclosed** in output as `tls_verified` |
+| `ANTA_VERIFY_TLS` | default `true` (certificate and hostname verification) — **always disclosed** in output as `tls_verified` |
 | `ANTA_TIMEOUT` | per-device timeout, default 30s |
 
 ## Install and test
@@ -92,3 +93,5 @@ bash tests/anta/run-tests.sh         # 21 assertions; live ones skip without ANT
 EOS only — this is not multivendor validation. `arista-cvp-mcp` is the management plane, pyATS and
 the multivendor CLI driver are the device-CLI plane, and this is the validation plane. Use it to
 assert, not to fetch.
+
+For private CA trust use `ANTA_CA_BUNDLE`; see [transport migration](../../docs/INTEGRATION-TLS-MIGRATION.md). SSH host-key checks remain enabled independently.

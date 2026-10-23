@@ -1,0 +1,60 @@
+{
+  "date": "2026-10-11",
+  "reason": "Owner-authorized preservation before branch cleanup; these are not release tags.",
+  "refs": [
+    {
+      "former_ref": "150-vscode-extension",
+      "commit": "aa2795313b487e00ccbe85d53f6a78db07b10a94",
+      "archive_tag": "archive/2026-10-11/150-vscode-extension",
+      "disposition": "original expanded design and WSL baseline"
+    },
+    {
+      "former_ref": "150-vscode-extension-implementation",
+      "commit": "3c01a37ab12b165fbd877efcd1f200962073ad5b",
+      "archive_tag": "archive/2026-10-11/150-vscode-extension-implementation",
+      "disposition": "superseded expanded implementation"
+    },
+    {
+      "former_ref": "150-vscode-extension-release",
+      "commit": "4ed565ba221b75c33dccd4c5dfdbbc096bbb4786",
+      "archive_tag": "archive/2026-10-11/150-vscode-extension-release",
+      "disposition": "superseded expanded implementation"
+    },
+    {
+      "former_ref": "150-vscode-backend-experiments",
+      "commit": "5cf5779b0a53a6741792d386c677c47426410ca1",
+      "archive_tag": "archive/2026-10-11/150-vscode-backend-experiments",
+      "disposition": "abandoned backend experiment; never merge"
+    },
+    {
+      "former_ref": "origin/150-vscode-extension-wsl",
+      "commit": "413d53225332056569606e365051ada7c3f92420",
+      "archive_tag": "archive/2026-10-11/150-vscode-extension-wsl",
+      "disposition": "superseded expanded WSL implementation"
+    },
+    {
+      "former_ref": "archive/143-agent-substrate-2026-10-09",
+      "commit": "bb36375d2f9ec353ebf8d033cef5f3e80218f668",
+      "archive_tag": "archive/2026-10-11/143-agent-substrate-2026-10-09",
+      "disposition": "deferred unimplemented spec"
+    },
+    {
+      "former_ref": "archive/145-google-chat-channel-2026-10-09",
+      "commit": "912649b5635ceb347521d814e8dee75a4b8d939a",
+      "archive_tag": "archive/2026-10-11/145-google-chat-channel-2026-10-09",
+      "disposition": "deferred unimplemented spec"
+    },
+    {
+      "former_ref": "a72dbe4cb6b81d3573ed450abe6a654d161e45db",
+      "commit": "a72dbe4cb6b81d3573ed450abe6a654d161e45db",
+      "archive_tag": "archive/2026-10-11/owner-publication-hold",
+      "disposition": "owner-publication-hold"
+    },
+    {
+      "former_ref": "e860862944ca1d3b648726f9c255790afbf323f0",
+      "commit": "e860862944ca1d3b648726f9c255790afbf323f0",
+      "archive_tag": "archive/2026-10-11/spec148-mac-fixture-snapshot",
+      "disposition": "spec148-mac-fixture-snapshot"
+    }
+  ]
+}

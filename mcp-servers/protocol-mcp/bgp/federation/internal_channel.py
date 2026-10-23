@@ -10,8 +10,8 @@ Border (FR-007/FR-007a). No change to eN2N (052/053).
 Transport handshake (contracts/in2n-internal-transport.md):
     Border → member : IN2N_MAGIC (5B) + nonce (32B)
     member → Border : in2n/hello | in2n/enroll  (JSON-RPC, signing the nonce)
-Then the standard NCFED JSON-RPC channel runs. An optional TLS wrapper encrypts
-the socket for distributed members; the auth guarantee is the signed-nonce check.
+Then the standard NCFED JSON-RPC channel runs. Distributed members require verified TLS. Possession and hub attestation proofs
+include a TLS channel binding; plaintext is restricted to loopback.
 """
 
 import asyncio
@@ -112,14 +112,10 @@ async def read_border_preamble(reader) -> Optional[bytes]:
 
 
 def build_ssl_contexts(cert_path: str, key_path: str):
-    """Optional TLS for distributed members (encryption). Returns (server_ctx,
-    client_ctx) using this claw's self-signed cert. Auth is still the app-layer
-    signed-nonce check; TLS only encrypts the socket. Best-effort — callers may
-    run plaintext over a trusted loopback/private transport."""
+    """Legacy explicit-cert helper: trust the supplied certificate and verify
+    hostname. Distributed daemon setup uses internal_security contexts."""
     import ssl
     server_ctx = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
     server_ctx.load_cert_chain(certfile=cert_path, keyfile=key_path)
-    client_ctx = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
-    client_ctx.check_hostname = False
-    client_ctx.verify_mode = ssl.CERT_NONE   # pinning happens at the app layer
+    client_ctx = ssl.create_default_context(cafile=cert_path)
     return server_ctx, client_ctx

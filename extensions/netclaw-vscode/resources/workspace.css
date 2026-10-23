@@ -1,0 +1,126 @@
+.workspace-page {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 32px 28px;
+}
+.workspace-page h1 {
+  font-size: 30px;
+  margin: 0 0 6px;
+}
+.workspace-page h2 {
+  font-size: 18px;
+  margin: 0 0 8px;
+}
+.workspace-page p {
+  line-height: 1.55;
+}
+.eyebrow {
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  color: var(--vscode-descriptionForeground);
+}
+.muted {
+  color: var(--vscode-descriptionForeground);
+}
+.claw-control {
+  margin: 28px 0;
+  padding: 22px;
+  border: 1px solid var(--vscode-panel-border);
+  border-radius: 10px;
+  background: var(--vscode-editorWidget-background);
+}
+.actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 12px 0;
+}
+.workspace-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  gap: 18px;
+}
+.workspace-files {
+  border: 1px solid var(--vscode-panel-border);
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 18px 0 28px;
+}
+.workspace-file {
+  display: grid;
+  grid-template-columns: 155px minmax(0, 1fr) auto;
+  gap: 18px;
+  align-items: center;
+  padding: 18px;
+  border-bottom: 1px solid var(--vscode-panel-border);
+}
+.workspace-file:last-child {
+  border-bottom: none;
+}
+.workspace-file p {
+  margin: 0;
+}
+.workspace-file .muted {
+  font-size: 12px;
+  margin-top: 4px;
+}
+.file-open {
+  font-family: var(--vscode-editor-font-family);
+  font-weight: 600;
+  text-align: left;
+}
+.service-badge {
+  display: inline-block;
+  margin: 10px 8px 0 0;
+  padding: 4px 10px;
+  border: 1px solid var(--vscode-panel-border);
+  border-radius: 12px;
+  font-size: 12px;
+}
+.target-path {
+  overflow-wrap: anywhere;
+  font-family: var(--vscode-editor-font-family);
+  font-size: 12px;
+}
+#message {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+button:focus-visible,
+summary:focus-visible {
+  outline: 2px solid var(--vscode-focusBorder);
+  outline-offset: 3px;
+}
+button:disabled {
+  opacity: 0.55;
+}
+@media (max-width: 650px) {
+  .workspace-page {
+    padding: 18px 14px;
+  }
+  .workspace-heading {
+    display: block;
+  }
+  .workspace-file {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 10px;
+  }
+  .workspace-file > div {
+    grid-column: 1/-1;
+    grid-row: 2;
+  }
+  .claw-control {
+    padding: 16px;
+  }
+  .workspace-page h1 {
+    font-size: 24px;
+  }
+}
+
+.workspace-file {
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  margin: 0;
+}

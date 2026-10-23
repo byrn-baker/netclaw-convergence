@@ -1,0 +1,2 @@
+# Research
+Installed OpenClaw sessions --agent ID --json exposes totalTokens, totalTokensFresh, contextTokens and updatedAt from its SQLite store. Its own status display uses fresh totalTokens for context occupancy. status --usage --agent ID --json exposes usage.providers[].windows with label, usedPercent, resetAt and updatedAt, but also account identifiers; project an allowlist only. Existing HUD tokenomics scans legacy transcript files and budget endpoints estimate cross-session spend, so neither fits this requirement.

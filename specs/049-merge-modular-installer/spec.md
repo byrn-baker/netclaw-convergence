@@ -103,3 +103,77 @@ A future contributor adding a new MCP server or skill needs to know, from the pr
 - The project's existing inventory-verification tooling (built for a prior documentation-reconciliation effort) is a reasonable starting point to extend for the new catalog-coverage check, since it already knows how to enumerate the live configuration and workspace skills.
 - The constitution amendment described here is a clarifying/extending change to existing principle text (not a redefinition or removal of a principle), consistent with a minor version bump under the constitution's own semantic-versioning rule.
 - The external contributor is not expected to make further changes themselves; this effort completes the coverage-parity and retrofit work directly on top of their contributed branch, preserving their authorship, before merging.
+
+## Scoped follow-up: macOS keyboard selection (2026-10-09)
+
+The original modular installer targets macOS as well as Linux. Its shared TUI
+must support the system Bash 3.2 without silently accepting the default runtime.
+
+- Down/Up followed by Enter selects the highlighted runtime and profile.
+- CSI (`ESC [ A/B/C/D`) and application (`ESC O A/B/C/D`) arrows work.
+- q, Escape, or failed keyboard input aborts runtime selection and the installer.
+- Checklist navigation/toggling and j/k shortcuts keep working.
+- Explicit `--runtime hermes --profile recommended` bypasses the menus.
+- Non-interactive defaults remain compatible. No packages or services are
+  installed during regression tests.
+
+## Scoped follow-up: Python prerequisites and retry recovery (2026-10-09)
+
+Greg's next install log reports missing uv for pyATS and repeated resolution
+failures under `/usr/bin/python3` with pip 21.2.4. The modular installer must
+validate Python compatibility before claiming prerequisites are satisfied.
+
+- Require Python 3.10+ for installer scripts and the selected NETCLAW_PY base.
+- Require uv up front when pyATS or GAIT is selected; provide an install remedy.
+- Refuse unsupported bases before creating a virtualenv.
+- Retry an automatically managed component with an unsupported old Python in
+  a separate compatible environment, retaining the original environment.
+- Reject unmanaged/symlink recovery destinations and explicit unsupported
+  virtualenvs. Keep existing compatible runtimes and package constraints.
+- Document Python selection and recovery without deleting runtime state or
+  changing system packages during testing.
+
+## Full-log follow-up (2026-10-09)
+
+The received archive contains 104 component/core logs (excluding AppleDouble
+metadata). It confirms Python 3.9/pip 21.2.4 and exposes additional retry and
+portability problems. Keep this follow-up within installer reliability scope.
+
+- Refresh obsolete pip only inside a component virtualenv before modern
+  editable installation; never modify system pip.
+- Preserve unsupported component-specific source `.venv` directories and use
+  separate compatible replacements. Bind canonical template Python launches
+  to the successfully recorded replacement; preserve custom launch conflicts.
+- Multivendor uses the selected base/helper, not hardcoded `/usr/bin/python3`,
+  and fails visibly instead of silently skipping a required dependency.
+- Claw Certification installs its cryptography dependency in its component
+  environment, executes with that Python, and propagates issuance failures.
+- gtrace parses release metadata without GNU grep and reports success only
+  after binary placement/executable checks succeed.
+- Document remaining Docker, kubectl, Ollama and Linux-desktop limitations;
+  do not imply that a full macOS install supplies those external services.
+
+## Platform and component preflight follow-up (2026-10-09)
+
+The second archive confirms a Zabbix cwd regression, missing Forward Go,
+Python 3.14 incompatibility in Panorama/Zoom and RADKit vendor-index needs.
+This extends the modular installer's prerequisite and retry reliability scope.
+
+- Resolve Zabbix's local vendored requirement from its component directory.
+- Detect/report OS/version, architecture and Bash before interactive selection.
+- Prefer existing Python 3.12 for component environments unless NETCLAW_PY
+  is explicitly selected; never install Python or change global defaults.
+- Check every selected catalog entry against one tracked policy before runtime
+  install, onboarding, component downloads, manifest/config writes or services.
+- Aggregate unsupported platforms, missing tools, Python bounds, Forward Go
+  1.25/CGO/compiler requirements and RADKit vendor-source configuration.
+- Include interpreter-platform checks for native Zoom SDK wheels. Keep Linux
+  virtual desktop unavailable in the macOS custom picker. Explicit unsupported
+  selections fail; no unreported selection removal or false installation success.
+- Add a read-only --preflight mode with a nonzero result for blocked selections.
+- Apply the same component Python bounds to environment recovery, retaining
+  incompatible environments and success-only records; explicit venvs are refused
+  rather than rebuilt. Version checks use the chosen component interpreter.
+- Keep endpoint credentials/connectivity outside host prerequisite checks.
+- Store logs in separate run directories so old interactive logs cannot be
+  mistaken for new failures. Test offline and with a temporary real Zabbix install.

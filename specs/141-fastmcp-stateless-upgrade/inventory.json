@@ -1,0 +1,1163 @@
+[
+  {
+    "server": "ACI_MCP",
+    "ownership": "external",
+    "sources": [
+      {
+        "path": "mcp-servers/ACI_MCP/aci_mcp/main.py",
+        "imports": [
+          "fastmcp",
+          "fastmcp.exceptions"
+        ],
+        "tracked": false
+      }
+    ],
+    "registrations": [],
+    "components": [],
+    "manifests": []
+  },
+  {
+    "server": "CiscoFMC-MCP-server-community",
+    "ownership": "external",
+    "sources": [
+      {
+        "path": "mcp-servers/CiscoFMC-MCP-server-community/sfw_mcp_fmc/server.py",
+        "imports": [
+          "fastmcp"
+        ],
+        "tracked": false
+      }
+    ],
+    "registrations": [],
+    "components": [],
+    "manifests": [
+      "mcp-servers/CiscoFMC-MCP-server-community/requirements.txt"
+    ]
+  },
+  {
+    "server": "ISE_MCP",
+    "ownership": "external",
+    "sources": [
+      {
+        "path": "mcp-servers/ISE_MCP/src/ise_mcp_server/api/client.py",
+        "imports": [
+          "fastmcp.exceptions"
+        ],
+        "tracked": false
+      },
+      {
+        "path": "mcp-servers/ISE_MCP/src/ise_mcp_server/server.py",
+        "imports": [
+          "fastmcp"
+        ],
+        "tracked": false
+      }
+    ],
+    "registrations": [],
+    "components": [],
+    "manifests": [
+      "mcp-servers/ISE_MCP/requirements.txt"
+    ]
+  },
+  {
+    "server": "Wikipedia_MCP",
+    "ownership": "external",
+    "sources": [
+      {
+        "path": "mcp-servers/Wikipedia_MCP/main.py",
+        "imports": [
+          "fastmcp",
+          "fastmcp.exceptions"
+        ],
+        "tracked": false
+      }
+    ],
+    "registrations": [],
+    "components": [],
+    "manifests": [
+      "mcp-servers/Wikipedia_MCP/requirements.txt"
+    ]
+  },
+  {
+    "server": "analysis-mcp",
+    "ownership": "tracked",
+    "sources": [
+      {
+        "path": "mcp-servers/analysis-mcp/server.py",
+        "imports": [
+          "mcp.server.fastmcp"
+        ],
+        "tracked": true
+      }
+    ],
+    "registrations": [
+      "analysis-mcp"
+    ],
+    "components": [
+      "analysis"
+    ],
+    "manifests": [
+      "mcp-servers/analysis-mcp/requirements.txt"
+    ]
+  },
+  {
+    "server": "anta-mcp",
+    "ownership": "tracked",
+    "sources": [
+      {
+        "path": "mcp-servers/anta-mcp/server.py",
+        "imports": [
+          "mcp.server.fastmcp"
+        ],
+        "tracked": true
+      }
+    ],
+    "registrations": [
+      "anta-mcp"
+    ],
+    "components": [
+      "anta"
+    ],
+    "manifests": [
+      "mcp-servers/anta-mcp/requirements.txt"
+    ]
+  },
+  {
+    "server": "auvik-mcp",
+    "ownership": "tracked",
+    "sources": [
+      {
+        "path": "mcp-servers/auvik-mcp/auvik_mcp_server.py",
+        "imports": [
+          "fastmcp"
+        ],
+        "tracked": true
+      }
+    ],
+    "registrations": [
+      "auvik-mcp"
+    ],
+    "components": [
+      "auvik"
+    ],
+    "manifests": [
+      "mcp-servers/auvik-mcp/requirements.txt"
+    ]
+  },
+  {
+    "server": "azure-network-mcp",
+    "ownership": "tracked",
+    "sources": [
+      {
+        "path": "mcp-servers/azure-network-mcp/azure_network_mcp_server.py",
+        "imports": [
+          "mcp.server.fastmcp"
+        ],
+        "tracked": true
+      }
+    ],
+    "registrations": [
+      "azure-network-mcp"
+    ],
+    "components": [
+      "azure"
+    ],
+    "manifests": [
+      "mcp-servers/azure-network-mcp/requirements.txt"
+    ]
+  },
+  {
+    "server": "batfish-mcp",
+    "ownership": "tracked",
+    "sources": [
+      {
+        "path": "mcp-servers/batfish-mcp/batfish_mcp_server.py",
+        "imports": [
+          "mcp.server.fastmcp"
+        ],
+        "tracked": true
+      }
+    ],
+    "registrations": [
+      "batfish-mcp"
+    ],
+    "components": [
+      "batfish"
+    ],
+    "manifests": [
+      "mcp-servers/batfish-mcp/requirements.txt"
+    ]
+  },
+  {
+    "server": "bgp-intel-mcp",
+    "ownership": "tracked",
+    "sources": [
+      {
+        "path": "mcp-servers/bgp-intel-mcp/server.py",
+        "imports": [
+          "mcp.server.fastmcp"
+        ],
+        "tracked": true
+      }
+    ],
+    "registrations": [
+      "bgp-intel-mcp"
+    ],
+    "components": [
+      "bgp-intel"
+    ],
+    "manifests": [
+      "mcp-servers/bgp-intel-mcp/requirements.txt"
+    ]
+  },
+  {
+    "server": "catalyst-center-mcp",
+    "ownership": "external",
+    "sources": [
+      {
+        "path": "mcp-servers/catalyst-center-mcp/catalyst-center-mcp.py",
+        "imports": [
+          "fastmcp"
+        ],
+        "tracked": false
+      }
+    ],
+    "registrations": [],
+    "components": [],
+    "manifests": [
+      "mcp-servers/catalyst-center-mcp/requirements.txt"
+    ]
+  },
+  {
+    "server": "catc-mcp",
+    "ownership": "tracked",
+    "sources": [
+      {
+        "path": "mcp-servers/catc-mcp/server.py",
+        "imports": [
+          "mcp.server.fastmcp"
+        ],
+        "tracked": true
+      }
+    ],
+    "registrations": [
+      "catc-mcp"
+    ],
+    "components": [
+      "catc"
+    ],
+    "manifests": [
+      "mcp-servers/catc-mcp/requirements.txt"
+    ]
+  },
+  {
+    "server": "cisco-psirt-mcp",
+    "ownership": "tracked",
+    "sources": [
+      {
+        "path": "mcp-servers/cisco-psirt-mcp/server.py",
+        "imports": [
+          "mcp.server.fastmcp"
+        ],
+        "tracked": true
+      }
+    ],
+    "registrations": [
+      "cisco-psirt-mcp"
+    ],
+    "components": [
+      "cisco-psirt"
+    ],
+    "manifests": [
+      "mcp-servers/cisco-psirt-mcp/requirements.txt"
+    ]
+  },
+  {
+    "server": "cisco-sdwan-mcp",
+    "ownership": "external",
+    "sources": [
+      {
+        "path": "mcp-servers/cisco-sdwan-mcp/sdwan_mcp_server.py",
+        "imports": [
+          "fastmcp"
+        ],
+        "tracked": false
+      }
+    ],
+    "registrations": [],
+    "components": [],
+    "manifests": []
+  },
+  {
+    "server": "clab-mcp-server",
+    "ownership": "external",
+    "sources": [
+      {
+        "path": "mcp-servers/clab-mcp-server/clab_mcp_server.py",
+        "imports": [
+          "fastmcp"
+        ],
+        "tracked": false
+      }
+    ],
+    "registrations": [],
+    "components": [],
+    "manifests": [
+      "mcp-servers/clab-mcp-server/requirements.txt"
+    ]
+  },
+  {
+    "server": "claroty-mcp",
+    "ownership": "tracked",
+    "sources": [
+      {
+        "path": "mcp-servers/claroty-mcp/claroty_mcp_server.py",
+        "imports": [
+          "mcp.server.fastmcp"
+        ],
+        "tracked": true
+      }
+    ],
+    "registrations": [
+      "claroty-mcp"
+    ],
+    "components": [
+      "claroty"
+    ],
+    "manifests": [
+      "mcp-servers/claroty-mcp/requirements.txt"
+    ]
+  },
+  {
+    "server": "document-mcp",
+    "ownership": "tracked",
+    "sources": [
+      {
+        "path": "mcp-servers/document-mcp/server.py",
+        "imports": [
+          "mcp.server.fastmcp"
+        ],
+        "tracked": true
+      }
+    ],
+    "registrations": [
+      "document-mcp"
+    ],
+    "components": [
+      "document"
+    ],
+    "manifests": [
+      "mcp-servers/document-mcp/requirements.txt"
+    ]
+  },
+  {
+    "server": "eve-ng-mcp-server",
+    "ownership": "tracked",
+    "sources": [
+      {
+        "path": "mcp-servers/eve-ng-mcp-server/mcp_init.py",
+        "imports": [
+          "fastmcp"
+        ],
+        "tracked": true
+      }
+    ],
+    "registrations": [],
+    "components": [],
+    "manifests": [
+      "mcp-servers/eve-ng-mcp-server/requirements.txt"
+    ]
+  },
+  {
+    "server": "f5-mcp-server",
+    "ownership": "external",
+    "sources": [
+      {
+        "path": "mcp-servers/f5-mcp-server/F5MCPserver.py",
+        "imports": [
+          "mcp.server.fastmcp"
+        ],
+        "tracked": false
+      }
+    ],
+    "registrations": [],
+    "components": [],
+    "manifests": [
+      "mcp-servers/f5-mcp-server/requirements.txt"
+    ]
+  },
+  {
+    "server": "fortinet-mcp",
+    "ownership": "tracked",
+    "sources": [
+      {
+        "path": "mcp-servers/fortinet-mcp/server.py",
+        "imports": [
+          "mcp.server.fastmcp"
+        ],
+        "tracked": true
+      }
+    ],
+    "registrations": [
+      "fortinet-mcp"
+    ],
+    "components": [
+      "fortinet"
+    ],
+    "manifests": [
+      "mcp-servers/fortinet-mcp/requirements.txt"
+    ]
+  },
+  {
+    "server": "gait_mcp",
+    "ownership": "external",
+    "sources": [
+      {
+        "path": "mcp-servers/gait_mcp/gait_mcp.py",
+        "imports": [
+          "fastmcp",
+          "mcp.server.fastmcp"
+        ],
+        "tracked": false
+      }
+    ],
+    "registrations": [],
+    "components": [],
+    "manifests": [
+      "mcp-servers/gait_mcp/pyproject.toml"
+    ]
+  },
+  {
+    "server": "gnmi-mcp",
+    "ownership": "tracked",
+    "sources": [
+      {
+        "path": "mcp-servers/gnmi-mcp/gnmi_mcp_server.py",
+        "imports": [
+          "fastmcp"
+        ],
+        "tracked": true
+      }
+    ],
+    "registrations": [
+      "gnmi-mcp"
+    ],
+    "components": [
+      "gnmi"
+    ],
+    "manifests": [
+      "mcp-servers/gnmi-mcp/requirements.txt"
+    ]
+  },
+  {
+    "server": "gns3-mcp-server",
+    "ownership": "tracked",
+    "sources": [
+      {
+        "path": "mcp-servers/gns3-mcp-server/gns3_mcp_server.py",
+        "imports": [
+          "fastmcp"
+        ],
+        "tracked": true
+      }
+    ],
+    "registrations": [
+      "gns3-mcp"
+    ],
+    "components": [
+      "gns3"
+    ],
+    "manifests": [
+      "mcp-servers/gns3-mcp-server/requirements.txt"
+    ]
+  },
+  {
+    "server": "halo-mcp",
+    "ownership": "tracked",
+    "sources": [
+      {
+        "path": "mcp-servers/halo-mcp/halo_mcp_server.py",
+        "imports": [
+          "fastmcp"
+        ],
+        "tracked": true
+      }
+    ],
+    "registrations": [
+      "halo-mcp"
+    ],
+    "components": [
+      "halo"
+    ],
+    "manifests": [
+      "mcp-servers/halo-mcp/requirements.txt"
+    ]
+  },
+  {
+    "server": "humanrail-mcp-server",
+    "ownership": "external",
+    "sources": [
+      {
+        "path": "mcp-servers/humanrail-mcp-server/server.py",
+        "imports": [
+          "mcp.server.fastmcp"
+        ],
+        "tracked": false
+      }
+    ],
+    "registrations": [],
+    "components": [],
+    "manifests": [
+      "mcp-servers/humanrail-mcp-server/pyproject.toml"
+    ]
+  },
+  {
+    "server": "image-style-mcp",
+    "ownership": "tracked",
+    "sources": [
+      {
+        "path": "mcp-servers/image-style-mcp/server.py",
+        "imports": [
+          "mcp.server.fastmcp"
+        ],
+        "tracked": true
+      }
+    ],
+    "registrations": [
+      "image-style-mcp"
+    ],
+    "components": [
+      "comfyui-viz"
+    ],
+    "manifests": [
+      "mcp-servers/image-style-mcp/requirements.txt"
+    ]
+  },
+  {
+    "server": "infrahub-mcp",
+    "ownership": "external",
+    "sources": [
+      {
+        "path": "mcp-servers/infrahub-mcp/src/infrahub_mcp/server.py",
+        "imports": [
+          "fastmcp"
+        ],
+        "tracked": false
+      },
+      {
+        "path": "mcp-servers/infrahub-mcp/src/infrahub_mcp/tools/branch.py",
+        "imports": [
+          "fastmcp"
+        ],
+        "tracked": false
+      },
+      {
+        "path": "mcp-servers/infrahub-mcp/src/infrahub_mcp/tools/gql.py",
+        "imports": [
+          "fastmcp"
+        ],
+        "tracked": false
+      },
+      {
+        "path": "mcp-servers/infrahub-mcp/src/infrahub_mcp/tools/nodes.py",
+        "imports": [
+          "fastmcp"
+        ],
+        "tracked": false
+      },
+      {
+        "path": "mcp-servers/infrahub-mcp/src/infrahub_mcp/tools/schema.py",
+        "imports": [
+          "fastmcp"
+        ],
+        "tracked": false
+      }
+    ],
+    "registrations": [],
+    "components": [],
+    "manifests": [
+      "mcp-servers/infrahub-mcp/pyproject.toml"
+    ]
+  },
+  {
+    "server": "jev-mcp",
+    "ownership": "tracked",
+    "sources": [
+      {
+        "path": "mcp-servers/jev-mcp/server.py",
+        "imports": [
+          "mcp.server.fastmcp"
+        ],
+        "tracked": true
+      }
+    ],
+    "registrations": [
+      "jev-mcp"
+    ],
+    "components": [
+      "jev"
+    ],
+    "manifests": [
+      "mcp-servers/jev-mcp/requirements.txt"
+    ]
+  },
+  {
+    "server": "mcp-cvp-fun",
+    "ownership": "external",
+    "sources": [
+      {
+        "path": "mcp-servers/mcp-cvp-fun/mcp_server_rest.py",
+        "imports": [
+          "mcp.server.fastmcp"
+        ],
+        "tracked": false
+      }
+    ],
+    "registrations": [],
+    "components": [],
+    "manifests": []
+  },
+  {
+    "server": "mcp-nvd",
+    "ownership": "external",
+    "sources": [
+      {
+        "path": "mcp-servers/mcp-nvd/mcp_nvd/server.py",
+        "imports": [
+          "mcp.server.fastmcp"
+        ],
+        "tracked": false
+      }
+    ],
+    "registrations": [],
+    "components": [],
+    "manifests": [
+      "mcp-servers/mcp-nvd/pyproject.toml"
+    ]
+  },
+  {
+    "server": "memory-mcp",
+    "ownership": "tracked",
+    "sources": [
+      {
+        "path": "mcp-servers/memory-mcp/memory_mcp_server.py",
+        "imports": [
+          "fastmcp",
+          "mcp.server.fastmcp"
+        ],
+        "tracked": true
+      }
+    ],
+    "registrations": [
+      "memory-mcp"
+    ],
+    "components": [
+      "memory-mcp"
+    ],
+    "manifests": [
+      "mcp-servers/memory-mcp/pyproject.toml"
+    ]
+  },
+  {
+    "server": "meraki-magic-mcp-community",
+    "ownership": "external",
+    "sources": [
+      {
+        "path": "mcp-servers/meraki-magic-mcp-community/meraki-mcp-dynamic.py",
+        "imports": [
+          "mcp.server.fastmcp"
+        ],
+        "tracked": false
+      },
+      {
+        "path": "mcp-servers/meraki-magic-mcp-community/meraki-mcp.py",
+        "imports": [
+          "mcp.server.fastmcp"
+        ],
+        "tracked": false
+      }
+    ],
+    "registrations": [],
+    "components": [],
+    "manifests": [
+      "mcp-servers/meraki-magic-mcp-community/requirements.txt",
+      "mcp-servers/meraki-magic-mcp-community/pyproject.toml"
+    ]
+  },
+  {
+    "server": "multivendor-cli-mcp",
+    "ownership": "tracked",
+    "sources": [
+      {
+        "path": "mcp-servers/multivendor-cli-mcp/server.py",
+        "imports": [
+          "mcp.server.fastmcp"
+        ],
+        "tracked": true
+      }
+    ],
+    "registrations": [
+      "multivendor-cli-mcp"
+    ],
+    "components": [
+      "multivendor-cli"
+    ],
+    "manifests": [
+      "mcp-servers/multivendor-cli-mcp/requirements.txt"
+    ]
+  },
+  {
+    "server": "n2n-mcp",
+    "ownership": "tracked",
+    "sources": [
+      {
+        "path": "mcp-servers/n2n-mcp/server.py",
+        "imports": [
+          "mcp.server.fastmcp"
+        ],
+        "tracked": true
+      }
+    ],
+    "registrations": [
+      "n2n-mcp"
+    ],
+    "components": [
+      "n2n"
+    ],
+    "manifests": [
+      "mcp-servers/n2n-mcp/requirements.txt"
+    ]
+  },
+  {
+    "server": "nautobot-golden-config-mcp",
+    "ownership": "tracked",
+    "sources": [
+      {
+        "path": "mcp-servers/nautobot-golden-config-mcp/server.py",
+        "imports": [
+          "mcp.server.fastmcp"
+        ],
+        "tracked": true
+      }
+    ],
+    "registrations": [
+      "nautobot-golden-config-mcp"
+    ],
+    "components": [
+      "nautobot-golden-config"
+    ],
+    "manifests": [
+      "mcp-servers/nautobot-golden-config-mcp/requirements.txt"
+    ]
+  },
+  {
+    "server": "nautobot-mcp-v2",
+    "ownership": "tracked",
+    "sources": [
+      {
+        "path": "mcp-servers/nautobot-mcp-v2/server.py",
+        "imports": [
+          "mcp.server.fastmcp"
+        ],
+        "tracked": true
+      }
+    ],
+    "registrations": [
+      "nautobot-mcp"
+    ],
+    "components": [
+      "nautobot"
+    ],
+    "manifests": [
+      "mcp-servers/nautobot-mcp-v2/requirements.txt"
+    ]
+  },
+  {
+    "server": "nautobot-routing-mcp",
+    "ownership": "tracked",
+    "sources": [
+      {
+        "path": "mcp-servers/nautobot-routing-mcp/server.py",
+        "imports": [
+          "mcp.server.fastmcp"
+        ],
+        "tracked": true
+      }
+    ],
+    "registrations": [
+      "nautobot-routing-mcp"
+    ],
+    "components": [
+      "nautobot-routing"
+    ],
+    "manifests": [
+      "mcp-servers/nautobot-routing-mcp/requirements.txt"
+    ]
+  },
+  {
+    "server": "netbox-mcp-server",
+    "ownership": "external",
+    "sources": [
+      {
+        "path": "mcp-servers/netbox-mcp-server/src/netbox_mcp_server/server.py",
+        "imports": [
+          "fastmcp"
+        ],
+        "tracked": false
+      }
+    ],
+    "registrations": [],
+    "components": [],
+    "manifests": [
+      "mcp-servers/netbox-mcp-server/pyproject.toml"
+    ]
+  },
+  {
+    "server": "netclaw-dot-mcp",
+    "ownership": "tracked",
+    "sources": [
+      {
+        "path": "mcp-servers/netclaw-dot-mcp/server.py",
+        "imports": [
+          "mcp.server.fastmcp"
+        ],
+        "tracked": true
+      }
+    ],
+    "registrations": [],
+    "components": [],
+    "manifests": []
+  },
+  {
+    "server": "nsm-mcp",
+    "ownership": "tracked",
+    "sources": [
+      {
+        "path": "mcp-servers/nsm-mcp/server.py",
+        "imports": [
+          "mcp.server.fastmcp"
+        ],
+        "tracked": true
+      }
+    ],
+    "registrations": [
+      "nsm-mcp"
+    ],
+    "components": [
+      "nsm"
+    ],
+    "manifests": [
+      "mcp-servers/nsm-mcp/requirements.txt"
+    ]
+  },
+  {
+    "server": "packet-buddy-mcp",
+    "ownership": "tracked",
+    "sources": [
+      {
+        "path": "mcp-servers/packet-buddy-mcp/server.py",
+        "imports": [
+          "fastmcp"
+        ],
+        "tracked": true
+      }
+    ],
+    "registrations": [],
+    "components": [],
+    "manifests": []
+  },
+  {
+    "server": "protocol-mcp",
+    "ownership": "tracked",
+    "sources": [
+      {
+        "path": "mcp-servers/protocol-mcp/server.py",
+        "imports": [
+          "mcp.server.fastmcp"
+        ],
+        "tracked": true
+      }
+    ],
+    "registrations": [
+      "protocol-mcp"
+    ],
+    "components": [
+      "protocol"
+    ],
+    "manifests": [
+      "mcp-servers/protocol-mcp/requirements.txt"
+    ]
+  },
+  {
+    "server": "radkit-mcp-server-community",
+    "ownership": "external",
+    "sources": [
+      {
+        "path": "mcp-servers/radkit-mcp-server-community/src/radkit_mcp/server.py",
+        "imports": [
+          "fastmcp"
+        ],
+        "tracked": false
+      }
+    ],
+    "registrations": [
+      "radkit-mcp"
+    ],
+    "components": [
+      "radkit"
+    ],
+    "manifests": [
+      "mcp-servers/radkit-mcp-server-community/pyproject.toml"
+    ]
+  },
+  {
+    "server": "rag-mcp",
+    "ownership": "tracked",
+    "sources": [
+      {
+        "path": "mcp-servers/rag-mcp/rag_mcp_server.py",
+        "imports": [
+          "fastmcp"
+        ],
+        "tracked": true
+      }
+    ],
+    "registrations": [
+      "rag-mcp"
+    ],
+    "components": [
+      "rag-mcp"
+    ],
+    "manifests": [
+      "mcp-servers/rag-mcp/pyproject.toml"
+    ]
+  },
+  {
+    "server": "redfish-mcp",
+    "ownership": "tracked",
+    "sources": [
+      {
+        "path": "mcp-servers/redfish-mcp/server.py",
+        "imports": [
+          "mcp.server.fastmcp"
+        ],
+        "tracked": true
+      }
+    ],
+    "registrations": [
+      "redfish-mcp"
+    ],
+    "components": [
+      "redfish"
+    ],
+    "manifests": [
+      "mcp-servers/redfish-mcp/requirements.txt"
+    ]
+  },
+  {
+    "server": "servicenow-mcp",
+    "ownership": "external",
+    "sources": [
+      {
+        "path": "mcp-servers/servicenow-mcp/src/servicenow_mcp/server_sse.py",
+        "imports": [
+          "mcp.server.fastmcp"
+        ],
+        "tracked": false
+      }
+    ],
+    "registrations": [],
+    "components": [],
+    "manifests": [
+      "mcp-servers/servicenow-mcp/pyproject.toml"
+    ]
+  },
+  {
+    "server": "subnet-calculator-mcp",
+    "ownership": "external",
+    "sources": [
+      {
+        "path": "mcp-servers/subnet-calculator-mcp/servers/subnetcalculator_mcp.py",
+        "imports": [
+          "mcp.server.fastmcp"
+        ],
+        "tracked": false
+      }
+    ],
+    "registrations": [],
+    "components": [],
+    "manifests": []
+  },
+  {
+    "server": "suzieq-mcp",
+    "ownership": "tracked",
+    "sources": [
+      {
+        "path": "mcp-servers/suzieq-mcp/server.py",
+        "imports": [
+          "mcp.server.fastmcp"
+        ],
+        "tracked": true
+      }
+    ],
+    "registrations": [
+      "suzieq-mcp"
+    ],
+    "components": [
+      "suzieq"
+    ],
+    "manifests": [
+      "mcp-servers/suzieq-mcp/requirements.txt"
+    ]
+  },
+  {
+    "server": "thousandeyes-mcp-community",
+    "ownership": "external",
+    "sources": [
+      {
+        "path": "mcp-servers/thousandeyes-mcp-community/src/server.py",
+        "imports": [
+          "mcp.server.fastmcp"
+        ],
+        "tracked": false
+      }
+    ],
+    "registrations": [
+      "thousandeyes-mcp"
+    ],
+    "components": [
+      "te-community"
+    ],
+    "manifests": [
+      "mcp-servers/thousandeyes-mcp-community/requirements.txt"
+    ]
+  },
+  {
+    "server": "topology-diagram-mcp",
+    "ownership": "tracked",
+    "sources": [
+      {
+        "path": "mcp-servers/topology-diagram-mcp/server.py",
+        "imports": [
+          "mcp.server.fastmcp"
+        ],
+        "tracked": true
+      }
+    ],
+    "registrations": [
+      "topology-diagram-mcp"
+    ],
+    "components": [
+      "comfyui-viz"
+    ],
+    "manifests": [
+      "mcp-servers/topology-diagram-mcp/requirements.txt"
+    ]
+  },
+  {
+    "server": "tts-mcp",
+    "ownership": "tracked",
+    "sources": [
+      {
+        "path": "mcp-servers/tts-mcp/server.py",
+        "imports": [
+          "fastmcp"
+        ],
+        "tracked": true
+      }
+    ],
+    "registrations": [],
+    "components": [],
+    "manifests": []
+  },
+  {
+    "server": "uml-mcp",
+    "ownership": "external",
+    "sources": [
+      {
+        "path": "mcp-servers/uml-mcp/mcp_core/server/fastmcp_wrapper.py",
+        "imports": [
+          "fastmcp",
+          "fastmcp.context"
+        ],
+        "tracked": false
+      }
+    ],
+    "registrations": [
+      "uml-mcp"
+    ],
+    "components": [
+      "uml"
+    ],
+    "manifests": [
+      "mcp-servers/uml-mcp/requirements.txt",
+      "mcp-servers/uml-mcp/pyproject.toml"
+    ]
+  },
+  {
+    "server": "worldlabs-marble-mcp",
+    "ownership": "tracked",
+    "sources": [
+      {
+        "path": "mcp-servers/worldlabs-marble-mcp/server.py",
+        "imports": [
+          "mcp.server.fastmcp"
+        ],
+        "tracked": true
+      }
+    ],
+    "registrations": [
+      "worldlabs-marble-mcp"
+    ],
+    "components": [
+      "worldlabs-marble"
+    ],
+    "manifests": [
+      "mcp-servers/worldlabs-marble-mcp/requirements.txt"
+    ]
+  },
+  {
+    "server": "zabbix-mcp",
+    "ownership": "tracked",
+    "sources": [
+      {
+        "path": "mcp-servers/zabbix-mcp/vendor/zabbix-mcp-server/src/zabbix_mcp_server/server.py",
+        "imports": [
+          "fastmcp"
+        ],
+        "tracked": true
+      }
+    ],
+    "registrations": [
+      "zabbix-mcp"
+    ],
+    "components": [
+      "zabbix"
+    ],
+    "manifests": [
+      "mcp-servers/zabbix-mcp/requirements.txt"
+    ]
+  },
+  {
+    "server": "zoom-rtms-mcp",
+    "ownership": "tracked",
+    "sources": [
+      {
+        "path": "mcp-servers/zoom-rtms-mcp/server.py",
+        "imports": [
+          "mcp.server.fastmcp"
+        ],
+        "tracked": true
+      }
+    ],
+    "registrations": [
+      "zoom-rtms-mcp"
+    ],
+    "components": [
+      "zoom-rtms"
+    ],
+    "manifests": [
+      "mcp-servers/zoom-rtms-mcp/requirements.txt"
+    ]
+  }
+]

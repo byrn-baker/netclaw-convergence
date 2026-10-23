@@ -1,3 +1,4 @@
+import { setSafeHtml, appendSafeHtml } from '../security/safe-html.js';
 /**
  * KnowledgePanel - HUD component for the RAG Knowledge Base (Feature 062)
  *
@@ -42,7 +43,7 @@ export class KnowledgePanel {
     this.element = document.createElement('div');
     this.element.id = 'knowledge-panel';
     this.element.className = `knowledge-panel collapsed${this.docked ? ' kp-docked' : ''}`;
-    this.element.innerHTML = this.getTemplate();
+    setSafeHtml(this.element, this.getTemplate());
     this.setupEventListeners();
     if (!this.docked) {
       this.setupDragResize();
@@ -135,7 +136,7 @@ export class KnowledgePanel {
       if (btn) {
         btn.title = this.isCollapsed ? 'Expand knowledge base' : 'Collapse knowledge base';
         btn.setAttribute('aria-expanded', this.isCollapsed ? 'false' : 'true');
-        btn.innerHTML = this.isCollapsed ? '&#9652;' : '&#9662;';
+        btn.textContent = this.isCollapsed ? '▴' : '▾';
       }
       this.persistGeometry();
     };
@@ -222,13 +223,13 @@ export class KnowledgePanel {
     if (!url || !/^https?:\/\//i.test(url)) {
       if (box) {
         box.hidden = false;
-        box.innerHTML = '<span class="kp-error-text">Enter a full http(s) URL.</span>';
+        setSafeHtml(box, '<span class="kp-error-text">Enter a full http(s) URL.</span>');
       }
       return;
     }
     if (box) {
       box.hidden = false;
-      box.innerHTML = '<span class="kp-chip-busy">Fetching preview…</span>';
+      setSafeHtml(box, '<span class="kp-chip-busy">Fetching preview…</span>');
     }
     try {
       const body = { url, mode: 'preview', doc_type: this.docType() };
@@ -243,7 +244,7 @@ export class KnowledgePanel {
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
         this._urlPreview = null;
-        box.innerHTML = `<span class="kp-error-text">${this.esc(data.error || data.message || res.status)}</span>`;
+        setSafeHtml(box, `<span class="kp-error-text">${this.esc(data.error || data.message || res.status)}</span>`);
         return;
       }
       this._urlPreview = { ...data, url };
@@ -274,7 +275,7 @@ export class KnowledgePanel {
             </p>` : ''}
           </div>`
         : '';
-      box.innerHTML = `
+      setSafeHtml(box, `
         <div class="kp-url-preview-head">
           <strong>${this.esc(data.title || url)}</strong>
           <span class="kp-drop-hint">${this.esc(data.content_type || '')}</span>
@@ -291,7 +292,7 @@ export class KnowledgePanel {
           <button type="button" id="kp-url-ingest-all" ${links.length ? '' : 'disabled'}
             title="Requires preview scope token">Ingest page + ${links.length} linked</button>
         </div>
-      `;
+      `);
       box.querySelector('#kp-url-ingest-one')?.addEventListener('click', () => {
         this.ingestUrl({ includeLinked: false });
       });
@@ -300,7 +301,7 @@ export class KnowledgePanel {
       });
     } catch (err) {
       this._urlPreview = null;
-      if (box) box.innerHTML = `<span class="kp-error-text">${this.esc(err.message)}</span>`;
+      if (box) setSafeHtml(box, `<span class="kp-error-text">${this.esc(err.message)}</span>`);
     }
   }
 
@@ -573,7 +574,7 @@ export class KnowledgePanel {
       const btn = this.element.querySelector('.kp-collapse-btn');
       if (btn) {
         btn.setAttribute('aria-expanded', this.isCollapsed ? 'false' : 'true');
-        btn.innerHTML = this.isCollapsed ? '&#9652;' : '&#9662;';
+        btn.textContent = this.isCollapsed ? '▴' : '▾';
       }
     } catch {
       /* ignore */
@@ -737,7 +738,7 @@ export class KnowledgePanel {
   renderProgress() {
     const el = this.element.querySelector('#kp-progress');
     const items = [...this.progress.values()].slice(-5);
-    el.innerHTML = items
+    setSafeHtml(el, items
       .map((p) => {
         const cls = p.status === 'error' ? 'kp-chip-error'
           : p.status === 'ready' ? 'kp-chip-done'
@@ -750,7 +751,7 @@ export class KnowledgePanel {
           : p.status;
         return `<div class="kp-chip ${cls}"><span>${this.esc(p.title || '')}</span><span class="kp-chip-status">${this.esc(statusLabel)}</span>${detail}${err}</div>`;
       })
-      .join('');
+      .join(''));
   }
 
   renderTables() {
@@ -761,9 +762,9 @@ export class KnowledgePanel {
 
     const docRows = this.element.querySelector('#kp-doc-rows');
     if (!this.documents.length) {
-      docRows.innerHTML = '<tr><td colspan="7" class="kp-empty">No documents indexed yet — upload one above.</td></tr>';
+      setSafeHtml(docRows, '<tr><td colspan="7" class="kp-empty">No documents indexed yet — upload one above.</td></tr>');
     } else {
-      docRows.innerHTML = this.documents
+      setSafeHtml(docRows, this.documents
         .map(
           (d) => `<tr>
             <td title="${this.esc(d.id)}">${this.esc(d.title)}</td>
@@ -778,14 +779,14 @@ export class KnowledgePanel {
             </td>
           </tr>`
         )
-        .join('');
+        .join(''));
     }
 
     const snapRows = this.element.querySelector('#kp-snap-rows');
     if (!this.snapshots.length) {
-      snapRows.innerHTML = '<tr><td colspan="5" class="kp-empty">No snapshots</td></tr>';
+      setSafeHtml(snapRows, '<tr><td colspan="5" class="kp-empty">No snapshots</td></tr>');
     } else {
-      snapRows.innerHTML = this.snapshots
+      setSafeHtml(snapRows, this.snapshots
         .map(
           (s) => `<tr>
             <td><span class="kp-type kp-type-snapshot">investigation</span> ${this.esc(s.title)}</td>
@@ -797,7 +798,7 @@ export class KnowledgePanel {
             </td>
           </tr>`
         )
-        .join('');
+        .join(''));
     }
 
     this.element.querySelectorAll('.kp-actions button').forEach((btn) => {

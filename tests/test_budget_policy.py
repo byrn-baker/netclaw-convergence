@@ -190,3 +190,24 @@ class TestResolveSessionConfig:
         policy = resolve_session_config(config, "something:unknown:pattern")
         assert policy.session_budget_usd == 5.0
         assert policy.model is None
+
+
+@pytest.mark.parametrize("invalid", ["nan", "inf", "-inf", "-1", "nonsense"])
+def test_invalid_environment_retains_configured_limit(monkeypatch, invalid):
+    monkeypatch.setenv("NETCLAW_SESSION_BUDGET_USD", invalid)
+    assert load_budget_policy({"defaults":{"budget":{"sessionBudgetUsd":2}}}).session_budget_usd == 2
+
+@pytest.mark.parametrize("invalid", [float("nan"), float("inf"), -1, True, None, []])
+def test_invalid_config_retains_default(invalid):
+    assert load_budget_policy({"defaults":{"budget":{"sessionBudgetUsd":invalid}}}).session_budget_usd == 5
+
+@pytest.mark.parametrize("value,expected", [(False,False),(True,True),("false",False),("true",True)])
+def test_boolean_overrides_are_boolean(value, expected):
+    policy=load_budget_policy({"defaults":{"budget":{"allowOverride":value}}})
+    assert policy.allow_override is expected
+
+
+def test_fractional_call_limit_rejected_and_zero_cost_supported():
+    policy=load_budget_policy({"defaults":{"budget":{"maxToolCallsPerTurn":1.5,"sessionBudgetUsd":0}}})
+    assert policy.max_tool_calls_per_turn == 20
+    assert policy.session_budget_usd == 0

@@ -1,0 +1,26 @@
+[
+  {
+    "case": "unknown host key",
+    "status": "unreachable",
+    "rejected": true
+  },
+  {
+    "case": "trusted host key",
+    "command": "vtysh -c \"show version\"",
+    "status": "ok",
+    "has_output": true,
+    "ssh_host_key_checking": true
+  },
+  {
+    "case": "trusted host key",
+    "command": "vtysh -c \"show ip route\"",
+    "status": "ok",
+    "has_output": true,
+    "ssh_host_key_checking": true
+  },
+  {
+    "case": "mismatched host key",
+    "status": "unreachable",
+    "rejected": true
+  }
+]

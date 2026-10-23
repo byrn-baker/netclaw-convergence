@@ -1,0 +1,33 @@
+{
+  "counts": {
+    "BLOCKED_DEPENDENCY": 0,
+    "ERROR": 0,
+    "FAIL": 0,
+    "NEEDS_DOCKER": 0,
+    "NEEDS_LIVE_CREDENTIALS": 0,
+    "PASS": 1
+  },
+  "exit_code": 0,
+  "generated_at": "2026-09-26T19:52:01.975685+00:00",
+  "results": [
+    {
+      "capabilities": [],
+      "command": [
+        "/Users/john.capobianco/netclaw/.contract-test-envs/auvik-mcp/bin/python",
+        "-m",
+        "pytest",
+        "tests/auvik-mcp"
+      ],
+      "detail": "offline contracts passed",
+      "duration_seconds": 9.167887916999462,
+      "environment": {
+        "fingerprint": "18edcc310c90449758a3a1d26fc52cf90acb32d8213ab8ab6f6d10486c16e737",
+        "path": ".contract-test-envs/auvik-mcp"
+      },
+      "exit_code": 0,
+      "status": "PASS",
+      "suite": "auvik-mcp"
+    }
+  ],
+  "schema_version": 1
+}

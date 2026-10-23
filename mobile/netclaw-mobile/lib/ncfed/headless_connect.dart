@@ -20,15 +20,17 @@ class NotEnrolledError implements Exception {
 class ConnectTimeoutError implements Exception {
   const ConnectTimeoutError();
   @override
-  String toString() => 'ConnectTimeoutError: connecting to the Border timed out';
+  String toString() =>
+      'ConnectTimeoutError: connecting to the Border timed out';
 }
 
-typedef ReconnectFn = Future<EdgeClient> Function(
-  EnrollmentQrPayload payload, {
-  required String memberId,
-  required String keyFingerprint,
-  required EdgeIdentity identity,
-});
+typedef ReconnectFn =
+    Future<EdgeClient> Function(
+      EnrollmentQrPayload payload, {
+      required String memberId,
+      required String keyFingerprint,
+      required EdgeIdentity identity,
+    });
 
 /// Opens a fresh, authenticated [EdgeClient] connection for a headless App
 /// Intents entrypoint, using this device's persisted enrollment — the same
@@ -49,14 +51,51 @@ Future<EdgeClient> connectHeadless({
   final dir = directory ?? await getApplicationDocumentsDirectory();
   final stored = await EnrollmentStore(dir).load();
   if (stored == null) throw const NotEnrolledError();
+  var timedOut = false;
   try {
     return await reconnect(
-      stored.toPayload(),
-      memberId: stored.memberId,
-      keyFingerprint: stored.keyFingerprint,
-      identity: const EdgeIdentity(),
-    ).timeout(timeout);
+          stored.toPayload(),
+          memberId: stored.memberId,
+          keyFingerprint: stored.keyFingerprint,
+          identity: const EdgeIdentity(),
+        )
+        .then((client) async {
+          // Future.timeout doesn't cancel reconnect. Its late result still owns
+          // a socket, so release it when no caller can receive that client.
+          if (timedOut) {
+            await client.close();
+            throw const ConnectTimeoutError();
+          }
+          return client;
+        })
+        .timeout(
+          timeout,
+          onTimeout: () {
+            timedOut = true;
+            throw const ConnectTimeoutError();
+          },
+        );
   } on TimeoutException {
     throw const ConnectTimeoutError();
+  }
+}
+
+/// Own a headless connection through all work/error paths, including late dial
+/// completion handled by connectHeadless itself.
+Future<T> withHeadlessClient<T>(
+  Future<T> Function(EdgeClient client) work, {
+  Duration timeout = const Duration(seconds: 15),
+  Directory? directory,
+  ReconnectFn reconnect = EdgeClient.reconnect,
+}) async {
+  final client = await connectHeadless(
+    timeout: timeout,
+    directory: directory,
+    reconnect: reconnect,
+  );
+  try {
+    return await work(client);
+  } finally {
+    await client.close();
   }
 }

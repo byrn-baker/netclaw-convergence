@@ -22,18 +22,17 @@ import pytest
 
 GOLDEN_PATH = Path(__file__).parent.parent / "fixtures" / "rag" / "golden_set.yaml"
 
-if not GOLDEN_PATH.exists():
-    pytest.skip(
-        "no golden set supplied — copy golden_set.example.yaml to golden_set.yaml "
-        "and author >=20 Q&A pairs over your ingested documents (FR-080)",
-        allow_module_level=True,
-    )
+pytestmark = pytest.mark.skipif(
+    not GOLDEN_PATH.exists(),
+    reason="no operator golden set supplied (FR-080); retrieval quality remains unverified",
+)
 
 sys.path.insert(0, str(Path(__file__).parent.parent.parent / "mcp-servers" / "rag-mcp"))
 
 import yaml  # noqa: E402
 
-import rag_mcp_server as server  # noqa: E402
+# Import only when a test runs: a missing corpus must not initialize operator storage.
+server = None
 
 
 def _load_golden():
@@ -44,6 +43,9 @@ def _load_golden():
 
 
 def _run_eval(rerank_enabled: bool):
+    global server
+    if server is None:
+        import rag_mcp_server as server
     server.reranker.enabled = rerank_enabled
     entries = _load_golden()
     hits, faithful, total = 0, 0, len(entries)

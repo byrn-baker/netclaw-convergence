@@ -9,7 +9,8 @@ import os
 import sys
 from typing import Optional
 
-from mcp.server.fastmcp import FastMCP
+from fastmcp_tasks import TasksExtension
+from fastmcp import FastMCP
 
 from nautobot_client import NautobotClient, NautobotError, _esc
 from reconcile import reconcile_interfaces
@@ -30,6 +31,7 @@ for var in ("NAUTOBOT_URL", "NAUTOBOT_TOKEN"):
         sys.exit(1)
 
 mcp = FastMCP("nautobot-mcp-v2")
+mcp.add_extension(TasksExtension(name="netclaw-nautobot-mcp-v2", concurrency=1))
 client = NautobotClient()
 
 ITSM_ENABLED = os.environ.get("ITSM_ENABLED", "false").lower() == "true"
@@ -67,7 +69,7 @@ def _gql_filters(**kwargs: Optional[str | int | bool]) -> str:
 # ═══════════════════════════════════════════════════════════════════════
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def nautobot_test_connection() -> str:
     """Test connectivity to the Nautobot API. Verifies GraphQL and REST endpoints."""
     results = {"url": client.url, "graphql": False, "rest": False, "version": None}
@@ -86,7 +88,7 @@ async def nautobot_test_connection() -> str:
     return json.dumps(results, indent=2)
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def nautobot_get_devices(
     name: Optional[str] = None,
     location: Optional[str] = None,
@@ -118,7 +120,7 @@ async def nautobot_get_devices(
     return json.dumps({"count": len(devices), "devices": devices}, indent=2)
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def nautobot_get_interfaces(
     device: Optional[str] = None,
     name: Optional[str] = None,
@@ -154,7 +156,7 @@ async def nautobot_get_interfaces(
     return json.dumps({"count": len(ifaces), "interfaces": ifaces}, indent=2)
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def nautobot_get_vlans(
     vid: Optional[int] = None,
     name: Optional[str] = None,
@@ -184,7 +186,7 @@ async def nautobot_get_vlans(
     return json.dumps({"count": len(vlans), "vlans": vlans}, indent=2)
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def nautobot_get_prefixes(
     prefix: Optional[str] = None,
     status: Optional[str] = None,
@@ -213,7 +215,7 @@ async def nautobot_get_prefixes(
     return json.dumps({"count": len(prefixes), "prefixes": prefixes}, indent=2)
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def nautobot_get_ip_addresses(
     address: Optional[str] = None,
     status: Optional[str] = None,
@@ -240,7 +242,7 @@ async def nautobot_get_ip_addresses(
     return json.dumps({"count": len(ips), "ip_addresses": ips}, indent=2)
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def nautobot_get_cables(
     device: Optional[str] = None,
     status: Optional[str] = None,
@@ -317,7 +319,7 @@ async def nautobot_get_cables(
     return json.dumps({"count": len(enriched), "cables": enriched}, indent=2)
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def nautobot_graphql(query: str, variables: Optional[str] = None) -> str:
     """Execute an arbitrary GraphQL query against Nautobot. Read-only — Nautobot 3.1.0 has no GraphQL mutations."""
     logger.info(f"nautobot_graphql query_len={len(query)}")
@@ -615,7 +617,7 @@ def _first_list_from(data: dict) -> list:
 # ═══════════════════════════════════════════════════════════════════════
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def nautobot_reconcile(device_name: str, live_interfaces: str) -> str:
     """Compare live device interfaces (from pyATS) against Nautobot source of truth.
 
@@ -685,7 +687,7 @@ async def cisco_design_reference(
         return json.dumps({"features": get_summary()}, indent=2)
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def golden_config_get_template(
     template_path: Optional[str] = None,
 ) -> str:
@@ -721,7 +723,7 @@ async def golden_config_get_template(
 # ── Golden Config Plugin ─────────────────────────────────────────────
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def nautobot_get_golden_configs(
     device: Optional[str] = None,
     limit: int = 50,
@@ -753,7 +755,7 @@ async def nautobot_get_golden_configs(
     return json.dumps({"count": len(configs), "golden_configs": configs}, indent=2)
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def nautobot_get_config_compliance(
     device: Optional[str] = None,
     limit: int = 50,
@@ -787,7 +789,7 @@ async def nautobot_get_config_compliance(
     return json.dumps({"count": len(records), "config_compliances": records}, indent=2)
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def nautobot_get_compliance_rules(
     limit: int = 50,
     offset: int = 0,
@@ -816,7 +818,7 @@ async def nautobot_get_compliance_rules(
     )
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def nautobot_get_golden_config_settings() -> str:
     """Query golden config settings — repos, path templates, SoT query, and dynamic group scope.
 
@@ -832,7 +834,7 @@ async def nautobot_get_golden_config_settings() -> str:
     return json.dumps({"count": len(results), "settings": results}, indent=2)
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def nautobot_get_git_repositories() -> str:
     """Query Nautobot git repositories — used for golden config templates, backups, and intended configs."""
     logger.info("nautobot_get_git_repositories")
@@ -844,7 +846,7 @@ async def nautobot_get_git_repositories() -> str:
     return json.dumps({"count": len(results), "repositories": results}, indent=2)
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def nautobot_get_graphql_queries() -> str:
     """Query saved GraphQL queries in Nautobot — used as SoT aggregation queries for golden config."""
     logger.info("nautobot_get_graphql_queries")
@@ -1058,7 +1060,7 @@ async def nautobot_run_job(
         return json.dumps({"error": str(e)})
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def nautobot_get_job_result(job_result_id: str) -> str:
     """Check the status and result of a Nautobot job run.
 
@@ -1079,7 +1081,7 @@ async def nautobot_get_job_result(job_result_id: str) -> str:
         return json.dumps({"error": str(e)})
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def nautobot_list_jobs(
     q: Optional[str] = None,
     limit: int = 50,
@@ -1206,7 +1208,7 @@ async def nautobot_update_git_repository(
 # ── Config Contexts ──────────────────────────────────────────
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def nautobot_get_config_contexts(
     name: Optional[str] = None,
     limit: int = 50,
@@ -1234,7 +1236,7 @@ async def nautobot_get_config_contexts(
         return json.dumps({"error": str(e)})
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def nautobot_get_config_context_detail(config_context_id: str) -> str:
     """Get full detail of a config context including its data payload."""
     logger.info(f"nautobot_get_config_context_detail id={config_context_id}")
@@ -1325,7 +1327,7 @@ async def nautobot_update_config_context(
 # ── Dynamic Groups ───────────────────────────────────────────
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def nautobot_get_dynamic_group_members(
     dynamic_group_id: str,
 ) -> str:
@@ -1435,7 +1437,7 @@ async def nautobot_add_secret_to_group(
 # ── Firewall Models Plugin ───────────────────────────────────────────
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def nautobot_get_firewall_policies(
     device: Optional[str] = None,
     limit: int = 50,
@@ -1475,7 +1477,7 @@ async def nautobot_get_firewall_policies(
     return json.dumps({"count": len(policies), "policies": policies}, indent=2)
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def nautobot_get_firewall_zones(
     limit: int = 50,
     offset: int = 0,
@@ -1498,7 +1500,7 @@ async def nautobot_get_firewall_zones(
     return json.dumps({"count": len(zones), "zones": zones}, indent=2)
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def nautobot_get_nat_policies(
     limit: int = 50,
     offset: int = 0,
@@ -1531,7 +1533,7 @@ async def nautobot_get_nat_policies(
 # ── BGP Models Plugin ────────────────────────────────────────────────
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def nautobot_get_bgp_routing(
     device: Optional[str] = None,
     limit: int = 50,
@@ -1574,7 +1576,7 @@ async def nautobot_get_bgp_routing(
     return json.dumps({"count": len(instances), "bgp_routing_instances": instances}, indent=2)
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def nautobot_get_autonomous_systems(
     limit: int = 50,
     offset: int = 0,
@@ -1599,7 +1601,7 @@ async def nautobot_get_autonomous_systems(
 # ── IGP Models Plugin ────────────────────────────────────────────────
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def nautobot_get_ospf_routing(
     limit: int = 50,
     offset: int = 0,
@@ -1632,7 +1634,7 @@ async def nautobot_get_ospf_routing(
 # ── Virtualization ────────────────────────────────────────────────────
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def nautobot_get_virtual_machines(
     name: Optional[str] = None,
     cluster: Optional[str] = None,
@@ -2317,7 +2319,7 @@ async def _resolve_identifier(object_type: str, identifier: str, reg: dict) -> s
     return results[0]["id"]
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def nautobot_get_schema(object_type: str) -> str:
     """Get the full field schema for any Nautobot object type — required fields, optional fields, and field types.
 
@@ -2372,7 +2374,7 @@ async def nautobot_get_schema(object_type: str) -> str:
 # ── High-Level BGP/Network Tools (reduce LLM context burn) ─────────────────
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def nautobot_get_device_config_context(
     device: str,
 ) -> str:
@@ -2704,7 +2706,7 @@ async def nautobot_create_bgp_peer_group(
         return json.dumps({"error": str(e)})
 
 
-@mcp.tool()
+@mcp.tool(task=True)
 async def nautobot_render_device_config(
     device: str,
 ) -> str:

@@ -333,6 +333,8 @@ PH="$TMP/piphelper"; mkdir -p "$PH"
 # is present. Exercises the retry without touching the real environment.
 cat >"$PH/fakepy668" <<'EOF'
 #!/usr/bin/env bash
+# The helper now checks Python support before probing/installing pip.
+if [ "$1" = "-c" ] && [[ "$2" == *sys.version_info* ]]; then exit 0; fi
 [ "$1" = "-m" ] && [ "$2" = "pip" ] || exit 9
 case " $* " in
     *" --version "*) echo "pip 99.0"; exit 0 ;;
@@ -344,16 +346,18 @@ exit 1
 EOF
 chmod +x "$PH/fakepy668"
 
-assert_exit 0 "PEP 668 refusal is retried with --break-system-packages" \
+assert_exit 1 "PEP 668 refusal does not override system packages" \
     env NETCLAW_PY="$PH/fakepy668" bash -c \
         'source "$0"/scripts/lib/pip-helper.sh; netclaw_pip_install thing' "$REPO_ROOT"
-assert_mentions "externally managed" "the retry is announced, not silent" \
+assert_mentions "externally managed" "the managed-environment refusal is actionable" \
     env NETCLAW_PY="$PH/fakepy668" bash -c \
         'source "$0"/scripts/lib/pip-helper.sh; netclaw_pip_install thing' "$REPO_ROOT"
 
 # A failure for any OTHER reason must surface its actual output, not be swallowed.
 cat >"$PH/fakepyfail" <<'EOF'
 #!/usr/bin/env bash
+# The helper now checks Python support before probing/installing pip.
+if [ "$1" = "-c" ] && [[ "$2" == *sys.version_info* ]]; then exit 0; fi
 [ "$1" = "-m" ] && [ "$2" = "pip" ] || exit 9
 case " $* " in *" --version "*) echo "pip 99.0"; exit 0 ;; esac
 echo "ERROR: No matching distribution found for nonexistent-xyz" >&2
@@ -425,21 +429,20 @@ assert_exit 1 "a dead server FAILS reconciliation (startup is not warn-only)" \
 # generic pattern reported junos-mcp's absent devices.json as an entry-point problem.
 # Uses the real junos-mcp entry point (which exists) pointed at a device-mapping file
 # that does not -- the exact shape of the original misdiagnosis.
-if [ -f "$REPO_ROOT/mcp-servers/junos-mcp-server/jmcp.py" ]; then
-    python3 - "$TMP" "$REPO_ROOT" <<'EOF'
-import json, os, sys
-tmp, root = sys.argv[1], sys.argv[2]
-cfg = {"mcpServers": {"junos-probe": {"command": "python3", "args": [
-    "-u", os.path.join(root, "mcp-servers/junos-mcp-server/jmcp.py"),
-    "-f", "/nonexistent/devices.json", "-t", "stdio"]}}}
-json.dump(cfg, open(os.path.join(tmp, "junoscfg.json"), "w"))
+cat > "$TMP/missing-data.py" <<'EOF'
+open('/nonexistent/netclaw-audit-fixture-devices.json')
 EOF
-    assert_mentions "a file the server loads at startup is missing" \
-        "a missing runtime data file is distinguished from a missing entry point" \
-        python3 "$REPO_ROOT/scripts/check-server-startup.py" --config "$TMP/junoscfg.json"
-else
-    printf '  skip junos data-file assertion (junos-mcp-server not cloned)\n'
-fi
+python3 - "$TMP" <<'EOF'
+import json, os, sys
+root = sys.argv[1]
+cfg = {"mcpServers": {"missing-data-probe": {"command": sys.executable,
+       "args": [os.path.join(root, "missing-data.py")]}}}
+json.dump(cfg, open(os.path.join(root, "missingdatacfg.json"), "w"))
+EOF
+assert_mentions "a file the server loads at startup is missing" \
+    "a missing runtime data file is distinguished from a missing entry point" \
+    python3 "$REPO_ROOT/scripts/check-server-startup.py" --config "$TMP/missingdatacfg.json"
+
 
 # ── Package-reference surface (spec 093) ──────────────────────────────────────
 # Three skills invoked `npx -y @anthropic-ai/microsoft-graph-mcp`, which 404s on npm, and

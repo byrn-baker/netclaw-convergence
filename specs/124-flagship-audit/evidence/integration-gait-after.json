@@ -1,0 +1,105 @@
+{
+  "counts": {
+    "BLOCKED_DEPENDENCY": 0,
+    "ERROR": 0,
+    "FAIL": 0,
+    "NEEDS_DOCKER": 0,
+    "NEEDS_LIVE_CREDENTIALS": 0,
+    "PASS": 1
+  },
+  "exit_code": 0,
+  "generated_at": "2026-09-26T23:51:09.150126+00:00",
+  "results": [
+    {
+      "capabilities": [],
+      "command": [
+        "/Users/john.capobianco/netclaw/.contract-test-envs/integration/bin/python",
+        "-m",
+        "pytest",
+        "tests/integration"
+      ],
+      "detail": "offline contracts passed",
+      "duration_seconds": 10.398658167003305,
+      "environment": {
+        "fingerprint": "379e69eb4f02d5ee65bd87f816f29ad30a660de04e0e628e961dbd8c2bd8aa22",
+        "path": ".contract-test-envs/integration"
+      },
+      "exit_code": 0,
+      "status": "PASS",
+      "suite": "integration",
+      "test_runs": [
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/integration/bin/python",
+            "-m",
+            "pytest",
+            "tests/integration/test_comfyui_topology_viz.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\nplugins: asyncio-1.4.0, platformdirs-4.12.0, anyio-4.15.1\nasyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function\ncollected 3 items\n\ntests/integration/test_comfyui_topology_viz.py s..                       [100%]\n\n========================= 2 passed, 1 skipped in 0.34s ========================="
+        },
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/integration/bin/python",
+            "-m",
+            "pytest",
+            "tests/integration/test_federated_topology_viz.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\nplugins: asyncio-1.4.0, platformdirs-4.12.0, anyio-4.15.1\nasyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function\ncollected 4 items\n\ntests/integration/test_federated_topology_viz.py ssss                    [100%]\n\n============================== 4 skipped in 0.22s =============================="
+        },
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/integration/bin/python",
+            "-m",
+            "pytest",
+            "tests/integration/test_memory_mcp.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\nplugins: asyncio-1.4.0, platformdirs-4.12.0, anyio-4.15.1\nasyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function\ncollected 18 items\n\ntests/integration/test_memory_mcp.py ..................                  [100%]\n\n============================== 18 passed in 0.51s =============================="
+        },
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/integration/bin/python",
+            "-m",
+            "pytest",
+            "tests/integration/test_rag_eval.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\nplugins: asyncio-1.4.0, platformdirs-4.12.0, anyio-4.15.1\nasyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function\ncollected 3 items\n\ntests/integration/test_rag_eval.py sss                                   [100%]\n\n============================== 3 skipped in 0.01s =============================="
+        },
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/integration/bin/python",
+            "-m",
+            "pytest",
+            "tests/integration/test_rag_mcp.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\nplugins: asyncio-1.4.0, platformdirs-4.12.0, anyio-4.15.1\nasyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function\ncollected 18 items\n\ntests/integration/test_rag_mcp.py ..................                     [100%]\n\n=============================== warnings summary ===============================\n.contract-test-envs/integration/lib/python3.12/site-packages/fastmcp/server/auth/providers/jwt.py:10\n  /Users/john.capobianco/netclaw/.contract-test-envs/integration/lib/python3.12/site-packages/fastmcp/server/auth/providers/jwt.py:10: AuthlibDeprecationWarning: authlib.jose module is deprecated, please use joserfc instead.\n  It will be compatible before version 2.0.0.\n    from authlib.jose import JsonWebKey, JsonWebToken\n\n.contract-test-envs/integration/lib/python3.12/site-packages/authlib/integrations/httpx_client/assertion_client.py:5\n  /Users/john.capobianco/netclaw/.contract-test-envs/integration/lib/python3.12/site-packages/authlib/integrations/httpx_client/assertion_client.py:5: AuthlibDeprecationWarning: The httpx module is deprecated; please use httpx2 instead.\n    from ._compat import httpx2\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n======================== 18 passed, 2 warnings in 0.88s ========================"
+        },
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/integration/bin/python",
+            "-m",
+            "pytest",
+            "tests/integration/test_threejs_network_viz.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\nplugins: asyncio-1.4.0, platformdirs-4.12.0, anyio-4.15.1\nasyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function\ncollected 3 items\n\ntests/integration/test_threejs_network_viz.py ...                        [100%]\n\n============================== 3 passed in 3.14s ==============================="
+        },
+        {
+          "command": [
+            "/Users/john.capobianco/netclaw/.contract-test-envs/integration/bin/python",
+            "-m",
+            "pytest",
+            "tests/integration/test_ue5_mcp.py"
+          ],
+          "exit_code": 0,
+          "output": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/john.capobianco/netclaw\nplugins: asyncio-1.4.0, platformdirs-4.12.0, anyio-4.15.1\nasyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function\ncollected 75 items\n\ntests/integration/test_ue5_mcp.py sssssssssss..........sssssss.......... [ 50%]\n.....................................                                    [100%]\n\n=============================== warnings summary ===============================\ntests/integration/test_ue5_mcp.py:477\n  /Users/john.capobianco/netclaw/tests/integration/test_ue5_mcp.py:477: PytestUnknownMarkWarning: Unknown pytest.mark.timeout - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html\n    @pytest.mark.timeout(120)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n================== 57 passed, 18 skipped, 1 warning in 3.78s ==================="
+        }
+      ]
+    }
+  ],
+  "schema_version": 1
+}

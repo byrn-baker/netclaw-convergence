@@ -144,9 +144,8 @@ being over-polite costs latency nobody notices and being under-polite costs the 
 netclaw_pip_install -r mcp-servers/bgp-intel-mcp/requirements.txt
 ```
 
-`mcp>=1.2.0,<2` and `httpx>=0.27.0,<1`. The `mcp` upper bound is **load-bearing and no longer
-hypothetical**: the MCP Python SDK has shipped **v2** targeting the 2026-07-28 specification, and v2 removes
-`mcp.server.fastmcp`, which this server imports (spec 077).
+Uses standalone `fastmcp==4.0.11` with `mcp==2.3.0` in an isolated runtime (spec 141).
+See [the migration and rollback guide](../../docs/FASTMCP-UPGRADE.md).
 
 No RDAP/RPKI/BGP library. The payloads are plain JSON and the value here is in the **semantics** — which
 state means what — not the transport. An SDK would add a pinning hazard while abstracting the one thing this

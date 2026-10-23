@@ -1,0 +1,17 @@
+<html><head><style>body{font:16px system-ui;max-width:1050px;margin:40px auto;color:#172033;line-height:1.5}pre{background:#eef1f5;padding:16px;overflow:auto}table{border-collapse:collapse}td,th{padding:8px;border:1px solid #aaa}a{color:#1264a3}</style></head><body><h1>Local and remote HUD access</h1>
+<p>The HUD can read credentials, edit local configuration, and invoke your agent. It is a trusted local operator interface. Starting with spec 124, both the API and frontend bind to <code>127.0.0.1</code>. HTTP and WebSocket requests reject untrusted browser origins and hostnames. Native Windows is not a full NetClaw host; use WSL2. macOS and Linux are supported host paths.</p>
+<p>After updating the checkout, from <code>ui/netclaw-visual</code>, run <code>npm ci</code> (required to adopt the patched lockfile), then <code>npm run dev</code>, then open <a href="http://127.0.0.1:3000">http://127.0.0.1:3000</a>. Adam Mason's context chat remains at <code>/canvas.html</code>. For a built frontend, run <code>npm run build</code>, <code>npm run server</code>, and <code>npm run preview</code> in the appropriate terminals.</p>
+<p><code>HUD_PORT</code> configures the API port (default 3001), and <code>HUD_UI_PORT</code> configures the frontend port (default 3000). Export the same values in the API and frontend processes. Ports must differ; the frontend fails rather than silently moving to an untrusted port.</p>
+<h2>Migration for existing remote users</h2>
+<p>Direct unauthenticated LAN/public access is no longer supported. Run the provided migration helper <strong>on your client machine</strong>, using an SSH account on the NetClaw host:</p>
+<pre><code class="language-bash"># Preview: no connection and no state changes
+python3 scripts/migrate-hud-access.py --ssh-target operator@netclaw-host
+
+# Connect: SSH authenticates normally and holds the tunnel open
+python3 scripts/migrate-hud-access.py --ssh-target operator@netclaw-host --connect
+</code></pre>
+<p>Then open <a href="http://127.0.0.1:3000">http://127.0.0.1:3000</a> locally. Both frontend and API ports are forwarded on loopback only. The helper disables agent forwarding, retains SSH host-key verification, and fails when a forwarding port is already occupied. It does not install keys, alter SSH configuration, or change NetClaw data. Use an existing SSH configuration alias for unusual host addressing or custom SSH ports.</p>
+<p>For custom HUD ports, pass matching <code>--ui-port</code> and <code>--api-port</code> values. If a local port is occupied, stop the conflicting process or select matching custom ports on the host and helper; do not expose the API on a network interface.</p>
+<h2>Recovery and limits</h2>
+<p>Ctrl-C closes the tunnel. No data/configuration migration occurs, so no backup restoration is needed. A failed SSH connection leaves the original installation untouched. The server must already be running on the remote host. Access is for a trusted operator on the local machine or authenticated SSH account; this is not a multi-user authentication system. Do not publish the Vite proxy or API through an unauthenticated reverse proxy. A public deployment needs a separately reviewed authentication design.</p>
+</body></html>

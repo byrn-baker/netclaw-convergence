@@ -1,0 +1,14 @@
+Reconciliation: FAIL
+  catalog      pass   installer coverage and vendored state
+  dependencies FAIL   dependency pins and install paths
+      pins: CiscoFMC-MCP-server-community: 'fastmcp' is pinned '>=2.3.0' with no upper bound, but the code imports a SUBMODULE of it — a new major can remove that submodule (as mcp 2.0.0 removed mcp.server.fastmcp)
+      pins: ISE_MCP: 'fastmcp' is pinned '(unpinned)' with no upper bound, but the code imports a SUBMODULE of it — a new major can remove that submodule (as mcp 2.0.0 removed mcp.server.fastmcp)
+      pins: Wikipedia_MCP: 'fastmcp' is pinned '(unpinned)' with no upper bound, but the code imports a SUBMODULE of it — a new major can remove that submodule (as mcp 2.0.0 removed mcp.server.fastmcp)
+      pins: thousandeyes-mcp-community: 'mcp' is pinned '>=1.13' with no upper bound, but the code imports a SUBMODULE of it — a new major can remove that submodule (as mcp 2.0.0 removed mcp.server.fastmcp)
+      pins: uml-mcp: 'fastapi' is pinned '>=0.128.0' with no upper bound, but the code imports a SUBMODULE of it — a new major can remove that submodule (as mcp 2.0.0 removed mcp.server.fastmcp)
+      pins: uml-mcp: 'rich' is pinned '>=14.0.0' with no upper bound, but the code imports a SUBMODULE of it — a new major can remove that submodule (as mcp 2.0.0 removed mcp.server.fastmcp)
+      pins: uml-mcp: 'mcp' is pinned '>=1.2.0' with no upper bound, but the code imports a SUBMODULE of it — a new major can remove that submodule (as mcp 2.0.0 removed mcp.server.fastmcp)
+  docs         pass   documented counts
+  meraki-ids   pass   Meraki capability IDs cited in skills
+  packages     pass   npx/uvx packages skills invoke exist
+  portability  pass   registration portability

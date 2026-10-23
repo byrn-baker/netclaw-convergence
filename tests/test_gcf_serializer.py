@@ -76,7 +76,9 @@ def test_delta_encoding():
     # Same data, delta should be tiny
     r2 = gs.serialize_response(data1, use_session=True, use_delta=True)
     assert r2["profile_used"] == "delta"
-    assert r2["gcf_token_count"] < 50
+    # A topology delta must still carry the complete authoritative snapshot.
+    assert "Complete source snapshot" in r2["encoded_data"]
+    assert "rtr-4" in r2["encoded_data"]
 
 
 def test_delta_with_changes():
@@ -220,3 +222,65 @@ if __name__ == "__main__":
             print(f"  FAIL  {test.__name__}: {e}")
             failed += 1
     print(f"\n{passed}/{passed+failed} passed")
+
+
+def test_graph_preserves_operational_attributes_and_envelope():
+    gs = reload_serializer()
+    data = {
+        "devices": [{"hostname": "r1", "role": "spine", "cpu_percent": 99, "software": "fixture-1"}],
+        "links": [{"source": "r1", "target": "r1", "state": "up", "packet_loss": 80}],
+        "error": "PARTIAL_RESULTS", "observed_at": "fixture-timestamp",
+    }
+    result = gs.serialize_response(data)
+    for field in ("cpu_percent", "software", "packet_loss", "PARTIAL_RESULTS", "fixture-timestamp"):
+        assert field in result["encoded_data"]
+
+
+def test_delta_preserves_changed_attributes_and_full_context():
+    gs = reload_serializer()
+    data = {"devices": [{"hostname": "r1", "cpu_percent": 1}],
+            "links": [{"source": "r1", "target": "r1", "state": "up"}]}
+    gs.serialize_response(data, use_session=True, use_delta=True)
+    data["devices"][0]["cpu_percent"] = 99
+    result = gs.serialize_response(data, use_session=True, use_delta=True)
+    assert "cpu_percent" in result["encoded_data"]
+    assert "99" in result["encoded_data"]
+    assert "r1" in result["encoded_data"]
+
+
+def test_generic_ambiguous_scalars_are_not_silently_changed():
+    gs = reload_serializer("generic")
+    from gcf import decode_generic
+    data = {"strings": ["001", "true", "-", "1.0", "null"], "empty": [], "nested": {"number": 1, "bool": True}}
+    result = gs.serialize_response(data)
+    if result["profile_used"] == "json":
+        decoded = json.loads(result["encoded_data"])
+    else:
+        decoded = decode_generic(result["encoded_data"])
+    assert json.dumps(decoded, sort_keys=True) == json.dumps(data, sort_keys=True)
+
+
+def test_generic_cache_reuses_only_identical_content():
+    import netclaw_tokens.gcf_serializer as codec
+    from gcf import decode_generic
+    codec._cached_generic.cache_clear()
+    data = [{'name': 'R1', 'cpu': 1}]
+    first = codec._lossless_generic(data)
+    assert codec._lossless_generic(data) == first
+    assert codec._cached_generic.cache_info().hits == 1
+    data[0]['cpu'] = 99
+    changed = codec._lossless_generic(data)
+    assert decode_generic(changed) == data
+    assert changed != first
+    assert codec._cached_generic.cache_info().misses == 2
+
+
+def test_generic_cache_is_bounded_and_large_payloads_bypass_it():
+    import netclaw_tokens.gcf_serializer as codec
+    codec._cached_generic.cache_clear()
+    for i in range(24):
+        codec._lossless_generic([{'name': 'R1', 'cpu': i}])
+    assert codec._cached_generic.cache_info().currsize == 16
+    before = codec._cached_generic.cache_info()
+    codec._lossless_generic([{'name': 'R1', 'description': 'x' * (256 * 1024)}])
+    assert codec._cached_generic.cache_info() == before

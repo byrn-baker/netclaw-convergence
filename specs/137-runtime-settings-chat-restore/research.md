@@ -1,0 +1,2 @@
+# Research
+/api/graph uses config/openclaw.json from the repository; its raw config field is also used by the classic UI footer. Replace it with a safe compatible projection, not the live raw configuration. StandardChat stores everything in React memory. Session storage provides per-tab refresh continuity without cross-tab write races. Existing HttpOnly HUD cookie and server-owned thread binding remain the authorization boundary; browser-saved assessment references grant no new access.

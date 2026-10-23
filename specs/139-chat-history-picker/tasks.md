@@ -1,0 +1,3 @@
+- [x] Add authenticated history list and resume endpoints.
+- [x] Add dropdown and per-chat browser drafts.
+- [x] Verify ownership, continuation, browser behavior and deployment.

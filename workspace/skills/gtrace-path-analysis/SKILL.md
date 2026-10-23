@@ -1,6 +1,6 @@
 ---
 name: gtrace-path-analysis
-description: "Network path tracing and monitoring — traceroute with MPLS/ECMP/NAT detection, continuous MTR monitoring, and distributed GlobalPing probes from 500+ worldwide locations. Use when tracing the path to a destination, diagnosing slow network routes, detecting MPLS or ECMP load balancing, running MTR for intermittent packet loss, or testing reachability from global vantage points."
+description: "Network path tracing and monitoring — traceroute with MPLS/ECMP/NAT detection, continuous MTR monitoring, and distributed GlobalPing probes from 500+ worldwide locations. Use when tracing the path to a destination, diagnosing slow network routes, detecting MPLS or ECMP load balancing, running MTR for intermittent packet loss, or testing reachability from global vantage points. Works standalone from this host, no external platform required; if Cisco ThousandEyes agents are already deployed, prefer `te-path-analysis` for BGP route analysis and agent-based outage investigation. For public-probe-only checks with no local traceroute/MTR, `globalping-external-checks` has the critical guidance on interpreting GlobalPing's no-probe vs. unreachable responses."
 license: Apache-2.0
 user-invocable: true
 metadata:
@@ -8,6 +8,8 @@ metadata:
 ---
 
 # Network Path Analysis with gtrace
+
+Installer note: native registration and the documented MCP_CALL invocation share the installed component launcher. Check `readiness.json` before first use; failed discovery is not device state. Existing write approvals still apply.
 
 ## How to Call the gtrace MCP Tools
 
@@ -114,3 +116,9 @@ All tools return structured results including:
 - Use GlobalPing to differentiate local vs global path issues
 - Cross-reference hop IPs with `asn_lookup` and `geo_lookup` from gtrace-ip-enrichment skill for full context
 - Record all path analysis in GAIT
+
+## Failure Behavior
+
+- If a tool call fails with an authentication or connection error, check that `GTRACE_MCP_BIN` is set and valid before assuming a data or device problem.
+- On a tool error (timeout, unreachable host, malformed response), report the failure and its error message directly to the user rather than fabricating or guessing at results.
+- For a confirmed read-only call, check connectivity and retry once if appropriate. For any call that changes state or sends a message, a timeout does not prove the action failed: inspect current state or delivery status before retrying, preserve the required approval/change gates, and do not repeat an action whose outcome is unknown.

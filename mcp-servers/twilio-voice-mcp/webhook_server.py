@@ -17,6 +17,9 @@ Usage:
 import os
 import json
 import logging
+import hmac
+import ssl
+from urllib.parse import urlsplit
 import httpx
 import asyncio
 from datetime import datetime, timedelta
@@ -24,7 +27,7 @@ from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor
 from typing import Optional
 
-from flask import Flask, request, Response
+from flask import Flask, request, Response, abort
 from twilio.twiml.voice_response import VoiceResponse, Gather
 from twilio.request_validator import RequestValidator
 
@@ -71,7 +74,7 @@ ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
 
 # OpenClaw Gateway - routes to Claude with ALL MCPs
 OPENCLAW_GATEWAY_URL = os.environ.get("OPENCLAW_GATEWAY_URL", "http://localhost:18789")
-OPENCLAW_GATEWAY_TOKEN = os.environ.get("OPENCLAW_GATEWAY_TOKEN", "7cd7e3ad9acece055b438f97d0bf188c70a44397868832f9")
+OPENCLAW_GATEWAY_TOKEN = os.environ.get("OPENCLAW_GATEWAY_TOKEN", "")
 
 # MCP Server URLs (for direct integration)
 CML_API_URL = os.environ.get("CML_URL", "")
@@ -88,8 +91,11 @@ PAGERDUTY_API_KEY = os.environ.get("PAGERDUTY_API_KEY", "")
 
 # Request validator for signature verification
 validator = None
-if TWILIO_API_SECRET:
-    validator = RequestValidator(TWILIO_API_SECRET)
+if TWILIO_AUTH_TOKEN:
+    validator = RequestValidator(TWILIO_AUTH_TOKEN)
+
+VOICE_ALERT_TOKEN = os.environ.get("VOICE_ALERT_TOKEN", "")
+VOICE_PUBLIC_URL = os.environ.get("VOICE_WEBHOOK_URL") or os.environ.get("TWILIO_WEBHOOK_URL", "")
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -217,13 +223,56 @@ def end_call_tracking(call_sid: str) -> Optional[int]:
 
 
 def validate_twilio_request(req):
-    """Validate that request came from Twilio."""
+    """Authenticate form callbacks with the account Auth Token, not API credentials."""
     if not validator:
-        return True
-    signature = req.headers.get("X-Twilio-Signature", "")
+        return False
     url = req.url
-    params = req.form.to_dict()
-    return validator.validate(url, params, signature)
+    if VOICE_PUBLIC_URL:
+        public = urlsplit(VOICE_PUBLIC_URL)
+        if public.scheme != "https" or not public.netloc or public.username or public.password:
+            return False
+        # Paths are rooted at /webhooks; never trust client-supplied proxy headers.
+        url = f"{public.scheme}://{public.netloc}{req.path}"
+        if req.query_string:
+            url += "?" + req.query_string.decode("ascii")
+    return validator.validate(url, req.form, req.headers.get("X-Twilio-Signature", ""))
+
+
+@app.before_request
+def authenticate_voice_request():
+    if not request.path.startswith("/webhooks/twilio/voice"):
+        return None
+    if request.path == "/webhooks/twilio/voice/trigger-alert":
+        if not VOICE_ALERT_TOKEN:
+            abort(503)
+        supplied = request.headers.get("Authorization", "")
+        expected = f"Bearer {VOICE_ALERT_TOKEN}"
+        if not hmac.compare_digest(supplied.encode(), expected.encode()):
+            abort(403)
+        return None
+    if not validator:
+        abort(503)
+    try:
+        valid = validate_twilio_request(request)
+    except (ValueError, UnicodeError):
+        valid = False
+    if not valid:
+        abort(403)
+    if request.path != "/webhooks/twilio/voice/status":
+        outbound = request.form.get("Direction", "").startswith("outbound")
+        number = request.form.get("To" if outbound else "From", "")
+        allowed, _ = is_whitelisted(number, direction="outbound" if outbound else "inbound")
+        if not allowed:
+            abort(403)
+    return None
+
+
+def cml_tls_verify():
+    """Verify CML TLS by default; lab overrides are explicit operator settings."""
+    if os.environ.get("CML_VERIFY_SSL", "true").strip().lower() in ("false", "0", "no"):
+        return False
+    ca_bundle = os.environ.get("CML_CA_BUNDLE")
+    return ssl.create_default_context(cafile=ca_bundle) if ca_bundle else True
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -326,7 +375,7 @@ async def get_cml_token() -> str | None:
     if not CML_API_URL:
         return None
     try:
-        async with httpx.AsyncClient(verify=False, timeout=30.0) as client:
+        async with httpx.AsyncClient(verify=cml_tls_verify(), timeout=30.0) as client:
             auth_response = await client.post(
                 f"{CML_API_URL}/api/v0/authenticate",
                 json={"username": CML_USERNAME, "password": CML_PASSWORD}
@@ -370,7 +419,7 @@ async def tool_get_cml_labs() -> str:
         return "Failed to authenticate with CML. Check credentials."
 
     try:
-        async with httpx.AsyncClient(verify=False, timeout=30.0) as client:
+        async with httpx.AsyncClient(verify=cml_tls_verify(), timeout=30.0) as client:
             headers = {"Authorization": f"Bearer {token}"}
 
             # Get labs
@@ -419,7 +468,7 @@ async def tool_get_cml_lab_details(lab_id: str) -> str:
         return "Failed to authenticate with CML."
 
     try:
-        async with httpx.AsyncClient(verify=False, timeout=30.0) as client:
+        async with httpx.AsyncClient(verify=cml_tls_verify(), timeout=30.0) as client:
             headers = {"Authorization": f"Bearer {token}"}
 
             # Get lab details
@@ -464,7 +513,7 @@ async def tool_start_cml_lab(lab_id: str) -> str:
         return "Failed to authenticate with CML."
 
     try:
-        async with httpx.AsyncClient(verify=False, timeout=60.0) as client:
+        async with httpx.AsyncClient(verify=cml_tls_verify(), timeout=60.0) as client:
             headers = {"Authorization": f"Bearer {token}"}
 
             # Start the lab
@@ -497,7 +546,7 @@ async def tool_stop_cml_lab(lab_id: str) -> str:
         return "Failed to authenticate with CML."
 
     try:
-        async with httpx.AsyncClient(verify=False, timeout=60.0) as client:
+        async with httpx.AsyncClient(verify=cml_tls_verify(), timeout=60.0) as client:
             headers = {"Authorization": f"Bearer {token}"}
 
             # Stop the lab

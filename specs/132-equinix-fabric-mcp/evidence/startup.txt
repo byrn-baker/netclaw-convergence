@@ -1,0 +1,6 @@
+Servers registered: 111
+  launched and checked: 1
+  skipped (remote, interpreter absent, or not installed): 0
+  recorded exceptions: 1
+
+Server startup check: PASS

@@ -394,9 +394,16 @@ def infer_device_type(hostname: str, model: str = "") -> str:
     """
     search_text = f"{hostname} {model}".lower()
 
-    for device_type, patterns in DEVICE_TYPE_PATTERNS.items():
-        for pattern in patterns:
-            if pattern in search_text:
-                return device_type.value
+    import re
+    tokens = set(re.findall(r"[a-z]+[0-9]*", search_text))
+    # Explicit equipment roles outrank location hints such as core/edge.
+    generic = {"core", "edge", "border", "access", "distribution", "cr", "er", "br", "ds", "as"}
+    for broad in (False, True):
+        for device_type, patterns in DEVICE_TYPE_PATTERNS.items():
+            for pattern in patterns:
+                if (pattern in generic) != broad:
+                    continue
+                if pattern in tokens or (len(pattern) >= 3 and any(t.startswith(pattern) and t[len(pattern):].isdigit() for t in tokens)):
+                    return device_type.value
 
     return DeviceType.UNKNOWN.value

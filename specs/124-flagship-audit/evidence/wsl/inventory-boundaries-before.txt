@@ -1,0 +1,114 @@
+..FFFFFF                                                                 [100%]
+=================================== FAILURES ===================================
+____________ test_encoded_secret_is_blocked[value-\u79d8\u5bc6-123] ____________
+
+manager = <bgp.federation.manager.FederationManager object at 0x7b686d4ed790>
+tmp_path = PosixPath('/tmp/pytest-of-johncapobianco/pytest-359/test_encoded_secret_is_blocked2')
+secret = 'value-秘密-123'
+
+    @pytest.mark.parametrize('secret', ['value"withquote123', 'value\\withslash123', 'value-秘密-123'])
+    def test_encoded_secret_is_blocked(manager, tmp_path, secret):
+        env = tmp_path / '.env'
+        env.write_text('API_TOKEN=' + json.dumps(secret, ensure_ascii=False) + '\n')
+        builder = InventoryBuilder(manager, env_path=str(env))
+>       with pytest.raises(ValueError, match='secret'):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE <class 'ValueError'>
+
+tests/n2n/test_inventory_boundaries.py:11: Failed
+_________________ test_member_aggregate_respects_hidden_skill __________________
+
+manager = <bgp.federation.manager.FederationManager object at 0x7b686d4ed7c0>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7b686d4efa10>
+
+    def test_member_aggregate_respects_hidden_skill(manager, monkeypatch):
+        builder = InventoryBuilder(manager)
+        monkeypatch.setattr(builder, '_member_aggregate_skills', lambda _: [{'name': 'hidden-member-skill'}])
+        manager._conn.execute("INSERT INTO visibility_setting VALUES ('skill','hidden-member-skill','hidden',NULL)")
+        manager._conn.commit()
+>       assert 'hidden-member-skill' not in [x['name'] for x in builder.build('peer')['skills']]
+E       AssertionError: assert 'hidden-member-skill' not in ['aap-automation', 'aap-eda', 'aap-lint', 'aci-change-deploy', 'aci-fabric-audit', 'anta-validation', ...]
+
+tests/n2n/test_inventory_boundaries.py:20: AssertionError
+_________________ test_cache_refuses_path_identity[../escape] __________________
+
+manager = <bgp.federation.manager.FederationManager object at 0x7b686d51e570>
+identity = '../escape'
+
+    @pytest.mark.parametrize('identity', ['../escape', '/tmp/absolute', 'peer/name'])
+    def test_cache_refuses_path_identity(manager, identity):
+        builder = InventoryBuilder(manager)
+>       with pytest.raises(ValueError):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE <class 'ValueError'>
+
+tests/n2n/test_inventory_boundaries.py:26: Failed
+_______________ test_cache_refuses_path_identity[/tmp/absolute] ________________
+
+manager = <bgp.federation.manager.FederationManager object at 0x7b686d51eea0>
+identity = '/tmp/absolute'
+
+    @pytest.mark.parametrize('identity', ['../escape', '/tmp/absolute', 'peer/name'])
+    def test_cache_refuses_path_identity(manager, identity):
+        builder = InventoryBuilder(manager)
+>       with pytest.raises(ValueError):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE <class 'ValueError'>
+
+tests/n2n/test_inventory_boundaries.py:26: Failed
+_________________ test_cache_refuses_path_identity[peer/name] __________________
+
+manager = <bgp.federation.manager.FederationManager object at 0x7b686d51d610>
+identity = 'peer/name'
+
+    @pytest.mark.parametrize('identity', ['../escape', '/tmp/absolute', 'peer/name'])
+    def test_cache_refuses_path_identity(manager, identity):
+        builder = InventoryBuilder(manager)
+        with pytest.raises(ValueError):
+>           builder.cache_remote(identity, {'version': 1})
+
+tests/n2n/test_inventory_boundaries.py:27:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+mcp-servers/protocol-mcp/bgp/federation/inventory.py:306: in cache_remote
+    (base / f"{peer_identity}.json").write_text(json.dumps(inventory, indent=2))
+../.local/share/uv/python/cpython-3.12.10-linux-x86_64-gnu/lib/python3.12/pathlib.py:1047: in write_text
+    with self.open(mode='w', encoding=encoding, errors=errors, newline=newline) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = PosixPath('/tmp/pytest-of-johncapobianco/pytest-359/test_cache_refuses_path_identi2/n2n/inventories/peer/name.json')
+mode = 'w', buffering = -1, encoding = 'locale', errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/tmp/pytest-of-johncapobianco/pytest-359/test_cache_refuses_path_identi2/n2n/inventories/peer/name.json'
+
+../.local/share/uv/python/cpython-3.12.10-linux-x86_64-gnu/lib/python3.12/pathlib.py:1013: FileNotFoundError
+________________________ test_missing_metadata_is_stale ________________________
+
+manager = <bgp.federation.manager.FederationManager object at 0x7b686d51c8f0>
+
+    def test_missing_metadata_is_stale(manager):
+        builder = InventoryBuilder(manager)
+        builder.cache_remote('peer', {'version': 1})
+        (manager.base_dir / 'inventories' / 'peer.meta.json').unlink()
+>       assert builder.load_remote('peer')['stale'] is True
+E       assert False is True
+
+tests/n2n/test_inventory_boundaries.py:36: AssertionError
+=========================== short test summary info ============================
+FAILED tests/n2n/test_inventory_boundaries.py::test_encoded_secret_is_blocked[value-\u79d8\u5bc6-123]
+FAILED tests/n2n/test_inventory_boundaries.py::test_member_aggregate_respects_hidden_skill
+FAILED tests/n2n/test_inventory_boundaries.py::test_cache_refuses_path_identity[../escape]
+FAILED tests/n2n/test_inventory_boundaries.py::test_cache_refuses_path_identity[/tmp/absolute]
+FAILED tests/n2n/test_inventory_boundaries.py::test_cache_refuses_path_identity[peer/name]
+FAILED tests/n2n/test_inventory_boundaries.py::test_missing_metadata_is_stale
+6 failed, 2 passed in 0.20s

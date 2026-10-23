@@ -1,10 +1,74 @@
+> The current HUD opens on **Chat**. Use the header to switch to **Canvas** or open **OpenClaw ↗** in a separate tab. See the [current HUD guide](../../docs/HUD-FUNCTION-FIRST.md) for conversation retention, native authentication and port-forward requirements. The visual and classic surfaces below remain available.
+
 <p align="center">
   <img src="logos/netclawvisualhud.png" alt="NetClaw Visual HUD — 3D Network Operations Dashboard" width="800">
 </p>
 
 # NetClaw Visual HUD
 
-A Three.js 3D network operations dashboard for [NetClaw](https://github.com/automateyournetwork/netclaw). Visualizes all 43 MCP servers, 179 skills, your device fleet, and live BGP peering topology in a real-time interactive scene. Includes a chat terminal wired directly to the OpenClaw gateway for live tool execution from the browser. Supports bidirectional Slack and WebEx channels.
+Spec 127 adds a **panel-first dashboard** with Basic/Advanced presentation, dedicated
+Risk/peer/mobile/Jev views, optional Three.js relationship maps and the preserved
+full Adam Mason canvas. See the [function-first guide](../../docs/HUD-FUNCTION-FIRST.md)
+for routes, scope, Jev task binding and verification limits. The earlier scene and
+its existing utility controls remain at `/classic.html`; `/canvas.html` stays available.
+
+
+A Three.js 3D network operations dashboard for [NetClaw](https://github.com/automateyournetwork/netclaw). Visualizes the registered MCP integrations, deployed skills, your device fleet, and live BGP peering topology in a real-time interactive scene. Includes a chat terminal wired directly to the OpenClaw gateway for live tool execution from the browser. Supports bidirectional Slack and WebEx channels.
+### Optional observability integrations
+
+Canvas terminal → **Extra Features → Observability integrations** now offers
+opt-in Infoblox NIOS network context, ThousandEyes network-test results,
+namespace-scoped Kubernetes pod context, and OTLP/HTTP health export. Evidence
+appears in the existing hover/side pane without changing normal CLI behavior.
+VMware and ExtraHop are explicitly marked planned, not connected.
+
+This is an initial, session-only implementation, tested with synthetic fixtures.
+Restart the API to load the new routes, then configure and authorize providers in
+the GUI. See [OBSERVABILITY.md](OBSERVABILITY.md) for supported scopes, privacy,
+limitations, validation and optional Kubernetes Collector / RBAC examples.
+
+### Terminal JSON uses pyATS / Genie
+
+In Canvas, open **Structured output → Output: JSON**, confirm the full command
+and device OS, then choose **Parse with Genie**. The latest captured show/display
+response is detected from transcript prompts; a selection without a prompt needs
+its command entered manually. This field selects a parser—it does not execute CLI.
+Use complete, unfiltered output with its headings. **Create Result** becomes
+available only after parsing succeeds. The Result, copy and download preserve
+Genie's native JSON structure; no indentation-based nesting is substituted.
+
+The API reuses the existing NetClaw pyATS Python via `PYATS_PYTHON` (default
+`python3`), including its installed Genie parsers. No Gemini/LLM, API key, second
+pyATS installation, SSH connection or device credentials are involved. The
+existing `pyats_run_show_command` MCP tool executes a new device command; this
+offline adapter instead calls `Device.parse(command, output=captured_output)` in
+the same Python environment. Connect/execute/configure calls are blocked.
+
+For a Windows-hosted API using Linux pyATS, it invokes the existing WSL `Ubuntu`
+environment (`PYATS_WSL_DISTRO` overrides the distribution). Set `PYATS_PYTHON` to
+the existing Linux virtualenv's absolute Python path when needed. A native Windows
+executable path is also honored. This does not enable Windows virtualization or
+install any dependencies. Restart the API once after upgrading to enable
+`POST /api/terminal/parse/genie`; runtime settings use the existing `.env` files.
+
+For users without a configured environment, the optional
+[automated runtime installer](../../docs/GENIE-RUNTIME-SETUP.md) creates an isolated
+pyATS/Genie virtualenv and verifies a synthetic parse. It never installs into system
+Python or enables WSL/Hyper-V automatically. Native Windows Python is not an
+upstream-supported pyATS runtime, even though the adapter accepts executable paths.
+
+Parsing stays local. The endpoint is localhost-only, limits requests to 500 KB,
+allows at most two concurrent parsers and times out after 30 seconds. Output is
+passed on stdin, not through shell interpolation or temporary transcript files.
+Unsupported commands, missing runtimes and invalid/empty parser responses produce
+an explicit error, never a synthetic JSON fallback. Genie schema validation and
+JSON syntax validation are not proof of device-state accuracy or complete parser
+coverage. Other output formats retain their existing behavior.
+
+Verification: `npm run test:genie` tests the adapter/API boundary with mock parser
+responses; `python test/genie_adapter_test.py` tests the offline contract with
+fake Genie modules. These are not live Genie integration tests.
+
 
 ---
 
@@ -29,9 +93,9 @@ Before running the HUD, you need a working NetClaw installation with the OpenCla
 
 ### Prerequisites
 
-- **Node.js** 18+ and npm
+- **Node.js** compatible with the installed OpenClaw release (Node22 used in spec124 acceptance), and npm
 - **Python** 3.10+
-- **OpenClaw** CLI (`pip install openclaw` or via the install script)
+- **OpenClaw** CLI installed through the NetClaw installer (the gateway is a Node application, not a Python package)
 
 ### Clone and Install
 
@@ -105,66 +169,16 @@ fully offline gateway.
 
 NetClaw includes a pure-Python BGP daemon (AS 65001) and a Docker-based FRR router lab. When running, the HUD automatically discovers BGP peers and renders them as equal core nodes alongside the local NetClaw in the 3D scene.
 
-### A. Start the FRR Router Lab
+Use the [canonical IPv6 FRR lab procedure](../../lab/frr-testbed/README.md) on a disposable lab host. It defines the required Docker networks, IPv6 GRE addresses and route checks. Root-level setup changes host networking; preserve its baseline and required authorization. A fixed delay does not prove routing convergence.
 
-The lab creates three FRR routers (Edge1, Core route reflector, Edge2) in AS 65000 with OSPF + iBGP, connected to your host via a GRE tunnel.
-
-```bash
-cd netclaw/lab/frr-testbed
-docker compose up -d
-sleep 15                          # wait for OSPF/BGP convergence
-sudo bash scripts/setup-gre.sh   # create GRE tunnel from host to Edge1
-bash scripts/verify.sh            # confirm everything is up
-```
-
-```
-Topology:
-
-NetClaw (AS 65001)     Edge1 (AS 65000)     Core (RR)     Edge2 (AS 65000)
-  host / WSL           1.1.1.1              2.2.2.2       3.3.3.3
-  172.16.0.2 ──GRE──── 172.16.0.1
-                       eBGP ↔ NetClaw       iBGP hub      iBGP spoke
-```
-
-### B. Start the BGP Daemon
+The protocol daemon is installed through the NetClaw installer/shared Python environment. Configure peering through the [peering guide](../../N2N-PEERING-NETCLAWS.md); do not install its dependencies into the OS-managed Python environment. The local read-only API can be inspected with:
 
 ```bash
-cd netclaw/mcp-servers/protocol-mcp
-pip install -r requirements.txt
-
-export NETCLAW_ROUTER_ID="4.4.4.4"
-export NETCLAW_LOCAL_AS="65001"
-export NETCLAW_BGP_PEERS='[{"address":"172.16.0.1","remote_as":65000}]'
-
-python bgp-daemon-v2.py
+curl -fsS http://localhost:8179/peers | python3 -m json.tool
+curl -fsS http://localhost:8179/rib | python3 -m json.tool
 ```
 
-The daemon exposes an HTTP API on `localhost:8179`:
-
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/peers` | GET | BGP peer state (ASN, router-id, state, timers) |
-| `/rib` | GET | Full RIB (Adj-RIB-In from all peers) |
-| `/status` | GET | Daemon status and uptime |
-| `/inject` | POST | Inject a route: `{"network":"10.99.99.0/24","next_hop":"172.16.0.2"}` |
-| `/withdraw` | POST | Withdraw a route: `{"network":"10.99.99.0/24"}` |
-
-### C. Verify Peering
-
-```bash
-# Check peering is Established
-curl -s http://localhost:8179/peers | python3 -m json.tool
-
-# Check received routes
-curl -s http://localhost:8179/rib | python3 -m json.tool
-```
-
-### D. Teardown
-
-```bash
-sudo bash scripts/teardown-gre.sh
-docker compose down
-```
+Route injection and withdrawal are network changes, not HUD health checks. Follow the approved change workflow before invoking them.
 
 ---
 
@@ -184,7 +198,7 @@ On the local NetClaw, add the ngrok endpoint as a BGP peer:
 
 ```bash
 export NETCLAW_BGP_PEERS='[
-  {"address":"172.16.0.1","remote_as":65000},
+  {"address":"fd00:ee::0","remote_as":65000},
   {"address":"X.tcp.ngrok.io","remote_as":65002,"remote_port":NNNNN}
 ]'
 python bgp-daemon-v2.py
@@ -196,7 +210,7 @@ If both NetClaws are on the same network or have direct IP connectivity:
 
 ```bash
 export NETCLAW_BGP_PEERS='[
-  {"address":"172.16.0.1","remote_as":65000},
+  {"address":"fd00:ee::0","remote_as":65000},
   {"address":"192.168.1.50","remote_as":65002}
 ]'
 python bgp-daemon-v2.py
@@ -207,6 +221,20 @@ The HUD renders all BGP peers as equal core nodes in a triangular layout — loc
 ---
 
 ## 5. Start the Visual HUD
+
+### Windows one-command startup
+
+From the NetClaw repository root, double-click `Start-NetClaw.cmd`, or run:
+
+```powershell
+.\Start-NetClaw.ps1
+```
+
+This starts the OpenClaw Gateway and both Visual HUD processes, waits until
+they are ready, and opens Canvas Chat. It is safe to run again: services that
+are already listening are reused instead of duplicated. Pass `-Interface HUD`
+to open the main dashboard, `-NoBrowser` to skip opening a browser, or
+`-SkipGateway` when a separately managed gateway is already available.
 
 ### Install Dependencies
 
@@ -310,7 +338,7 @@ The center of the HUD is a Three.js 3D scene. Use your mouse to navigate:
 
 The scene displays up to three central core nodes in a triangular arrangement:
 
-- **NetClaw (Local)** — your local instance, with all 43 integrations orbiting around it as colored spheres connected by animated data-flow tubes
+- **NetClaw (Local)** — your local instance, with its registered integrations orbiting around it as colored spheres connected by animated data-flow tubes
 - **Peer NetClaw** — another NetClaw instance you're peered with via BGP (magenta tint), with received routes fanning out as dendrite wires
 - **Router** — a traditional router peer like FRR Edge1 (cyan tint), also showing its advertised routes
 
@@ -318,7 +346,7 @@ All core nodes have the same visual treatment: icosahedron shell, glowing nucleu
 
 ### Integration Nodes
 
-Each of the 43 MCP integrations is rendered as a sphere orbiting the local core, color-coded by category:
+Each registered MCP integration is rendered as a sphere orbiting the local core, color-coded by category:
 
 | Color | Categories |
 |-------|-----------|
@@ -373,6 +401,325 @@ model, MCP integrations, skills, and safety controls as the existing terminal.
 Each canvas request sends the context for its own branch. Sibling branches are
 therefore isolated from one another, while the original `{ "message": "..." }`
 chat request remains fully backward compatible for the Visual HUD.
+
+### Interactive SSH Terminal
+
+Choose **Tools → New SSH terminal** in Canvas Chat to open a movable,
+resizable terminal window. The terminal uses xterm.js for VT/ANSI emulation and
+an `ssh2` channel on the NetClaw API server, giving network-device VTY sessions
+the same keyboard, cursor, color, scrollback, copy/paste, and resize behavior as
+a desktop SSH client.
+
+- Devices and connection endpoints come only from named profiles in
+  `testbed/testbed.yaml`; the browser cannot supply an arbitrary host.
+- Use **+ Device** in the terminal toolbar to append a validated SSH profile to
+  the existing `devices:` mapping. Existing entries, comments, credentials, and
+  unrelated testbed structures are preserved; duplicate device IDs are rejected
+  rather than overwritten. Adding a profile never opens a connection.
+- In **Edit Testbed**, choose **Edit selected device…** to change its display
+  name, SSH address/port, device type, OS or platform. The stable device ID is
+  read-only. The existing preferred connection (`cli`, then `ssh`) is updated;
+  credentials, other connections, custom fields and YAML comments are preserved.
+- **Remove selected device…** shows the exact profile and endpoint for
+  confirmation before removing only that inventory entry, not the actual device.
+  Disconnect that device in all terminal windows first (the API enforces this).
+  Both edits and removal revoke only that device's background-collection grant,
+  clear its collector login and observations, and cancel pending collection.
+  Other devices continue collecting. Edited profiles require fresh authorization.
+- Edit/remove writes save the previous inventory in `testbed.yaml.backups/`
+  beside the active testbed (or `<custom-testbed-path>.backups`). These local
+  backups may contain credentials: keep them private and out of version control.
+  Recover an entry by copying its YAML from a backup into the testbed; restoring
+  the whole backup also undoes later inventory changes. Backups are not auto-pruned.
+  Stale dialogs are rejected: **Reload**, then reopen the editor before retrying.
+  Shared YAML aliases that would affect another device are rejected rather than
+  rewritten. Unsupported/non-SSH profiles can be selected for removal, but only
+  explicit SSH profiles can be edited with this form.
+- Restart the API after installing this change, then refresh Canvas. No CML-only
+  endpoint rules, production defaults or host-key policies are changed.
+- Use **Reload** to pick up profiles added by another editor or inventory
+  workflow. NetClaw integrations can query controller and source-of-truth
+  inventories, but the terminal does not perform an automatic network scan or
+  enroll discovered endpoints without an explicit testbed update.
+- Passwords, private keys, and SSH-agent access stay on the NetClaw server and
+  are never returned by `/api/terminal/devices`.
+- Unknown or changed SSH host keys require an explicit PuTTY-style trust
+  decision. Accepted fingerprints are stored locally in
+  `~/.openclaw/netclaw-terminal-known-hosts.json`.
+- Selecting terminal output opens the same **Branch this** workflow used by
+  chat text. The exact terminal cells remain highlighted, the new chat window
+  is connected on the Canvas, and the selected output is included in the
+  branch's first model request.
+- Terminal transcripts, source-highlight ranges, custom names, and window
+  layout are saved with the Canvas session in browser IndexedDB. The window
+  also supports transcript copy/export, minimize/restore, close/reopen,
+  drag/resize, auto-size reset, overview, tiling, and undo/redo.
+- Interactive terminal access is restricted to a browser opened through
+  `localhost` or `127.0.0.1`.
+- SSH VTY and SSH-based console-server profiles are supported. Raw Telnet is
+  intentionally unsupported because it would transmit credentials and commands
+  without encryption.
+- **Extra Features → Inline DNS enrichment** adds an optional presentation-layer
+  annotation to IP addresses with a successful PTR record. The original xterm
+  buffer, SSH bytes, selection/copy content, transcript, and device logging are
+  never changed. PTR resolution happens asynchronously and both successes and
+  failures are cached; unresolved addresses remain ordinary terminal text.
+
+#### NetBox / SNOW demonstration tab
+
+Open **NetBox / SNOW demo** beside **Terminal** and **Structured output** to
+explore an interactive example of route enrichment. Hover a sample prefix or
+next hop in `show ip route` output to open a scrollable popover of tiled NetBox
+inventory, ServiceNow (SNOW) records, router observations, and aliases. Move
+into the popover to scroll or edit a sample alias; click the route or **Pin**
+to hold it open. **Close**, Escape, or clicking outside dismisses it. Keyboard
+focus also opens the card, and Tab moves into its controls. All demo records
+are fictional. A persistent **FAKE DATA —
+DEMONSTRATION ONLY** banner and source-card labels distinguish the sample from
+live data. Sample alias edits last only for the current demo view.
+
+This tab uses bundled synthetic data; it does not query NetBox, ServiceNow,
+DNS, or a device, and does not add samples to the real terminal transcript,
+inventory, or saved aliases. Choose **Terminal** to return to the SSH session.
+The demo is an interaction preview, not an enabled live connector.
+
+The normal terminal uses the same hover-card layout for the available route,
+DNS, and local-alias information. Synthetic NetBox and ServiceNow tiles appear
+only in the demonstration tab.
+
+Route details automatically dock in the unused right side of a wide terminal.
+The layout measures the visible output (including canvas zoom) and requires at
+least 420 screen pixels of spare width and 240 pixels of height. Long output or
+a smaller window falls back to the floating card. Resizing switches layouts
+without changing the selected route. Docked details remain open while crossing
+the terminal to reach them; hovering another route updates unpinned details.
+Tiles scroll independently, and Pin, Close and Escape work in either layout.
+Opening details does not resize the SSH terminal or send device commands.
+
+### Terminal selection and canvas zoom
+
+Terminal selection accounts for canvas zoom and panning. The coordinate adapter
+in `src/canvas-chat/terminal-mouse-coordinates.js` preserves xterm's native
+selection, scrollback and drag-scroll behavior. It uses an isolated private API
+boundary, so xterm is pinned to 6.0.0: when upgrading, run
+`npm run test:terminal-selection` and open `/test/terminal-selection.html` on the
+development server to verify selection at multiple zoom levels and terminal
+widths. The fixture uses synthetic text only and makes no device connections.
+
+### Automatic cross-router context (opt-in)
+
+Open **Extra Features → Automatic topology context** in any terminal. Select
+the testbed devices, information categories and polling interval, then check consent
+and choose **Authorize automatic collection**. This grants standing read-only
+access; no transcript imports or manual commands are needed after authorization.
+Selected devices expose username/password fields and a **Log in / test credentials**
+button in this same panel. Leave both fields blank to use the saved testbed login.
+Authorizing also checks any unverified logins and brings the device's inline prompt
+into view. Unknown/changed SSH fingerprints require **Trust this key and test login**
+after verification with a trusted source; passwords are not transmitted to an
+unapproved key. Login checks authenticate only, without opening a shell or
+executing commands. Cancel does not approve the fingerprint.
+
+Entered credentials are retained only in API process memory (not browser storage,
+testbed YAML, authorization JSON or AI requests). They are cleared on **Stop and
+revoke all** or API restart; affected standing grants pause for login after restart.
+Saved-testbed credentials may resume automatically. Closing the panel does not
+clear credentials needed by a running collector. No encrypted credential vault
+or cross-restart password persistence is provided by this flow.
+
+**Stop and revoke all** cancels current collectors, clears observations, and
+removes the standing grants. Closing a terminal or browser does not stop the
+server-side collector. After deploying this backend change, restart the NetClaw
+API once and refresh Canvas.
+
+- **Supported now:** SSH IOS / IOS-XE IPv4 routing tables, default and available
+  named VRFs, plus opt-in identifier sources below. Unknown-OS profiles use read-only `show version` detection first;
+  other platforms and IPv6 correlation are not implemented. Unsupported profiles
+  do not receive IOS collection commands.
+- **Information categories:** routing; hostname/software/hardware inventory
+  (model, serial, product/revision); interface addresses, descriptions, state,
+  rates and error counters; ARP; CDP/LLDP system/chassis IDs, management addresses
+  and ports; MAC forwarding/VLAN identifiers; and OSPF/BGP peer summaries.
+  The authorization panel lists the exact fixed show commands for each category.
+  Existing routing-only grants remain routing-only until explicitly expanded.
+  Unsupported commands are reported per source without discarding other results.
+- **Read-only transport:** separate SSH shells run `terminal length 0` (only a
+  session paging setting) and the selected categories' fixed show commands. Interactive
+  user sessions are not reused or modified. Use saved testbed credentials or the
+  collector panel's session login, with explicitly verified SSH host keys. One-connection credential
+  overrides from the Credentials dialog are not persisted for background use.
+- **Authorization boundary:** explicit selection, up to 32 devices; new testbed
+  entries are not automatically included. Grants bind device ID, endpoint,
+  platform and trusted key. Changed identities and authentication failures pause
+  the device until reauthorized, including across restart. Legacy KEX requires
+  a separate per-device opt-in. The GUI/API are localhost-only, not a multi-user
+  RBAC or remote deployment authorization system.
+- **Freshness:** near-real-time polling, not push/streaming telemetry. Default
+  interval is 30 seconds after each collection (15–300 seconds configurable),
+  with two collectors at once per server instance. Slow devices/fleets can take
+  longer. Failed devices back off up to five minutes; failed or aged observations
+  are explicitly stale. Hover/docked details refresh every three seconds while
+  open, without rerunning a command in the interactive terminal.
+- **Correlation:** exact normalized prefix plus VRF across routers; host lookups
+  use each router's longest-prefix match per VRF. A next-hop address matching a
+  different device's local `/32` produces an evidence-labeled relationship,
+  never a claimed physical link or complete forwarding path. Matching VRF names
+  within the authorized testbed are assumed to refer to the same context; use
+  separate instances for unrelated overlapping networks. Unknown transcript
+  VRFs show separately labeled results rather than silently mixing scopes.
+- **Identifier correlation:** IP/prefix lookup also joins matching interface and
+  neighbor records, device identity, and routing peers. ARP links IPs to MACs;
+  authorized switches' forwarding tables can then supply candidate VLAN/port
+  associations (authorize both ARP and switching categories for this join).
+  Every record identifies the reporting device, command and observation time.
+  Route-reporting routers are not presented as owners of every destination IP.
+  MAC reuse and disconnected VLAN/site contexts mean a matching MAC is a candidate
+  association, not a verified endpoint or forwarding path. Default-VRF ARP and
+  peer summaries are not mixed into explicit named-VRF queries; interface-brief
+  address matches explicitly note that interface VRF is unknown. Interface error
+  counters are cumulative observations, not calculated error rates.
+- **Failure visibility:** device status, last successful collection, incomplete
+  named-VRF coverage and timestamps are shown. A successful snapshot replaces
+  old routes (withdrawals disappear); each identifier source has independent
+  freshness and replacement, with stale prior records retained on failure.
+  Failed parsing never turns a malformed
+  response into an empty current routing table. IPv4 RIB correlations do not
+  prove L2 adjacency, reachability, policy-routing behavior, or FIB installation.
+- **Local storage:** bounded authorization history and grants are in
+  `$OPENCLAW_HOME/netclaw-topology-authorization.json` (default
+  `~/.openclaw/netclaw-topology-authorization.json`); override with
+  `NETCLAW_TOPOLOGY_FILE`. No new credential copies are saved, and full running
+  configurations are not collected. Route and identifier observations
+  live in process memory, are recollected after restart, and are never sent to
+  an AI provider, NetBox or ServiceNow. Run one collector-enabled API instance
+  per authorization file to avoid duplicate polling.
+
+Tests: `npm run test:topology`, `npm run test:topology-facts` and
+`npm run test:topology-api`. The latter uses
+a synthetic loopback-only SSH router and isolated testbed/authorization files;
+it does not contact the user's routers. NetBox / SNOW remains a separate,
+clearly labeled synthetic demo; these connectors are not enabled by collection.
+
+Interactive terminal commands are sent directly to the selected device.
+Background collection runs only the authorized read-only command categories;
+it never bypasses change-control requirements for configuration changes.
+
+Run the self-contained mock-SSH validation without touching a real device:
+
+```bash
+npm run test:terminal
+npm run test:enrichment
+```
+
+### English Terminal Intent
+
+Choose **English intent** from the SSH window's **Structured output** format
+dropdown to add a plain-English layer over terminal output. Selecting the mode
+translates the selected output, or the current visible transcript, into concise
+operational meaning. **Explain output** refreshes that interpretation after
+additional commands. The same preview includes a composer for English requests
+such as “show me the BGP neighbor state.”
+
+NetClaw returns an explanation plus exact CLI as a proposal. Commands are
+classified as read-only, configuration, destructive, or unknown. A proposal is
+executed automatically only when both the model and NetClaw's local command
+classifier identify every command as read-only and the SSH session is already
+connected. NetClaw captures the resulting terminal stream and adds a second
+English-intent response containing the executed command, a plain-English
+interpretation of what the device reported, important findings, and an
+expandable copy of the exact terminal output. Configuration, destructive, and
+unknown-risk proposals require the operator to review the exact CLI, select the
+approval checkbox, and choose **Send configuration**. Any proposal can be
+copied without opening a connection.
+
+Intent requests send the selected terminal context to the model configured
+behind NetClaw's existing `/api/chat` endpoint. Terminal output is treated as
+untrusted data, multi-line or control-character commands are rejected, and a
+local risk classifier can raise a model's reported risk level.
+
+### Instant Assist terminal mode
+
+The terminal toolbar's **AI** selector defaults to **NetClaw Gateway**. Select
+**Instant Assist** to use the direct `chat-latest` terminal-intent path. This
+alias follows the newest Instant model used in ChatGPT for fast English-to-CLI
+proposals and terminal-output explanations. This mode is deliberately limited to the English-intent panel:
+it does not receive SSH credentials and does not change direct terminal input.
+
+Choose **Set up Instant Assist** in the terminal toolbar and paste the API key into the
+local-only dialog. Canvas stores it as `NETCLAW_TERRA_API_KEY` in the local
+OpenClaw configuration and never sends it back to the browser after saving.
+Advanced users can still configure `OPENAI_API_KEY` or `NETCLAW_TERRA_API_KEY`
+in `~/.openclaw/.env`. The selected terminal context is sent to
+OpenAI only when Instant Assist is selected. NetClaw's local command-risk check
+still controls execution: read-only CLI can run automatically on a connected
+session, while configuration, destructive, and unknown-risk CLI still require
+explicit review and **Send configuration**.
+
+Run the intent parsing and safety tests with:
+
+```bash
+npm run test:intent
+```
+
+### Structured Results
+
+Terminal output can be promoted into a durable, graph-connected artifact instead
+of remaining buried in a transcript.
+
+1. Select the relevant terminal text, or leave it unselected to use the visible
+   transcript.
+2. Open **Structured output** in the terminal window.
+3. Choose JSON, JSONL, YAML, XML, CSV, or raw text, review the live preview, and
+   choose **Create Result**.
+
+The new Result window records its source terminal, validation state, record
+count, version, size, and creation time. Result actions support copy, download,
+conversion to another supported format, and branching into a new chat with the
+artifact attached as context. Results remain discoverable in the persistent
+right-side **Results** rail even when their graph windows are hidden.
+
+Indented network configuration is represented as nested command/children
+sections by default. Flat command output remains a simple entry list. JSONL
+emits nested section records, while CSV uses parent/command columns to retain
+the relationship without adding synthetic line numbers.
+
+Results are stored in the same browser-local Canvas session as conversations
+and terminal transcripts. Review terminal output before sharing an exported
+artifact because it can contain device configuration or other sensitive data.
+
+Run the artifact format tests with:
+
+```bash
+npm run test:artifacts
+```
+
+### Configuration Review Workspace
+
+Choose **Tools → New configuration review** to paste or import an existing
+running configuration into a movable Canvas window. To hand off terminal output
+directly, select the relevant configuration text in an SSH window and choose
+**Review config**; when nothing is selected, the visible terminal buffer is
+used.
+
+- The imported configuration becomes an immutable source when review begins.
+  Review notes are stored separately, so comments cannot accidentally become
+  device commands.
+- Select a configuration line and press **Enter**, or click its **+**, to insert
+  a multiline comment between that line and the next.
+- Source search, source replacement, original-config download, Markdown review
+  export, minimize/restore, close/reopen, drag/resize, tiling, overview, and
+  undo/redo are supported.
+- Source text, anchored comments, and layout persist with the browser-local
+  Canvas session.
+- Exported Markdown is explicitly marked as a review artifact that must not be
+  applied to a device.
+
+Company synchronization is deliberately not represented as enabled. NetClaw
+Visual currently has no authenticated human-user identity or HTTP RBAC layer;
+N2N grants authorize agent peers rather than web users. Until an identity and
+authorization provider is selected, the supported sharing path is to export the
+review package into a company Git repository and rely on that repository's
+existing team permissions, reviews, and audit history.
 
 ### Top Bar Metrics
 
@@ -525,7 +872,7 @@ Browser (Visual HUD + Canvas Chat @ localhost:3000)
     +-- POST /api/chat           -> linear message or branch context, proxied to OpenClaw
     +-- GET  /api/testbed/raw    -> read/edit testbed.yaml
     +-- PUT  /api/env            -> update integration credentials
-    +-- WS   /ws                 -> real-time activations, BGP state, heartbeat
+    +-- WS   /ws                 -> graph events plus local interactive SSH terminal I/O
     |
     +-- API Server (Express @ localhost:3001)
     |     +-- Reads ~/.openclaw/ for gateway config and credentials
@@ -535,8 +882,8 @@ Browser (Visual HUD + Canvas Chat @ localhost:3000)
     |
     +-- OpenClaw Gateway (@ localhost:18789)
           +-- Anthropic Claude (agent model)
-          +-- 43 MCP integrations (pyATS, ACI, ISE, NetBox, GitHub, Slack, ...)
-          +-- 179 skills (health checks, troubleshooting, auditing, ...)
+          +-- Registered MCP integrations (pyATS, ACI, ISE, NetBox, GitHub, Slack, ...)
+          +-- Deployed skills (health checks, troubleshooting, auditing, ...)
 ```
 
 ---
@@ -549,6 +896,8 @@ Browser (Visual HUD + Canvas Chat @ localhost:3000)
 | `/api/graph` | GET | Full integration + device graph for 3D visualization |
 | `/api/bgp` | GET | BGP peer state and RIB from daemon |
 | `/api/gateway/status` | GET | OpenClaw reachability and chat-completions readiness |
+| `/api/terminal/devices` | GET | Sanitized SSH profiles from `testbed.yaml` (no credentials) |
+| `/api/terminal/devices` | POST | Append a validated SSH profile to the existing `devices:` mapping |
 | `/api/skill/:skillId` | GET | Individual skill details |
 | `/api/env/:integrationId` | GET | Integration environment variables |
 | `/api/env` | PUT | Update integration credentials |
@@ -571,7 +920,7 @@ Browser (Visual HUD + Canvas Chat @ localhost:3000)
 **No BGP peers in the visualization**
 - Verify the BGP daemon is running: `curl http://localhost:8179/peers`
 - Check that peers show `"state": "Established"`
-- If using the FRR lab, ensure GRE tunnel is up: `ping 172.16.0.1`
+- If using the FRR lab, ensure GRE tunnel is up: `ping -6 fd00:ee::0`
 
 **Integrations show zero tools**
 - Run `./scripts/setup.sh` to configure integration credentials
@@ -652,3 +1001,10 @@ TWITTER_ACCESS_TOKEN=your_access_token
 TWITTER_ACCESS_SECRET=your_access_secret
 TWITTER_HEARTBEAT_ENABLED=true  # Optional: enable autonomous tweets
 ```
+
+
+Spec 127 adds direct RAG uploads/search, masked Configuration, exact Claw MCP/LLM
+inspectors, Tokenomics, bounded service Logs, and Documentation with Sean's guide,
+CLI/MCP references and [HUD OpenAPI](../../docs/reference/hud-openapi.json).
+[Logging guide](../../docs/LOGGING-GUIDE.md) · [Function-first guide](../../docs/HUD-FUNCTION-FIRST.md).
+Regenerate references with `python3 scripts/build-hud-reference.py` from repo root.

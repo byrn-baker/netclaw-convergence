@@ -1,6 +1,6 @@
 ---
 name: anta-validation
-description: Validate Arista EOS network state with structured pass/fail verdicts using ANTA. Use for "is this switch healthy", "did my change break anything", "verify BGP/interfaces/hardware are correct", "run a health check on this device". Read-only. A test for a feature the device does not run reports not_applicable — never a failure — and no health percentage is ever emitted.
+description: Validate Arista EOS network state against ANTA's pre-built 208-test catalogue, with structured pass/fail verdicts. Use for "is this switch healthy", "did my change break anything", "verify BGP/interfaces/hardware are correct", "run a health check on this device". Read-only. A test for a feature the device does not run reports not_applicable — never a failure — and no health percentage is ever emitted. For non-Arista devices, or an assertion ANTA's catalogue doesn't cover, use `pyats-dynamic-test` to author a custom aetest script instead.
 ---
 
 # ANTA validation — the assertion layer
@@ -95,9 +95,10 @@ Or by category: `category: "hardware"`.
 ## Credentials and scope
 
 `ANTA_USERNAME` / `ANTA_PASSWORD` come from the environment and are **never** tool arguments and
-never appear in output. `ANTA_VERIFY_TLS` defaults to `false` because lab switches ship self-signed
-certificates — and the setting is **always disclosed** in the response as `tls_verified`, so a
-downgrade is visible rather than silent.
+never appear in output. `ANTA_VERIFY_TLS` defaults to `true` and verifies both certificate trust and hostname.
+For private PKI set `ANTA_CA_BUNDLE` to a trusted PEM bundle.
+An explicit `false` lab override is disclosed as `tls_verified=false`; it does not disable SSH host-key checks.
+See `docs/INTEGRATION-TLS-MIGRATION.md` for migration.
 
 ## Boundaries
 

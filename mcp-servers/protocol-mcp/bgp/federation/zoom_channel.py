@@ -17,6 +17,7 @@ Contract: specs/118-zoom-meeting-intelligence/contracts/zoom-channel-internal.md
 
 import asyncio
 import json
+import hmac
 import logging
 import os
 import struct
@@ -143,7 +144,8 @@ class ZoomChannel:
         params = msg.get("params") or {}
         if method == "n2n/zoom/hello":
             secret = os.environ.get("N2N_ZOOM_CHANNEL_SECRET", "")
-            self.trusted = bool(secret) and params.get("secret") == secret
+            provided = params.get("secret", "")
+            self.trusted = bool(secret) and isinstance(provided, str) and hmac.compare_digest(provided.encode(), secret.encode())
             if req_id is not None:
                 await self._send({"jsonrpc": "2.0", "id": req_id,
                                    "result": {"trusted": self.trusted}})
@@ -179,15 +181,19 @@ class ZoomChannel:
         req_id = f"border-zoom:{self._next_id}"
         fut = asyncio.get_event_loop().create_future()
         self._pending[req_id] = fut
-        await self._send({"jsonrpc": "2.0", "id": req_id, "method": method, "params": params})
         try:
-            resp = await asyncio.wait_for(fut, timeout=timeout)
-        except asyncio.TimeoutError:
+            await self._send({"jsonrpc": "2.0", "id": req_id, "method": method, "params": params})
+            try:
+                resp = await asyncio.wait_for(fut, timeout=timeout)
+            except asyncio.TimeoutError:
+                raise RpcError(ERR_EXECUTION_TIMEOUT, f"{method} timed out")
+            if "error" in resp:
+                raise RpcError(resp["error"]["code"], resp["error"]["message"])
+            return resp.get("result", {})
+        finally:
             self._pending.pop(req_id, None)
-            raise RpcError(ERR_EXECUTION_TIMEOUT, f"{method} timed out")
-        if "error" in resp:
-            raise RpcError(resp["error"]["code"], resp["error"]["message"])
-        return resp.get("result", {})
+            if not fut.done():
+                fut.cancel()
 
 
 # ---------------------------------------------------------------------------
@@ -213,17 +219,32 @@ class ZoomInvestigationManager:
         # request_id -> the ZoomChannel that submitted it, so the async result
         # push (research.md R1) reaches the right connection.
         self._channels_by_request: dict[str, ZoomChannel] = {}
+        self._tasks: set[asyncio.Task] = set()
 
     async def handle_investigate(self, channel: ZoomChannel, params: dict) -> dict:
         request_id = params.get("request_id") or str(uuid.uuid4())
         meeting_uuid = params.get("meeting_uuid", "")
+        raw_text = params.get("raw_text", "")
+        if (not isinstance(request_id, str) or len(request_id) > 256
+                or not isinstance(meeting_uuid, str) or not meeting_uuid or len(meeting_uuid) > 256
+                or not isinstance(raw_text, str) or not raw_text.strip() or len(raw_text) > 16000):
+            raise RpcError(-32602, "Invalid investigation identifier or text")
+        if request_id in self._channels_by_request:
+            raise RpcError(-32602, "Investigation request_id already active")
+        if len(self._tasks) >= 8:
+            raise RpcError(-32000, "Investigation capacity reached; retry after completion")
         session_key = f"n2n-zoom-{meeting_uuid}"
-        self._channels_by_request[request_id] = channel
-
         prompt = self._build_prompt(params)
-
-        asyncio.create_task(self._run_investigation(request_id, meeting_uuid, session_key,
-                                                      params, prompt, channel))
+        self._channels_by_request[request_id] = channel
+        task = asyncio.create_task(self._run_investigation(
+            request_id, meeting_uuid, session_key, params, prompt, channel))
+        self._tasks.add(task)
+        def finished(completed):
+            self._tasks.discard(completed)
+            self._channels_by_request.pop(request_id, None)
+            if not completed.cancelled() and completed.exception():
+                logger.warning("Zoom investigation task failed (%s)", type(completed.exception()).__name__)
+        task.add_done_callback(finished)
         return {"accepted": True, "request_id": request_id}
 
     def _build_prompt(self, params: dict) -> str:
