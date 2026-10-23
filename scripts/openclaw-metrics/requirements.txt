@@ -1,0 +1,2 @@
+# Compressed canonical OpenClaw transcript events.
+zstandard>=0.23,<1

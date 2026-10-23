@@ -1,6 +1,6 @@
 # OpenClaw Token/Cost Exporter (pull)
 
-A zero-dependency Prometheus exporter that surfaces NetClaw's LLM token and cost
+A Prometheus exporter that surfaces NetClaw's LLM token and cost
 usage for a **persistent** OpenClaw host, so the OBS-stack Prometheus can
 **scrape** it directly.
 
@@ -11,13 +11,21 @@ no Vector, no remote-write receiver.
 
 ## Data source
 
-OpenClaw has no native `/metrics` endpoint and writes no token log. Usage lives
-in the session logs — every assistant turn in
-`~/.openclaw/agents/<agent>/sessions/*.jsonl` carries a `usage` block. The
-exporter sums those per `(agent, provider, model)`.
+The exporter reads each agent's canonical database at
+`~/.openclaw/agents/<agent>/agent/openclaw-agent.sqlite` in read-only mode,
+including compressed transcript events. If an agent has no canonical database,
+it reads the older `sessions/*.jsonl` logs. SQLite takes precedence so retained
+migration originals are not counted twice.
 
-- Checkpoint / reset / deleted session files are skipped (no double counting).
-- Per-file results are cached by `(mtime, size)`; unchanged files aren't re-read.
+Install the compressed-event reader in the exporter's Python environment:
+
+```bash
+.venv/bin/python -m pip install -r scripts/openclaw-metrics/requirements.txt
+```
+
+- Checkpoint / reset / deleted JSONL files are skipped.
+- Database and WAL timestamps invalidate the cache when new turns are committed.
+- Database read failures return an HTTP error instead of reporting zero usage.
 
 ## Metrics
 

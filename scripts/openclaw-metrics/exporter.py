@@ -5,9 +5,9 @@ Exposes NetClaw LLM token usage as Prometheus metrics for a PERSISTENT OpenClaw
 host (stable IP), so the OBS-stack Prometheus can scrape it directly. This is the
 pull counterpart to the ephemeral demo VMs' Vector push.
 
-Source of truth: OpenClaw's session logs. Every assistant turn in
-  ~/.openclaw/agents/<agent>/sessions/*.jsonl
-carries a `usage` block ({input, output, cacheRead, cacheWrite, cost}) plus the
+Source of truth: OpenClaw's canonical agent SQLite databases, with session logs
+as a fallback for older installations. Assistant transcript events carry a
+`usage` block ({input, output, cacheRead, cacheWrite, cost}) plus the
 model/provider. We sum those per (agent, provider, model) and expose cumulative
 counters, matching the metric names the demo dashboard already uses.
 
@@ -19,10 +19,10 @@ Metrics (labels: model, provider, agent, instance):
   netclaw_model_cost_usd_total            counter
   netclaw_model_calls_total               counter
   netclaw_model_call_duration_ms          gauge   (most recent call)
-  netclaw_token_exporter_sessions         gauge   (session files scanned)
+  netclaw_token_exporter_sessions         gauge   (sessions scanned)
 
-Efficiency: per-file aggregates are cached by (mtime, size); unchanged session
-files are not re-parsed on subsequent scrapes.
+Efficiency: aggregates are cached by file timestamps and sizes, including the
+SQLite WAL so newly committed turns invalidate the cache.
 
 Correctness: checkpoint / reset / deleted session files are skipped so turns are
 never double-counted.
@@ -37,6 +37,8 @@ from __future__ import annotations
 
 import json
 import os
+import sqlite3
+from contextlib import closing
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
@@ -60,63 +62,89 @@ def _is_session_file(p: Path) -> bool:
     return not any(b in n for b in bad)
 
 
-def _parse_file(path: Path):
-    """Return (aggregates, last_durations) for one session file.
-
-    aggregates: {(provider, model): {input, output, cacheRead, cacheWrite, cost, calls}}
-    last_durations: {(provider, model): (ts_ms, duration_ms)}
-    """
-    agg: dict[tuple, dict] = {}
-    last_dur: dict[tuple, tuple] = {}
+def _parse_events(events):
+    """Aggregate JSONL-compatible events, resetting duration at session boundaries."""
+    agg, last_dur = {}, {}
     prev_ts = None
-    try:
-        with path.open("r", encoding="utf-8", errors="replace") as fh:
-            for line in fh:
-                line = line.strip()
-                if not line:
-                    continue
-                try:
-                    d = json.loads(line)
-                except json.JSONDecodeError:
-                    continue
-                m = d.get("message") or {}
-                ts = m.get("timestamp")
-                role = m.get("role")
-                usage = m.get("usage")
-                if role == "assistant" and isinstance(usage, dict):
-                    provider = (m.get("provider") or "unknown").strip()
-                    model = (m.get("model") or "unknown").strip()
-                    # Skip OpenClaw's internal pseudo-models (delivery-mirror,
-                    # gateway-injected, etc.) — they aren't real LLM API calls.
-                    if provider == "openclaw":
-                        if isinstance(ts, (int, float)):
-                            prev_ts = ts
-                        continue
-                    key = (provider, model)
-                    a = agg.setdefault(key, {"input": 0, "output": 0, "cacheRead": 0,
-                                             "cacheWrite": 0, "cost": 0.0, "calls": 0})
-                    a["input"] += int(usage.get("input") or 0)
-                    a["output"] += int(usage.get("output") or 0)
-                    a["cacheRead"] += int(usage.get("cacheRead") or 0)
-                    a["cacheWrite"] += int(usage.get("cacheWrite") or 0)
-                    cost = usage.get("cost")
-                    if isinstance(cost, dict):
-                        a["cost"] += float(cost.get("total") or 0.0)
-                    a["calls"] += 1
-                    # Best-effort per-call duration from message timestamps.
-                    if isinstance(ts, (int, float)) and isinstance(prev_ts, (int, float)):
-                        dur = ts - prev_ts
-                        if 0 <= dur < 3_600_000:  # sane bound: < 1h
-                            last_dur[key] = (ts, dur)
-                if isinstance(ts, (int, float)):
-                    prev_ts = ts
-    except OSError:
-        pass
+    previous_session = None
+    for session_id, raw in events:
+        if session_id != previous_session:
+            prev_ts = None
+            previous_session = session_id
+        try:
+            d = json.loads(raw)
+        except (json.JSONDecodeError, UnicodeDecodeError):
+            continue
+        m = d.get("message") or {}
+        ts = m.get("timestamp")
+        usage = m.get("usage")
+        if m.get("role") == "assistant" and isinstance(usage, dict):
+            provider = (m.get("provider") or "unknown").strip()
+            model = (m.get("model") or "unknown").strip()
+            if provider != "openclaw":
+                key = (provider, model)
+                a = agg.setdefault(key, {"input": 0, "output": 0, "cacheRead": 0,
+                                         "cacheWrite": 0, "cost": 0.0, "calls": 0})
+                for field in ("input", "output", "cacheRead", "cacheWrite"):
+                    a[field] += int(usage.get(field) or 0)
+                cost = usage.get("cost")
+                if isinstance(cost, dict):
+                    a["cost"] += float(cost.get("total") or 0.0)
+                a["calls"] += 1
+                if isinstance(ts, (int, float)) and isinstance(prev_ts, (int, float)):
+                    duration = ts - prev_ts
+                    if 0 <= duration < 3_600_000:
+                        last_dur[key] = (ts, duration)
+        if isinstance(ts, (int, float)):
+            prev_ts = ts
     return agg, last_dur
 
 
+def _parse_file(path: Path):
+    try:
+        with path.open("r", encoding="utf-8", errors="replace") as stream:
+            return _parse_events((None, line) for line in stream if line.strip())
+    except OSError:
+        return {}, {}
+
+
+_sqlite_cache = {}
+
+
+def _parse_sqlite(path: Path):
+    """Read canonical events without writing the DB; include live WAL changes."""
+    wal = path.with_name(path.name + "-wal")
+    signature = tuple((f.stat().st_mtime_ns, f.stat().st_size) if f.exists() else None
+                      for f in (path, wal))
+    cached = _sqlite_cache.get(str(path))
+    if cached and cached[0] == signature:
+        return cached[1]
+    with closing(sqlite3.connect(path.as_uri() + "?mode=ro", uri=True, timeout=5)) as db:
+        db.execute("BEGIN")
+        columns = {row[1] for row in db.execute("PRAGMA table_info(transcript_events)")}
+        compressed = "event_zstd" if "event_zstd" in columns else "NULL"
+        count = db.execute("SELECT count(DISTINCT session_id) FROM transcript_events").fetchone()[0]
+        rows = db.execute(f"SELECT session_id, event_json, {compressed} FROM transcript_events ORDER BY session_id, seq")
+
+        def events():
+            decompressor = None
+            for session_id, raw, packed in rows:
+                if raw is None and packed is not None:
+                    if decompressor is None:
+                        import zstandard
+                        decompressor = zstandard.ZstdDecompressor()
+                    raw = decompressor.decompress(packed, max_output_size=64 * 1024 * 1024)
+                if raw is not None:
+                    yield session_id, raw
+
+        aggregates, durations = _parse_events(events())
+    result = (aggregates, durations, count)
+    _sqlite_cache[str(path)] = (signature, result)
+    return result
+
+
 def collect() -> dict:
-    """Scan all agents' session files, using the mtime/size cache."""
+    """Read each agent's canonical database or legacy session logs."""
     totals: dict[tuple, dict] = {}   # (agent, provider, model) -> aggregate
     durations: dict[tuple, tuple] = {}
     session_count = 0
@@ -125,36 +153,41 @@ def collect() -> dict:
         return {"totals": totals, "durations": durations, "sessions": 0}
 
     for agent_dir in AGENTS_DIR.iterdir():
-        sess_dir = agent_dir / "sessions"
-        if not sess_dir.is_dir():
-            continue
         agent = agent_dir.name
-        for f in sess_dir.glob("*.jsonl"):
-            if not _is_session_file(f):
-                continue
-            session_count += 1
-            try:
-                st = f.stat()
-            except OSError:
-                continue
-            ckey = str(f)
-            cached = _cache.get(ckey)
-            if cached and cached[0] == st.st_mtime and cached[1] == st.st_size:
-                agg, last_dur = cached[2], cached[3]
-            else:
-                agg, last_dur = _parse_file(f)
-                _cache[ckey] = (st.st_mtime, st.st_size, agg, last_dur)
-
-            for (provider, model), a in agg.items():
-                tkey = (agent, provider, model)
-                t = totals.setdefault(tkey, {"input": 0, "output": 0, "cacheRead": 0,
-                                             "cacheWrite": 0, "cost": 0.0, "calls": 0})
-                for k in ("input", "output", "cacheRead", "cacheWrite", "cost", "calls"):
-                    t[k] += a[k]
-            for (provider, model), (ts, dur) in last_dur.items():
-                dkey = (agent, provider, model)
-                if dkey not in durations or ts > durations[dkey][0]:
-                    durations[dkey] = (ts, dur)
+        database = agent_dir / "agent" / "openclaw-agent.sqlite"
+        sources = []
+        if database.is_file():
+            # Canonical SQLite supersedes retained JSONL migration originals.
+            agg, last_dur, count = _parse_sqlite(database)
+            session_count += count
+            sources.append((agg, last_dur))
+        else:
+            for f in (agent_dir / "sessions").glob("*.jsonl"):
+                if not _is_session_file(f):
+                    continue
+                try:
+                    st = f.stat()
+                except OSError:
+                    continue
+                session_count += 1
+                cached = _cache.get(str(f))
+                if cached and cached[0] == st.st_mtime_ns and cached[1] == st.st_size:
+                    agg, last_dur = cached[2], cached[3]
+                else:
+                    agg, last_dur = _parse_file(f)
+                    _cache[str(f)] = (st.st_mtime_ns, st.st_size, agg, last_dur)
+                sources.append((agg, last_dur))
+        for agg, last_dur in sources:
+            for (provider, model), usage in agg.items():
+                key = (agent, provider, model)
+                total = totals.setdefault(key, {"input": 0, "output": 0, "cacheRead": 0,
+                                                "cacheWrite": 0, "cost": 0.0, "calls": 0})
+                for field in total:
+                    total[field] += usage[field]
+            for (provider, model), (timestamp, duration) in last_dur.items():
+                key = (agent, provider, model)
+                if key not in durations or timestamp > durations[key][0]:
+                    durations[key] = (timestamp, duration)
 
     return {"totals": totals, "durations": durations, "sessions": session_count}
 

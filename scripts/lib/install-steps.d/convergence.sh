@@ -196,6 +196,9 @@ echo ""
 component_install_convergence_agent_metrics() {
 log_step "Convergence agent metrics (openclaw-token-exporter)..."
 EXP_SRC="$NETCLAW_DIR/scripts/openclaw-metrics"
+# The existing exporter unit uses the repository venv; install its compressed
+# transcript reader there rather than in an unrelated component environment.
+NETCLAW_VENV="$NETCLAW_DIR/.venv" netclaw_pip_install -r "$EXP_SRC/requirements.txt" || return 1
 UNIT_SRC="$EXP_SRC/openclaw-token-exporter.service"
 UNIT_DST="$HOME/.config/systemd/user/openclaw-token-exporter.service"
 if [ -f "$UNIT_SRC" ]; then
