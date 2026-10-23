@@ -124,7 +124,8 @@ log_step "2/8 Setting up Python virtual environment..."
 
 VENV_DIR="$NETCLAW_DIR/.venv"
 if [ ! -d "$VENV_DIR" ]; then
-    python3 -m venv "$VENV_DIR"
+    source "$NETCLAW_DIR/scripts/lib/pip-helper.sh"
+    netclaw_venv_create "$VENV_DIR"
     log_info "Created venv at $VENV_DIR"
 fi
 source "$VENV_DIR/bin/activate"

@@ -31,6 +31,8 @@ missing entry point, or a syntax error. Those are never correct.
 """
 
 import argparse
+import importlib.util
+from pathlib import Path
 import json
 import os
 import re
@@ -170,6 +172,26 @@ def registered(config: str = CONFIG) -> dict:
         return json.load(fh).get("mcpServers", {})
 
 
+def installed_command(name: str, command: str) -> str:
+    """Honor installer records so legacy and modern SDK probes stay isolated."""
+    if command not in ("python", "python3", "fastmcp"):
+        return command
+    selection_spec = importlib.util.spec_from_file_location(
+        "startup_runtime_selection", Path(REPO_ROOT) / "scripts/runtime-selection.py")
+    selection = importlib.util.module_from_spec(selection_spec)
+    selection_spec.loader.exec_module(selection)
+    home = selection.resolve()["home"]
+    root = Path(os.environ.get("NETCLAW_RUNTIME_ROOT", str(Path(home) / "python-runtimes")))
+    for component in (name, name.removesuffix("-mcp")):
+        record = root / "records" / component
+        if record.is_file():
+            python = record.read_text().strip()
+            if not Path(python).is_absolute():
+                raise ValueError(f"{component}: runtime record must contain an absolute interpreter")
+            return str(Path(python).with_name("fastmcp")) if command == "fastmcp" else python
+    return command
+
+
 def launchable(name: str, spec: dict) -> tuple[list[str], str] | None:
     """The argv to try, or None with a reason to skip.
 
@@ -187,7 +209,7 @@ def launchable(name: str, spec: dict) -> tuple[list[str], str] | None:
         shutil.which(cmd) or os.path.exists(os.path.join(REPO_ROOT, cmd))
     ):
         return None
-    argv = [cmd] + list(spec.get("args", []))
+    argv = [installed_command(name, cmd)] + list(spec.get("args", []))
 
     # NOT INSTALLED is not the same as BROKEN, and conflating them made this check
     # unusable as a gate: CI is a fresh checkout where every vendored server clone is
