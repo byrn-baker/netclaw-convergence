@@ -29,3 +29,14 @@ def test_broken_record_is_reported_instead_of_falling_back(tmp_path, monkeypatch
     monkeypatch.setenv('NETCLAW_RUNTIME_ROOT', str(tmp_path))
     argv, _ = startup.launchable('junos-mcp', {'command': 'python3', 'args': ['server.py']})
     assert startup.probe('junos-mcp', argv).startswith('could not launch:')
+
+
+def test_record_works_without_ambient_python(tmp_path, monkeypatch):
+    records = tmp_path / 'records'
+    records.mkdir()
+    python = tmp_path / 'runtime/bin/python'
+    (records / 'cml-mcp').write_text(str(python))
+    monkeypatch.setenv('NETCLAW_RUNTIME_ROOT', str(tmp_path))
+    monkeypatch.setattr(startup.shutil, 'which', lambda command: None)
+    argv, _ = startup.launchable('cml-mcp', {'command': 'python3', 'args': ['-m', 'cml_mcp']})
+    assert argv[0] == str(python)

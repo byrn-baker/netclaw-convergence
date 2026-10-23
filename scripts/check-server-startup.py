@@ -203,13 +203,15 @@ def launchable(name: str, spec: dict) -> tuple[list[str], str] | None:
     cmd = spec.get("command")
     if not cmd:
         return None
-    if cmd in ("npx", "uvx", "docker", "node", "npm") and not shutil.which(cmd):
+    resolved = installed_command(name, cmd)
+    has_record = resolved != cmd
+    if not has_record and cmd in ("npx", "uvx", "docker", "node", "npm") and not shutil.which(cmd):
         return None
-    if cmd not in ("npx", "uvx", "docker", "node", "npm") and not (
+    if not has_record and cmd not in ("npx", "uvx", "docker", "node", "npm") and not (
         shutil.which(cmd) or os.path.exists(os.path.join(REPO_ROOT, cmd))
     ):
         return None
-    argv = [installed_command(name, cmd)] + list(spec.get("args", []))
+    argv = [resolved] + list(spec.get("args", []))
 
     # NOT INSTALLED is not the same as BROKEN, and conflating them made this check
     # unusable as a gate: CI is a fresh checkout where every vendored server clone is
