@@ -35,6 +35,12 @@ export default function StandardChat({ preview = false, active = true, pal = fal
   const [catalog, setCatalog] = useState(null);
   const [modelError, setModelError] = useState('');
   const [modelRefresh, setModelRefresh] = useState(0);
+  // FORK-LOCAL: Convergence applies model settings without remounting Chat.
+  useEffect(() => {
+    const refresh = () => setModelRefresh(value => value + 1);
+    window.addEventListener('netclaw:models-updated', refresh);
+    return () => window.removeEventListener('netclaw:models-updated', refresh);
+  }, []);
   useEffect(() => {
     if (preview) return;
     const controller = new AbortController();

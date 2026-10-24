@@ -1,3 +1,5 @@
+// FORK-LOCAL: resolve model references from the selected runtime environment.
+import { readModelConfig } from './src/fork-local/model-config.js';
 import { managementDiscovery } from './src/hud-server/management.js';
 import { ENV_MAP } from './env-map.js';
 import { mountMcpConfiguration } from './mcp-configuration.js';
@@ -644,7 +646,7 @@ function pickDeviceConnection(device) {
 
 function parseConfig() {
   try {
-    return installation.kind === 'hermes' ? yaml.load(readText(installation.configPath)) : JSON.parse(readText(OPENCLAW_CONFIG));
+    return installation.kind === 'hermes' ? yaml.load(readText(installation.configPath)) : readModelConfig(OPENCLAW_CONFIG);
   } catch {
     return null;
   }
@@ -754,7 +756,7 @@ app.get('/api/hud/tokenomics', (_req, res) => {
 app.get('/api/hud/runtime', (_req, res) => {
   res.setHeader('Cache-Control', 'no-store');
   try {
-    const config = JSON.parse(readText(OPENCLAW_CONFIG));
+    const config = readModelConfig(OPENCLAW_CONFIG);
     res.json({ available: true, ...runtimeInventory(config), controlUi: controlUiLocation(config), generatedAt:new Date().toISOString() });
   } catch { res.status(503).json({ available:false, error:'Runtime configuration unavailable' }); }
 });
@@ -1551,7 +1553,7 @@ function textFromChatContent(content) {
 // Read OpenClaw gateway config for auth
 function getGatewayConfig() {
   try {
-    const config = JSON.parse(readText(OPENCLAW_CONFIG));
+    const config = readModelConfig(OPENCLAW_CONFIG);
     // FORK PATCH (upstream bug candidate): openclaw.json may store the token as
     // a "${OPENCLAW_GATEWAY_TOKEN}" reference rather than a literal. Passing that
     // string through verbatim yields a 401 from /v1/*, which the HUD then reports
@@ -1651,11 +1653,11 @@ app.post('/api/terminal/terra', async (req, res) => {
 
 const readChatUsage = createUsageReader();
 const chatRuntime = createChatRuntime();
-if (!hermesRuntime) mountChatHistory(app, { bindings: hudBindings, config: () => JSON.parse(readText(OPENCLAW_CONFIG)), configPath: OPENCLAW_CONFIG, runtime: chatRuntime });
+if (!hermesRuntime) mountChatHistory(app, { bindings: hudBindings, config: () => readModelConfig(OPENCLAW_CONFIG), configPath: OPENCLAW_CONFIG, runtime: chatRuntime });
 app.post('/api/chat/usage', async (req, res) => {
   res.set('Cache-Control', 'no-store');
   try {
-    const config = JSON.parse(readText(OPENCLAW_CONFIG));
+    const config = readModelConfig(OPENCLAW_CONFIG);
     const agentId = gatewayAgentId(config);
     const selectedModel = resolveChatModel(config, req.body?.chatModel ?? '', await chatRuntime.catalog(config, OPENCLAW_CONFIG));
     let key = null;
@@ -1670,7 +1672,7 @@ app.post('/api/chat/usage', async (req, res) => {
 
 app.get('/api/chat/models', async (_req, res) => {
   res.set('Cache-Control', 'no-store');
-  try { const config = JSON.parse(readText(OPENCLAW_CONFIG));
+  try { const config = readModelConfig(OPENCLAW_CONFIG);
     res.json(publicChatModels(config, await chatRuntime.catalog(config, OPENCLAW_CONFIG))); }
   catch { res.status(503).json({ error: 'Configured models are unavailable.' }); }
 });
@@ -1679,7 +1681,7 @@ app.post('/api/chat', async (req, res) => {
   let selectedModel, selectedEffort;
   if (req.body?.chatModel !== undefined || req.body?.chatEffort !== undefined) {
     try {
-      const config = JSON.parse(readText(OPENCLAW_CONFIG));
+      const config = readModelConfig(OPENCLAW_CONFIG);
       const discovered = await chatRuntime.catalog(config, OPENCLAW_CONFIG);
       selectedModel = resolveChatModel(config, req.body.chatModel, discovered);
       selectedEffort = resolveChatEffort(config, req.body.chatModel, req.body.chatEffort, discovered);

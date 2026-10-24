@@ -341,3 +341,22 @@ test('synthetic preview Convergence never reads or changes the live network', as
   assert.equal(calls.length, 0);
   assert.deepEqual(errors, []);
 });
+
+test('Convergence OpenAI preset shows applied values, clears fallback and refreshes Chat discovery', async t => {
+  const calls = [];
+  const { document, errors } = await app(t, false, convergenceFetch(calls, (path, url, options) => {
+    if (path === '/api/models' && options.method === 'POST') return { sot: { brain: 'openai/gpt-6.1-sol', alert: 'openai/gpt-6-luna', fallback: '' } };
+  }));
+  const initialDiscovery = calls.filter(([url]) => url === '/api/chat/models').length;
+  click(document, 'Convergence');
+  await waitFor(() => document.querySelector('[data-home-sub="models"]'), 'Convergence');
+  document.querySelector('[data-home-sub="models"]').click();
+  await waitFor(() => document.querySelector('[data-models-field="brain"]'), 'Models controls');
+  document.querySelector('[data-preset="openai"]').click();
+  await waitFor(() => document.querySelector('[data-models-field="brain"]')?.value === 'openai/gpt-6.1-sol', 'applied model values');
+  assert.equal(document.querySelector('[data-models-field="alert"]').value, 'openai/gpt-6-luna');
+  assert.equal(document.querySelector('[data-models-field="fallback"]').value, '');
+  await waitFor(() => calls.filter(([url]) => url === '/api/chat/models').length > initialDiscovery, 'Chat catalog refresh');
+  assert.deepEqual(JSON.parse(calls.find(([url, options]) => url === '/api/models' && options.method === 'POST')[1].body), { preset: 'openai', restart: true });
+  assert.deepEqual(errors, []);
+});

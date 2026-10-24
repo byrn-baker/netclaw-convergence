@@ -21,6 +21,29 @@
 
 ## Source of truth (`.env`)
 
+The default HUD and Convergence use the same model controls. Convergence's
+telemetry API does not run its own chat model: alert investigations are sent
+through OpenClaw's `alert` agent and hook. Chat's model picker can override the
+default for an individual conversation; choose **Agent default** to follow
+`NETCLAW_BRAIN_MODEL`.
+
+For ChatGPT/Codex subscription authentication, connect OpenClaw once:
+
+```bash
+openclaw models auth login --provider openai --agent main --device-code
+```
+
+Then choose account-available `openai/...` models. The **OpenAI** preset selects
+`openai/gpt-6.1-sol` for chat and `openai/gpt-6-luna` for investigations and chat
+fallback. Verify availability for your signed-in account before applying a
+preset. Subscription credentials are managed by OpenClaw's auth store, rather
+than being an API key in `.env`.
+
+The apply script supports current `agents.entries` and legacy `agents.list`
+configurations, preserves agent tool restrictions, and uses the selected
+`OPENCLAW_STATE_DIR` / `OPENCLAW_CONFIG_PATH`. It updates the alert agent and
+the alert hook together. An explicitly empty fallback clears the old value.
+
 Preferred operator file:
 
 ```text
@@ -34,6 +57,7 @@ netclaw/.env
 | Variable | Used for | Example |
 |----------|----------|---------|
 | **`NETCLAW_BRAIN_MODEL`** | Interactive **main** agent / HUD chat / Border defaults | `anthropic/claude-sonnet-5` |
+| **`NETCLAW_BRAIN_FALLBACK`** | Optional interactive fallback; empty disables it | `openai/gpt-6-luna` |
 | **`NETCLAW_ALERT_TRIAGE_MODEL`** | **T2 auto-investigations** (`hooks.mappings` path `alert`, agent `alert`) | `anthropic/claude-haiku-4-5-20251001` |
 | **`NETCLAW_ALERT_FALLBACK_MODEL`** | Optional alert-agent fallback if primary fails | `ollama/glm-5.2:cloud` |
 | **`OLLAMA_BASE_URL`** | Ollama API base (local LAN or `https://ollama.com`) | synced to gateway env |
@@ -177,6 +201,12 @@ Autonomous T2 path (host agent + Docker diary):
 
 Member env SoT: `migration-staging/members/guardian-claw/.env`  
 Must use the same diary base URL as `services/alert-receiver/.env` (`http://127.0.0.1:3080` for Docker Convergence).
+
+The delegated worker's LLM is separately selected by `N2N_MEMBER_MODEL` in that
+member environment and its scoped OpenClaw configuration. Changing the Border
+chat/alert defaults does not change the Guardian worker. Subscription auth must
+also be available in the member's selected OpenClaw state directory; an isolated
+member does not automatically inherit credentials from another state directory.
 
 ## How this relates to investigation policy (Phase 9)
 

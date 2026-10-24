@@ -3,6 +3,8 @@ import { promisify } from 'node:util';
 import { readFile, access } from 'node:fs/promises';
 import { constants } from 'node:fs';
 import path from 'node:path';
+// FORK-LOCAL: use selected-state dotenv credentials for CLI discovery.
+import { readModelConfig, runtimeEnvironment } from '../fork-local/model-config.js';
 import { gatewayAgentId } from './gateway-agent.js';
 const execute = promisify(execFile);
 export function gatewayEnvironment(config, port, configPath, env = process.env, nodePath = process.execPath) {
@@ -24,7 +26,8 @@ export function gatewayEnvironment(config, port, configPath, env = process.env, 
     OPENCLAW_GATEWAY_TOKEN: token || '', OPENCLAW_GATEWAY_PASSWORD: password || '' };
 }
 export async function gatewayCall(method, params, port, configPath) {
-  const config = JSON.parse(await readFile(configPath, 'utf8'));
+  const env = runtimeEnvironment(configPath);
+  const config = readModelConfig(configPath, env);
   // Resolve the owner's CLI before pinning Node in the child PATH. Otherwise
   // a sibling openclaw executable can shadow a configured wrapper/installation.
   let executable='openclaw';
@@ -37,7 +40,7 @@ export async function gatewayCall(method, params, port, configPath) {
   }
   const { stdout } = await execute(executable, ['gateway', 'call', method, '--params', JSON.stringify(params),
     '--timeout', '10000', '--json'],
-  { env: gatewayEnvironment(config, port, configPath), timeout: 20000, maxBuffer: 4 * 1024 * 1024, windowsHide: true });
+  { env: gatewayEnvironment(config, port, configPath, env), timeout: 20000, maxBuffer: 4 * 1024 * 1024, windowsHide: true });
   return JSON.parse(stdout.slice(stdout.indexOf('{')));
 }
 export function createChatRuntime(call = gatewayCall) {

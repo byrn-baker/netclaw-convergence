@@ -58,6 +58,7 @@
  */
 
 import express from 'express';
+import { readModelConfig } from './src/fork-local/model-config.js';
 import fs from 'fs';
 import path from 'path';
 import { execFile } from 'child_process';
@@ -360,11 +361,9 @@ const MODEL_ENV_KEYS = [
 
 function readOpenclawModelsLive() {
   try {
-    const raw = readText(path.join(process.env.HOME || '/root', '.openclaw', 'openclaw.json'));
-    if (!raw) return {};
-    const d = JSON.parse(raw);
+    const d = readModelConfig(process.env.OPENCLAW_CONFIG_PATH || path.join(process.env.HOME || '/root', '.openclaw', 'openclaw.json'));
     const defaults = d?.agents?.defaults?.model || {};
-    let alertAgent = null;
+    let alertAgent = d?.agents?.entries?.alert?.model || null;
     for (const a of d?.agents?.list || []) {
       if (a?.id === 'alert') alertAgent = a.model || null;
     }
@@ -375,7 +374,7 @@ function readOpenclawModelsLive() {
       }
     }
     return {
-      defaultsPrimary: defaults.primary || null,
+      defaultsPrimary: typeof defaults === 'string' ? defaults : defaults.primary || null,
       alertAgent,
       hookAlert,
     };
@@ -394,7 +393,7 @@ function writeModelEnvKeys(updates) {
     let text = readText(targetFile);
     if (!text) text = '';
     for (const [key, value] of Object.entries(updates)) {
-      if (value == null || value === '') continue;
+      if (value == null) continue;
       if (!MODEL_ENV_KEYS.includes(key) && !key.startsWith('NETCLAW_') && !key.startsWith('OLLAMA_')) {
         continue;
       }
@@ -447,7 +446,7 @@ app.get('/api/models', (req, res) => {
   const rootEnv = parseOneEnvFile(ROOT_ENV);
   const brain = rootEnv.NETCLAW_BRAIN_MODEL || env.NETCLAW_BRAIN_MODEL || '';
   const alert = rootEnv.NETCLAW_ALERT_TRIAGE_MODEL || env.NETCLAW_ALERT_TRIAGE_MODEL || '';
-  const fallback = rootEnv.NETCLAW_ALERT_FALLBACK_MODEL || env.NETCLAW_ALERT_FALLBACK_MODEL || '';
+  const fallback = rootEnv.NETCLAW_ALERT_FALLBACK_MODEL ?? env.NETCLAW_ALERT_FALLBACK_MODEL ?? '';
   const live = readOpenclawModelsLive();
   res.json({
     sot: {
@@ -460,6 +459,7 @@ app.get('/api/models', (req, res) => {
     },
     live,
     presets: {
+      openai: { brain: 'openai/gpt-6.1-sol', alert: 'openai/gpt-6-luna', fallback: '' },
       local: {
         brain: 'ollama/voytas26/openclaw-qwen3vl-8b-opt',
         alert: 'ollama/voytas26/openclaw-qwen3vl-8b-opt',
@@ -520,13 +520,13 @@ app.post('/api/models', async (req, res) => {
       const updates = {};
       if (body.brain) updates.NETCLAW_BRAIN_MODEL = String(body.brain).trim();
       if (body.alert) updates.NETCLAW_ALERT_TRIAGE_MODEL = String(body.alert).trim();
-      if (body.fallback != null && body.fallback !== '') {
+      if (body.fallback != null) {
         updates.NETCLAW_ALERT_FALLBACK_MODEL = String(body.fallback).trim();
       }
       if (body.ollamaBaseUrl) updates.OLLAMA_BASE_URL = String(body.ollamaBaseUrl).trim();
       if (!Object.keys(updates).length) {
         return res.status(400).json({
-          error: 'Expected { brain, alert } or { preset: "local"|"cloud-flash"|"split" }',
+          error: 'Expected { brain, alert } or { preset: "openai"|"local"|"cloud-flash"|"split" }',
         });
       }
       writeModelEnvKeys(updates);
@@ -540,7 +540,7 @@ app.post('/api/models', async (req, res) => {
     res.json({
       ok: true,
       restarted: restart,
-      sot: parseOneEnvFile(ROOT_ENV),
+      sot: { brain: parseOneEnvFile(ROOT_ENV).NETCLAW_BRAIN_MODEL || '', alert: parseOneEnvFile(ROOT_ENV).NETCLAW_ALERT_TRIAGE_MODEL || '', fallback: parseOneEnvFile(ROOT_ENV).NETCLAW_ALERT_FALLBACK_MODEL || '' },
       live: readOpenclawModelsLive(),
     });
   } catch (err) {

@@ -746,15 +746,16 @@ export class HomeView {
         throw new Error(data?.error || data?.detail || `HTTP ${res.status}`);
       }
       this.modelsDraft = {
-        brain: data.sot?.NETCLAW_BRAIN_MODEL || body.brain || this.modelsDraft?.brain,
-        alert: data.sot?.NETCLAW_ALERT_TRIAGE_MODEL || body.alert || this.modelsDraft?.alert,
-        fallback: data.sot?.NETCLAW_ALERT_FALLBACK_MODEL || body.fallback || this.modelsDraft?.fallback,
+        brain: data.sot?.brain ?? data.sot?.NETCLAW_BRAIN_MODEL ?? body.brain ?? this.modelsDraft?.brain,
+        alert: data.sot?.alert ?? data.sot?.NETCLAW_ALERT_TRIAGE_MODEL ?? body.alert ?? this.modelsDraft?.alert,
+        fallback: data.sot?.fallback ?? data.sot?.NETCLAW_ALERT_FALLBACK_MODEL ?? body.fallback ?? this.modelsDraft?.fallback,
       };
       this.modelsFlash = {
         kind: 'ok',
         message: 'Applied to .env + openclaw.json; gateway restarted. Investigations use alert model; chat uses brain.',
       };
       await this.refreshModels(false);
+      window.dispatchEvent(new CustomEvent('netclaw:models-updated'));
     } catch (err) {
       this.modelsFlash = { kind: 'error', message: err.message || String(err) };
     } finally {
@@ -827,7 +828,9 @@ export class HomeView {
             </button>
           </div>
           <p class="home-section-title" style="margin-top:1rem">Presets</p>
+          <p class="home-muted" style="margin-bottom:12px">OpenAI uses your configured OpenClaw sign-in. Subscription access is connected through OpenClaw; an API key is not required for a Codex subscription.</p>
           <div class="home-models-presets">
+            <button type="button" class="home-action-btn" data-models-action="preset" data-preset="openai" ${this.modelsBusy ? 'disabled' : ''} title="OpenAI chat and investigation models; requires an OpenClaw OpenAI sign-in">OpenAI</button>
             <button type="button" class="home-action-btn" data-models-action="preset" data-preset="split" ${this.modelsBusy ? 'disabled' : ''} title="Local chat + cloud investigations">split</button>
             <button type="button" class="home-action-btn" data-models-action="preset" data-preset="cloud-flash" ${this.modelsBusy ? 'disabled' : ''}>cloud-flash</button>
             <button type="button" class="home-action-btn" data-models-action="preset" data-preset="anthropic" ${this.modelsBusy ? 'disabled' : ''} title="Sonnet brain + Haiku alert">anthropic</button>

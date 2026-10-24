@@ -28,11 +28,18 @@
 set -euo pipefail
 
 NETCLAW_DIR="${NETCLAW_DIR:-$(cd "$(dirname "$0")/.." && pwd)}"
-OPENCLAW_HOME="${OPENCLAW_HOME:-$HOME/.openclaw}"
-OPENCLAW_JSON="${OPENCLAW_CONFIG_PATH:-$OPENCLAW_HOME/openclaw.json}"
-GATEWAY_ENV="${OPENCLAW_GATEWAY_ENV:-$OPENCLAW_HOME/gateway.systemd.env}"
+MODEL_STATE_DIR="${OPENCLAW_STATE_DIR:-}"
+if [[ -z "$MODEL_STATE_DIR" ]]; then
+  if [[ -n "${OPENCLAW_CONFIG_PATH:-}" ]]; then
+    MODEL_STATE_DIR="$(dirname "$OPENCLAW_CONFIG_PATH")"
+  else
+    MODEL_STATE_DIR="${OPENCLAW_HOME:-$HOME/.openclaw}"
+  fi
+fi
+OPENCLAW_JSON="${OPENCLAW_CONFIG_PATH:-$MODEL_STATE_DIR/openclaw.json}"
+GATEWAY_ENV="${OPENCLAW_GATEWAY_ENV:-$MODEL_STATE_DIR/gateway.systemd.env}"
 SOT_ENV="${NETCLAW_ENV_FILE:-$NETCLAW_DIR/.env}"
-OPENCLAW_DOTENV="$OPENCLAW_HOME/.env"
+OPENCLAW_DOTENV="$MODEL_STATE_DIR/.env"
 RESTART=1
 
 cmd="${1:-show}"
@@ -85,20 +92,28 @@ PY
 }
 
 load_env_merge() {
-  # Prefer SoT (repo .env) over ~/.openclaw/.env for model keys
-  local k
-  for k in NETCLAW_BRAIN_MODEL NETCLAW_ALERT_TRIAGE_MODEL NETCLAW_ALERT_FALLBACK_MODEL \
-           OLLAMA_BASE_URL OLLAMA_API_KEY NETCLAW_MODEL; do
-    local v=""
-    v="$(_env_get "$OPENCLAW_DOTENV" "$k" || true)"
-    local v2=""
-    v2="$(_env_get "$SOT_ENV" "$k" || true)"
-    [[ -n "$v2" ]] && v="$v2"
-    if [[ -n "$v" ]]; then
-      export "$k=$v"
-    fi
-  done
-  # Convenience: bare NETCLAW_MODEL fills brain if brain unset
+  # Presence matters: an explicitly empty fallback clears an older mirrored value.
+  while IFS= read -r -d '' model_key && IFS= read -r -d '' model_value; do
+    export "$model_key=$model_value"
+  done < <(python3 - "$OPENCLAW_DOTENV" "$SOT_ENV" <<'PY'
+import os, re, sys
+from pathlib import Path
+keys = ['NETCLAW_BRAIN_MODEL', 'NETCLAW_BRAIN_FALLBACK', 'NETCLAW_ALERT_TRIAGE_MODEL',
+        'NETCLAW_ALERT_FALLBACK_MODEL', 'OLLAMA_BASE_URL', 'OLLAMA_API_KEY', 'NETCLAW_MODEL']
+values = {k: os.environ[k] for k in keys if k in os.environ}
+for name in sys.argv[1:]:
+    p = Path(name)
+    if not p.is_file(): continue
+    for line in p.read_text().splitlines():
+        match = re.match(r'^\s*(?:export\s+)?([A-Z_][A-Z0-9_]*)\s*=\s*(.*)$', line)
+        if not match or match[1] not in keys: continue
+        value = match[2].strip()
+        if len(value) >= 2 and value[0] == value[-1] and value[0] in "\"'": value = value[1:-1]
+        values[match[1]] = value
+for key, value in values.items():
+    sys.stdout.write(key + '\0' + value + '\0')
+PY
+  )
   if [[ -z "${NETCLAW_BRAIN_MODEL:-}" && -n "${NETCLAW_MODEL:-}" ]]; then
     export NETCLAW_BRAIN_MODEL="$NETCLAW_MODEL"
   fi
@@ -139,7 +154,9 @@ d = json.loads(p.read_text())
 def_m = ((d.get("agents") or {}).get("defaults") or {}).get("model") or {}
 print("Live openclaw.json:")
 print(f"  agents.defaults.model.primary = {def_m.get('primary')}")
-for a in (d.get("agents") or {}).get("list") or []:
+agents = d.get("agents") or {}
+records = [{"id": k, **v} for k, v in (agents.get("entries") or {}).items()] if isinstance(agents.get("entries"), dict) else agents.get("list") or []
+for a in records:
     if not isinstance(a, dict):
         continue
     print(f"  agents.list[{a.get('id')}].model = {a.get('model')}")
@@ -192,9 +209,8 @@ write_sot() {
     "NETCLAW_BRAIN_MODEL=$brain"
     "NETCLAW_ALERT_TRIAGE_MODEL=$alert"
   )
-  if [[ -n "$fallback" ]]; then
-    args+=("NETCLAW_ALERT_FALLBACK_MODEL=$fallback")
-  fi
+  args+=("NETCLAW_ALERT_FALLBACK_MODEL=$fallback")
+  [[ -n "${NETCLAW_BRAIN_FALLBACK+x}" ]] && args+=("NETCLAW_BRAIN_FALLBACK=${NETCLAW_BRAIN_FALLBACK}")
   # Keep OLLAMA_* if already in environment
   if [[ -n "${OLLAMA_BASE_URL:-}" ]]; then
     args+=("OLLAMA_BASE_URL=$OLLAMA_BASE_URL")
@@ -205,7 +221,7 @@ write_sot() {
   echo "Writing SoT → $SOT_ENV"
   upsert_env_file "$SOT_ENV" "${args[@]}"
   # Mirror model keys into ~/.openclaw/.env so other tools see them
-  if [[ -f "$OPENCLAW_DOTENV" ]] || [[ -d "$OPENCLAW_HOME" ]]; then
+  if [[ -f "$OPENCLAW_DOTENV" ]] || [[ -d "$MODEL_STATE_DIR" ]]; then
     upsert_env_file "$OPENCLAW_DOTENV" "${args[@]}"
   fi
 }
@@ -234,11 +250,11 @@ apply_json_and_gateway() {
 
   local ts bak
   ts="$(date +%Y%m%d%H%M%S)"
-  bak="${OPENCLAW_HOME}/openclaw.json.bak-models-${ts}"
+  bak="${MODEL_STATE_DIR}/openclaw.json.bak-models-${ts}"
   cp -a "$OPENCLAW_JSON" "$bak"
   echo "Backup: $bak"
 
-  BRAIN="$brain" ALERT="$alert" FALLBACK="$fallback" OPENCLAW_JSON="$OPENCLAW_JSON" python3 <<'PY'
+  BRAIN_FALLBACK="${NETCLAW_BRAIN_FALLBACK:-}" BRAIN_FALLBACK_SET="${NETCLAW_BRAIN_FALLBACK+x}" BRAIN="$brain" ALERT="$alert" FALLBACK="$fallback" OPENCLAW_JSON="$OPENCLAW_JSON" python3 <<'PY'
 import json, os, re
 from pathlib import Path
 
@@ -268,39 +284,24 @@ if not isinstance(model, dict):
     model = {}
     defaults["model"] = model
 model["primary"] = brain
+if os.environ.get("BRAIN_FALLBACK_SET"):
+    model["fallbacks"] = [normalize(os.environ["BRAIN_FALLBACK"])] if os.environ.get("BRAIN_FALLBACK") else []
 if "fallbacks" not in model or model["fallbacks"] is None:
     model["fallbacks"] = []
 
-lst = agents.get("list")
-if not isinstance(lst, list):
-    lst = []
-    agents["list"] = lst
-
-def upsert_agent(aid, **fields):
-    for i, a in enumerate(lst):
-        if isinstance(a, dict) and a.get("id") == aid:
-            a.update(fields)
-            lst[i] = a
-            return
-    lst.append({"id": aid, **fields})
-
-# Ensure main exists when list is used
-if lst and not any(isinstance(a, dict) and a.get("id") == "main" for a in lst):
-    lst.insert(0, {"id": "main", "default": True, "name": "Main"})
-
-# alert agent model (thin tools profile may already exist)
+# Current OpenClaw uses keyed entries; keep legacy list configs compatible.
+entries = agents.get("entries")
+if isinstance(entries, dict):
+    records = list(entries.items())
+else:
+    records = [(a.get("id"), a) for a in agents.get("list", []) if isinstance(a, dict)]
 alert_model = {"primary": alert, "fallbacks": [fallback] if fallback else []}
-found_alert = False
-for a in lst:
-    if isinstance(a, dict) and a.get("id") == "alert":
-        a["model"] = alert_model
-        found_alert = True
-        break
-if not found_alert and lst:
-    # list mode without alert — only set defaults; hooks still get model
-    pass
-elif not found_alert and not lst:
-    pass
+for aid, agent in records:
+    if aid == "alert": agent["model"] = alert_model
+    elif aid == "main" and "model" in agent: agent["model"] = dict(model)
+allowed_models = defaults.setdefault("models", {})
+for ref in [brain, alert, fallback, *model.get("fallbacks", [])]:
+    if ref: allowed_models.setdefault(ref, {})
 
 hooks = d.setdefault("hooks", {})
 mappings = hooks.get("mappings")
@@ -329,7 +330,7 @@ if alert_map is None:
     mappings.insert(0, alert_map)
 alert_map["model"] = alert
 # Prefer thin agent id when present
-if any(isinstance(a, dict) and a.get("id") == "alert" for a in lst):
+if any(aid == "alert" for aid, a in records):
     alert_map["agentId"] = "alert"
     allowed = hooks.get("allowedAgentIds")
     if not isinstance(allowed, list):
@@ -351,7 +352,8 @@ PY
     "NETCLAW_BRAIN_MODEL=$brain"
     "NETCLAW_ALERT_TRIAGE_MODEL=$alert"
   )
-  [[ -n "$fallback" ]] && gargs+=("NETCLAW_ALERT_FALLBACK_MODEL=$fallback")
+  gargs+=("NETCLAW_ALERT_FALLBACK_MODEL=$fallback")
+  [[ -n "${NETCLAW_BRAIN_FALLBACK+x}" ]] && gargs+=("NETCLAW_BRAIN_FALLBACK=${NETCLAW_BRAIN_FALLBACK}")
   [[ -n "${OLLAMA_BASE_URL:-}" ]] && gargs+=("OLLAMA_BASE_URL=$OLLAMA_BASE_URL")
   [[ -n "${OLLAMA_API_KEY:-}" ]] && gargs+=("OLLAMA_API_KEY=$OLLAMA_API_KEY")
   echo "Syncing gateway env → $GATEWAY_ENV"
@@ -421,13 +423,17 @@ do_preset() {
       # Cheap interactive local + capable cloud investigations
       write_sot "$local_m" "$flash" "$glm"
       ;;
+    openai|codex)
+      export NETCLAW_BRAIN_FALLBACK="openai/gpt-6-luna"
+      write_sot "openai/gpt-6.1-sol" "openai/gpt-6-luna" ""
+      ;;
     anthropic|sonnet-haiku)
       # Strong chat + cheaper structured alert triage (needs ANTHROPIC_API_KEY)
       write_sot "anthropic/claude-sonnet-5" "anthropic/claude-haiku-4-5-20251001" ""
       ;;
     *)
       echo "Unknown preset: $name" >&2
-      echo "Presets: local | cloud-flash | split | anthropic" >&2
+      echo "Presets: openai | local | cloud-flash | split | anthropic" >&2
       exit 2
       ;;
   esac
