@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2440" height="1810" viewBox="0 0 2440 1810" role="img" aria-labelledby="title desc">
+<title id="title">GUARDIAN / CONVERGENCE — INVESTIGATION SEQUENCE</title><desc id="desc">Automatic admission, delegated execution and the operator feedback loop  •  Current configured workflow</desc>
+<defs>
+<marker id="a-teal" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#007f83"/></marker>
+<marker id="a-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#2864ba"/></marker>
+<marker id="a-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#bd5c15"/></marker>
+<marker id="a-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#7950aa"/></marker>
+<marker id="a-model" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#66748c"/></marker>
+<marker id="a-ink" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#152b44"/></marker>
+</defs><style>
+text{font-family:"DejaVu Sans",sans-serif;fill:#152b44} .body{font-size:20px}
+.code{font-family:"DejaVu Sans Mono",monospace;font-size:17px}
+.edge-label{font-size:18px;font-weight:600;paint-order:stroke;stroke:#f7f9fc;stroke-width:8px;stroke-linejoin:round}
+</style>
+<rect x="0" y="0" width="2440" height="1810" rx="0" fill="#f7f9fc" stroke="none" stroke-width="1.6"/>
+<rect x="0" y="0" width="2440" height="132" rx="0" fill="#152b44" stroke="none" stroke-width="1.6"/>
+<text x="60" y="53" font-size="39" fill="#ffffff" style="fill:#ffffff" font-weight="700" text-anchor="start" class="">GUARDIAN / CONVERGENCE — INVESTIGATION SEQUENCE</text>
+<text x="60" y="98" font-size="21" fill="#c4d3e3" style="fill:#c4d3e3" font-weight="400" text-anchor="start" class="">Automatic admission, delegated execution and the operator feedback loop  •  Current configured workflow</text>
+<text x="2368" y="54" font-size="19" fill="#c4d3e3" style="fill:#c4d3e3" font-weight="400" text-anchor="end" class="">SHEET 02 / 02</text>
+<rect x="60" y="325" width="2320" height="810" rx="14" fill="#fff7ed" stroke="#efd9bf" stroke-width="1.6"/>
+<rect x="60" y="1200" width="2320" height="365" rx="14" fill="#f4effa" stroke="#dac9ec" stroke-width="1.6"/>
+<rect x="25" y="185" width="310" height="105" rx="10" fill="#ffffff" stroke="#c7d3e0" stroke-width="1.6"/>
+<text x="180" y="223" font-size="23" fill="#152b44" style="fill:#152b44" font-weight="700" text-anchor="middle" class="">Alertmanager</text>
+<text x="180" y="262" font-size="16" fill="#53677e" style="fill:#53677e" font-weight="400" text-anchor="middle" class="">Docker :9093</text>
+<path d="M180 291 V1555" stroke="#a9b8c9" stroke-width="1.6" stroke-dasharray="6 7"/>
+<rect x="435" y="185" width="310" height="105" rx="10" fill="#ffffff" stroke="#c7d3e0" stroke-width="1.6"/>
+<text x="590" y="223" font-size="23" fill="#152b44" style="fill:#152b44" font-weight="700" text-anchor="middle" class="">Alert receiver</text>
+<text x="590" y="262" font-size="16" fill="#53677e" style="fill:#53677e" font-weight="400" text-anchor="middle" class="">Host :8099</text>
+<path d="M590 291 V1555" stroke="#a9b8c9" stroke-width="1.6" stroke-dasharray="6 7"/>
+<rect x="845" y="185" width="310" height="105" rx="10" fill="#ffffff" stroke="#c7d3e0" stroke-width="1.6"/>
+<text x="1000" y="223" font-size="23" fill="#152b44" style="fill:#152b44" font-weight="700" text-anchor="middle" class="">OpenClaw / alert</text>
+<text x="1000" y="262" font-size="16" fill="#53677e" style="fill:#53677e" font-weight="400" text-anchor="middle" class="">Luna · Gateway :18789</text>
+<path d="M1000 291 V1555" stroke="#a9b8c9" stroke-width="1.6" stroke-dasharray="6 7"/>
+<rect x="1255" y="185" width="310" height="105" rx="10" fill="#ffffff" stroke="#c7d3e0" stroke-width="1.6"/>
+<text x="1410" y="223" font-size="23" fill="#152b44" style="fill:#152b44" font-weight="700" text-anchor="middle" class="">Guardian worker</text>
+<text x="1410" y="262" font-size="16" fill="#53677e" style="fill:#53677e" font-weight="400" text-anchor="middle" class="">Sol · scoped profile</text>
+<path d="M1410 291 V1555" stroke="#a9b8c9" stroke-width="1.6" stroke-dasharray="6 7"/>
+<rect x="1665" y="185" width="310" height="105" rx="10" fill="#ffffff" stroke="#c7d3e0" stroke-width="1.6"/>
+<text x="1820" y="223" font-size="23" fill="#152b44" style="fill:#152b44" font-weight="700" text-anchor="middle" class="">Case API + DB</text>
+<text x="1820" y="262" font-size="16" fill="#53677e" style="fill:#53677e" font-weight="400" text-anchor="middle" class="">Convergence :3080</text>
+<path d="M1820 291 V1555" stroke="#a9b8c9" stroke-width="1.6" stroke-dasharray="6 7"/>
+<rect x="2075" y="185" width="310" height="105" rx="10" fill="#ffffff" stroke="#c7d3e0" stroke-width="1.6"/>
+<text x="2230" y="223" font-size="23" fill="#152b44" style="fill:#152b44" font-weight="700" text-anchor="middle" class="">Operator / HUD</text>
+<text x="2230" y="262" font-size="16" fill="#53677e" style="fill:#53677e" font-weight="400" text-anchor="middle" class="">UI :3000 → API :3001</text>
+<path d="M2230 291 V1555" stroke="#a9b8c9" stroke-width="1.6" stroke-dasharray="6 7"/>
+<text x="85" y="360" font-size="22" fill="#bd5c15" style="fill:#bd5c15" font-weight="700" text-anchor="start" class="">AUTOMATIC ALERT — POLICY-GATED</text>
+<path d="M180 400 H590" fill="none" stroke="#bd5c15" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#a-orange)"/>
+<rect x="475" y="440" width="1470" height="95" rx="8" fill="#ffffff" stroke="#bd5c15" stroke-width="1.6"/>
+<text x="500" y="474" font-size="20" fill="#152b44" style="fill:#152b44" font-weight="600" text-anchor="start" class="">Admission branch: T0 / T1 → logged case + configured notification; stop before OpenClaw.</text>
+<text x="500" y="510" font-size="19" fill="#53677e" style="fill:#53677e" font-weight="400" text-anchor="start" class="">T2 allowlist + receiver budgets + duplicate/rate checks → continue below. No queued investigation backlog.</text>
+<path d="M590 575 H1820" fill="none" stroke="#7950aa" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#a-purple)"/>
+<path d="M590 650 H1000" fill="none" stroke="#bd5c15" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#a-orange)"/>
+<text x="620" y="683" font-size="17" fill="#53677e" style="fill:#53677e" font-weight="400" text-anchor="start" class="">Alert context + device context + prior-case hits + event_id</text>
+<path d="M1000 745 H1410" fill="none" stroke="#bd5c15" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#a-orange)"/>
+<text x="1018" y="778" font-size="17" fill="#53677e" style="fill:#53677e" font-weight="400" text-anchor="start" class="">Via n2n-mcp → Border :11790; wait repeatedly for task completion</text>
+<path d="M1410 820 H1530 V875 H1410" fill="none" stroke="#2864ba" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#a-blue)" stroke-dasharray="8 5"/>
+<text x="1550" y="874" font-size="18" fill="#53677e" style="fill:#53677e" font-weight="400" text-anchor="start" class="">Metrics / logs / device APIs / prior cases</text>
+<path d="M1410 930 H1820" fill="none" stroke="#7950aa" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#a-purple)"/>
+<text x="1428" y="963" font-size="17" fill="#53677e" style="fill:#53677e" font-weight="400" text-anchor="start" class="">Findings + root cause + resolved / escalated</text>
+<path d="M1410 1015 H1000" fill="none" stroke="#bd5c15" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#a-orange)" stroke-dasharray="8 5"/>
+<path d="M2230 1075 H1820" fill="none" stroke="#2864ba" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#a-blue)" stroke-dasharray="8 5"/>
+<rect x="85" y="1145" width="2270" height="40" rx="6" fill="#edf5f6" stroke="#c5dadd" stroke-width="1.6"/>
+<text x="105" y="1172" font-size="19" fill="#007f83" style="fill:#007f83" font-weight="400" text-anchor="start" class="">Outcome side effects: Guardian sends Discord findings and requests /snapshot → RAG. Subsequent alerts can reuse the prior-case narrative.</text>
+<text x="85" y="1237" font-size="22" fill="#7950aa" style="fill:#7950aa" font-weight="700" text-anchor="start" class="">OPERATOR-REQUESTED FOLLOW-UP — DEDICATED PATH</text>
+<path d="M2230 1290 H1820" fill="none" stroke="#7950aa" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#a-purple)"/>
+<text x="1760" y="1325" font-size="17" fill="#53677e" style="fill:#53677e" font-weight="400" text-anchor="start" class="">POST /api/home/events/:id/reinvestigate via HUD API</text>
+<path d="M1820 1378 H590" fill="none" stroke="#7950aa" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#a-purple)"/>
+<path d="M590 1460 H1000" fill="none" stroke="#7950aa" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#a-purple)"/>
+<text x="1025" y="1465" font-size="19" fill="#7950aa" style="fill:#7950aa" font-weight="400" text-anchor="start" class="">Repeat steps 04–08 with the same case ID and operator notes.</text>
+<text x="85" y="1530" font-size="19" fill="#7950aa" style="fill:#7950aa" font-weight="400" text-anchor="start" class="">This route does not call the automatic T0/T1/T2 admission functions. Model work is explicitly requested by the operator.</text>
+<text x="60" y="1625" font-size="18" fill="#53677e" style="fill:#53677e" font-weight="700" text-anchor="start" class="">IDENTITY + AUTHENTICATION</text>
+<text x="60" y="1662" font-size="19" fill="#152b44" style="fill:#152b44" font-weight="400" text-anchor="start" class="">Fingerprint groups the alert; event_id identifies the durable case; task_id identifies a delegated run; hook session key is fingerprint-based.</text>
+<text x="60" y="1694" font-size="19" fill="#152b44" style="fill:#152b44" font-weight="400" text-anchor="start" class="">Upstream case-API bearer stays in the HUD proxy; hook bearer, iN2N member authentication and OAuth model auth are distinct.</text>
+<text x="60" y="1745" font-size="18" fill="#53677e" style="fill:#53677e" font-weight="400" text-anchor="start" class="">Current receiver concurrency accounting ends after hook dispatch; it is not an end-to-end reservation for the worker’s entire run.</text>
+<text x="60" y="1776" font-size="18" fill="#53677e" style="fill:#53677e" font-weight="400" text-anchor="start" class="">Deployment bindings / model replies / member enrollment verified. Agent tool use, case completion and notifications follow the configured procedure.</text>
+<text x="2380" y="1800" font-size="15" fill="#53677e" style="fill:#53677e" font-weight="400" text-anchor="end" class="">NETCLAW / CURRENT STATE / REV 1</text>
+<text x="255.0" y="388" font-size="18" fill="#bd5c15" style="fill:#bd5c15" font-weight="600" text-anchor="start" class="edge-label">01  POST /webhook</text>
+<text x="1075.0" y="563" font-size="18" fill="#7950aa" style="fill:#7950aa" font-weight="600" text-anchor="start" class="edge-label">02  POST initial case · status=investigating · keep event_id</text>
+<text x="665.0" y="638" font-size="18" fill="#bd5c15" style="fill:#bd5c15" font-weight="600" text-anchor="start" class="edge-label">03  POST /hooks/alert</text>
+<text x="1075.0" y="733" font-size="18" fill="#bd5c15" style="fill:#bd5c15" font-weight="600" text-anchor="start" class="edge-label">04  n2n_route → task ID</text>
+<text x="1550" y="840" font-size="18" fill="#2864ba" style="fill:#2864ba" font-weight="600" text-anchor="start" class="edge-label">05  Scoped evidence queries</text>
+<text x="1485.0" y="918" font-size="18" fill="#7950aa" style="fill:#7950aa" font-weight="600" text-anchor="start" class="edge-label">06  PATCH same event_id</text>
+<text x="1075.0" y="1003" font-size="18" fill="#bd5c15" style="fill:#bd5c15" font-weight="600" text-anchor="start" class="edge-label">07  Task findings / terminal result</text>
+<text x="1895.0" y="1063" font-size="18" fill="#2864ba" style="fill:#2864ba" font-weight="600" text-anchor="start" class="edge-label">08  GET diary / triage via HUD proxy</text>
+<text x="1895.0" y="1278" font-size="18" fill="#7950aa" style="fill:#7950aa" font-weight="600" text-anchor="start" class="edge-label">09  Need More + expert_feedback</text>
+<text x="1075.0" y="1366" font-size="18" fill="#7950aa" style="fill:#7950aa" font-weight="600" text-anchor="start" class="edge-label">10  Reopen original case; POST receiver /reinvestigate</text>
+<text x="665.0" y="1448" font-size="18" fill="#7950aa" style="fill:#7950aa" font-weight="600" text-anchor="start" class="edge-label">11  POST /hooks/alert</text>
+</svg>

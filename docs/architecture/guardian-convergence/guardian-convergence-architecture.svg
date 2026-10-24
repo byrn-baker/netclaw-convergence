@@ -1,0 +1,235 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2440" height="2150" viewBox="0 0 2440 2150" role="img" aria-labelledby="title desc">
+<title id="title">GUARDIAN / CONVERGENCE — CURRENT ARCHITECTURE</title><desc id="desc">NetClaw host 192.168.3.252  •  Docker Compose + systemd  •  Verified 24 Oct 2026</desc>
+<defs>
+<marker id="a-teal" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#007f83"/></marker>
+<marker id="a-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#2864ba"/></marker>
+<marker id="a-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#bd5c15"/></marker>
+<marker id="a-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#7950aa"/></marker>
+<marker id="a-model" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#66748c"/></marker>
+<marker id="a-ink" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#152b44"/></marker>
+</defs><style>
+text{font-family:"DejaVu Sans",sans-serif;fill:#152b44} .body{font-size:20px}
+.code{font-family:"DejaVu Sans Mono",monospace;font-size:17px}
+.edge-label{font-size:18px;font-weight:600;paint-order:stroke;stroke:#f7f9fc;stroke-width:8px;stroke-linejoin:round}
+</style>
+<rect x="0" y="0" width="2440" height="2150" rx="0" fill="#f7f9fc" stroke="none" stroke-width="1.6"/>
+<rect x="0" y="0" width="2440" height="132" rx="0" fill="#152b44" stroke="none" stroke-width="1.6"/>
+<text x="60" y="53" font-size="39" fill="#ffffff" style="fill:#ffffff" font-weight="700" text-anchor="start" class="">GUARDIAN / CONVERGENCE — CURRENT ARCHITECTURE</text>
+<text x="60" y="98" font-size="21" fill="#c4d3e3" style="fill:#c4d3e3" font-weight="400" text-anchor="start" class="">NetClaw host 192.168.3.252  •  Docker Compose + systemd  •  Verified 24 Oct 2026</text>
+<text x="2368" y="54" font-size="19" fill="#c4d3e3" style="fill:#c4d3e3" font-weight="400" text-anchor="end" class="">SHEET 01 / 02</text>
+<text x="60" y="164" font-size="18" fill="#53677e" style="fill:#53677e" font-weight="700" text-anchor="start" class="">OPERATOR ACCESS</text>
+<text x="1640" y="164" font-size="18" fill="#53677e" style="fill:#53677e" font-weight="700" text-anchor="start" class="">MANAGED ENVIRONMENT</text>
+<rect x="60" y="385" width="670" height="1310" rx="18" fill="#edf5f6" stroke="#c7d3e0" stroke-width="1.6"/>
+<text x="86" y="421" font-size="23" fill="#152b44" style="fill:#152b44" font-weight="700" text-anchor="start" class="">OBSERVABILITY + CASE DATA</text>
+<text x="86" y="452" font-size="17" fill="#53677e" style="fill:#53677e" font-weight="400" text-anchor="start" class="">Docker Compose: netclaw-convergence</text>
+<rect x="800" y="385" width="740" height="1310" rx="18" fill="#edf2f9" stroke="#c7d3e0" stroke-width="1.6"/>
+<text x="826" y="421" font-size="23" fill="#152b44" style="fill:#152b44" font-weight="700" text-anchor="start" class="">NETCLAW CONTROL SERVICES</text>
+<text x="826" y="452" font-size="17" fill="#53677e" style="fill:#53677e" font-weight="400" text-anchor="start" class="">Host processes / systemd; existing NetClaw installation</text>
+<rect x="1610" y="385" width="730" height="1310" rx="18" fill="#f2eff8" stroke="#c7d3e0" stroke-width="1.6" stroke-dasharray="9 5"/>
+<text x="1636" y="421" font-size="23" fill="#152b44" style="fill:#152b44" font-weight="700" text-anchor="start" class="">GUARDIAN EXECUTION PROFILE</text>
+<text x="1636" y="452" font-size="17" fill="#53677e" style="fill:#53677e" font-weight="400" text-anchor="start" class="">Host worker; separate state, credentials and scoped tools</text>
+<path d="M470 250 H520" fill="none" stroke="#2864ba" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#a-blue)"/>
+<path d="M960 250 H1010" fill="none" stroke="#2864ba" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#a-blue)"/>
+<path d="M1975 310 V345 H395 V455" fill="none" stroke="#007f83" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#a-teal)"/>
+<path d="M395 605 V630 H232 V665" fill="none" stroke="#007f83" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#a-teal)"/>
+<path d="M395 630 H557 V665" fill="none" stroke="#007f83" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#a-teal)"/>
+<path d="M232 825 V885" fill="none" stroke="#007f83" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#a-teal)"/>
+<path d="M700 950 H770 V535 H835" fill="none" stroke="#bd5c15" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#a-orange)"/>
+<path d="M1170 655 V715" fill="none" stroke="#bd5c15" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#a-orange)"/>
+<path d="M1170 1015 V1115" fill="none" stroke="#bd5c15" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#a-orange)"/>
+<path d="M1170 1330 V1400" fill="none" stroke="#bd5c15" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#a-orange)"/>
+<path d="M1505 1475 H1575 V535 H1640" fill="none" stroke="#bd5c15" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#a-orange)" marker-start="url(#a-orange)"/>
+<path d="M1975 615 V735" fill="none" stroke="#bd5c15" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#a-orange)"/>
+<path d="M1975 935 V1045" fill="none" stroke="#2864ba" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#a-blue)" marker-start="url(#a-blue)" stroke-dasharray="8 5"/>
+<path d="M1975 1250 V1350" fill="none" stroke="#bd5c15" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#a-orange)"/>
+<path d="M1010 655 V682 H785 V1200 H700" fill="none" stroke="#7950aa" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#a-purple)"/>
+<path d="M1975 1545 V1600 H395 V1325" fill="none" stroke="#7950aa" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#a-purple)"/>
+<path d="M232 1325 V1420" fill="none" stroke="#7950aa" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#a-purple)"/>
+<path d="M232 1140 V1015" fill="none" stroke="#2864ba" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#a-blue)" stroke-dasharray="7 5"/>
+<path d="M90 1205 H43 V745 H90" fill="none" stroke="#2864ba" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#a-blue)" stroke-dasharray="7 5"/>
+<path d="M1260 310 V365 H755 V1172 H700" fill="none" stroke="#2864ba" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#a-blue)"/>
+<path d="M700 1280 H792 V1060 H835" fill="none" stroke="#7950aa" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#a-purple)" stroke-dasharray="8 5"/>
+<path d="M1095 1060 H1140 V1115" fill="none" stroke="#7950aa" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#a-purple)" stroke-dasharray="8 5"/>
+<path d="M1510 250 H1552 V1210 H1505" fill="none" stroke="#66748c" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#a-model)" stroke-dasharray="3 6"/>
+<path d="M1640 1148 H1590 V1645 H557 V1550" fill="none" stroke="#2864ba" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#a-blue)" stroke-dasharray="8 5"/>
+<path d="M1640 1190 H1580 V1672 H23 V775 H90" fill="none" stroke="#2864ba" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#a-blue)" stroke-dasharray="8 5"/>
+<path d="M2310 1150 H2355 V250 H2310" fill="none" stroke="#2864ba" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#a-blue)" stroke-dasharray="8 5"/>
+<path d="M557 1420 V1380 H717 V780 H700" fill="none" stroke="#2864ba" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#a-blue)" stroke-dasharray="7 5"/>
+<path d="M717 850 H395 V795 H375" fill="none" stroke="#2864ba" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#a-blue)" stroke-dasharray="7 5"/>
+<path d="M1505 1260 H1525 V1730 H1000 V1780" fill="none" stroke="#66748c" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#a-model)" stroke-dasharray="3 6"/>
+<path d="M2310 840 H2380 V1750 H1340 V1780" fill="none" stroke="#66748c" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#a-model)" stroke-dasharray="3 6"/>
+<rect x="90" y="190" width="380" height="120" rx="12" fill="#ffffff" stroke="#c7d3e0" stroke-width="1.6"/>
+<rect x="90" y="190" width="6" height="120" rx="0" fill="#2864ba" stroke="none" stroke-width="1.6"/>
+<text x="112" y="226" font-size="23" fill="#152b44" style="fill:#152b44" font-weight="700" text-anchor="start" class="">Operator browser</text>
+<text x="112" y="260" font-size="20" fill="#152b44" style="fill:#152b44" font-weight="400" text-anchor="start" class="">Chat · Convergence · Canvas</text>
+<text x="112" y="288" font-size="17" fill="#53677e" style="fill:#53677e" font-weight="400" text-anchor="start" class="code">Remote subnet → 192.168.3.252:3000</text>
+<rect x="520" y="190" width="440" height="120" rx="12" fill="#ffffff" stroke="#c7d3e0" stroke-width="1.6"/>
+<rect x="520" y="190" width="6" height="120" rx="0" fill="#2864ba" stroke="none" stroke-width="1.6"/>
+<text x="542" y="226" font-size="24" fill="#152b44" style="fill:#152b44" font-weight="700" text-anchor="start" class="">New HUD UI</text>
+<text x="542" y="260" font-size="20" fill="#152b44" style="fill:#152b44" font-weight="400" text-anchor="start" class="">Vite preview · host TCP :3000</text>
+<text x="542" y="288" font-size="17" fill="#53677e" style="fill:#53677e" font-weight="400" text-anchor="start" class="code">Convergence is inline; no legacy iframe</text>
+<rect x="1010" y="190" width="500" height="120" rx="12" fill="#ffffff" stroke="#c7d3e0" stroke-width="1.6"/>
+<rect x="1010" y="190" width="6" height="120" rx="0" fill="#2864ba" stroke="none" stroke-width="1.6"/>
+<text x="1032" y="226" font-size="24" fill="#152b44" style="fill:#152b44" font-weight="700" text-anchor="start" class="">HUD API + Convergence proxy</text>
+<text x="1032" y="260" font-size="20" fill="#152b44" style="fill:#152b44" font-weight="400" text-anchor="start" class="">Loopback 127.0.0.1:3001</text>
+<text x="1032" y="288" font-size="17" fill="#53677e" style="fill:#53677e" font-weight="400" text-anchor="start" class="code">/api/home/* · /api/models · /api/chat</text>
+<rect x="1640" y="190" width="670" height="120" rx="12" fill="#ffffff" stroke="#c7d3e0" stroke-width="1.6"/>
+<rect x="1640" y="190" width="6" height="120" rx="0" fill="#007f83" stroke="none" stroke-width="1.6"/>
+<text x="1662" y="226" font-size="24" fill="#152b44" style="fill:#152b44" font-weight="700" text-anchor="start" class="">Network devices + WAN targets</text>
+<text x="1662" y="260" font-size="20" fill="#152b44" style="fill:#152b44" font-weight="400" text-anchor="start" class="">pfSense · UniFi APs · campus switches</text>
+<text x="1662" y="288" font-size="20" fill="#152b44" style="fill:#152b44" font-weight="400" text-anchor="start" class="">Device exporters / APIs / logs / reachability probes</text>
+<rect x="90" y="455" width="610" height="150" rx="12" fill="#ffffff" stroke="#c7d3e0" stroke-width="1.6"/>
+<rect x="90" y="455" width="6" height="150" rx="0" fill="#007f83" stroke="none" stroke-width="1.6"/>
+<text x="112" y="491" font-size="24" fill="#152b44" style="fill:#152b44" font-weight="700" text-anchor="start" class="">Collectors, exporters and probes</text>
+<text x="112" y="525" font-size="20" fill="#152b44" style="fill:#152b44" font-weight="400" text-anchor="start" class="">OTel: switch SNMP + device syslog TCP/UDP :1514</text>
+<text x="112" y="553" font-size="20" fill="#152b44" style="fill:#152b44" font-weight="400" text-anchor="start" class="">Blackbox :9115 · UniFi :9899 · speedtest / Pushgateway</text>
+<text x="112" y="581" font-size="20" fill="#152b44" style="fill:#152b44" font-weight="400" text-anchor="start" class="">OTel fans metrics to Prometheus / VictoriaMetrics</text>
+<rect x="90" y="665" width="285" height="160" rx="12" fill="#ffffff" stroke="#c7d3e0" stroke-width="1.6"/>
+<rect x="90" y="665" width="6" height="160" rx="0" fill="#007f83" stroke="none" stroke-width="1.6"/>
+<text x="112" y="701" font-size="23" fill="#152b44" style="fill:#152b44" font-weight="700" text-anchor="start" class="">Metrics stores</text>
+<text x="112" y="735" font-size="20" fill="#152b44" style="fill:#152b44" font-weight="400" text-anchor="start" class="">Prometheus :9090</text>
+<text x="112" y="763" font-size="20" fill="#152b44" style="fill:#152b44" font-weight="400" text-anchor="start" class="">VictoriaMetrics :8428</text>
+<text x="112" y="791" font-size="20" fill="#152b44" style="fill:#152b44" font-weight="400" text-anchor="start" class="">PromQL / time series</text>
+<rect x="415" y="665" width="285" height="160" rx="12" fill="#ffffff" stroke="#c7d3e0" stroke-width="1.6"/>
+<rect x="415" y="665" width="6" height="160" rx="0" fill="#007f83" stroke="none" stroke-width="1.6"/>
+<text x="437" y="701" font-size="23" fill="#152b44" style="fill:#152b44" font-weight="700" text-anchor="start" class="">Log stores</text>
+<text x="437" y="735" font-size="20" fill="#152b44" style="fill:#152b44" font-weight="400" text-anchor="start" class="">Loki :3100</text>
+<text x="437" y="763" font-size="20" fill="#152b44" style="fill:#152b44" font-weight="400" text-anchor="start" class="">VictoriaLogs :9428</text>
+<text x="437" y="791" font-size="20" fill="#152b44" style="fill:#152b44" font-weight="400" text-anchor="start" class="">Syslog / device evidence</text>
+<rect x="90" y="885" width="610" height="130" rx="12" fill="#ffffff" stroke="#c7d3e0" stroke-width="1.6"/>
+<rect x="90" y="885" width="6" height="130" rx="0" fill="#007f83" stroke="none" stroke-width="1.6"/>
+<text x="112" y="921" font-size="24" fill="#152b44" style="fill:#152b44" font-weight="700" text-anchor="start" class="">Alertmanager</text>
+<text x="112" y="955" font-size="20" fill="#152b44" style="fill:#152b44" font-weight="400" text-anchor="start" class="">TCP :9093 · groups / deduplicates firing alerts</text>
+<text x="112" y="983" font-size="17" fill="#53677e" style="fill:#53677e" font-weight="400" text-anchor="start" class="code">Webhook → host alert-receiver :8099</text>
+<rect x="90" y="1140" width="610" height="185" rx="12" fill="#ffffff" stroke="#c7d3e0" stroke-width="1.6"/>
+<rect x="90" y="1140" width="6" height="185" rx="0" fill="#7950aa" stroke="none" stroke-width="1.6"/>
+<text x="112" y="1176" font-size="24" fill="#152b44" style="fill:#152b44" font-weight="700" text-anchor="start" class="">Convergence API</text>
+<text x="112" y="1210" font-size="20" fill="#152b44" style="fill:#152b44" font-weight="400" text-anchor="start" class="">Host :3080 → container :3000</text>
+<text x="112" y="1238" font-size="20" fill="#152b44" style="fill:#152b44" font-weight="400" text-anchor="start" class="">Health / Wi-Fi / devices / alerts / diary / triage</text>
+<text x="112" y="1266" font-size="20" fill="#152b44" style="fill:#152b44" font-weight="400" text-anchor="start" class="">Case identity: site + event_id + alert fingerprint</text>
+<text x="112" y="1294" font-size="20" fill="#152b44" style="fill:#152b44" font-weight="400" text-anchor="start" class="">No LLM runs here; telemetry and case persistence</text>
+<rect x="90" y="1420" width="285" height="130" rx="12" fill="#ffffff" stroke="#c7d3e0" stroke-width="1.6"/>
+<rect x="90" y="1420" width="6" height="130" rx="0" fill="#7950aa" stroke="none" stroke-width="1.6"/>
+<text x="112" y="1456" font-size="23" fill="#152b44" style="fill:#152b44" font-weight="700" text-anchor="start" class="">PostgreSQL</text>
+<text x="112" y="1490" font-size="20" fill="#152b44" style="fill:#152b44" font-weight="400" text-anchor="start" class="">Internal Docker :5432</text>
+<text x="112" y="1518" font-size="20" fill="#152b44" style="fill:#152b44" font-weight="400" text-anchor="start" class="">Events / notes / feedback</text>
+<rect x="415" y="1420" width="285" height="130" rx="12" fill="#ffffff" stroke="#c7d3e0" stroke-width="1.6"/>
+<rect x="415" y="1420" width="6" height="130" rx="0" fill="#2864ba" stroke="none" stroke-width="1.6"/>
+<text x="437" y="1456" font-size="23" fill="#152b44" style="fill:#152b44" font-weight="700" text-anchor="start" class="">Grafana</text>
+<text x="437" y="1490" font-size="20" fill="#152b44" style="fill:#152b44" font-weight="400" text-anchor="start" class="">Host :3300 → :3000</text>
+<text x="437" y="1518" font-size="20" fill="#152b44" style="fill:#152b44" font-weight="400" text-anchor="start" class="">Queries metrics / logs</text>
+<rect x="835" y="455" width="670" height="200" rx="12" fill="#ffffff" stroke="#c7d3e0" stroke-width="1.6"/>
+<rect x="835" y="455" width="6" height="200" rx="0" fill="#bd5c15" stroke="none" stroke-width="1.6"/>
+<text x="857" y="491" font-size="24" fill="#152b44" style="fill:#152b44" font-weight="700" text-anchor="start" class="">Alert receiver</text>
+<text x="857" y="525" font-size="20" fill="#152b44" style="fill:#152b44" font-weight="400" text-anchor="start" class="">Host TCP :8099 · netclaw-alert-receiver.service</text>
+<text x="857" y="553" font-size="20" fill="#152b44" style="fill:#152b44" font-weight="400" text-anchor="start" class="">POST /webhook → automatic-alert admission path</text>
+<text x="857" y="581" font-size="20" fill="#152b44" style="fill:#152b44" font-weight="400" text-anchor="start" class="">Enrich from Nautobot / inventory + RAG prior cases</text>
+<text x="857" y="609" font-size="20" fill="#152b44" style="fill:#152b44" font-weight="400" text-anchor="start" class="">Create / update initial case; send received notice</text>
+<text x="857" y="637" font-size="20" fill="#152b44" style="fill:#152b44" font-weight="400" text-anchor="start" class="">Other endpoints: /reinvestigate and /snapshot</text>
+<rect x="835" y="715" width="670" height="300" rx="12" fill="#ffffff" stroke="#c7d3e0" stroke-width="1.6"/>
+<rect x="835" y="715" width="6" height="300" rx="0" fill="#bd5c15" stroke="none" stroke-width="1.6"/>
+<text x="857" y="751" font-size="24" fill="#152b44" style="fill:#152b44" font-weight="700" text-anchor="start" class="">Automatic investigation policy</text>
+<text x="857" y="785" font-size="20" fill="#152b44" style="fill:#152b44" font-weight="400" text-anchor="start" class="">Default T0: record / notify; no LLM investigation</text>
+<text x="857" y="813" font-size="20" fill="#152b44" style="fill:#152b44" font-weight="400" text-anchor="start" class="">T2 allowlist:</text>
+<text x="857" y="841" font-size="17" fill="#53677e" style="fill:#53677e" font-weight="400" text-anchor="start" class="code">WanHardDown</text>
+<text x="857" y="869" font-size="17" fill="#53677e" style="fill:#53677e" font-weight="400" text-anchor="start" class="code">SwitchLinkLost  [severity=critical]</text>
+<text x="857" y="897" font-size="17" fill="#53677e" style="fill:#53677e" font-weight="400" text-anchor="start" class="code">DeviceSnmpExporterDown</text>
+<text x="857" y="925" font-size="20" fill="#152b44" style="fill:#152b44" font-weight="400" text-anchor="start" class="">3 T2 admissions / hour · 30-minute duplicate TTL</text>
+<text x="857" y="953" font-size="20" fill="#152b44" style="fill:#152b44" font-weight="400" text-anchor="start" class="">Concurrency 2 applies to receiver trigger handling</text>
+<text x="857" y="981" font-size="20" fill="#152b44" style="fill:#152b44" font-weight="400" text-anchor="start" class="">Suppressed / over budget → diary; no backlog queue</text>
+<rect x="835" y="1035" width="260" height="50" rx="8" fill="#f5eefa" stroke="#7950aa" stroke-width="1.6"/>
+<text x="848" y="1067" font-size="19" fill="#7950aa" style="fill:#7950aa" font-weight="600" text-anchor="start" class="">Receiver /reinvestigate</text>
+<rect x="835" y="1115" width="670" height="215" rx="12" fill="#ffffff" stroke="#c7d3e0" stroke-width="1.6"/>
+<rect x="835" y="1115" width="6" height="215" rx="0" fill="#bd5c15" stroke="none" stroke-width="1.6"/>
+<text x="857" y="1151" font-size="24" fill="#152b44" style="fill:#152b44" font-weight="700" text-anchor="start" class="">OpenClaw Gateway</text>
+<text x="857" y="1185" font-size="20" fill="#152b44" style="fill:#152b44" font-weight="400" text-anchor="start" class="">Host TCP :18789 · openclaw-gateway.service</text>
+<text x="857" y="1213" font-size="20" fill="#152b44" style="fill:#152b44" font-weight="400" text-anchor="start" class="">main / HUD chat: GPT-6.1 Sol</text>
+<text x="857" y="1241" font-size="20" fill="#152b44" style="fill:#152b44" font-weight="400" text-anchor="start" class="">alert / orchestrator: GPT-6 Luna</text>
+<text x="857" y="1269" font-size="17" fill="#53677e" style="fill:#53677e" font-weight="400" text-anchor="start" class="code">/hooks/alert → agent alert · deliver=false</text>
+<text x="857" y="1297" font-size="20" fill="#152b44" style="fill:#152b44" font-weight="400" text-anchor="start" class="">main + alert share the Border OAuth credential store</text>
+<rect x="835" y="1400" width="670" height="150" rx="12" fill="#ffffff" stroke="#c7d3e0" stroke-width="1.6"/>
+<rect x="835" y="1400" width="6" height="150" rx="0" fill="#bd5c15" stroke="none" stroke-width="1.6"/>
+<text x="857" y="1436" font-size="24" fill="#152b44" style="fill:#152b44" font-weight="700" text-anchor="start" class="">iN2N Border / task broker</text>
+<text x="857" y="1470" font-size="20" fill="#152b44" style="fill:#152b44" font-weight="400" text-anchor="start" class="">netclaw-mesh.service · loopback TCP :11790</text>
+<text x="857" y="1498" font-size="20" fill="#152b44" style="fill:#152b44" font-weight="400" text-anchor="start" class="">n2n-mcp is the Gateway’s tool-facing client</text>
+<text x="857" y="1526" font-size="20" fill="#152b44" style="fill:#152b44" font-weight="400" text-anchor="start" class="">Route → task ID → wait/progress → result</text>
+<rect x="1640" y="455" width="670" height="160" rx="12" fill="#ffffff" stroke="#c7d3e0" stroke-width="1.6"/>
+<rect x="1640" y="455" width="6" height="160" rx="0" fill="#bd5c15" stroke="none" stroke-width="1.6"/>
+<text x="1662" y="491" font-size="24" fill="#152b44" style="fill:#152b44" font-weight="700" text-anchor="start" class="">Guardian member daemon</text>
+<text x="1662" y="525" font-size="20" fill="#152b44" style="fill:#152b44" font-weight="400" text-anchor="start" class="">netclaw-member-byrns-risk-guardian-claw.service</text>
+<text x="1662" y="553" font-size="20" fill="#152b44" style="fill:#152b44" font-weight="400" text-anchor="start" class="">Python iN2N worker; persistent Border connection</text>
+<text x="1662" y="581" font-size="17" fill="#53677e" style="fill:#53677e" font-weight="400" text-anchor="start" class="code">Identity: byrns-risk/guardian-claw</text>
+<text x="1662" y="609" font-size="20" fill="#152b44" style="fill:#152b44" font-weight="400" text-anchor="start" class="">Idle daemon ≠ continuously running LLM</text>
+<rect x="1640" y="735" width="670" height="200" rx="12" fill="#ffffff" stroke="#c7d3e0" stroke-width="1.6"/>
+<rect x="1640" y="735" width="6" height="200" rx="0" fill="#bd5c15" stroke="none" stroke-width="1.6"/>
+<text x="1662" y="771" font-size="24" fill="#152b44" style="fill:#152b44" font-weight="700" text-anchor="start" class="">Scoped OpenClaw agent run</text>
+<text x="1662" y="805" font-size="20" fill="#152b44" style="fill:#152b44" font-weight="400" text-anchor="start" class="">GPT-6.1 Sol · GPT-6 Luna fallback</text>
+<text x="1662" y="833" font-size="17" fill="#53677e" style="fill:#53677e" font-weight="400" text-anchor="start" class="code">openclaw agent --local --model &lt;member-model&gt;</text>
+<text x="1662" y="861" font-size="20" fill="#152b44" style="fill:#152b44" font-weight="400" text-anchor="start" class="">Existing OpenClaw embedded tool runtime</text>
+<text x="1662" y="889" font-size="20" fill="#152b44" style="fill:#152b44" font-weight="400" text-anchor="start" class="">Own OAuth store / sessions / member environment</text>
+<text x="1662" y="917" font-size="20" fill="#152b44" style="fill:#152b44" font-weight="400" text-anchor="start" class="">No separate Guardian Gateway listener</text>
+<rect x="1640" y="1045" width="670" height="205" rx="12" fill="#ffffff" stroke="#c7d3e0" stroke-width="1.6"/>
+<rect x="1640" y="1045" width="6" height="205" rx="0" fill="#2864ba" stroke="none" stroke-width="1.6"/>
+<text x="1662" y="1081" font-size="24" fill="#152b44" style="fill:#152b44" font-weight="700" text-anchor="start" class="">Eight scoped MCP integrations</text>
+<text x="1662" y="1115" font-size="20" fill="#152b44" style="fill:#152b44" font-weight="400" text-anchor="start" class="">prometheus-mcp · grafana-mcp · pyats-mcp</text>
+<text x="1662" y="1143" font-size="20" fill="#152b44" style="fill:#152b44" font-weight="400" text-anchor="start" class="">pfsense-mcp · unifi-network</text>
+<text x="1662" y="1171" font-size="20" fill="#152b44" style="fill:#152b44" font-weight="400" text-anchor="start" class="">greynoise-community-mcp · rag-mcp · memory-mcp</text>
+<text x="1662" y="1199" font-size="20" fill="#152b44" style="fill:#152b44" font-weight="400" text-anchor="start" class="">Read evidence; compare prior cases; assess cause</text>
+<text x="1662" y="1227" font-size="20" fill="#152b44" style="fill:#152b44" font-weight="400" text-anchor="start" class="">Investigation procedure: report, do not auto-remediate</text>
+<rect x="1640" y="1350" width="670" height="195" rx="12" fill="#ffffff" stroke="#c7d3e0" stroke-width="1.6"/>
+<rect x="1640" y="1350" width="6" height="195" rx="0" fill="#7950aa" stroke="none" stroke-width="1.6"/>
+<text x="1662" y="1386" font-size="24" fill="#152b44" style="fill:#152b44" font-weight="700" text-anchor="start" class="">Investigation outcomes</text>
+<text x="1662" y="1420" font-size="20" fill="#152b44" style="fill:#152b44" font-weight="400" text-anchor="start" class="">Findings + evidence + root-cause classification</text>
+<text x="1662" y="1448" font-size="20" fill="#152b44" style="fill:#152b44" font-weight="400" text-anchor="start" class="">PATCH original case → resolved or escalated</text>
+<text x="1662" y="1476" font-size="20" fill="#152b44" style="fill:#152b44" font-weight="400" text-anchor="start" class="">Return task findings to the Border</text>
+<text x="1662" y="1504" font-size="20" fill="#152b44" style="fill:#152b44" font-weight="400" text-anchor="start" class="">Discord findings via configured notification path</text>
+<text x="1662" y="1532" font-size="20" fill="#152b44" style="fill:#152b44" font-weight="400" text-anchor="start" class="">POST /snapshot → RAG for future investigations</text>
+<rect x="800" y="1780" width="740" height="145" rx="12" fill="#ffffff" stroke="#c7d3e0" stroke-width="1.6"/>
+<rect x="800" y="1780" width="6" height="145" rx="0" fill="#66748c" stroke="none" stroke-width="1.6"/>
+<text x="822" y="1816" font-size="24" fill="#152b44" style="fill:#152b44" font-weight="700" text-anchor="start" class="">OpenAI — ChatGPT / Codex subscription</text>
+<text x="822" y="1850" font-size="20" fill="#152b44" style="fill:#152b44" font-weight="400" text-anchor="start" class="">Same account allowance; separate Border / Guardian OAuth stores</text>
+<text x="822" y="1878" font-size="20" fill="#152b44" style="fill:#152b44" font-weight="400" text-anchor="start" class="">Subscription inference; no general OpenAI API key required</text>
+<text x="822" y="1906" font-size="20" fill="#152b44" style="fill:#152b44" font-weight="400" text-anchor="start" class="">Model calls are outbound; no network device changes implied</text>
+<path d="M65 1978 h42" stroke="#007f83" stroke-width="3" marker-end="url(#a-teal)"/>
+<text x="120" y="1984" font-size="17" fill="#007f83" style="fill:#007f83" font-weight="600" text-anchor="start" class="">Telemetry / observation</text>
+<path d="M515 1978 h42" stroke="#bd5c15" stroke-width="3" marker-end="url(#a-orange)"/>
+<text x="570" y="1984" font-size="17" fill="#bd5c15" style="fill:#bd5c15" font-weight="600" text-anchor="start" class="">Automatic investigation</text>
+<path d="M1020 1978 h42" stroke="#2864ba" stroke-width="3" marker-end="url(#a-blue)"/>
+<text x="1075" y="1984" font-size="17" fill="#2864ba" style="fill:#2864ba" font-weight="600" text-anchor="start" class="">Read / query path</text>
+<path d="M1450 1978 h42" stroke="#7950aa" stroke-width="3" marker-end="url(#a-purple)"/>
+<text x="1505" y="1984" font-size="17" fill="#7950aa" style="fill:#7950aa" font-weight="600" text-anchor="start" class="">Case lifecycle / operator feedback</text>
+<path d="M2100 1978 h42" stroke="#66748c" stroke-width="3" marker-end="url(#a-model)"/>
+<text x="2155" y="1984" font-size="17" fill="#66748c" style="fill:#66748c" font-weight="600" text-anchor="start" class="">Model inference</text>
+<text x="60" y="2040" font-size="17" fill="#53677e" style="fill:#53677e" font-weight="700" text-anchor="start" class="">READING NOTES</text>
+<text x="60" y="2074" font-size="19" fill="#152b44" style="fill:#152b44" font-weight="400" text-anchor="start" class="">Need More uses /reinvestigate → /hooks/alert directly; automatic admission gates are not reapplied on that path.</text>
+<text x="60" y="2105" font-size="18" fill="#53677e" style="fill:#53677e" font-weight="400" text-anchor="start" class="">Ports are host bindings unless marked internal/container. Dashed = query / feedback; dotted = model/control. Crossings are not junctions.</text>
+<text x="2370" y="2130" font-size="15" fill="#53677e" style="fill:#53677e" font-weight="400" text-anchor="end" class="">NETCLAW / CURRENT STATE / REV 1</text>
+<text x="445" y="182" font-size="18" fill="#2864ba" style="fill:#2864ba" font-weight="600" text-anchor="start" class="edge-label">Same origin</text>
+<text x="958" y="182" font-size="18" fill="#2864ba" style="fill:#2864ba" font-weight="600" text-anchor="start" class="edge-label">/api/*</text>
+<text x="875" y="334" font-size="18" fill="#007f83" style="fill:#007f83" font-weight="600" text-anchor="start" class="edge-label">01  SNMP / syslog / UniFi / WAN probes</text>
+<text x="170" y="648" font-size="18" fill="#007f83" style="fill:#007f83" font-weight="600" text-anchor="start" class="edge-label">Metrics</text>
+<text x="566" y="648" font-size="18" fill="#007f83" style="fill:#007f83" font-weight="600" text-anchor="start" class="edge-label">Logs</text>
+<text x="247" y="858" font-size="18" fill="#007f83" style="fill:#007f83" font-weight="600" text-anchor="start" class="edge-label">Alert rules</text>
+<text x="405" y="936" font-size="18" fill="#bd5c15" style="fill:#bd5c15" font-weight="600" text-anchor="start" class="edge-label">02  POST /webhook</text>
+<text x="1186" y="690" font-size="18" fill="#bd5c15" style="fill:#bd5c15" font-weight="600" text-anchor="start" class="edge-label">Enrich + evaluate</text>
+<text x="1187" y="1086" font-size="18" fill="#bd5c15" style="fill:#bd5c15" font-weight="600" text-anchor="start" class="edge-label">03  POST /hooks/alert (T2)</text>
+<text x="856" y="1376" font-size="18" fill="#bd5c15" style="fill:#bd5c15" font-weight="600" text-anchor="start" class="edge-label">04  n2n_route / n2n_task_wait via n2n-mcp</text>
+<text x="1561" y="1230" font-size="18" fill="#bd5c15" style="fill:#bd5c15" font-weight="600" text-anchor="start" class="edge-label" transform="rotate(-90 1561 1230)">05  iN2N: task dispatch / progress / result</text>
+<text x="1670" y="686" font-size="18" fill="#bd5c15" style="fill:#bd5c15" font-weight="600" text-anchor="start" class="edge-label">Spawn model run per delegated task</text>
+<text x="1992" y="995" font-size="18" fill="#2864ba" style="fill:#2864ba" font-weight="600" text-anchor="start" class="edge-label">MCP tool calls / results</text>
+<text x="1992" y="1307" font-size="18" fill="#bd5c15" style="fill:#bd5c15" font-weight="600" text-anchor="start" class="edge-label">Evidence → assessment</text>
+<text x="838" y="678" font-size="18" fill="#7950aa" style="fill:#7950aa" font-weight="600" text-anchor="start" class="edge-label">Initial POST /api/events</text>
+<text x="850" y="1588" font-size="18" fill="#7950aa" style="fill:#7950aa" font-weight="600" text-anchor="start" class="edge-label">06  PATCH same event ID: findings, root cause, status</text>
+<text x="248" y="1380" font-size="18" fill="#7950aa" style="fill:#7950aa" font-weight="600" text-anchor="start" class="edge-label">SQL case lifecycle</text>
+<text x="247" y="1100" font-size="18" fill="#2864ba" style="fill:#2864ba" font-weight="600" text-anchor="start" class="edge-label">Alert state</text>
+<text x="29" y="1110" font-size="18" fill="#2864ba" style="fill:#2864ba" font-weight="600" text-anchor="start" class="edge-label" transform="rotate(-90 29 1110)">PromQL reads</text>
+<text x="740" y="1075" font-size="18" fill="#2864ba" style="fill:#2864ba" font-weight="600" text-anchor="start" class="edge-label" transform="rotate(-90 740 1075)">Convergence /api/home/* proxy; bearer added server-side</text>
+<text x="600" y="1347" font-size="18" fill="#7950aa" style="fill:#7950aa" font-weight="600" text-anchor="start" class="edge-label">Need More + notes</text>
+<text x="1537" y="1030" font-size="18" fill="#66748c" style="fill:#66748c" font-weight="600" text-anchor="start" class="edge-label" transform="rotate(-90 1537 1030)">Chat / model controls → OpenClaw</text>
+<text x="885" y="1635" font-size="18" fill="#2864ba" style="fill:#2864ba" font-weight="600" text-anchor="start" class="edge-label">07  Grafana queries via scoped MCP</text>
+<text x="870" y="1698" font-size="18" fill="#2864ba" style="fill:#2864ba" font-weight="600" text-anchor="start" class="edge-label">Direct Prometheus MCP reads</text>
+<text x="2338" y="1100" font-size="18" fill="#2864ba" style="fill:#2864ba" font-weight="600" text-anchor="start" class="edge-label" transform="rotate(-90 2338 1100)">Device APIs / CLI reads through MCP</text>
+<text x="703" y="1113" font-size="18" fill="#2864ba" style="fill:#2864ba" font-weight="600" text-anchor="start" class="edge-label" transform="rotate(-90 703 1113)">Metrics / logs</text>
+<text x="1095" y="1720" font-size="18" fill="#66748c" style="fill:#66748c" font-weight="600" text-anchor="start" class="edge-label">Luna alert / Sol chat</text>
+<text x="1735" y="1740" font-size="18" fill="#66748c" style="fill:#66748c" font-weight="600" text-anchor="start" class="edge-label">Sol worker / Luna fallback</text>
+</svg>
