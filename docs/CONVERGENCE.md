@@ -293,8 +293,10 @@ private environment. Register the case MCP with `CONVERGENCE_API_URL` and
 
 Convergence now includes a Security view with structured firewall block totals,
 source rankings and explicit sensor coverage. Firewall blocks are unclassified
-observations, not confirmed intrusions. A validated IDS sensor feed, signature
-management, network-zone/asset correlation, authenticated HUD ingress, restricted
+observations, not confirmed intrusions. The optional [passive Suricata feed](runbooks/convergence-ids.md)
+adds authenticated EVE ingestion, durable delivery, validated rule updates,
+original case evidence and per-VLAN sensor health. Network-zone/asset correlation,
+authenticated HUD ingress, restricted
 backend exposure, dependency updates, and restore/failure exercises remain work
 before claiming enterprise IDS capability. Cloud model availability is not a
 requirement for recording alerts or viewing telemetry.

@@ -76,6 +76,8 @@ ON CONFLICT (id) DO NOTHING;
 ALTER TABLE events ADD COLUMN IF NOT EXISTS incident_key TEXT;
 ALTER TABLE events ADD COLUMN IF NOT EXISTS alert_cleared_at TIMESTAMPTZ;
 ALTER TABLE events ADD COLUMN IF NOT EXISTS rag_content_hash TEXT;
+-- Original observation survives later edits to investigation conclusions.
+ALTER TABLE events ADD COLUMN IF NOT EXISTS source_evidence JSONB;
 CREATE UNIQUE INDEX IF NOT EXISTS idx_events_incident ON events(site_id, incident_key);
 CREATE TABLE IF NOT EXISTS event_history (
   sequence BIGSERIAL PRIMARY KEY, event_id UUID NOT NULL,

@@ -19,7 +19,7 @@ test('case routes deny cross-site lookup and viewer mutation',async()=>{
 });
 test('security aggregates structured logs and ranks observed sources',async()=>{
  const queries=[];
- const {handlers}=routes('security.js',{'../lib/config':{LOKI_URL:'http://logs',promqlLabelValue:s=>s}}, {
+ const {handlers}=routes('security.js',{'../lib/config':{LOKI_URL:'http://logs',promqlLabelValue:s=>s},'../lib/idsStatus':{idsStatus:async()=>({status:'not_configured'})}}, {
   fetch:async url=>{
    const q=new URL(url).searchParams.get('query');queries.push(q);
    const rows=q.startsWith('topk')?[{metric:{attributes_src_ip:'one'},value:[0,'2']},{metric:{attributes_src_ip:'two'},value:[0,'9']}]:[{value:[0,'11']}];
@@ -32,11 +32,12 @@ test('security aggregates structured logs and ranks observed sources',async()=>{
  assert.ok(queries.every(q=>q.includes('attributes_appname="filterlog"')&&q.includes('site="home"')));
 });
 test('security does not report zero attacks when logs are unavailable',async()=>{
- const {handlers}=routes('security.js',{'../lib/config':{LOKI_URL:'http://logs',promqlLabelValue:s=>s}}, {
+ const {handlers}=routes('security.js',{'../lib/config':{LOKI_URL:'http://logs',promqlLabelValue:s=>s},'../lib/idsStatus':{idsStatus:async()=>({status:'active',sensors:[{id:'sensor'}]})}}, {
   fetch:async()=>{throw new Error('offline')},
  });
  const r=response();await handlers['get /']({site:'home'},r);
  assert.equal(r.body.status,'unavailable');assert.equal(r.body.blockedConnections.lastHour,null);
+ assert.equal(r.body.intrusionDetection.status,'active');
 });
 test('Alertmanager failure reports unknown counts and degraded source',async()=>{
  const q={instantQuery:async()=>[{value:[0,'99']}],extractScalar:r=>Number(r[0].value[1]),queryAlertmanager:async()=>{throw Error('down')}};

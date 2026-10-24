@@ -2,6 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const { LOKI_URL, promqlLabelValue } = require('../lib/config');
+const { idsStatus } = require('../lib/idsStatus');
 
 async function metric(query) {
   const r = await fetch(`${LOKI_URL}/loki/api/v1/query?${new URLSearchParams({query})}`, {signal: AbortSignal.timeout(10000)});
@@ -13,6 +14,7 @@ async function metric(query) {
 const scalar = rows => rows.length ? Number(rows[0].value[1]) : 0;
 
 router.get('/', async (req, res) => {
+  const ids = idsStatus(req.site);
   const site = promqlLabelValue(req.site);
   const source = `{job="device-syslog",site="${site}"} | json | attributes_appname="filterlog"`;
   const blocked = `${source} | attributes_action="block"`;
@@ -30,11 +32,11 @@ router.get('/', async (req, res) => {
       blockedConnections: {last24h: observed ? scalar(day) : null, lastHour: observed ? scalar(hour) : null},
       topSources: top.map(r => ({ip: r.metric.attributes_src_ip, count: Number(r.value[1]), classification: 'unclassified'})).sort((a, b) => b.count - a.count),
       // Firewall drops alone are not evidence that an intrusion was detected.
-      intrusionDetection: {status: 'not_configured', reason: 'No validated IDS sensor feed configured'},
+      intrusionDetection: await ids,
     });
   } catch (err) {
     res.json({site: req.site, status: 'unavailable', unavailable: true, reason: err.message,
-      blockedConnections: {last24h: null, lastHour: null}, topSources: []});
+      blockedConnections: {last24h: null, lastHour: null}, topSources: [], intrusionDetection: await ids});
   }
 });
 module.exports = router;

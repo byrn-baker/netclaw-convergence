@@ -109,6 +109,7 @@ router.post('/', async (req, res) => {
     alert_name, alert_fingerprint, incident_key,
     investigation_notes, root_cause, status,
     rag_document_id, expert_feedback, feedback_quality,
+    source_evidence,
   } = req.body;
 
   if (!message) {
@@ -116,6 +117,9 @@ router.post('/', async (req, res) => {
   }
   if (!site) {
     return res.status(400).json({ error: 'site query param is required' });
+  }
+  if (source_evidence != null && (typeof source_evidence !== 'object' || Array.isArray(source_evidence) || JSON.stringify(source_evidence).length > 64000)) {
+    return res.status(400).json({error: 'source_evidence must be an object under 64 KB'});
   }
 
   try {
@@ -128,8 +132,8 @@ router.post('/', async (req, res) => {
       `INSERT INTO events (site_id, message, severity, category, source,
         alert_name, alert_fingerprint, investigation_notes, root_cause, status,
         rag_document_id, expert_feedback, feedback_quality,
-        escalated_at, rag_snapshotted_at, incident_key)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)
+        escalated_at, rag_snapshotted_at, incident_key, source_evidence)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)
        ON CONFLICT (site_id, incident_key) DO UPDATE SET updated_at = NOW()
        RETURNING id, timestamp, message, severity, status, alert_name, alert_fingerprint,
                  rag_document_id, escalated_at`,
@@ -150,6 +154,7 @@ router.post('/', async (req, res) => {
         st === 'escalated' ? new Date().toISOString() : null,
         ragId ? new Date().toISOString() : null,
         incident_key || null,
+        source_evidence || null,
       ]
     );
 
@@ -283,7 +288,7 @@ router.get('/escalated', async (req, res) => {
               alert_name, alert_fingerprint, root_cause, investigation_notes,
               expert_feedback, feedback_quality, rag_document_id, rag_snapshotted_at,
               escalated_at, investigation_started_at, investigation_completed_at,
-              feedback_provided_at, created_at, updated_at
+              feedback_provided_at, created_at, updated_at, source_evidence
        FROM events
        WHERE site_id = $1 AND status = 'escalated'
        ORDER BY escalated_at DESC NULLS LAST, timestamp DESC`,

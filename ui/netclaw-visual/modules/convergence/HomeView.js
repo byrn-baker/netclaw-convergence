@@ -702,6 +702,7 @@ export class HomeView {
   htmlSecurity() {
     const data = this.cache.security;
     if (!data) return '<p class="home-muted">Loading security observations…</p>';
+    const ids = data.intrusionDetection || {};
     return `<div class="home-section">
       <h3>Security visibility</h3>
       <p>Firewall telemetry: <strong>${esc(data.status)}</strong> · observation window ${esc(data.observedWindow || 'unknown')}</p>
@@ -710,7 +711,22 @@ export class HomeView {
         <div class="home-kpi"><div class="home-kpi-label">Blocked connections · 1 hour</div><div class="home-kpi-value">${esc(data.blockedConnections?.lastHour ?? 'Unknown')}</div></div>
         <div class="home-kpi"><div class="home-kpi-label">Blocked connections · 24 hours</div><div class="home-kpi-value">${esc(data.blockedConnections?.last24h ?? 'Unknown')}</div></div>
       </div>
-      <h3>Intrusion detection</h3><p>${esc(data.intrusionDetection?.reason || 'Sensor coverage unavailable')}</p>
+      <h3>Intrusion detection · ${esc(ids.status || 'unknown')}</h3>
+      <p>${esc(ids.reason || 'Sensor coverage unavailable')}</p>
+      ${(ids.sensors || []).map(sensor => `<div class="home-section">
+        <h4>${esc(sensor.id)} · ${esc(sensor.status)}</h4><p>${esc(sensor.reason)}</p>
+        <div class="home-kpi-grid">
+          <div class="home-kpi"><div class="home-kpi-label">Captured packets</div><div class="home-kpi-value">${esc(sensor.packets ?? 'Unknown')}</div></div>
+          <div class="home-kpi"><div class="home-kpi-label">Capture drops · since engine start</div><div class="home-kpi-value">${esc(sensor.captureDrops ?? 'Unknown')}</div></div>
+          <div class="home-kpi"><div class="home-kpi-label">Decoder errors · since engine start</div><div class="home-kpi-value">${esc(sensor.decoderErrors ?? 'Unknown')}</div></div>
+          <div class="home-kpi"><div class="home-kpi-label">Rules available</div><div class="home-kpi-value">${esc(sensor.rulesCount ?? 'Unknown')}</div></div>
+          <div class="home-kpi"><div class="home-kpi-label">Events awaiting delivery</div><div class="home-kpi-value">${esc(sensor.pendingEvents ?? 'Unknown')}</div></div>
+        </div>
+        <p class="home-muted">${esc(sensor.scope)}. Automatic investigations: ${sensor.autoInvestigate ? 'subject to Guardian policy' : 'disabled during tuning; cases remain available for review'}.</p>
+        <table class="home-table"><thead><tr><th>VLAN</th><th>Packet evidence · last 15 minutes</th></tr></thead><tbody>
+          ${(sensor.coverage || []).map(v => `<tr><td>${esc(v.vlan)}</td><td>${esc(v.status)}</td></tr>`).join('')}
+        </tbody></table>
+      </div>`).join('')}
       <h3>Most frequently blocked sources · 1 hour</h3>
       <p class="home-muted">A firewall block is an observation. A source needs investigation before it can be classified as malicious.</p>
       <table class="home-table"><thead><tr><th>Source</th><th>Blocks</th><th>Assessment</th></tr></thead><tbody>
@@ -1314,6 +1330,7 @@ export class HomeView {
           <div class="home-triage-field">
             <span class="home-triage-label">Investigation notes</span>
             <pre class="home-triage-notes-pre">${esc(selected.investigation_notes || '—')}</pre>
+            ${selected.source_evidence ? `<details><summary>Original sensor / alert evidence</summary><pre class="home-triage-notes-pre">${esc(JSON.stringify(selected.source_evidence, null, 2))}</pre></details>` : ''}
           </div>
           ${ragBlock}
           ${selected.expert_feedback ? `
