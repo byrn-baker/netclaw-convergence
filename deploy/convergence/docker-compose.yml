@@ -64,6 +64,7 @@ services:
       - --storage.path=/alertmanager
     volumes:
       - ./alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
+      - ./secrets/receiver-token:/run/secrets/receiver-token:ro
       - convergence-amdata:/alertmanager
     ports:
       - "${ALERTMANAGER_HOST_PORT:-9093}:9093"
@@ -114,6 +115,7 @@ services:
       ALERTMANAGER_URL: http://alertmanager:9093
       # Host alert-receiver for Triage "Need More" → /reinvestigate (strip /webhook if present)
       ALERT_RECEIVER_URL: ${ALERT_RECEIVER_URL:-http://host.docker.internal:8099/webhook}
+      ALERT_RECEIVER_TOKEN: ${ALERT_RECEIVER_TOKEN:?Set receiver authentication token}
       JWT_SECRET: ${JWT_SECRET:-change-me-convergence-api-jwt}
       API_KEYS: ${API_KEYS}
       USERS: ${USERS:-[]}

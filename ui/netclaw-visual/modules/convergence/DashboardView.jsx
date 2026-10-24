@@ -44,7 +44,7 @@ export default function DashboardView({ preview, active, refreshKey, onStatus, i
   const inspect = () => {
     const view = controller.current;
     if (!view) return;
-    const key = { overview: 'health', wifi: 'wifi', devices: 'devices', diary: 'events', triage: 'escalated' }[view.subview];
+    const key = { overview: 'health', wifi: 'wifi', devices: 'devices', security: 'security', diary: 'events', triage: 'escalated' }[view.subview];
     if (!key) return;
     investigate(`Convergence · ${view.site} · ${view.subview}`, { site: view.site, section: view.subview, data: view.cache[key], readError: view.lastError?.message }, `/api/home/${{ events: 'events', escalated: 'events/escalated' }[key] || key}`, view.readTimes[key]);
   };

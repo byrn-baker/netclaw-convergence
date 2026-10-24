@@ -4,6 +4,12 @@ Current-state snapshot verified on **24 October 2026**, following the OpenAI
 subscription model migration. These diagrams document the deployment and
 configured workflows; they do not propose a new architecture.
 
+These exported sheets precede the reliability changes later on 24 October.
+The [current hardening notes](../../CONVERGENCE.md#reliability-and-security-foundation--24-october-2026)
+document the durable receiver queue, restricted investigator/coordinator tools,
+scoped case MCP, case history, corrected learning and Security view. Use those
+notes for the updated investigation and persistence paths.
+
 | View | PNG | Zoomable vector source |
 |---|---|---|
 | Deployment, service boundaries, ports and data paths | [Architecture](guardian-convergence-architecture.png) | [Architecture SVG](guardian-convergence-architecture.svg) |

@@ -32,7 +32,7 @@ allow_t2: []
 # allow_t2:
 #   - alertname: WanHardDown
 #   - alertname: SwitchLinkLost
-#     severity: critical
+#     severity: warning
 
 # Optional cheap summaries (empty = no T1)
 allow_t1: []

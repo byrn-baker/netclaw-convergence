@@ -225,3 +225,89 @@ Vendor manuals go in RAG (`~/.openclaw/rag`), not the live Integration API:
 | Grafana NetClaw quota board | **Shipped** | `--profile full` provisions dashboards |
 | Network switch Grafana board | **Shipped** | `device-snmp-switches.json` |
 | Alert → investigation safety rails | **Shipped** | [CONVERGENCE-ALERT-SAFETY.md](./CONVERGENCE-ALERT-SAFETY.md) |
+
+
+## Reliability and security foundation — 24 October 2026
+
+The receiver now requires `Authorization: Bearer $ALERT_RECEIVER_TOKEN` for
+mutation endpoints. Nautobot retains its separate signed-webhook verification.
+Use the same receiver token in the receiver and Docker environments; run
+`deploy/convergence/render-config.sh` to create the private Alertmanager credential
+file. Do not commit `deploy/convergence/secrets/`. Recreate Alertmanager and the
+API after credential changes. K3s deployments must provision the equivalent
+credential Secret and client header before upgrading their receiver.
+
+Alerts are persisted in `services/alert-receiver/state/jobs.sqlite` before HTTP
+acknowledgement. The bounded queue has 1,000 pending entries, two investigation
+workers by default, a separate ingest/recovery worker, and a learning worker.
+Model work cannot occupy the ingest worker. Repeated deliveries
+of the same fingerprint/start/status are idempotent. Case creation also has a
+unique site/incident key. Checkpointed dispatches survive restart and resume
+watching the original case; an uncertain HTTP response does not blindly launch
+another model run. Completion has a 900-second default deadline; overdue cases
+are escalated. This is case-level completion accounting, not proof that every
+underlying model subprocess has terminated. Queue retries are bounded to three
+attempts. `/health` exposes queued/running/done/failed counts.
+
+Manual follow-ups use the same queue and hourly dispatch budget. Automatic
+allowlists match current `WanHardDown`, warning `SwitchLinkLost`, and
+`DeviceSnmpStale` rules. Site-level alerts need no fabricated device IP. OTel
+interface metrics replace retired exporter queries, and missing Alertmanager
+counts are unknown rather than zero. The SNMP disappearance rule retains a
+24-hour inventory window; explicit inventory-based absence detection remains
+necessary for devices silent longer than that or never observed.
+
+Case GET/PATCH/reinvestigation routes enforce site scope. Mutations require an
+admin/operator role. PostgreSQL retains previous event versions in
+`event_history`; `alert_cleared_at` is separate from root cause and investigation
+notes. Existing databases are migrated additively at API startup. Back up both
+PostgreSQL and the receiver queue for recovery.
+
+Case evidence/feedback updates queue learning. Snapshots use a content hash;
+corrected snapshots are retained as superseded history and excluded from the
+investigation search alias. Failed learning is visible in receiver job state;
+there is not yet a transactional outbox spanning the case database and receiver.
+
+Guardian's deployed main-agent tool allowlist is recorded in
+`deploy/convergence/config/guardian-readonly-tools.json`. It excludes shell,
+configuration, arbitrary HTTP and code execution tools. The dedicated
+`mcp-servers/convergence-case-mcp/server.py` exposes only case read/update through
+a configured API and site. Run it using the existing fastmcp4 Python environment
+and register it as `convergence-case-mcp` in the member configuration. Device
+credentials should additionally be replaced with read-only service accounts;
+tool filtering is not a substitute for device-side authorization.
+Native file reads are limited to the agent workspace. Code Mode's JavaScript
+`exec`/`wait` discovery wrappers remain available; these are distinct from a
+shell execution tool and expose the filtered tool catalog.
+
+The Border alert coordinator uses `config/alert-coordinator-tools.json` (relative
+to `deploy/convergence`): delegation, task observation and case updates. Its
+autonomous profile excludes direct device configuration and mesh administration.
+Guardian uses a dedicated workspace, with `config/guardian-instructions.md` as
+`AGENTS.md` and copies of alert-triage, pyats-network, pyats-troubleshoot,
+prometheus-monitoring, grafana-observability and pfsense-threat-intel skills.
+Refresh these copies when updating the repository's investigation instructions.
+Every MCP environment reference must be explicitly present in the member's
+private environment. Register the case MCP with `CONVERGENCE_API_URL` and
+`CONVERGENCE_API_TOKEN` references to that member's case API credentials.
+
+Convergence now includes a Security view with structured firewall block totals,
+source rankings and explicit sensor coverage. Firewall blocks are unclassified
+observations, not confirmed intrusions. A validated IDS sensor feed, signature
+management, network-zone/asset correlation, authenticated HUD ingress, restricted
+backend exposure, dependency updates, and restore/failure exercises remain work
+before claiming enterprise IDS capability. Cloud model availability is not a
+requirement for recording alerts or viewing telemetry.
+
+The Convergence API image now uses Node 24 and refreshed locked dependencies,
+including bcrypt 6. The production npm audit reports zero known advisories at
+this change; this is not a security assessment of every service in the stack.
+
+Verification:
+
+```sh
+.venv/bin/python -m pytest services/alert-receiver/test_reliability.py
+node --test ui/convergence-api/test-reliability.cjs
+promtool test rules services/alert-receiver/test_snmp_rules.yml
+.venv/bin/python -m pytest tests/contract/test_convergence_api.py
+```

@@ -71,3 +71,21 @@ CREATE TRIGGER events_updated_at
 -- Seed the home site
 INSERT INTO sites (id, name) VALUES ('home', 'Home Pilot')
 ON CONFLICT (id) DO NOTHING;
+
+-- Incident identity and recovery are independent of investigation conclusions.
+ALTER TABLE events ADD COLUMN IF NOT EXISTS incident_key TEXT;
+ALTER TABLE events ADD COLUMN IF NOT EXISTS alert_cleared_at TIMESTAMPTZ;
+ALTER TABLE events ADD COLUMN IF NOT EXISTS rag_content_hash TEXT;
+CREATE UNIQUE INDEX IF NOT EXISTS idx_events_incident ON events(site_id, incident_key);
+CREATE TABLE IF NOT EXISTS event_history (
+  sequence BIGSERIAL PRIMARY KEY, event_id UUID NOT NULL,
+  recorded_at TIMESTAMPTZ NOT NULL DEFAULT now(), previous JSONB NOT NULL
+);
+CREATE OR REPLACE FUNCTION retain_event_history() RETURNS TRIGGER AS $$
+BEGIN
+  INSERT INTO event_history(event_id, previous) VALUES (OLD.id, to_jsonb(OLD));
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+DROP TRIGGER IF EXISTS events_history ON events;
+CREATE TRIGGER events_history BEFORE UPDATE ON events FOR EACH ROW EXECUTE FUNCTION retain_event_history();

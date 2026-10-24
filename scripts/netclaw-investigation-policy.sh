@@ -54,8 +54,8 @@ tiers:
 allow_t2:
   - alertname: WanHardDown
   - alertname: SwitchLinkLost
-    severity: critical
-  - alertname: DeviceSnmpExporterDown
+    severity: warning
+  - alertname: DeviceSnmpStale
 
 allow_t1: []
 
@@ -73,7 +73,7 @@ budgets:
 degrade:
   force_max_tier: null
 YAML
-  echo "Seeded $POLICY (observe-by-default + allow_t2 for WanHardDown / SwitchLinkLost / DeviceSnmpExporterDown)"
+  echo "Seeded $POLICY (observe-by-default + allow_t2 for WanHardDown / SwitchLinkLost / DeviceSnmpStale)"
   echo "Ensure thin agent: $THIN apply"
   echo "Reload within ~30s or restart netclaw-alert-receiver"
 }

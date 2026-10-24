@@ -14,6 +14,15 @@ fi
 
 export ALERT_RECEIVER_URL="${ALERT_RECEIVER_URL:-http://host.docker.internal:8099/webhook}"
 
+if [[ -z "${ALERT_RECEIVER_TOKEN:-}" ]]; then
+  echo "Set ALERT_RECEIVER_TOKEN in deploy/convergence/.env and the receiver environment" >&2
+  exit 1
+fi
+mkdir -p secrets
+chmod 700 secrets
+printf '%s' "$ALERT_RECEIVER_TOKEN" > secrets/receiver-token
+chmod 644 secrets/receiver-token  # mounted file is read by the unprivileged Alertmanager
+
 if command -v envsubst >/dev/null 2>&1; then
   envsubst < alertmanager/alertmanager.yml.tmpl > alertmanager/alertmanager.yml
 else

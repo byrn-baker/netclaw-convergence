@@ -2,6 +2,12 @@
 
 const express = require('express');
 const router = express.Router();
+router.use((req, res, next) => {
+  if (!['GET', 'HEAD'].includes(req.method) && !['admin', 'operator'].includes(req.user?.role)) {
+    return res.status(403).json({ error: 'Operator role required' });
+  }
+  next();
+});
 
 /**
  * The diary and triage are the only Postgres-backed features; Postgres is
@@ -62,7 +68,7 @@ router.get('/', async (req, res) => {
   try {
     let sql = `SELECT id, timestamp, message, severity, category, source, status,
                alert_name, alert_fingerprint, root_cause, investigation_notes,
-               expert_feedback, feedback_quality, rag_document_id
+               expert_feedback, feedback_quality, rag_document_id, incident_key, alert_cleared_at
                FROM events WHERE site_id = $1`;
     const params = [site];
 
@@ -74,6 +80,10 @@ router.get('/', async (req, res) => {
       sql += ` AND alert_fingerprint = $${params.length + 1}`;
       params.push(fingerprint);
     }
+    if (req.query.incident_key) {
+      sql += ` AND incident_key = $${params.length + 1}`;
+      params.push(req.query.incident_key);
+    }
 
     sql += ` ORDER BY timestamp DESC LIMIT $${params.length + 1}`;
     params.push(limit);
@@ -82,7 +92,8 @@ router.get('/', async (req, res) => {
     res.json({ site, events: result.rows });
   } catch (err) {
     if (!isDbDown(err)) console.error('Events GET error:', err.message);
-    emptyWithReason(res, site, err);
+    if (isDbDown(err)) return emptyWithReason(res, site, err);
+    res.status(500).json({error: 'Case query failed', unavailable: true});
   }
 });
 
@@ -95,7 +106,7 @@ router.post('/', async (req, res) => {
   const site = req.site;
   const {
     message, severity, category, source,
-    alert_name, alert_fingerprint,
+    alert_name, alert_fingerprint, incident_key,
     investigation_notes, root_cause, status,
     rag_document_id, expert_feedback, feedback_quality,
   } = req.body;
@@ -117,8 +128,9 @@ router.post('/', async (req, res) => {
       `INSERT INTO events (site_id, message, severity, category, source,
         alert_name, alert_fingerprint, investigation_notes, root_cause, status,
         rag_document_id, expert_feedback, feedback_quality,
-        escalated_at, rag_snapshotted_at)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
+        escalated_at, rag_snapshotted_at, incident_key)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)
+       ON CONFLICT (site_id, incident_key) DO UPDATE SET updated_at = NOW()
        RETURNING id, timestamp, message, severity, status, alert_name, alert_fingerprint,
                  rag_document_id, escalated_at`,
       [
@@ -137,6 +149,7 @@ router.post('/', async (req, res) => {
         feedback_quality || null,
         st === 'escalated' ? new Date().toISOString() : null,
         ragId ? new Date().toISOString() : null,
+        incident_key || null,
       ]
     );
 
@@ -166,7 +179,7 @@ router.patch('/:id', async (req, res) => {
     status, severity, message,
     investigation_notes, root_cause,
     expert_feedback, feedback_quality,
-    rag_document_id
+    rag_document_id, rag_content_hash, alert_cleared_at
   } = req.body;
 
   const updates = [];
@@ -206,25 +219,49 @@ router.patch('/:id', async (req, res) => {
     updates.push(`feedback_quality = $${paramIdx++}`);
     params.push(feedback_quality);
   }
+  if (rag_content_hash) {
+    updates.push(`rag_content_hash = $${paramIdx++}`);
+    params.push(rag_content_hash);
+  }
   if (rag_document_id) {
     updates.push(`rag_document_id = $${paramIdx++}`);
     params.push(rag_document_id);
     updates.push(`rag_snapshotted_at = NOW()`);
   }
 
+  if (alert_cleared_at) {
+    if (!Number.isFinite(Date.parse(alert_cleared_at))) return res.status(400).json({error: 'Invalid clearance timestamp'});
+    updates.push(`alert_cleared_at = $${paramIdx++}`);
+    params.push(alert_cleared_at);
+    if (!status) updates.push("status = CASE WHEN status = 'logged' THEN 'resolved' ELSE status END");
+  }
   if (updates.length === 0) {
     return res.status(400).json({ error: 'No fields to update' });
   }
 
-  params.push(id);
-  const sql = `UPDATE events SET ${updates.join(', ')} WHERE id = $${paramIdx} RETURNING *`;
+  params.push(id, req.site);
+  const sql = `UPDATE events SET ${updates.join(', ')} WHERE id = $${paramIdx} AND site_id = $${paramIdx + 1} RETURNING *`;
 
   try {
     const result = await query(sql, params);
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'Event not found' });
     }
-    res.json(result.rows[0]);
+    const event = result.rows[0];
+    if (expert_feedback || feedback_quality || investigation_notes || root_cause) {
+      const receiver = (process.env.ALERT_RECEIVER_URL || '').replace(/\/webhook\/?$/, '').replace(/\/$/, '');
+      if (receiver) {
+        try {
+          const reply = await fetch(`${receiver}/learning`, {
+            method: 'POST', signal: AbortSignal.timeout(5000),
+            headers: {'Content-Type': 'application/json', Authorization: `Bearer ${process.env.ALERT_RECEIVER_TOKEN || ''}`},
+            body: JSON.stringify({event_id: id, site: req.site}),
+          });
+          event.learning = reply.ok ? 'queued' : 'unavailable';
+        } catch { event.learning = 'unavailable'; }
+      }
+    }
+    res.json(event);
   } catch (err) {
     if (writeUnavailable(res, err, 'Updating an event')) return;
     console.error('Events PATCH error:', err.message);
@@ -255,7 +292,8 @@ router.get('/escalated', async (req, res) => {
     res.json({ site, events: result.rows });
   } catch (err) {
     if (!isDbDown(err)) console.error('Escalated events error:', err.message);
-    emptyWithReason(res, site, err);
+    if (isDbDown(err)) return emptyWithReason(res, site, err);
+    res.status(500).json({error: 'Case query failed', unavailable: true});
   }
 });
 
@@ -266,7 +304,7 @@ router.get('/escalated', async (req, res) => {
 router.get('/:id', async (req, res) => {
   const { id } = req.params;
   try {
-    const result = await query(`SELECT * FROM events WHERE id = $1`, [id]);
+    const result = await query(`SELECT * FROM events WHERE id = $1 AND site_id = $2`, [id, req.site]);
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'Event not found' });
     }
@@ -292,7 +330,7 @@ router.post('/:id/reinvestigate', async (req, res) => {
   const expert_feedback = String(req.body?.expert_feedback || '').trim();
 
   try {
-    const existing = await query(`SELECT * FROM events WHERE id = $1`, [id]);
+    const existing = await query(`SELECT * FROM events WHERE id = $1 AND site_id = $2`, [id, req.site]);
     if (existing.rows.length === 0) {
       return res.status(404).json({ error: 'Event not found' });
     }
@@ -310,12 +348,12 @@ router.post('/:id/reinvestigate', async (req, res) => {
          expert_feedback = $2,
          feedback_quality = 'needs_more_context',
          feedback_provided_at = NOW()
-       WHERE id = $3
+       WHERE id = $3 AND site_id = $4
        RETURNING *`,
       [
         notes,
         expert_feedback || prev.expert_feedback || 'Operator requested more context',
-        id,
+        id, site,
       ]
     );
 
@@ -328,7 +366,7 @@ router.post('/:id/reinvestigate', async (req, res) => {
       try {
         const r = await fetch(`${receiverBase}/reinvestigate`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json', Authorization: `Bearer ${process.env.ALERT_RECEIVER_TOKEN || ''}` },
           body: JSON.stringify({
             event_id: id,
             site,

@@ -14,6 +14,8 @@ Alertmanager webhook config (on OBS VM):
 """
 
 import asyncio
+import contextvars
+from jobs import JobStore
 import hashlib
 import hmac
 import json
@@ -28,7 +30,7 @@ from typing import Optional
 import httpx
 from dotenv import load_dotenv
 from fastapi import FastAPI, Request, BackgroundTasks
-from fastapi.responses import PlainTextResponse
+from fastapi.responses import PlainTextResponse, JSONResponse
 from pydantic import BaseModel
 
 # ---------------------------------------------------------------------------
@@ -39,6 +41,7 @@ load_dotenv(Path(__file__).parent / ".env")
 
 HOST = os.getenv("ALERT_RECEIVER_HOST", "0.0.0.0")
 PORT = int(os.getenv("ALERT_RECEIVER_PORT", "8099"))
+RECEIVER_TOKEN = os.getenv("ALERT_RECEIVER_TOKEN", "")
 LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO").upper()
 
 NAUTOBOT_URL = os.getenv("NAUTOBOT_URL", "").rstrip("/")
@@ -314,6 +317,61 @@ class Metrics:
 
 
 metrics = Metrics()
+job_store = None
+active_job = contextvars.ContextVar("active_job", default=None)
+workers = []
+INVESTIGATION_TIMEOUT = int(os.getenv("INVESTIGATION_TIMEOUT_SECONDS", "900"))
+
+async def wait_for_case(event_id, site, dispatched):
+    while time.time() < dispatched + INVESTIGATION_TIMEOUT:
+        event = await _fetch_guardian_event(event_id, site)
+        if event and event.get("status") in ("resolved", "escalated", "archived"):
+            return
+        await asyncio.sleep(10)
+    await patch_guardian_event(event_id, site, status="escalated")
+    raise TimeoutError("Investigation exceeded its completion deadline; operator review required")
+
+async def job_worker(lane='investigation'):
+    while True:
+        job = job_store.claim(lane)
+        if not job:
+            await asyncio.sleep(1)
+            continue
+        token = active_job.set(job)
+        try:
+            body = json.loads(job['payload'])
+            if job['dispatched']:
+                await wait_for_case(job['event_id'], job['site'], job['dispatched'])
+            elif job['kind'] == 'manual':
+                from investigation_policy import load_policy
+                budget = int((load_policy().get('budgets') or {}).get('max_t2_per_hour', 3))
+                if job_store.hourly_dispatches() >= budget:
+                    raise RuntimeError('Hourly investigation budget exhausted')
+                result = await run_reinvestigation(body)
+                if result.get('status') != 'accepted':
+                    raise RuntimeError(result.get('message', 'Reinvestigation failed'))
+            elif job['kind'] == 'snapshot':
+                event = await _fetch_guardian_event(body['event_id'], body.get('site', 'home'))
+                if not event: raise RuntimeError('Case unavailable for learning')
+                result = await _snapshot_event_to_rag(event, body.get('site','home'))
+                if result.get('status') == 'error': raise RuntimeError(result.get('message'))
+            else:
+                if await process_alert(Alert(**body)) == 'promoted':
+                    continue
+            job_store.finish(job['id'])
+        except asyncio.CancelledError:
+            raise
+        except Exception as exc:
+            log.warning('Receiver job %s: %s', job['id'], exc)
+            if job['attempts'] >= 3 and job['kind'] == 'manual':
+                try:
+                    await patch_guardian_event(body['event_id'], body.get('site','home'), status='escalated')
+                except Exception:
+                    log.exception('Unable to escalate failed manual investigation')
+            job_store.retry(job, exc)
+        finally:
+            active_job.reset(token)
+
 
 # Investigation admission control (process-wide)
 _investigation_sem: Optional[asyncio.Semaphore] = None
@@ -432,6 +490,12 @@ async def admit_investigation(fingerprint: str) -> tuple[bool, str]:
         return False, "concurrency"
 
     async with _get_investigation_gate_lock():
+        if fp in _investigation_dedup and now - _investigation_dedup[fp] < INVESTIGATION_DEDUP_TTL:
+            sem.release()
+            return False, "dedup"
+        if len(_investigation_recent) >= MAX_INVESTIGATIONS_PER_MINUTE:
+            sem.release()
+            return False, "rate_limit"
         _investigation_dedup[fp] = time.monotonic()
         _investigation_recent.append(time.monotonic())
         metrics.investigations_in_flight += 1
@@ -877,9 +941,16 @@ async def trigger_netclaw(alert: Alert, device_info: dict):
             alert, device_info, status="investigating"
         )
 
-    message = build_investigation_prompt(
+    if not guardian_event_id:
+        raise RuntimeError("Case store unavailable; investigation retained for retry")
+    if alert.status == 'firing' and not await patch_guardian_event(
+        guardian_event_id, normalize_guardian_site(device_info.get('site')), status='investigating'
+    ):
+        raise RuntimeError('Unable to mark case as investigating')
+    message = await asyncio.to_thread(build_investigation_prompt,
         alert, device_info, guardian_event_id=guardian_event_id
     )
+    message += "\nInvestigator: use convergence-case-mcp case_get/case_update for this case. Shell access is disabled. Do not execute curl. Case updates automatically queue learning. Use read-only device tools; report missing tools and uncertainty."
 
     if OPENCLAW_GATEWAY_URL and OPENCLAW_HOOK_TOKEN:
         try:
@@ -912,6 +983,17 @@ async def trigger_netclaw(alert: Alert, device_info: dict):
                 ],
             }
 
+            job = active_job.get()
+            dispatched = time.time()
+            if job_store and job:
+                from investigation_policy import load_policy
+                budget = int((load_policy().get('budgets') or {}).get('max_t2_per_hour', 3))
+                try:
+                    job_store.checkpoint(job['id'], guardian_event_id, normalize_guardian_site(device_info.get('site')), budget)
+                except OverflowError:
+                    await patch_guardian_event(guardian_event_id, normalize_guardian_site(device_info.get('site')), status='logged')
+                    metrics.investigation_budget_trips_total['hourly'] += 1
+                    return
             async with httpx.AsyncClient(timeout=30) as client:
                 resp = await client.post(
                     f"{OPENCLAW_GATEWAY_URL}/hooks/alert",
@@ -924,14 +1006,15 @@ async def trigger_netclaw(alert: Alert, device_info: dict):
                 if resp.status_code in (200, 202):
                     log.info(f"Triggered NetClaw investigation for {alert.labels.alertname} on {device_info['name']}")
                     metrics.investigations_triggered_total += 1
+                    await wait_for_case(guardian_event_id, normalize_guardian_site(device_info.get('site')), dispatched)
                 else:
-                    log.error(f"OpenClaw gateway returned {resp.status_code}: {resp.text[:200]}")
+                    raise RuntimeError(f"OpenClaw hook failed with HTTP {resp.status_code}")
         except Exception as e:
-            log.error(f"Failed to trigger NetClaw: {e}")
+            raise RuntimeError(f"Investigation dispatch/completion failed: {type(e).__name__}") from e
     else:
         # No gateway configured — log the investigation prompt for manual pickup
         log.warning("No OpenClaw gateway configured — logging investigation prompt")
-        log.info(f"INVESTIGATION PROMPT:\n{message}")
+        raise RuntimeError("OpenClaw gateway is not configured")
 
     # Post to Discord if configured — but suppress known-noise alerts that don't
     # warrant human attention or investigation (they just clutter the channel).
@@ -957,7 +1040,7 @@ def _search_prior_investigations(alert: Alert, device_info: dict) -> list:
         rag_path = REPO_ROOT / "mcp-servers" / "rag-mcp"
         if str(rag_path) not in sys.path:
             sys.path.insert(0, str(rag_path))
-        from rag_mcp_server import rag_search as _rag_search
+        from rag_mcp_server import _do_search as _rag_search
 
         result = _rag_search(query=query, k=RAG_PRIOR_K, collection="investigations")
         if not result.get("success"):
@@ -1201,6 +1284,7 @@ async def post_guardian_event(alert: Alert, device_info: dict, status: str = "in
         "source": "netclaw",
         "alert_name": alert.labels.alertname,
         "alert_fingerprint": alert.fingerprint,
+        "incident_key": f"{alert.fingerprint}:{alert.startsAt}" if alert.fingerprint else None,
         "status": status,
     }
 
@@ -1280,9 +1364,9 @@ async def patch_guardian_event(
 
 
 async def find_open_guardian_event(
-    fingerprint: str, site: str, *, limit: int = 50
+    fingerprint: str, site: str, *, starts_at: str = '', limit: int = 50
 ) -> Optional[str]:
-    """Find the newest open (investigating/logged) event for an alert fingerprint."""
+    """Find the alert episode, including investigations already completed."""
     if not NETWORK_GUARDIAN_URL or not NETWORK_GUARDIAN_TOKEN or not fingerprint:
         return None
 
@@ -1290,51 +1374,40 @@ async def find_open_guardian_event(
     try:
         async with httpx.AsyncClient(timeout=10) as client:
             resp = await client.get(
-                f"{NETWORK_GUARDIAN_URL}/api/events?site={site}&limit={limit}"
-                f"&fingerprint={fingerprint}",
+                f"{NETWORK_GUARDIAN_URL}/api/events",
+                params={"site": site, "limit": limit, "fingerprint": fingerprint,
+                        **({"incident_key": f"{fingerprint}:{starts_at}"} if starts_at else {})},
                 headers=_guardian_headers(),
             )
-            if resp.status_code != 200:
-                # Older Guardian builds may lack fingerprint filter — fall back.
-                resp = await client.get(
-                    f"{NETWORK_GUARDIAN_URL}/api/events?site={site}&limit={limit}",
-                    headers=_guardian_headers(),
-                )
-            if resp.status_code != 200:
-                return None
+            resp.raise_for_status()
             events = resp.json().get("events") or []
-            open_statuses = {"investigating", "logged"}
             for ev in events:
                 if ev.get("alert_fingerprint") != fingerprint:
                     continue
-                if ev.get("status") in open_statuses:
-                    return ev.get("id")
+                if starts_at and ev.get('incident_key') != f'{fingerprint}:{starts_at}':
+                    continue
+                return ev.get("id")
     except Exception as e:
         log.warning(f"Guardian event lookup error: {e}")
+        raise
     return None
 
 
 async def complete_guardian_event_resolved(
     alert: Alert, device_info: dict
 ) -> Optional[str]:
-    """On alert resolve: PATCH open case by fingerprint if one exists."""
+    """Record recovery without changing a completed investigation's findings."""
     site = normalize_guardian_site(device_info.get("site"))
-    event_id = await find_open_guardian_event(alert.fingerprint, site)
+    event_id = await find_open_guardian_event(alert.fingerprint, site, starts_at=alert.startsAt)
     if not event_id:
         return None
-    ok = await patch_guardian_event(
-        event_id,
-        site,
-        status="resolved",
-        severity="ok",
-        message=f"{alert.labels.alertname} resolved on {device_info['name']}",
-        root_cause="alert-cleared",
-        investigation_notes=(
-            f"Alertmanager resolved {alert.labels.alertname} on "
-            f"{device_info['name']} ({device_info['ip']})."
-        ),
-    )
-    return event_id if ok else None
+    async with httpx.AsyncClient(timeout=10) as client:
+        response = await client.patch(
+            f"{NETWORK_GUARDIAN_URL}/api/events/{event_id}", params={"site": site},
+            json={"alert_cleared_at": alert.endsAt or datetime.now(timezone.utc).isoformat()},
+            headers=_guardian_headers())
+        response.raise_for_status()
+    return event_id
 
 
 def categorize_alert(alert_name: str) -> str:
@@ -1364,9 +1437,36 @@ app = FastAPI(
 )
 
 
+@app.on_event("startup")
+async def start_jobs():
+    global job_store
+    job_store = JobStore(os.getenv("ALERT_JOBS_PATH", str(Path(__file__).parent / "state" / "jobs.sqlite")))
+    workers.extend(asyncio.create_task(job_worker()) for _ in range(MAX_CONCURRENT_INVESTIGATIONS))
+    workers.append(asyncio.create_task(job_worker(lane='ingest')))
+    workers.append(asyncio.create_task(job_worker(lane='maintenance')))
+
+@app.on_event("shutdown")
+async def stop_jobs():
+    for worker in workers: worker.cancel()
+    await asyncio.gather(*workers, return_exceptions=True)
+    workers.clear()
+    if job_store: job_store.db.close()
+
+@app.middleware("http")
+async def authenticate_receiver(request: Request, call_next):
+    # Health/metrics contain no credentials and are needed by local monitoring.
+    if request.method != "GET" and request.url.path != "/nautobot-webhook":
+        if not RECEIVER_TOKEN:
+            return JSONResponse({"error": "Receiver authentication is not configured"}, status_code=503)
+        supplied = request.headers.get("authorization", "")
+        if not hmac.compare_digest(supplied, f"Bearer {RECEIVER_TOKEN}"):
+            return JSONResponse({"error": "Authentication required"}, status_code=401)
+    return await call_next(request)
+
+
 @app.get("/health")
 async def health():
-    return {"status": "ok", "timestamp": datetime.now(timezone.utc).isoformat()}
+    return {"status": "ok", "jobs": job_store.counts() if job_store else {}, "timestamp": datetime.now(timezone.utc).isoformat()}
 
 
 @app.get("/policy/status")
@@ -1397,31 +1497,33 @@ async def prometheus_metrics():
 
 
 async def _fetch_guardian_event(event_id: str, site: str) -> Optional[dict]:
-    """Load one Guardian event by scanning recent pages (home pilot scale)."""
+    """Load one site-scoped Guardian event."""
     if not NETWORK_GUARDIAN_URL or not NETWORK_GUARDIAN_TOKEN:
         return None
     async with httpx.AsyncClient(timeout=15) as client:
         resp = await client.get(
-            f"{NETWORK_GUARDIAN_URL}/api/events?site={site}&limit=100",
+            f"{NETWORK_GUARDIAN_URL}/api/events/{event_id}",
+            params={"site": site},
             headers={"Authorization": f"Bearer {NETWORK_GUARDIAN_TOKEN}"},
         )
         if resp.status_code != 200:
             return None
-        events = resp.json().get("events", [])
-        return next((e for e in events if e.get("id") == event_id), None)
+        return resp.json()
 
 
 async def _snapshot_event_to_rag(event: dict, site: str) -> dict:
     """Build narrative + rag_snapshot + PATCH rag_document_id. Shared by /snapshot."""
     event_id = event.get("id")
-    if event.get("rag_document_id"):
+    content_hash = hashlib.sha256(json.dumps({k: event.get(k) for k in
+        ('investigation_notes', 'root_cause', 'expert_feedback', 'feedback_quality')}, sort_keys=True).encode()).hexdigest()
+    if event.get("rag_document_id") and event.get("rag_content_hash") == content_hash:
         return {
             "status": "skipped",
             "message": "already linked",
             "snapshot_id": event.get("rag_document_id"),
             "event_id": event_id,
         }
-    if not (event.get("investigation_notes") or event.get("root_cause")):
+    if event.get("status") not in ("resolved", "escalated") or not (event.get("investigation_notes") or event.get("root_cause")):
         return {
             "status": "skipped",
             "message": "no investigation_notes or root_cause to snapshot",
@@ -1459,9 +1561,13 @@ async def _snapshot_event_to_rag(event: dict, site: str) -> dict:
     rag_path = REPO_ROOT / "mcp-servers" / "rag-mcp"
     if str(rag_path) not in sys.path:
         sys.path.insert(0, str(rag_path))
-    from rag_mcp_server import rag_snapshot as _rag_snapshot
+    from rag_mcp_server import _do_snapshot as _rag_snapshot
 
-    result = _rag_snapshot(
+    if event.get('rag_document_id'):
+        from rag_mcp_server import registry
+        registry.set_status(event['rag_document_id'], 'superseded')
+    label = f"{label}-{event_id}-{content_hash[:12]}"
+    result = await asyncio.to_thread(_rag_snapshot,
         label=label,
         content=content,
         source_description=f"Network Guardian investigation: {event.get('alert_name', 'unknown')}",
@@ -1483,16 +1589,21 @@ async def _snapshot_event_to_rag(event: dict, site: str) -> dict:
     async with httpx.AsyncClient(timeout=10) as client:
         patch_resp = await client.patch(
             f"{NETWORK_GUARDIAN_URL}/api/events/{event_id}?site={site}",
-            json={"rag_document_id": snapshot_id},
+            json={"rag_document_id": snapshot_id, "rag_content_hash": content_hash},
             headers={
                 "Authorization": f"Bearer {NETWORK_GUARDIAN_TOKEN}",
                 "Content-Type": "application/json",
             },
         )
         if patch_resp.status_code == 200:
+            # Preserve historical snapshots, but exclude corrected versions from retrieval.
+            if event.get('rag_document_id'):
+                from rag_mcp_server import registry
+                registry.set_status(event['rag_document_id'], 'superseded')
             log.info(f"Guardian event {event_id} linked to RAG snapshot {snapshot_id}")
         else:
             log.warning(f"Failed to PATCH Guardian event: {patch_resp.status_code}")
+            return {"status": "error", "message": "Unable to link learning snapshot to case"}
 
     return {
         "status": "success",
@@ -1501,6 +1612,19 @@ async def _snapshot_event_to_rag(event: dict, site: str) -> dict:
         "chunk_count": result.get("data", {}).get("chunk_count"),
         "event_id": event_id,
     }
+
+
+@app.post("/learning")
+async def queue_learning(request: Request):
+    body = await request.json()
+    if not body.get('event_id'):
+        return JSONResponse({'error': 'event_id required'}, status_code=400)
+    try:
+        # A distinct update must survive a snapshot already in progress.
+        jid = job_store.enqueue(f"learning:{body['event_id']}:{time.time_ns()}", 'snapshot', body)
+        return JSONResponse({'status': 'accepted', 'job_id': jid}, status_code=202)
+    except OverflowError:
+        return JSONResponse({'error': 'Learning inbox full'}, status_code=503)
 
 
 @app.post("/snapshot")
@@ -1553,6 +1677,18 @@ async def reinvestigate(request: Request):
     }
     """
     body = await request.json()
+    if not body.get('event_id'):
+        return JSONResponse({'error': 'event_id required'}, status_code=400)
+    if not await _fetch_guardian_event(body['event_id'], body.get('site', 'home')):
+        return JSONResponse({'error': 'Case not found'}, status_code=404)
+    try:
+        jid = job_store.enqueue(f"manual:{body.get('site','home')}:{body['event_id']}", 'manual', body, repeat=True)
+        return JSONResponse({'status': 'accepted', 'job_id': jid}, status_code=202)
+    except OverflowError:
+        return JSONResponse({'error': 'Receiver inbox full'}, status_code=503)
+
+
+async def run_reinvestigation(body):
     event_id = body.get("event_id")
     site = body.get("site", "home")
     expert_feedback = (body.get("expert_feedback") or "").strip()
@@ -1622,13 +1758,11 @@ async def reinvestigate(request: Request):
         "",
         "INSTRUCTIONS:",
         "1. You are the Border brain. First tool call: n2n_route(target_hint=\"alert-triage\").",
-        "2. Do not restate the shallow 'chronic interference, no action' answer without NEW evidence.",
-        "3. Gather deeper data: radio channel/power/width if available, client counts per band,",
-        "   neighboring AP overlap, time-series retries, and whether 5 GHz capacity can absorb load.",
-        "4. Update the SAME Guardian event via PATCH (do not open a duplicate case).",
+        "2. Verify the operator correction against fresh evidence; distinguish facts from hypotheses.",
+        "3. Select read-only tools and the runbook appropriate to this alert and device.",
+        "4. Update the SAME Guardian event with convergence-case-mcp case_update. Shell access is disabled.",
         "5. Discord + RAG snapshot per alert-triage skill when complete.",
-        "6. If still non-actionable, say exactly what config change would fix it (channel, width,",
-        "   band steering, min RSSI) even if human must approve.",
+        "6. Report uncertainty and missing evidence. Propose changes for human review only.",
     ]
     message = "\n".join(parts)
 
@@ -1657,6 +1791,12 @@ async def reinvestigate(request: Request):
                 }
             ],
         }
+        dispatched = time.time()
+        job = active_job.get()
+        if job_store and job:
+            from investigation_policy import load_policy
+            budget = int((load_policy().get('budgets') or {}).get('max_t2_per_hour', 3))
+            job_store.checkpoint(job['id'], event_id, site, budget)
         async with httpx.AsyncClient(timeout=30) as client:
             resp = await client.post(
                 f"{OPENCLAW_GATEWAY_URL}/hooks/alert",
@@ -1673,6 +1813,7 @@ async def reinvestigate(request: Request):
                     "event_id": event_id,
                 }
         metrics.investigations_triggered_total += 1
+        await wait_for_case(event_id, site, dispatched)
         log.info(f"Reinvestigate triggered for event {event_id} ({alert_name})")
         return {
             "status": "accepted",
@@ -1715,7 +1856,7 @@ async def snapshot_backfill(request: Request):
         if event.get("rag_document_id"):
             results.append({"event_id": event.get("id"), "status": "skipped", "reason": "already linked"})
             continue
-        if not (event.get("investigation_notes") or event.get("root_cause")):
+        if event.get("status") not in ("resolved", "escalated") or not (event.get("investigation_notes") or event.get("root_cause")):
             results.append({"event_id": event.get("id"), "status": "skipped", "reason": "no notes"})
             continue
         try:
@@ -1884,7 +2025,7 @@ async def receive_webhook(request: Request, background_tasks: BackgroundTasks):
         payload = AlertmanagerPayload(**body)
     except Exception as e:
         log.error(f"Failed to parse Alertmanager payload: {e}")
-        return {"status": "error", "message": str(e)}
+        return JSONResponse({"error": "Invalid Alertmanager payload"}, status_code=400)
 
     log.info(
         f"Received webhook: status={payload.status}, "
@@ -1905,7 +2046,11 @@ async def receive_webhook(request: Request, background_tasks: BackgroundTasks):
         else:
             metrics.alerts_resolved_total += 1
         # Process each alert in the background so we return 200 quickly
-        background_tasks.add_task(process_alert, alert)
+        key = f"{alert.fingerprint or hashlib.sha256(json.dumps(alert.labels.model_dump(), sort_keys=True).encode()).hexdigest()}:{alert.startsAt}:{alert.status}"
+        try:
+            job_store.enqueue(key, 'resolved' if alert.status == 'resolved' else 'alert', alert.model_dump())
+        except OverflowError:
+            return JSONResponse({"error": "Receiver inbox full; retry later"}, status_code=503)
 
     return {
         "status": "accepted",
@@ -1938,11 +2083,19 @@ async def process_alert(alert: Alert):
         )
 
     if not instance:
-        log.warning(f"Alert {alert.labels.alertname} has no instance/device_name label — skipping")
-        return
-
-    device_info = await lookup_device(instance)
+        site = normalize_guardian_site(_label_get(alert.labels, "site"))
+        device_info = {"name": f"site:{site}", "ip": "", "platform": "site",
+                       "role": "site", "site": site, "source": "alert-labels"}
+        instance = f"site:{site}"
+    else:
+        device_info = await lookup_device(instance)
     log.info(f"  Device resolved: {device_info['name']} → {device_info['ip']} (source: {device_info['source']})")
+
+    async def record_case(status):
+        event_id = await post_guardian_event(alert, device_info, status=status)
+        if not event_id:
+            raise RuntimeError('Unable to persist alert case; retrying durable inbox entry')
+        return event_id
 
     if alert.status == "resolved":
         await complete_guardian_event_resolved(alert, device_info)
@@ -1952,7 +2105,7 @@ async def process_alert(alert: Alert):
         log.info(f"  Suppressed (known noisy IoT): {alert.labels.alertname} for {device_info['ip']}")
         metrics.investigations_suppressed_total += 1
         metrics.investigations_by_tier["T0"] = metrics.investigations_by_tier.get("T0", 0) + 1
-        await post_guardian_event(alert, device_info, status="resolved")
+        await record_case("logged")
         return
 
     decision = resolve_tier(alert)
@@ -1973,7 +2126,7 @@ async def process_alert(alert: Alert):
         _count_tier("T0")
         metrics.investigations_suppressed_policy_total += 1
         metrics.investigations_suppressed_total += 1
-        await post_guardian_event(alert, device_info, status="logged")
+        await record_case("logged")
         if (
             alert.labels.alertname not in DISCORD_SUPPRESS_ALERTS
             and (alert.labels.severity or "").lower() == "critical"
@@ -1987,7 +2140,7 @@ async def process_alert(alert: Alert):
     # ── T1: cheap summarize (no multi-tool OpenClaw farm) ───────────
     if tier == "T1":
         _count_tier("T1")
-        await post_guardian_event(alert, device_info, status="logged")
+        await record_case("logged")
         if alert.labels.alertname not in DISCORD_SUPPRESS_ALERTS:
             try:
                 await post_discord(alert, device_info)
@@ -2011,11 +2164,34 @@ async def process_alert(alert: Alert):
         _count_tier("T0")
         metrics.investigations_suppressed_policy_total += 1
         metrics.investigations_suppressed_total += 1
-        await post_guardian_event(alert, device_info, status="logged")
+        await record_case("logged")
         return
 
+    job = active_job.get()
+    if job_store and job and job['kind'] == 'alert':
+        # Record/classify independently of slow model work. Ingest also handles
+        # recovery in delivery order so a clear cannot overtake its firing alert.
+        await record_case("logged")
+        job_store.promote(job['id'])
+        return 'promoted'
+    if job and job['kind'] == 'investigate':
+        event_id = await record_case("logged")
+        event = await _fetch_guardian_event(event_id, normalize_guardian_site(device_info.get('site')))
+        if event and event.get('alert_cleared_at'):
+            return
+
+    admitted, admit_reason = await admit_investigation(alert.fingerprint or instance)
+    if not admitted:
+        _count_tier("T0")
+        await record_case("logged")
+        return
+    if job_store and job_store.hourly_dispatches() >= int((decision.budgets or {}).get('max_t2_per_hour', 3)):
+        release_investigation()
+        await record_case("logged")
+        return
     ok_budget, budget_reason = admit_t2(decision.budgets or {})
     if not ok_budget:
+        release_investigation()
         log.warning(
             "investigation_policy budget trip budget=%s alertname=%s — clamp to T0",
             budget_reason,
@@ -2026,28 +2202,22 @@ async def process_alert(alert: Alert):
             metrics.investigation_budget_trips_total.get(budget_reason, 0) + 1
         )
         metrics.investigations_suppressed_total += 1
-        await post_guardian_event(alert, device_info, status="logged")
-        return
-
-    admitted, admit_reason = await admit_investigation(alert.fingerprint or instance)
-    if not admitted:
-        release_t2()
-        _count_tier("T0")
-        log.warning(
-            f"  Investigation admission denied ({admit_reason}): "
-            f"{alert.labels.alertname} — diary only"
-        )
-        await post_guardian_event(alert, device_info, status="logged")
+        await record_case("logged")
         return
 
     _count_tier("T2")
+    scope_gen = None
     try:
         scope_gen = await scope_skills_for_alert(alert, device_info)
         await trigger_netclaw(alert, device_info)
-        await restore_skills_after_trigger(scope_gen)
+    except Exception:
+        # A failed case write must be retryable rather than suppressed as a duplicate.
+        _investigation_dedup.pop(alert.fingerprint or instance, None)
+        raise
     finally:
         release_investigation()
         release_t2()
+        await restore_skills_after_trigger(scope_gen)
 
 
 def _is_noisy_iot_suppressed(alert: Alert, device_info: dict) -> bool:

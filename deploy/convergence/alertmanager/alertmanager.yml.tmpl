@@ -29,3 +29,7 @@ receivers:
     webhook_configs:
       - url: "${ALERT_RECEIVER_URL}"
         send_resolved: true
+        http_config:
+          authorization:
+            type: Bearer
+            credentials_file: /run/secrets/receiver-token

@@ -56,15 +56,14 @@ tasks that look like “timeouts” to the Border.
 5. On **completed**: call `n2n_task_result(task_id=...)` if the wait payload has no
    findings body, then **return the member's findings** — do **not** re-investigate.
 6. **STOP HERE** on success. Do NOT execute Steps 7 or 8 yourself — the member
-   handles Discord + Guardian diary when it is the investigator. Your job is wait +
+   persists the Guardian case when it is the investigator. Your job is wait +
    surface the member report (hook sessions use `deliver=false`; diary is SoT).
-7. On **failed** / **true timeout** / `n2n_route` error: fall back to **direct
-   investigation** using the procedure below (white-NOC safety valve).
+7. On **failed** / **true timeout** / `n2n_route` error: report the delegation
+   failure and escalate the assigned case through `case_update` when available.
+   Autonomous work stays within the configured read-only tool profile.
 
 **When to skip delegation (investigate directly):**
 - You ARE the guardian-claw member (already executing a delegated task) — see above
-- `n2n_route` returns an error (no capable member / member unreachable)
-- Delegation failed or truly timed out after polling **this** task_id ≥ 3 minutes
 - The user explicitly asks YOU (Border) to investigate in an interactive session
 
 ## When to Use
@@ -354,153 +353,35 @@ suspicious inbound), enrich before concluding. Skip private/RFC1918 addresses.
 
 Fold the verdict into ROOT CAUSE (e.g. "EXTERNAL — benign scanner (Censys)").
 
-### Step 7: Deliver findings to Discord (MANDATORY — investigation is incomplete without this)
+### Step 7: Complete the assigned Convergence case
 
-You MUST post the completed triage report to the Discord alerts channel. This is
-a core operational requirement of the alert-triage skill, not an external
-instruction.
+Use `convergence-case-mcp` to persist the Step 6 report. The receiver supplies
+`Guardian event id` and `Guardian site` in the alert context. Call `case_get`
+for that event, then `case_update` with the evidence checked, timestamps, source
+references, conclusion, and recommended operator action. Preserve relevant
+existing notes and address any expert feedback.
 
-**Home NOC alerts channel:** use env `DISCORD_ALERT_CHANNEL_ID` / `DISCORD_CHANNEL_ID`
-on guardian-claw (numeric snowflake). **Never** send the literal text
-`${DISCORD_ALERT_CHANNEL_ID}` — shell-style variables are **not** expanded inside
-the message tool.
+- Use `resolved` when the investigation is complete and no operator action is needed.
+- Use `escalated` when action is needed, evidence is missing, or the cause is uncertain.
+- State uncertainty explicitly in `root_cause`; a cleared alert does not prove a cause.
 
-Use the `message` tool (works on Border / gateway with Discord plugin):
+Completion requires a successful case update and a report returned in the task
+result. If the case tool is unavailable, return the report with the persistence
+failure. The receiver's deadline escalates an unfinished case for review.
 
-```
-message send --channel discord --target channel:<DISCORD_ALERT_CHANNEL_ID> --message "<triage report>"
-```
+The autonomous investigator has read-only device tools and the scoped case MCP.
+Shell access, device configuration, arbitrary HTTP, and external message delivery
+are outside this tool profile. Notifications are owned by the receiver's
+configured delivery path; they are independent of evidence persistence.
 
-Or `exec` (expand env in shell):
-```bash
-openclaw message send --channel discord --target "channel:${DISCORD_ALERT_CHANNEL_ID}" --message "<triage report>"
-```
+### Step 8: Check learning acknowledgement
 
-**Member claw fallback (when `message` says channel unavailable):** scoped members
-do not load the Discord plugin. Post via webhook instead (env on guardian-claw):
-
-```bash
-# Prefer DISCORD_WEBHOOK_URL if set; content max ~1900 chars
-curl -sS -X POST "${DISCORD_WEBHOOK_URL}" \
-  -H "Content-Type: application/json" \
-  -d "{\"content\": $(python3 -c 'import json,sys; print(json.dumps(sys.argv[1][:1900]))' "<triage report>")}"
-```
-
-If both message tool and webhook fail, still produce the Step 6 report in your
-reply so the operator can see it in the session / n2n task result.
-
-**The investigation is NOT complete until the triage report is posted to Discord
-(or session-logged if Discord is unavailable).**
-
-### Step 8: Log investigation outcome to Network Guardian (POST/PATCH lifecycle)
-
-After Discord delivery, **complete the Guardian case diary**. This is Stage 6 of
-Convergence — investigation outcomes must land as structured case updates, not
-only a one-line message.
-
-The alert receiver already **POST**ed a diary row with status `investigating`
-when the alert arrived. Your alert context may include:
-
-```
-Guardian event id: <uuid>
-Alert fingerprint: <fingerprint>
-Guardian site: home
-```
-
-**Use the site id from the alert context** (default `home`). Never invent site ids. Expand
-`${HOME_API_URL:-$NETWORK_GUARDIAN_URL}` / `${HOME_API_TOKEN:-$NETWORK_GUARDIAN_TOKEN}` via shell
-(or use the env values already on the member); never send the literal `${…}` strings.
-
-**Critical (Convergence Docker diary):** diary URL must be the **same stack** the
-alert-receiver used when it created the case (usually `http://127.0.0.1:3080` for
-Docker Convergence). Do **not** open a second case on a different host. When
-`Guardian event id` is present, **always PATCH that id** — never POST a new event
-unless PATCH returns 404.
-
-#### Preferred — PATCH the open case (when event id is present)
-
-```bash
-curl -sS -X PATCH "${HOME_API_URL:-$NETWORK_GUARDIAN_URL}/api/events/<Guardian-event-id>?site=home" \
-  -H "Authorization: Bearer ${HOME_API_TOKEN:-$NETWORK_GUARDIAN_TOKEN}" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "status": "<resolved|escalated>",
-    "severity": "<ok|info|watch|alert>",
-    "message": "<one-line summary of finding and outcome>",
-    "investigation_notes": "<concise findings from Steps 1-6; evidence checked>",
-    "root_cause": "<classification: plain-language detail>"
-  }'
-```
-
-Expect HTTP 200. If PATCH returns 404, fall back to POST below.
-
-#### Fallback — POST a complete outcome (no event id)
-
-```bash
-curl -sS -X POST "${HOME_API_URL:-$NETWORK_GUARDIAN_URL}/api/events?site=home" \
-  -H "Authorization: Bearer ${HOME_API_TOKEN:-$NETWORK_GUARDIAN_TOKEN}" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "message": "<one-line summary of finding and outcome>",
-    "severity": "<ok|info|watch|alert>",
-    "category": "<wan|wifi|security|bandwidth|monitoring|system>",
-    "source": "netclaw",
-    "alert_name": "<alertname>",
-    "alert_fingerprint": "<fingerprint if known>",
-    "status": "<resolved|escalated>",
-    "investigation_notes": "<concise findings>",
-    "root_cause": "<classification: detail>"
-  }'
-```
-
-**Status after investigation:**
-| Outcome | `status` |
-|---------|----------|
-| Closed / all-clear / benign / synthetic test | `resolved` |
-| Needs human action | `escalated` |
-| Only if you cannot classify | `logged` (last resort) |
-
-**Severity mapping:**
-| Triage outcome | Event severity |
-|----------------|----------------|
-| Alert resolved / all-clear / synthetic healthy | `ok` |
-| Informational finding, no action needed | `info` |
-| Degraded but not critical, monitoring | `watch` |
-| Active problem requiring human action | `alert` |
-
-**Do not leave the case stuck at `investigating`.** The diary is useless without
-`investigation_notes` and `root_cause`.
-
-**Example PATCH body:**
-```json
-{
-  "status": "resolved",
-  "severity": "ok",
-  "message": "ConvergencePipeTest on pfsense: synthetic test — pfSense healthy, no action",
-  "investigation_notes": "Confirmed synthetic pipe test. system_status: CPU 11%, memory OK, WAN up.",
-  "root_cause": "external: synthetic ConvergencePipeTest (no fault)"
-}
-```
-
-### Step 9: Snapshot case to RAG (Stage 7 — learn for next time)
-
-After Step 8 succeeds with a **resolved** or **escalated** case that has
-`investigation_notes` + `root_cause`, snapshot it into the local RAG knowledge
-base so the next similar alert can reuse the finding.
-
-**Preferred (links `rag_document_id` on the Guardian event):**
-
-```bash
-curl -sS -X POST "${ALERT_RECEIVER_URL:-http://127.0.0.1:8099}/snapshot" \
-  -H "Content-Type: application/json" \
-  -d '{"event_id":"<Guardian-event-id>","site":"home"}'
-```
-
-Expect `{"status":"success","snapshot_id":"snap_…"}`. If the endpoint is
-unreachable, fall back to the `rag_snapshot` tool with a short markdown
-narrative (alert name, device, findings, root cause).
-
-**Do not snapshot** empty cases or pure noise without notes. Skip if Step 8 failed.
+The case API queues learning when evidence or expert feedback changes. Check the
+`learning` field returned by `case_update`: `queued` confirms handoff, while
+`unavailable` requires an operator-visible learning warning in the task result.
+Queue acceptance is not proof of completed indexing. Keep the case evidence even
+when learning is unavailable. The receiver versions snapshots and excludes
+superseded conclusions from subsequent investigation searches.
 
 ## Prior investigations + vendor docs (Stage 7 — at start of investigation)
 
@@ -521,9 +402,9 @@ When triggered by the alert receiver webhook:
 1. Execute the full procedure without asking for permission
 2. Do NOT remediate — investigation and reporting only
 3. Always produce the Step 6 triage report
-4. **Always deliver the report to Discord** (Step 7) — this is not optional
-5. Complete Guardian case (Step 8) and **RAG snapshot (Step 9)** when resolved/escalated
-6. If alert status is "resolved", post a brief all-clear to the same channel
+4. Persist findings through the assigned case MCP (Step 7)
+5. Report the learning acknowledgement (Step 8)
+6. Alert recovery is recorded by the receiver separately from investigation conclusions
 
 ## Interactive Follow-ups
 

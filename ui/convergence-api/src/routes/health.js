@@ -4,7 +4,7 @@ const express = require('express');
 const router = express.Router();
 const { instantQuery, extractScalar } = require('../lib/queryEngine');
 const { queryAlertmanager } = require('../lib/queryEngine');
-const { getSiteConfig, getPrimaryProvider, getThresholdStatus } = require('../lib/config');
+const { getSiteConfig, getPrimaryProvider, getThresholdStatus, promqlLabelValue } = require('../lib/config');
 
 /**
  * GET /api/health?site=X
@@ -12,7 +12,7 @@ const { getSiteConfig, getPrimaryProvider, getThresholdStatus } = require('../li
  * Throughput KPI now shows speedtest aggregate (line capacity), not live utilization.
  */
 router.get('/', async (req, res) => {
-  const site = req.site;
+  const site = promqlLabelValue(req.site);
   const config = getSiteConfig(site);
 
   if (!config) {
@@ -35,9 +35,9 @@ router.get('/', async (req, res) => {
       // Last incident: most recent alert start time (from Alertmanager resolved alerts)
       queryAlertmanager({}),
       // Optional Overview KPI — greenfield device_snmp (Phase 8 T087)
-      instantQuery(`count(count by (device_name) (up{job="device_snmp"} == 1))`),
-      instantQuery(`count(ifOperStatus{job="device_snmp"} == 1)`),
-      instantQuery(`count(ifOperStatus{job="device_snmp"})`)
+      instantQuery(`count(count by (device_name) (interface_status{job="device_snmp",site="${site}"}))`),
+      instantQuery(`count(interface_status{job="device_snmp",site="${site}"} == 1)`),
+      instantQuery(`count(interface_status{job="device_snmp",site="${site}"})`)
     ]);
 
     const healthScore = healthResult.status === 'fulfilled' ? extractScalar(healthResult.value) : null;
@@ -66,8 +66,9 @@ router.get('/', async (req, res) => {
     }
 
     // Count alerts by severity
-    let alertCount = { firing: 0, warning: 0, critical: 0 };
+    let alertCount = { firing: null, warning: null, critical: null, status: "unavailable" };
     if (alerts.status === 'fulfilled' && Array.isArray(alerts.value)) {
+      alertCount.status = "available";
       const firingAlerts = alerts.value.filter(a => a.status && a.status.state === 'active');
       alertCount.firing = firingAlerts.length;
       alertCount.warning = firingAlerts.filter(a => a.labels?.severity === 'warning').length;
@@ -127,6 +128,9 @@ router.get('/', async (req, res) => {
         ispName
       },
       alertCount,
+      sources: { alertmanager: alertCount.status, metrics: healthResult.status === 'fulfilled' ? 'available' : 'unavailable' },
+      unavailable: alerts.status !== 'fulfilled' || healthResult.status !== 'fulfilled',
+      reason: alerts.status !== 'fulfilled' ? 'Alert monitoring unavailable; alert counts are unknown' : undefined,
       // Present only when device_snmp has series (optional Overview KPI)
       devices: snmpDeviceCount != null && snmpDeviceCount > 0
         ? {
@@ -134,9 +138,8 @@ router.get('/', async (req, res) => {
             portsUp: snmpPortsUp != null ? Math.round(snmpPortsUp) : null,
             portsTotal: snmpPortsTotal != null ? Math.round(snmpPortsTotal) : null,
             status: snmpPortsTotal != null && snmpPortsUp != null && snmpPortsTotal > 0
-              ? (snmpPortsUp / snmpPortsTotal >= 0.9 ? 'healthy'
-                : snmpPortsUp / snmpPortsTotal >= 0.5 ? 'degraded' : 'unhealthy')
-              : 'healthy'
+              ? 'observed'
+              : 'unknown'
           }
         : null
     });

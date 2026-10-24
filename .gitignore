@@ -230,3 +230,6 @@ local-permissions-backup.json
 mcp-servers/hermes-hud-mcp/.venv/
 mcp-servers/hermes-hud-mcp/__pycache__/
 .vite/
+
+# Durable alert receiver queue (local runtime state)
+services/alert-receiver/state/

@@ -20,7 +20,9 @@ groups:
       # stops refreshing its series. Device-agnostic — no hardcoded inventory.
       - alert: DeviceSnmpStale
         expr: |
-          (time() - max by (device_name, site) (timestamp(interface_status{job="device_snmp"}))) > 300
+          max by (device_name, site) (count_over_time(interface_status{job="device_snmp"}[24h]))
+          unless on(device_name, site)
+          max by (device_name, site) (count_over_time(interface_status{job="device_snmp"}[5m]))
         for: 5m
         labels:
           severity: warning
@@ -170,7 +172,7 @@ groups:
       - alert: SyslogIngestNoEntries
         expr: |
           up{job="otel-collector"} == 1
-          and sum(increase(otelcol_receiver_accepted_log_records{job="otel-collector"}[1h])) == 0
+          and on() sum(increase(otelcol_receiver_accepted_log_records{job="otel-collector"}[1h])) == 0
         for: 1h
         labels:
           severity: info

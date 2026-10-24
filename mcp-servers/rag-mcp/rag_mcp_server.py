@@ -566,7 +566,7 @@ def _investigation_collections() -> list:
     """Snapshot collections used for Guardian investigation reuse (Stage 7)."""
     cols = []
     for row in registry.list_documents():
-        if row.get("kind") == "snapshot" and row.get("collection"):
+        if row.get("kind") == "snapshot" and row.get("collection") and row.get("ingest_status") == "ready":
             cols.append(row["collection"])
     # de-dupe preserve order
     seen = set()

@@ -1,3 +1,5 @@
 # Convergence deploy secrets — never commit
 .env
 k8s/secret.yaml
+
+secrets/

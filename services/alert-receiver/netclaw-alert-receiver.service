@@ -16,7 +16,7 @@ Environment=HOME=/home/ubuntu
 EnvironmentFile=-/home/ubuntu/netclaw/services/alert-receiver/.env
 NoNewPrivileges=true
 ProtectSystem=strict
-ReadWritePaths=/home/ubuntu/netclaw/services/alert-receiver /home/ubuntu/.openclaw/workspace/skills
+ReadWritePaths=/home/ubuntu/netclaw/services/alert-receiver /home/ubuntu/.openclaw/workspace/skills /home/ubuntu/.openclaw/rag
 
 [Install]
 WantedBy=multi-user.target

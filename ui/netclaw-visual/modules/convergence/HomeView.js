@@ -7,6 +7,7 @@ const SUBVIEWS = [
   { id: 'overview', label: 'Overview' },
   { id: 'wifi', label: 'Wi‑Fi' },
   { id: 'devices', label: 'Devices' },
+  { id: 'security', label: 'Security' },
   { id: 'diary', label: 'Diary' },
   { id: 'triage', label: 'Triage' },
   { id: 'models', label: 'Models' },
@@ -579,6 +580,7 @@ export class HomeView {
 
       // Health + wifi always — top-right Command Deck metrics (Health / WAN / Wi‑Fi / Alerts)
       this.cache.health = await this.fetch(`/health?site=${this.site}`);
+      if (this.cache.health?.unavailable) this.sourceErrors.overview = this.cache.health.reason || 'Monitoring data incomplete';
       this.cache.wifi = await this.fetch(`/wifi?site=${this.site}`).catch(err => { this.sourceErrors.wifi = err.message; return this.cache.wifi || null; });
 
       if (this.subview === 'devices' || force) {
@@ -589,6 +591,7 @@ export class HomeView {
         // Console action just doesn't render.
         this.cache.terminal = await loadTerminalTargets().catch(() => null);
       }
+      if (this.subview === 'security' || force) this.cache.security = await this.fetch(`/security?site=${this.site}`);
       if (this.subview === 'diary' || force) {
         this.cache.events = await this.fetch(`/events?site=${this.site}&limit=30`);
         // Firing alerts help when diary DB is still empty (fresh Docker)
@@ -688,11 +691,31 @@ export class HomeView {
       overview: () => this.htmlOverview(),
       wifi: () => this.htmlWifi(),
       devices: () => this.htmlDevices(),
+      security: () => this.htmlSecurity(),
       diary: () => this.htmlDiary(),
       triage: () => this.htmlTriage(),
       models: () => this.htmlModels(),
     };
     return (map[this.subview] || map.overview)();
+  }
+
+  htmlSecurity() {
+    const data = this.cache.security;
+    if (!data) return '<p class="home-muted">Loading security observations…</p>';
+    return `<div class="home-section">
+      <h3>Security visibility</h3>
+      <p>Firewall telemetry: <strong>${esc(data.status)}</strong> · observation window ${esc(data.observedWindow || 'unknown')}</p>
+      ${data.reason ? `<p class="home-muted">${esc(data.reason)}</p>` : ''}
+      <div class="home-kpi-grid">
+        <div class="home-kpi"><div class="home-kpi-label">Blocked connections · 1 hour</div><div class="home-kpi-value">${esc(data.blockedConnections?.lastHour ?? 'Unknown')}</div></div>
+        <div class="home-kpi"><div class="home-kpi-label">Blocked connections · 24 hours</div><div class="home-kpi-value">${esc(data.blockedConnections?.last24h ?? 'Unknown')}</div></div>
+      </div>
+      <h3>Intrusion detection</h3><p>${esc(data.intrusionDetection?.reason || 'Sensor coverage unavailable')}</p>
+      <h3>Most frequently blocked sources · 1 hour</h3>
+      <p class="home-muted">A firewall block is an observation. A source needs investigation before it can be classified as malicious.</p>
+      <table class="home-table"><thead><tr><th>Source</th><th>Blocks</th><th>Assessment</th></tr></thead><tbody>
+      ${(data.topSources || []).map(source => `<tr><td>${esc(source.ip)}</td><td>${esc(source.count)}</td><td>${esc(source.classification)}</td></tr>`).join('') || '<tr><td colspan="3">No source observations in this window</td></tr>'}
+      </tbody></table></div>`;
   }
 
   async refreshModels(render = true) {
