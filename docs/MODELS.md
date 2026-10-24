@@ -39,6 +39,10 @@ fallback. Verify availability for your signed-in account before applying a
 preset. Subscription credentials are managed by OpenClaw's auth store, rather
 than being an API key in `.env`.
 
+OpenAI selections applied here default to the existing OpenClaw embedded tool
+runtime, preserving the configured NetClaw MCP integrations. An explicitly
+configured model runtime is preserved.
+
 The apply script supports current `agents.entries` and legacy `agents.list`
 configurations, preserves agent tool restrictions, and uses the selected
 `OPENCLAW_STATE_DIR` / `OPENCLAW_CONFIG_PATH`. It updates the alert agent and
@@ -207,6 +211,15 @@ member environment and its scoped OpenClaw configuration. Changing the Border
 chat/alert defaults does not change the Guardian worker. Subscription auth must
 also be available in the member's selected OpenClaw state directory; an isolated
 member does not automatically inherit credentials from another state directory.
+For the `byrns-risk/guardian-claw` profile, sign in explicitly under that profile:
+
+```bash
+openclaw --profile byrns-risk-guardian-claw models auth login \
+  --provider openai --agent main --device-code
+```
+
+The named profile selects the member's state and service namespace, avoiding a
+conflict with the installed Border Gateway when writing credentials.
 
 ## How this relates to investigation policy (Phase 9)
 

@@ -301,7 +301,11 @@ for aid, agent in records:
     elif aid == "main" and "model" in agent: agent["model"] = dict(model)
 allowed_models = defaults.setdefault("models", {})
 for ref in [brain, alert, fallback, *model.get("fallbacks", [])]:
-    if ref: allowed_models.setdefault(ref, {})
+    if ref:
+        metadata = allowed_models.setdefault(ref, {})
+        # Preserve the existing MCP/tool runtime for direct and subscription OpenAI.
+        if ref.startswith("openai/"):
+            metadata.setdefault("agentRuntime", {"id": "openclaw"})
 
 hooks = d.setdefault("hooks", {})
 mappings = hooks.get("mappings")

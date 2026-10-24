@@ -51,4 +51,6 @@ test('model apply updates current agent entries, respects selected state, and cl
   assert.deepEqual(openai.agents.defaults.model, { primary: 'openai/gpt-6.1-sol', fallbacks: ['openai/gpt-6-luna'] });
   assert.deepEqual(openai.agents.entries.alert.model, { primary: 'openai/gpt-6-luna', fallbacks: [] });
   assert.equal(openai.hooks.mappings[0].model, 'openai/gpt-6-luna');
+  assert.equal(openai.agents.defaults.models['openai/gpt-6.1-sol'].agentRuntime.id, 'openclaw');
+  assert.equal(openai.agents.defaults.models['openai/gpt-6-luna'].agentRuntime.id, 'openclaw');
 });
