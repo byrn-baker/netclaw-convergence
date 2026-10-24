@@ -52,7 +52,7 @@ test('local Pal shares the Chat draft and thread; avatar choice never starts Tav
   typeChat(window,document,'Keep this question while I choose a Pal');await settle();
   const chat=document.querySelector('.standard-chat');
   click(document,'Avatar');await settle();
-  assert.deepEqual([...document.querySelector('[aria-label="Chat interface"]').querySelectorAll('button,a')].map(node=>node.textContent),['Chat','Canvas','OpenClaw ↗','Avatar']);
+  assert.deepEqual([...document.querySelector('[aria-label="Chat interface"]').querySelectorAll('button,a')].map(node=>node.textContent),['Chat','Canvas','OpenClaw ↗','Avatar','Convergence']);
   assert.equal([...document.querySelectorAll('nav button')].some(button=>/Avatar|Pal/.test(button.textContent)),false);
   assert.equal(document.querySelector('.standard-chat'),chat);
   assert.equal(document.querySelectorAll('#standard-chat-message').length,1);
@@ -209,4 +209,135 @@ test('Avatar quiet preference survives switching views and never starts automati
   click(document,'00Chat');await settle();click(document,'Avatar');await settle();
   assert.ok([...document.querySelectorAll('button')].find(button=>button.textContent==='Read latest reply'));
   assert.equal(speech.length,0);assert.deepEqual(errors,[]);
+});
+
+function convergenceFetch(calls, override = () => undefined) {
+  return async (url, options = {}) => {
+    calls.push([url, options]);
+    const path = new URL(url, 'http://localhost').pathname;
+    const fixtures = {
+      '/api/home/status': { configured: true },
+      '/api/home/sites': { sites: [{ id: 'branch', name: 'Branch' }, { id: 'home', name: 'Home' }] },
+      '/api/home/health': { site: 'branch', healthScore: { value: 97, status: 'healthy' }, wanLatency: { value: 8 }, wanLoss: { value: 0 }, alertCount: { firing: 1 } },
+      '/api/home/wifi': { clients: { wireless: 24, wired: 6, total: 30 } },
+      '/api/home/devices': { switches: [{ name: 'BranchSwitch', status: 'up', portsUp: 8, portsTotal: 24 }] },
+      '/api/home/events/escalated': { events: [{ id: 'case-1', alert_name: 'LinkDown', message: 'Branch uplink needs review', status: 'escalated', severity: 'warning' }] },
+      '/api/home/events': { events: [{ id: 'case-1', alert_name: 'LinkDown', message: 'Investigation recorded', status: 'escalated' }] },
+      '/api/home/events/case-1/reinvestigate': { reinvestigate: { status: 'accepted' } },
+      '/api/models': { sot: { brain: 'provider/brain', alert: 'provider/alert', fallback: '', file: '.env' }, live: {} },
+      '/api/graph': { devices: [{ name: 'BranchSwitch', protocol: 'ssh' }] },
+      '/api/ssh/capabilities': { enabled: true, dedicatedAccount: true },
+      '/api/chat/models': { models: [] },
+    };
+    const changed = override(path, url, options);
+    if (changed instanceof Error) throw changed;
+    const data = changed ?? fixtures[path] ?? {};
+    return { ok: true, status: 200, json: async () => data, text: async () => JSON.stringify(data) };
+  };
+}
+
+test('Convergence loads on demand, discovers sites, and preserves the Chat draft and device section', async t => {
+  const calls = [];
+  const { document, window, errors } = await app(t, false, convergenceFetch(calls));
+  typeChat(window, document, 'Keep my network question');
+  assert.equal(calls.some(([url]) => url.startsWith('/api/home')), false);
+  window.localStorage.setItem('netclaw.convergence.site', 'retired-site');
+  click(document, 'Convergence');
+  await waitFor(() => document.querySelector('.home-kpi-value')?.textContent === '97', 'live Convergence metrics');
+  assert.equal(document.querySelector('h1').textContent, 'Convergence.');
+  assert.equal(document.querySelector('[aria-label="Search entities and capabilities"]'), null);
+  await waitFor(() => document.querySelector('.heading-actions').textContent.includes('Convergence available'), 'Convergence connection status');
+  assert.equal(document.querySelector('#home-site-select').value, 'branch');
+  document.querySelector('[data-home-sub="devices"]').click();
+  await waitFor(() => document.querySelector('[data-console-device="BranchSwitch"]'), 'device console action');
+  assert.equal(calls.filter(([url]) => url.startsWith('/api/home/devices')).length, 1, 'inline toolbar does not bind duplicate listeners');
+  const workspace = document.querySelector('.convergence-workspace');
+  click(document, '00Chat'); await settle();
+  assert.equal(workspace.hidden, true);
+  assert.equal(document.querySelector('#standard-chat-message').value, 'Keep my network question');
+  click(document, 'Convergence'); await settle();
+  assert.equal(document.querySelector('.convergence-workspace'), workspace);
+  assert.equal(document.querySelector('[data-home-sub="devices"]').getAttribute('aria-pressed'), 'true');
+  assert.match(workspace.textContent, /BranchSwitch/);
+  assert.deepEqual(errors, []);
+});
+
+test('Convergence preserves triage notes across sections and sends feedback with the active site', async t => {
+  const calls = [];
+  const { document, window, errors } = await app(t, false, convergenceFetch(calls));
+  window.localStorage.setItem('netclaw.convergence.site', 'retired-site');
+  click(document, 'Convergence');
+  await waitFor(() => document.querySelector('.home-kpi-value'), 'Convergence');
+  document.querySelector('[data-home-sub="triage"]').click();
+  const notes = await waitFor(() => document.querySelector('.home-triage-textarea'), 'triage notes');
+  notes.value = 'Check the peer and keep this context';
+  notes.dispatchEvent(new window.Event('input', { bubbles: true }));
+  document.querySelector('[data-home-sub="wifi"]').click(); await settle();
+  document.querySelector('[data-home-sub="triage"]').click(); await settle();
+  assert.equal(document.querySelector('.home-triage-textarea').value, notes.value);
+  document.querySelector('[data-triage-action="need_more"]').click();
+  await waitFor(() => calls.find(([url, opts]) => url.includes('/reinvestigate') && opts.method === 'POST'), 'feedback request');
+  const [url, options] = calls.find(([url, opts]) => url.includes('/reinvestigate') && opts.method === 'POST');
+  assert.equal(url, '/api/home/events/case-1/reinvestigate?site=branch');
+  assert.deepEqual(JSON.parse(options.body), { expert_feedback: notes.value, site: 'branch' });
+  await settle();
+  const picker = document.querySelector('#home-site-select');
+  picker.value = 'home'; picker.dispatchEvent(new window.Event('change', { bubbles: true }));
+  await waitFor(() => window.localStorage.getItem('netclaw.convergence.site') === 'home' && !document.querySelector('#home-site-select').disabled, 'site switch');
+  assert.equal(document.querySelector('.home-triage-textarea').value, '');
+  assert.deepEqual(errors, []);
+});
+
+test('Convergence keeps Models drafts while navigating and passes site observations to Canvas without inference', async t => {
+  const calls = [];
+  const { document, window, errors } = await app(t, false, convergenceFetch(calls));
+  window.localStorage.setItem('netclaw.convergence.site', 'retired-site');
+  click(document, 'Convergence');
+  await waitFor(() => document.querySelector('.home-kpi-value'), 'Convergence');
+  document.querySelector('[data-home-sub="models"]').click();
+  const brain = await waitFor(() => document.querySelector('[data-models-field="brain"]'), 'Models');
+  brain.value = 'provider/my-draft'; brain.dispatchEvent(new window.Event('input', { bubbles: true }));
+  click(document, '00Chat'); await settle(); click(document, 'Convergence'); await settle();
+  assert.equal(document.querySelector('[data-models-field="brain"]').value, 'provider/my-draft');
+  assert.equal([...document.querySelectorAll('button')].find(b => b.textContent === 'Investigate in Canvas ↗').disabled, true);
+  document.querySelector('[data-home-sub="overview"]').click(); await settle();
+  click(document, 'Investigate in Canvas ↗'); await settle();
+  assert.match(document.querySelector('h1').textContent, /Canvas/);
+  assert.match(document.querySelector('.context-review pre').textContent, /Convergence · branch · overview/);
+  assert.match(document.querySelector('.context-review pre').textContent, /\/api\/home\/health/);
+  assert.equal(calls.some(([url, options]) => /^\/api\/(home|models|ssh)/.test(url) && options.method && options.method !== 'GET'), false);
+  assert.equal(calls.some(([url]) => url === '/api/chat'), false);
+  assert.deepEqual(errors, []);
+});
+
+test('Convergence reports API and diary failures without presenting an empty queue as healthy', async t => {
+  const calls = []; let failed = false;
+  const { document, window, errors } = await app(t, false, convergenceFetch(calls, path => {
+    if (path === '/api/home/events/escalated') return { unavailable: true, reason: 'Diary database offline', events: [] };
+    if (failed && path === '/api/home/health') return new Error('Telemetry offline');
+  }));
+  window.localStorage.setItem('netclaw.convergence.site', 'retired-site');
+  click(document, 'Convergence');
+  await waitFor(() => document.querySelector('.home-kpi-value'), 'Convergence');
+  document.querySelector('[data-home-sub="triage"]').click();
+  await waitFor(() => document.querySelector('.home-panel').textContent.includes('Diary database offline'), 'unavailable queue');
+  assert.doesNotMatch(document.querySelector('.home-panel').textContent, /Queue empty|No escalated cases/);
+  assert.match(document.querySelector('.heading-actions').textContent, /Convergence unavailable/);
+  failed = true;
+  document.querySelector('[data-home-sub="overview"]').click();
+  await waitFor(() => document.querySelector('.home-panel').textContent.includes('Telemetry offline'), 'failed refresh');
+  assert.match(document.querySelector('.convergence-source').textContent, /showing previous observations/);
+  assert.equal(document.querySelector('.home-kpi-value').textContent, '97');
+  assert.deepEqual(errors, []);
+});
+
+test('synthetic preview Convergence never reads or changes the live network', async t => {
+  const calls = [];
+  const { document, errors } = await app(t, true, convergenceFetch(calls));
+  click(document, 'Convergence');
+  await waitFor(() => document.querySelector('.convergence-workspace'), 'preview Convergence');
+  assert.match(document.querySelector('.convergence-workspace').textContent, /disabled in this synthetic preview/);
+  assert.equal(document.querySelector('[aria-label="Refresh Convergence sources"]').disabled, true);
+  assert.equal(calls.length, 0);
+  assert.deepEqual(errors, []);
 });

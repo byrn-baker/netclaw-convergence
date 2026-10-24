@@ -53,7 +53,7 @@ async function homeFetch(path, options = {}) {
     method,
     headers,
     body,
-    signal: AbortSignal.timeout(options.timeoutMs || 25000),
+    signal: options.signal ? AbortSignal.any([options.signal, AbortSignal.timeout(options.timeoutMs || 25000)]) : AbortSignal.timeout(options.timeoutMs || 25000),
   });
   const text = await res.text();
   let data = null;
@@ -145,7 +145,13 @@ function consoleAction(name, terminal) {
 }
 
 export class HomeView {
-  constructor(rootEl) {
+  constructor(rootEl, options = {}) {
+    this.options = options;
+    this.disposed = false;
+    this.requests = new Set();
+    this.notesDrafts = new Map();
+    this.lastSuccess = null;
+    this.readTimes = {};
     this.root = rootEl;
     this.subview = 'overview';
     /** Active site id. Seeded from the operator's last choice, then confirmed
@@ -162,6 +168,7 @@ export class HomeView {
     this.chrome = null;
     this.cache = {};
     this.lastError = null;
+    this.sourceErrors = {};
     this.loading = false;
     /** @type {string|null} selected escalated event id */
     this.selectedEventId = null;
@@ -171,6 +178,29 @@ export class HomeView {
     this.modelsFlash = null; // { kind, message }
     /** @type {{ brain?: string, alert?: string, fallback?: string }|null} */
     this.modelsDraft = null;
+  }
+
+  async fetch(path, options = {}) {
+    if (this.disposed) throw new Error('Convergence workspace closed');
+    const controller = new AbortController();
+    this.requests.add(controller);
+    try {
+      const data = await homeFetch(path, { ...options, signal: controller.signal });
+      if ((!options.method || options.method === 'GET') && !data?.unavailable) {
+        const key = path.startsWith('/events/escalated') ? 'escalated' : path.slice(1).split(/[/?]/)[0];
+        this.readTimes[key] = new Date().toISOString();
+      }
+      return data;
+    }
+    finally { this.requests.delete(controller); }
+  }
+
+  destroy() {
+    this.disposed = true;
+    this.requests.forEach(controller => controller.abort());
+    this.requests.clear();
+    this.chrome?.remove();
+    this.element?.remove();
   }
 
   mount() {
@@ -203,7 +233,7 @@ export class HomeView {
    * position rather than dropping the controls entirely.
    */
   mountChrome() {
-    const host = document.getElementById('home-topbar-slot');
+    const host = this.options.embedded ? null : document.getElementById('home-topbar-slot');
     this.chrome = document.createElement('div');
     this.chrome.className = host ? 'home-toolbar home-toolbar--topbar' : 'home-toolbar';
     this.chrome.innerHTML = this.templateToolbar();
@@ -228,10 +258,10 @@ export class HomeView {
   }
 
   qsa(sel) {
-    return [
+    return [...new Set([
       ...(this.element?.querySelectorAll(sel) || []),
       ...(this.chrome?.querySelectorAll(sel) || []),
-    ];
+    ])];
   }
 
   templateShell() {
@@ -245,12 +275,12 @@ export class HomeView {
   templateToolbar() {
     const buttons = SUBVIEWS.map(
       (s) =>
-        `<button type="button" class="home-sub-btn${s.id === this.subview ? ' active' : ''}" data-home-sub="${s.id}">${s.label}</button>`,
+        `<button type="button" aria-pressed="${s.id === this.subview}" class="home-sub-btn${s.id === this.subview ? ' active' : ''}" data-home-sub="${s.id}">${s.label}</button>`,
     ).join('');
     return `
       <div class="home-toolbar-left">
         <p class="eyebrow home-toolbar-title">NetClaw Convergence</p>
-        <div class="home-segmented" role="tablist" aria-label="Convergence sections">
+        <div class="home-segmented" role="group" aria-label="Convergence sections">
           ${buttons}
         </div>
       </div>
@@ -270,6 +300,7 @@ export class HomeView {
         this.subview = btn.dataset.homeSub;
         this.qsa('.home-sub-btn[data-home-sub]').forEach((b) => {
           b.classList.toggle('active', b.dataset.homeSub === this.subview);
+          b.setAttribute('aria-pressed', String(b.dataset.homeSub === this.subview));
         });
         this.renderSubview();
         this.refresh();
@@ -285,7 +316,7 @@ export class HomeView {
       this.selectSite(ev.target.value);
     };
     this.element.addEventListener('change', onChange);
-    this.chrome?.addEventListener('change', onChange);
+    if (!this.element.contains(this.chrome)) this.chrome?.addEventListener('change', onChange);
 
 
     // Models panel actions
@@ -299,6 +330,10 @@ export class HomeView {
     });
     this.element.addEventListener('input', (ev) => {
       const t = ev.target;
+      if (t?.classList.contains('home-triage-textarea')) {
+        this.notesDrafts.set(t.dataset.eventId, t.value);
+        return;
+      }
       if (!t || !t.getAttribute || !t.getAttribute('data-models-field')) return;
       if (!this.modelsDraft) this.modelsDraft = {};
       this.modelsDraft[t.getAttribute('data-models-field')] = t.value;
@@ -365,20 +400,20 @@ export class HomeView {
   }
 
   notesFromForm(eventId) {
-    const elId = `triage-notes-${String(eventId)}`;
-    const ta = this.element?.querySelector(`textarea[id="${elId}"]`);
+    const ta = this.element?.querySelector('.home-triage-textarea');
+    if (ta?.dataset.eventId !== String(eventId)) return (this.notesDrafts.get(String(eventId)) || '').trim();
     return (ta?.value || '').trim();
   }
 
   async handleTriageAction(action, eventId) {
     if (this.triageBusy) return;
+    const notes = this.notesFromForm(eventId);
     this.triageBusy = true;
     this.triageFlash = null;
     this.renderSubview();
-    const notes = this.notesFromForm(eventId);
     try {
       if (action === 'need_more') {
-        const res = await homeFetch(`/events/${encodeURIComponent(eventId)}/reinvestigate?site=${this.site}`, {
+        const res = await this.fetch(`/events/${encodeURIComponent(eventId)}/reinvestigate?site=${this.site}`, {
           method: 'POST',
           body: { expert_feedback: notes || undefined, site: this.site },
         });
@@ -411,7 +446,7 @@ export class HomeView {
           body.severity = action === 'correct' ? 'ok' : undefined;
         }
         // incorrect / partial stay escalated unless notes say otherwise
-        await homeFetch(`/events/${encodeURIComponent(eventId)}?site=${this.site}`, {
+        await this.fetch(`/events/${encodeURIComponent(eventId)}?site=${this.site}`, {
           method: 'PATCH',
           body,
         });
@@ -429,11 +464,11 @@ export class HomeView {
         if (action === 'correct' || action === 'resolve') this.selectedEventId = null;
       }
       // Refresh queue
-      this.cache.escalated = await homeFetch(`/events/escalated?site=${this.site}`).catch(async () =>
-        homeFetch(`/events?site=${this.site}&status=escalated&limit=20`),
+      this.cache.escalated = await this.fetch(`/events/escalated?site=${this.site}`).catch(async () =>
+        this.fetch(`/events?site=${this.site}&status=escalated&limit=20`),
       );
       // Keep diary warm
-      this.cache.events = await homeFetch(`/events?site=${this.site}&limit=30`).catch(() => this.cache.events);
+      this.cache.events = await this.fetch(`/events?site=${this.site}&limit=30`).catch(() => this.cache.events);
     } catch (err) {
       this.triageFlash = {
         kind: 'error',
@@ -459,7 +494,7 @@ export class HomeView {
     if (this.sites.length) return;
     let sites = [];
     try {
-      const res = await homeFetch('/sites');
+      const res = await this.fetch('/sites');
       sites = Array.isArray(res?.sites) ? res.sites : [];
     } catch {
       return; // keep this.site as-is
@@ -495,22 +530,27 @@ export class HomeView {
     }).join('');
     slot.innerHTML = `
       <label class="home-site-label" for="home-site-select">Site</label>
-      <select class="home-site-select" id="home-site-select" aria-label="Active site">${opts}</select>`;
+      <select class="home-site-select" id="home-site-select" aria-label="Active site" ${this.loading || this.triageBusy || this.modelsBusy ? 'disabled' : ''}>${opts}</select>`;
   }
 
   /** Switch site, persist the choice, and reload everything scoped to it. */
   async selectSite(siteId) {
     if (!siteId || siteId === this.site) return;
+    if (this.loading || this.triageBusy || this.modelsBusy) return;
     if (this.sites.length && !this.sites.some((s) => s.id === siteId)) return;
     this.site = siteId;
     writeStoredSite(siteId);
     // Site-scoped caches are now stale; keep only the site list.
     this.cache = {};
+    this.notesDrafts.clear();
+    this.lastSuccess = null;
+    this.readTimes = {};
     this.selectedEventId = null;
     await this.refresh(true);
   }
 
   async refresh(force = false) {
+    if (this.disposed) return;
     // Coalesce concurrent refreshes; still run one more pass if requested while busy
     if (this.loading) {
       this._refreshAgain = true;
@@ -518,9 +558,10 @@ export class HomeView {
     }
     this.loading = true;
     this.lastError = null;
+    this.sourceErrors = {};
     this.renderSubview(); // show loading
     try {
-      const status = await homeFetch('/status').catch(() => ({ configured: false }));
+      const status = await this.fetch('/status').catch(() => ({ configured: false }));
       this.cache.status = status;
 
       if (!status.configured) {
@@ -537,11 +578,11 @@ export class HomeView {
       await this.discoverSites();
 
       // Health + wifi always — top-right Command Deck metrics (Health / WAN / Wi‑Fi / Alerts)
-      this.cache.health = await homeFetch(`/health?site=${this.site}`);
-      this.cache.wifi = await homeFetch(`/wifi?site=${this.site}`).catch(() => this.cache.wifi || null);
+      this.cache.health = await this.fetch(`/health?site=${this.site}`);
+      this.cache.wifi = await this.fetch(`/wifi?site=${this.site}`).catch(err => { this.sourceErrors.wifi = err.message; return this.cache.wifi || null; });
 
       if (this.subview === 'devices' || force) {
-        this.cache.devices = await homeFetch(`/devices?site=${this.site}`);
+        this.cache.devices = await this.fetch(`/devices?site=${this.site}`);
         // Which of these are reachable by the HUD SSH terminal. Two local
         // endpoints (not convergence-api): the pyATS testbed inventory, and
         // whether the terminal is enabled at all. Failures are non-fatal — the
@@ -549,19 +590,20 @@ export class HomeView {
         this.cache.terminal = await loadTerminalTargets().catch(() => null);
       }
       if (this.subview === 'diary' || force) {
-        this.cache.events = await homeFetch(`/events?site=${this.site}&limit=30`);
+        this.cache.events = await this.fetch(`/events?site=${this.site}&limit=30`);
         // Firing alerts help when diary DB is still empty (fresh Docker)
-        this.cache.alerts = await homeFetch(`/alerts?site=${this.site}`).catch(() => null);
+        this.cache.alerts = await this.fetch(`/alerts?site=${this.site}`).catch(() => null);
       }
       if (this.subview === 'triage' || force) {
-        this.cache.escalated = await homeFetch(`/events/escalated?site=${this.site}`).catch(async () =>
-          homeFetch(`/events?site=${this.site}&status=escalated&limit=20`),
+        this.cache.escalated = await this.fetch(`/events/escalated?site=${this.site}`).catch(async () =>
+          this.fetch(`/events?site=${this.site}&status=escalated&limit=20`),
         );
       }
       if (this.subview === 'models' || force) {
         await this.refreshModels(false);
       }
 
+      this.lastSuccess = new Date().toISOString();
       this.syncTopbarMetrics(this.cache.health);
     } catch (err) {
       this.lastError = {
@@ -582,6 +624,7 @@ export class HomeView {
   }
 
   syncTopbarMetrics(health) {
+    if (this.options.embedded || this.disposed) return;
     const set = (id, v) => {
       const el = document.getElementById(id);
       if (el) el.textContent = v;
@@ -607,6 +650,8 @@ export class HomeView {
   }
 
   renderSubview() {
+    if (this.disposed) return;
+    this.options.onUpdate?.(this);
     const body = this.element?.querySelector('#home-panel-body');
     if (!body) return;
 
@@ -623,7 +668,7 @@ export class HomeView {
         this.htmlBodyForSubview();
       return;
     }
-    body.innerHTML = this.htmlBodyForSubview();
+    body.innerHTML = (this.sourceErrors[this.subview] ? this.htmlBanner('down', this.sourceErrors[this.subview]) : '') + this.htmlBodyForSubview();
   }
 
   htmlBanner(kind, message) {
@@ -632,7 +677,7 @@ export class HomeView {
       kind === 'down' ? 'API unreachable' :
       kind === 'loading' ? 'Loading' : 'Error';
     return `
-      <div class="home-banner home-banner-${esc(kind)}">
+      <div class="home-banner home-banner-${esc(kind)}" role="status">
         <span class="home-badge ${kind === 'loading' ? '' : 'mock'}">${esc(label)}</span>
         <p class="home-muted" style="margin:8px 0 16px">${esc(message)}</p>
       </div>`;
@@ -734,7 +779,7 @@ export class HomeView {
     if (err && !sot.file) {
       return `
         <div class="home-panel-header">
-          <div><p class="eyebrow">OpenClaw</p><h2>MODELS</h2></div>
+          <div><p class="eyebrow">OpenClaw</p><h2>Models</h2></div>
         </div>
         ${flash}
         <p class="home-muted">Could not load model status: ${esc(err)}</p>`;
@@ -746,17 +791,17 @@ export class HomeView {
       <div class="home-panel-header">
         <div>
           <p class="eyebrow">SoT · netclaw/.env</p>
-          <h2>MODELS</h2>
+          <h2>Models</h2>
         </div>
         <button type="button" class="home-refresh-btn" data-models-action="reload" ${this.modelsBusy ? 'disabled' : ''}>Reload</button>
       </div>
       ${flash}
       <p class="home-muted">
-        One place to set brains. Edit fields (or pick a preset), then <strong>Apply &amp; restart gateway</strong>.
+        ${this.options.embedded ? 'Choose the models used for interactive chat and alert investigations. Applying a change restarts the gateway; investigations already running keep their original model.' : `One place to set brains. Edit fields (or pick a preset), then <strong>Apply &amp; restart gateway</strong>.
         Writes <code>NETCLAW_BRAIN_MODEL</code> / <code>NETCLAW_ALERT_TRIAGE_MODEL</code> in
         <code>${esc(sot.file || '…/netclaw/.env')}</code>, projects into
         <code>~/.openclaw/openclaw.json</code> + <code>gateway.systemd.env</code>.
-        CLI: <code>./scripts/netclaw-apply-models.sh show|apply|preset cloud-flash</code>
+        CLI: <code>./scripts/netclaw-apply-models.sh show|apply|preset cloud-flash</code>`}
       </p>
       <div class="home-models-grid">
         <div class="home-models-card">
@@ -812,7 +857,7 @@ export class HomeView {
     if (!h) {
       return `
         <div class="home-panel-header">
-          <div><p class="eyebrow">Site · ${esc(this.site)}</p><h2>OVERVIEW</h2></div>
+          <div><p class="eyebrow">Site · ${esc(this.site)}</p><h2>Overview</h2></div>
         </div>
         <p class="home-muted">No health data yet. Click Refresh after configuring Home API.</p>`;
     }
@@ -822,14 +867,14 @@ export class HomeView {
     const loss = h.wanLoss?.value;
     const dl = h.speedtest?.download;
     const ul = h.speedtest?.upload;
-    const firing = h.alertCount?.firing ?? 0;
+    const firing = h.alertCount?.firing;
     const dual = this.cache.status?.dualRun;
 
     return `
       <div class="home-panel-header">
         <div>
           <p class="eyebrow">Site · ${esc(h.site || this.site)}</p>
-          <h2>OVERVIEW</h2>
+          <h2>Overview</h2>
         </div>
         <span class="home-badge${dual ? '' : ''}">${dual ? 'Dual-run · pilot Guardian' : 'Live'}</span>
       </div>
@@ -860,7 +905,7 @@ export class HomeView {
         </div>
         <div class="home-kpi">
           <div class="home-kpi-label">Firing alerts</div>
-          <div class="home-kpi-value ${firing > 0 ? 'warn' : 'ok'}">${esc(firing)}</div>
+          <div class="home-kpi-value ${firing == null ? '' : firing > 0 ? 'warn' : 'ok'}">${esc(firing ?? '—')}</div>
         </div>
         ${h.devices?.snmpSwitches != null ? `
         <div class="home-kpi" title="Greenfield device_snmp — campus switches">
@@ -872,10 +917,10 @@ export class HomeView {
           }</span></div>
         </div>` : ''}
       </div>
-      <p class="home-section-title">Pipeline</p>
+      <p class="home-section-title">Network Guardian</p>
       <p class="home-muted">
-        Metrics → Alertmanager → alert-receiver → risk investigator (guardian-claw) → diary / triage.
-        Convergence tab proxies <code>/api/home/*</code> to convergence-api (or pilot Network Guardian during dual-run).
+        ${this.options.embedded ? 'Review site telemetry here, follow investigations in Diary, and handle escalated cases in Triage. Send observations to Canvas to continue an investigation with NetClaw.' : `Metrics → Alertmanager → alert-receiver → risk investigator (guardian-claw) → diary / triage.
+        Convergence tab proxies <code>/api/home/*</code> to convergence-api (or pilot Network Guardian during dual-run).`}
       </p>
     `;
   }
@@ -883,7 +928,7 @@ export class HomeView {
   htmlWifi() {
     const w = this.cache.wifi;
     if (!w) {
-      return `<div class="home-panel-header"><div><p class="eyebrow">Wireless</p><h2>WI‑FI</h2></div></div>
+      return `<div class="home-panel-header"><div><p class="eyebrow">Wireless</p><h2>Wi‑Fi</h2></div></div>
         <p class="home-muted">No Wi‑Fi data loaded. Click Refresh.</p>`;
     }
     const clients = w.clients || {};
@@ -930,7 +975,7 @@ export class HomeView {
       <div class="home-panel-header">
         <div>
           <p class="eyebrow">Wireless · ${esc(clients.wireless ?? '—')} clients</p>
-          <h2>WI‑FI</h2>
+          <h2>Wi‑Fi</h2>
         </div>
         <span class="home-badge${hasSeries ? '' : ' mock'}">${hasSeries ? 'Live · unifi_*' : 'Waiting · unifi'}</span>
       </div>
@@ -954,7 +999,7 @@ export class HomeView {
   htmlDevices() {
     const d = this.cache.devices;
     if (!d) {
-      return `<div class="home-panel-header"><div><p class="eyebrow">Inventory</p><h2>DEVICES</h2></div></div>
+      return `<div class="home-panel-header"><div><p class="eyebrow">Inventory</p><h2>Devices</h2></div></div>
         <p class="home-muted">No device data loaded. Click Refresh.</p>`;
     }
 
@@ -1111,7 +1156,7 @@ export class HomeView {
 
     return `
       <div class="home-panel-header">
-        <div><p class="eyebrow">Edge · APs · probes</p><h2>DEVICES</h2></div>
+        <div><p class="eyebrow">Edge · APs · probes</p><h2>Devices</h2></div>
         <span class="home-badge">Live</span>
       </div>
       ${body}
@@ -1121,6 +1166,7 @@ export class HomeView {
   htmlDiary() {
     const ev = this.cache.events;
     const events = ev?.events || ev?.items || [];
+    if (ev?.unavailable) return this.htmlBanner('down', ev.reason || 'Investigation diary is unavailable.');
     const alerts = this.cache.alerts;
     const firing = alerts?.firing || alerts?.alerts || [];
     const rows = events
@@ -1150,7 +1196,7 @@ export class HomeView {
 
     return `
       <div class="home-panel-header">
-        <div><p class="eyebrow">Investigations</p><h2>DIARY</h2></div>
+        <div><p class="eyebrow">Investigations</p><h2>Diary</h2></div>
         <span class="home-badge">Live · events</span>
       </div>
       ${!events.length ? `
@@ -1177,6 +1223,7 @@ export class HomeView {
   }
 
   htmlTriage() {
+    if (this.cache.escalated?.unavailable) return this.htmlBanner('down', this.cache.escalated.reason || 'Operator queue is unavailable.');
     const events = this.getEscalatedEvents();
     const selected = this.getSelectedEvent();
     const flash = this.triageFlash
@@ -1252,8 +1299,8 @@ export class HomeView {
             </div>` : ''}
           <label class="home-triage-field" for="triage-notes-${esc(id)}">
             <span class="home-triage-label">Your notes (optional)</span>
-            <textarea id="triage-notes-${esc(id)}" class="home-triage-textarea" rows="3"
-              placeholder="Context for the investigator or diary…"></textarea>
+            <textarea id="triage-notes-${esc(id)}" class="home-triage-textarea" data-event-id="${esc(id)}" rows="3"
+              placeholder="Context for the investigator or diary…">${esc(this.notesDrafts.get(String(id)) || '')}</textarea>
           </label>
           <div class="home-triage-actions" role="group" aria-label="Feedback">
             <button type="button" class="home-triage-btn ok" data-triage-action="correct" data-event-id="${esc(id)}"
@@ -1276,7 +1323,7 @@ export class HomeView {
 
     return `
       <div class="home-panel-header">
-        <div><p class="eyebrow">Operator queue</p><h2>TRIAGE</h2></div>
+        <div><p class="eyebrow">Operator queue</p><h2>Triage</h2></div>
         <span class="home-badge">Live · ${esc(String(events.length))} escalated</span>
       </div>
       ${flash}

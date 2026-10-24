@@ -1,7 +1,16 @@
 # Convergence
 
 Site health portal for the HUD — WAN and Wi-Fi status, device inventory, an event
-diary, and an operator triage panel. Adds a `CONVERGENCE` tab alongside `COMMAND`.
+diary, and an operator triage panel. Adds **Convergence** beside Chat, Canvas,
+OpenClaw and Avatar in the default HUD, and `CONVERGENCE` alongside `COMMAND`
+in the classic HUD.
+
+The default HUD mounts the shared controller inline, with its own scoped skin.
+Site/section selections, model drafts and operator notes survive switching
+workspaces. Active telemetry refreshes every 30 seconds, pausing while a form
+has focus or an operation is busy. The page Refresh action refreshes Convergence
+as well. **Investigate in Canvas** stages the current section's observations,
+site and read time for review; it never sends a chat request automatically.
 
 Proxies to [convergence-api](../../../convergence-api/); the browser never talks
 to it directly, so its URL and token stay server-side.
@@ -26,8 +35,8 @@ Restart the HUD, then:
 curl -s localhost:3001/api/modules | jq '.modules[] | select(.id=="convergence")'
 ```
 
-With the URL unset the module is skipped entirely: no routes, no tab, no CSS in
-the bundle.
+With the URL unset the backend and classic module are skipped. The default
+HUD's lazy workspace shows configuration guidance when opened.
 
 ## What it owns
 
@@ -38,8 +47,13 @@ the bundle.
 | `HomeView.js` | the view — overview, wifi, devices, diary, triage, models subviews |
 | `tab-router.js` | `COMMAND` \| `CONVERGENCE` switching |
 | `home.css` | module-owned stylesheet |
+| `DashboardView.jsx` | inline React lifecycle adapter, telemetry status and Canvas handoff |
+| `dashboard.css` | scoped default-HUD skin using its design tokens |
 
-Nothing under `src/` references this directory. Deleting it removes Convergence.
+The default HUD has a small labelled hook in `src/dashboard/Dashboard.jsx` and
+a fork-owned adapter in `src/fork-local/DashboardConvergence.jsx`. The latter
+provides the existing terminal event contract without loading classic HUD
+chrome. Feature code remains here; classic integration remains in `ui.js`.
 
 ## Dependencies on the rest of the HUD
 

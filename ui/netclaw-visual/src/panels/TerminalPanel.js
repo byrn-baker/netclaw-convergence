@@ -167,7 +167,8 @@ export async function openTerminalPanel(deviceName) {
     term.writeln('');
     term.writeln('\x1b[90mThe terminal is opt-in. Enable with HUD_SSH_ENABLED=1 after');
     term.writeln('reading docs/SSH-TERMINAL-HARDENING.md.\x1b[0m');
-    active = { root, term, session: null, stream: null };
+    active = { root, term, session: null, stream: null, onThemeChange };
+    root.querySelector('#tp-close').addEventListener('click', closeTerminalPanel);
     return;
   }
 
