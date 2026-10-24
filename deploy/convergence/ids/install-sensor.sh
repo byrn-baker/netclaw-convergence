@@ -30,6 +30,7 @@ netplan generate
 ip link set dev "$IDS_INTERFACE" mtu 9000
 mkdir -p config rules staging-rules logs
 chmod 700 . logs
+chown root:root .
 docker pull "$SURICATA_IMAGE"
 container=$(docker create "$SURICATA_IMAGE")
 trap 'docker rm "$container" >/dev/null 2>&1 || true' EXIT
@@ -50,4 +51,4 @@ docker create --name netclaw-suricata --network host --restart no \
   --entrypoint suricata "$SURICATA_IMAGE" -c /etc/suricata/suricata.yaml --af-packet="$IDS_INTERFACE"
 install -m 644 netclaw-ids-*.service netclaw-ids-rules.timer /etc/systemd/system/
 systemctl daemon-reload
-systemctl enable --now netclaw-ids-capture netclaw-ids-shipper netclaw-ids-rules.timer
+systemctl enable --now netclaw-ids-capture netclaw-ids-shipper netclaw-ids-rules.timer netclaw-ids-probe

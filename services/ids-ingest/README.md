@@ -17,6 +17,17 @@ health. Delivery retries without expiring pending records. Use one Uvicorn worke
 and durable local storage. Credentials and TLS keys are generated outside source
 control by `deploy/convergence/ids/prepare-ingest.py`.
 
+For distributed switch capture, configure each sensor's `capture_sources`
+using the reviewed source inventory. Each entry needs `id`, `ip`, `sessionId`,
+`name` and `scope`; copy the same array to the sensor's `capture-sources.json`.
+`coverage_gaps` records boundaries that packet activity cannot prove covered.
+The optional header probe reports source liveness independently of engine
+statistics. See the [network coverage runbook](../../docs/runbooks/convergence-network-coverage.md).
+
+Status also reports site-scoped TLS metadata counts for the last 15 minutes.
+These are observations, not a complete inventory of encrypted connections;
+payload decryption is explicitly disabled.
+
 Run tests from the repository root:
 
 ```bash

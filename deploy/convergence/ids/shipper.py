@@ -27,9 +27,13 @@ def heartbeat(root):
         rules = json.loads((root/'rules-status.json').read_text())
     except (OSError, ValueError):
         rules = {}
+    try:
+        probe = json.loads((root/'capture-status.json').read_text())
+    except (OSError, ValueError):
+        probe = {}
     return {'capture_running': running, 'rules_count': rules.get('rules_count', 0),
             'rules_checked_at': rules.get('rules_checked_at', 0),
-            'disk_free_bytes': shutil.disk_usage(root).free}
+            'disk_free_bytes': shutil.disk_usage(root).free, 'capture_probe': probe}
 
 
 def read_batch(path, offset, max_bytes=524288):

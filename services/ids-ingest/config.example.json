@@ -11,6 +11,8 @@
       "site": "home",
       "token_sha256": "REPLACE_WITH_SHA256_OF_SENSOR_TOKEN",
       "vlans": [100, 102],
+      "capture_sources": [],
+      "coverage_gaps": ["Same-host and AP-local traffic require additional collection"],
       "scope": "Both directions of the firewall-facing port-channel; same-VLAN traffic outside that path is not covered",
       "auto_investigate": false
     }

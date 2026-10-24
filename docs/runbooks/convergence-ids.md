@@ -5,6 +5,12 @@ ERSPAN, and delivers authenticated EVE observations into NetClaw Convergence.
 It includes the deployment used in the home/LocalEdge network on 24 October 2026.
 The sensor is passive: it cannot block packets or change firewall policy.
 
+The live deployment now extends this initial firewall capture with
+[three-switch endpoint capture and encrypted-traffic visibility](convergence-network-coverage.md).
+Follow this guide for the base installation, then that guide for the expansion.
+The firewall-only topology and commissioning results below describe the initial
+stage, not the complete current capture scope.
+
 ## Architecture and coverage
 
 ```mermaid
@@ -64,7 +70,7 @@ TLS and flow metadata can support investigation but do not prove exfiltration.
 |---|---|---|
 | 2 | `192.168.2.0/24` | Wi-Fi |
 | 3 | `192.168.3.0/24` | Device management |
-| 13 | `192.168.13.0/24` | DNS / infrastructure |
+| 13 | `192.168.13.0/24` | K3s cluster / DNS / infrastructure |
 | 100 | `192.168.100.0/24` | Home LAN |
 | 101 | `192.168.101.0/24` | Personal-device / kids' laptops |
 | 102 | `192.168.102.0/24` | IoT |

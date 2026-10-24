@@ -1,6 +1,9 @@
 import hashlib
 import importlib.util
 import json
+import socket
+import struct
+import subprocess
 from pathlib import Path
 import tempfile
 import time
@@ -126,6 +129,73 @@ class IngestionTests(unittest.TestCase):
         records, end = module.read_batch(path, offset)
         self.assertEqual(len(records), 1)
         self.assertEqual(end, path.stat().st_size)
+
+    def test_one_failed_mirror_is_not_hidden_by_other_sources(self):
+        now = time.time()
+        self.sensor['capture_sources'] = [
+            {'id': 'switch-a', 'sessionId': 110}, {'id': 'switch-b', 'sessionId': 112}]
+        hb = {**self.hb, 'capture_probe': {'checkedAt': now, 'sources': {
+            'switch-a': {'lastSeen': now, 'packets': 99, 'vlans': {'13': now}},
+            'unconfigured': {'lastSeen': now, 'packets': 99, 'vlans': {}}}}}
+        stats = event('stats', now, stats={'capture': {'kernel_packets': 500, 'kernel_drops': 0}})
+        self.store.accept(self.sensor, [stats], hb, now=now)
+        state = self.store.status([self.sensor], 'home', now=now)['sensors'][0]
+        self.assertEqual(state['status'], 'degraded')
+        self.assertEqual([x['status'] for x in state['captureSources']], ['active', 'unverified'])
+        self.assertEqual(state['captureSources'][0]['observedVlans'], [13])
+        hb['capture_probe']['sources']['switch-b'] = {'lastSeen': now, 'packets': 10, 'vlans': {}}
+        self.store.accept(self.sensor, [], hb, now=now)
+        self.assertEqual(self.store.status([self.sensor], 'home', now=now)['status'], 'active')
+        state = self.store.status([self.sensor], 'home', now=now+61)['sensors'][0]
+        self.assertEqual(state['status'], 'degraded')
+        self.assertEqual(state['captureSources'][0]['status'], 'stale')
+
+    def test_invalid_probe_cannot_partially_accept_a_batch(self):
+        for probe in ({'checkedAt': time.time()+1000}, {'sources': []},
+                      {'sources': {'a': {'lastSeen': 0, 'packets': -1}}},
+                      {'sources': {'a': {'lastSeen': 0, 'packets': 1, 'vlans': {'4095': 0}}}}):
+            response = self.client.post('/v1/eve', json={'events': [event()],
+                'heartbeat': {**self.hb, 'capture_probe': probe}}, headers={'Authorization': 'Bearer sensor-secret'})
+            self.assertEqual(response.status_code, 400)
+        self.assertEqual(self.store.pending('log'), [])
+
+    def test_tls_metadata_is_site_scoped_and_does_not_claim_decryption(self):
+        self.store.accept(self.sensor, [event('tls', tls={'ja4': 'fingerprint', 'sni': 'test.invalid'})], self.hb)
+        status = self.store.status([self.sensor], 'home')['encryptedTraffic']
+        self.assertEqual((status['tlsObservations'], status['fingerprinted'], status['serverNamesObserved']), (1, 1, 1))
+        self.assertFalse(status['payloadDecryption'])
+        self.assertEqual(self.store.status([self.sensor], 'other')['encryptedTraffic']['tlsObservations'], 0)
+
+    def test_probe_decodes_headers_and_rejects_truncation_and_other_gre(self):
+        script = Path(__file__).resolve().parents[2]/'deploy/convergence/ids/capture-probe.py'
+        spec = importlib.util.spec_from_file_location('ids_probe', script)
+        module = importlib.util.module_from_spec(spec); spec.loader.exec_module(module)
+        ip = struct.pack('!BBHHHBBH4s4s', 0x45, 0, 60, 0, 0, 64, 47, 0,
+                         socket.inet_aton('192.0.2.2'), socket.inet_aton('192.0.2.200'))
+        gre = struct.pack('!HHI', 0x1000, 0x88be, 1)
+        erspan = struct.pack('!HHI', 0x1000 | 13, 114, 0)
+        frame = b'\0'*12+struct.pack('!H', 0x0800)+ip+gre+erspan
+        self.assertEqual(module.decode_header(frame), ('192.0.2.2', '192.0.2.200', 114, 13))
+        tagged = frame[:12]+struct.pack('!HH', 0x8100, 3)+frame[12:]
+        self.assertEqual(module.decode_header(tagged), module.decode_header(frame))
+        for length in range(len(frame)):
+            self.assertIsNone(module.decode_header(frame[:length]))
+        self.assertIsNone(module.decode_header(frame.replace(b'\x88\xbe', b'\x08\x00')))
+
+    def test_renderer_allows_only_verified_ipv4_origins_and_decodes_flannel(self):
+        import yaml
+        root = Path(self.temp.name)
+        base, target = root/'base.yaml', root/'out.yaml'
+        base.write_text('vars:\n  address-groups: {}\n')
+        script = Path(__file__).resolve().parents[2]/'deploy/convergence/ids/render-sensor.py'
+        import sys
+        command = [sys.executable, str(script), '--base', str(base), '--output', str(target),
+                   '--sensor-ip', '192.0.2.200', '--home-net', '10.42.0.0/16', '--switch-ip']
+        subprocess.run(command+['192.0.2.2,192.0.2.3'], check=True, capture_output=True)
+        data = yaml.safe_load(target.read_text())
+        self.assertEqual(data['af-packet'][0]['bpf-filter'], 'ip proto 47 and (src host 192.0.2.2 or src host 192.0.2.3) and dst host 192.0.2.200')
+        self.assertEqual(data['vars']['port-groups']['VXLAN_PORTS'], '[4789,8472]')
+        self.assertNotEqual(subprocess.run(command+['192.0.2.2 or ip'], capture_output=True).returncode, 0)
 
     def test_case_outage_does_not_block_raw_log_delivery(self):
         self.store.accept(self.sensor, [event()], self.hb)

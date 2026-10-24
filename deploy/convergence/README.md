@@ -8,7 +8,9 @@ findings through the HUD HOME tab and curated Grafana dashboards.
 **Project:** `deploy/convergence` · compose name `netclaw-convergence`
 
 For passive intrusion detection, follow the [Suricata / ERSPAN setup and recovery
-runbook](../../docs/runbooks/convergence-ids.md). It includes a dedicated sensor
+runbook](../../docs/runbooks/convergence-ids.md), followed by the
+[network-wide capture guide](../../docs/runbooks/convergence-network-coverage.md).
+The guides include a dedicated sensor
 VM, authenticated durable ingestion, rule updates, HUD integration and acceptance
 tests. This is an optional addition to the existing stack.
 

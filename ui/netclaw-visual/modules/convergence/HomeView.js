@@ -723,10 +723,20 @@ export class HomeView {
           <div class="home-kpi"><div class="home-kpi-label">Events awaiting delivery</div><div class="home-kpi-value">${esc(sensor.pendingEvents ?? 'Unknown')}</div></div>
         </div>
         <p class="home-muted">${esc(sensor.scope)}. Automatic investigations: ${sensor.autoInvestigate ? 'subject to Guardian policy' : 'disabled during tuning; cases remain available for review'}.</p>
+        ${(sensor.captureSources || []).length ? `<h4>Capture points</h4>
+          <p class="home-muted">Source liveness comes from mirrored headers; engine statistics above report Suricata capture health.</p>
+          <table class="home-table"><thead><tr><th>Source</th><th>State</th><th>Scope</th></tr></thead><tbody>
+            ${sensor.captureSources.map(source => `<tr><td>${esc(source.name)}</td><td>${esc(source.status)}</td><td>${esc(source.scope)}</td></tr>`).join('')}
+          </tbody></table>` : ''}
+        ${(sensor.coverageGaps || []).length ? `<details><summary>Coverage gaps</summary><ul>${sensor.coverageGaps.map(gap => `<li>${esc(gap)}</li>`).join('')}</ul></details>` : ''}
         <table class="home-table"><thead><tr><th>VLAN</th><th>Packet evidence · last 15 minutes</th></tr></thead><tbody>
           ${(sensor.coverage || []).map(v => `<tr><td>${esc(v.vlan)}</td><td>${esc(v.status)}</td></tr>`).join('')}
         </tbody></table>
       </div>`).join('')}
+      ${ids.encryptedTraffic ? `<h3>Encrypted traffic visibility</h3>
+        <p>Metadata only · last ${esc(ids.encryptedTraffic.window)}: ${esc(ids.encryptedTraffic.tlsObservations)} TLS observations,
+        ${esc(ids.encryptedTraffic.fingerprinted)} with client fingerprints, ${esc(ids.encryptedTraffic.serverNamesObserved)} with visible server names.</p>
+        <p class="home-muted">Payload decryption is not enabled. Encryption and incomplete handshakes can hide server names or other metadata; fingerprints alone do not establish malicious activity.</p>` : ''}
       <h3>Most frequently blocked sources · 1 hour</h3>
       <p class="home-muted">A firewall block is an observation. A source needs investigation before it can be classified as malicious.</p>
       <table class="home-table"><thead><tr><th>Source</th><th>Blocks</th><th>Assessment</th></tr></thead><tbody>

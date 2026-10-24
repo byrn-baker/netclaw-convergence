@@ -6,6 +6,7 @@ import hashlib
 import hmac
 import json
 import logging
+import math
 import os
 from pathlib import Path
 import shutil
@@ -120,6 +121,25 @@ def create_app(config, store, client_factory=httpx.AsyncClient):
                     raise ValueError(f'{key} must be a nonnegative number')
             if heartbeat['rules_checked_at'] > time.time()+300:
                 raise ValueError('Rule timestamp is ahead of the receiver clock')
+            probe = heartbeat.get('capture_probe', {})
+            if not isinstance(probe, dict) or not isinstance(probe.get('sources', {}), dict):
+                raise ValueError('Invalid capture probe')
+            if len(probe.get('sources', {})) > 32:
+                raise ValueError('Too many capture sources')
+            def valid_stamp(value):
+                return type(value) in (int, float) and math.isfinite(value) and 0 <= value <= time.time()+300
+            if not valid_stamp(probe.get('checkedAt', 0)):
+                raise ValueError('Invalid capture probe timestamp')
+            for source in probe.get('sources', {}).values():
+                if not isinstance(source, dict) or not valid_stamp(source.get('lastSeen', 0)):
+                    raise ValueError('Invalid capture source timestamp')
+                if type(source.get('packets')) is not int or source['packets'] < 0:
+                    raise ValueError('Invalid capture source packet count')
+                vlans = source.get('vlans', {})
+                if not isinstance(vlans, dict) or len(vlans) > 4095:
+                    raise ValueError('Invalid capture source VLANs')
+                if any(not key.isdigit() or not 0 <= int(key) <= 4094 or not valid_stamp(value) for key, value in vlans.items()):
+                    raise ValueError('Invalid capture source VLAN observation')
             if shutil.disk_usage(config['state_dir']).free < 512*1024*1024:
                 raise OverflowError('Receiver disk reserve reached')
             accepted = store.accept(sensor, events, heartbeat)

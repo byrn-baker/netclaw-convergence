@@ -10,8 +10,7 @@ EnvironmentFile=/opt/netclaw-ids/sensor.env
 ExecStartPre=-/usr/sbin/ethtool -K ${IDS_INTERFACE} gro off lro off tso off gso off
 # AF_PACKET sees frames before INPUT. Prevent the ordinary IP stack from
 # answering raw ERSPAN with ICMP protocol-unreachable and disrupting the source.
-ExecStartPre=-/usr/sbin/iptables -D INPUT -s ${IDS_SWITCH_IP} -p 47 -j DROP
-ExecStartPre=/usr/sbin/iptables -I INPUT -s ${IDS_SWITCH_IP} -p 47 -j DROP
+ExecStartPre=/usr/bin/python3 /opt/netclaw-ids/capture-network.py
 ExecStart=/usr/bin/docker start --attach netclaw-suricata
 ExecStop=/usr/bin/docker stop --time 20 netclaw-suricata
 Restart=always

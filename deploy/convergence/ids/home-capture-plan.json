@@ -1,0 +1,39 @@
+{
+  "site": "home",
+  "sensor": "home-ids-01",
+  "destination": "192.168.3.200",
+  "sensorMac": "bc24.11ef.9e87",
+  "vlans": [2, 3, 13, 100, 101, 102, 103, 104, 300, 301],
+  "direction": "rx",
+  "capture_sources": [
+    {
+      "id": "homeswitch01", "name": "HomeSwitch01", "ip": "192.168.3.2", "sessionId": 110, "monitorSession": 10,
+      "scope": "Endpoint ingress and firewall-to-switch ingress; inter-switch links excluded",
+      "ports": ["Gi1/0/1", "Gi1/0/3", "Gi1/0/7", "Gi1/0/11", "Gi1/0/16", "Gi1/0/17", "Gi1/0/18", "Gi1/0/20", "Gi1/0/41", "Gi1/0/45", "Gi1/0/46", "Po1"],
+      "excludedTransit": ["Po3", "Gi1/0/44"],
+      "sensorNextHop": "Port-channel3"
+    },
+    {
+      "id": "homeswitch02", "name": "HomeSwitch02", "ip": "192.168.3.3", "sessionId": 112, "monitorSession": 12,
+      "scope": "Endpoint, AP and R640 physical uplink ingress; inter-switch link excluded",
+      "ports": ["Gi1/0/9", "Gi1/0/10", "Gi1/0/11", "Gi1/0/12", "Gi1/0/13", "Gi1/0/26", "Gi1/0/29", "Gi1/0/46", "Te1/1/1", "Te1/1/2"],
+      "excludedTransit": ["Po3"],
+      "sensorNextHop": "TenGigabitEthernet1/1/1"
+    },
+    {
+      "id": "homeswitch04", "name": "HomeSwitch04", "ip": "192.168.3.5", "sessionId": 114, "monitorSession": 14,
+      "scope": "Endpoint, office AP and all six K3s node ingress ports; uplink excluded",
+      "ports": ["Gi1/0/3", "Gi1/0/5", "Gi1/0/11", "Gi1/0/12", "Gi1/0/35", "Gi1/0/36", "Gi1/0/37", "Gi1/0/38", "Gi1/0/39", "Gi1/0/40"],
+      "excludedTransit": ["Gi1/0/47"],
+      "sensorNextHop": "GigabitEthernet1/0/47"
+    }
+  ],
+  "coverage_gaps": [
+    "VM-to-VM traffic staying inside a hypervisor bridge needs virtual-switch or host capture.",
+    "Pod-to-pod traffic staying inside a K3s node needs node-level monitoring.",
+    "Traffic forwarded locally within an AP, wireless mesh, or downstream uninstrumented switch may bypass mirrored uplinks.",
+    "Only the recorded endpoint ports and selected VLANs are in scope; new ports or moved devices require inventory review.",
+    "Switch-originated traffic, WAN-only traffic and global IPv6 coverage are not fully validated.",
+    "TLS/QUIC payloads remain encrypted; metadata and fingerprints do not provide payload inspection."
+  ]
+}

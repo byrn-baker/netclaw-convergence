@@ -201,6 +201,19 @@ class Store:
                 oldest = self.db.execute('SELECT min(received_ns) FROM eve WHERE sensor=? AND (log_done=0 OR case_done=0)', (cfg['id'],)).fetchone()[0]
                 if oldest and now-oldest/1e9 > 120 and state == 'active':
                     state, reason = 'degraded', 'Log or case delivery backlog exceeds two minutes'
+                probe = heartbeat.get('capture_probe', {})
+                sources = []
+                for source in cfg.get('capture_sources', []):
+                    observation = probe.get('sources', {}).get(source['id'], {})
+                    seen = observation.get('lastSeen', 0)
+                    source_state = 'stale' if now-probe.get('checkedAt', 0) > 60 else (
+                        'active' if seen and now-seen < 300 else 'unverified')
+                    sources.append({'id': source['id'], 'name': source.get('name', source['id']),
+                        'status': source_state, 'lastSeen': seen or None,
+                        'scope': source.get('scope', ''), 'sessionId': source['sessionId'],
+                        'observedVlans': sorted(int(v) for v, ts in observation.get('vlans', {}).items() if now-ts < 900)})
+                if any(s['status'] != 'active' for s in sources) and state == 'active':
+                    state, reason = 'degraded', 'One or more configured mirror sources lack recent header observations'
                 coverage = {r['vlan']: r['observed'] for r in self.db.execute('SELECT * FROM coverage WHERE sensor=?', (cfg['id'],))}
                 sensors.append({'id': cfg['id'], 'status': state, 'reason': reason,
                     'lastSeen': row['seen'] if row else None, 'packets': row['packets'] if row else None,
@@ -210,9 +223,17 @@ class Store:
                     'coverage': [{'vlan': v, 'lastObserved': coverage.get(v),
                         'status': 'observed' if now-coverage.get(v, 0) < 900 else 'unverified'} for v in cfg['vlans']],
                     'scope': cfg.get('scope', 'Configured mirror sources only'),
+                    'captureSources': sources, 'coverageGaps': cfg.get('coverage_gaps', []),
                     'autoInvestigate': bool(cfg.get('auto_investigate'))})
             alerts = self.db.execute("SELECT count(*) FROM eve WHERE site=? AND kind='alert' AND observed>?", (site, now-86400)).fetchone()[0]
+            tls = self.db.execute("""SELECT count(*) AS sessions,
+                count(CASE WHEN json_extract(payload,'$.tls.ja3.hash') IS NOT NULL OR json_extract(payload,'$.tls.ja4') IS NOT NULL THEN 1 END) AS fingerprints,
+                count(json_extract(payload,'$.tls.sni')) AS names
+                FROM eve WHERE site=? AND kind='tls' AND observed>?""", (site, now-900)).fetchone()
         overall = 'not_configured' if not sensors else ('active' if all(s['status']=='active' for s in sensors) else 'degraded')
         return {'status': overall, 'reason': 'No IDS sensors configured for this site' if not sensors else
             'Passive IDS; coverage applies only to traffic reaching the configured mirror sources.',
-            'alertsLast24h': alerts if sensors else None, 'sensors': sensors}
+            'alertsLast24h': alerts if sensors else None, 'sensors': sensors,
+            'encryptedTraffic': {'mode': 'metadata_only', 'window': '15m',
+                'tlsObservations': tls['sessions'], 'fingerprinted': tls['fingerprints'],
+                'serverNamesObserved': tls['names'], 'payloadDecryption': False}}
