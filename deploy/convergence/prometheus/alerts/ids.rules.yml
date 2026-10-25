@@ -2,6 +2,12 @@ groups:
   - name: netclaw-convergence.ids
     interval: 30s
     rules:
+      - alert: IDSIPContextUnavailable
+        expr: netclaw_ids_ip_context_ready == 0
+        for: 15m
+        labels: {severity: warning, investigate: "false"}
+        annotations:
+          summary: "IDS public-IP database is unavailable, stale or failed to reload"
       - alert: IDSSensorStale
         expr: time() - netclaw_ids_sensor_last_seen_timestamp_seconds > 120
         for: 2m

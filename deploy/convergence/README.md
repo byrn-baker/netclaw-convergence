@@ -297,3 +297,6 @@ See [TROUBLESHOOT.md](./TROUBLESHOOT.md) for:
 - Common failure patterns and fixes
 - Restart procedures
 - Validation scripts
+
+For public source/destination country and ASN attribution, see the
+[IP context runbook](../../docs/runbooks/convergence-ip-context.md).

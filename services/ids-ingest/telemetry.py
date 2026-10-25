@@ -22,6 +22,8 @@ def archive_record(row):
         alert = event['alert']
         record.update(signature_id=alert['signature_id'], priority=alert.get('severity', 3),
                       _msg=str(alert.get('signature', 'Suricata alert'))[:240])
+    if row.get('ip_context'):
+        record['ip_context'] = json.loads(row['ip_context'])
     return record
 
 
@@ -100,4 +102,9 @@ def render_metrics(store, configured, now=None):
                  'Last successful durable batch delivery for this destination, across sensors.')
         emit('archive_backfill_active', store.archive_enabled and meta.get('archive_backfill_cursor', 0) < meta.get('archive_backfill_end', 0),
              {}, 'Retained history still awaiting scheduling; also check archive delivery queue.')
+        if store.enricher:
+            status = store.enricher.status()
+            if status['status'] != 'not_configured':
+                emit('ip_context_ready', status['status'] == 'active', {}, 'Public-IP database available, current and reload healthy.')
+                emit('ip_context_database_timestamp_seconds', status['databaseBuiltAt'], {}, 'Build time of local public-IP database.')
     return '\n'.join(lines)+'\n'

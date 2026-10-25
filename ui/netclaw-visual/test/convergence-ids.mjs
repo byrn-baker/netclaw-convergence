@@ -2,6 +2,21 @@ import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {JSDOM} from 'jsdom';
 import {HomeView} from '../modules/convergence/HomeView.js';
+import {caseIPContext, ipContextHTML} from '../modules/convergence/IPContext.js';
+
+test('IP context renders untrusted provider fields as text and does not imply identity', () => {
+  const context = {status: 'active', databaseBuiltAt: 'invalid',
+    source: {ip: '192.168.3.2', scope: 'internal'},
+    destination: {ip: '1.1.1.1', scope: 'external', asn: 'AS13335',
+      as_name: '<img src=x onerror=alert(1)>', as_domain: 'javascript:alert(1)', country: 'Test country'}};
+  const document = new JSDOM(ipContextHTML(caseIPContext({ip_context: JSON.stringify(context)}))).window.document;
+  assert.equal(document.querySelector('img'), null);
+  assert.match(document.body.textContent, /AS13335/);
+  assert.match(document.body.textContent, /not the requested hostname/);
+  assert.equal(document.querySelector('a').href, 'https://ipinfo.io/');
+  assert.equal(caseIPContext({ip_context: 'broken JSON'}), null);
+  assert.equal(caseIPContext({}), null);
+});
 
 test('sensor strings remain text and quiet VLANs remain unverified', () => {
   const security = {status: 'active', blockedConnections: {lastHour: 0, last24h: 0},

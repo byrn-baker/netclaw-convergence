@@ -2,6 +2,7 @@
  * 080-convergence — Home product view (HUD-styled).
  * Live data via HUD proxy /api/home/* → convergence-api / Network Guardian (dual-run).
  */
+import {caseIPContext, ipContextHTML} from './IPContext.js';
 
 const SUBVIEWS = [
   { id: 'overview', label: 'Overview' },
@@ -737,6 +738,10 @@ export class HomeView {
         <p>Metadata only · last ${esc(ids.encryptedTraffic.window)}: ${esc(ids.encryptedTraffic.tlsObservations)} TLS observations,
         ${esc(ids.encryptedTraffic.fingerprinted)} with client fingerprints, ${esc(ids.encryptedTraffic.serverNamesObserved)} with visible server names.</p>
         <p class="home-muted">Payload decryption is not enabled. Encryption and incomplete handshakes can hide server names or other metadata; fingerprints alone do not establish malicious activity.</p>` : ''}
+      ${ids.ipEnrichment ? `<h3>External IP context · ${esc(ids.ipEnrichment.status)}</h3>
+        <p>Local country and ASN lookups for IDS sources and destinations. IP address data powered by
+        <a href="https://ipinfo.io" target="_blank" rel="noopener noreferrer">IPinfo</a>.</p>
+        <p class="home-muted">New IDS cases show this context in the Diary and Triage views. Country and network organization do not establish malicious activity. Reputation assessment remains a separate investigation.</p>` : ''}
       <h3>Most frequently blocked sources · 1 hour</h3>
       <p class="home-muted">A firewall block is an observation. A source needs investigation before it can be classified as malicious.</p>
       <table class="home-table"><thead><tr><th>Source</th><th>Blocks</th><th>Assessment</th></tr></thead><tbody>
@@ -1231,7 +1236,7 @@ export class HomeView {
         <td class="${statusClass(e.status)}">${esc(e.status)}</td>
         <td class="${statusClass(e.severity)}">${esc(e.severity)}</td>
         <td>${esc(e.alert_name || e.category || '')}</td>
-        <td>${esc((e.message || '').slice(0, 100))}</td>
+        <td>${esc((e.message || '').slice(0, 100))}${ipContextHTML(caseIPContext(e))}</td>
         <td>${rag}</td>
       </tr>`;
       })
@@ -1342,6 +1347,7 @@ export class HomeView {
             <pre class="home-triage-notes-pre">${esc(selected.investigation_notes || '—')}</pre>
             ${selected.source_evidence ? `<details><summary>Original sensor / alert evidence</summary><pre class="home-triage-notes-pre">${esc(JSON.stringify(selected.source_evidence, null, 2))}</pre></details>` : ''}
           </div>
+          ${ipContextHTML(caseIPContext(selected))}
           ${ragBlock}
           ${selected.expert_feedback ? `
             <div class="home-triage-field">

@@ -68,7 +68,8 @@ router.get('/', async (req, res) => {
   try {
     let sql = `SELECT id, timestamp, message, severity, category, source, status,
                alert_name, alert_fingerprint, root_cause, investigation_notes,
-               expert_feedback, feedback_quality, rag_document_id, incident_key, alert_cleared_at
+               expert_feedback, feedback_quality, rag_document_id, incident_key, alert_cleared_at,
+               source_evidence->'annotations'->'ip_context' AS ip_context
                FROM events WHERE site_id = $1`;
     const params = [site];
 

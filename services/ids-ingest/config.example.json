@@ -3,6 +3,10 @@
   "queue_capacity": 250000,
   "loki_url": "http://127.0.0.1:3100",
   "victorialogs_url": "http://127.0.0.1:9428",
+  "ip_enrichment": {
+    "database": "/var/lib/netclaw-ids-ingest/geoip/ipinfo_lite.mmdb",
+    "internal_networks": ["192.168.0.0/16", "10.0.0.0/8", "172.16.0.0/12", "fc00::/7"]
+  },
   "receiver_url": "http://127.0.0.1:8099/webhook",
   "receiver_token": "REPLACE_WITH_EXISTING_RECEIVER_TOKEN",
   "status_token_sha256": "REPLACE_WITH_SHA256_OF_A_SEPARATE_STATUS_TOKEN",

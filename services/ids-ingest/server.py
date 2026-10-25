@@ -18,6 +18,7 @@ import httpx
 
 from store import Store
 from telemetry import archive_body, render_metrics
+from ip_context import IPContext
 
 log = logging.getLogger('ids-ingest')
 
@@ -48,7 +49,10 @@ def create_app(config, store, client_factory=httpx.AsyncClient):
                         streams = {}
                         for row in rows:
                             key = (row['site'], row['sensor'], row['kind'])
-                            streams.setdefault(key, []).append([str(row['received_ns']), row['payload']])
+                            record = json.loads(row['payload'])
+                            if row.get('ip_context'):
+                                record['netclaw_ip_context'] = json.loads(row['ip_context'])
+                            streams.setdefault(key, []).append([str(row['received_ns']), json.dumps(record)])
                         payload = {'streams': [{'stream': {'job': 'ids-eve', 'site': key[0],
                             'sensor': key[1], 'event_type': key[2]}, 'values': values}
                             for key, values in streams.items()]}
@@ -121,7 +125,10 @@ def create_app(config, store, client_factory=httpx.AsyncClient):
     async def status(request: Request, site: str):
         if not hmac.compare_digest(token_hash(request), config['status_token_sha256']):
             return JSONResponse({'error': 'Unauthorized'}, status_code=401)
-        return store.status(sensors, site)
+        data = store.status(sensors, site)
+        if store.enricher:
+            data['ipEnrichment'] = store.enricher.status()
+        return data
 
     @app.post('/v1/eve')
     async def ingest(request: Request):
@@ -180,5 +187,6 @@ def create_app(config, store, client_factory=httpx.AsyncClient):
 def configured_app():
     config = json.loads(Path(os.environ['IDS_CONFIG_FILE']).read_text())
     Path(config['state_dir']).mkdir(parents=True, exist_ok=True, mode=0o700)
-    store = Store(str(Path(config['state_dir'])/'eve.sqlite'), config.get('queue_capacity', 250000))
+    store = Store(str(Path(config['state_dir'])/'eve.sqlite'), config.get('queue_capacity', 250000),
+                  enricher=IPContext(config.get('ip_enrichment')))
     return create_app(config, store)

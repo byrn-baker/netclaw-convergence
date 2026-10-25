@@ -212,3 +212,9 @@ the inbox first if that history must be preserved.
 
 References: [VictoriaLogs bulk ingestion](https://docs.victoriametrics.com/victorialogs/data-ingestion/#elasticsearch-bulk-api)
 and [OTel Prometheus receiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/v0.104.0/receiver/prometheusreceiver).
+
+## Public-IP context
+
+New observations can include locally derived country/ASN context in both log
+stores and the case diary. See [public-IP context](convergence-ip-context.md)
+for installation, update cadence, field queries, attribution and limitations.

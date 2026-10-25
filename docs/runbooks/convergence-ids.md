@@ -529,3 +529,9 @@ case schema and feature parity first.
 * [Suricata EVE output](https://docs.suricata.io/en/suricata-8.0.7/output/eve/eve-json-output.html)
 * [Suricata ERSPAN decoder](https://github.com/OISF/suricata/blob/suricata-8.0.7/src/decode-erspan.c)
 * [Proxmox cloud-init](https://pve.proxmox.com/wiki/Cloud-Init_Support)
+
+## Public-IP attribution
+
+For country, ASN and network organization context on new IDS observations, see
+[public-IP context setup](convergence-ip-context.md). This uses a local IPinfo
+database and preserves the original event evidence.

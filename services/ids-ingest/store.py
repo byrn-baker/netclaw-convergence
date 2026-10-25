@@ -21,7 +21,7 @@ def canonical(value):
     return json.dumps(value, sort_keys=True, separators=(',', ':'), allow_nan=False)
 
 
-def case_payload(sensor, event):
+def case_payload(sensor, event, ip_context=None):
     """Correlate a signature/host pair per five-minute window, independent of LLMs."""
     alert = event['alert']
     window = int(stamp(event['timestamp']) // 300) * 300
@@ -46,6 +46,7 @@ def case_payload(sensor, event):
             'suricata_severity': str(alert.get('severity', 3)),
             'investigate': str(bool(sensor.get('auto_investigate')) and not canary).lower()},
         'annotations': {'summary': summary,
+            **({'ip_context': canonical(ip_context)} if ip_context else {}),
             'description': 'Passive IDS observation; not proof of compromise. ' + canonical(details)[:12000]},
     }]}
 
@@ -75,7 +76,7 @@ def validate_event(event, now):
 
 
 class Store:
-    def __init__(self, path, capacity=250000):
+    def __init__(self, path, capacity=250000, enricher=None):
         Path(path).parent.mkdir(parents=True, exist_ok=True, mode=0o700)
         self.db = sqlite3.connect(path, check_same_thread=False)
         Path(path).chmod(0o600)
@@ -83,6 +84,7 @@ class Store:
         self.lock = threading.RLock()
         self.capacity = capacity
         self.archive_enabled = False
+        self.enricher = enricher
         self.db.execute('PRAGMA journal_mode=WAL')
         self.db.execute('PRAGMA synchronous=FULL')
         self.db.executescript('''
@@ -118,6 +120,8 @@ class Store:
             # Upgrade without creating an unbounded live queue. Retained history
             # is scheduled in bounded batches with a durable rowid checkpoint.
             self.db.execute('ALTER TABLE eve ADD COLUMN archive_done INTEGER NOT NULL DEFAULT 1')
+        if 'ip_context' not in {r[1] for r in self.db.execute('PRAGMA table_info(eve)')}:
+            self.db.execute('ALTER TABLE eve ADD COLUMN ip_context TEXT')
         self.db.executescript('''
           CREATE INDEX IF NOT EXISTS eve_archive_pending ON eve(received_ns) WHERE archive_done=0;
           CREATE INDEX IF NOT EXISTS eve_delivery_pending ON eve(sensor,received_ns)
@@ -168,13 +172,14 @@ class Store:
                 if identity in batch_ids or self.db.execute('SELECT 1 FROM eve WHERE id=?', (identity,)).fetchone():
                     continue
                 batch_ids.add(identity)
-                case = case_payload(sensor, event) if event['event_type'] == 'alert' else None
+                context = self.enricher.enrich(event) if self.enricher else {}
+                case = case_payload(sensor, event, context) if event['event_type'] == 'alert' else None
                 rows.append((identity, sensor['id'], sensor['site'], event['event_type'],
                     stamp(event['timestamp']), int(now * 1e9) + i, payload, canonical(case) if case else None,
-                    0 if case else 1, 0 if self.archive_enabled else 1))
+                    0 if case else 1, 0 if self.archive_enabled else 1, canonical(context) if context else None))
             if pending + len(rows) > self.capacity:
                 raise OverflowError('IDS inbox full; sensor must retain and retry its batch')
-            self.db.executemany('INSERT OR IGNORE INTO eve(id,sensor,site,kind,observed,received_ns,payload,case_payload,case_done,archive_done) VALUES(?,?,?,?,?,?,?,?,?,?)', rows)
+            self.db.executemany('INSERT OR IGNORE INTO eve(id,sensor,site,kind,observed,received_ns,payload,case_payload,case_done,archive_done,ip_context) VALUES(?,?,?,?,?,?,?,?,?,?,?)', rows)
             for row in rows:
                 evidence = json.loads(row[6])
                 severity = evidence['alert'].get('severity', 3) if row[3]=='alert' else 3
