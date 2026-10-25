@@ -134,6 +134,12 @@ Changes retain their review boundaries: Testbed saves do not connect devices, sa
 
 ### Active workstreams (this fork / Convergence)
 
+**Setting up Convergence on your own network?** Ask NetClaw to use its bundled
+**`convergence-setup`** skill. From a fresh checkout, tell your coding agent:
+“Read `workspace/skills/convergence-setup/SKILL.md` and set up Convergence for my
+home network.” Start with the [fresh-install guide](docs/runbooks/convergence-setup.md)
+for generated credentials, portable configuration and verification.
+
 | Area | Spec / docs | Deploy / code |
 |------|-------------|----------------|
 | **NetClaw Convergence** | **[docs/CONVERGENCE.md](docs/CONVERGENCE.md)** · [ENV layout](docs/ENV-AND-LAYOUT.md) · [spec 067](specs/080-convergence/) · [greenfield device/agent telemetry (Phase 8)](specs/080-convergence/device-telemetry-greenfield.md) | [`deploy/convergence/`](deploy/convergence/) · [`ui/convergence-api/`](ui/convergence-api/) · [`services/alert-receiver/`](services/alert-receiver/) · HUD CONVERGENCE |

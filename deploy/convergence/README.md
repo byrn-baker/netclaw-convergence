@@ -7,6 +7,12 @@ findings through the HUD HOME tab and curated Grafana dashboards.
 
 **Project:** `deploy/convergence` · compose name `netclaw-convergence`
 
+For a fresh checkout on another home network, start with the
+[Convergence setup skill and guide](../../docs/runbooks/convergence-setup.md).
+The generated Docker bundle isolates site configuration and credentials, binds
+core ports to loopback, and provides a read-only checker. Legacy examples below
+require replacing example addresses and credentials before deployment.
+
 For passive intrusion detection, follow the [Suricata / ERSPAN setup and recovery
 runbook](../../docs/runbooks/convergence-ids.md), followed by the
 [network-wide capture guide](../../docs/runbooks/convergence-network-coverage.md).

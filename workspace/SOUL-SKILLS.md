@@ -6,6 +6,13 @@
 
 ---
 
+## Convergence installation
+
+Use `skills/convergence-setup/SKILL.md` when asked to install Convergence on a new
+network or finish an existing deployment. It covers host discovery, portable
+Docker/K3s setup, telemetry, HUD/Guardian and optional IDS/JEV acceptance checks.
+Use `alert-triage` for individual incidents after setup.
+
 ## Device Automation Skills
 
 ### pyats-network

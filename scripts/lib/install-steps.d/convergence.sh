@@ -10,6 +10,8 @@ component_install_convergence_core() {
 log_step "Installing Convergence Core (convergence-api + config)..."
 echo "  convergence-api: ui/convergence-api/  |  config: config/convergence.example.yaml"
 echo "  Deploy (later in setup): Docker deploy/convergence/ or K3s deploy/convergence/k8s/"
+echo "  Guided setup: ask NetClaw to use the bundled convergence-setup skill."
+echo "  Fresh network guide: docs/runbooks/convergence-setup.md"
 
 HOME_API_DIR="$NETCLAW_DIR/ui/convergence-api"
 if [ -f "$HOME_API_DIR/package.json" ]; then

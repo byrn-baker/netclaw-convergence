@@ -4,6 +4,11 @@
 tab, metrics stack, device adapters, investigation diary, and the
 Alertmanager → alert-receiver → guardian-claw loop.
 
+**New installation:** use the bundled [`convergence-setup` skill](../workspace/skills/convergence-setup/SKILL.md)
+and [fresh-install guide](runbooks/convergence-setup.md). They start from your
+machine and network, with private generated credentials and separate checks for
+core services, actual telemetry, the HUD and investigations.
+
 | Spec | Code | Deploy |
 |------|------|--------|
 | [`specs/1001–1008`](../specs/1000-convergence-architecture-review/plan.md) | [`ui/convergence-api/`](../ui/convergence-api/) · HUD HOME | [`deploy/convergence/`](../deploy/convergence/) |
