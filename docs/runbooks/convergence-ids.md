@@ -55,6 +55,38 @@ firewall-originated traffic, but loses internal source identity after NAT and
 duplicates some internal observations. HTTPS payload remains encrypted; DNS,
 TLS and flow metadata can support investigation but do not prove exfiltration.
 
+## VLANs in the Diary and Triage
+
+The **Observed VLAN** column shows VLAN IDs reported by Suricata for each IDS
+case. Expand **Capture context** for the sensor ID and the original ordered tag
+array. Repeated tags such as `[100,100]` appear as one `100` badge in the column;
+the details retain both tags. Multiple tags describe the observation, not a
+route between the source and destination. Tag `0` is labeled as a priority tag,
+not VLAN membership.
+
+**Not recorded** means the alert has no VLAN tags. This can happen with untagged
+traffic or inner tunnel events, including K3s VXLAN pod traffic. The HUD does
+not assign VLAN 13 from a `10.42.x.x` pod address or from the sensor's management
+network. **Unavailable** means the capture evidence is missing or invalid.
+Non-IDS cases have a dash. VLAN names and endpoint network membership are not
+inferred from an address or a VLAN number.
+
+New IDS cases carry a versioned JSON `annotations.capture_context` containing
+`version: 1` and `vlan_tags`. The sensor ID comes from authenticated ingestion's
+`labels.sensor_id`. The events API adds normalized `capture_context` to diary,
+escalated, and individual case reads: `sensor_id`, `vlan_tags`, and `status`
+(`recorded`, `not_recorded`, or `unavailable`). For older cases, it reads the
+complete EVE JSON already stored after the known description prefix. Truncated
+or malformed descriptions remain unavailable. This is a read projection:
+original evidence, case fingerprints, and investigation policy are unchanged;
+no database backfill is needed.
+
+Deploy the IDS ingestion code, rebuild `convergence-api` with the deployment's
+existing Compose overlays, then build and restart the HUD. Check an existing
+tagged case and a case with no tags through `/api/events?site=<site>` and the
+Diary; check the raw evidence through `/api/events/<id>?site=<site>` if needed.
+Raw EVE VLAN fields remain available in Loki and VictoriaLogs.
+
 ## Deployed example
 
 | Component | Value |

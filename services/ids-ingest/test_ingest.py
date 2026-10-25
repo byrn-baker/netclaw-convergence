@@ -101,9 +101,27 @@ class IngestionTests(unittest.TestCase):
         self.assertEqual(a['labels']['investigate'], 'false')
         other = case_payload({**self.sensor, 'site': 'other'}, event(now=now))['alerts'][0]
         self.assertNotEqual(a['fingerprint'], other['fingerprint'])
+        other_vlan = case_payload(self.sensor, event(now=now, vlan=[301]))['alerts'][0]
+        self.assertNotEqual(a['fingerprint'], other_vlan['fingerprint'])
         canary = case_payload({**self.sensor, 'auto_investigate': True}, event(alert={'signature_id':9000001}))['alerts'][0]
         self.assertEqual(canary['labels']['investigate'], 'false')
         self.assertEqual(canary['labels']['severity'], 'info')
+
+    def test_case_capture_annotation_preserves_tags_independently_of_description(self):
+        for tags in ([100, 100], [300, 301], [0, 13], []):
+            record = event(vlan=tags, alert={'signature_id': 12345, 'signature': 'x'*15000})
+            self.store.accept(self.sensor, [record], self.hb)
+            case = json.loads(self.store.pending('case')[-1]['case_payload'])['alerts'][0]
+            self.assertEqual(json.loads(case['annotations']['capture_context']),
+                             {'version': 1, 'vlan_tags': tags})
+            self.assertEqual(case['labels']['sensor_id'], self.sensor['id'])
+            self.assertEqual(record['vlan'], tags)
+            with self.assertRaises(ValueError):
+                json.loads(case['annotations']['description'].split('. ', 1)[1])
+        record = event(src_ip='192.168.13.2', dest_ip='10.42.4.57')
+        del record['vlan']
+        case = case_payload(self.sensor, record)['alerts'][0]
+        self.assertEqual(json.loads(case['annotations']['capture_context'])['vlan_tags'], [])
 
     def test_malformed_mirror_cannot_report_healthy_capture(self):
         now = time.time()

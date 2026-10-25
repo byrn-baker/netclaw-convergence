@@ -411,6 +411,22 @@
   border-bottom: 0;
 }
 
+.home-observed-vlan {
+  min-width: 100px;
+}
+
+.home-observed-vlan .home-badge {
+  white-space: nowrap;
+}
+
+.home-capture-context {
+  margin-top: 12px;
+}
+
+.home-capture-context p {
+  margin: 8px 0;
+}
+
 .home-muted {
   color: var(--muted);
   font-size: 13px;

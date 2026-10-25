@@ -41,6 +41,7 @@ function writeUnavailable(res, err, what) {
   return null;
 }
 const { query, DbUnavailableError, dbStatus } = require('../db');
+const { captureContext } = require('../lib/captureContext');
 
 /**
  * Ensure a site row exists so event POSTs never FK-500 on unknown site_id.
@@ -69,7 +70,7 @@ router.get('/', async (req, res) => {
     let sql = `SELECT id, timestamp, message, severity, category, source, status,
                alert_name, alert_fingerprint, root_cause, investigation_notes,
                expert_feedback, feedback_quality, rag_document_id, incident_key, alert_cleared_at,
-               source_evidence->'annotations'->'ip_context' AS ip_context
+               source_evidence->'annotations'->'ip_context' AS ip_context, source_evidence
                FROM events WHERE site_id = $1`;
     const params = [site];
 
@@ -90,7 +91,9 @@ router.get('/', async (req, res) => {
     params.push(limit);
 
     const result = await query(sql, params);
-    res.json({ site, events: result.rows });
+    res.json({ site, events: result.rows.map(({source_evidence, ...event}) => ({
+      ...event, capture_context: captureContext(source_evidence, event.alert_name),
+    })) });
   } catch (err) {
     if (!isDbDown(err)) console.error('Events GET error:', err.message);
     if (isDbDown(err)) return emptyWithReason(res, site, err);
@@ -295,7 +298,9 @@ router.get('/escalated', async (req, res) => {
        ORDER BY escalated_at DESC NULLS LAST, timestamp DESC`,
       [site]
     );
-    res.json({ site, events: result.rows });
+    res.json({ site, events: result.rows.map(event => ({
+      ...event, capture_context: captureContext(event.source_evidence, event.alert_name),
+    })) });
   } catch (err) {
     if (!isDbDown(err)) console.error('Escalated events error:', err.message);
     if (isDbDown(err)) return emptyWithReason(res, site, err);
@@ -314,7 +319,8 @@ router.get('/:id', async (req, res) => {
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'Event not found' });
     }
-    res.json(result.rows[0]);
+    const event = result.rows[0];
+    res.json({...event, capture_context: captureContext(event.source_evidence, event.alert_name)});
   } catch (err) {
     if (writeUnavailable(res, err, 'Reading an event')) return;
     console.error('Event GET error:', err.message);

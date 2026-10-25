@@ -3,6 +3,7 @@
  * Live data via HUD proxy /api/home/* → convergence-api / Network Guardian (dual-run).
  */
 import {caseIPContext, ipContextHTML} from './IPContext.js';
+import {caseCaptureContext, observedVlanHTML, captureContextHTML} from './CaptureContext.js';
 
 const SUBVIEWS = [
   { id: 'overview', label: 'Overview' },
@@ -1228,6 +1229,7 @@ export class HomeView {
     const firing = alerts?.firing || alerts?.alerts || [];
     const rows = events
       .map((e) => {
+        const capture = caseCaptureContext(e);
         const rag = e.rag_document_id
           ? `<code class="home-rag-id" title="RAG snapshot id">${esc(e.rag_document_id)}</code>`
           : '<span class="home-muted">—</span>';
@@ -1236,7 +1238,8 @@ export class HomeView {
         <td class="${statusClass(e.status)}">${esc(e.status)}</td>
         <td class="${statusClass(e.severity)}">${esc(e.severity)}</td>
         <td>${esc(e.alert_name || e.category || '')}</td>
-        <td>${esc((e.message || '').slice(0, 100))}${ipContextHTML(caseIPContext(e))}</td>
+        <td class="home-observed-vlan">${observedVlanHTML(capture)}</td>
+        <td>${esc((e.message || '').slice(0, 100))}${captureContextHTML(capture)}${ipContextHTML(caseIPContext(e))}</td>
         <td>${rag}</td>
       </tr>`;
       })
@@ -1264,8 +1267,8 @@ export class HomeView {
         </p>` : ''}
       <div class="home-table-wrap">
         <table class="home-table">
-          <thead><tr><th>When</th><th>Status</th><th>Sev</th><th>Alert</th><th>Message</th><th>RAG id</th></tr></thead>
-          <tbody>${rows || '<tr><td colspan="6">No diary events yet</td></tr>'}</tbody>
+          <thead><tr><th>When</th><th>Status</th><th>Sev</th><th>Alert</th><th>Observed VLAN</th><th>Message</th><th>RAG id</th></tr></thead>
+          <tbody>${rows || '<tr><td colspan="7">No diary events yet</td></tr>'}</tbody>
         </table>
       </div>
       ${alertRows ? `
@@ -1337,6 +1340,7 @@ export class HomeView {
             <span>id <code>${esc(String(id).slice(0, 8))}…</code></span>
             <span class="${statusClass(selected.severity)}">sev ${esc(selected.severity || '—')}</span>
             <span>${esc((selected.escalated_at || selected.timestamp || '').toString().slice(0, 19))}</span>
+            <span>Observed VLAN: ${observedVlanHTML(caseCaptureContext(selected))}</span>
           </div>
           <div class="home-triage-field">
             <span class="home-triage-label">Root cause</span>
@@ -1347,6 +1351,7 @@ export class HomeView {
             <pre class="home-triage-notes-pre">${esc(selected.investigation_notes || '—')}</pre>
             ${selected.source_evidence ? `<details><summary>Original sensor / alert evidence</summary><pre class="home-triage-notes-pre">${esc(JSON.stringify(selected.source_evidence, null, 2))}</pre></details>` : ''}
           </div>
+          ${captureContextHTML(caseCaptureContext(selected))}
           ${ipContextHTML(caseIPContext(selected))}
           ${ragBlock}
           ${selected.expert_feedback ? `

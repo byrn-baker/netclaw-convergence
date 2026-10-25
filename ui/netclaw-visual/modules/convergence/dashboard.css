@@ -35,6 +35,10 @@
 .convergence-workspace .home-section-title { margin: 22px 0 12px; font: .7rem/1.6 ui-monospace,monospace; text-transform: uppercase; letter-spacing: .1em; color: #9aaec1; }
 .convergence-workspace .home-table-wrap { overflow: auto; max-width: 100%; }
 .convergence-workspace .home-table { min-width: 520px; }
+.convergence-workspace .home-observed-vlan { min-width: 100px; }
+.convergence-workspace .home-observed-vlan .home-badge { white-space: nowrap; }
+.convergence-workspace .home-capture-context { margin-top: 12px; }
+.convergence-workspace .home-capture-context p { margin: 8px 0; }
 .convergence-workspace .home-mgmt-link { text-decoration: underline; text-underline-offset: 4px; }
 .convergence-workspace .home-triage-layout { display: grid; grid-template-columns: minmax(180px,.65fr) minmax(0,1.5fr); gap: 24px; margin-top: 22px; }
 .convergence-workspace .home-triage-list { display: flex; flex-direction: column; gap: 8px; min-width: 0; max-height: 660px; overflow: auto; }

@@ -6,7 +6,7 @@ function routes(file, dependencies, globals={}){
  const router={use:h=>middleware.push(h)};
  for(const m of ['get','post','patch'])router[m]=(p,h)=>{handlers[m+' '+p]=h};
  vm.runInNewContext(fs.readFileSync(__dirname+'/src/routes/'+file,'utf8'),{
- require:n=>n==='express'?{Router:()=>router}:dependencies[n],module:{exports:{}},process:{env:{}},console,Date,AbortSignal,Promise,URLSearchParams,...globals,
+ require:n=>n==='express'?{Router:()=>router}:n==='../lib/captureContext'?require('./src/lib/captureContext'):dependencies[n],module:{exports:{}},process:{env:{}},console,Date,AbortSignal,Promise,URLSearchParams,...globals,
  });
  return {handlers,middleware};
 }
@@ -16,6 +16,22 @@ test('case routes deny cross-site lookup and viewer mutation',async()=>{
  let r=response();await handlers['get /:id']({params:{id:'other-case'},site:'home'},r);assert.equal(r.code,404);
  r=response();middleware[0]({method:'PATCH',user:{role:'viewer'}},r,()=>assert.fail('viewer write passed'));assert.equal(r.code,403);
  r=response();await handlers['patch /:id']({params:{id:'other-case'},site:'home',body:{status:'resolved'}},r);assert.equal(r.code,404);
+});
+test('diary and case detail expose the same capture context without leaking full evidence into the diary',async()=>{
+ const evidence={labels:{source:'suricata',sensor_id:'home-ids-01'},annotations:{
+  description:'Passive IDS observation; not proof of compromise. '+JSON.stringify({vlan:[100,100]})}};
+ const event={id:'case',alert_name:'SuricataIntrusion',source_evidence:evidence};
+ const calls=[];
+ const {handlers}=routes('events.js',{'../db':{query:async(sql,args)=>{calls.push({sql,args});return {rows:[event]}},DbUnavailableError:class extends Error{},dbStatus:()=>({available:true})}});
+ for(const path of ['/', '/escalated', '/:id']){
+  const r=response();await handlers['get '+path]({site:'home',query:{limit:30},params:{id:'case'}},r);
+  assert.equal(r.code,200);
+  const row=path==='/:id'?r.body:r.body.events[0];
+  assert.deepEqual(row.capture_context,{sensor_id:'home-ids-01',status:'recorded',vlan_tags:[100,100]});
+  assert.equal(row.source_evidence,path==='/'?undefined:evidence);
+ }
+ assert.ok(calls.every(c=>c.sql.includes('site_id = $')&&c.args.includes('home')));
+ assert.equal(event.capture_context,undefined,'read projection must not rewrite the stored case');
 });
 test('security aggregates structured logs and ranks observed sources',async()=>{
  const queries=[];

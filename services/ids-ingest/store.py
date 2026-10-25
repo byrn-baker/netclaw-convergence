@@ -46,6 +46,7 @@ def case_payload(sensor, event, ip_context=None):
             'suricata_severity': str(alert.get('severity', 3)),
             'investigate': str(bool(sensor.get('auto_investigate')) and not canary).lower()},
         'annotations': {'summary': summary,
+            'capture_context': canonical({'version': 1, 'vlan_tags': event.get('vlan', [])}),
             **({'ip_context': canonical(ip_context)} if ip_context else {}),
             'description': 'Passive IDS observation; not proof of compromise. ' + canonical(details)[:12000]},
     }]}
