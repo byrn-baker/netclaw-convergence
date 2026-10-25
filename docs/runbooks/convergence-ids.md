@@ -11,6 +11,9 @@ Follow this guide for the base installation, then that guide for the expansion.
 The firewall-only topology and commissioning results below describe the initial
 stage, not the complete current capture scope.
 
+For current long-term event retention, sensor metrics and replay behavior, follow
+[IDS integration with the Victoria stack](convergence-ids-victoria.md).
+
 ## Architecture and coverage
 
 ```mermaid
@@ -24,6 +27,9 @@ flowchart LR
     EVE -->|HTTPS + sensor token| IN[IDS ingestion service]
     IN --> DB[(SQLite durable inbox)]
     DB --> LOKI[Loki: raw observations]
+    DB --> VL[VictoriaLogs: long-term observations]
+    IN --> OT[OTel: authenticated metrics scrape]
+    OT --> VM[VictoriaMetrics / Prometheus]
     DB --> REC[Authenticated alert receiver]
     REC --> CASE[(Convergence cases)]
     CASE --> GUARD[Guardian investigation policy]
@@ -63,7 +69,7 @@ TLS and flow metadata can support investigation but do not prove exfiltration.
 | Sensor identity / site | `home-ids-01` / `home` |
 | Engine | Suricata 8.0.7, image pinned by digest in `image.env.example` |
 | Alert receiver / Convergence API | Existing services on ports `8099` / `3080` |
-| Raw log storage | Existing local Loki, job `ids-eve` |
+| Raw log storage | Loki plus VictoriaLogs, job `ids-eve` (Victoria integration added 25 October) |
 | Automation | Cases enabled; automatic IDS investigations disabled during tuning |
 
 | VLAN | Network | Purpose |
@@ -421,7 +427,7 @@ After a restart, replay is safe: the receiver deduplicates canonical EVE records
 by sensor identity and content. Invalid or oversized records stop the shipper
 with a logged error; they are not silently discarded.
 
-The receiver commits observations before acknowledgement. Loki delivery and
+The receiver commits observations before acknowledgement. Loki, VictoriaLogs and
 case delivery have independent durable checkpoints and retries. Cases correlate
 the same sensor, signature, source/destination, VLAN and five-minute window.
 The existing alert receiver then persists cases and applies Guardian policy.
@@ -432,9 +438,11 @@ manual follow-up includes the original observation as untrusted evidence.
 The receiver has a 250,000-pending-record limit and a 512 MiB free-disk reserve.
 When full it returns 503, and the sensor retains its files. Metadata rows already
 delivered are retained locally for one day; alert rows for 30 days. Undelivered
-rows never expire automatically. Raw log retention in Loki follows the existing
-Loki configuration. The sensor deletes only fully acknowledged EVE files older
-than 48 hours. A long outage can exhaust sensor disk: monitor free space and
+rows never expire automatically. Log retention follows the configured Loki and
+VictoriaLogs retention periods.
+The optional Victoria integration protects undelivered archive rows and pending
+historical replay from pruning; see its linked runbook. The sensor deletes only
+fully acknowledged EVE files older than 48 hours. A long outage can exhaust sensor disk: monitor free space and
 restore delivery or increase capacity before that happens.
 
 These durability boundaries do **not** guarantee that every original network

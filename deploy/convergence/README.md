@@ -10,6 +10,8 @@ findings through the HUD HOME tab and curated Grafana dashboards.
 For passive intrusion detection, follow the [Suricata / ERSPAN setup and recovery
 runbook](../../docs/runbooks/convergence-ids.md), followed by the
 [network-wide capture guide](../../docs/runbooks/convergence-network-coverage.md).
+For year-long configured IDS retention and metric trends, enable the
+[Victoria stack integration](../../docs/runbooks/convergence-ids-victoria.md).
 The guides include a dedicated sensor
 VM, authenticated durable ingestion, rule updates, HUD integration and acceptance
 tests. This is an optional addition to the existing stack.

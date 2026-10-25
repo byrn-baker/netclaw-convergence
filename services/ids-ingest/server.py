@@ -13,10 +13,11 @@ import shutil
 import time
 
 from fastapi import FastAPI, Request
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, PlainTextResponse
 import httpx
 
 from store import Store
+from telemetry import archive_body, render_metrics
 
 log = logging.getLogger('ids-ingest')
 
@@ -29,58 +30,75 @@ def create_app(config, store, client_factory=httpx.AsyncClient):
     if len(set(hashes)) != len(hashes) or any(len(h) != 64 for h in hashes):
         raise ValueError('Unique SHA-256 token hashes required')
 
-    async def deliver():
-        last_prune = 0
-        retry_at = {'log': 0, 'case': 0}
-        backoff = {'log': 1, 'case': 1}
+    if config.get('victorialogs_url'):
+        store.enable_archive()
+
+    async def deliver(target):
+        backoff = 1
         async with client_factory(timeout=15) as client:
             while True:
-                for target in ('log', 'case'):
-                    if time.monotonic() < retry_at[target]:
-                        continue
-                    rows = store.pending(target)
+                try:
+                    if target == 'archive':
+                        store.schedule_backfill()
+                    rows = store.pending(target, limit=512 if target == 'archive' else 128)
                     if not rows:
+                        await asyncio.sleep(0.2)
                         continue
-                    try:
-                        if target == 'log':
-                            streams = {}
-                            for row in rows:
-                                key = (row['site'], row['sensor'], row['kind'])
-                                streams.setdefault(key, []).append([str(row['received_ns']), row['payload']])
-                            payload = {'streams': [{'stream': {'job': 'ids-eve', 'site': key[0],
-                                'sensor': key[1], 'event_type': key[2]}, 'values': values}
-                                for key, values in streams.items()]}
-                            response = await client.post(config['loki_url'].rstrip('/')+'/loki/api/v1/push', json=payload)
+                    if target == 'log':
+                        streams = {}
+                        for row in rows:
+                            key = (row['site'], row['sensor'], row['kind'])
+                            streams.setdefault(key, []).append([str(row['received_ns']), row['payload']])
+                        payload = {'streams': [{'stream': {'job': 'ids-eve', 'site': key[0],
+                            'sensor': key[1], 'event_type': key[2]}, 'values': values}
+                            for key, values in streams.items()]}
+                        response = await client.post(config['loki_url'].rstrip('/')+'/loki/api/v1/push', json=payload)
+                        response.raise_for_status()
+                        store.acknowledge(target, [r['id'] for r in rows])
+                    elif target == 'archive':
+                        response = await client.post(config['victorialogs_url'].rstrip('/')+'/insert/elasticsearch/_bulk',
+                            params={'_stream_fields': 'job,site,sensor,event_type'},
+                            headers={'Content-Type': 'application/x-ndjson'}, content=archive_body(rows))
+                        response.raise_for_status()
+                        ack = response.json()
+                        items = ack.get('items', [])
+                        if (ack.get('errors') is not False or len(items) != len(rows) or
+                            any(not 200 <= item.get('create', {}).get('status', 0) < 300 for item in items)):
+                            raise RuntimeError('VictoriaLogs did not acknowledge complete batch')
+                        store.acknowledge(target, [r['id'] for r in rows])
+                    else:
+                        for row in rows:
+                            response = await client.post(config['receiver_url'],
+                                headers={'Authorization': 'Bearer '+config['receiver_token']},
+                                json=json.loads(row['case_payload']))
                             response.raise_for_status()
-                            store.acknowledge('log', [r['id'] for r in rows])
-                        else:
-                            for row in rows:
-                                response = await client.post(config['receiver_url'],
-                                    headers={'Authorization': 'Bearer '+config['receiver_token']},
-                                    json=json.loads(row['case_payload']))
-                                response.raise_for_status()
-                                if response.json().get('status') != 'accepted':
-                                    raise RuntimeError('Case receiver did not acknowledge durable acceptance')
-                                store.acknowledge('case', [row['id']])
-                        backoff[target] = 1
-                    except Exception as exc:
-                        # Exception messages can contain URLs; log only type/status.
-                        status = getattr(getattr(exc, 'response', None), 'status_code', None)
-                        log.warning('%s delivery failed (%s, HTTP %s); retaining batch; retry in %ss',
-                                    target, type(exc).__name__, status, backoff[target])
-                        retry_at[target] = time.monotonic()+backoff[target]
-                        backoff[target] = min(60, backoff[target]*2)
-                if time.time()-last_prune > 3600:
-                    store.prune()
-                    last_prune = time.time()
-                await asyncio.sleep(0.2)
+                            if response.json().get('status') != 'accepted':
+                                raise RuntimeError('Case receiver did not acknowledge durable acceptance')
+                            store.acknowledge(target, [row['id']])
+                    backoff = 1
+                    await asyncio.sleep(0.05)
+                except Exception as exc:
+                    # Exception messages can contain URLs; log only type/status.
+                    status = getattr(getattr(exc, 'response', None), 'status_code', None)
+                    log.warning('%s delivery failed (%s, HTTP %s); retaining batch; retry in %ss',
+                                target, type(exc).__name__, status, backoff)
+                    await asyncio.sleep(backoff)
+                    backoff = min(60, backoff*2)
+
+    async def prune():
+        while True:
+            store.prune()
+            await asyncio.sleep(3600)
 
     @asynccontextmanager
     async def lifespan(app):
-        task = asyncio.create_task(deliver())
+        targets = ['log', 'case'] + (['archive'] if store.archive_enabled else [])
+        tasks = [asyncio.create_task(deliver(target)) for target in targets]
+        tasks.append(asyncio.create_task(prune()))
         yield
-        task.cancel()
-        await asyncio.gather(task, return_exceptions=True)
+        for task in tasks:
+            task.cancel()
+        await asyncio.gather(*tasks, return_exceptions=True)
 
     app = FastAPI(lifespan=lifespan, docs_url=None, redoc_url=None, openapi_url=None)
 
@@ -91,6 +109,13 @@ def create_app(config, store, client_factory=httpx.AsyncClient):
     @app.get('/healthz')
     async def health():
         return {'status': 'ok'}
+
+    @app.get('/metrics', response_class=PlainTextResponse)
+    async def metrics(request: Request):
+        if not hmac.compare_digest(token_hash(request), config['status_token_sha256']):
+            return JSONResponse({'error': 'Unauthorized'}, status_code=401)
+        return PlainTextResponse(render_metrics(store, sensors),
+                                 media_type='text/plain; version=0.0.4; charset=utf-8')
 
     @app.get('/v1/status')
     async def status(request: Request, site: str):

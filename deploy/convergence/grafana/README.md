@@ -112,3 +112,11 @@ curl -s -X POST http://127.0.0.1:9090/-/reload
 ## Spec
 
 `specs/1006-grafana-board-suite/spec.md` · Phase 10 curated suite.
+
+## IDS Capture and Alerts (`convergence-ids`)
+
+An additional board uses **VictoriaMetrics - Long Term** for twelve IDS trend
+panels. Enable the optional IDS telemetry overlay first; see
+[the integration runbook](../../../docs/runbooks/convergence-ids-victoria.md).
+Metric history begins at telemetry installation; retained older EVE observations
+are separately backfilled into VictoriaLogs.

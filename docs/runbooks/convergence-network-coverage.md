@@ -291,3 +291,10 @@ neither is an automatic rollback action.
 * [Suricata TLS fingerprints](https://docs.suricata.io/en/suricata-8.0.0/rules/ja-keywords.html)
 * [TLS inspection certificates and application compatibility](https://docs.mitmproxy.org/stable/concepts/certificates/)
 * [Wireshark TLS decryption](https://wiki.wireshark.org/TLS)
+
+## Long-term IDS retention and metrics
+
+The 25 October integration sends EVE observations to VictoriaLogs and exports
+IDS health and rates through OTel to VictoriaMetrics and Prometheus. See the
+[Victoria integration runbook](convergence-ids-victoria.md) for setup, retained
+history replay, Grafana, failure handling and verification.

@@ -31,7 +31,7 @@ if not receiver_token:
     raise SystemExit('Existing alert receiver token required')
 sensor_token, status_token = secrets.token_urlsafe(48), secrets.token_urlsafe(48)
 (root/'sensor-token').write_text(sensor_token+'\n')
-(root/'api.env').write_text(f'IDS_STATUS_URL=https://{args.server_ip}:8445\nIDS_STATUS_TOKEN={status_token}\n')
+(root/'api.env').write_text(f'IDS_STATUS_URL=https://{args.server_ip}:8445\nIDS_STATUS_TOKEN={status_token}\nIDS_METRICS_TARGET={args.server_ip}:8445\n')
 digest = lambda value: hashlib.sha256(value.encode()).hexdigest()
 config = {'state_dir': args.state_dir, 'queue_capacity': 250000,
     'loki_url': 'http://127.0.0.1:3100', 'receiver_url': 'http://127.0.0.1:8099/webhook',

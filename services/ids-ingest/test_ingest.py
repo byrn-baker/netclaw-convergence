@@ -14,6 +14,7 @@ from fastapi.testclient import TestClient
 import httpx
 from server import create_app
 from store import Store, case_payload
+from telemetry import render_metrics
 
 
 def event(kind='alert', now=None, **extra):
@@ -214,6 +215,104 @@ class IngestionTests(unittest.TestCase):
         self.assertEqual(len(self.store.pending('case')), 1)
         self.assertIn('logs', calls)
         self.assertIn('cases', calls)
+
+    def test_archive_backfill_is_bounded_restartable_and_protected_from_pruning(self):
+        records = [event(now=time.time()-40*86400, src_port=n) for n in range(6)]
+        self.store.accept(self.sensor, records, self.hb, now=time.time()-40*86400)
+        ids = [r['id'] for r in self.store.pending('log')]
+        for target in ('log', 'case'):
+            self.store.acknowledge(target, ids)
+        self.store.enable_archive()
+        self.store.schedule_backfill(limit=2)
+        self.assertEqual(len(self.store.pending('archive')), 2)
+        self.store.prune()
+        self.assertEqual(self.store.db.execute('SELECT count(*) FROM eve').fetchone()[0], 6)
+        first = self.store.pending('archive')
+        self.store.acknowledge('archive', [r['id'] for r in first])
+        self.store.prune()
+        self.assertEqual(self.store.db.execute('SELECT count(*) FROM eve').fetchone()[0], 4)
+        self.store.db.close()
+        self.store = Store(self.path, capacity=10)
+        self.store.enable_archive()
+        self.store.schedule_backfill(limit=2)
+        self.assertFalse(set(r['id'] for r in first) & set(r['id'] for r in self.store.pending('archive')))
+        # Historical replay occupies at most half the live queue.
+        self.store.schedule_backfill(limit=100)
+        self.store.accept(self.sensor, [event()], self.hb)
+        self.assertLessEqual(len(self.store.pending('archive')), 6)
+
+    def test_metrics_are_authenticated_persistent_deduplicated_and_scope_bound(self):
+        record = event(site='spoofed', sensor='spoofed')
+        self.store.enable_archive()
+        self.store.accept(self.sensor, [record, record], self.hb)
+        self.assertEqual(self.client.get('/metrics').status_code, 401)
+        self.assertEqual(self.client.get('/metrics', headers={'Authorization':'Bearer sensor-secret'}).status_code, 401)
+        response = self.client.get('/metrics', headers={'Authorization':'Bearer status-secret'})
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('netclaw_ids_alerts_ingested_total{priority="1",sensor="sensor-home",site="home"} 1.0', response.text)
+        self.assertNotIn('spoofed', response.text)
+        self.store.db.close()
+        self.store = Store(self.path)
+        self.store.enable_archive()
+        self.store.accept(self.sensor, [record], self.hb)
+        text = render_metrics(self.store, [self.sensor])
+        self.assertIn('netclaw_ids_alerts_ingested_total{priority="1",sensor="sensor-home",site="home"} 1.0', text)
+
+    def test_metric_counters_follow_engine_resets_and_ignore_old_stats(self):
+        now = time.time()
+        def stats(t, packets, errors):
+            return event('stats', t, stats={'capture': {'kernel_packets': packets}, 'decoder': {'unknown_ethertype': errors}})
+        self.store.accept(self.sensor, [stats(now-20, 1000, 10), stats(now-10, 5, 1)], self.hb)
+        self.store.accept(self.sensor, [stats(now-15, 2000, 50)], self.hb)
+        text = render_metrics(self.store, [self.sensor])
+        self.assertIn('netclaw_ids_capture_packets_total{sensor="sensor-home",site="home"} 5.0', text)
+        self.assertIn('netclaw_ids_decoder_events_total{reason="unknown_ethertype",sensor="sensor-home",site="home"} 1.0', text)
+
+    def test_archive_failure_keeps_evidence_without_blocking_other_destinations(self):
+        record = event(site='spoofed', sensor='spoofed', _time='invalid')
+        config = {**self.config, 'loki_url': 'http://logs', 'receiver_url': 'http://cases/webhook',
+                  'receiver_token': 'test', 'victorialogs_url': 'http://archive'}
+        failing, bodies = [True], []
+        def upstream(request):
+            if request.url.host == 'archive':
+                bodies.append(request.content)
+                return httpx.Response(200, json={'errors': failing[0], 'items': [{'create': {'status': 201}}]})
+            if request.url.host == 'cases':
+                return httpx.Response(200, json={'status': 'accepted'})
+            return httpx.Response(204)
+        factory = lambda **kw: httpx.AsyncClient(transport=httpx.MockTransport(upstream), **kw)
+        app = create_app(config, self.store, factory)
+        self.store.accept(self.sensor, [record], self.hb)
+        with TestClient(app):
+            deadline = time.monotonic()+3
+            while (self.store.pending('log') or self.store.pending('case') or not bodies) and time.monotonic()<deadline:
+                time.sleep(0.02)
+            self.assertEqual(self.store.pending('log'), [])
+            self.assertEqual(self.store.pending('case'), [])
+            self.assertEqual(len(self.store.pending('archive')), 1)
+            self.store.prune(now=time.time()+90*86400)
+            self.assertEqual(len(self.store.pending('archive')), 1)
+            failing[0] = False
+            deadline = time.monotonic()+3
+            while self.store.pending('archive') and time.monotonic()<deadline:
+                time.sleep(0.02)
+        self.assertEqual(self.store.pending('archive'), [])
+        self.assertEqual(bodies[0], bodies[-1], 'Retries retain the same evidence ID and timestamp')
+        envelope = json.loads(bodies[0].splitlines()[1])
+        self.assertEqual((envelope['site'], envelope['sensor']), ('home', 'sensor-home'))
+        self.assertEqual(json.loads(envelope['eve']), record)
+        self.assertEqual(envelope['_time'], record['timestamp'])
+
+    def test_archive_backpressure_is_atomic_and_metrics_do_not_count_rejected_events(self):
+        self.store.enable_archive()
+        self.store.capacity = 1
+        self.store.accept(self.sensor, [event()], self.hb)
+        row = self.store.pending('archive')[0]
+        for target in ('log', 'case'):
+            self.store.acknowledge(target, [row['id']])
+        with self.assertRaises(OverflowError):
+            self.store.accept(self.sensor, [event(src_port=99)], self.hb)
+        self.assertEqual(self.store.db.execute('SELECT sum(count) FROM event_counts').fetchone()[0], 1)
 
 
 if __name__ == '__main__':

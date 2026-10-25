@@ -317,3 +317,12 @@ node --test ui/convergence-api/test-reliability.cjs
 promtool test rules services/alert-receiver/test_snmp_rules.yml
 .venv/bin/python -m pytest tests/contract/test_convergence_api.py
 ```
+
+### IDS long-term telemetry
+
+The optional [Victoria integration](runbooks/convergence-ids-victoria.md) sends
+structured EVE observations to VictoriaLogs with independent durable delivery
+and bounded replay of retained history. OTel exports IDS capture health and
+alert-rate metrics to both Prometheus and VictoriaMetrics. Grafana includes
+**IDS Capture and Alerts** for reviewing the baseline; automatic IDS
+investigations remain disabled during tuning.

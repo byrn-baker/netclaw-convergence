@@ -2,6 +2,7 @@
   "state_dir": "/var/lib/netclaw-ids-ingest",
   "queue_capacity": 250000,
   "loki_url": "http://127.0.0.1:3100",
+  "victorialogs_url": "http://127.0.0.1:9428",
   "receiver_url": "http://127.0.0.1:8099/webhook",
   "receiver_token": "REPLACE_WITH_EXISTING_RECEIVER_TOKEN",
   "status_token_sha256": "REPLACE_WITH_SHA256_OF_A_SEPARATE_STATUS_TOKEN",

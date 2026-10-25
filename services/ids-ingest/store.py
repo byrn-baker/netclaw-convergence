@@ -1,4 +1,4 @@
-"""Durable EVE inbox and independent log/case delivery checkpoints."""
+"""Durable EVE inbox and independent log/archive/case delivery checkpoints."""
 import hashlib
 import ipaddress
 import json
@@ -82,6 +82,7 @@ class Store:
         self.db.row_factory = sqlite3.Row
         self.lock = threading.RLock()
         self.capacity = capacity
+        self.archive_enabled = False
         self.db.execute('PRAGMA journal_mode=WAL')
         self.db.execute('PRAGMA synchronous=FULL')
         self.db.executescript('''
@@ -101,19 +102,65 @@ class Store:
           CREATE TABLE IF NOT EXISTS coverage (
             sensor TEXT NOT NULL, vlan INTEGER NOT NULL, observed REAL NOT NULL,
             PRIMARY KEY(sensor, vlan));
+          CREATE TABLE IF NOT EXISTS metadata (key TEXT PRIMARY KEY, value INTEGER NOT NULL);
+          CREATE TABLE IF NOT EXISTS event_counts (
+            site TEXT NOT NULL, sensor TEXT NOT NULL, kind TEXT NOT NULL,
+            priority TEXT NOT NULL, count INTEGER NOT NULL,
+            PRIMARY KEY(site,sensor,kind,priority));
         ''')
         columns = {r[1] for r in self.db.execute('PRAGMA table_info(sensors)')}
         for name in ('decoder_errors', 'decoder_delta', 'packet_delta'):
             if name not in columns:
                 self.db.execute(f'ALTER TABLE sensors ADD COLUMN {name} INTEGER NOT NULL DEFAULT 0')
+        if 'decoder_counts' not in columns:
+            self.db.execute("ALTER TABLE sensors ADD COLUMN decoder_counts TEXT NOT NULL DEFAULT '{}'")
+        if 'archive_done' not in {r[1] for r in self.db.execute('PRAGMA table_info(eve)')}:
+            # Upgrade without creating an unbounded live queue. Retained history
+            # is scheduled in bounded batches with a durable rowid checkpoint.
+            self.db.execute('ALTER TABLE eve ADD COLUMN archive_done INTEGER NOT NULL DEFAULT 1')
+        self.db.executescript('''
+          CREATE INDEX IF NOT EXISTS eve_archive_pending ON eve(received_ns) WHERE archive_done=0;
+          CREATE INDEX IF NOT EXISTS eve_delivery_pending ON eve(sensor,received_ns)
+            WHERE log_done=0 OR case_done=0 OR archive_done=0;
+        ''')
         self.db.commit()
+
+    def enable_archive(self):
+        with self.lock, self.db:
+            self.archive_enabled = True
+            high = self.db.execute('SELECT coalesce(max(rowid),0) FROM eve').fetchone()[0]
+            self.db.execute("INSERT OR IGNORE INTO metadata VALUES('archive_backfill_end',?)", (high,))
+            self.db.execute("INSERT OR IGNORE INTO metadata VALUES('archive_backfill_cursor',0)")
+
+    @property
+    def pending_condition(self):
+        return 'log_done=0 OR case_done=0' + (' OR archive_done=0' if self.archive_enabled else '')
+
+    def schedule_backfill(self, limit=512):
+        """Queue old retained evidence without starving new ingestion or pruning it."""
+        if not self.archive_enabled:
+            return
+        with self.lock, self.db:
+            pending = self.db.execute(f'SELECT count(*) FROM eve WHERE {self.pending_condition}').fetchone()[0]
+            # Let existing (including live) work drain before adding more history.
+            # Otherwise a continuously replenished historical batch can keep
+            # recent observations at the back of the archive queue for hours.
+            limit = max(0, min(limit, self.capacity//2)-pending)
+            if not limit:
+                return
+            state = dict(self.db.execute('SELECT key,value FROM metadata'))
+            cursor, end = state['archive_backfill_cursor'], state['archive_backfill_end']
+            rows = self.db.execute('SELECT rowid FROM eve WHERE rowid>? AND rowid<=? ORDER BY rowid LIMIT ?',
+                                   (cursor, end, limit)).fetchall()
+            self.db.executemany('UPDATE eve SET archive_done=0 WHERE rowid=?', [(r[0],) for r in rows])
+            self.db.execute("UPDATE metadata SET value=? WHERE key='archive_backfill_cursor'", (rows[-1][0] if rows else end,))
 
     def accept(self, sensor, events, heartbeat, now=None):
         now = time.time() if now is None else now
         for event in events:
             validate_event(event, now)
         with self.lock, self.db:
-            pending = self.db.execute('SELECT count(*) FROM eve WHERE log_done=0 OR case_done=0').fetchone()[0]
+            pending = self.db.execute(f'SELECT count(*) FROM eve WHERE {self.pending_condition}').fetchone()[0]
             rows, batch_ids = [], set()
             for i, event in enumerate(events):
                 payload = canonical(event)
@@ -124,10 +171,17 @@ class Store:
                 case = case_payload(sensor, event) if event['event_type'] == 'alert' else None
                 rows.append((identity, sensor['id'], sensor['site'], event['event_type'],
                     stamp(event['timestamp']), int(now * 1e9) + i, payload, canonical(case) if case else None,
-                    0 if case else 1))
+                    0 if case else 1, 0 if self.archive_enabled else 1))
             if pending + len(rows) > self.capacity:
                 raise OverflowError('IDS inbox full; sensor must retain and retry its batch')
-            self.db.executemany('INSERT OR IGNORE INTO eve(id,sensor,site,kind,observed,received_ns,payload,case_payload,case_done) VALUES(?,?,?,?,?,?,?,?,?)', rows)
+            self.db.executemany('INSERT OR IGNORE INTO eve(id,sensor,site,kind,observed,received_ns,payload,case_payload,case_done,archive_done) VALUES(?,?,?,?,?,?,?,?,?,?)', rows)
+            for row in rows:
+                evidence = json.loads(row[6])
+                severity = evidence['alert'].get('severity', 3) if row[3]=='alert' else 3
+                priority = str(severity) if severity <= 3 else 'other'
+                self.db.execute('''INSERT INTO event_counts VALUES(?,?,?,?,1)
+                    ON CONFLICT(site,sensor,kind,priority) DO UPDATE SET count=count+1''',
+                    (sensor['site'], sensor['id'], row[3], priority if row[3]=='alert' else 'none'))
             self.db.execute('INSERT INTO sensors(id,seen,heartbeat) VALUES(?,?,?) ON CONFLICT(id) DO UPDATE SET seen=excluded.seen,heartbeat=excluded.heartbeat',
                             (sensor['id'], now, canonical(heartbeat)))
             for event in events:
@@ -149,25 +203,34 @@ class Store:
                     errors = sum(int(decoder.get(k, 0)) for k in ('invalid', 'too_many_layers', 'unknown_ethertype'))
                     error_delta = errors if reset else max(0, errors-old['decoder_errors'])
                     last_packet = ts if packets > (0 if reset else old['packets']) else old['last_packet']
-                    self.db.execute('UPDATE sensors SET stats_time=?,packets=?,drops=?,drop_delta=?,last_packet=?,decoder_errors=?,decoder_delta=?,packet_delta=? WHERE id=?',
-                        (ts, packets, drops, delta, last_packet, errors, error_delta, packet_delta, sensor['id']))
+                    counts = {k: int(decoder.get(k, 0)) for k in ('invalid', 'too_many_layers', 'unknown_ethertype')}
+                    self.db.execute('UPDATE sensors SET stats_time=?,packets=?,drops=?,drop_delta=?,last_packet=?,decoder_errors=?,decoder_delta=?,packet_delta=?,decoder_counts=? WHERE id=?',
+                        (ts, packets, drops, delta, last_packet, errors, error_delta, packet_delta, canonical(counts), sensor['id']))
             return len(rows)
 
     def pending(self, target, limit=128):
-        column = {'log': 'log_done', 'case': 'case_done'}[target]
+        column = {'log': 'log_done', 'case': 'case_done', 'archive': 'archive_done'}[target]
         with self.lock:
             return [dict(r) for r in self.db.execute(f'SELECT * FROM eve WHERE {column}=0 ORDER BY received_ns LIMIT ?', (limit,))]
 
     def acknowledge(self, target, ids):
-        column = {'log': 'log_done', 'case': 'case_done'}[target]
+        column = {'log': 'log_done', 'case': 'case_done', 'archive': 'archive_done'}[target]
         with self.lock, self.db:
             self.db.executemany(f'UPDATE eve SET {column}=1 WHERE id=?', [(i,) for i in ids])
+            if ids:
+                self.db.execute('INSERT INTO metadata VALUES(?,?) ON CONFLICT(key) DO UPDATE SET value=excluded.value',
+                                ('delivery_success_'+target, int(time.time())))
 
     def prune(self, now=None):
         now = time.time() if now is None else now
         with self.lock, self.db:
             # Never expire an undelivered row. Upstream outage becomes explicit backpressure.
-            self.db.execute("DELETE FROM eve WHERE log_done=1 AND case_done=1 AND received_ns < ? AND (kind!='alert' OR received_ns < ?)",
+            archive_guard = ''
+            if self.archive_enabled:
+                archive_guard = """ AND archive_done=1 AND (rowid <=
+                    (SELECT value FROM metadata WHERE key='archive_backfill_cursor') OR rowid >
+                    (SELECT value FROM metadata WHERE key='archive_backfill_end'))"""
+            self.db.execute("DELETE FROM eve WHERE log_done=1 AND case_done=1"+archive_guard+" AND received_ns < ? AND (kind!='alert' OR received_ns < ?)",
                             (int((now-86400)*1e9), int((now-30*86400)*1e9)))
 
     def status(self, configured, site, now=None):
@@ -197,10 +260,10 @@ class Store:
                         state, reason = 'degraded', 'High decoder-error rate; inspect mirror integrity and malformed traffic'
                     else:
                         state, reason = 'active', 'Recent mirrored packets, capture statistics and rule checks'
-                pending = self.db.execute('SELECT count(*) FROM eve WHERE sensor=? AND (log_done=0 OR case_done=0)', (cfg['id'],)).fetchone()[0]
-                oldest = self.db.execute('SELECT min(received_ns) FROM eve WHERE sensor=? AND (log_done=0 OR case_done=0)', (cfg['id'],)).fetchone()[0]
+                pending = self.db.execute(f'SELECT count(*) FROM eve WHERE sensor=? AND ({self.pending_condition})', (cfg['id'],)).fetchone()[0]
+                oldest = self.db.execute(f'SELECT min(received_ns) FROM eve WHERE sensor=? AND ({self.pending_condition})', (cfg['id'],)).fetchone()[0]
                 if oldest and now-oldest/1e9 > 120 and state == 'active':
-                    state, reason = 'degraded', 'Log or case delivery backlog exceeds two minutes'
+                    state, reason = 'degraded', 'Log, archive or case delivery backlog exceeds two minutes'
                 probe = heartbeat.get('capture_probe', {})
                 sources = []
                 for source in cfg.get('capture_sources', []):
