@@ -140,6 +140,10 @@ Changes retain their review boundaries: Testbed saves do not connect devices, sa
 home network.” Start with the [fresh-install guide](docs/runbooks/convergence-setup.md)
 for generated credentials, portable configuration and verification.
 
+For day-to-day operation, see [security review and ISP incident reports](docs/runbooks/convergence-incident-review.md):
+explained IDS priorities, recorded case reviews, and local support/email drafts
+with evidence exports and a catalog of major U.S. providers.
+
 | Area | Spec / docs | Deploy / code |
 |------|-------------|----------------|
 | **NetClaw Convergence** | **[docs/CONVERGENCE.md](docs/CONVERGENCE.md)** · [ENV layout](docs/ENV-AND-LAYOUT.md) · [spec 067](specs/080-convergence/) · [greenfield device/agent telemetry (Phase 8)](specs/080-convergence/device-telemetry-greenfield.md) | [`deploy/convergence/`](deploy/convergence/) · [`ui/convergence-api/`](ui/convergence-api/) · [`services/alert-receiver/`](services/alert-receiver/) · HUD CONVERGENCE |

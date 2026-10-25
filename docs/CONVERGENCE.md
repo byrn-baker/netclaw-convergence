@@ -37,6 +37,9 @@ Optional JEV second opinions for IDS cases are available in Diary, Triage and
 Guardian's case tools. See the [JEV review runbook](runbooks/convergence-jev.md)
 for setup, data sharing, shared budgets and recovery behavior.
 
+Security review priorities and local ISP incident/email evidence drafts are
+documented in [Incident review and provider reports](runbooks/convergence-incident-review.md).
+
 ---
 
 ## Planes (where things run)

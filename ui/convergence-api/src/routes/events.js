@@ -42,6 +42,8 @@ function writeUnavailable(res, err, what) {
 }
 const { query, DbUnavailableError, dbStatus } = require('../db');
 const { captureContext } = require('../lib/captureContext');
+const { securityAssessment } = require('../lib/securityAssessment');
+const { WAN_ALERTS } = require('../lib/ispReport');
 
 /**
  * Ensure a site row exists so event POSTs never FK-500 on unknown site_id.
@@ -70,9 +72,16 @@ router.get('/', async (req, res) => {
     let sql = `SELECT id, timestamp, message, severity, category, source, status,
                alert_name, alert_fingerprint, root_cause, investigation_notes,
                expert_feedback, feedback_quality, rag_document_id, incident_key, alert_cleared_at,
-               source_evidence->'annotations'->'ip_context' AS ip_context, source_evidence, jev_review
+               source_evidence->'annotations'->'ip_context' AS ip_context, source_evidence, jev_review,
+               security_disposition, isp_report->>'generated_at' AS isp_report_generated_at
                FROM events WHERE site_id = $1`;
     const params = [site];
+
+    if (req.query.type === 'security') sql += " AND alert_name = 'SuricataIntrusion'";
+    if (req.query.type === 'wan') {
+      params.push(WAN_ALERTS);
+      sql += ` AND (category = 'wan' OR alert_name = ANY($${params.length}::text[]))`;
+    }
 
     if (status) {
       sql += ` AND status = $${params.length + 1}`;
@@ -93,6 +102,7 @@ router.get('/', async (req, res) => {
     const result = await query(sql, params);
     res.json({ site, events: result.rows.map(({source_evidence, ...event}) => ({
       ...event, capture_context: captureContext(source_evidence, event.alert_name),
+      security_assessment: securityAssessment({...event, source_evidence}),
     })) });
   } catch (err) {
     if (!isDbDown(err)) console.error('Events GET error:', err.message);
@@ -302,7 +312,7 @@ router.get('/escalated', async (req, res) => {
               alert_name, alert_fingerprint, root_cause, investigation_notes,
               expert_feedback, feedback_quality, rag_document_id, rag_snapshotted_at,
               escalated_at, investigation_started_at, investigation_completed_at,
-              feedback_provided_at, created_at, updated_at, source_evidence, jev_review
+              feedback_provided_at, created_at, updated_at, source_evidence, jev_review, security_disposition
        FROM events
        WHERE site_id = $1 AND status = 'escalated'
        ORDER BY escalated_at DESC NULLS LAST, timestamp DESC`,
@@ -310,6 +320,7 @@ router.get('/escalated', async (req, res) => {
     );
     res.json({ site, events: result.rows.map(event => ({
       ...event, capture_context: captureContext(event.source_evidence, event.alert_name),
+      security_assessment: securityAssessment(event),
     })) });
   } catch (err) {
     if (!isDbDown(err)) console.error('Escalated events error:', err.message);
@@ -330,7 +341,7 @@ router.get('/:id', async (req, res) => {
       return res.status(404).json({ error: 'Event not found' });
     }
     const event = result.rows[0];
-    res.json({...event, capture_context: captureContext(event.source_evidence, event.alert_name)});
+    res.json({...event, capture_context: captureContext(event.source_evidence, event.alert_name), security_assessment: securityAssessment(event)});
   } catch (err) {
     if (writeUnavailable(res, err, 'Reading an event')) return;
     console.error('Event GET error:', err.message);

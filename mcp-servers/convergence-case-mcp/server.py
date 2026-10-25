@@ -23,6 +23,30 @@ async def case_get(event_id: str) -> dict:
     return await request('GET',event_id)
 
 @mcp.tool()
+async def isp_provider_catalog() -> dict:
+    """List supported US providers and dated official support/credit source links.
+    Selecting a recipient does not identify the failing WAN or establish credit eligibility.
+    """
+    if not BASE or not TOKEN: raise ValueError('Case interface is not configured')
+    async with httpx.AsyncClient(timeout=15) as client:
+        response = await client.get(f'{BASE}/api/isp/providers', params={'site': SITE},
+                                    headers={'Authorization': f'Bearer {TOKEN}'})
+        response.raise_for_status()
+        return response.json()
+
+@mcp.tool()
+async def case_isp_report(event_id: str, provider_id: str, timezone: str = 'UTC') -> dict:
+    """Prepare and save a local provider-message draft and redacted evidence for a WAN case.
+    Choose provider_id from isp_provider_catalog after confirming the affected service.
+    Uses stored incident times and bounded historical probe measurements; missing data is explicit.
+    No email is sent, claim filed, account accessed or credit promised. Ask the user to review
+    the draft, recipient, applicable terms and evidence before any separate sending action.
+    Re-generating replaces the current saved draft; prior versions remain in case history.
+    """
+    if len(provider_id) > 40 or len(timezone) > 100: raise ValueError('Invalid report options')
+    return await request('POST', event_id, {'provider_id': provider_id, 'timezone': timezone}, action='/isp-report')
+
+@mcp.tool()
 async def case_jev_review(event_id: str) -> dict:
     """Request one advisory JEV review of the assigned IDS case's abstract metadata.
     No addresses, VLAN IDs, names, raw signatures or investigation notes are sent.

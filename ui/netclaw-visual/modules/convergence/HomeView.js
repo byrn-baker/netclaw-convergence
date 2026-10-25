@@ -5,6 +5,7 @@
 import {caseIPContext, ipContextHTML} from './IPContext.js';
 import {caseCaptureContext, observedVlanHTML, captureContextHTML} from './CaptureContext.js';
 import {jevReviewHTML} from './JevReview.js';
+import {assessmentHTML, securityQueueHTML, ispReportsHTML, reportDownload} from './IncidentReview.js';
 
 const SUBVIEWS = [
   { id: 'overview', label: 'Overview' },
@@ -12,6 +13,7 @@ const SUBVIEWS = [
   { id: 'devices', label: 'Devices' },
   { id: 'security', label: 'Security' },
   { id: 'diary', label: 'Diary' },
+  { id: 'isp', label: 'Internet reports' },
   { id: 'triage', label: 'Triage' },
   { id: 'models', label: 'Models' },
 ];
@@ -180,6 +182,12 @@ export class HomeView {
     this.triageFlash = null; // { kind, message }
     this.jevPending = new Set();
     this.jevErrors = new Map();
+    this.securityFilter = 'all';
+    this.securityDrafts = new Map();
+    this.incidentPending = new Set();
+    this.incidentErrors = new Map();
+    this.ispReports = new Map();
+    this.ispProviders = new Map();
     this.modelsBusy = false;
     this.modelsFlash = null; // { kind, message }
     /** @type {{ brain?: string, alert?: string, fallback?: string }|null} */
@@ -322,6 +330,27 @@ export class HomeView {
       this.selectSite(ev.target.value);
     };
     this.element.addEventListener('change', onChange);
+    this.element.addEventListener('change', ev => {
+      if (ev.target.matches('[data-isp-provider]')) { this.ispProviders.set(this.site, ev.target.value); this.renderSubview(); }
+      this.saveIncidentDraft(ev.target);
+    });
+    this.element.addEventListener('input', ev => this.saveIncidentDraft(ev.target));
+    this.element.addEventListener('submit', ev => {
+      const form = ev.target.closest('[data-security-case]');
+      if (!form) return;
+      ev.preventDefault();
+      this.handleIncidentAction('security', form.dataset.securityCase, {kind: form.elements.kind.value, reason: form.elements.reason.value});
+    });
+    this.element.addEventListener('click', ev => {
+      const filter = ev.target.closest('[data-security-filter]');
+      if (filter) { this.securityFilter = filter.dataset.securityFilter; this.renderSubview(); return; }
+      const generate = ev.target.closest('[data-isp-generate]');
+      if (generate && !generate.disabled) this.handleIncidentAction('isp', generate.dataset.ispGenerate);
+      const load = ev.target.closest('[data-isp-load]');
+      if (load) this.handleIncidentAction('load', load.dataset.ispLoad);
+      const download = ev.target.closest('[data-isp-download]');
+      if (download) this.downloadIspReport(download.dataset.eventId, download.dataset.ispDownload);
+    });
     if (!this.element.contains(this.chrome)) this.chrome?.addEventListener('change', onChange);
 
 
@@ -400,6 +429,52 @@ export class HomeView {
     return raw?.events || raw?.items || (Array.isArray(raw) ? raw : []);
   }
 
+  saveIncidentDraft(target) {
+    const form = target.closest('[data-security-case]');
+    if (form) this.securityDrafts.set(`${this.site}:${form.dataset.securityCase}`, {kind: form.elements.kind.value, reason: form.elements.reason.value});
+    const field = target.dataset.ispField, pane = target.closest('[data-isp-case]');
+    if (field && pane) {
+      const report = this.ispReports.get(`${this.site}:${pane.dataset.ispCase}`);
+      if (report && ['subject', 'body'].includes(field)) report.draft[field] = target.value;
+    }
+  }
+
+  async handleIncidentAction(action, eventId, body) {
+    const site = this.site, key = `${site}:${eventId}`;
+    if (this.incidentPending.has(key)) return;
+    this.incidentPending.add(key); this.incidentErrors.delete(key); this.renderSubview();
+    try {
+      const path = `/events/${encodeURIComponent(eventId)}`;
+      let result;
+      if (action === 'load') result = await this.fetch(`${path}?site=${encodeURIComponent(site)}`);
+      else result = await this.fetch(`${path}/${action === 'security' ? 'security-disposition' : 'isp-report'}?site=${encodeURIComponent(site)}`, {method: 'POST',
+        body: action === 'security' ? body : {provider_id: this.ispProviders.get(site), timezone: Intl.DateTimeFormat().resolvedOptions().timeZone}});
+      if (this.site !== site || this.disposed) return;
+      if (action === 'security') {
+        for (const group of ['events', 'escalated', 'securityCases']) {
+          const event = this.cache[group]?.events?.find(e => e.id === eventId);
+          if (event) Object.assign(event, result);
+        }
+        this.securityDrafts.delete(key);
+      } else {
+        const report = action === 'load' ? result.isp_report : result;
+        if (!report) throw new Error('No saved report is available');
+        this.ispReports.set(key, report);
+      }
+    } catch (error) { if (this.site === site) this.incidentErrors.set(key, error.message || 'Incident action unavailable'); }
+    finally { this.incidentPending.delete(key); if (!this.disposed && this.site === site) this.renderSubview(); }
+  }
+
+  downloadIspReport(eventId, kind) {
+    const report = this.ispReports.get(`${this.site}:${eventId}`);
+    if (!report) return;
+    const file = reportDownload(report, kind), blob = new Blob([file.text], {type: file.type});
+    const url = URL.createObjectURL(blob), anchor = document.createElement('a');
+    anchor.href = url; anchor.download = `internet-incident-${String(eventId).replace(/[^a-zA-Z0-9-]/g, '')}.${file.extension}`;
+    document.body.append(anchor); anchor.click(); anchor.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
   async handleJevReview(eventId) {
     const site = this.site;
     const key = `${site}:${eventId}`;
@@ -408,7 +483,7 @@ export class HomeView {
     this.jevErrors.delete(key);
     this.renderSubview();
     const update = review => {
-      for (const group of ['events', 'escalated']) {
+      for (const group of ['events', 'escalated', 'securityCases']) {
         const raw = this.cache[group];
         const rows = raw?.events || raw?.items || (Array.isArray(raw) ? raw : []);
         const row = rows.find(e => e.id === eventId);
@@ -643,7 +718,15 @@ export class HomeView {
         // Console action just doesn't render.
         this.cache.terminal = await loadTerminalTargets().catch(() => null);
       }
-      if (this.subview === 'security' || force) this.cache.security = await this.fetch(`/security?site=${this.site}`);
+      if (this.subview === 'security' || force) {
+        this.cache.security = await this.fetch(`/security?site=${this.site}`);
+        this.cache.securityCases = await this.fetch(`/events?site=${this.site}&type=security&limit=100`).catch(() => ({unavailable: true}));
+      }
+      if (this.subview === 'isp' || force) {
+        this.cache.wanCases = await this.fetch(`/events?site=${this.site}&type=wan&limit=50`);
+        this.readTimes.wanCases = this.readTimes.events;
+        this.cache.ispCatalog = await this.fetch('/isp/providers');
+      }
       if (this.subview === 'diary' || force) {
         this.cache.events = await this.fetch(`/events?site=${this.site}&limit=30`);
         // Firing alerts help when diary DB is still empty (fresh Docker)
@@ -744,6 +827,7 @@ export class HomeView {
       wifi: () => this.htmlWifi(),
       devices: () => this.htmlDevices(),
       security: () => this.htmlSecurity(),
+      isp: () => ispReportsHTML(this.cache.wanCases, this.cache.ispCatalog, this.ispProviders.get(this.site), this.ispReports, this.incidentPending, this.incidentErrors, this.site),
       diary: () => this.htmlDiary(),
       triage: () => this.htmlTriage(),
       models: () => this.htmlModels(),
@@ -759,6 +843,8 @@ export class HomeView {
       <h3>Security visibility</h3>
       <p>Firewall telemetry: <strong>${esc(data.status)}</strong> · observation window ${esc(data.observedWindow || 'unknown')}</p>
       ${data.reason ? `<p class="home-muted">${esc(data.reason)}</p>` : ''}
+      <p>IDS feed: <strong>${esc(ids.status || 'unknown')}</strong> · ${esc(ids.reason || 'Coverage needs verification')}</p>
+      ${securityQueueHTML(this.cache.securityCases, this.securityFilter, this.securityDrafts, this.incidentPending, this.incidentErrors, this.site, {pending: this.jevPending, errors: this.jevErrors})}
       <div class="home-kpi-grid">
         <div class="home-kpi"><div class="home-kpi-label">Blocked connections · 1 hour</div><div class="home-kpi-value">${esc(data.blockedConnections?.lastHour ?? 'Unknown')}</div></div>
         <div class="home-kpi"><div class="home-kpi-label">Blocked connections · 24 hours</div><div class="home-kpi-value">${esc(data.blockedConnections?.last24h ?? 'Unknown')}</div></div>
@@ -1289,7 +1375,7 @@ export class HomeView {
         <td class="${statusClass(e.severity)}">${esc(e.severity)}</td>
         <td>${esc(e.alert_name || e.category || '')}</td>
         <td class="home-observed-vlan">${observedVlanHTML(capture)}</td>
-        <td>${esc((e.message || '').slice(0, 100))}${captureContextHTML(capture)}${ipContextHTML(caseIPContext(e))}${jevReviewHTML(e, this.jevPending?.has(`${this.site}:${e.id}`), this.jevErrors?.get(`${this.site}:${e.id}`))}</td>
+        <td>${esc((e.message || '').slice(0, 100))}${assessmentHTML(e)}${captureContextHTML(capture)}${ipContextHTML(caseIPContext(e))}${jevReviewHTML(e, this.jevPending?.has(`${this.site}:${e.id}`), this.jevErrors?.get(`${this.site}:${e.id}`))}</td>
         <td>${rag}</td>
       </tr>`;
       })
@@ -1402,6 +1488,7 @@ export class HomeView {
             ${selected.source_evidence ? `<details><summary>Original sensor / alert evidence</summary><pre class="home-triage-notes-pre">${esc(JSON.stringify(selected.source_evidence, null, 2))}</pre></details>` : ''}
           </div>
           ${captureContextHTML(caseCaptureContext(selected))}
+          ${assessmentHTML(selected)}
           ${ipContextHTML(caseIPContext(selected))}
           ${jevReviewHTML(selected, this.jevPending?.has(`${this.site}:${selected.id}`), this.jevErrors?.get(`${this.site}:${selected.id}`))}
           ${ragBlock}

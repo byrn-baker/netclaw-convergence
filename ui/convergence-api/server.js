@@ -81,6 +81,8 @@ app.use('/api/wifi', authMiddleware, wifiRoutes);
 app.use('/api/speedtest', authMiddleware, speedtestRoutes);
 app.use('/api/alerts', authMiddleware, alertsRoutes);
 app.use('/api/events', authMiddleware, eventsRoutes);
+app.use('/api/events', authMiddleware, require('./src/routes/incident-actions'));
+app.get('/api/isp/providers', authMiddleware, (req, res) => res.json(require('./src/lib/ispReport').catalog));
 app.use('/api/sites', authMiddleware, sitesRoutes);
 app.use('/api/security', authMiddleware, securityRoutes);
 app.use('/api/device', authMiddleware, deviceDetailRoutes);

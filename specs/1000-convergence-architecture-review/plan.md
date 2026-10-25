@@ -56,3 +56,8 @@ work that should not be prioritized unless operator demand arrives:
 - T170: Assert/change validation documentation
 
 Everything else in Convergence is shipped and running.
+
+This status describes the original 1001–1008 specification scope. Later IDS,
+security-review and provider-reporting work has additional operational readiness
+tasks; see [remaining operational work](../../docs/runbooks/convergence-incident-review.md#remaining-operational-work)
+before treating the current installation as complete.
