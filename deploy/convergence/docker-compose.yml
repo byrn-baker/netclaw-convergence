@@ -90,6 +90,9 @@ services:
       dockerfile: Dockerfile
     image: netclaw-convergence-api:local
     restart: unless-stopped
+    # Linux containers need this mapping for host receiver callbacks.
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     depends_on:
       # Postgres is optional — it only backs the event diary and triage. Wait for
       # it when present, but do not require it: 'required: false' lets the API

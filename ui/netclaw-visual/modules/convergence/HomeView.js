@@ -4,6 +4,7 @@
  */
 import {caseIPContext, ipContextHTML} from './IPContext.js';
 import {caseCaptureContext, observedVlanHTML, captureContextHTML} from './CaptureContext.js';
+import {jevReviewHTML} from './JevReview.js';
 
 const SUBVIEWS = [
   { id: 'overview', label: 'Overview' },
@@ -177,6 +178,8 @@ export class HomeView {
     this.selectedEventId = null;
     this.triageBusy = false;
     this.triageFlash = null; // { kind, message }
+    this.jevPending = new Set();
+    this.jevErrors = new Map();
     this.modelsBusy = false;
     this.modelsFlash = null; // { kind, message }
     /** @type {{ brain?: string, alert?: string, fallback?: string }|null} */
@@ -344,6 +347,11 @@ export class HomeView {
 
     // Triage actions (event delegation — panel body is re-rendered often)
     this.element.addEventListener('click', (ev) => {
+      const reviewBtn = ev.target.closest('[data-jev-review]');
+      if (reviewBtn && !reviewBtn.disabled) {
+        this.handleJevReview(reviewBtn.getAttribute('data-jev-review'));
+        return;
+      }
       const sel = ev.target.closest('[data-triage-select]');
       if (sel) {
         this.selectedEventId = sel.getAttribute('data-triage-select');
@@ -391,6 +399,48 @@ export class HomeView {
     const raw = this.cache.escalated;
     return raw?.events || raw?.items || (Array.isArray(raw) ? raw : []);
   }
+
+  async handleJevReview(eventId) {
+    const site = this.site;
+    const key = `${site}:${eventId}`;
+    if (this.jevPending.has(key)) return;
+    this.jevPending.add(key);
+    this.jevErrors.delete(key);
+    this.renderSubview();
+    const update = review => {
+      for (const group of ['events', 'escalated']) {
+        const raw = this.cache[group];
+        const rows = raw?.events || raw?.items || (Array.isArray(raw) ? raw : []);
+        const row = rows.find(e => e.id === eventId);
+        if (row) row.jev_review = review;
+      }
+      this.renderSubview();
+    };
+    try {
+      const result = await this.fetch(`/events/${encodeURIComponent(eventId)}/jev-review?site=${encodeURIComponent(site)}`, {method: 'POST'});
+      if (this.site !== site || this.disposed) return;
+      update(result.review || {status: 'queued'});
+      if (result.review && result.review.status !== 'queued') return;
+      // Poll this case even while the operator has focus inside the workspace.
+      // A delayed job remains queued and can be checked again without a new call.
+      for (let attempt = 0; attempt < 15; attempt++) {
+        await this.waitJevPoll();
+        if (this.site !== site || this.disposed) return;
+        const event = await this.fetch(`/events/${encodeURIComponent(eventId)}?site=${encodeURIComponent(site)}`);
+        if (this.site !== site || this.disposed) return;
+        if (event.jev_review) update(event.jev_review);
+        if (event.jev_review && event.jev_review.status !== 'queued') return;
+      }
+      this.jevErrors.set(key, 'Review is still queued. Use Check review to retrieve it later.');
+    } catch (err) {
+      if (this.site === site) this.jevErrors.set(key, err.message || 'JEV review unavailable');
+    } finally {
+      this.jevPending.delete(key);
+      if (!this.disposed && this.site === site) this.renderSubview();
+    }
+  }
+
+  waitJevPoll() { return new Promise(resolve => setTimeout(resolve, 2000)); }
 
   getSelectedEvent() {
     const events = this.getEscalatedEvents();
@@ -1239,7 +1289,7 @@ export class HomeView {
         <td class="${statusClass(e.severity)}">${esc(e.severity)}</td>
         <td>${esc(e.alert_name || e.category || '')}</td>
         <td class="home-observed-vlan">${observedVlanHTML(capture)}</td>
-        <td>${esc((e.message || '').slice(0, 100))}${captureContextHTML(capture)}${ipContextHTML(caseIPContext(e))}</td>
+        <td>${esc((e.message || '').slice(0, 100))}${captureContextHTML(capture)}${ipContextHTML(caseIPContext(e))}${jevReviewHTML(e, this.jevPending?.has(`${this.site}:${e.id}`), this.jevErrors?.get(`${this.site}:${e.id}`))}</td>
         <td>${rag}</td>
       </tr>`;
       })
@@ -1353,6 +1403,7 @@ export class HomeView {
           </div>
           ${captureContextHTML(caseCaptureContext(selected))}
           ${ipContextHTML(caseIPContext(selected))}
+          ${jevReviewHTML(selected, this.jevPending?.has(`${this.site}:${selected.id}`), this.jevErrors?.get(`${this.site}:${selected.id}`))}
           ${ragBlock}
           ${selected.expert_feedback ? `
             <div class="home-triage-field">

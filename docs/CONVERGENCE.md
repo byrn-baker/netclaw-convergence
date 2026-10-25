@@ -28,6 +28,10 @@ Set once in **repo `.env`**, apply with script or HUD:
 
 Full operator guide: [`docs/MODELS.md`](./MODELS.md) · env layout: [`ENV-AND-LAYOUT.md`](./ENV-AND-LAYOUT.md).
 
+Optional JEV second opinions for IDS cases are available in Diary, Triage and
+Guardian's case tools. See the [JEV review runbook](runbooks/convergence-jev.md)
+for setup, data sharing, shared budgets and recovery behavior.
+
 ---
 
 ## Planes (where things run)

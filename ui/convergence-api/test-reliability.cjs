@@ -17,6 +17,36 @@ test('case routes deny cross-site lookup and viewer mutation',async()=>{
  r=response();middleware[0]({method:'PATCH',user:{role:'viewer'}},r,()=>assert.fail('viewer write passed'));assert.equal(r.code,403);
  r=response();await handlers['patch /:id']({params:{id:'other-case'},site:'home',body:{status:'resolved'}},r);assert.equal(r.code,404);
 });
+test('JEV review uses the authorized case and site, ignoring caller overrides',async()=>{
+ const sent=[],queries=[];
+ let exists=true;
+ const {handlers,middleware}=routes('events.js',{'../db':{query:async(sql,args)=>{queries.push({sql,args});return {rows:exists?[{id:'case'}]:[]}},DbUnavailableError:class extends Error{},dbStatus:()=>({available:true})}}, {
+  process:{env:{ALERT_RECEIVER_URL:'http://receiver/webhook',ALERT_RECEIVER_TOKEN:'internal-token'}},
+  fetch:async(url,options)=>{sent.push({url,options});return {status:202,json:async()=>({job_id:'job'})}},
+ });
+ let r=response();middleware[0]({method:'POST',user:{role:'viewer'}},r,()=>assert.fail('viewer review passed'));assert.equal(r.code,403);
+ r=response();await handlers['post /:id/jev-review']({params:{id:'case'},site:'home',body:{site:'other',event_id:'other',state:'private'}},r);
+ assert.equal(r.code,202);assert.equal(sent[0].url,'http://receiver/jev-review');
+ assert.deepEqual(JSON.parse(sent[0].options.body),{event_id:'case',site:'home'});
+ assert.equal(sent[0].options.headers.Authorization,'Bearer internal-token');
+ assert.ok(queries[0].sql.includes('site_id = $2'));assert.equal(queries[0].args[1],'home');
+ exists=false;r=response();await handlers['post /:id/jev-review']({params:{id:'case'},site:'other'},r);
+ assert.equal(r.code,404);assert.equal(sent.length,1);
+});
+test('saving an advisory review preserves evidence and case disposition without queuing learning',async()=>{
+ const calls=[];
+ const {handlers}=routes('events.js',{'../db':{query:async(sql,args)=>{calls.push({sql,args});return {rows:[{id:'case',status:'logged'}]}},DbUnavailableError:class extends Error{},dbStatus:()=>({available:true})}}, {
+  fetch:async()=>assert.fail('review must not queue learning'),process:{env:{ALERT_RECEIVER_URL:'http://receiver'}},
+ });
+ const review={version:1,advisory_only:true,status:'ok',assessment_id:'a'};
+ let r=response();await handlers['patch /:id']({params:{id:'case'},site:'home',body:{jev_review:review}},r);
+ assert.equal(r.code,200);assert.equal(calls.length,1);
+ assert.match(calls[0].sql,/SET jev_review = \$1 WHERE/);
+ assert.doesNotMatch(calls[0].sql,/source_evidence =|status =|severity =/);
+ assert.deepEqual(calls[0].args[0],review);assert.equal(calls[0].args[2],'home');
+ r=response();await handlers['patch /:id']({params:{id:'case'},site:'home',body:{jev_review:{status:'ok'}}},r);
+ assert.equal(r.code,400);assert.equal(calls.length,1);
+});
 test('diary and case detail expose the same capture context without leaking full evidence into the diary',async()=>{
  const evidence={labels:{source:'suricata',sensor_id:'home-ids-01'},annotations:{
   description:'Passive IDS observation; not proof of compromise. '+JSON.stringify({vlan:[100,100]})}};

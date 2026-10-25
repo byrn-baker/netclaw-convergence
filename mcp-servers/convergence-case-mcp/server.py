@@ -8,11 +8,11 @@ BASE=(os.getenv('CONVERGENCE_API_URL') or os.getenv('HOME_API_URL') or os.getenv
 TOKEN=os.getenv('CONVERGENCE_API_TOKEN') or os.getenv('HOME_API_TOKEN') or os.getenv('NETWORK_GUARDIAN_TOKEN','')
 SITE=os.getenv('GUARDIAN_DEFAULT_SITE','home')
 
-async def request(method, event_id, body=None):
+async def request(method, event_id, body=None, action=''):
     event_id=str(uuid.UUID(event_id))
     if not BASE or not TOKEN: raise ValueError('Case interface is not configured')
     async with httpx.AsyncClient(timeout=15) as client:
-        r=await client.request(method,f'{BASE}/api/events/{event_id}',params={'site':SITE},
+        r=await client.request(method,f'{BASE}/api/events/{event_id}{action}',params={'site':SITE},
             headers={'Authorization':f'Bearer {TOKEN}'},json=body)
         r.raise_for_status()
         return r.json()
@@ -21,6 +21,16 @@ async def request(method, event_id, body=None):
 async def case_get(event_id: str) -> dict:
     """Read the assigned investigation case and operator feedback."""
     return await request('GET',event_id)
+
+@mcp.tool()
+async def case_jev_review(event_id: str) -> dict:
+    """Request one advisory JEV review of the assigned IDS case's abstract metadata.
+    No addresses, VLAN IDs, names, raw signatures or investigation notes are sent.
+    Uses the operator's JEV configuration, shared daily cap and a trusted case cap.
+    Repeated calls reuse the same review. Read case_get for the eventual jev_review.
+    This does not start an investigation, change severity, suppress or block traffic.
+    """
+    return await request('POST',event_id,action='/jev-review')
 
 @mcp.tool()
 async def case_update(event_id: str, investigation_notes: str, root_cause: str,

@@ -1,0 +1,6 @@
+# Optional drop-in: /etc/systemd/system/netclaw-alert-receiver.service.d/jev.conf
+# Adjust paths to the deployment user, checkout and private JEV data directory.
+[Service]
+Environment=CONVERGENCE_JEV_ENV_FILE=/home/ubuntu/netclaw/.env
+Environment=TIKTOKEN_CACHE_DIR=/home/ubuntu/.openclaw/jev/tokenizer-cache
+ReadWritePaths=/home/ubuntu/.openclaw/jev /home/ubuntu/netclaw/.gait

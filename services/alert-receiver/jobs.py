@@ -23,14 +23,22 @@ class JobStore:
             created REAL NOT NULL, available REAL NOT NULL, dispatched REAL,
             event_id TEXT, site TEXT, error TEXT)''')
         self.db.execute("UPDATE jobs SET state='queued' WHERE state='running'")
+        if 'result' not in {r[1] for r in self.db.execute('PRAGMA table_info(jobs)')}:
+            self.db.execute('ALTER TABLE jobs ADD COLUMN result TEXT')
         self.db.commit()
 
-    def enqueue(self, key, kind, payload, repeat=False):
+    def enqueue(self, key, kind, payload, repeat=False, retry_failed=False):
         with self.db:
-            self.db.execute("DELETE FROM jobs WHERE state IN ('done','failed') AND created < ?", (time.time()-30*86400,))
-            previous = self.db.execute("SELECT id FROM jobs WHERE key=?" +
+            # Review checkpoints must outlive delivery failures and API outages.
+            self.db.execute("DELETE FROM jobs WHERE state IN ('done','failed') AND kind != 'jev_review' AND created < ?", (time.time()-30*86400,))
+            previous = self.db.execute("SELECT id,state FROM jobs WHERE key=?" +
                 (" AND state IN ('queued','running')" if repeat else "") + " ORDER BY created DESC LIMIT 1", (key,)).fetchone()
-            if previous: return previous['id']
+            if previous:
+                if retry_failed and previous['state'] == 'failed':
+                    if self.db.execute("SELECT count(*) FROM jobs WHERE state IN ('queued','running')").fetchone()[0] >= self.capacity:
+                        raise OverflowError('Investigation inbox full')
+                    self.db.execute("UPDATE jobs SET state='queued',attempts=0,available=? WHERE id=? AND state='failed'", (time.time(), previous['id']))
+                return previous['id']
             if self.db.execute("SELECT count(*) FROM jobs WHERE state IN ('queued','running')").fetchone()[0] >= self.capacity:
                 raise OverflowError('Investigation inbox full')
             jid = str(uuid.uuid4())
@@ -43,6 +51,7 @@ class JobStore:
             'ingest': "kind IN ('alert','resolved')",
             'maintenance': "kind = 'snapshot'",
             'investigation': "kind IN ('investigate','manual')",
+            'review': "kind = 'jev_review'",
         }[lane]
         with self.db:
             r = self.db.execute(f"SELECT * FROM jobs WHERE state='queued' AND available<=? AND {kinds} ORDER BY created LIMIT 1", (time.time(),)).fetchone()
@@ -73,7 +82,16 @@ class JobStore:
             self.db.execute("UPDATE jobs SET state='queued',available=?,error=? WHERE id=?", (time.time()+15*job['attempts'], str(error), job['id']))
 
     def hourly_dispatches(self):
-        return self.db.execute('SELECT count(*) FROM jobs WHERE dispatched>?',(time.time()-3600,)).fetchone()[0]
+        return self.db.execute("SELECT count(*) FROM jobs WHERE dispatched>? AND kind != 'jev_review'",(time.time()-3600,)).fetchone()[0]
+
+    def checkpoint_review(self, jid, body):
+        with self.db:
+            self.db.execute('UPDATE jobs SET dispatched=?,event_id=?,site=?,payload=? WHERE id=?',
+                            (time.time(), body['event_id'], body['site'], json.dumps(body), jid))
+
+    def save_result(self, jid, result):
+        with self.db:
+            self.db.execute('UPDATE jobs SET result=? WHERE id=?', (json.dumps(result), jid))
 
     def counts(self):
         return {r[0]:r[1] for r in self.db.execute('SELECT state,count(*) FROM jobs GROUP BY state')}

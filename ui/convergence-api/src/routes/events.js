@@ -70,7 +70,7 @@ router.get('/', async (req, res) => {
     let sql = `SELECT id, timestamp, message, severity, category, source, status,
                alert_name, alert_fingerprint, root_cause, investigation_notes,
                expert_feedback, feedback_quality, rag_document_id, incident_key, alert_cleared_at,
-               source_evidence->'annotations'->'ip_context' AS ip_context, source_evidence
+               source_evidence->'annotations'->'ip_context' AS ip_context, source_evidence, jev_review
                FROM events WHERE site_id = $1`;
     const params = [site];
 
@@ -188,12 +188,22 @@ router.patch('/:id', async (req, res) => {
     status, severity, message,
     investigation_notes, root_cause,
     expert_feedback, feedback_quality,
-    rag_document_id, rag_content_hash, alert_cleared_at
+    rag_document_id, rag_content_hash, alert_cleared_at, jev_review
   } = req.body;
 
   const updates = [];
   const params = [];
   let paramIdx = 1;
+
+  if (jev_review !== undefined) {
+    if (!jev_review || typeof jev_review !== 'object' || Array.isArray(jev_review)
+        || jev_review.version !== 1 || jev_review.advisory_only !== true
+        || typeof jev_review.status !== 'string' || JSON.stringify(jev_review).length > 32000) {
+      return res.status(400).json({error: 'Invalid JEV review'});
+    }
+    updates.push(`jev_review = $${paramIdx++}`);
+    params.push(jev_review);
+  }
 
   if (status) {
     updates.push(`status = $${paramIdx++}`);
@@ -292,7 +302,7 @@ router.get('/escalated', async (req, res) => {
               alert_name, alert_fingerprint, root_cause, investigation_notes,
               expert_feedback, feedback_quality, rag_document_id, rag_snapshotted_at,
               escalated_at, investigation_started_at, investigation_completed_at,
-              feedback_provided_at, created_at, updated_at, source_evidence
+              feedback_provided_at, created_at, updated_at, source_evidence, jev_review
        FROM events
        WHERE site_id = $1 AND status = 'escalated'
        ORDER BY escalated_at DESC NULLS LAST, timestamp DESC`,
@@ -328,13 +338,31 @@ router.get('/:id', async (req, res) => {
   }
 });
 
+// Operator-triggered review. Case identity and site come from the authorized route.
+router.post('/:id/jev-review', async (req, res) => {
+  try {
+    const existing = await query('SELECT id FROM events WHERE id = $1 AND site_id = $2', [req.params.id, req.site]);
+    if (!existing.rows.length) return res.status(404).json({error: 'Event not found'});
+    const receiver = (process.env.ALERT_RECEIVER_URL || '').replace(/\/webhook\/?$/, '').replace(/\/$/, '');
+    if (!receiver || !process.env.ALERT_RECEIVER_TOKEN) return res.status(503).json({error: 'Case review service is not configured'});
+    const reply = await fetch(`${receiver}/jev-review`, {
+      method: 'POST', signal: AbortSignal.timeout(20000),
+      headers: {'Content-Type': 'application/json', Authorization: `Bearer ${process.env.ALERT_RECEIVER_TOKEN}`},
+      body: JSON.stringify({event_id: req.params.id, site: req.site}),
+    });
+    if (![200, 202, 400, 404, 503].includes(reply.status)) return res.status(502).json({error: 'Case review service unavailable'});
+    return res.status(reply.status).json(await reply.json());
+  } catch (err) {
+    if (writeUnavailable(res, err, 'Reviewing a case')) return;
+    return res.status(503).json({error: 'Case review service unavailable'});
+  }
+});
+
 /**
  * POST /api/events/:id/reinvestigate
  * Operator "Need More" — mark needs_more_context, re-open as investigating,
  * optionally forward to host alert-receiver /reinvestigate (hooks guardian-claw).
- *
- * Body: { expert_feedback?: string, site?: string }
- * Query: ?site=home (preferred for multi-tenant)
+ * Body: { expert_feedback?: string }. Query: ?site=home
  */
 router.post('/:id/reinvestigate', async (req, res) => {
   const { id } = req.params;

@@ -427,6 +427,10 @@
   margin: 8px 0;
 }
 
+.home-jev-review { margin-top: 12px; }
+.home-jev-review p { margin: 8px 0; }
+.home-jev-review pre { white-space: pre-wrap; overflow-wrap: anywhere; }
+
 .home-muted {
   color: var(--muted);
   font-size: 13px;

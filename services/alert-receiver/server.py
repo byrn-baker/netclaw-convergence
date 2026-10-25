@@ -23,6 +23,7 @@ import logging
 import os
 import sys
 import time
+import uuid
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional
@@ -340,7 +341,10 @@ async def job_worker(lane='investigation'):
         token = active_job.set(job)
         try:
             body = json.loads(job['payload'])
-            if job['dispatched']:
+            if job['kind'] == 'jev_review':
+                from jev_review import run_job
+                await run_job(job_store, job, publish_jev_review)
+            elif job['dispatched']:
                 await wait_for_case(job['event_id'], job['site'], job['dispatched'])
             elif job['kind'] == 'manual':
                 from investigation_policy import load_policy
@@ -1449,6 +1453,7 @@ async def start_jobs():
     workers.extend(asyncio.create_task(job_worker()) for _ in range(MAX_CONCURRENT_INVESTIGATIONS))
     workers.append(asyncio.create_task(job_worker(lane='ingest')))
     workers.append(asyncio.create_task(job_worker(lane='maintenance')))
+    workers.append(asyncio.create_task(job_worker(lane='review')))
 
 @app.on_event("shutdown")
 async def stop_jobs():
@@ -1514,6 +1519,40 @@ async def _fetch_guardian_event(event_id: str, site: str) -> Optional[dict]:
         if resp.status_code != 200:
             return None
         return resp.json()
+
+
+async def publish_jev_review(body, review):
+    async with httpx.AsyncClient(timeout=15, trust_env=False) as client:
+        resp = await client.patch(f"{NETWORK_GUARDIAN_URL}/api/events/{body['event_id']}",
+            params={'site': body['site']}, headers=_guardian_headers(), json={'jev_review': review})
+        resp.raise_for_status()
+
+
+@app.post('/jev-review')
+async def queue_jev_review(request: Request):
+    from jev_review import abstraction, configuration, core
+    body = await request.json()
+    try:
+        event_id = str(uuid.UUID(body.get('event_id', '')))
+        site = body.get('site')
+        if not isinstance(site, str) or not site or len(site) > 128: raise ValueError()
+    except (ValueError, TypeError, AttributeError):
+        return JSONResponse({'error': 'Valid case ID and site required'}, status_code=400)
+    event = await _fetch_guardian_event(event_id, site)
+    if not event: return JSONResponse({'error': 'Case not found'}, status_code=404)
+    if event.get('jev_review') and event['jev_review'].get('status') not in ('queued',):
+        return {'status': 'complete', 'review': event['jev_review']}
+    try:
+        configuration(site, event_id)
+        state = abstraction(event)
+    except (ValueError, core.Refused) as exc:
+        return JSONResponse({'error': str(exc) if isinstance(exc, ValueError) else 'JEV configuration unavailable'}, status_code=400)
+    try:
+        jid = job_store.enqueue(f'jev:{site}:{event_id}', 'jev_review',
+            {'event_id': event_id, 'site': site, 'input_summary': state}, retry_failed=True)
+    except OverflowError:
+        return JSONResponse({'error': 'Receiver inbox full'}, status_code=503)
+    return JSONResponse({'status': 'accepted', 'job_id': jid}, status_code=202)
 
 
 async def _snapshot_event_to_rag(event: dict, site: str) -> dict:
