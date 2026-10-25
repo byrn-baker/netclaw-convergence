@@ -76,6 +76,7 @@ const { authMiddleware } = require('./src/middleware/auth');
 
 app.use('/api/health', authMiddleware, healthRoutes);
 app.use('/api/metrics', authMiddleware, metricsRoutes);
+app.use('/api/flows', authMiddleware, require('./src/routes/flows'));
 app.use('/api/devices', authMiddleware, devicesRoutes);
 app.use('/api/wifi', authMiddleware, wifiRoutes);
 app.use('/api/speedtest', authMiddleware, speedtestRoutes);

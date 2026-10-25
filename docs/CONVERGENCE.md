@@ -39,6 +39,9 @@ for setup, data sharing, shared budgets and recovery behavior.
 
 Security review priorities and local ISP incident/email evidence drafts are
 documented in [Incident review and provider reports](runbooks/convergence-incident-review.md).
+For grouped Diary investigations, per-case Canvas handoffs, and source/destination
+traffic rankings from firewall flow exports, see
+[Diary and flow visibility](runbooks/convergence-flow-visibility.md).
 
 ---
 

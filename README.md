@@ -143,6 +143,9 @@ for generated credentials, portable configuration and verification.
 For day-to-day operation, see [security review and ISP incident reports](docs/runbooks/convergence-incident-review.md):
 explained IDS priorities, recorded case reviews, and local support/email drafts
 with evidence exports and a catalog of major U.S. providers.
+The [Diary and traffic explorer guide](docs/runbooks/convergence-flow-visibility.md)
+covers alert grouping, selected-case Canvas deep dives, and firewall top talkers
+backed by retained flow records in VictoriaLogs.
 
 | Area | Spec / docs | Deploy / code |
 |------|-------------|----------------|

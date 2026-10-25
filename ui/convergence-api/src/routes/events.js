@@ -43,6 +43,7 @@ function writeUnavailable(res, err, what) {
 const { query, DbUnavailableError, dbStatus } = require('../db');
 const { captureContext } = require('../lib/captureContext');
 const { securityAssessment } = require('../lib/securityAssessment');
+const { trafficContext } = require('../lib/trafficContext');
 const { WAN_ALERTS } = require('../lib/ispReport');
 
 /**
@@ -64,7 +65,9 @@ async function ensureSite(siteId) {
  */
 router.get('/', async (req, res) => {
   const site = req.site;
-  const limit = Math.min(parseInt(req.query.limit) || 20, 100);
+  const limit = Math.max(1, Math.min(parseInt(req.query.limit) || 20, 100));
+  const windows = {'1h':3600,'6h':21600,'24h':86400,'7d':604800};
+  if (req.query.range && !Object.hasOwn(windows, req.query.range)) return res.status(400).json({error:'Invalid diary time window'});
   const status = req.query.status; // optional: filter by status
   const fingerprint = req.query.fingerprint; // optional: alertmanager fingerprint
 
@@ -76,6 +79,10 @@ router.get('/', async (req, res) => {
                security_disposition, isp_report->>'generated_at' AS isp_report_generated_at
                FROM events WHERE site_id = $1`;
     const params = [site];
+    if (req.query.range) {
+      params.push(new Date(Date.now() - windows[req.query.range] * 1000).toISOString());
+      sql += ` AND timestamp >= $${params.length}::timestamptz`;
+    }
 
     if (req.query.type === 'security') sql += " AND alert_name = 'SuricataIntrusion'";
     if (req.query.type === 'wan') {
@@ -100,8 +107,9 @@ router.get('/', async (req, res) => {
     params.push(limit);
 
     const result = await query(sql, params);
-    res.json({ site, events: result.rows.map(({source_evidence, ...event}) => ({
+    res.json({ site, limit, range: req.query.range || null, events: result.rows.map(({source_evidence, ...event}) => ({
       ...event, capture_context: captureContext(source_evidence, event.alert_name),
+      traffic_context: trafficContext(source_evidence),
       security_assessment: securityAssessment({...event, source_evidence}),
     })) });
   } catch (err) {
@@ -319,7 +327,7 @@ router.get('/escalated', async (req, res) => {
       [site]
     );
     res.json({ site, events: result.rows.map(event => ({
-      ...event, capture_context: captureContext(event.source_evidence, event.alert_name),
+      ...event, traffic_context: trafficContext(event.source_evidence), capture_context: captureContext(event.source_evidence, event.alert_name),
       security_assessment: securityAssessment(event),
     })) });
   } catch (err) {
@@ -341,7 +349,7 @@ router.get('/:id', async (req, res) => {
       return res.status(404).json({ error: 'Event not found' });
     }
     const event = result.rows[0];
-    res.json({...event, capture_context: captureContext(event.source_evidence, event.alert_name), security_assessment: securityAssessment(event)});
+    res.json({...event, traffic_context: trafficContext(event.source_evidence), capture_context: captureContext(event.source_evidence, event.alert_name), security_assessment: securityAssessment(event)});
   } catch (err) {
     if (writeUnavailable(res, err, 'Reading an event')) return;
     console.error('Event GET error:', err.message);

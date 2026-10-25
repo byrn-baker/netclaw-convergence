@@ -23,6 +23,36 @@ async def case_get(event_id: str) -> dict:
     return await request('GET',event_id)
 
 @mcp.tool()
+async def flow_top_talkers(time_range: str = '1h', exporter: str = '') -> dict:
+    """Read top source/destination addresses and pairs from this configured site's retained flow exports.
+    time_range: 15m, 1h, 6h or 24h. Exporter must belong to this site (empty selects all).
+    Totals are observed exported bytes, not billing usage or proof of malicious activity.
+    """
+    if time_range not in ('15m','1h','6h','24h') or len(exporter)>64:
+        raise ValueError('Invalid flow filter')
+    return await flow_read('', {'range': time_range, 'exporter': exporter})
+
+@mcp.tool()
+async def flow_evidence(address: str, start: str, end: str, exporter: str = '') -> dict:
+    """Read up to 100 recent matching flow records for one IP and an explicit ISO time window (max 24h).
+    This configured site is enforced. Confirm the returned site matches the investigation.
+    Times select collector receipt, not connection start. Empty results do not prove no traffic.
+    Use alongside case_get and available endpoint/DNS/TLS evidence for formal case deep dives.
+    """
+    import ipaddress
+    ipaddress.ip_address(address)
+    if len(start)>40 or len(end)>40 or len(exporter)>64: raise ValueError('Invalid flow window')
+    return await flow_read('/records', {'address': address, 'start': start, 'end': end, 'exporter': exporter})
+
+async def flow_read(path, params):
+    if not BASE or not TOKEN: raise ValueError('Case interface is not configured')
+    async with httpx.AsyncClient(timeout=20) as client:
+        response = await client.get(f'{BASE}/api/flows{path}', params={**params, 'site': SITE},
+                                    headers={'Authorization': f'Bearer {TOKEN}'})
+        response.raise_for_status()
+        return response.json()
+
+@mcp.tool()
 async def isp_provider_catalog() -> dict:
     """List supported US providers and dated official support/credit source links.
     Selecting a recipient does not identify the failing WAN or establish credit eligibility.

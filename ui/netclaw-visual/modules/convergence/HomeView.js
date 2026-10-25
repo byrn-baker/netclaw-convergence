@@ -7,12 +7,16 @@ import {caseCaptureContext, observedVlanHTML, captureContextHTML} from './Captur
 import {jevReviewHTML} from './JevReview.js';
 import {assessmentHTML, securityQueueHTML, ispReportsHTML, reportDownload} from './IncidentReview.js';
 
+import {diaryHTML, groupDiary, caseHandoff, MAX_SELECTION} from './DiaryExplorer.js';
+import {flowHTML, flowHandoff} from './FlowExplorer.js';
+
 const SUBVIEWS = [
   { id: 'overview', label: 'Overview' },
   { id: 'wifi', label: 'Wi‑Fi' },
   { id: 'devices', label: 'Devices' },
   { id: 'security', label: 'Security' },
   { id: 'diary', label: 'Diary' },
+  { id: 'flows', label: 'Traffic' },
   { id: 'isp', label: 'Internet reports' },
   { id: 'triage', label: 'Triage' },
   { id: 'models', label: 'Models' },
@@ -183,6 +187,8 @@ export class HomeView {
     this.jevPending = new Set();
     this.jevErrors = new Map();
     this.securityFilter = 'all';
+    this.diaryMode = 'signature'; this.diaryRange = '24h'; this.diarySearch = ''; this.diarySelected = new Set();
+    this.flowRange = '1h'; this.flowExporter = ''; this.diaryFlash = null;
     this.securityDrafts = new Map();
     this.incidentPending = new Set();
     this.incidentErrors = new Map();
@@ -332,9 +338,26 @@ export class HomeView {
     this.element.addEventListener('change', onChange);
     this.element.addEventListener('change', ev => {
       if (ev.target.matches('[data-isp-provider]')) { this.ispProviders.set(this.site, ev.target.value); this.renderSubview(); }
+      if (ev.target.matches('[data-diary-group]')) { this.diaryMode = ev.target.value; this.renderSubview(); }
+      if (ev.target.matches('[data-diary-search]')) { this.diarySearch = ev.target.value; this.renderSubview(); }
+      if (ev.target.matches('[data-diary-range]')) { this.diaryRange = ev.target.value; this.diarySelected.clear(); this.refresh(); }
+      if (ev.target.matches('[data-diary-select]')) {
+        const id = ev.target.dataset.diarySelect;
+        if (ev.target.checked && this.diarySelected.size < MAX_SELECTION) this.diarySelected.add(id); else this.diarySelected.delete(id);
+        this.renderSubview();
+      }
+      if (ev.target.matches('[data-flow-range]')) { this.flowRange = ev.target.value; this.refresh(); }
+      if (ev.target.matches('[data-flow-exporter]')) { this.flowExporter = ev.target.value; this.refresh(); }
       this.saveIncidentDraft(ev.target);
     });
-    this.element.addEventListener('input', ev => this.saveIncidentDraft(ev.target));
+    this.element.addEventListener('input', ev => {
+      if (ev.target.matches('[data-diary-search]')) {
+        const cursor = ev.target.selectionStart;
+        this.diarySearch = ev.target.value; this.renderSubview();
+        const input = this.element.querySelector('[data-diary-search]');
+        input?.focus(); input?.setSelectionRange(cursor, cursor);
+      } else this.saveIncidentDraft(ev.target);
+    });
     this.element.addEventListener('submit', ev => {
       const form = ev.target.closest('[data-security-case]');
       if (!form) return;
@@ -342,6 +365,21 @@ export class HomeView {
       this.handleIncidentAction('security', form.dataset.securityCase, {kind: form.elements.kind.value, reason: form.elements.reason.value});
     });
     this.element.addEventListener('click', ev => {
+      const one = ev.target.closest('[data-diary-canvas]'), group = ev.target.closest('[data-diary-group-canvas]');
+      if (one) this.investigateDiary([one.dataset.diaryCanvas], 'Selected diary case');
+      if (group) {
+        const groups = groupDiary(this.cache.events?.events || [], this.diaryMode, this.diarySearch);
+        const chosen = groups[Number(group.dataset.diaryGroupCanvas)];
+        if (chosen) this.investigateDiary(chosen.events.slice(0, MAX_SELECTION).map(e => e.id), chosen.label);
+      }
+      if (ev.target.closest('[data-diary-selected]')) this.investigateDiary([...this.diarySelected], 'Operator-selected diary cases');
+      if (ev.target.closest('[data-diary-clear]')) { this.diarySelected.clear(); this.renderSubview(); }
+      const flow = ev.target.closest('[data-flow-canvas]');
+      if (flow) {
+        const [kind, index] = flow.dataset.flowCanvas.split(':');
+        const context = flowHandoff(this.cache.flows, kind, Number(index));
+        if (context) this.options.investigate?.('Convergence traffic deep dive', context, `/api/home/flows?site=${encodeURIComponent(this.site)}&range=${this.flowRange}&exporter=${encodeURIComponent(this.flowExporter)}`, this.cache.flows?.read_at);
+      }
       const filter = ev.target.closest('[data-security-filter]');
       if (filter) { this.securityFilter = filter.dataset.securityFilter; this.renderSubview(); return; }
       const generate = ev.target.closest('[data-isp-generate]');
@@ -596,7 +634,7 @@ export class HomeView {
         this.fetch(`/events?site=${this.site}&status=escalated&limit=20`),
       );
       // Keep diary warm
-      this.cache.events = await this.fetch(`/events?site=${this.site}&limit=30`).catch(() => this.cache.events);
+      this.cache.events = await this.fetch(`/events?site=${this.site}&limit=100&range=${this.diaryRange}`).catch(() => this.cache.events);
     } catch (err) {
       this.triageFlash = {
         kind: 'error',
@@ -671,6 +709,7 @@ export class HomeView {
     // Site-scoped caches are now stale; keep only the site list.
     this.cache = {};
     this.notesDrafts.clear();
+    this.diarySelected.clear(); this.diaryFlash = null; this.flowExporter = '';
     this.lastSuccess = null;
     this.readTimes = {};
     this.selectedEventId = null;
@@ -727,8 +766,13 @@ export class HomeView {
         this.readTimes.wanCases = this.readTimes.events;
         this.cache.ispCatalog = await this.fetch('/isp/providers');
       }
+      if (this.subview === 'flows' || force) {
+        this.cache.flows = await this.fetch(`/flows?site=${encodeURIComponent(this.site)}&range=${this.flowRange}&exporter=${encodeURIComponent(this.flowExporter)}`).catch(err => { this.sourceErrors.flows = err.message; return {unavailable:true}; });
+      }
       if (this.subview === 'diary' || force) {
-        this.cache.events = await this.fetch(`/events?site=${this.site}&limit=30`);
+        this.cache.events = await this.fetch(`/events?site=${this.site}&limit=100&range=${this.diaryRange}`);
+        const availableIds = new Set((this.cache.events?.events || []).map(e => e.id));
+        this.diarySelected = new Set([...this.diarySelected].filter(id => availableIds.has(id)));
         // Firing alerts help when diary DB is still empty (fresh Docker)
         this.cache.alerts = await this.fetch(`/alerts?site=${this.site}`).catch(() => null);
       }
@@ -829,6 +873,7 @@ export class HomeView {
       security: () => this.htmlSecurity(),
       isp: () => ispReportsHTML(this.cache.wanCases, this.cache.ispCatalog, this.ispProviders.get(this.site), this.ispReports, this.incidentPending, this.incidentErrors, this.site),
       diary: () => this.htmlDiary(),
+      flows: () => flowHTML(this.cache.flows, {range:this.flowRange, exporter:this.flowExporter, canInvestigate:Boolean(this.options?.investigate)}),
       triage: () => this.htmlTriage(),
       models: () => this.htmlModels(),
     };
@@ -1357,65 +1402,17 @@ export class HomeView {
     `;
   }
 
+  investigateDiary(ids, scope) {
+    const events = (this.cache.events?.events || []).filter(e => ids.includes(e.id));
+    if (!events.length || !this.options.investigate) return;
+    this.options.investigate('Convergence formal case deep dive', caseHandoff(events, this.site, this.readTimes.events, scope),
+      `/api/home/events?site=${encodeURIComponent(this.site)}&range=${this.diaryRange}&limit=100`, this.readTimes.events);
+  }
+
   htmlDiary() {
-    const ev = this.cache.events;
-    const events = ev?.events || ev?.items || [];
-    if (ev?.unavailable) return this.htmlBanner('down', ev.reason || 'Investigation diary is unavailable.');
-    const alerts = this.cache.alerts;
-    const firing = alerts?.firing || alerts?.alerts || [];
-    const rows = events
-      .map((e) => {
-        const capture = caseCaptureContext(e);
-        const rag = e.rag_document_id
-          ? `<code class="home-rag-id" title="RAG snapshot id">${esc(e.rag_document_id)}</code>`
-          : '<span class="home-muted">—</span>';
-        return `<tr>
-        <td>${esc((e.timestamp || e.created_at || '').toString().slice(0, 19))}</td>
-        <td class="${statusClass(e.status)}">${esc(e.status)}</td>
-        <td class="${statusClass(e.severity)}">${esc(e.severity)}</td>
-        <td>${esc(e.alert_name || e.category || '')}</td>
-        <td class="home-observed-vlan">${observedVlanHTML(capture)}</td>
-        <td>${esc((e.message || '').slice(0, 100))}${assessmentHTML(e)}${captureContextHTML(capture)}${ipContextHTML(caseIPContext(e))}${jevReviewHTML(e, this.jevPending?.has(`${this.site}:${e.id}`), this.jevErrors?.get(`${this.site}:${e.id}`))}</td>
-        <td>${rag}</td>
-      </tr>`;
-      })
-      .join('');
-
-    const alertRows = (Array.isArray(firing) ? firing : [])
-      .map((a) => `<tr>
-        <td>${esc((a.startsAt || a.starts_at || '').toString().slice(0, 19))}</td>
-        <td class="${statusClass(a.severity)}">${esc(a.severity || '')}</td>
-        <td>${esc(a.name || a.alertname || a.labels?.alertname || '')}</td>
-        <td>${esc(a.summary || a.annotations?.summary || a.duration || '')}</td>
-      </tr>`)
-      .join('');
-
-    return `
-      <div class="home-panel-header">
-        <div><p class="eyebrow">Investigations</p><h2>Diary</h2></div>
-        <span class="home-badge">Live · events</span>
-      </div>
-      ${!events.length ? `
-        <p class="home-muted" style="margin-bottom:12px">
-          Diary rows are written when alert-receiver / guardian-claw posts investigations to
-          <code>POST /api/events</code>. An empty table is normal on a fresh Docker stack until
-          alerts flow through the host webhook (Alertmanager → :8099 → NetClaw).
-        </p>` : ''}
-      <div class="home-table-wrap">
-        <table class="home-table">
-          <thead><tr><th>When</th><th>Status</th><th>Sev</th><th>Alert</th><th>Observed VLAN</th><th>Message</th><th>RAG id</th></tr></thead>
-          <tbody>${rows || '<tr><td colspan="7">No diary events yet</td></tr>'}</tbody>
-        </table>
-      </div>
-      ${alertRows ? `
-        <p class="home-section-title">Firing alerts (Alertmanager)</p>
-        <div class="home-table-wrap">
-          <table class="home-table">
-            <thead><tr><th>Since</th><th>Sev</th><th>Alert</th><th>Summary</th></tr></thead>
-            <tbody>${alertRows}</tbody>
-          </table>
-        </div>` : ''}
-    `;
+    return diaryHTML(this.cache.events, {mode:this.diaryMode, range:this.diaryRange, search:this.diarySearch,
+      selected:this.diarySelected, site:this.site, canInvestigate:Boolean(this.options?.investigate),
+      jevPending:this.jevPending, jevErrors:this.jevErrors, flash:this.diaryFlash});
   }
 
   htmlTriage() {

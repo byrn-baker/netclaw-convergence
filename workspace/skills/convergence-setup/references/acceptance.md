@@ -15,6 +15,7 @@ not a fully monitored home network.
 | Guardian | Selected member can read/update its test case with scoped tools; authorized bounded investigation records evidence and uncertainty; learning completion separately verified |
 | IDS | Controlled signature/canary and observation counters prove the actual capture path; requested VLANs marked observed/unverified; drops and lag measured |
 | Victoria | Recent IDS/raw logs and metrics queryable in the intended stores; retention and disk budgets configured |
+| Firewall flows | Fresh retained records from each authorized exporter; correct site filters, sampling/coverage disclosure, top source/destination rankings, and scoped Canvas handoff; collector errors/queues checked |
 | JEV | Typed assessment persisted and displayed, shared budget/audit recorded; repeated review reuses assessment; original evidence preserved |
 
 Use repository canaries, documented payloads and the least costly test needed.

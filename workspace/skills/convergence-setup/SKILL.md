@@ -63,7 +63,7 @@ Read the applicable branch:
 
 - **Fresh Docker or an existing host deployment:** [Docker and host setup](references/docker.md).
 - **K3s or reuse of an existing monitoring stack:** [K3s and reuse](references/k3s.md).
-- **Passive IDS, Victoria storage, source/destination context or JEV:**
+- **Passive IDS, Victoria storage, firewall flows/top talkers, source/destination context or JEV:**
   [Optional integrations](references/integrations.md), reading only selected sections.
 
 Use the checked-in installer, generated configuration and runbooks. Resolve paths

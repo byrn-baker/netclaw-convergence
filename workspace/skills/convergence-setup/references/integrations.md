@@ -62,3 +62,14 @@ Keep hosted disclosure controls intact. Test a case review through the HUD and
 Guardian's case tool; verify assessment ID, audit, spend and reuse of repeated
 requests. JEV's abstract evidence-strength score is not incident probability or
 authority to change traffic policy.
+## Firewall flows and Diary deep dives
+
+When setting up top talkers or grouped investigations, read
+`docs/runbooks/convergence-flow-visibility.md`. Verify actual goflow2 JSON records,
+not just collector Prometheus counters. Retain them in VictoriaLogs with a
+trusted site label and explicitly configured exporter addresses. Use the
+optional K3s manifest renderer when applicable; check JSON integrity, timestamp
+freshness, sampling, disk/queue health and same-VLAN capture limits. Confirm
+`flow_top_talkers` and `flow_evidence` are discoverable in the configured case MCP.
+The new HUD's Diary and Traffic buttons prepare Canvas context; they do not
+execute an investigation or change firewall policy on click.

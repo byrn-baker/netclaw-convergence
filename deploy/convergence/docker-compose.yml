@@ -123,6 +123,8 @@ services:
       API_KEYS: ${API_KEYS}
       USERS: ${USERS:-[]}
       SITES_CONFIG: ${SITES_CONFIG}
+      # Optional retained firewall flow records (VictoriaLogs, not collector counters).
+      FLOW_VICTORIALOGS_URL: ${FLOW_VICTORIALOGS_URL:-http://victorialogs:9428}
       # Device name → management GUI deep-links (HOME Devices / Wi‑Fi)
       UNIFI_HOST: ${UNIFI_HOST:-}
       UNIFI_MGMT_URL: ${UNIFI_MGMT_URL:-${UNIFI_HOST:-}}

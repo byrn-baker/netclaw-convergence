@@ -89,3 +89,27 @@
 .convergence-workspace .home-incident-card label, .convergence-workspace .home-isp-reports > label { display: grid; gap: 6px; margin: 12px 0; }
 .convergence-workspace .home-incident-card textarea, .convergence-workspace .home-incident-card input { width: 100%; box-sizing: border-box; }
 .convergence-workspace .home-incident-card pre { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 320px; overflow: auto; }
+.convergence-workspace .home-explorer-controls { display: flex; align-items: end; flex-wrap: wrap; gap: 12px; margin: 16px 0; }
+.convergence-workspace .home-explorer-controls label { display: grid; gap: 6px; color: var(--muted); font-size: .8rem; max-width: 100%; }
+.convergence-workspace .home-explorer-controls input { min-width: 0; max-width: 100%; }
+.convergence-workspace .home-diary-group { border: 1px solid var(--line); border-radius: 8px; margin: 12px 0; overflow: hidden; }
+.convergence-workspace .home-diary-group > summary { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; padding: 16px; cursor: pointer; background: #1b2835; }
+.convergence-workspace .home-diary-group > summary > span:first-child { flex: 1; min-width: 180px; overflow-wrap: anywhere; }
+.convergence-workspace .home-group-actions { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; padding: 14px; }
+.convergence-workspace .home-diary-table { min-width: 900px; }
+.convergence-workspace .home-diary-table td:nth-child(3) { min-width: 230px; max-width: 460px; overflow-wrap: anywhere; }
+.convergence-workspace .home-diary-table td:nth-child(4) { overflow-wrap: anywhere; }
+.convergence-workspace .home-diary-table small { display: block; color: var(--muted); margin-top: 6px; }
+.convergence-workspace .home-diary-table details { margin: 10px 0; }
+.convergence-workspace .home-flow-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 24px; margin: 24px 0; }
+.convergence-workspace .home-flow-ranking { min-width: 0; padding: 18px; border: 1px solid var(--line); border-radius: 8px; }
+.convergence-workspace .home-flow-row { padding: 16px 0; border-top: 1px solid var(--line); }
+.convergence-workspace .home-flow-row > div { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; align-items: center; }
+.convergence-workspace .home-flow-row strong { overflow-wrap: anywhere; min-width: 0; }
+.convergence-workspace .home-flow-row small { color: var(--muted); }
+.convergence-workspace .home-flow-row button { font-size: .75rem; padding: 6px 10px; }
+.convergence-workspace .home-flow-bar { height: 6px; margin: 10px 0; background: #263747; border-radius: 4px; overflow: hidden; }
+.convergence-workspace .home-flow-bar span { height: 100%; background: #79bcb0; }
+.convergence-workspace .home-flow-kpis .home-kpi-value { font-size: 1.7rem; }
+.convergence-workspace .home-flow-limits { margin-top: 24px; color: var(--muted); font-size: .85rem; }
+@media(max-width:800px) { .convergence-workspace .home-flow-grid { grid-template-columns: 1fr; } }
