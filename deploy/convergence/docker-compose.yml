@@ -121,6 +121,7 @@ services:
       ALERT_RECEIVER_TOKEN: ${ALERT_RECEIVER_TOKEN:?Set receiver authentication token}
       JWT_SECRET: ${JWT_SECRET:-change-me-convergence-api-jwt}
       API_KEYS: ${API_KEYS}
+      API_RATE_LIMIT_PER_MINUTE: ${API_RATE_LIMIT_PER_MINUTE:-100}
       USERS: ${USERS:-[]}
       SITES_CONFIG: ${SITES_CONFIG}
       # Optional retained firewall flow records (VictoriaLogs, not collector counters).

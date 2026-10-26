@@ -20,10 +20,11 @@ app.use(express.urlencoded({ extended: false }));
 // Static files
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Rate limiting (100 requests per minute per IP)
+// Size this shared per-IP budget for both HUD reads and machine case ingestion.
+// A replay burst must not exhaust the interactive HUD's entire minute budget.
 const apiLimiter = rateLimit({
   windowMs: 60 * 1000,
-  max: 100,
+  max: Math.max(1, Math.min(10000, Number.parseInt(process.env.API_RATE_LIMIT_PER_MINUTE, 10) || 100)),
   standardHeaders: true,
   legacyHeaders: false,
   message: { error: 'Too many requests, please try again later.' }

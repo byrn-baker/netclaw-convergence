@@ -1,13 +1,15 @@
 import asyncio
 import importlib.util
 import json
+import sqlite3
 import sys
+import time
 from pathlib import Path
 from unittest.mock import AsyncMock
 import pytest
 import httpx
 sys.path.insert(0, str(Path(__file__).parent))
-from jobs import JobStore
+from jobs import JobStore, RetryableJobError
 import server as receiver
 
 
@@ -32,6 +34,51 @@ def test_bounded_queue_retains_existing_work(tmp_path):
     jid=store.enqueue('one', 'alert', {})
     with pytest.raises(OverflowError): store.enqueue('two','alert',{})
     assert store.enqueue('one','alert',{})==jid
+
+
+def test_admission_and_claim_do_not_scan_retained_job_history(tmp_path):
+    store=JobStore(tmp_path/'jobs.db',capacity=2)
+    now=time.time()
+    with store.db:
+        store.db.executemany("INSERT INTO jobs(id,key,kind,payload,state,created,available) VALUES(?,?,'alert',?,'done',?,?)",
+            [(str(i),'retained-'+str(i),json.dumps({'evidence':'x'*1000}),now,now) for i in range(6000)])
+    # A deterministic SQL work budget catches scans as history grows without
+    # making this regression depend on filesystem speed or wall-clock timing.
+    calls=0
+    def budget():
+        nonlocal calls
+        calls+=1
+        return int(calls>25)
+    store.db.set_progress_handler(budget,1000)
+    try:
+        jid=store.enqueue('new-alert','alert',{'labels':{}})
+        assert store.enqueue('new-alert','alert',{})==jid
+        assert store.claim('ingest')['id']==jid
+        assert store.claim('ingest') is None
+    except sqlite3.OperationalError as exc:
+        pytest.fail(f'Queue work grows with retained history: {exc}')
+    finally:
+        store.db.set_progress_handler(None,0)
+        store.db.close()
+
+
+def test_queue_upgrade_preserves_history_dedup_and_review_checkpoints(tmp_path):
+    path=tmp_path/'jobs.db'
+    store=JobStore(path,capacity=1)
+    old=store.enqueue('old','alert',{})
+    store.finish(old)
+    review=store.enqueue('review','jev_review',{})
+    store.finish(review)
+    with store.db:
+        store.db.execute('UPDATE jobs SET created=?',(time.time()-40*86400,))
+    store.db.close()
+    recovered=JobStore(path,capacity=1)
+    current=recovered.enqueue('current','alert',{})
+    assert recovered.db.execute('SELECT id FROM jobs WHERE id=?',(old,)).fetchone() is None
+    assert recovered.db.execute('SELECT id FROM jobs WHERE id=?',(review,)).fetchone()['id']==review
+    assert recovered.enqueue('current','alert',{})==current
+    with pytest.raises(OverflowError):recovered.enqueue('extra','alert',{})
+    recovered.db.close()
 
 
 def test_ingest_and_recovery_do_not_wait_for_model_jobs(tmp_path):
@@ -66,6 +113,45 @@ def test_case_failure_keeps_alert_retryable(monkeypatch):
     alert = receiver.Alert(status='firing', labels=receiver.AlertLabel(alertname='Test'), annotations=receiver.AlertAnnotation())
     with pytest.raises(RuntimeError, match='persist alert case'):
         asyncio.run(receiver.process_alert(alert))
+
+
+@pytest.mark.parametrize('status',[429,503])
+def test_transient_case_failure_stays_durable_after_three_attempts(tmp_path,monkeypatch,status):
+    store=JobStore(tmp_path/'jobs.db')
+    jid=store.enqueue('case','alert',{})
+    with store.db:store.db.execute('UPDATE jobs SET attempts=3 WHERE id=?',(jid,))
+    job=store.claim('ingest')
+    monkeypatch.setattr(receiver,'NETWORK_GUARDIAN_URL','http://cases')
+    monkeypatch.setattr(receiver,'NETWORK_GUARDIAN_TOKEN','test')
+    class Client:
+        def __init__(self,**kw):pass
+        async def __aenter__(self):return self
+        async def __aexit__(self,*args):pass
+        async def post(self,*args,**kwargs):return httpx.Response(status,headers={'Retry-After':'90'})
+    monkeypatch.setattr(receiver.httpx,'AsyncClient',Client)
+    alert=receiver.Alert(status='firing',labels=receiver.AlertLabel(alertname='SuricataIntrusion'),annotations=receiver.AlertAnnotation())
+    with pytest.raises(RetryableJobError) as failure:
+        asyncio.run(receiver.post_guardian_event(alert,{'name':'site:home','site':'home'}))
+    before=time.time()
+    store.retry(job,failure.value)
+    saved=store.db.execute('SELECT * FROM jobs WHERE id=?',(jid,)).fetchone()
+    assert saved['state']=='queued' and saved['available']>=before+90
+    assert store.claim('ingest') is None
+    store.db.close()
+
+
+def test_case_transport_timeout_remains_retryable(monkeypatch):
+    monkeypatch.setattr(receiver,'NETWORK_GUARDIAN_URL','http://cases')
+    monkeypatch.setattr(receiver,'NETWORK_GUARDIAN_TOKEN','test')
+    class Client:
+        def __init__(self,**kw):pass
+        async def __aenter__(self):return self
+        async def __aexit__(self,*args):pass
+        async def post(self,*args,**kwargs):raise httpx.ConnectTimeout('temporary failure')
+    monkeypatch.setattr(receiver.httpx,'AsyncClient',Client)
+    alert=receiver.Alert(status='firing',labels=receiver.AlertLabel(alertname='SuricataIntrusion'),annotations=receiver.AlertAnnotation())
+    with pytest.raises(RetryableJobError,match='transport unavailable'):
+        asyncio.run(receiver.post_guardian_event(alert,{'name':'site:home','site':'home'}))
 
 
 def test_recovery_matches_episode_even_after_investigation_completed(monkeypatch):

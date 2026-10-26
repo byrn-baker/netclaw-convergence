@@ -171,6 +171,43 @@ alertable. Existing collector-wide health rules cover loss of the collector.
 These rules do not suppress Suricata detections or enable autonomous remediation.
 
 Tests: run `.venv/bin/python -m unittest discover -s services/ids-ingest -q`.
+
+### Case-delivery backlog with healthy capture
+
+`home-ids-01` can report degraded while capture, heartbeat and log/archive
+delivery are healthy. Check `netclaw_ids_delivery_pending_events` and
+`netclaw_ids_delivery_oldest_age_seconds` by destination. A case-only queue
+points to the alert receiver or Convergence API, rather than mirror visibility.
+The status degrades when the oldest undelivered event exceeds two minutes.
+
+The alert receiver retains completed jobs for deduplication. Its queue must have
+`jobs_key_created` and `jobs_state_created` indexes: startup adds these without
+replacing jobs. They prevent repeated history scans during admission, retention,
+capacity checks and worker polling. A representative retained-history benchmark
+dropped from 67 ms to 0.24 ms per enqueue after these indexes were added.
+Back up the receiver SQLite database using SQLite's backup interface before
+upgrading, then restart `netclaw-alert-receiver.service` to apply the indexes.
+Preserve both receiver jobs and the IDS ingest outbox during recovery.
+
+HTTP 429 from `/api/events` indicates the shared per-IP API budget is exhausted;
+case ingestion and HUD reads can share the same address. The API exposes
+`API_RATE_LIMIT_PER_MINUTE` (default 100, bounded to 1–10,000), passed through
+Compose. This pilot uses 1,000 to accommodate case replay and interactive reads.
+Set it in `deploy/convergence/.env` and rebuild/recreate the API with the complete
+active overlay set. Confirm the `RateLimit-Limit` response header afterward.
+
+The receiver keeps HTTP 429, 5xx and transport failures queued with bounded
+15–300 second retry delays, even after three attempts. Other job failures retain
+their existing attempt limit. Review pre-existing failed jobs separately: restore
+only identified, retryable case writes; preserve IDs and deduplication keys.
+Do not indiscriminately replay model-investigation or JEV jobs. After recovery,
+verify the sensor outbox is current **and** the selected receiver jobs are done;
+an empty upstream outbox alone does not prove all downstream cases were saved.
+
+The October 25, 2026 pilot recovery also reclaimed 5.8 GB of unused Docker build
+cache after the host approached its disk reserve. No EVE evidence or case data
+was deleted. All 337 observation-only case jobs that exhausted their retries
+during catch-up were requeued with their original identities and completed.
 The suite exercises per-destination failures, retained evidence across pruning,
 bounded/restartable backfill, authentication, replay-safe counters, engine
 counter resets and original evidence preservation. Rule behavior tests are in

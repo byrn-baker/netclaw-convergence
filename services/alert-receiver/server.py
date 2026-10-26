@@ -15,7 +15,7 @@ Alertmanager webhook config (on OBS VM):
 
 import asyncio
 import contextvars
-from jobs import JobStore
+from jobs import JobStore, RetryableJobError
 import hashlib
 import hmac
 import json
@@ -1302,6 +1302,11 @@ async def post_guardian_event(alert: Alert, device_info: dict, status: str = "in
                 json=payload,
                 headers=_guardian_headers(),
             )
+            if resp.status_code==429 or resp.status_code>=500:
+                metrics.guardian_events_failed_total += 1
+                try: retry_after=int(resp.headers.get('Retry-After','60'))
+                except ValueError: retry_after=60
+                raise RetryableJobError(f'Case API temporarily unavailable (HTTP {resp.status_code})',retry_after)
             if resp.status_code == 201:
                 event = resp.json()
                 log.info(
@@ -1314,6 +1319,11 @@ async def post_guardian_event(alert: Alert, device_info: dict, status: str = "in
                 log.warning(f"Guardian event POST failed: {resp.status_code} {resp.text[:200]}")
                 metrics.guardian_events_failed_total += 1
                 return None
+    except RetryableJobError:
+        raise
+    except httpx.RequestError as e:
+        metrics.guardian_events_failed_total += 1
+        raise RetryableJobError(f'Case API transport unavailable ({type(e).__name__})') from e
     except Exception as e:
         log.warning(f"Guardian event POST error: {e}")
         metrics.guardian_events_failed_total += 1

@@ -9,6 +9,12 @@ import time
 import uuid
 from pathlib import Path
 
+class RetryableJobError(RuntimeError):
+    """Transient downstream failure; durable work must remain queued."""
+    def __init__(self, message, retry_after=60):
+        super().__init__(message)
+        self.retry_after=max(15,min(300,retry_after))
+
 class JobStore:
     def __init__(self, path, capacity=1000):
         Path(path).parent.mkdir(parents=True, exist_ok=True, mode=0o700)
@@ -25,6 +31,11 @@ class JobStore:
         self.db.execute("UPDATE jobs SET state='queued' WHERE state='running'")
         if 'result' not in {r[1] for r in self.db.execute('PRAGMA table_info(jobs)')}:
             self.db.execute('ALTER TABLE jobs ADD COLUMN result TEXT')
+        # Admission runs once per raw alert, including duplicates. Retained
+        # evidence must not turn dedup, capacity checks, cleanup and worker
+        # polling into repeated full-table scans on the receiver event loop.
+        self.db.execute('CREATE INDEX IF NOT EXISTS jobs_key_created ON jobs(key,created DESC)')
+        self.db.execute('CREATE INDEX IF NOT EXISTS jobs_state_created ON jobs(state,created)')
         self.db.commit()
 
     def enqueue(self, key, kind, payload, repeat=False, retry_failed=False):
@@ -76,6 +87,11 @@ class JobStore:
             self.db.execute('UPDATE jobs SET state=?,error=? WHERE id=?', ('failed' if error else 'done',error,jid))
 
     def retry(self, job, error):
+        if isinstance(error,RetryableJobError):
+            with self.db:
+                self.db.execute("UPDATE jobs SET state='queued',available=?,error=? WHERE id=?",
+                    (time.time()+error.retry_after,str(error),job['id']))
+            return
         if job['attempts'] >= 3:
             self.finish(job['id'], str(error)); return
         with self.db:
