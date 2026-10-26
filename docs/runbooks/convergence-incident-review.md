@@ -1,24 +1,48 @@
 # Security review and internet-provider reports
 
 Convergence separates the sensor observation, suggested review priority and
-reviewer's conclusion. In **Security**, the latest 100 IDS cases can be filtered
-into urgent review, context review, protocol/capture diagnostics and reviewed
-exceptions. Diary and Triage also explain the priority and suggested next check.
-The queue is a bounded recent-case view, not a count of every historical threat.
+reviewer's conclusion. In the new HUD's **Convergence → Security**, choose a
+1-hour, 6-hour, 24-hour (default), or 7-day window. The API returns up to the latest
+100 saved IDS cases within that window. Summary tiles distinguish urgent review,
+context review, reviewer-confirmed findings, protocol/capture diagnostics and
+reviewed exceptions. Confirmed findings require an explicit case review; a high
+rule priority or JEV score does not establish confirmation. Diary and Triage also
+explain the priority and suggested next check.
+
+Click a summary tile, destination-network/country bar, or VLAN chip to filter the
+queue. Filters combine; **Clear filters** resets them while retaining the chosen
+time window and grouping. Summary counts and destination rankings describe the
+whole loaded result; the queue reports the matching case and group counts.
+The result-cap notice means older cases in the selected window may be omitted.
+These charts count saved cases, not packets, unique attacks, traffic volume or
+all historical detections. Use **Traffic** for retained firewall-flow byte rankings.
+
+Group by signature, destination network/ASN, country or observed VLAN, or choose
+individual cases. A row shows the highest-priority representative case, case
+count, latest case time and whether review outcomes differ. Select a row to open
+its evidence alongside the list. Use **Case in this group** to inspect each
+member independently. Unknown VLANs remain unknown; tags are not inferred from
+IP addresses. The coverage panel uses the sensor's separate 15-minute window;
+an observed tag does not prove complete same-VLAN visibility. Open **Sensor
+health, firewall counts & coverage details** for the underlying diagnostics.
 
 Priority comes from original Suricata rule metadata. Priority-1 and selected
 malware/exploit families receive prompt review; protocol/decoder alerts prompt
 capture and stream checks. None is automatically marked safe or compromised.
 JEV advice remains a separate advisory result.
 
-Each Security card has an **Investigate in Canvas** button, visible even when
-the case details are collapsed. It prepares a formal investigation prompt with
+The selected case has an **Investigate in Canvas** button above its evidence.
+The classic HUD retains its per-card action. The button prepares a formal investigation prompt with
 that case's ID, site, timestamps, signature, endpoint/VLAN context and a bounded
 summary of any JEV advice. In Canvas, choose **Add to canvas draft**, review the
 prompt, then send. The model is asked to retrieve the full original case and
 corroborate it with available telemetry. Opening Canvas does not run an LLM,
 change the case disposition, or request another paid JEV review. After reviewing
 the findings, return to **Record a review of this case** to save your conclusion.
+**Deep dive group** includes only the matching members of that group, capped at
+the latest 20 cases. It preserves exact case IDs and bounded evidence excerpts.
+Group selection never applies a review outcome to multiple cases. Unsaved review
+text stays attached to the original site and case while switching selections.
 
 For an unencrypted HTTP Basic Auth alert, investigate the affected service and
 transport before concluding that credentials were exposed. Keep credential
@@ -90,6 +114,10 @@ explicit user instruction; the MCP provides no sending tool.
 
 ## Deployment and verification
 
+The visual Security explorer uses the existing events/time-window API and needs
+only a HUD build (`npm --prefix ui/netclaw-visual run build`). Reload the browser
+after deployment. No database migration or sensor restart is needed for this UI.
+
 Rebuild/recreate the Convergence API using the complete active Compose/overlay
 set, rebuild the HUD, and refresh the deployed skills/MCP process. API startup
 adds nullable JSONB columns without replacing existing case data. Back up the
@@ -105,7 +133,15 @@ From the checkout root, run the focused checks:
 ```sh
 node --test ui/convergence-api/test-reliability.cjs ui/convergence-api/test-incident-review.cjs
 node --test ui/netclaw-visual/test/convergence-ids.mjs ui/netclaw-visual/test/convergence-jev.mjs ui/netclaw-visual/test/convergence-incident-review.mjs
+node --test ui/netclaw-visual/test/convergence-security-explorer.mjs ui/netclaw-visual/test/convergence-explorer.mjs
 ```
+
+For the visual explorer, check summary and geographic/VLAN filters, mixed review
+outcomes within a group, individual case selection, form draft retention, and
+single/group Canvas handoffs. Verify a narrow viewport, result-cap and unavailable
+states. Browser verification should use synthetic API responses for review writes;
+live smoke checks can open/discard Canvas context without running a model or
+changing any real case.
 
 The evidence digest is SHA-256 over the UTF-8 `JSON.stringify(evidence)` content,
 not the pretty-printed download wrapper or CSV bytes. It identifies that snapshot;

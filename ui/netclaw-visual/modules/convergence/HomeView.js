@@ -9,6 +9,7 @@ import {assessmentHTML, securityQueueHTML, ispReportsHTML, reportDownload} from 
 
 import {diaryHTML, groupDiary, caseHandoff, MAX_SELECTION} from './DiaryExplorer.js';
 import {flowHTML, flowHandoff} from './FlowExplorer.js';
+import {securityExplorerHTML, securityModel} from './SecurityExplorer.js';
 
 const SUBVIEWS = [
   { id: 'overview', label: 'Overview' },
@@ -187,6 +188,8 @@ export class HomeView {
     this.jevPending = new Set();
     this.jevErrors = new Map();
     this.securityFilter = 'all';
+    this.securityRange = '24h'; this.securityGroup = 'signature'; this.securitySearch = '';
+    this.securityVlan = ''; this.securityNetwork = ''; this.securityCountry = ''; this.securitySelectedId = null;
     this.diaryMode = 'signature'; this.diaryRange = '24h'; this.diarySearch = ''; this.diarySelected = new Set();
     this.flowRange = '1h'; this.flowExporter = ''; this.diaryFlash = null;
     this.securityDrafts = new Map();
@@ -337,6 +340,13 @@ export class HomeView {
     };
     this.element.addEventListener('change', onChange);
     this.element.addEventListener('change', ev => {
+      if (ev.target.matches('[data-security-range]')) {
+        this.securityRange = ev.target.value; this.securitySelectedId = null;
+        delete this.cache.securityCases; delete this.readTimes.securityCases; this.renderSubview(); this.refresh();
+      }
+      if (ev.target.matches('[data-security-group]')) { this.securityGroup = ev.target.value; this.renderSubview(); }
+      if (ev.target.matches('[data-security-vlan-select]')) { this.securityVlan = ev.target.value; this.renderSubview(); }
+      if (ev.target.matches('[data-security-case-picker]')) { this.securitySelectedId = ev.target.value; this.renderSubview(); this.focusSecurityDetail(); }
       if (ev.target.matches('[data-isp-provider]')) { this.ispProviders.set(this.site, ev.target.value); this.renderSubview(); }
       if (ev.target.matches('[data-diary-group]')) { this.diaryMode = ev.target.value; this.renderSubview(); }
       if (ev.target.matches('[data-diary-search]')) { this.diarySearch = ev.target.value; this.renderSubview(); }
@@ -351,7 +361,12 @@ export class HomeView {
       this.saveIncidentDraft(ev.target);
     });
     this.element.addEventListener('input', ev => {
-      if (ev.target.matches('[data-diary-search]')) {
+      if (ev.target.matches('[data-security-search]')) {
+        const cursor = ev.target.selectionStart;
+        this.securitySearch = ev.target.value; this.renderSubview();
+        const input = this.element.querySelector('[data-security-search]');
+        input?.focus(); input?.setSelectionRange(cursor, cursor);
+      } else if (ev.target.matches('[data-diary-search]')) {
         const cursor = ev.target.selectionStart;
         this.diarySearch = ev.target.value; this.renderSubview();
         const input = this.element.querySelector('[data-diary-search]');
@@ -365,6 +380,18 @@ export class HomeView {
       this.handleIncidentAction('security', form.dataset.securityCase, {kind: form.elements.kind.value, reason: form.elements.reason.value});
     });
     this.element.addEventListener('click', ev => {
+      const selected = ev.target.closest('[data-security-select]');
+      if (selected) { this.securitySelectedId = selected.dataset.securitySelect; this.renderSubview(); this.focusSecurityDetail(); return; }
+      const securityGroup = ev.target.closest('[data-security-group-canvas]');
+      if (securityGroup && !securityGroup.disabled) { this.investigateSecurityGroup(securityGroup.dataset.securityGroupCanvas); return; }
+      for (const [attribute,field] of [['network','securityNetwork'],['country','securityCountry'],['vlan','securityVlan']]) {
+        const facet=ev.target.closest(`[data-security-${attribute}]`);
+        if(facet){const value=facet.getAttribute(`data-security-${attribute}`);this[field]=this[field]===value?'':value;this.renderSubview();return;}
+      }
+      if(ev.target.closest('[data-security-reset]')) {
+        this.securityFilter='all';this.securitySearch='';this.securityVlan='';this.securityNetwork='';this.securityCountry='';this.securitySelectedId=null;
+        this.renderSubview();return;
+      }
       const securityCase = ev.target.closest('[data-security-canvas]');
       if (securityCase && !securityCase.disabled) { this.investigateSecurity(securityCase.dataset.securityCanvas); return; }
       const one = ev.target.closest('[data-diary-canvas]'), group = ev.target.closest('[data-diary-group-canvas]');
@@ -710,6 +737,8 @@ export class HomeView {
     writeStoredSite(siteId);
     // Site-scoped caches are now stale; keep only the site list.
     this.cache = {};
+    this.securitySelectedId = null; this.securityFilter = 'all'; this.securitySearch = '';
+    this.securityVlan = ''; this.securityNetwork = ''; this.securityCountry = '';
     this.notesDrafts.clear();
     this.diarySelected.clear(); this.diaryFlash = null; this.flowExporter = '';
     this.lastSuccess = null;
@@ -761,8 +790,12 @@ export class HomeView {
       }
       if (this.subview === 'security' || force) {
         this.cache.security = await this.fetch(`/security?site=${this.site}`);
-        this.cache.securityCases = await this.fetch(`/events?site=${this.site}&type=security&limit=100`).catch(() => ({unavailable: true}));
-        if (!this.cache.securityCases?.unavailable) this.readTimes.securityCases = this.readTimes.events;
+        const caseSite=this.site, caseRange=this.securityRange || '24h';
+        const cases = await this.fetch(`/events?site=${encodeURIComponent(caseSite)}&type=security&limit=100${this.options?.embedded?'&range='+caseRange:''}`).catch(() => ({unavailable: true}));
+        if(caseSite===this.site && caseRange===(this.securityRange || '24h')) {
+          this.cache.securityCases = cases;
+          if (!cases?.unavailable) this.readTimes.securityCases = this.readTimes.events;
+        }
       }
       if (this.subview === 'isp' || force) {
         this.cache.wanCases = await this.fetch(`/events?site=${this.site}&type=wan&limit=50`);
@@ -887,12 +920,13 @@ export class HomeView {
     const data = this.cache.security;
     if (!data) return '<p class="home-muted">Loading security observations…</p>';
     const ids = data.intrusionDetection || {};
-    return `<div class="home-section">
+    const embedded=Boolean(this.options?.embedded);
+    return `${embedded?securityExplorerHTML(this.cache.securityCases,data,this.securityState())+'<details class="security-sensor-details"><summary>Sensor health, firewall counts &amp; coverage details</summary>':''}<div class="home-section">
       <h3>Security visibility</h3>
       <p>Firewall telemetry: <strong>${esc(data.status)}</strong> · observation window ${esc(data.observedWindow || 'unknown')}</p>
       ${data.reason ? `<p class="home-muted">${esc(data.reason)}</p>` : ''}
       <p>IDS feed: <strong>${esc(ids.status || 'unknown')}</strong> · ${esc(ids.reason || 'Coverage needs verification')}</p>
-      ${securityQueueHTML(this.cache.securityCases, this.securityFilter, this.securityDrafts, this.incidentPending, this.incidentErrors, this.site, {pending: this.jevPending, errors: this.jevErrors, canInvestigate: Boolean(this.options?.investigate)})}
+      ${embedded?'':securityQueueHTML(this.cache.securityCases, this.securityFilter, this.securityDrafts, this.incidentPending, this.incidentErrors, this.site, {pending: this.jevPending, errors: this.jevErrors, canInvestigate: Boolean(this.options?.investigate)})}
       <div class="home-kpi-grid">
         <div class="home-kpi"><div class="home-kpi-label">Blocked connections · 1 hour</div><div class="home-kpi-value">${esc(data.blockedConnections?.lastHour ?? 'Unknown')}</div></div>
         <div class="home-kpi"><div class="home-kpi-label">Blocked connections · 24 hours</div><div class="home-kpi-value">${esc(data.blockedConnections?.last24h ?? 'Unknown')}</div></div>
@@ -931,7 +965,30 @@ export class HomeView {
       <p class="home-muted">A firewall block is an observation. A source needs investigation before it can be classified as malicious.</p>
       <div class="home-table-wrap"><table class="home-table"><thead><tr><th>Source</th><th>Blocks</th><th>Assessment</th></tr></thead><tbody>
       ${(data.topSources || []).map(source => `<tr><td>${esc(source.ip)}</td><td>${esc(source.count)}</td><td>${esc(source.classification)}</td></tr>`).join('') || '<tr><td colspan="3">No source observations in this window</td></tr>'}
-      </tbody></table></div></div>`;
+      </tbody></table></div></div>${embedded?'</details>':''}`;
+  }
+
+  securityState() {
+    return {site:this.site,range:this.securityRange,group:this.securityGroup,filter:this.securityFilter,search:this.securitySearch,
+      vlan:this.securityVlan,network:this.securityNetwork,country:this.securityCountry,selectedId:this.securitySelectedId,
+      drafts:this.securityDrafts,incidentPending:this.incidentPending,incidentErrors:this.incidentErrors,
+      jevPending:this.jevPending,jevErrors:this.jevErrors,readAt:this.readTimes.securityCases,canInvestigate:Boolean(this.options?.investigate)};
+  }
+
+  focusSecurityDetail() {
+    const heading=this.element?.querySelector('#security-detail-title');
+    heading?.focus({preventScroll:true});
+    if(window.matchMedia('(max-width: 1100px)').matches)heading?.scrollIntoView({block:'start',behavior:'auto'});
+  }
+
+  investigateSecurityGroup(eventId) {
+    const cases=this.cache.securityCases;
+    if(!cases || cases.unavailable || (cases.site && cases.site!==this.site) || !this.options?.investigate)return;
+    const group=securityModel(cases,this.securityState()).groups.find(g=>g.events.some(e=>e.id===eventId));
+    if(!group)return;
+    const events=[...group.events].sort((a,b)=>Date.parse(b.timestamp)-Date.parse(a.timestamp)).slice(0,MAX_SELECTION);
+    this.options.investigate('Convergence grouped security deep dive',caseHandoff(events,this.site,this.readTimes.securityCases,`Selected Security group: ${group.label}`),
+      `/api/home/events?site=${encodeURIComponent(this.site)}&type=security&range=${this.securityRange}&limit=100`,this.readTimes.securityCases);
   }
 
   async refreshModels(render = true) {

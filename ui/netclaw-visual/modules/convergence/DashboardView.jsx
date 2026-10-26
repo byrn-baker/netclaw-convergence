@@ -16,7 +16,8 @@ export default function DashboardView({ preview, active, refreshKey, onStatus, i
       investigate,
       onUpdate(current) {
         const key = { overview: 'health', diary: 'events', triage: 'escalated', isp: 'wanCases', flows: 'flows' }[current.subview] || current.subview;
-        const unavailable = current.lastError || current.sourceErrors[current.subview] || current.cache[key]?.unavailable || current.cache[key]?.error;
+        const unavailable = current.lastError || current.sourceErrors[current.subview] || current.cache[key]?.unavailable || current.cache[key]?.error
+          || (current.subview === 'security' && current.cache.securityCases?.unavailable);
         const label = unavailable ? 'Convergence unavailable' : current.loading ? 'Refreshing Convergence' : current.lastSuccess ? 'Convergence available' : 'Connecting to Convergence';
         setSnapshot({ label, read: current.readTimes[key], site: current.site, stale: Boolean(unavailable), canInspect: key !== 'models' && Boolean(current.cache[key]) });
         statusCallback.current?.(label);
