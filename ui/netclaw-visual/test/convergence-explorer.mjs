@@ -26,6 +26,27 @@ test('Canvas receives only selected same-site cases, bounded excerpts, exact IDs
  HomeView.prototype.investigateDiary.call({site:'cottage',diaryRange:'24h',cache:{events:{events:fixtures}},readTimes:{events:'now'},options:{investigate:(...args)=>called=args}},['case-1'],'selected');
  assert.deepEqual(called[1].case_ids,['case-1']);assert.equal(called[1].site,'cottage');
 });
+test('case handoff includes compact JEV advice and transport context without raw review payloads',()=>{
+ const event={...fixtures[0],traffic_context:{...fixtures[0].traffic_context,protocol:'TCP',source_port:54000,destination_port:80},
+  security_assessment:{bucket:'attention',next_check:'Verify application and transport'},
+  jev_review:{status:'ok',assessment_id:'review-1',model:'jev-example',
+   answers:{next_check:{answer:'local_evidence'},evidence_strength:{score:0.66}},
+   questions:{next_check:{criteria:{local_evidence:'Retrieve the complete local alert'}},evidence_strength:{criteria:['Insufficient','Weak','Corroborated','Verified']}},
+   input_summary:{raw_review_marker:'excluded'},unused_payload:'excluded'}};
+ const handoff=caseHandoff([event],'home','now','Selected Security review case');
+ const excerpt=handoff.cases[0];
+ assert.equal(excerpt.signature,'Signature 1');assert.equal(excerpt.destination_port,80);
+ assert.equal(excerpt.next_check,'Verify application and transport');
+ assert.deepEqual(excerpt.jev_advisory,{advisory_only:true,status:'ok',assessment_id:'review-1',model:'jev-example',
+  next_check:'Retrieve the complete local alert',evidence_strength:0.66,rubric:['Insufficient','Weak','Corroborated','Verified']});
+ assert.doesNotMatch(JSON.stringify(handoff),/excluded|input_summary|unused_payload/);
+ assert.match(handoff.task,/redact credentials and authorization headers/);
+ assert.match(handoff.task,/not a verdict or threat probability/);
+ const oversized={...event,jev_review:{...event.jev_review,questions:{evidence_strength:{criteria:Array(100).fill('x'.repeat(40000))}}}};
+ const bounded=caseHandoff(Array.from({length:20},(_,i)=>({...oversized,id:`case-${i}`})),'home','now','selection');
+ assert.equal(bounded.case_ids.length,20);assert.ok(bounded.excerpts_omitted>0);
+ assert.ok(JSON.stringify(bounded,null,2).length<12000);
+});
 test('traffic renders measured volume, context and unavailable state; deep dive preserves window/exporter scope',()=>{
  const raw={site:'cottage',status:'active',start:'2026-10-25T10:00:00Z',end:'2026-10-25T11:00:00Z',exporters:['192.0.2.1'],total:{bytes:5000,records:2},sampling:[{rate:1}],
  sources:[{src_addr:'10.0.0.1',bytes:5000,records:2,packets:3}],destinations:[],conversations:[],basis:'Exported bytes',limitations:['Coverage limited']};

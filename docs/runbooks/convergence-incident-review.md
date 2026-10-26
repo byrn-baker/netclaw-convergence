@@ -11,6 +11,20 @@ malware/exploit families receive prompt review; protocol/decoder alerts prompt
 capture and stream checks. None is automatically marked safe or compromised.
 JEV advice remains a separate advisory result.
 
+Each Security card has an **Investigate in Canvas** button, visible even when
+the case details are collapsed. It prepares a formal investigation prompt with
+that case's ID, site, timestamps, signature, endpoint/VLAN context and a bounded
+summary of any JEV advice. In Canvas, choose **Add to canvas draft**, review the
+prompt, then send. The model is asked to retrieve the full original case and
+corroborate it with available telemetry. Opening Canvas does not run an LLM,
+change the case disposition, or request another paid JEV review. After reviewing
+the findings, return to **Record a review of this case** to save your conclusion.
+
+For an unencrypted HTTP Basic Auth alert, investigate the affected service and
+transport before concluding that credentials were exposed. Keep credential
+values and authorization headers out of the findings. JEV's abstract assessment
+is context for this investigation, not a substitute for the local evidence.
+
 An operator can record **expected activity**, **false positive**, **confirmed
 threat**, or **needs review**, with a reason. Each outcome applies only to that
 case. It does not suppress a signature, change investigation state, alter sensor

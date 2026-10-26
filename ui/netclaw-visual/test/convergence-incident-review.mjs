@@ -16,6 +16,40 @@ test('security UI explains priority, filters explicitly and escapes observations
   assert.equal(doc(securityQueueHTML({events:[event]},'attention')).querySelector('article'),null);
   assert.equal(assessmentHTML({alert_name:'WanHardDown'}),'');
 });
+test('Security offers an escaped Canvas action outside collapsed case details and requires the HUD host', () => {
+  const event={id:'case-"<img src=x>',alert_name:'SuricataIntrusion',security_assessment:assessment};
+  const render=options=>doc(securityQueueHTML({events:[event]},'all',undefined,undefined,undefined,'home',options));
+  const d=render({canInvestigate:true});
+  const button=d.querySelector('[data-security-canvas]');
+  assert.equal(button.dataset.securityCanvas,event.id);assert.equal(button.disabled,false);
+  assert.equal(button.type,'button');assert.equal(button.closest('details'),null);
+  assert.equal(button.closest('article').querySelector('details').open,false);
+  assert.equal(d.querySelector('img'),null);assert.equal(d.querySelector('script'),null);
+  assert.equal(render({}).querySelector('[data-security-canvas]').disabled,true);
+  assert.match(d.body.textContent,/Review the Canvas draft, then send/);
+});
+test('Security hands off only its selected case with its own site and retrieval time, independent of Diary', () => {
+  const event={id:'case/1',message:'Selected security evidence',security_assessment:assessment};
+  const calls=[];
+  const context={site:'cottage',cache:{securityCases:{site:'cottage',events:[event,{id:'case-2'}]}},
+    readTimes:{securityCases:'2026-10-26T00:01:00Z',events:'2026-10-26T00:02:00Z'},options:{investigate:(...args)=>calls.push(args)}};
+  HomeView.prototype.investigateSecurity.call(context,event.id);
+  assert.equal(calls.length,1);assert.deepEqual(calls[0][1].case_ids,[event.id]);
+  assert.equal(calls[0][1].cases[0].message,event.message);assert.equal(calls[0][1].site,'cottage');
+  assert.equal(calls[0][2],'/api/home/events/case%2F1?site=cottage');
+  assert.equal(calls[0][3],context.readTimes.securityCases);
+  // An unrelated Diary cache must not replace the selected Security evidence.
+  context.cache.events={events:[{id:event.id,message:'Different Diary snapshot'}]};
+  HomeView.prototype.investigateSecurity.call(context,event.id);
+  assert.equal(calls[1][1].cases[0].message,event.message);
+  HomeView.prototype.investigateSecurity.call(context,'missing');
+  context.cache.securityCases.site='other';HomeView.prototype.investigateSecurity.call(context,event.id);
+  context.cache.securityCases.site='cottage';context.cache.securityCases.unavailable=true;
+  HomeView.prototype.investigateSecurity.call(context,event.id);
+  context.cache.securityCases.unavailable=false;context.options={};
+  HomeView.prototype.investigateSecurity.call(context,event.id);
+  assert.equal(calls.length,2);
+});
 const report = {provider:{name:'ISP',support_url:'https://example.test/support',channel:'portal',guidance:'Use portal'},recipient_note:'No inferred email',
   draft:{subject:'Review outage',body:'Please review eligibility.'},evidence_sha256:'abc',evidence:{samples:[{target:'probe-1',success:[[1,0]],duration_ms:[[1,23]]}]}};
 test('provider drafts have explicit review controls, no send action, and downloadable email/evidence', () => {

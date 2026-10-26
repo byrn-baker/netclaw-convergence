@@ -26,7 +26,7 @@ export function assessmentHTML(event, {form = false, draft = {}, busy = false, e
   </div>`;
 }
 
-export function securityQueueHTML(data, filter = 'all', drafts = new Map(), pending = new Set(), errors = new Map(), site = '', jev = {}) {
+export function securityQueueHTML(data, filter = 'all', drafts = new Map(), pending = new Set(), errors = new Map(), site = '', options = {}) {
   if (!data) return '<p class="home-muted">Loading security cases…</p>';
   if (data.unavailable) return '<p role="alert">Security cases unavailable. Detection counts and review coverage are unknown.</p>';
   const events = data.events || [];
@@ -37,12 +37,14 @@ export function securityQueueHTML(data, filter = 'all', drafts = new Map(), pend
   return `<section class="home-security-queue"><h3>Security review queue</h3>
     <p class="home-muted">Latest ${events.length} IDS cases, capped at 100. Review priority is a suggestion, not a threat probability. Diagnostic alerts still need context; reviewed exceptions apply only to the individual case.</p>
     <div class="home-incident-filters" role="group" aria-label="Security case filters">${groups.map(([id,label]) => `<button type="button" data-security-filter="${id}" aria-pressed="${id === selected}">${label} · ${id === 'all' ? events.length : events.filter(e => e.security_assessment?.bucket === id).length}</button>`).join('')}</div>
-    ${rows.map(e => { const key = `${site}:${e.id}`; return `<article class="home-incident-card"><details>
+    ${rows.map(e => { const key = `${site}:${e.id}`; return `<article class="home-incident-card">
+      <div class="home-security-case-actions"><button type="button" class="primary" data-security-canvas="${esc(e.id)}" ${options.canInvestigate ? '' : 'disabled title="Open the new HUD to investigate in Canvas"'}>Investigate in Canvas ↗</button>
+      <span class="home-muted">Prepare a deep dive with this case and its JEV advice. Review the Canvas draft, then send.</span></div><details>
       <summary><span class="home-badge ${tones[e.security_assessment?.bucket] || ''}">${esc(e.security_assessment?.label || 'Review context')}</span> ${esc(e.security_assessment?.signature || e.message || e.alert_name)}</summary>
       <p class="home-muted">${esc(e.timestamp)} · Investigation: ${esc(e.status)} · Observed VLAN: ${esc(e.capture_context?.vlan_tags?.join(', ') || 'not recorded')}</p>
       ${assessmentHTML(e, {form: true, draft: drafts.get(key), busy: pending.has(key), error: errors.get(key)})}
       ${captureContextHTML(caseCaptureContext(e))}${ipContextHTML(caseIPContext(e))}
-      ${jevReviewHTML(e, jev.pending?.has(key), jev.errors?.get(key))}
+      ${jevReviewHTML(e, options.pending?.has(key), options.errors?.get(key))}
     </details></article>`; }).join('') || '<p>No cases in this view. This does not establish full network coverage.</p>'}
   </section>`;
 }

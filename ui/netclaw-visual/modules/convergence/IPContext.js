@@ -21,7 +21,7 @@ export function ipContextHTML(context) {
   const date = new Date(Number(context.databaseBuiltAt) * 1000);
   const built = context.databaseBuiltAt && Number.isFinite(date.getTime()) ? date.toISOString().slice(0, 10) : 'unknown';
   return `<details class="home-ip-context"><summary>Source and destination context</summary>
-    <table class="home-table"><thead><tr><th>Endpoint</th><th>Address</th><th>Network context</th></tr></thead><tbody>${rows}</tbody></table>
+    <div class="home-table-wrap"><table class="home-table"><thead><tr><th>Endpoint</th><th>Address</th><th>Network context</th></tr></thead><tbody>${rows}</tbody></table></div>
     <p class="home-muted">IP address data powered by <a href="https://ipinfo.io" target="_blank" rel="noopener noreferrer">IPinfo</a> · database ${esc(built)} · ${esc(context.status || 'unknown')}. Country and ASN identify network context; they do not establish who initiated the traffic or whether it is malicious. The organization domain is not the requested hostname.</p>
   </details>`;
 }

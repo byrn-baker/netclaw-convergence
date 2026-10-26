@@ -365,6 +365,8 @@ export class HomeView {
       this.handleIncidentAction('security', form.dataset.securityCase, {kind: form.elements.kind.value, reason: form.elements.reason.value});
     });
     this.element.addEventListener('click', ev => {
+      const securityCase = ev.target.closest('[data-security-canvas]');
+      if (securityCase && !securityCase.disabled) { this.investigateSecurity(securityCase.dataset.securityCanvas); return; }
       const one = ev.target.closest('[data-diary-canvas]'), group = ev.target.closest('[data-diary-group-canvas]');
       if (one) this.investigateDiary([one.dataset.diaryCanvas], 'Selected diary case');
       if (group) {
@@ -760,6 +762,7 @@ export class HomeView {
       if (this.subview === 'security' || force) {
         this.cache.security = await this.fetch(`/security?site=${this.site}`);
         this.cache.securityCases = await this.fetch(`/events?site=${this.site}&type=security&limit=100`).catch(() => ({unavailable: true}));
+        if (!this.cache.securityCases?.unavailable) this.readTimes.securityCases = this.readTimes.events;
       }
       if (this.subview === 'isp' || force) {
         this.cache.wanCases = await this.fetch(`/events?site=${this.site}&type=wan&limit=50`);
@@ -889,7 +892,7 @@ export class HomeView {
       <p>Firewall telemetry: <strong>${esc(data.status)}</strong> · observation window ${esc(data.observedWindow || 'unknown')}</p>
       ${data.reason ? `<p class="home-muted">${esc(data.reason)}</p>` : ''}
       <p>IDS feed: <strong>${esc(ids.status || 'unknown')}</strong> · ${esc(ids.reason || 'Coverage needs verification')}</p>
-      ${securityQueueHTML(this.cache.securityCases, this.securityFilter, this.securityDrafts, this.incidentPending, this.incidentErrors, this.site, {pending: this.jevPending, errors: this.jevErrors})}
+      ${securityQueueHTML(this.cache.securityCases, this.securityFilter, this.securityDrafts, this.incidentPending, this.incidentErrors, this.site, {pending: this.jevPending, errors: this.jevErrors, canInvestigate: Boolean(this.options?.investigate)})}
       <div class="home-kpi-grid">
         <div class="home-kpi"><div class="home-kpi-label">Blocked connections · 1 hour</div><div class="home-kpi-value">${esc(data.blockedConnections?.lastHour ?? 'Unknown')}</div></div>
         <div class="home-kpi"><div class="home-kpi-label">Blocked connections · 24 hours</div><div class="home-kpi-value">${esc(data.blockedConnections?.last24h ?? 'Unknown')}</div></div>
@@ -908,13 +911,13 @@ export class HomeView {
         <p class="home-muted">${esc(sensor.scope)}. Automatic investigations: ${sensor.autoInvestigate ? 'subject to Guardian policy' : 'disabled during tuning; cases remain available for review'}.</p>
         ${(sensor.captureSources || []).length ? `<h4>Capture points</h4>
           <p class="home-muted">Source liveness comes from mirrored headers; engine statistics above report Suricata capture health.</p>
-          <table class="home-table"><thead><tr><th>Source</th><th>State</th><th>Scope</th></tr></thead><tbody>
+          <div class="home-table-wrap"><table class="home-table"><thead><tr><th>Source</th><th>State</th><th>Scope</th></tr></thead><tbody>
             ${sensor.captureSources.map(source => `<tr><td>${esc(source.name)}</td><td>${esc(source.status)}</td><td>${esc(source.scope)}</td></tr>`).join('')}
-          </tbody></table>` : ''}
+          </tbody></table></div>` : ''}
         ${(sensor.coverageGaps || []).length ? `<details><summary>Coverage gaps</summary><ul>${sensor.coverageGaps.map(gap => `<li>${esc(gap)}</li>`).join('')}</ul></details>` : ''}
-        <table class="home-table"><thead><tr><th>VLAN</th><th>Packet evidence · last 15 minutes</th></tr></thead><tbody>
+        <div class="home-table-wrap"><table class="home-table"><thead><tr><th>VLAN</th><th>Packet evidence · last 15 minutes</th></tr></thead><tbody>
           ${(sensor.coverage || []).map(v => `<tr><td>${esc(v.vlan)}</td><td>${esc(v.status)}</td></tr>`).join('')}
-        </tbody></table>
+        </tbody></table></div>
       </div>`).join('')}
       ${ids.encryptedTraffic ? `<h3>Encrypted traffic visibility</h3>
         <p>Metadata only · last ${esc(ids.encryptedTraffic.window)}: ${esc(ids.encryptedTraffic.tlsObservations)} TLS observations,
@@ -926,9 +929,9 @@ export class HomeView {
         <p class="home-muted">New IDS cases show this context in the Diary and Triage views. Country and network organization do not establish malicious activity. Reputation assessment remains a separate investigation.</p>` : ''}
       <h3>Most frequently blocked sources · 1 hour</h3>
       <p class="home-muted">A firewall block is an observation. A source needs investigation before it can be classified as malicious.</p>
-      <table class="home-table"><thead><tr><th>Source</th><th>Blocks</th><th>Assessment</th></tr></thead><tbody>
+      <div class="home-table-wrap"><table class="home-table"><thead><tr><th>Source</th><th>Blocks</th><th>Assessment</th></tr></thead><tbody>
       ${(data.topSources || []).map(source => `<tr><td>${esc(source.ip)}</td><td>${esc(source.count)}</td><td>${esc(source.classification)}</td></tr>`).join('') || '<tr><td colspan="3">No source observations in this window</td></tr>'}
-      </tbody></table></div>`;
+      </tbody></table></div></div>`;
   }
 
   async refreshModels(render = true) {
@@ -1400,6 +1403,17 @@ export class HomeView {
       </div>
       ${body}
     `;
+  }
+
+  investigateSecurity(eventId) {
+    const cases = this.cache.securityCases;
+    if (cases?.unavailable || (cases?.site && cases.site !== this.site) || !this.options?.investigate) return;
+    const event = cases?.events?.find(e => e.id === eventId);
+    if (!event) return;
+    const retrievedAt = this.readTimes.securityCases;
+    this.options.investigate('Convergence security case deep dive',
+      caseHandoff([event], this.site, retrievedAt, 'Selected Security review case'),
+      `/api/home/events/${encodeURIComponent(event.id)}?site=${encodeURIComponent(this.site)}`, retrievedAt);
   }
 
   investigateDiary(ids, scope) {
