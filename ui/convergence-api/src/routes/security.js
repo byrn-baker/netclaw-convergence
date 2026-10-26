@@ -3,6 +3,19 @@ const express = require('express');
 const router = express.Router();
 const { LOKI_URL, promqlLabelValue } = require('../lib/config');
 const { idsStatus } = require('../lib/idsStatus');
+const {query, DbUnavailableError} = require('../db');
+const {securityHistory} = require('../lib/securityHistory');
+
+router.get('/history', async (req, res) => {
+  try {
+    res.json(await securityHistory(req.site, req.query, query));
+  } catch (err) {
+    if (/^Choose /.test(err.message)) return res.status(400).json({error:err.message});
+    const down=err instanceof DbUnavailableError || err.code==='DB_UNAVAILABLE';
+    if (!down) console.error('Security history error:',err.message);
+    res.status(503).json({site:req.site,unavailable:true,reason:'Security history unavailable'});
+  }
+});
 
 async function metric(query) {
   const r = await fetch(`${LOKI_URL}/loki/api/v1/query?${new URLSearchParams({query})}`, {signal: AbortSignal.timeout(10000)});

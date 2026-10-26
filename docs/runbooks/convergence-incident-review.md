@@ -17,6 +17,35 @@ The result-cap notice means older cases in the selected window may be omitted.
 These charts count saved cases, not packets, unique attacks, traffic volume or
 all historical detections. Use **Traffic** for retained firewall-flow byte rankings.
 
+### Historical timeline and destination map
+
+The **Historical activity** panel queries all saved IDS cases in the selected
+window, independently of the latest-100 review queue. Its zero-filled time bars
+count cases by recorded case time. They do not measure packet bursts or prove
+that sensors were continuously healthy. The map shades destination countries by
+saved case count; country is network context, not a risk verdict or actor origin.
+Internal destinations and unavailable geography have explicit entries in the
+country list. Small countries missing from the coarse map remain selectable there.
+The public-domain Natural Earth outlines ship locally; rendering makes no map
+service requests and sends no case data to a mapping provider.
+
+Click a time bar or country (or use the keyboard/list) to reload its matching
+cases from the database **before** the queue cap. Country and time selections
+combine. Use **Clear history selection** to restore the full-window queue. Changing
+the time-window selector clears both historical selections. The timeline/map
+remain scoped to the full selected window; priority, VLAN, destination-network,
+country bars below the summary and search filter only the loaded case queue.
+**Clear filters** resets those local filters, retaining the historical selection.
+Canvas handoffs contain exact case IDs and preserve the historical query scope.
+Review drafts remain attached to their original site and case.
+
+Historical counts cover retained database cases, including reviewed cases, not
+all sensor detections or overwritten versions of a case. They use enrichment saved
+with each case; historical geography is not refreshed from current IP databases.
+Missing database/query results show **History unavailable** instead of zero.
+The interval uses inclusive start/exclusive end; UTC-aligned bars at the edges
+may be partial, and chart labels use the browser's local timezone.
+
 Group by signature, destination network/ASN, country or observed VLAN, or choose
 individual cases. A row shows the highest-priority representative case, case
 count, latest case time and whether review outcomes differ. Select a row to open
@@ -114,9 +143,11 @@ explicit user instruction; the MCP provides no sending tool.
 
 ## Deployment and verification
 
-The visual Security explorer uses the existing events/time-window API and needs
-only a HUD build (`npm --prefix ui/netclaw-visual run build`). Reload the browser
-after deployment. No database migration or sensor restart is needed for this UI.
+The historical timeline/map require rebuilding the Convergence API and the HUD
+(`npm --prefix ui/netclaw-visual run build`). Use the complete active Compose
+overlay set when recreating the API; reload the browser afterward. PostgreSQL 16
+supports safe parsing of legacy enrichment. This update adds no schema migration
+and requires no sensor restart.
 
 Rebuild/recreate the Convergence API using the complete active Compose/overlay
 set, rebuild the HUD, and refresh the deployed skills/MCP process. API startup
@@ -134,7 +165,13 @@ From the checkout root, run the focused checks:
 node --test ui/convergence-api/test-reliability.cjs ui/convergence-api/test-incident-review.cjs
 node --test ui/netclaw-visual/test/convergence-ids.mjs ui/netclaw-visual/test/convergence-jev.mjs ui/netclaw-visual/test/convergence-incident-review.mjs
 node --test ui/netclaw-visual/test/convergence-security-explorer.mjs ui/netclaw-visual/test/convergence-explorer.mjs
+node --test ui/convergence-api/test-security-history.cjs ui/netclaw-visual/test/convergence-security-history.mjs
 ```
+
+For the optional real-SQL check, set `SECURITY_HISTORY_PG_CONTAINER` to the local
+Postgres container name when running `test-security-history.cjs`. It uses only
+connection-local temporary tables in a rolled-back transaction, covering more
+than 100 cases, site isolation, legacy/malformed geography and interval edges.
 
 For the visual explorer, check summary and geographic/VLAN filters, mixed review
 outcomes within a group, individual case selection, form draft retention, and
@@ -142,6 +179,13 @@ single/group Canvas handoffs. Verify a narrow viewport, result-cap and unavailab
 states. Browser verification should use synthetic API responses for review writes;
 live smoke checks can open/discard Canvas context without running a model or
 changing any real case.
+
+Timeline/map acceptance passed 54 focused API/UI checks, the real PostgreSQL
+temporary-table check, and the HUD production build. Synthetic browser checks
+covered combined interval/country selection, keyboard map selection, unavailable
+history, bounded Canvas context and mobile width. Live read-only checks verified
+country and timestamp predicates against returned cases and matching timeline/
+geography totals. No real case reviews or LLM investigations were submitted.
 
 The evidence digest is SHA-256 over the UTF-8 `JSON.stringify(evidence)` content,
 not the pretty-printed download wrapper or CSV bytes. It identifies that snapshot;

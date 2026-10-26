@@ -10,6 +10,7 @@ import {assessmentHTML, securityQueueHTML, ispReportsHTML, reportDownload} from 
 import {diaryHTML, groupDiary, caseHandoff, MAX_SELECTION} from './DiaryExplorer.js';
 import {flowHTML, flowHandoff} from './FlowExplorer.js';
 import {securityExplorerHTML, securityModel} from './SecurityExplorer.js';
+import {securityCasesPath} from './SecurityHistory.js';
 
 const SUBVIEWS = [
   { id: 'overview', label: 'Overview' },
@@ -190,6 +191,7 @@ export class HomeView {
     this.securityFilter = 'all';
     this.securityRange = '24h'; this.securityGroup = 'signature'; this.securitySearch = '';
     this.securityVlan = ''; this.securityNetwork = ''; this.securityCountry = ''; this.securitySelectedId = null;
+    this.securityHistoryWindow = null; this.securityHistoryCountry = '';
     this.diaryMode = 'signature'; this.diaryRange = '24h'; this.diarySearch = ''; this.diarySelected = new Set();
     this.flowRange = '1h'; this.flowExporter = ''; this.diaryFlash = null;
     this.securityDrafts = new Map();
@@ -342,7 +344,8 @@ export class HomeView {
     this.element.addEventListener('change', ev => {
       if (ev.target.matches('[data-security-range]')) {
         this.securityRange = ev.target.value; this.securitySelectedId = null;
-        delete this.cache.securityCases; delete this.readTimes.securityCases; this.renderSubview(); this.refresh();
+        this.securityHistoryWindow = null; this.securityHistoryCountry = '';
+        delete this.cache.securityHistory; this.reloadSecurityCases();
       }
       if (ev.target.matches('[data-security-group]')) { this.securityGroup = ev.target.value; this.renderSubview(); }
       if (ev.target.matches('[data-security-vlan-select]')) { this.securityVlan = ev.target.value; this.renderSubview(); }
@@ -380,6 +383,21 @@ export class HomeView {
       this.handleIncidentAction('security', form.dataset.securityCase, {kind: form.elements.kind.value, reason: form.elements.reason.value});
     });
     this.element.addEventListener('click', ev => {
+      const interval=ev.target.closest('[data-security-history-start]');
+      if(interval){
+        const start=interval.dataset.securityHistoryStart,end=interval.dataset.securityHistoryEnd;
+        this.securityHistoryWindow=this.securityHistoryWindow?.start===start?null:{start,end};
+        this.reloadSecurityCases();return;
+      }
+      const country=ev.target.closest('[data-security-history-country]');
+      if(country){
+        const code=country.dataset.securityHistoryCountry;
+        this.securityHistoryCountry=this.securityHistoryCountry===code?'':code;
+        this.reloadSecurityCases();return;
+      }
+      if(ev.target.closest('[data-security-history-clear]')){
+        this.securityHistoryWindow=null;this.securityHistoryCountry='';this.reloadSecurityCases();return;
+      }
       const selected = ev.target.closest('[data-security-select]');
       if (selected) { this.securitySelectedId = selected.dataset.securitySelect; this.renderSubview(); this.focusSecurityDetail(); return; }
       const securityGroup = ev.target.closest('[data-security-group-canvas]');
@@ -417,6 +435,11 @@ export class HomeView {
       if (load) this.handleIncidentAction('load', load.dataset.ispLoad);
       const download = ev.target.closest('[data-isp-download]');
       if (download) this.downloadIspReport(download.dataset.eventId, download.dataset.ispDownload);
+    });
+    this.element.addEventListener('keydown',ev=>{
+      if(ev.target.matches('path[data-security-history-country]') && ['Enter',' '].includes(ev.key)){
+        ev.preventDefault();ev.target.dispatchEvent(new MouseEvent('click',{bubbles:true}));
+      }
     });
     if (!this.element.contains(this.chrome)) this.chrome?.addEventListener('change', onChange);
 
@@ -739,6 +762,7 @@ export class HomeView {
     this.cache = {};
     this.securitySelectedId = null; this.securityFilter = 'all'; this.securitySearch = '';
     this.securityVlan = ''; this.securityNetwork = ''; this.securityCountry = '';
+    this.securityHistoryWindow = null; this.securityHistoryCountry = '';
     this.notesDrafts.clear();
     this.diarySelected.clear(); this.diaryFlash = null; this.flowExporter = '';
     this.lastSuccess = null;
@@ -791,9 +815,14 @@ export class HomeView {
       if (this.subview === 'security' || force) {
         this.cache.security = await this.fetch(`/security?site=${this.site}`);
         const caseSite=this.site, caseRange=this.securityRange || '24h';
-        const cases = await this.fetch(`/events?site=${encodeURIComponent(caseSite)}&type=security&limit=100${this.options?.embedded?'&range='+caseRange:''}`).catch(() => ({unavailable: true}));
-        if(caseSite===this.site && caseRange===(this.securityRange || '24h')) {
+        const scope=JSON.stringify([this.securityHistoryWindow,this.securityHistoryCountry]);
+        const [cases,history]=await Promise.all([
+          this.fetch(securityCasesPath(caseSite,caseRange,this.securityHistoryWindow,this.securityHistoryCountry,Boolean(this.options?.embedded))).catch(()=>({unavailable:true})),
+          this.options?.embedded?this.fetch(`/security/history?site=${encodeURIComponent(caseSite)}&range=${caseRange}`).catch(()=>({unavailable:true})):null,
+        ]);
+        if(caseSite===this.site && caseRange===(this.securityRange || '24h') && scope===JSON.stringify([this.securityHistoryWindow,this.securityHistoryCountry])) {
           this.cache.securityCases = cases;
+          this.cache.securityHistory = history;
           if (!cases?.unavailable) this.readTimes.securityCases = this.readTimes.events;
         }
       }
@@ -970,9 +999,16 @@ export class HomeView {
 
   securityState() {
     return {site:this.site,range:this.securityRange,group:this.securityGroup,filter:this.securityFilter,search:this.securitySearch,
+      history:this.cache.securityHistory,historyWindow:this.securityHistoryWindow,historyCountry:this.securityHistoryCountry,
       vlan:this.securityVlan,network:this.securityNetwork,country:this.securityCountry,selectedId:this.securitySelectedId,
       drafts:this.securityDrafts,incidentPending:this.incidentPending,incidentErrors:this.incidentErrors,
       jevPending:this.jevPending,jevErrors:this.jevErrors,readAt:this.readTimes.securityCases,canInvestigate:Boolean(this.options?.investigate)};
+  }
+
+  reloadSecurityCases() {
+    this.securitySelectedId=null;
+    delete this.cache.securityCases;delete this.readTimes.securityCases;
+    this.renderSubview();this.refresh();
   }
 
   focusSecurityDetail() {
@@ -988,7 +1024,7 @@ export class HomeView {
     if(!group)return;
     const events=[...group.events].sort((a,b)=>Date.parse(b.timestamp)-Date.parse(a.timestamp)).slice(0,MAX_SELECTION);
     this.options.investigate('Convergence grouped security deep dive',caseHandoff(events,this.site,this.readTimes.securityCases,`Selected Security group: ${group.label}`),
-      `/api/home/events?site=${encodeURIComponent(this.site)}&type=security&range=${this.securityRange}&limit=100`,this.readTimes.securityCases);
+      `/api/home${securityCasesPath(this.site,this.securityRange,this.securityHistoryWindow,this.securityHistoryCountry)}`,this.readTimes.securityCases);
   }
 
   async refreshModels(render = true) {

@@ -45,6 +45,7 @@ const { captureContext } = require('../lib/captureContext');
 const { securityAssessment } = require('../lib/securityAssessment');
 const { trafficContext } = require('../lib/trafficContext');
 const { WAN_ALERTS } = require('../lib/ispReport');
+const {caseHistoryFilters,DESTINATION_SQL,COUNTRY_SQL} = require('../lib/securityHistory');
 
 /**
  * Ensure a site row exists so event POSTs never FK-500 on unknown site_id.
@@ -70,6 +71,9 @@ router.get('/', async (req, res) => {
   if (req.query.range && !Object.hasOwn(windows, req.query.range)) return res.status(400).json({error:'Invalid diary time window'});
   const status = req.query.status; // optional: filter by status
   const fingerprint = req.query.fingerprint; // optional: alertmanager fingerprint
+  let historical;
+  try { historical=caseHistoryFilters(req.query); }
+  catch (err) { return res.status(400).json({error:err.message}); }
 
   try {
     let sql = `SELECT id, timestamp, message, severity, category, source, status,
@@ -85,6 +89,14 @@ router.get('/', async (req, res) => {
     }
 
     if (req.query.type === 'security') sql += " AND alert_name = 'SuricataIntrusion'";
+    if (historical.start) {
+      params.push(historical.start,historical.end);
+      sql += ` AND timestamp >= $${params.length-1}::timestamptz AND timestamp < $${params.length}::timestamptz`;
+    }
+    if (historical.country) {
+      params.push(historical.country);
+      sql += ` AND (SELECT ${COUNTRY_SQL} FROM (SELECT ${DESTINATION_SQL} AS destination) context) = $${params.length}`;
+    }
     if (req.query.type === 'wan') {
       params.push(WAN_ALERTS);
       sql += ` AND (category = 'wan' OR alert_name = ANY($${params.length}::text[]))`;
@@ -107,7 +119,7 @@ router.get('/', async (req, res) => {
     params.push(limit);
 
     const result = await query(sql, params);
-    res.json({ site, limit, range: req.query.range || null, events: result.rows.map(({source_evidence, ...event}) => ({
+    res.json({ site, limit, range: req.query.range || null, historical, events: result.rows.map(({source_evidence, ...event}) => ({
       ...event, capture_context: captureContext(source_evidence, event.alert_name),
       traffic_context: trafficContext(source_evidence),
       security_assessment: securityAssessment({...event, source_evidence}),

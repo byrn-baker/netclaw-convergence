@@ -2,11 +2,12 @@ const {test}=require('node:test');
 const assert=require('node:assert/strict');
 const fs=require('node:fs'),vm=require('node:vm');
 function routes(file, dependencies, globals={}){
+ dependencies={'../db':{query:()=>assert.fail('unexpected database query'),DbUnavailableError:class extends Error{}},...dependencies};
  const handlers={},middleware=[];
  const router={use:h=>middleware.push(h)};
  for(const m of ['get','post','patch'])router[m]=(p,h)=>{handlers[m+' '+p]=h};
  vm.runInNewContext(fs.readFileSync(__dirname+'/src/routes/'+file,'utf8'),{
- require:n=>n==='express'?{Router:()=>router}:['../lib/captureContext','../lib/securityAssessment','../lib/ispReport','../lib/trafficContext'].includes(n)?require('./src/lib/'+n.split('/').at(-1)):dependencies[n],module:{exports:{}},process:{env:{}},console,Date,AbortSignal,Promise,URLSearchParams,...globals,
+ require:n=>n==='express'?{Router:()=>router}:['../lib/captureContext','../lib/securityAssessment','../lib/ispReport','../lib/trafficContext','../lib/securityHistory'].includes(n)?require('./src/lib/'+n.split('/').at(-1)):dependencies[n],module:{exports:{}},process:{env:{}},console,Date,AbortSignal,Promise,URLSearchParams,...globals,
  });
  return {handlers,middleware};
 }

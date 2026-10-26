@@ -82,6 +82,32 @@ Writes (`POST /api/events`, `PATCH /api/events/:id`,
 `POST /api/events/:id/reinvestigate`) answer **503** with `error` and `hint` when
 the store is unavailable, never 500.
 
+## `GET /api/security/history?site=&range=`
+
+Authenticated, site-scoped read of all saved `SuricataIntrusion` cases in `1h`,
+`6h`, `24h` (default), or `7d`. PostgreSQL 16 (the bundled version) is required.
+Aggregation precedes any case-list limit and uses one database snapshot.
+
+The response contains `site`, `range`, inclusive `start`, exclusive `end`,
+`bucket_seconds`, `total`, zero-filled `buckets[{start,end,count}]`,
+`countries[{code,count}]`, and `basis`. Buckets align to UTC epoch intervals;
+the first and last may be partial. Country counts include `internal` and
+`unknown`; missing/malformed legacy enrichment is unknown. Country codes come
+only from saved external-destination context. Totals count cases by recorded case
+time, not packets, traffic volume, distinct incidents or continuous sensor coverage.
+No source evidence, addresses or packet content is returned.
+
+Invalid ranges return 400. Database/query failures return 503 with `unavailable:
+true` and no zero totals. An empty successful response has zero-filled buckets
+and `total: 0`.
+
+For case drilldown, `GET /api/events?type=security` also accepts paired `start`
+and `end` timestamps (half-open, up to seven days, end at most one minute ahead),
+and `country` (uppercase two-letter code, `internal`, or `unknown`). Filters are
+parameterized and applied before the latest-100 limit. If `range` is supplied,
+both time restrictions apply. These filters are rejected for other event types.
+The response echoes the normalized filters in `historical`.
+
 ## `GET /healthz`
 
 | Field | Req | Notes |

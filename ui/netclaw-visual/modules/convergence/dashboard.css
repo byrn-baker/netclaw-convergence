@@ -207,3 +207,39 @@
 @media(max-width:1400px) { .convergence-workspace .security-context-grid { grid-template-columns: 1fr 1fr; } .convergence-workspace .security-coverage { grid-column: 1/-1; } }
 @media(max-width:1100px) { .convergence-workspace .security-investigation-layout { grid-template-columns: minmax(0,1fr); } .convergence-workspace .security-detail { position: static; max-height: none; } .convergence-workspace .security-case-list > .home-table-wrap { max-height: 480px; } .convergence-workspace .security-summary { grid-template-columns: repeat(3,minmax(0,1fr)); } }
 @media(max-width:650px) { .convergence-workspace .security-summary { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px; } .convergence-workspace .security-context-grid { grid-template-columns: minmax(0,1fr); } .convergence-workspace .security-detail { padding: 16px; } .convergence-workspace .security-controls label { flex: 1; min-width: 120px; } .convergence-workspace .security-controls select { max-width: 100%; } }
+
+/* Historical case counts are independent of the bounded review queue. */
+.convergence-workspace .security-history { margin: 22px 0; padding: 20px; border: 1px solid var(--line); border-radius: 8px; min-width: 0; }
+.convergence-workspace .security-history-heading { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; align-items: end; }
+.convergence-workspace .security-history-heading h3 { margin: 8px 0; font-size: 1rem; }
+.convergence-workspace .security-history-heading strong { color: #9fc6c0; margin-left: 10px; font-size: 1.5rem; }
+.convergence-workspace .security-history .home-muted { font-size: .75rem; overflow-wrap: anywhere; }
+.convergence-workspace .security-timeline { display: flex; align-items: stretch; gap: 4px; height: 128px; margin-top: 24px; }
+.convergence-workspace .security-timeline button { display: flex; flex: 1; min-width: 0; position: relative; align-items: end; padding: 0; background: #172532; border: 0; border-bottom: 1px solid #486074; border-radius: 3px 3px 0 0; }
+.convergence-workspace .security-timeline button > span { display: block; width: 100%; background: #7caaa5; border-radius: 3px 3px 0 0; }
+.convergence-workspace .security-timeline button > small { position: absolute; top: -18px; width: 100%; text-align: center; font-size: .6rem; color: var(--muted); }
+.convergence-workspace .security-timeline button:is(:hover,:focus-visible,[aria-pressed=true]) { outline: 2px solid #ee946b; outline-offset: 1px; }
+.convergence-workspace .security-timeline-axis { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin: 10px 0 24px; color: var(--muted); font-size: .65rem; }
+.convergence-workspace .security-geography { display: grid; grid-template-columns: minmax(0,1.8fr) minmax(180px,1fr); gap: 24px; }
+.convergence-workspace .security-geography > div { min-width: 0; }
+.convergence-workspace .security-geography h4 { margin: 0 0 8px; font-size: .8rem; }
+.convergence-workspace .security-world-map { display: block; width: 100%; height: auto; background: #111d28; border-radius: 8px; }
+.convergence-workspace .security-world-map path { fill: #293e50; stroke: #101e2a; stroke-width: .3; }
+.convergence-workspace .security-world-map path.has-cases { fill: #88c9bd; fill-opacity: var(--country-opacity); cursor: pointer; }
+.convergence-workspace .security-world-map path:is(.selected,:focus-visible) { fill: #ee946b; fill-opacity: 1; stroke: #fff; stroke-width: .65; outline: none; }
+.convergence-workspace .security-world-map path.has-cases:hover { fill-opacity: 1; stroke: #eee; }
+.convergence-workspace .security-history-countries { max-height: 300px; overflow: auto; }
+.convergence-workspace .security-history-countries button { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; padding: 10px; border: 0; border-bottom: 1px solid var(--line); border-radius: 0; background: transparent; text-align: left; font-size: .75rem; }
+.convergence-workspace .security-history-countries button span { overflow-wrap: anywhere; min-width: 0; }
+.convergence-workspace .security-history-countries button[aria-pressed=true] { background: #334b58; color: #f3c8ae; }
+.convergence-workspace .security-history-selection { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; color: #edba99; font-size: .75rem; }
+.convergence-workspace .security-history-selection button { font-size: .75rem; }
+@media(max-width:650px) {
+  .convergence-workspace .security-history { padding: 12px; }
+  .convergence-workspace .security-geography { grid-template-columns: minmax(0,1fr); gap: 16px; }
+  .convergence-workspace .security-timeline { gap: 2px; height: 100px; }
+  .convergence-workspace .security-timeline button > small { display: none; }
+  .convergence-workspace .security-history-countries { max-height: 190px; }
+}
+.convergence-workspace .security-history-range { display: grid; gap: 6px; color: var(--muted); font-size: .75rem; }
+.convergence-workspace .security-history-range select { min-width: 100px; }
