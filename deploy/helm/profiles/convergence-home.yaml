@@ -1,0 +1,621 @@
+# Parallel validation: fresh stores, read-only metric federation, quiet alerts.
+# Docker remains authoritative; no historical cases or logs have been migrated.
+existingSecret: convergence-secrets
+nodeSelector: &id001
+  kubernetes.io/hostname: k3s-worker-macmini-1
+siteConfig:
+  home:
+    name: Home
+    wanInterface: wan
+    deviceName: edge
+    speedtestTarget: 1000000000
+    thresholds:
+      latency:
+        green: 40
+        yellow: 80
+      loss:
+        green: 0
+        yellow: 5
+      txRetries:
+        green: 20
+        yellow: 35
+      speedtest:
+        green: 900000000
+        yellow: 700000000
+    switches:
+      match: HomeSwitch.*
+      models:
+        HomeSwitch01: Cisco WS-C3850-48P
+        HomeSwitch02: Cisco WS-C3850-48P
+        HomeSwitch04: Cisco WS-C3650-48P
+    flows:
+      exporters:
+      - 192.168.13.1
+api:
+  idsEnabled: true
+  image:
+    tag: 6aced782
+  nodeSelector:
+    kubernetes.io/arch: amd64
+    kubernetes.io/hostname: k3s-worker-macmini-1
+  service:
+    type: NodePort
+    nodePort: 30081
+victoria:
+  nodeSelector: *id001
+  metrics:
+    server:
+      nodeSelector: *id001
+  logs:
+    server:
+      nodeSelector: *id001
+  collector:
+    config:
+      receivers:
+        syslog/devices:
+          protocol: rfc3164
+          location: UTC
+          udp:
+            listen_address: 0.0.0.0:1514
+            add_attributes: true
+          operators:
+          - type: router
+            id: vendor_router
+            routes:
+            - output: cisco_ios_parser
+              expr: 'body != nil and body matches "^<[0-9]+>[0-9]*: ?\\*?[A-Z][a-z]{2}
+                "'
+            - output: filterlog_v4
+              expr: attributes["appname"] == "filterlog" and attributes["message"]
+                != nil and attributes["message"] matches "^([^,]*,){8}4,"
+            - output: filterlog_v6
+              expr: attributes["appname"] == "filterlog" and attributes["message"]
+                != nil and attributes["message"] matches "^([^,]*,){8}6,"
+            - output: filterlog_common
+              expr: attributes["appname"] == "filterlog"
+            default: noop
+          - id: cisco_ios_parser
+            type: regex_parser
+            parse_from: body
+            on_error: send
+            regex: '^<(?P<priority>\d+)>(?P<sequence>\d+): \*?(?P<device_time>[A-Z][a-z]{2}
+              +\d+ [\d:.]+): %(?P<mnemonic>[A-Z0-9_]+-(?P<sev_level>\d)-[A-Z0-9_]+):
+              (?P<message>.*)$'
+            output: noop
+          - id: filterlog_v4
+            type: regex_parser
+            parse_from: attributes.message
+            on_error: send
+            regex: ^(?P<rule_nr>[^,]*),(?P<sub_rule_nr>[^,]*),(?P<anchor>[^,]*),(?P<tracker>[^,]*),(?P<fw_interface>[^,]*),(?P<reason>[^,]*),(?P<action>[^,]*),(?P<direction>[^,]*),(?P<ip_version>4),[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*,(?P<proto_id>[^,]*),(?P<protocol>[^,]*),[^,]*,(?P<src_ip>[^,]*),(?P<dst_ip>[^,]*)(?:,(?P<src_port>[0-9]*),(?P<dst_port>[0-9]*))?
+            output: noop
+          - id: filterlog_v6
+            type: regex_parser
+            parse_from: attributes.message
+            on_error: send
+            regex: ^(?P<rule_nr>[^,]*),(?P<sub_rule_nr>[^,]*),(?P<anchor>[^,]*),(?P<tracker>[^,]*),(?P<fw_interface>[^,]*),(?P<reason>[^,]*),(?P<action>[^,]*),(?P<direction>[^,]*),(?P<ip_version>6),[^,]*,[^,]*,[^,]*,(?P<protocol>[^,]*),(?P<proto_id>[^,]*),[^,]*,(?P<src_ip>[^,]*),(?P<dst_ip>[^,]*)(?:,(?P<src_port>[0-9]*),(?P<dst_port>[0-9]*))?
+            output: noop
+          - id: filterlog_common
+            type: regex_parser
+            parse_from: attributes.message
+            on_error: send
+            regex: ^(?P<rule_nr>[^,]*),(?P<sub_rule_nr>[^,]*),(?P<anchor>[^,]*),(?P<tracker>[^,]*),(?P<fw_interface>[^,]*),(?P<reason>[^,]*),(?P<action>[^,]*),(?P<direction>[^,]*)
+            output: noop
+          - id: noop
+            type: noop
+        syslog/devices_tcp:
+          protocol: rfc3164
+          location: UTC
+          tcp:
+            listen_address: 0.0.0.0:1514
+            add_attributes: true
+        otlp:
+          protocols:
+            grpc:
+              endpoint: 0.0.0.0:4317
+            http:
+              endpoint: 0.0.0.0:4318
+      processors:
+        transform/device_identity:
+          error_mode: ignore
+          log_statements:
+          - context: log
+            statements:
+            - set(attributes["device_name"], "HomeSwitch01") where attributes["net.peer.ip"]
+              == "192.168.3.2"
+            - set(attributes["device_name"], "HomeSwitch02") where attributes["net.peer.ip"]
+              == "192.168.3.3"
+            - set(attributes["device_name"], "HomeSwitch04") where attributes["net.peer.ip"]
+              == "192.168.3.5"
+            - set(attributes["device_name"], "pfsense")      where attributes["net.peer.ip"]
+              == "192.168.3.1"
+            - set(attributes["device_name"], attributes["hostname"]) where attributes["device_name"]
+              == nil and attributes["hostname"] != nil
+            - set(attributes["device_name"], attributes["net.peer.ip"]) where attributes["device_name"]
+              == nil and attributes["net.peer.ip"] != nil
+            - set(attributes["device_ip"], attributes["net.peer.ip"]) where attributes["net.peer.ip"]
+              != nil
+        transform/receive_time:
+          error_mode: ignore
+          log_statements:
+          - context: log
+            statements:
+            - set(time, observed_time)
+        transform/clean_body:
+          error_mode: ignore
+          log_statements:
+          - context: log
+            statements:
+            - set(body, attributes["message"]) where attributes["message"] != nil
+            - set(attributes["protocol"], ConvertCase(attributes["protocol"], "lower"))
+              where attributes["protocol"] != nil
+        groupbyattrs/device:
+          keys:
+          - device_name
+          - device_ip
+        resource/devices:
+          attributes:
+          - key: site
+            value: home
+            action: upsert
+          - key: service.name
+            value: device-syslog
+            action: upsert
+          - key: loki.resource.labels
+            value: device_name,site,service.name
+            action: insert
+        batch:
+          timeout: 5s
+          send_batch_size: 1024
+          send_batch_max_size: 2048
+        memory_limiter:
+          check_interval: 5s
+          limit_percentage: 75
+          spike_limit_percentage: 15
+      exporters:
+        loki:
+          endpoint: http://{{ .Release.Name }}-loki:3100/loki/api/v1/push
+          timeout: 30s
+          retry_on_failure:
+            enabled: true
+          sending_queue:
+            enabled: true
+            storage: file_storage/otel
+        otlphttp/victorialogs:
+          logs_endpoint: http://{{ .Release.Name }}-logs:9428/insert/opentelemetry/v1/logs
+          tls:
+            insecure: true
+          timeout: 30s
+          retry_on_failure:
+            enabled: true
+          sending_queue:
+            enabled: true
+            storage: file_storage/otel
+        prometheusremotewrite/victoriametrics:
+          endpoint: http://{{ .Release.Name }}-metrics:8428/api/v1/write
+          resource_to_telemetry_conversion:
+            enabled: true
+          timeout: 30s
+          retry_on_failure:
+            enabled: true
+      extensions:
+        health_check:
+          endpoint: 0.0.0.0:13133
+        file_storage/otel:
+          directory: /data
+          timeout: 10s
+      service:
+        extensions:
+        - health_check
+        - file_storage/otel
+        telemetry:
+          metrics:
+            address: 0.0.0.0:8888
+          logs:
+            level: info
+        pipelines:
+          logs/devices:
+            receivers:
+            - syslog/devices
+            - syslog/devices_tcp
+            processors:
+            - memory_limiter
+            - transform/device_identity
+            - transform/receive_time
+            - transform/clean_body
+            - groupbyattrs/device
+            - resource/devices
+            - batch
+            exporters:
+            - loki
+            - otlphttp/victorialogs
+          logs/otlp:
+            receivers:
+            - otlp
+            processors:
+            - memory_limiter
+            - batch
+            exporters:
+            - loki
+            - otlphttp/victorialogs
+          metrics/otlp:
+            receivers:
+            - otlp
+            processors:
+            - memory_limiter
+            - batch
+            exporters:
+            - prometheusremotewrite/victoriametrics
+    extraServicePorts:
+    - name: syslog-udp
+      port: 1514
+      targetPort: 1514
+      protocol: UDP
+    - name: syslog-tcp
+      port: 1514
+      targetPort: 1514
+      protocol: TCP
+  agent:
+    extraScrapeConfigs:
+    - job_name: convergence-preview-federation
+      honor_labels: true
+      metrics_path: /federate
+      params:
+        match[]:
+        - '{site="home"}'
+        - '{job=~"netclaw.*"}'
+      static_configs:
+      - targets:
+        - 192.168.3.252:9090
+    - job_name: convergence-services
+      static_configs:
+      - targets:
+        - '{{ .Release.Name }}-blackbox:9115'
+        - '{{ .Release.Name }}-pushgateway:9091'
+  sharedGrafana:
+    enabled: true
+    extraDatasources:
+    - name: '{{ .Release.Namespace }}/{{ .Release.Name }} / Loki'
+      uid: '{{ include "victoria-stack.uid" . }}-loki'
+      type: loki
+      access: proxy
+      url: http://{{ .Release.Name }}-loki.{{ .Release.Namespace }}.svc.cluster.local:3100
+      isDefault: false
+      editable: false
+      jsonData:
+        netclawAlias: loki
+  alerting:
+    ruleFiles:
+      device.rules.yml:
+        groups:
+        - name: netclaw-convergence.device
+          interval: 30s
+          rules:
+          - alert: DeviceSnmpStale
+            expr: 'max by (device_name, site) (count_over_time(interface_status{job="device_snmp"}[24h]))
+
+              unless on(device_name, site)
+
+              max by (device_name, site) (count_over_time(interface_status{job="device_snmp"}[5m]))
+
+              '
+            for: 5m
+            labels:
+              severity: warning
+              site: home
+              investigate: 'true'
+            annotations:
+              summary: Device SNMP data is stale ({{ $labels.device_name }})
+              description: No fresh SNMP metrics for device_name={{ $labels.device_name
+                }} in over 5 minutes. Check the collector (`docker logs netclaw-convergence-otel-collector-1`),
+                SNMP_COMMUNITY, and device reachability. Collector-wide failure shows
+                as up{job="otel-collector"}==0.
+          - alert: SwitchIdlePortsPresent
+            expr: "count by (device_name, instance, site) (\n  interface_status{job=\"\
+              device_snmp\",role=\"switch\"} == 2\n  and on(instance, interface_name,\
+              \ device_name)\n  interface_admin_status{job=\"device_snmp\",role=\"\
+              switch\"} == 1\n) > 0\n"
+            for: 30m
+            labels:
+              severity: info
+              site: home
+              investigate: 'false'
+              cardinality: high
+            annotations:
+              summary: Idle admin-up ports on {{ $labels.device_name }} ({{ $value
+                }})
+              description: "{{ $value }} interfaces on {{ $labels.device_name }} are\
+                \ admin-up but oper-down. Expected for unused ports \u2014 dashboard\
+                \ only (investigate=false)."
+          - alert: SwitchLinkLost
+            expr: "(\n  interface_status{job=\"device_snmp\",role=\"switch\"} == 2\n\
+              \  and on(instance, interface_name, device_name)\n  interface_admin_status{job=\"\
+              device_snmp\",role=\"switch\"} == 1\n)\nand on(instance, interface_name,\
+              \ device_name)\n(\n  interface_status{job=\"device_snmp\",role=\"switch\"\
+              } offset 15m == 1\n)\n"
+            for: 3m
+            labels:
+              severity: warning
+              site: home
+              investigate: 'true'
+            annotations:
+              summary: Link lost on {{ $labels.device_name }} {{ $labels.interface_name
+                }}
+              description: Interface {{ $labels.interface_name }} was oper-up 15m
+                ago and is now down while still admin-up, on device_name={{ $labels.device_name
+                }} instance={{ $labels.instance }}. Admin-shut ports are excluded
+                by the interface_admin_status term.
+          - alert: SwitchInterfaceErrorsHigh
+            expr: "sum by (device_name, instance, site) (\n  rate(interface_errors_in_total{job=\"\
+              device_snmp\",role=\"switch\"}[5m])\n  + rate(interface_errors_out_total{job=\"\
+              device_snmp\",role=\"switch\"}[5m])\n) > 5\n"
+            for: 10m
+            labels:
+              severity: warning
+              site: home
+              investigate: 'true'
+            annotations:
+              summary: High interface error rate on {{ $labels.device_name }}
+              description: "Aggregate in+out IF-MIB error rate \u2248 {{ $value |\
+                \ humanize }} /s on device_name={{ $labels.device_name }} instance={{\
+                \ $labels.instance }} for 10m. Open the Network board \u2192 Campus\
+                \ switching (Grafana :3300) and filter by device_name \u2014 series\
+                \ are named via interface_name (ifDescr/ifName). Aggregated by device\
+                \ only (no per-ifIndex alert) to avoid storms."
+          - alert: NetclawAgentMetricsDown
+            expr: up{job="netclaw-openclaw"} == 0
+            for: 15m
+            labels:
+              severity: info
+              site: home
+              investigate: 'false'
+            annotations:
+              summary: NetClaw agent metrics exporter not scraping
+              description: Job netclaw-openclaw is down. Enable openclaw-token-exporter
+                on the host (scripts/openclaw-metrics) or ignore if agent observability
+                is disabled.
+          - alert: SyslogIngestRefusing
+            expr: rate(otelcol_receiver_refused_log_records{job="otel-collector"}[10m])
+              > 0
+            for: 10m
+            labels:
+              severity: warning
+              site: home
+              investigate: 'false'
+            annotations:
+              summary: OTel Collector is refusing log records
+              description: "otelcol_receiver_refused_log_records is increasing ({{\
+                \ $value | humanize }}/s) on receiver {{ $labels.receiver }} \u2014\
+                \ records are arriving and being rejected rather than stored. Check\
+                \ `docker logs netclaw-convergence-otel-collector-1` and `deploy/convergence/otel/otel-config.yaml`."
+          - alert: LogExportFailing
+            expr: rate(otelcol_exporter_send_failed_log_records{job="otel-collector"}[10m])
+              > 0
+            for: 10m
+            labels:
+              severity: warning
+              site: home
+              investigate: 'false'
+            annotations:
+              summary: Log export failing to {{ $labels.exporter }}
+              description: otelcol_exporter_send_failed_log_records is increasing
+                on exporter {{ $labels.exporter }}. Logs are being received but not
+                stored. The persistent send queue absorbs short outages; sustained
+                failure means Loki or VictoriaLogs is unreachable or rejecting writes.
+          - alert: SyslogIngestNoEntries
+            expr: 'up{job="otel-collector"} == 1
+
+              and on() sum(increase(otelcol_receiver_accepted_log_records{job="otel-collector"}[1h]))
+              == 0
+
+              '
+            for: 1h
+            labels:
+              severity: info
+              site: home
+              investigate: 'false'
+            annotations:
+              summary: No syslog entries ingested in the last hour
+              description: "The collector is up but has accepted zero log records\
+                \ for 1h. Expected on a site with no device syslog configured yet\
+                \ \u2014 see the generated device config checklist for the syslog\
+                \ destination host:port."
+          - alert: LogIngestDown
+            expr: up{job="otel-collector"} == 0
+            for: 15m
+            labels:
+              severity: info
+              site: home
+              investigate: 'false'
+            annotations:
+              summary: OTel Collector not scraping
+              description: Job otel-collector is down, so device syslog is not reaching
+                Loki or VictoriaLogs. Enable the full or device-syslog compose profile.
+          - alert: HostLogShipDown
+            expr: up{job="promtail"} == 0
+            for: 15m
+            labels:
+              severity: info
+              site: home
+              investigate: 'false'
+            annotations:
+              summary: Promtail host log ship not scraping
+              description: Job promtail is down, so OpenClaw file logs and the systemd
+                journal are not reaching Loki. Device syslog is unaffected (OTel Collector).
+      home.rules.yml:
+        groups:
+        - name: netclaw-convergence.recording
+          interval: 15s
+          rules:
+          - record: convergence:wan_loss_ratio:5m
+            expr: 1 - avg(avg_over_time(probe_success{job="blackbox_wan_tcp"}[5m]))
+            labels:
+              site: home
+          - record: convergence:wan_latency_ms:avg
+            expr: 1000 * avg(probe_duration_seconds{job="blackbox_wan_tcp"})
+            labels:
+              site: home
+          - record: convergence:health_score
+            expr: "clamp_min(\n  100\n  - 45 * (1 - avg(avg_over_time(probe_success{job=\"\
+              blackbox_wan_tcp\"}[5m])))\n  - clamp_max(1000 * avg(probe_duration_seconds{job=\"\
+              blackbox_wan_tcp\"}) / 4, 25)\n, 0)\n"
+            labels:
+              site: home
+        - name: netclaw-convergence.alerts
+          rules:
+          - alert: WanHardDown
+            expr: max(probe_success{job=~"blackbox_wan_.*"}) == 0
+            for: 2m
+            labels:
+              severity: critical
+              site: home
+              investigate: 'true'
+            annotations:
+              summary: WAN hard down (all probes failing)
+              description: No WAN probe has succeeded for 2m from the Convergence
+                stack. Check ISP, edge firewall, and blackbox_wan_* targets.
+          - alert: InternetDown
+            expr: max(probe_success{job=~"blackbox_wan_.*"}) == 0
+            for: 2m
+            labels:
+              severity: critical
+              site: home
+              investigate: 'true'
+            annotations:
+              summary: Internet appears DOWN (all WAN probes failing)
+              description: No WAN probe has succeeded for 2m from the Convergence
+                stack vantage point.
+          - alert: WanTargetUnreachable
+            expr: probe_success{job="blackbox_wan_tcp"} == 0
+            for: 5m
+            labels:
+              severity: warning
+              site: home
+              investigate: 'true'
+            annotations:
+              summary: WAN target {{ $labels.target }} unreachable
+              description: TCP probe to {{ $labels.instance }} has failed for 5m.
+          - alert: WanHighLatency
+            expr: 1000 * avg(probe_duration_seconds{job="blackbox_wan_tcp"}) > 80
+            for: 5m
+            labels:
+              severity: warning
+              site: home
+              investigate: 'false'
+            annotations:
+              summary: WAN latency elevated
+              description: Average WAN TCP probe duration > 80ms for 5m. Dashboard/observe
+                by default (investigate=false) to avoid chatty T2.
+          - alert: UniFiExporterDown
+            expr: up{job="unifi"} == 0
+            for: 5m
+            labels:
+              severity: warning
+              site: home
+              investigate: 'true'
+            annotations:
+              summary: UniFi exporter not scraping
+              description: Prometheus cannot reach unifi-exporter:9899. Enable profile
+                unifi or fix UNIFI_* env.
+          - alert: ConvergenceApiDown
+            expr: probe_success{job="convergence-api"} == 0
+            for: 2m
+            labels:
+              severity: critical
+              site: home
+              investigate: 'true'
+            annotations:
+              summary: convergence-api unreachable
+              description: Blackbox HTTP probe of convergence-api /healthz is failing.
+          - alert: EdgeMgmtUnreachable
+            expr: probe_success{job="blackbox_edge"} == 0
+            for: 5m
+            labels:
+              severity: warning
+              site: home
+              investigate: 'true'
+            annotations:
+              summary: Edge management UI unreachable ({{ $labels.device_name }})
+              description: Blackbox HTTP probe of edge mgmt target {{ $labels.instance
+                }} failed for 5m (device_name={{ $labels.device_name }}). Check pfSense/firewall
+                admin HTTPS.
+      ids.rules.yml:
+        groups:
+        - name: netclaw-convergence.ids
+          interval: 30s
+          rules:
+          - alert: IDSIPContextUnavailable
+            expr: netclaw_ids_ip_context_ready == 0
+            for: 15m
+            labels:
+              severity: warning
+              investigate: 'false'
+            annotations:
+              summary: IDS public-IP database is unavailable, stale or failed to reload
+          - alert: IDSSensorStale
+            expr: time() - netclaw_ids_sensor_last_seen_timestamp_seconds > 120
+            for: 2m
+            labels:
+              severity: warning
+              investigate: 'false'
+            annotations:
+              summary: IDS sensor heartbeat is stale ({{ $labels.sensor }})
+          - alert: IDSCaptureStatsStale
+            expr: time() - netclaw_ids_stats_timestamp_seconds > 120
+            for: 2m
+            labels:
+              severity: warning
+              investigate: 'false'
+            annotations:
+              summary: IDS capture statistics are stale ({{ $labels.sensor }})
+          - alert: IDSMirrorSourceMissing
+            expr: netclaw_ids_source_active == 0
+            for: 5m
+            labels:
+              severity: warning
+              investigate: 'false'
+            annotations:
+              summary: IDS mirror source lacks recent packets ({{ $labels.source }})
+          - alert: IDSDeliveryBacklog
+            expr: "(netclaw_ids_delivery_oldest_age_seconds{destination!=\"victorialogs\"\
+              } > 300)\nor (netclaw_ids_delivery_oldest_age_seconds{destination=\"\
+              victorialogs\"} > 300\n    unless on() (netclaw_ids_archive_backfill_active\
+              \ == 1))\n"
+            for: 5m
+            labels:
+              severity: warning
+              investigate: 'false'
+            annotations:
+              summary: IDS delivery is behind ({{ $labels.destination }}, {{ $labels.sensor
+                }})
+          - alert: IDSCapturePacketLoss
+            expr: rate(netclaw_ids_capture_drops_total[5m]) / clamp_min(rate(netclaw_ids_capture_packets_total[5m]),
+              1) > 0.01
+            for: 5m
+            labels:
+              severity: warning
+              investigate: 'false'
+            annotations:
+              summary: IDS sensor is missing over 1% of mirrored packets ({{ $labels.sensor
+                }})
+          - alert: IDSDeliveryStalled
+            expr: '(sum by (destination) (netclaw_ids_delivery_pending_events) > 0)
+
+              and on(destination) (time() - netclaw_ids_delivery_last_success_timestamp_seconds
+              > 300)
+
+              '
+            for: 2m
+            labels:
+              severity: warning
+              investigate: 'false'
+            annotations:
+              summary: IDS destination has stopped acknowledging data ({{ $labels.destination
+                }})
+          - alert: IDSMetricsScrapeFailed
+            expr: up{job="netclaw-ids"} == 0
+            for: 2m
+            labels:
+              severity: warning
+              investigate: 'false'
+            annotations:
+              summary: IDS telemetry collector cannot scrape ingest metrics

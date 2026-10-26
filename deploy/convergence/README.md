@@ -222,6 +222,13 @@ hygiene improves. See `config/investigation-policy.example.yaml`.
 Setup detects existing iN2N risks, preserves members, ensures a
 `guardian-claw` investigator member (idempotent).
 
+## Reusable Helm project stacks
+
+Use the [Helm charts](../helm/README.md) to create isolated VictoriaMetrics /
+VictoriaLogs stacks per purpose and register them with the existing shared Grafana.
+The `convergence` chart adds the case API/database and network-telemetry services;
+its home profile supports parallel validation alongside this Docker deployment.
+
 ## K3s deployment
 
 Same services via kustomize under `k8s/`. Namespace `netclaw-convergence`.
