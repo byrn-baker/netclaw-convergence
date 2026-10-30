@@ -78,3 +78,10 @@ and retained exporter logs only in an unuploaded runner directory. Investigate
 startup versus capture using the exporter's control socket, bounded readiness and
 failure diagnostics; require real captured packets and retained evidence unchanged.
 This is an introduced qualification failure, not a waived platform pass.
+
+T008 attempt1 local corrected host acceptance: PASS, including actual captured
+loopback packets, retained API/MCP/HUD evidence and restart. Independent review
+confirms the evidence assertions remain intact; explicit expiration flushes real
+captured flows rather than synthesizing observations. Added five-second bounds
+to control commands so an unresponsive exporter fails explicitly. Native hosted
+qualification remains the merge gate; final exact-head results belong to PR #5.

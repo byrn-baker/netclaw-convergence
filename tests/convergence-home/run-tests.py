@@ -124,7 +124,7 @@ def qualify(mode, evidence_dir):
                 while True:
                     assert exporter.poll() is None, 'Exporter stopped before capture readiness'
                     ready = subprocess.run(['docker','exec',project+'-exporter','softflowctl',
-                        '-c','/run/convergence.ctl','statistics'],capture_output=True,text=True)
+                        '-c','/run/convergence.ctl','statistics'],capture_output=True,text=True,timeout=5)
                     if ready.returncode == 0:
                         break
                     assert time.monotonic()<deadline, 'Exporter control socket did not become ready'
@@ -137,10 +137,10 @@ def qualify(mode, evidence_dir):
                         response.read()
                     time.sleep(1)
                 statistics = subprocess.check_output(['docker','exec',project+'-exporter',
-                    'softflowctl','-c','/run/convergence.ctl','statistics'],text=True)
+                    'softflowctl','-c','/run/convergence.ctl','statistics'],text=True,timeout=5)
                 print('Isolated loopback capture statistics:\n'+statistics,flush=True)
                 execute(['docker','exec',project+'-exporter','softflowctl',
-                    '-c','/run/convergence.ctl','expire-all'])
+                    '-c','/run/convergence.ctl','expire-all'],timeout=5)
                 result = flows.check(ROOT, bundle)
                 assert result['passed'], result
                 assert all(r['src_addr']=='127.0.0.1' and r['dst_addr']=='127.0.0.1'
