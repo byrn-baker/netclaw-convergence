@@ -10,3 +10,5 @@
 - [x] T007 Diagnose the unchanged avatar fixture timing failure exposed by full HUD validation; retain assertions and use deterministic readiness if reproduced.
 
 Hosted final-head CI and merge disposition are tracked in fork PR #5; local passes do not stand in for pending native architecture checks.
+
+- [ ] T008 Resolve hosted host-capture acceptance failure with exporter readiness and retained diagnostics; preserve actual packet/evidence assertions.

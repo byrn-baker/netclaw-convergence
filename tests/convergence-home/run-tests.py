@@ -118,6 +118,17 @@ def qualify(mode, evidence_dir):
                 index = capture.index('run')+1
                 capture[index:index] = ['--name',project+'-exporter']
                 exporter = subprocess.Popen(capture, env=environment, stdout=log, stderr=log)
+                # Compose may still be building/pulling after Popen returns. Start
+                # fixture traffic only when softflowd's capture/control loop exists.
+                deadline = time.monotonic()+120
+                while True:
+                    assert exporter.poll() is None, 'Exporter stopped before capture readiness'
+                    ready = subprocess.run(['docker','exec',project+'-exporter','softflowctl',
+                        '-c','/run/convergence.ctl','statistics'],capture_output=True,text=True)
+                    if ready.returncode == 0:
+                        break
+                    assert time.monotonic()<deadline, 'Exporter control socket did not become ready'
+                    time.sleep(1)
                 opener = build_opener(ProxyHandler({}))
                 for _ in range(35):
                     assert exporter.poll() is None, 'Exporter stopped; inspect private test log'
@@ -125,6 +136,11 @@ def qualify(mode, evidence_dir):
                         assert response.status == 200
                         response.read()
                     time.sleep(1)
+                statistics = subprocess.check_output(['docker','exec',project+'-exporter',
+                    'softflowctl','-c','/run/convergence.ctl','statistics'],text=True)
+                print('Isolated loopback capture statistics:\n'+statistics,flush=True)
+                execute(['docker','exec',project+'-exporter','softflowctl',
+                    '-c','/run/convergence.ctl','expire-all'])
                 result = flows.check(ROOT, bundle)
                 assert result['passed'], result
                 assert all(r['src_addr']=='127.0.0.1' and r['dst_addr']=='127.0.0.1'
@@ -153,6 +169,13 @@ def qualify(mode, evidence_dir):
             setup.run_compose(ROOT, bundle, 'start')
             assert flows.check(ROOT, bundle)['passed'], 'Evidence must survive restart'
             print(json.dumps({'mode':mode,'result':'PASS','scope':'exporter, collector, store, real API/MCP/HUD components and restart'}))
+        except Exception:
+            log.flush()
+            # Only synthetic test resources: no operator settings, tokens or captures.
+            print((evidence_dir/(mode+'-exporter.log')).read_text()[-12000:],file=sys.stderr)
+            for service in ('flow-collector','flow-shipper'):
+                subprocess.run(command+['logs','--tail','15',service],env=environment,check=False)
+            raise
         finally:
             if exporter:
                 subprocess.run(['docker','rm','-f',project+'-exporter'],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)

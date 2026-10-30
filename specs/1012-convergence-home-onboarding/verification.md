@@ -70,3 +70,11 @@ cycle additionally runs the cross-bundle collision case against actual Docker
 resources before sending fixture traffic; its repeat and hosted checks are tracked
 in fork PR #5. T006 independent re-review PASS: no remaining blockers. Publication
 is the fork review PR; merge requires all final-head hosted checks.
+
+T008 attempt1: final-head hosted CI at52b72cfb passed39/41; both native Docker jobs
+passed the demo but returned an empty host archive. Local host runs passed. The
+harness generated traffic immediately after starting an asynchronous Compose build
+and retained exporter logs only in an unuploaded runner directory. Investigate
+startup versus capture using the exporter's control socket, bounded readiness and
+failure diagnostics; require real captured packets and retained evidence unchanged.
+This is an introduced qualification failure, not a waived platform pass.
