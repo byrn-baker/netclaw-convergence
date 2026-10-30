@@ -5,47 +5,29 @@ that checkout and `bundle` to the chosen private output directory; quote paths.
 
 ## Fresh installation
 
-1. Read `docs/setup-instructions.md`, `scripts/install.sh --help`, and
-   `scripts/lib/catalog.d/convergence.sh`. Install the runtime and Convergence
-   profile using the repo's supported path. The installer deploys this skill for
-   OpenClaw or Hermes through `scripts/deploy-skills.py`. Use existing model
-   authentication or complete the user's chosen provider login; installation of
-   the core containers does not need an LLM API key. Avoid unattended execution of
-   interactive setup prompts; configure explicit values or let the operator
-   complete the human-only authentication step.
-2. Inspect preflight output and existing Docker projects. Select unused ports and
-   a unique project name. `prepare` writes a new bundle, never starts services,
-   and never reads this checkout's existing `.env` files:
+Follow `docs/convergence/docker.md` from the verified checkout. It is the
+canonical sequence; do not install a model/runtime just to try the core stack.
 
-   ```bash
-   python3 workspace/skills/convergence-setup/scripts/setup.py --repo "$repo" prepare \
-     --output "$bundle" --site home --project netclaw-convergence-home
-   ```
+1. Inspect host preflight, Docker server/context, existing projects and selected
+   ports. Require a local Linux-container daemon. On macOS use Docker Desktop;
+   on Windows run inside WSL2 with Docker integration and Linux-home paths.
+2. Use the bundled `scripts/setup.py --repo "$repo" prepare` with an explicit
+   private output directory, unique project/site and unused ports. Include
+   `--grafana --grafana-port PORT` for the trial health dashboard.
+3. Use `scripts/setup.py --repo "$repo" run --bundle "$bundle" --action validate`,
+   then `--action start`. This isolates Compose interpolation from conflicting
+   host environment variables. Do not execute older raw manifest commands when
+   host variables may override the bundle. Never print resolved Compose secrets.
+4. Run `scripts/verify.py --repo "$repo" --bundle "$bundle"` after initial scrapes.
+   Inspect the provisioned dashboard and its datasource query. For the authorized
+   installation acceptance test, `--canary` writes/archives a synthetic case.
+5. Stop/start the same project and verify again. Record the generated private
+   access file location, selected URLs, retained volumes and remaining telemetry
+   work. Do not expose services publicly to make local verification pass.
 
-   Defaults: API 3080, Prometheus 9090, Alertmanager 9093, blackbox 9115, receiver
-   8099. Each has a `--NAME-port` override. Use `--edge-url` only for the user's
-   verified gateway management URL. The default configuration probes only the
-   core service; there are no inherited home addresses, devices, WAN probes or
-   rules. The generated core binds to loopback initially. Re-running with the
-   same options preserves all files/credentials; changed options require explicit
-   reconciliation or a new bundle, never a password rotation on a live database.
-3. Read `deployment.json` for the exact `commands.validate` and
-   `commands.start_core` argument arrays. Execute validation first (`config
-   --quiet`, which avoids printing resolved secrets). Review the merged services,
-   mounts and port bindings privately. Then start the selected core services when
-   authorized. Keep both the base Compose file and the bundle overlay on later
-   commands. The bundle uses its own image tag, network and project-scoped named
-   volumes; the network override prevents the base file's fixed network name
-   from joining another installation's service discovery.
-4. Run the read-only checker after startup and the first metric scrape:
-
-   ```bash
-   python3 workspace/skills/convergence-setup/scripts/setup.py --repo "$repo" check --bundle "$bundle"
-   ```
-
-   This checks core connectivity, not the complete monitoring system. The older
-   `deploy/convergence/smoke-docker.sh` builds/starts services and uses the legacy
-   env path; do not use it to inspect an existing or bundle-based deployment.
+The guide documents exact commands and recovery. Existing bundles keep their
+credentials. Avoid the legacy `full` profile for a fresh portable trial: it starts
+additional collectors and has platform-specific mounts and example device data.
 
 ## Connect the host receiver and HUD
 

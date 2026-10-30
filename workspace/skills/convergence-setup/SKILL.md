@@ -1,9 +1,9 @@
 ---
 name: convergence-setup
-description: Set up NetClaw Convergence on a user's home network from a fresh checkout, or complete an existing installation. Discover host and network prerequisites, configure Docker or K3s services, connect telemetry and the HUD, and verify Guardian and optional passive IDS/JEV integrations. Use for Convergence installation or onboarding; use alert-triage for individual incidents.
+description: Set up NetClaw Convergence on a user's network from a fresh checkout, or complete an existing installation. Discover host and network prerequisites, configure recommended K3s/Helm services or a local Docker trial, connect telemetry and the HUD, and verify Guardian and optional passive IDS/JEV integrations. Use for Convergence installation or onboarding; use alert-triage for individual incidents.
 license: Apache-2.0
 metadata:
-  version: "1.0.0"
+  version: "1.1.0"
   openclaw:
     requires:
       bins: [python3]
@@ -53,6 +53,13 @@ missing credentials through a private local file or secret store, not chat.
 
 ## Prepare and install the requested layers
 
+Use `docs/CONVERGENCE.md` as the installation entry point. Recommend K3s for a
+persistent Victoria stack and Docker for a smaller local trial. Core containers
+do not require a model login, a NetClaw runtime installation or network-device
+credentials. Qualify the actual OS/architecture; do not infer universal support
+from image manifests or a successful Linux test.
+
+
 State the concrete target: hosts, ports, services being added/reused, network
 coverage, and any expected interruption. Proceed with work already authorized by
 the setup request. Obtain missing scope or approval only for additional actions
@@ -61,8 +68,8 @@ exposure. Prepare the exact diff and rollback before that decision.
 
 Read the applicable branch:
 
-- **Fresh Docker or an existing host deployment:** [Docker and host setup](references/docker.md).
-- **K3s or reuse of an existing monitoring stack:** [K3s and reuse](references/k3s.md).
+- **Local Docker trial or an existing host deployment:** [Docker and host setup](references/docker.md).
+- **Recommended K3s/Helm or reuse of an existing monitoring stack:** [K3s and reuse](references/k3s.md).
 - **Passive IDS, Victoria storage, firewall flows/top talkers, source/destination context or JEV:**
   [Optional integrations](references/integrations.md), reading only selected sections.
 
@@ -85,8 +92,11 @@ unless its actual packet-access path has been verified.
 Read [Acceptance checks](references/acceptance.md). Finish each requested layer
 with observations, not only generated files or running processes:
 
-1. Core API, database, metrics and alert service are reachable and authenticated
-   site access works. The bundled `check` command is read-only.
+1. Run `scripts/verify.py --repo "$repo" --bundle "$bundle"` from this skill.
+   Core API/database, scoped authentication, metrics and Grafana datasource queries
+   must pass. Its HTTP checks are read-only; K3s uses temporary local port-forwards.
+   Use `--canary` explicitly for labeled case persistence and K3s OTLP log tests.
+   Repeat verification after a restart; preserve the canary record for that check.
 2. Selected devices produce fresh, correctly labeled telemetry. Missing telemetry
    remains unknown; a successful API liveness probe is not a network-health test.
 3. HUD works from the user's intended subnet/browser, without a Grafana port

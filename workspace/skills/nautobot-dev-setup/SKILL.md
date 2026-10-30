@@ -1,3 +1,8 @@
+---
+name: nautobot-dev-setup
+description: "Deploy a Nautobot development environment using the official nautobot-docker-compose repository. Use for local Nautobot development setup."
+---
+
 # SKILL: Nautobot Dev Environment Setup
 
 ## Purpose

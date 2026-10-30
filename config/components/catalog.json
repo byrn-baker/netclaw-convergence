@@ -29344,7 +29344,7 @@
     {
       "id": "alert-triage",
       "title": "alert-triage",
-      "description": "Fork add-on workflow; see its bundled skill instructions.",
+      "description": "Investigate alerts from the home/edge observability stack via adapters (firewall, wireless, SoT). Receives enriched alert context (device name, IP, platform, role) from the alert receiver webhook and uses MCP tools matched to platform. Multi-vendor: edge firewalls (pfSense first), wireless controllers (UniFi first), switches, hypervisors, and Linux hosts.",
       "path": "workspace/skills/alert-triage/SKILL.md",
       "sha256": "28a9b7ebaab72f49d4c7161eb705569097fcdb469ef548139853cc96b49ee44c",
       "components": [],
@@ -29368,7 +29368,7 @@
     {
       "id": "convergence-isp-report",
       "title": "convergence-isp-report",
-      "description": "Fork add-on workflow; see its bundled skill instructions.",
+      "description": "Prepare an evidence-backed ISP support message or service-credit request for a recorded Convergence WAN incident. Use when a user wants to report an internet outage or degradation, find their provider's support channel, or draft a credit request. Does not send messages or submit claims.",
       "path": "workspace/skills/convergence-isp-report/SKILL.md",
       "sha256": "636cde4ac7b58fbfe814b5a06ea7fd6f4828a9e65b36d7930c86c0f0eefeb787",
       "components": [],
@@ -29392,9 +29392,9 @@
     {
       "id": "convergence-setup",
       "title": "convergence-setup",
-      "description": "Fork add-on workflow; see its bundled skill instructions.",
+      "description": "Set up NetClaw Convergence on a user's network from a fresh checkout, or complete an existing installation. Discover host and network prerequisites, configure recommended K3s/Helm services or a local Docker trial, connect telemetry and the HUD, and verify Guardian and optional passive IDS/JEV integrations. Use for Convergence installation or onboarding; use alert-triage for individual incidents.",
       "path": "workspace/skills/convergence-setup/SKILL.md",
-      "sha256": "fb9417cdc77292ff0e92a973503a5138e917d14bdc2bc7e52d3e9ca541dae59c",
+      "sha256": "5c943f12fd923d6b75b1882b853666e783fd50c48045f16bb28b166405eb072a",
       "components": [],
       "servers": [],
       "availability": "unsupported",
@@ -29416,9 +29416,9 @@
     {
       "id": "demo-lab-setup",
       "title": "demo-lab-setup",
-      "description": "Fork add-on workflow; see its bundled skill instructions.",
+      "description": "Deploy the Nautobot Workshop and ContainerLab demo using the documented step gates and session checkpoints. Use when setting up the demo lab.",
       "path": "workspace/skills/demo-lab-setup/SKILL.md",
-      "sha256": "b3faa04e8483f0ed8c1c4ebda575df81aceb96b7041183ceb09e32096fcd78a7",
+      "sha256": "90eb40953b0b00635673bc10f7eea51b5776be04bfd68f14a461c5e450296059",
       "components": [],
       "servers": [],
       "availability": "unsupported",
@@ -29440,7 +29440,7 @@
     {
       "id": "domain-expert-delegation",
       "title": "domain-expert-delegation",
-      "description": "Fork add-on workflow; see its bundled skill instructions.",
+      "description": "Offload structured workloads (config generation, design validation, GraphQL building, state summarization, context compression) to local or cloud LLM providers via the ollama-mcp server. Saves tokens on the orchestrating model by delegating domain-specific tasks.",
       "path": "workspace/skills/domain-expert-delegation/SKILL.md",
       "sha256": "effc1d4e573295ca5a055a382fe62b597bbb2eeb9958ee860d901ef08b47504a",
       "components": [],
@@ -29464,9 +29464,9 @@
     {
       "id": "golden-config-bootstrap",
       "title": "golden-config-bootstrap",
-      "description": "Fork add-on workflow; see its bundled skill instructions.",
+      "description": "Guide setup of Nautobot Golden Config, compliance features and intended configuration templates. Use when bootstrapping Golden Config.",
       "path": "workspace/skills/golden-config-bootstrap/SKILL.md",
-      "sha256": "2b836ba3c0c16e9b83302f6d4c45c005654b0c920d12d7ff7ac313b8994e4238",
+      "sha256": "19e419d0da4dc28f528f57d2c7ab67560d480bc99c4f48adb5fdc95f91808a02",
       "components": [],
       "servers": [],
       "availability": "unsupported",
@@ -29488,7 +29488,7 @@
     {
       "id": "intent-reconcile",
       "title": "intent-reconcile",
-      "description": "Fork add-on workflow; see its bundled skill instructions.",
+      "description": "Reconcile live network devices to Nautobot intent, with a human approval gate over Discord. Triggered by a Nautobot webhook (device interface change) or by an approval/denial reply. Proposes the exact config diff, waits for `approve <id>`, then applies via the pyats-config-mgmt baseline→apply→verify→rollback workflow. SCOPE: device interface changes on switches only. Never touches firewalls.",
       "path": "workspace/skills/intent-reconcile/SKILL.md",
       "sha256": "76eba9e397ffa03636b4b968b294d10437494972ca5cf75ce39bf174cc2634f1",
       "components": [],
@@ -29512,7 +29512,7 @@
     {
       "id": "isp-sla-claim",
       "title": "isp-sla-claim",
-      "description": "Fork add-on workflow; see its bundled skill instructions.",
+      "description": "Draft ISP service credit claims after WAN outages. Gathers evidence from Prometheus, pfSense, and dpinger logs to prove the outage was ISP-side (not CPE). Produces a ready-to-send email for human approval before filing. Tracks claim eligibility windows.",
       "path": "workspace/skills/isp-sla-claim/SKILL.md",
       "sha256": "696eac0ea6f6f3456ea414fc0e21667654d7cbafd1a7f9502b48c398fd2a281e",
       "components": [],
@@ -29536,7 +29536,7 @@
     {
       "id": "lab-troubleshoot",
       "title": "lab-troubleshoot",
-      "description": "Fork add-on workflow; see its bundled skill instructions.",
+      "description": "Detect and diagnose network failures by correlating observability metrics (Grafana/Prometheus), syslog (Loki), and live device state (pyATS). Use when investigating connectivity issues, interface flaps, routing instability, or performance degradation in the lab.",
       "path": "workspace/skills/lab-troubleshoot/SKILL.md",
       "sha256": "e64466768b84fb2ea696752af808b377a1ceab4360b40d79d73fccbed1a258ff",
       "components": [],
@@ -29560,7 +29560,7 @@
     {
       "id": "memory-management",
       "title": "memory-management",
-      "description": "Fork add-on workflow; see its bundled skill instructions.",
+      "description": "Record and recall network facts, decisions, and session context using hybrid structured + semantic memory",
       "path": "workspace/skills/memory-management/SKILL.md",
       "sha256": "5043f031a666925b64e08294864a1b7b407797a60ce80f2d116f1f71b42db820",
       "components": [],
@@ -29584,7 +29584,7 @@
     {
       "id": "monitoring-onboard",
       "title": "monitoring-onboard",
-      "description": "Fork add-on workflow; see its bundled skill instructions.",
+      "description": "Configure network devices to send telemetry to the existing observability stack. Supports pfSense, Cisco IOS/IOS-XE switches, Proxmox hosts, and Linux servers. Generates Prometheus scrape configs and alert rules.",
       "path": "workspace/skills/monitoring-onboard/SKILL.md",
       "sha256": "e7bffcaa34ae8553843e01202aac42e04c03c2685b8f4f63ddbfe424255fe03f",
       "components": [],
@@ -29608,9 +29608,9 @@
     {
       "id": "nautobot-dev-setup",
       "title": "nautobot-dev-setup",
-      "description": "Fork add-on workflow; see its bundled skill instructions.",
+      "description": "Deploy a Nautobot development environment using the official nautobot-docker-compose repository. Use for local Nautobot development setup.",
       "path": "workspace/skills/nautobot-dev-setup/SKILL.md",
-      "sha256": "97c8dc8609b3a252036adb38dc138face0e75b4506b1814a3900535668c530d3",
+      "sha256": "2cd8693c5cfbf435e8e167894c38679f2a65e8b65ee2cdaae55ee99ecd175872",
       "components": [],
       "servers": [],
       "availability": "unsupported",
@@ -29632,7 +29632,7 @@
     {
       "id": "pfsense-threat-intel",
       "title": "pfsense-threat-intel",
-      "description": "Fork add-on workflow; see its bundled skill instructions.",
+      "description": "Analyze pfSense blocked traffic, enrich with threat intelligence, and ONLY surface IPs that require human action — filter out scanners, background noise, and already-handled blocks.",
       "path": "workspace/skills/pfsense-threat-intel/SKILL.md",
       "sha256": "4fa1e5c9d391b0ad59f43f197056bd00e659afc57092fd7106c02a5c9212655a",
       "components": [],
@@ -29656,7 +29656,7 @@
     {
       "id": "wifi-diagnosis",
       "title": "wifi-diagnosis",
-      "description": "Fork add-on workflow; see its bundled skill instructions.",
+      "description": "Diagnose Wi-Fi and internet connectivity using Home / Network Guardian observability. Prefer adapter metrics (UniFi Integration exporter first; other wireless vendors via stubs later). Analyzes AP retries, WAN health, speedtests, and client distribution.",
       "path": "workspace/skills/wifi-diagnosis/SKILL.md",
       "sha256": "e089403f4fd0946cf09a758520bc255385fd62a44ac4d7ebb97db39c93e5550c",
       "components": [],

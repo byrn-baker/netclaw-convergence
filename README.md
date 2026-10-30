@@ -145,8 +145,9 @@ Changes retain their review boundaries: Testbed saves do not connect devices, sa
 **Setting up Convergence on your own network?** Ask NetClaw to use its bundled
 **`convergence-setup`** skill. From a fresh checkout, tell your coding agent:
 “Read `workspace/skills/convergence-setup/SKILL.md` and set up Convergence for my
-home network.” Start with the [fresh-install guide](docs/runbooks/convergence-setup.md)
-for generated credentials, portable configuration and verification.
+home network.” Start with [Convergence installation](docs/CONVERGENCE.md).
+K3s/Helm is the recommended persistent path; a smaller Docker trial provides a
+local starting point. Both include generated credentials and verification.
 
 For day-to-day operation, see [security review and ISP incident reports](docs/runbooks/convergence-incident-review.md):
 explained IDS priorities, recorded case reviews, and local support/email drafts

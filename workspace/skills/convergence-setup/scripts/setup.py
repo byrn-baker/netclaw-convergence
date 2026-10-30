@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Portable Convergence preflight, fresh configuration, and read-only checks.
 
-Standard-library only. Never installs packages, starts services, or reads the
-operator's existing dotenv files. Existing bundles retain their credentials.
+Standard-library only. Preparation and checks never start services. The explicit
+run command operates only the selected Compose project. Existing bundles retain credentials.
 """
 import argparse
 import importlib.util
@@ -80,6 +80,8 @@ def validate_options(options):
     if not re.fullmatch(r'[a-z0-9][a-z0-9_-]{0,62}', options['project']):
         raise ValueError('Invalid Compose project name')
     ports = [options[k] for k in ('api_port', 'prometheus_port', 'alertmanager_port', 'blackbox_port', 'receiver_port')]
+    if options.get('grafana'):
+        ports.append(options.get('grafana_port', 3300))
     if any(not 1024 <= p <= 65535 for p in ports) or len(set(ports)) != len(ports):
         raise ValueError('Choose distinct unprivileged ports between 1024 and 65535')
     if options['edge_url']:
@@ -106,6 +108,10 @@ def prepare(repo, bundle, options):
     validate_options(options)
     bundle = private_path(bundle)
     writer = env_writer(repo)
+    # Keep schema-1 core bundles compatible with the new optional dashboard.
+    options = dict(options)
+    if not options.get('grafana'):
+        options.pop('grafana', None); options.pop('grafana_port', None)
     identity = {'repo': str(repo), **options}
     if bundle.exists():
         marker = bundle/'deployment.json'
@@ -116,6 +122,8 @@ def prepare(repo, bundle, options):
             raise ValueError('Existing deployment differs; reconcile it explicitly or choose a new directory')
         files = ('compose.env', 'receiver.env', 'hud.env', 'compose.override.json',
                  'prometheus.yml', 'alertmanager.yml', 'receiver-token', 'investigation-policy.yaml')
+        if options.get('grafana'):
+            files += ('grafana-datasources.yml', 'grafana-dashboards.yml', 'grafana-health.json', 'access.txt')
         if any(not (bundle/file).is_file() or (bundle/file).is_symlink() for file in files):
             raise ValueError('Existing deployment is incomplete; restore missing files without rotating credentials')
         return {'status': 'preserved', 'bundle': str(bundle), 'commands': manifest['commands']}
@@ -170,11 +178,30 @@ def prepare(repo, bundle, options):
         'prometheus': {'volumes': [mount('prometheus.yml', '/etc/prometheus/prometheus.yml')]},
         'alertmanager': {'volumes': [mount('alertmanager.yml', '/etc/alertmanager/alertmanager.yml'),
                                     mount('receiver-token', '/run/secrets/receiver-token')]}}}
-    commands = ['docker', 'compose', '-p', options['project'], '--env-file', str(bundle/'compose.env'),
-                '-f', str(repo/'deploy/convergence/docker-compose.yml'), '-f', str(bundle/'compose.override.json')]
+    grafana_files = {}
+    if options.get('grafana'):
+        password = secrets.token_hex(32)
+        overlay['volumes'] = {'convergence-grafana': {}}
+        overlay['services']['grafana'] = {
+            'image': 'grafana/grafana:12.3.3', 'restart': 'unless-stopped',
+            'networks': ['convergence'], 'ports': [f"127.0.0.1:{options['grafana_port']}:3000"],
+            'environment': {'GF_SECURITY_ADMIN_USER': 'admin', 'GF_SECURITY_ADMIN_PASSWORD': password,
+                'GF_AUTH_ANONYMOUS_ENABLED': 'false', 'GF_USERS_ALLOW_SIGN_UP': 'false'},
+            'volumes': ['convergence-grafana:/var/lib/grafana',
+                mount('grafana-datasources.yml', '/etc/grafana/provisioning/datasources/default.yml'),
+                mount('grafana-dashboards.yml', '/etc/grafana/provisioning/dashboards/default.yml'),
+                mount('grafana-health.json', '/var/lib/grafana/provisioned/health.json')]}
+        grafana_files = {
+            'grafana-datasources.yml': {'apiVersion': 1, 'datasources': [{
+                'name': 'Metrics', 'uid': 'convergence-metrics', 'type': 'prometheus', 'access': 'proxy',
+                'url': 'http://prometheus:9090', 'isDefault': True, 'editable': False}]},
+            'grafana-dashboards.yml': {'apiVersion': 1, 'providers': [{'name': 'Convergence',
+                'type': 'file', 'options': {'path': '/var/lib/grafana/provisioned'}}]},
+            'grafana-health.json': installation_dashboard(site)}
+    commands = ['python3', str(repo/'workspace/skills/convergence-setup/scripts/setup.py'), '--repo', str(repo),
+                'run', '--bundle', str(bundle), '--action']
     manifest = {'schema_version': 1, 'options': identity,
-                'commands': {'validate': commands+['config', '--quiet'],
-                             'start_core': commands+['up', '-d', '--build', 'postgres', 'prometheus', 'alertmanager', 'blackbox', 'convergence-api']},
+                'commands': {'validate': commands+['validate'], 'start_core': commands+['start']},
                 'scope': 'core services; telemetry, HUD, receiver and investigator require their own verification'}
     bundle.mkdir(parents=True, mode=0o700)
     writer.write_private(bundle/'.gitignore', '*\n')
@@ -184,12 +211,64 @@ def prepare(repo, bundle, options):
                         ('compose.override.json', overlay),
                         ('investigation-policy.yaml', {'version': 1, 'default_tier': 'T0', 'allow_t1': [], 'allow_t2': []})]:
         writer.write_private(bundle/file, json.dumps(value, indent=2)+'\n')
+    for file, value in grafana_files.items():
+        writer.write_private(bundle/file, json.dumps(value, indent=2)+'\n')
+        (bundle/file).chmod(0o644)
+    if options.get('grafana'):
+        writer.write_private(bundle/'access.txt', f"Grafana: http://127.0.0.1:{options['grafana_port']}\nUsername: admin\nPassword: {password}\n")
     writer.write_private(bundle/'receiver-token', receiver_token)
     # Containers run unprivileged; the parent directory remains owner-private.
     for file in ('prometheus.yml', 'alertmanager.yml', 'receiver-token'):
         (bundle/file).chmod(0o644)
     writer.write_private(bundle/'deployment.json', json.dumps(manifest, indent=2)+'\n')
     return {'status': 'prepared', 'bundle': str(bundle), 'commands': manifest['commands']}
+
+
+
+def installation_dashboard(site):
+    panels = [{'id': 1, 'type': 'text', 'title': 'What this dashboard proves',
+        'gridPos': {'x': 0, 'y': 0, 'w': 24, 'h': 4}, 'options': {'mode': 'markdown',
+        'content': 'Core services only. Network telemetry, IDS capture and investigations require separate verification. Missing feeds are unknown.'}}]
+    for i, (title, expr) in enumerate([('Core scrape targets', 'up'), ('API reachability', 'probe_success{job="convergence-api"}')], 2):
+        expr = expr[:-1]+',site="'+site+'"}' if '{' in expr else expr+'{site="'+site+'"}'
+        panels.append({'id': i, 'type': 'timeseries', 'title': title+' (1 = up)',
+            'gridPos': {'x': (i-2)*12, 'y': 4, 'w': 12, 'h': 8},
+            'datasource': {'type': 'prometheus', 'uid': 'convergence-metrics'},
+            'targets': [{'refId': 'A', 'expr': expr, 'legendFormat': '{{job}} / {{instance}}'}]})
+    return {'uid': 'convergence-installation', 'title': 'Convergence installation health',
+            'schemaVersion': 39, 'version': 1, 'refresh': '15s',
+            'time': {'from': 'now-30m', 'to': 'now'}, 'panels': panels}
+
+
+def compose_environment(repo):
+    # Compose shell interpolation wins over --env-file. Strip only inputs used by
+    # the base file and Compose overrides; preserve daemon context and OS tools.
+    variables = set(re.findall(r'\$\{([A-Za-z_][A-Za-z0-9_]*)',
+                              (repo/'deploy/convergence/docker-compose.yml').read_text()))
+    variables.discard('HOME')
+    return {k: v for k, v in os.environ.items() if k not in variables and not k.startswith('COMPOSE_')}
+
+
+def run_compose(repo, bundle, action):
+    bundle = private_path(bundle)
+    manifest = json.loads((bundle/'deployment.json').read_text())
+    options = manifest['options']; validate_options(options)
+    if manifest.get('schema_version')!=1 or options['repo']!=str(repo):
+        raise ValueError('Bundle belongs to another checkout or unsupported format')
+    context = os.environ.get('DOCKER_CONTEXT') or output(['docker','context','show'])
+    endpoint = (None if os.environ.get('DOCKER_CONTEXT') else os.environ.get('DOCKER_HOST')) or output(
+        ['docker','context','inspect',context or 'default','--format','{{.Endpoints.docker.Host}}'])
+    if not endpoint or not endpoint.startswith(('unix://','npipe://')):
+        raise ValueError('Use a local Docker Engine/Desktop context; remote daemons cannot mount this local bundle')
+    base = ['docker','compose','-p',options['project'],'--env-file',str(bundle/'compose.env'),
+            '-f',str(repo/'deploy/convergence/docker-compose.yml'),'-f',str(bundle/'compose.override.json')]
+    actions = {'validate':['config','--quiet'], 'start':['up','-d','--build','--wait','--wait-timeout','120',
+        'postgres','prometheus','alertmanager','blackbox','convergence-api']+(['grafana'] if options.get('grafana') else []),
+        'stop':['stop'], 'status':['ps']}
+    result = subprocess.run(base+actions[action], env=compose_environment(repo), stdin=subprocess.DEVNULL)
+    if result.returncode:
+        raise ValueError('Compose failed; review the error above and docs/convergence/troubleshooting.md')
+    return {'status':'complete', 'action':action, 'project':options['project']}
 
 
 def get_json(url, token=None):
@@ -214,9 +293,9 @@ def check(repo, bundle, include_receiver=False):
         except Exception as exc:
             # Responses/exception messages may include private data or credentials.
             results.append({'check': name, 'status': 'fail', 'reason': type(exc).__name__})
-    probe('API and diary database', api_url+'/healthz', lambda d: d['features']['diary']=='available')
     probe('Site-scoped diary access', api_url+'/api/events?'+urlencode({'site': options['site'], 'limit': 1}),
           lambda d: not d.get('unavailable') and isinstance(d.get('events'), list), token)
+    probe('API and diary database', api_url+'/healthz', lambda d: d['features']['diary']=='available')
     def core_targets_up(data):
         targets = data['data']['activeTargets']
         return data['status']=='success' and all(
@@ -228,6 +307,9 @@ def check(repo, bundle, include_receiver=False):
         'query': 'probe_success{job="convergence-api",site="'+options['site']+'"}'}),
         lambda d: d['status']=='success' and any(float(r['value'][1])==1 for r in d['data']['result']))
     probe('Alertmanager API', env['ALERTMANAGER_URL']+'/api/v2/status', lambda d: bool(d.get('versionInfo')))
+    if options.get('grafana'):
+        probe('Grafana database', f"http://127.0.0.1:{options['grafana_port']}/api/health",
+              lambda d: d.get('database')=='ok')
     if include_receiver:
         url = f"http://127.0.0.1:{options['receiver_port']}"
         probe('Receiver health', url+'/health', lambda d: d.get('status')=='ok')
@@ -250,6 +332,11 @@ def main():
     prep.add_argument('--edge-url', default='')
     for name, port in [('api', 3080), ('prometheus', 9090), ('alertmanager', 9093), ('blackbox', 9115), ('receiver', 8099)]:
         prep.add_argument('--'+name+'-port', type=int, default=port)
+    prep.add_argument('--grafana', action='store_true', help='Add a private installation health dashboard')
+    prep.add_argument('--grafana-port', type=int, default=3300)
+    execute = commands.add_parser('run', help='Operate the selected bundle with isolated Compose settings')
+    execute.add_argument('--bundle', required=True)
+    execute.add_argument('--action', choices=('validate','start','stop','status'), required=True)
     verify = commands.add_parser('check', help='Read-only checks; never renders, builds or starts services')
     verify.add_argument('--bundle', required=True)
     verify.add_argument('--receiver', action='store_true')
@@ -260,6 +347,7 @@ def main():
         elif args.command=='prepare':
             options = {k: v for k, v in vars(args).items() if k not in ('repo', 'command', 'output')}
             result = prepare(repo, args.output, options)
+        elif args.command=='run': result = run_compose(repo, args.bundle, args.action)
         else: result = check(repo, args.bundle, args.receiver)
         print(json.dumps(result, indent=2))
         return 1 if result.get('passed') is False else 0

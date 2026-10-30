@@ -1,0 +1,137 @@
+name: Convergence onboarding
+
+on:
+  pull_request:
+    paths:
+      - 'workspace/skills/convergence-setup/**'
+      - 'deploy/helm/**'
+      - 'deploy/convergence/docker-compose.yml'
+      - 'ui/convergence-api/**'
+      - 'scripts/write-env.py'
+      - 'tests/unit/test_convergence_setup*'
+      - 'docs/convergence/**'
+      - '.github/workflows/convergence-onboarding.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  docker-trial:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, ubuntu-24.04-arm]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: checkout with spaces
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: checkout with spaces
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Helper contracts
+        run: |
+          python3 -m venv "$RUNNER_TEMP/convergence-venv"
+          "$RUNNER_TEMP/convergence-venv/bin/pip" install pytest==8.3.5
+          "$RUNNER_TEMP/convergence-venv/bin/python" -m pytest tests/unit/test_convergence_setup*.py -q
+      - name: Fresh install with conflicting shell settings
+        env:
+          PGPASSWORD: deliberately-conflicting-fixture
+          API_KEYS: deliberately-conflicting-fixture
+          COMPOSE_PROFILES: unifi
+        run: |
+          bundle="$RUNNER_TEMP/convergence bundle"
+          helper=workspace/skills/convergence-setup/scripts/setup.py
+          python3 "$helper" prepare --output "$bundle" --site ci --project convergence-ci --grafana
+          python3 "$helper" run --bundle "$bundle" --action validate
+          python3 "$helper" run --bundle "$bundle" --action start
+          python3 workspace/skills/convergence-setup/scripts/verify.py --bundle "$bundle" --canary
+      - name: Restart and prove persistence
+        run: |
+          bundle="$RUNNER_TEMP/convergence bundle"
+          helper=workspace/skills/convergence-setup/scripts/setup.py
+          python3 "$helper" run --bundle "$bundle" --action stop
+          python3 "$helper" run --bundle "$bundle" --action start
+          python3 workspace/skills/convergence-setup/scripts/verify.py --bundle "$bundle"
+      - name: Stop only the test project
+        if: always()
+        run: |
+          if [ -f "$RUNNER_TEMP/convergence bundle/deployment.json" ]; then
+            python3 workspace/skills/convergence-setup/scripts/setup.py run --bundle "$RUNNER_TEMP/convergence bundle" --action stop
+          fi
+
+  k3s-release:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, ubuntu-24.04-arm]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: azure/setup-helm@v4.3.0
+        with:
+          version: v3.19.0
+      - name: Install checksum-verified k3d
+        run: |
+          mkdir -p "$RUNNER_TEMP/convergence-tools"
+          cd "$RUNNER_TEMP/convergence-tools"
+          case "$(uname -m)" in
+            x86_64) k3d_arch=amd64 ;;
+            aarch64) k3d_arch=arm64 ;;
+            *) echo "Unsupported test runner architecture" >&2; exit 1 ;;
+          esac
+          export K3D_ASSET="k3d-linux-$k3d_arch"
+          curl -fsSL "https://github.com/k3d-io/k3d/releases/download/v5.9.0/$K3D_ASSET" -o k3d
+          curl -fsSLO https://github.com/k3d-io/k3d/releases/download/v5.9.0/checksums.txt
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib, os
+          actual=hashlib.sha256(Path('k3d').read_bytes()).hexdigest()
+          assert any(line.split()[0]==actual and Path(line.split()[-1]).name==os.environ['K3D_ASSET'] for line in Path('checksums.txt').read_text().splitlines())
+          Path('k3d').chmod(0o700)
+          PY
+          echo "$RUNNER_TEMP/convergence-tools" >> "$GITHUB_PATH"
+      - name: Chart contracts
+        run: |
+          helm repo add victoria-metrics https://victoriametrics.github.io/helm-charts/
+          helm dependency build deploy/helm/victoria-stack
+          helm dependency build deploy/helm/convergence
+          python3 -m venv "$RUNNER_TEMP/convergence-venv"
+          "$RUNNER_TEMP/convergence-venv/bin/pip" install pytest==8.3.5 PyYAML==6.0.2
+          HELM_BIN="$(command -v helm)" "$RUNNER_TEMP/convergence-venv/bin/python" -m pytest deploy/helm/tests/test_charts.py -q
+      - name: Fresh disposable cluster and release
+        run: |
+          k3d cluster create convergence-ci --image rancher/k3s:v1.37.1-k3s1 --kubeconfig-update-default=false --kubeconfig-switch-context=false --no-lb --k3s-arg '--disable=traefik@server:0' --wait
+          umask 077
+          k3d kubeconfig get convergence-ci > "$RUNNER_TEMP/convergence-kubeconfig"
+          echo "KUBECONFIG=$RUNNER_TEMP/convergence-kubeconfig" >> "$GITHUB_ENV"
+          export KUBECONFIG="$RUNNER_TEMP/convergence-kubeconfig"
+          docker build -t netclaw-convergence-api:ci ui/convergence-api
+          k3d image import netclaw-convergence-api:ci -c convergence-ci
+          bundle="$RUNNER_TEMP/convergence-k3s"
+          python3 workspace/skills/convergence-setup/scripts/k3s.py prepare --output "$bundle" --context k3d-convergence-ci --namespace trial --release trial --site ci --storage-class local-path --image netclaw-convergence-api:ci
+          python3 workspace/skills/convergence-setup/scripts/k3s.py install --bundle "$bundle"
+          python3 workspace/skills/convergence-setup/scripts/verify.py --bundle "$bundle" --canary
+          helm --kube-context k3d-convergence-ci -n trial test trial --logs
+      - name: Repeat upgrade and persistence
+        run: |
+          bundle="$RUNNER_TEMP/convergence-k3s"
+          python3 workspace/skills/convergence-setup/scripts/k3s.py install --bundle "$bundle"
+          kubectl --context k3d-convergence-ci -n trial rollout restart statefulset/trial-postgres
+          kubectl --context k3d-convergence-ci -n trial rollout status statefulset/trial-postgres --timeout=120s
+          python3 workspace/skills/convergence-setup/scripts/verify.py --bundle "$bundle"
+      - name: Remove only the disposable cluster
+        if: always()
+        run: |
+          if command -v k3d >/dev/null 2>&1; then
+            k3d cluster delete convergence-ci
+          fi

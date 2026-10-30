@@ -1,3 +1,7 @@
+# Convergence deployment reference
+
+**New installation:** use the [recommended K3s guide](../../docs/convergence/k3s.md) or [local Docker trial](../../docs/convergence/docker.md). The sections below describe legacy/manual profiles and optional adapters; review their site-specific settings before reuse. The trial does not require the `full` profile.
+
 # NetClaw Convergence
 
 Single-host observability + investigation stack for network monitoring.

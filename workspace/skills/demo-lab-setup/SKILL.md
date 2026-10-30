@@ -1,3 +1,8 @@
+---
+name: demo-lab-setup
+description: "Deploy the Nautobot Workshop and ContainerLab demo using the documented step gates and session checkpoints. Use when setting up the demo lab."
+---
+
 # SKILL: Demo Lab Setup — Nautobot Workshop + ContainerLab + Golden Config
 
 ## Purpose
