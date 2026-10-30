@@ -1,7 +1,7 @@
 # Feature Specification: Read-only Convergence flow evidence in NetClaw
 
 **Feature Branch:** `161-convergence-proposal` · **Created:** 2026-10-30
-**Status:** Contributing maintainer approved this scope in the development conversation on 2026-10-30; this PR contains no implementation and remains open for upstream review.
+**Status:** Scope accepted and proposal PR #309 merged upstream on 2026-10-30 at `4d791a36`. This specification contains no implementation. The accessible-onboarding amendment is follow-up planning for the implementation PR.
 
 ## Recommendation and decision requested
 

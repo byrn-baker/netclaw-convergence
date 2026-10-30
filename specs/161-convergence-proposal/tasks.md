@@ -6,7 +6,7 @@
 - [x] T002 Compare Grafana/Prometheus/IPFIX/HUD capabilities with retained Convergence flow evidence.
 - [x] T003 Recommend external service ownership and one read-only observation-to-records workflow.
 - [x] T004 Document concrete proposed files/dependencies, acceptance and platform limits; preserve provenance.
-- [x] T005 Record contributing maintainer approval of this bounded integration in the development conversation (2026-10-30); upstream PR review remains open.
+- [x] T005 Record contributing maintainer approval of this bounded integration in the development conversation (2026-10-30); proposal PR #309 subsequently merged upstream at `4d791a36`.
 
 ## Implementation only after agreement
 

@@ -108,3 +108,8 @@ capability-based setup and measured resource use. These are external-service and
 integration acceptance requirements; the two-tool upstream boundary is unchanged.
 Fork spec1012 implements onboarding separately. No new runtime or platform test
 result is claimed by this proposal amendment.
+
+Subsequent verification: GitHub reports proposal PR #309 merged at `4d791a36` on
+2026-10-30. The accessible-onboarding amendment was prepared after the merged head
+`f9fc1ffe`; it is follow-up planning, not a change included in that completed PR.
+Keep it for the later implementation contribution.
