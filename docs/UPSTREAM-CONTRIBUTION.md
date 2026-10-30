@@ -1,64 +1,60 @@
 # Convergence upstream contribution
 
-The fork's `main` is the working integration branch. It includes the upstream
-v1.14.0 baseline (`b18d51c0`) and the Convergence/Guardian additions, including
-the portable model-provider configuration and IDS replay optimization. See the
-[30 October synchronization record](runbooks/upstream-sync.md). Runtime credentials, OAuth sessions,
-private member environments and database contents stay outside Git.
+[Proposal #309](https://github.com/automateyournetwork/netclaw/pull/309) is ready for
+maintainer **scope review**. It contains five Spec Kit documents and no runtime
+implementation. The requested decision is whether one optional read-only
+flow-evidence integration belongs in NetClaw.
 
-## Proposed contribution path
+## First milestone
 
-Start a design-only draft from upstream `main`, following upstream's required
-maintainer scope review. The draft proposes an optional Convergence monitoring
-workspace, durable cases, bounded read-only investigations, operator feedback,
-and a separately reviewed IDS sensor interface. It does not represent the fork's entire
-history as an upstream-ready implementation.
+An operator selects a retained traffic observation in NetClaw, then inspects the
+latest records involving that address for the same window and exporters. The
+proposed contribution is two read-only MCP tools, one optional HUD view, connection
+guidance and the applicable installer/catalog/access tests.
 
-After agreement, port focused changes with sanitized fixtures and installation
-coverage. The implementation sequence should be:
+Convergence continues to own collection, retention, dashboards, alerting and its
+case API. NetClaw owns the connector and evidence presentation. No API server,
+storage deployment, Helm chart, collector, case mutation or automatic investigation
+is imported in the first slice. Those capabilities remain in the independently
+operated fork and would need separate scope proposals before upstream inclusion.
 
-1. Durable incident/case contracts, authenticated ingestion and failure tests.
-2. Portable K3s/Helm and Docker onboarding, setup skill, core health dashboard and recovery evidence.
-3. Read-only investigation tools, case MCP and installer/runtime integration.
-4. Optional HUD workspace using upstream navigation and access controls.
-5. Telemetry adapters and deployment examples without installation-specific data.
-6. Versioned feedback and retrieval with reliable recovery from failed indexing.
-7. Separately reviewed IDS ingestion, asset/zone correlation and response policy.
+The [source comparison and plan](https://github.com/byrn-baker/netclaw-convergence/tree/161-convergence-proposal/specs/161-convergence-proposal)
+explain the incremental value beyond existing Grafana/Prometheus queries and
+in-memory IPFIX reception, identify existing service endpoints and proposed new
+files, and define credential, site, session, response-size and lifecycle boundaries.
 
-Keep unrelated personality changes, additional MCP vendors, local models,
-generated site configuration, runtime state and historical fork specs out of
-each implementation PR. Preserve attribution for code selected from this fork.
+Evidence includes an address as source OR destination; the latest 100 records may
+not reproduce a directional ranking total. Display direction and limits explicitly.
+Failed-refresh cached data is stale; old receipt timestamps alone do not establish
+collector failure or missing capture coverage.
 
-## Checks at synchronization, 24 October 2026
+## Service distribution and attribution
 
-- HUD unit suite: 380 tests passed.
-- Convergence hardening: receiver/API regressions, contract tests, Prometheus
-  disappearance rule, browser Security view and live synthetic alert lifecycle
-  verified during the implementation session. Three contract tests were skipped.
-- Guardian: nine MCP initializations and a native model permission check passed.
-- Convergence API: Node 24 image healthy; bcrypt 5 hash compatibility verified
-  with bcrypt 6; production npm audit reported zero known vulnerabilities.
-- Unpushed history: no exact matches for 29 configured credential values. The
-  three private-key marker candidates were test files already in upstream main.
-  This targeted check is not an exhaustive secret or history audit.
-- Fork-wide spec checker: **46 findings** in existing fork artifacts. These
-  remain documented debt, not an upstream acceptance pass.
-- `config/openclaw.json` is the repository's legacy integration template. Passing
-  it directly to the current native gateway validator reports legacy fields
-  (`mcpServers`, `security.mode`, `commands.ownerDisplay` and a comment key).
-  Installed runtime configs are separate; both live gateway/member configs
-  validated during hardening. Upstream installation parity needs its own test.
+The compatible API currently lives in this fork's `ui/convergence-api/`. The
+original standalone Convergence repository does not contain that API. Before an
+upstream connector ships, its guide must identify a public reproducible service
+build/revision and retained-flow setup. See [provenance](convergence/provenance.md).
+The fork's [K3s and Docker guides](CONVERGENCE.md) remain the installation entry point;
+the smaller Docker trial does not itself collect network flows.
 
-## Remaining acceptance work
+## Evidence and remaining gates
 
-Maintainer scope agreement and a coordinated specification number are pending.
-The implementation port needs artifact/declaration reconciliation, fresh-install
-and upgrade coverage, restricted backend/HUD access, a transactional learning
-handoff, restoration exercises and explicit sensor coverage tests. Current
-firewall activity is useful evidence; it does not establish IDS capability.
+[Spec 1009](../specs/1009-convergence-onboarding/spec.md) established portable core
+onboarding. [Spec 1010](../specs/1010-convergence-development/spec.md) added the
+coding workflow. Both are merged into the fork; neither is an upstream feature release.
 
-## Portable onboarding follow-up, 30 October 2026
+[Spec 1011](../specs/1011-convergence-readiness/spec.md) repairs inherited CI contracts
+and adds a real-store flow/API/HUD component integration check. Historical missing
+spec artifacts are explicitly reconstructed, not presented as original planning.
+The [qualification matrix](convergence/verification.md) distinguishes actual checks
+from untested host/runtime combinations.
 
-[Spec 1009](../specs/1009-convergence-onboarding/spec.md) improves the fork installation paths and documentation. See the [qualification matrix](convergence/verification.md) for actual Docker/K3s, persistence, recovery and browser evidence. The clean upstream proposal uses spec 161 and does not include the fork history or implementation. Maintainer scope agreement and a focused port remain required. The author confirmed the API predecessor was his own code; the API now carries its declared MIT notice and attribution. Chart/dashboard provenance and platform qualification must still be reviewed for each implementation slice.
+Remaining gates are maintainer scope agreement, a coordinated implementation spec,
+a clean upstream port and its own acceptance. Linux Docker/K3s tests are feasibility
+evidence, not upstream compatibility proof. macOS Docker Desktop and Windows/WSL2
+still need actual host execution; WSL2 awaits an accessible dedicated test VM.
+Full browser/gateway/model investigations and real-device/capture coverage require
+separate evidence and are outside the first read-only integration.
 
-The [upstream design draft is #309](https://github.com/automateyournetwork/netclaw/pull/309); the [fork onboarding implementation is #2](https://github.com/byrn-baker/netclaw-convergence/pull/2). Both remain drafts.
+Keep unrelated fork history, additional MCP vendors, personality/model changes,
+private topology, runtime state and generated credentials out of upstream ports.
