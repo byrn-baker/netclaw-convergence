@@ -127,3 +127,39 @@ collection, case investigations, model calls, macOS Docker Desktop or Windows/WS
 Run the same commands on an actual Mac/WSL host and retain OS/Docker/Node versions
 and results before marking that host qualified. Missing platform access remains
 an external prerequisite.
+
+## Home-lab flow onboarding (spec 1012)
+
+The opt-in Docker paths add software export, GoFlow2, OTel file delivery and
+VictoriaLogs to the core trial. Linux x86_64 execution qualified a generated
+15-packet demonstration and real HTTP traffic captured on loopback with a BPF
+filter restricted to the disposable fixture's TCP port. Both reached retained
+API evidence, real MCP tool calls and the production HUD proxy/renderer, and
+survived project stop/start. No physical interface or unrelated host traffic was
+captured. A separate Chromium rendering check showed the host-only coverage label
+and records with no page JavaScript errors; it was not a full HUD/gateway session.
+
+Repeat the acceptance in a dedicated development environment with Docker, Node
+24, the API/HUD npm dependencies and the case MCP requirements installed:
+
+```bash
+python3 tests/convergence-home/run-tests.py --evidence-dir /path/to/private-test-evidence
+```
+
+The command creates UUID-named Docker projects, generates only fixture traffic,
+and removes only those test projects and their disposable volumes. It also saves
+per-container resource snapshots. The onboarding workflow runs it on native Linux
+x86_64 and ARM64; consult the PR checks for the tested commit before claiming a
+hosted pass. Actual macOS/WSL2 and physical-adapter coverage remain unqualified.
+
+An initial small-fixture snapshot on the documented Ubuntu x86_64 host measured
+about 259 MiB across nine demo services and 278 MiB across nine host-mode services.
+The three flow volumes held about 100 KiB and 606 KiB of logical file data at those
+instants. These exclude Docker image storage, daemon/kernel usage, other core
+volumes and build-time peaks. They are neither minimum requirements nor retention/
+throughput sizing. The existing conservative planning allowance still applies.
+
+Raw flow spooling retains three 16 MiB files; the OTel retry queue holds at most
+128 batches and VictoriaLogs uses one-day retention. Retention is not a disk-byte
+quota. An outage can exhaust the finite buffers and lose records; delivery can
+repeat records. Keep source coverage and duplicate-counting limits visible.

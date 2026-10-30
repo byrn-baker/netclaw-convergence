@@ -15,7 +15,8 @@ required. Demo observations must never be presented as the user's network traffi
 A user can explicitly select a local interface for software flow export into the
 same collector/archive/API path. The instructions explain permissions and scope;
 no capture starts during preparation and no host routing or firewall is changed.
-An isolated Linux network namespace with real generated traffic qualifies the
+An isolated Linux network namespace or strictly filtered loopback fixture with real
+generated traffic qualifies the
 software exporter pipeline; physical adapters and whole-home coverage are separate.
 
 ### US3 — Select capabilities honestly (P1)

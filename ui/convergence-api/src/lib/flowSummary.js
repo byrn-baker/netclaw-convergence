@@ -2,6 +2,17 @@
 const {isIP} = require('node:net');
 const WINDOWS = {'15m':900,'1h':3600,'6h':21600,'24h':86400};
 const quote = value => JSON.stringify(String(value));
+const COVERAGE = {
+  demo: {label:'Synthetic demonstration', description:'Synthetic demonstration traffic only; these records do not describe activity on your home network.'},
+  host: {label:'Local interface traffic', description:'Only traffic visible on the explicitly selected local interface is observed; this is not whole-network coverage.'},
+  network: {label:'Configured flow exporters', description:'Only traffic visible to the configured exporters is observed; collection points determine network coverage.'},
+};
+function flowCoverage(config) {
+  const selected = config?.flows?.coverage;
+  const mode = typeof selected?.mode === 'string' && Object.hasOwn(COVERAGE,selected.mode) ? selected.mode : 'network';
+  const detail = typeof selected?.description === 'string' ? selected.description.trim().slice(0,240) : '';
+  return {mode,...COVERAGE[mode],...(detail ? {detail} : {})};
+}
 
 async function queryLogs(query) {
   const base = process.env.FLOW_VICTORIALOGS_URL || process.env.VICTORIALOGS_URL || 'http://victorialogs:9428';
@@ -22,9 +33,10 @@ async function queryLogs(query) {
 
 async function flowSummary(site, config, input = {}, query = queryLogs, now = Date.now()) {
   const range = input.range || '1h';
+  const coverage = flowCoverage(config);
   if (!Object.hasOwn(WINDOWS,range)) throw Object.assign(Error('Choose 15m, 1h, 6h or 24h'),{status:400});
   const exporters = [...new Set((config?.flows?.exporters || []).filter(ip=>typeof ip==='string' && isIP(ip)))];
-  if (!exporters.length) return {site,status:'not_configured',reason:'Configure this site’s flow exporters and a VictoriaLogs flow collector.',exporters:[]};
+  if (!exporters.length) return {site,coverage,status:'not_configured',reason:'Configure this site’s flow exporters and a VictoriaLogs flow collector.',exporters:[]};
   const exporter = input.exporter || '';
   if (exporter && !exporters.includes(exporter)) throw Object.assign(Error('Exporter not configured for this site'),{status:400});
   const start = new Date(now-WINDOWS[range]*1000).toISOString(), end = new Date(now).toISOString();
@@ -40,12 +52,12 @@ async function flowSummary(site, config, input = {}, query = queryLogs, now = Da
   const number = v => {const n=Number(v);return Number.isFinite(n)&&n>=0?n:null;};
   const values = row => ({bytes:number(row?.bytes),packets:number(row?.packets),records:number(row?.records)});
   const rows = (list,fields) => list.slice(0,20).filter(r=>fields.every(f=>isIP(String(r[f]||'')))).map(r=>({...Object.fromEntries(fields.map(f=>[f,r[f]])),...values(r)}));
-  return {site,status:Number(total[0]?.records)>0?'active':'empty',range,start,end,read_at:new Date(now).toISOString(),exporter:exporter||null,exporters,
+  return {site,coverage,status:Number(total[0]?.records)>0?'active':'empty',range,start,end,read_at:new Date(now).toISOString(),exporter:exporter||null,exporters,
     total:{...values(total[0]),last_received:total[0]?.last_received||null},
     sources:rows(sources,['src_addr']),destinations:rows(destinations,['dst_addr']),conversations:rows(conversations,['src_addr','dst_addr']),
     sampling:sampling.map(r=>({rate:number(r.sampling_rate),records:number(r.records)})),
     basis:'Exported bytes and packets by collector receipt time; sampling is not extrapolated. Source and destination describe record direction, not connection initiator or upload/download.',
-    limitations:['Only configured exporters and retained records are included; same-VLAN traffic bypassing the firewall may be absent.',
+    limitations:[coverage.description,'Only configured exporters and retained records are included; traffic outside their observation points is absent.',
       'Ingress/egress observation, NAT, repeated exports and at-least-once log delivery can count traffic more than once. Totals are observed exports, not billing usage.',
       'Flow volume does not establish a threat, application identity, or a firewall allow/block verdict. New collection has no earlier history.'],
   };
@@ -60,7 +72,7 @@ async function flowEvidence(site, config, input, query = queryLogs, now = Date.n
   if (exporter && !exporters.includes(exporter)) throw Object.assign(Error('Exporter not configured for this site'),{status:400});
   const fields = ['_time','sampler_address','src_addr','dst_addr','src_port','dst_port','proto','bytes','packets','sampling_rate','in_if','out_if','src_vlan','dst_vlan','vlan_id'];
   const records = await query(`_time:[${quote(new Date(from).toISOString())},${quote(new Date(to).toISOString())}] job:="netflow" site:=${quote(site)} sampler_address:in(${(exporter?[exporter]:exporters).map(quote).join(',')}) (src_addr:=${quote(address)} OR dst_addr:=${quote(address)}) | sort by (_time desc) | limit 100 | fields ${fields.join(', ')}`);
-  return {site,address,start:new Date(from).toISOString(),end:new Date(to).toISOString(),limit:100,
+  return {site,coverage:flowCoverage(config),address,start:new Date(from).toISOString(),end:new Date(to).toISOString(),limit:100,
     records:records.slice(0,100).filter(r=>(r.src_addr===address||r.dst_addr===address)&&exporters.includes(r.sampler_address)&&(!exporter||r.sampler_address===exporter)).map(r=>Object.fromEntries(fields.filter(f=>r[f]!=null).map(f=>[f,r[f]]))),
     basis:'Latest 100 retained matching flow exports by collector receipt time. Interface indices and VLAN fields are exporter observations, not inferred asset membership. Bytes are not sampling-extrapolated; duplicate observation/NAT may apply.'};
 }

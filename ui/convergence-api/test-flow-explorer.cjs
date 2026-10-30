@@ -42,3 +42,18 @@ test('flow evidence limits query scope, refuses arbitrary selectors and projects
  for(const bad of [{address:'* OR site:other'},{start:'yesterday'},{end:'2026-10-27T10:00:00Z'},{exporter:'192.0.2.9'}])
   await assert.rejects(flowEvidence('cottage',config,{...input,...bad},()=>assert.fail('invalid query executed'),Date.parse('2026-10-25T12:00:00Z')));
 });
+test('demo and host coverage remain explicit in summaries and evidence, even when the archive is empty',async()=>{
+ const inputs={address:'192.0.2.10',start:'2026-10-25T10:00:00Z',end:'2026-10-25T11:00:00Z'};
+ for(const mode of ['demo','host']) {
+  const config={flows:{exporters:['127.0.0.1'],coverage:{mode,description:'Selected source'}}};
+  const summary=await flowSummary('lab',config,{},async()=>[],Date.parse('2026-10-25T12:00:00Z'));
+  const evidence=await flowEvidence('lab',config,inputs,async()=>[],Date.parse('2026-10-25T12:00:00Z'));
+  assert.equal(summary.status,'empty');assert.equal(summary.coverage.mode,mode);
+  assert.deepEqual(evidence.coverage,summary.coverage);assert.equal(summary.coverage.detail,'Selected source');
+  assert.ok(summary.limitations.includes(summary.coverage.description));
+  assert.match(summary.coverage.description,mode==='demo'?/do not describe activity/:/not whole-network/);
+ }
+ const unknown=await flowSummary('lab',{flows:{coverage:{mode:'invalid',description:'x'.repeat(1000)}}},{},()=>assert.fail('must not query'));
+ assert.equal(unknown.status,'not_configured');assert.equal(unknown.coverage.mode,'network');assert.equal(unknown.coverage.detail.length,240);
+ assert.doesNotMatch(unknown.coverage.description,/firewall/i);
+});

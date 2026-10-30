@@ -55,3 +55,18 @@ test('traffic renders measured volume, context and unavailable state; deep dive 
  const ctx=flowHandoff(raw,'sources',0);assert.equal(ctx.start,raw.start);assert.deepEqual(ctx.exporters,raw.exporters);assert.equal(ctx.observation.src_addr,'10.0.0.1');
  assert.match(flowHTML({unavailable:true}),/totals are unknown/);assert.doesNotMatch(flowHTML({unavailable:true}),/0 B/);
 });
+test('demo and host coverage is visible, escaped, and retained in investigation context',()=>{
+ const raw={site:'demo',status:'active',start:'2026-10-25T10:00:00Z',end:'2026-10-25T11:00:00Z',exporters:['127.0.0.1'],
+  sources:[{src_addr:'192.0.2.10',bytes:1200}],coverage:{mode:'demo',detail:'<img src=x onerror=alert(1)>'}};
+ const document=new JSDOM(flowHTML(raw,{canInvestigate:true})).window.document;
+ assert.match(document.body.textContent,/Synthetic demonstration/);
+ assert.match(document.body.textContent,/do not describe activity on your home network/);
+ assert.equal(document.querySelector('img'),null);
+ const context=flowHandoff(raw,'sources',0);
+ assert.equal(context.coverage.mode,'demo');assert.match(context.task,/Do not infer activity or threats/);
+ assert.match(context.coverage.description,/Synthetic demonstration/);
+ const host=new JSDOM(flowHTML({...raw,coverage:{mode:'host'},status:'empty'})).window.document;
+ assert.match(host.body.textContent,/Local interface traffic/);assert.match(host.body.textContent,/not whole-network coverage/);
+ assert.match(host.body.textContent,/No retained flow records/);
+ assert.doesNotMatch(flowHTML({...raw,coverage:undefined}),/Firewall flow exports/);
+});

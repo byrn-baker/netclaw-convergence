@@ -29394,7 +29394,7 @@
       "title": "convergence-setup",
       "description": "Set up NetClaw Convergence on a user's network from a fresh checkout, or complete an existing installation. Discover host and network prerequisites, configure recommended K3s/Helm services or a local Docker trial, connect telemetry and the HUD, and verify Guardian and optional passive IDS/JEV integrations. Use for Convergence installation or onboarding; use alert-triage for individual incidents.",
       "path": "workspace/skills/convergence-setup/SKILL.md",
-      "sha256": "5c943f12fd923d6b75b1882b853666e783fd50c48045f16bb28b166405eb072a",
+      "sha256": "7c2a22f101cd2afecb9976210937618fdbd1a9329555b668424a0ada94909864",
       "components": [],
       "servers": [],
       "availability": "unsupported",

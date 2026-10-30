@@ -11,7 +11,15 @@ const output=await build({stdin:{contents:`import React from 'react';import {cre
     b.onLoad({filter:/.*/,namespace:'loader'},()=>({contents:`import {Group} from 'three';export class GLTFLoader{load(url,ready){window.loadedAvatars.push(url);const scene=new Group();for(const name of ['pal_head','pal_mouth','pal_eye_left','pal_eye_right']){const node=new Group();node.name=name;scene.add(node);}ready({scene});}}`,resolveDir:directory}));
   },
 }]});
-const settle=()=>new Promise(resolve=>setTimeout(resolve,25));
+// Concurrent suite load can delay React's commit/effects beyond a fixed sleep.
+// Wait for each observable transition, with a deadline so broken behavior fails.
+async function waitFor(ready, description) {
+  const deadline=Date.now()+2000;
+  while(!ready()) {
+    assert.ok(Date.now()<deadline,`Timed out waiting for ${description}`);
+    await new Promise(resolve=>setTimeout(resolve,10));
+  }
+}
 
 test('avatar suspends offscreen, recovers context loss and releases render resources',async t=>{
   const dom=new JSDOM('<div id="root"></div>',{url:'http://localhost:3000',runScripts:'outside-only',pretendToBeVisual:true});
@@ -26,16 +34,16 @@ test('avatar suspends offscreen, recovers context loss and releases render resou
     domElement=w.document.createElement('canvas');
     setPixelRatio(){}setSize(){}render(){renders++;}dispose(){disposed++;}forceContextLoss(){lost++;}
   };
-  w.eval(output.outputFiles[0].text);w.showAvatar({avatar:'john'});await settle();
+  w.eval(output.outputFiles[0].text);w.showAvatar({avatar:'john'});await waitFor(()=>w.loadedAvatars.length>0,'avatar load');
   assert.deepEqual([...w.loadedAvatars],['/pal/john.glb']);frame(100);assert.equal(renders,1);
   observe([{isIntersecting:false}]);assert.equal(frames.size,0);
   observe([{isIntersecting:true}]);frame(200);assert.equal(renders,2);
-  w.showAvatar({avatar:'john',active:false});await settle();assert.equal(frames.size,0);
-  w.showAvatar({avatar:'john',active:true});await settle();frame(300);assert.equal(renders,3);
+  w.showAvatar({avatar:'john',active:false});await waitFor(()=>frames.size===0,'inactive animation cancellation');assert.equal(frames.size,0);
+  w.showAvatar({avatar:'john',active:true});await waitFor(()=>frames.size>0,'active animation scheduling');frame(300);assert.equal(renders,3);
   const canvas=w.document.querySelector('canvas');
-  canvas.dispatchEvent(new w.Event('webglcontextlost',{cancelable:true}));await settle();assert.equal(frames.size,0);
+  canvas.dispatchEvent(new w.Event('webglcontextlost',{cancelable:true}));await waitFor(()=>w.document.body.textContent.includes('3D paused'),'context-loss fallback');assert.equal(frames.size,0);
   assert.match(w.document.body.textContent,/3D paused/);
-  [...w.document.querySelectorAll('button')].find(button=>button.textContent==='Retry 3D').click();await settle();
+  [...w.document.querySelectorAll('button')].find(button=>button.textContent==='Retry 3D').click();await waitFor(()=>w.loadedAvatars.length===2,'replacement avatar load');
   assert.equal(disposed,1);assert.equal(lost,1);assert.notEqual(w.document.querySelector('canvas'),canvas);
   assert.equal(w.loadedAvatars.length,2);
   w.removeAvatar();assert.equal(disposed,2);assert.equal(lost,2);assert.equal(frames.size,0);

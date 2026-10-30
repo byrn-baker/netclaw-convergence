@@ -3,7 +3,7 @@ name: convergence-setup
 description: Set up NetClaw Convergence on a user's network from a fresh checkout, or complete an existing installation. Discover host and network prerequisites, configure recommended K3s/Helm services or a local Docker trial, connect telemetry and the HUD, and verify Guardian and optional passive IDS/JEV integrations. Use for Convergence installation or onboarding; use alert-triage for individual incidents.
 license: Apache-2.0
 metadata:
-  version: "1.1.0"
+  version: "1.2.0"
   openclaw:
     requires:
       bins: [python3]
@@ -66,6 +66,14 @@ the setup request. Obtain missing scope or approval only for additional actions
 such as a shared switch mirror change, replacing a running service, or public
 exposure. Prepare the exact diff and rollback before that decision.
 
+Choose source coverage separately from deployment. For a home user, a laptop trial,
+or a lab without managed switches or a hypervisor, read
+[Home and lab onboarding](../../../docs/convergence/home-lab.md). Offer an isolated
+labeled demo first, an explicitly selected Linux host interface second, and router
+exports or mirrored packet sensors only when those capabilities exist. Cisco,
+Proxmox and Kubernetes are optional infrastructure, not entry requirements. Keep
+demo and live-host modes in separate bundles/sites. Preparation never starts capture.
+
 Read the applicable branch:
 
 - **Local Docker trial or an existing host deployment:** [Docker and host setup](references/docker.md).
@@ -97,7 +105,12 @@ with observations, not only generated files or running processes:
    must pass. Its HTTP checks are read-only; K3s uses temporary local port-forwards.
    Use `--canary` explicitly for labeled case persistence and K3s OTLP log tests.
    Repeat verification after a restart; preserve the canary record for that check.
-2. Selected devices produce fresh, correctly labeled telemetry. Missing telemetry
+2. For a selected flow demo or host source, run `scripts/flows.py check --bundle
+   "$bundle"` and inspect matching evidence with the same window. Confirm the HUD
+   labels synthetic versus host-only coverage. An empty configured source has no
+   retained records; an unconfigured source is not a failed core service. Qualify
+   actual Linux interfaces and platforms separately from generated demonstration.
+   Selected devices produce fresh, correctly labeled telemetry. Missing telemetry
    remains unknown; a successful API liveness probe is not a network-health test.
 3. HUD works from the user's intended subnet/browser, without a Grafana port
    collision. Test the configured chat model through its real authentication path.
