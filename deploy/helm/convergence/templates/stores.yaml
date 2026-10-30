@@ -81,7 +81,9 @@ spec:
       {{- end }}
   {{- if not $cfg.storage.existingClaim }}
   volumeClaimTemplates:
-    - metadata: {name: data}
+    - apiVersion: v1
+      kind: PersistentVolumeClaim
+      metadata: {name: data}
       spec:
         storageClassName: {{ $cfg.storage.className | quote }}
         accessModes: [ReadWriteOnce]

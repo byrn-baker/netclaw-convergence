@@ -131,7 +131,9 @@ spec:
         {{- end }}
   {{- if $stateful }}
   volumeClaimTemplates:
-    - metadata: {name: data}
+    - apiVersion: v1
+      kind: PersistentVolumeClaim
+      metadata: {name: data}
       spec:
         storageClassName: {{ $root.Values.storage.className | quote }}
         accessModes: [ReadWriteOnce]
