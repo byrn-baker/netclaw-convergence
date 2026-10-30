@@ -184,3 +184,30 @@ def test_offline_grafana_merge_preserves_existing_projects_and_is_idempotent():
     assert yaml.safe_load(sources['data']['datasources.yml'])['datasources'][0]==existing
     assert boards['data']['existing.json']=='{"uid":"existing"}'
     with pytest.raises(ValueError):module.merge(objects,'wrong-namespace','alpha',sources,boards)
+
+
+def test_portable_fresh_bundle_renders_optional_grafana_and_local_path(tmp_path):
+    import sys
+    scripts=ROOT/'workspace/skills/convergence-setup/scripts'
+    sys.path.insert(0,str(scripts))
+    spec=importlib.util.spec_from_file_location('fresh_k3s',scripts/'k3s.py')
+    module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+    bundle=tmp_path/'bundle'
+    module.prepare(ROOT,bundle,{'context':'test','namespace':'office-obs','release':'office',
+        'site':'office','storage_class':'local-path','image':'api:test','grafana':True})
+    objects=render('convergence','office','office-obs','-f',str(bundle/'values.json'))
+    assert not any(d['kind']=='Secret' for d in objects)
+    config=next(d for d in objects if d['kind']=='ConfigMap' and d['metadata']['name']=='office-application-config')
+    assert json.loads(config['data']['SITES_CONFIG'])=={'office':{'name':'office'}}
+    grafana=next(d for d in objects if d['kind']=='StatefulSet' and d['metadata']['name']=='office-grafana')
+    container=grafana['spec']['template']['spec']['containers'][0]
+    env={e['name']:e for e in container['env']}
+    assert env['GF_AUTH_ANONYMOUS_ENABLED']['value']=='false'
+    assert env['GF_SECURITY_ADMIN_PASSWORD']['valueFrom']['secretKeyRef']['name']=='office-credentials'
+    for obj in objects:
+        if obj['kind']=='StatefulSet':
+            assert obj['spec'].get('persistentVolumeClaimRetentionPolicy',{}).get('whenDeleted','Retain')=='Retain'
+            assert all(v['spec']['storageClassName']=='local-path' for v in obj['spec']['volumeClaimTemplates'])
+    config=next(d for d in objects if d['kind']=='ConfigMap' and d['metadata']['name']=='office-grafana')
+    assert json.loads(config['data']['health.json'])['uid']=='convergence-installation'
+    assert all(d['spec'].get('type','ClusterIP')=='ClusterIP' for d in objects if d['kind']=='Service')

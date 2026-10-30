@@ -40,7 +40,7 @@ unavailable GAIT tools for this development session; no GAIT record is claimed.
 
 ## Design decisions
 Kubernetes context and storage class are explicit. Preparation is file-only;
-application uses generated command arrays and private credential input. Existing
+application uses explicit helper lifecycle commands and private credential input. Existing
 bundles retain identity and credentials; an existing Secret must agree with the
 bundle, never be blindly overwritten. API image delivery is explicit (registry
 or all-node import), with platform checks and no default private GHCR dependency.

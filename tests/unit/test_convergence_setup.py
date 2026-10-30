@@ -177,3 +177,27 @@ def test_deployed_skill_keeps_helper_and_references_without_other_skills(tmp_pat
     assert (destination/'references/docker.md').is_file()
     help_result=subprocess.run([sys.executable,str(destination/'scripts/setup.py'),'--help'],capture_output=True,text=True)
     assert help_result.returncode==0
+
+
+def test_optional_dashboard_has_private_credentials_and_site_scoped_queries(repo):
+    bundle=repo/'dashboard bundle'
+    result=setup.prepare(repo,bundle,options(grafana=True,grafana_port=23300))
+    overlay=json.loads((bundle/'compose.override.json').read_text())
+    grafana=overlay['services']['grafana']
+    assert grafana['ports']==['127.0.0.1:23300:3000']
+    assert grafana['environment']['GF_AUTH_ANONYMOUS_ENABLED']=='false'
+    assert grafana['environment']['GF_SECURITY_ADMIN_PASSWORD'] not in json.dumps(result)
+    dashboard=json.loads((bundle/'grafana-health.json').read_text())
+    assert 'cottage' in json.dumps(dashboard)
+    assert 'Grafana' in (bundle/'access.txt').read_text()
+    assert setup.prepare(repo,bundle,options(grafana=True,grafana_port=23300))['status']=='preserved'
+
+
+def test_compose_environment_drops_conflicting_interpolation_and_profiles(repo,monkeypatch):
+    monkeypatch.setenv('PGPASSWORD','wrong')
+    monkeypatch.setenv('API_KEYS','wrong')
+    monkeypatch.setenv('COMPOSE_PROFILES','full,unifi')
+    monkeypatch.setenv('DOCKER_CONTEXT','desktop-linux')
+    env=setup.compose_environment(repo)
+    assert 'PGPASSWORD' not in env and 'API_KEYS' not in env and 'COMPOSE_PROFILES' not in env
+    assert env['DOCKER_CONTEXT']=='desktop-linux' and 'HOME' in env

@@ -25,7 +25,7 @@ or new device configuration. Reuse existing authorization and prepare concrete
 changes when an additional approval is necessary.
 
 Do not run legacy `smoke-docker.sh` as a read-only check: it renders and starts
-services. The bundled helper's `check` command performs GET requests only and
+services. The Docker helper's `check` and cross-platform `verify.py` default perform GET requests only and
 returns a nonzero exit code on failed core checks. It deliberately does not
 exercise model spending, webhook writes or packet generation.
 
@@ -34,3 +34,5 @@ selected account/runtime, private configuration paths (not values), restart and
 rollback steps, telemetry/capture coverage, remaining gaps and next tuning work.
 Keep automatic investigations and enforcement separately identified. No claim of
 "all VLAN traffic inspected" without evidence at the relevant capture points.
+
+For fresh installations, follow `docs/convergence/verification.md` for the platform evidence matrix. `verify.py --canary` explicitly writes synthetic cases and, on K3s, a synthetic OTLP log. Its saved private case reference lets later checks prove persistence. Record restart, upgrade and restore evidence separately.

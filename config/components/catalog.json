@@ -29392,9 +29392,9 @@
     {
       "id": "convergence-setup",
       "title": "convergence-setup",
-      "description": "Fork add-on workflow; see its bundled skill instructions.",
+      "description": "Install Convergence with recommended K3s/Helm or a local Docker trial; verify core health, persistence and selected integrations.",
       "path": "workspace/skills/convergence-setup/SKILL.md",
-      "sha256": "fb9417cdc77292ff0e92a973503a5138e917d14bdc2bc7e52d3e9ca541dae59c",
+      "sha256": "5c943f12fd923d6b75b1882b853666e783fd50c48045f16bb28b166405eb072a",
       "components": [],
       "servers": [],
       "availability": "unsupported",

@@ -1,47 +1,54 @@
-# K3s and reuse of an existing monitoring stack
+# K3s/Helm setup and existing-stack reuse
 
-Read `deploy/convergence/k8s/README.md`, `SMOKE.md`, and the selected component
-README before rendering. For existing monitoring, also read `OVERLAY-PILOT.md`
-as an architectural example, not an instruction to scale down another namespace.
+Use `docs/convergence/k3s.md` from the verified checkout as the canonical procedure.
+Resolve the helper paths relative to this skill; pass the checkout with `--repo`.
+The guide includes image delivery alternatives, storage explanations and access.
 
-Discover the chosen kubeconfig/context, API reachability, node architectures,
-storage classes, ingress/load balancer and current monitoring services. Use the
-user's explicit context/namespace on commands. A context name in a local file
-does not establish cluster reachability or permission to change its resources.
+## Fresh release
 
-Choose either a fresh isolated Convergence namespace or reuse of compatible
-existing Prometheus/Alertmanager/Victoria/Grafana services. Verify APIs, retention,
-site labels and authentication for reused services. Keep one authoritative case
-database and receiver route; avoid duplicate alert delivery during migration.
+1. Discover explicit context, namespace, release, site, node architectures, storage
+   class, capacity and image delivery. Read existing resources before assuming a
+   new deployment. Do not change the global current context. Creating a K3s cluster
+   changes a host and is separate from installing into an existing cluster.
+2. Run `scripts/k3s.py --repo "$repo" preflight --context "$context"`. Resolve
+   unavailable access, unready nodes or missing storage before installation.
+3. Build the API with a revision-specific tag. Import on every eligible native K3s
+   node, use k3d image import for k3d, or push to an authorized registry. Verify CPU
+   architecture and pull credentials. A host Docker image is not automatically in
+   the cluster's containerd store.
+4. Build both Helm dependency layers. Prepare the private bundle using
+   `scripts/k3s.py --repo "$repo" prepare` with every required target option.
+   Standalone Grafana is enabled for a fresh release; use `--no-grafana` when
+   reusing shared Grafana. Review non-secret values and resource requests.
+5. Run `scripts/k3s.py --repo "$repo" install --bundle "$bundle"`. It uses the
+   explicit target and preserves a matching Secret. Do not bypass a mismatch by
+   overwriting database passwords. Diagnose failed Helm readiness in place.
+6. Run `scripts/verify.py --repo "$repo" --bundle "$bundle"`, then the authorized
+   `--canary` acceptance check. Confirm case persistence after restart and the
+   collector-to-VictoriaLogs round-trip. Open Grafana through loopback forwarding.
+7. Follow `docs/convergence/operations.md` for HUD connectivity, telemetry, backup,
+   repeat upgrades and a durable access plan. Temporary forwards are not a
+   permanent integration. Report which layers remain unverified.
 
-For a new deployment:
+The fresh bundle overrides historical Longhorn defaults with the selected storage
+class. K3s local-path is node-local, not replication or a backup. Do not translate
+an existing Helm release to legacy Kustomize or adopt resources into another
+controller without a migration plan.
 
-1. Generate unique database/JWT/API/receiver credentials in private files or the
-   existing secret manager. Inspect `secret.example.yaml` and the manifests for
-   all required references. Retain credentials when re-running against PVCs.
-2. Create a local overlay for site, addresses, namespace, storage, image reference,
-   configuration mounts and chosen optional components. Resolve all example
-   targets and labels. Render with `kubectl kustomize` and inspect the output
-   privately; Secret values must not appear in chat or logs.
-3. Build and distribute the API image using the target cluster's registry or its
-   supported node import workflow. A local Docker image is not automatically
-   available on every K3s node. Verify image architecture and pull availability.
-4. Configure Alertmanager and the case API to reach the actual host receiver.
-   `host.docker.internal` is a Docker host mapping, not a portable Kubernetes
-   endpoint. Verify DNS/routing/TLS from a pod in the target namespace.
-5. Apply the selected manifest set, inspect rollout/PVC state and authenticate a
-   site-scoped API request. Connect the host HUD to a durable reachable endpoint;
-   a terminal port-forward is temporary access only.
-6. Add only requested adapters and verify real samples. Kustomize config maps
-   embed files; adding a component does not automatically merge all scrape jobs
-   into a preexisting Prometheus configuration. Inspect the active mounted config.
+## Reuse or migrate
 
-Default architecture keeps the agent, scoped Guardian and alert receiver on the
-NetClaw host. Optional IDS packet capture needs a verified SPAN/ERSPAN/TAP or
-host-level capture path; scheduling an ordinary pod on a VLAN does not give it
-visibility into that VLAN's other traffic. Read the IDS branch before deciding
-which components can move into the cluster.
+Inventory releases, PVCs, Secrets, Grafana ownership, collector endpoints and
+current producers/consumers. Keep credentials private. Separate a parallel new
+release from a cutover: first verify new storage and canaries, then backfill or
+restore selected history, verify counts/time ranges, and switch clients in a
+controlled order. Avoid duplicate collectors or investigations. Keep rollback
+routes and old data until the new path is verified.
 
-The bundled fresh-config helper creates **Docker core** configuration only.
-Do not pass its Compose manifest to Kubernetes or describe it as a tested K3s
-installer. Verify K3s with its own rendered manifests and acceptance checks.
+Shared Grafana should retain its current owner. Prefer the external provisioning
+bundle or manually add distinct datasource names/UIDs. Do not replace other
+projects' defaults. Review imported dashboards for site filters and unavailable
+feeds. Argo CD adoption is a separate ownership operation, not a prerequisite for
+a fresh Helm installation.
+
+Home profiles and historical cutover runbooks are deployment records. Their node
+addresses, namespaces, registry account and volume names are not portable defaults.
