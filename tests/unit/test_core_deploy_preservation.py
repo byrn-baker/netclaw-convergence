@@ -11,7 +11,7 @@ writer = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(writer)
 
 
-def deploy(tmp_path):
+def deploy(tmp_path, *, umask=None):
     repo = tmp_path / "checkout & pipe|quote' space"
     repo.mkdir(exist_ok=True)
     (repo / 'workspace/skills/example').mkdir(parents=True, exist_ok=True)
@@ -36,6 +36,8 @@ RUNTIME_SKILLS="$RUNTIME_WORKSPACE/skills"
 RUNTIME_ENV="$RUNTIME_HOME/.env"
 core_deploy
 '''
+    if umask is not None:
+        script = f'umask {umask:03o}\n' + script
     result = subprocess.run(['bash', '-c', script], cwd=ROOT,
         env={**os.environ, 'FIXTURE_REPO': str(repo), 'FIXTURE_RUNTIME': str(runtime)},
         capture_output=True, text=True, timeout=30)
@@ -55,6 +57,7 @@ def test_real_deploy_literal_private_environment_and_repeat(tmp_path):
 
 def test_upgrade_preserves_persona_testbed_and_custom_stores(tmp_path):
     runtime = tmp_path / '.openclaw'
+    runtime.mkdir(mode=0o700)
     workspace = runtime / 'workspace'
     (workspace / 'testbed').mkdir(parents=True)
     for name in ('SOUL.md', 'USER.md', 'TOOLS.md'):
@@ -75,6 +78,7 @@ def test_upgrade_preserves_persona_testbed_and_custom_stores(tmp_path):
 
 def test_upgrade_retains_skill_original_and_ignores_custom_only_file(tmp_path):
     runtime = tmp_path / '.openclaw'
+    runtime.mkdir(mode=0o700)
     skill = runtime / 'workspace/skills/example/SKILL.md'
     skill.parent.mkdir(parents=True)
     skill.write_text('operator skill\n')
@@ -101,3 +105,9 @@ def test_dynamic_deploy_preserves_policy_and_never_creates_static_placeholder(tm
     assert 'PYATS_TESTBED_PATH=' not in data
     assert 'NETCLAW_TESTBED_MODE=dynamic' in data
     assert 'NETCLAW_PASSWORD=fixture-private' in data
+
+
+def test_new_runtime_is_private_even_with_group_writable_umask(tmp_path):
+    _, runtime = deploy(tmp_path, umask=0o002)
+    assert runtime.stat().st_mode & 0o777 == 0o700
+    assert (runtime / '.env').stat().st_mode & 0o777 == 0o600

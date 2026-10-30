@@ -22,7 +22,7 @@ import sys
 from pathlib import Path
 
 import httpx
-from mcp.server.fastmcp import FastMCP
+from fastmcp import FastMCP
 
 COMMUNITY_URL = "https://api.greynoise.io/v3/community/{ip}"
 TIMEOUT = float(os.environ.get("GREYNOISE_TIMEOUT", "10"))

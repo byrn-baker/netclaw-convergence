@@ -100,3 +100,30 @@ only Python's standard library. For actual fresh-install checks, follow the
 [Docker](docker.md) or [K3s](k3s.md) guide with new isolated identities and run
 `verify.py --canary`, then restart/upgrade and verify again. Never point destructive
 acceptance steps at a live installation.
+
+## Retained observation to HUD evidence (spec 1011)
+
+From the repository root, with Node 24, npm and a local Linux-container Docker daemon:
+
+```bash
+npm --prefix ui/convergence-api ci
+npm --prefix ui/netclaw-visual ci
+npm --prefix ui/netclaw-visual run test:convergence-flow
+```
+
+This test starts its own pinned VictoriaLogs container on an ephemeral loopback
+port, ingests synthetic flow records and restarts the store. It exercises the real
+API authentication/flow routes, the real HUD proxy and flow renderer, then retrieves
+matching records using the selected observation's exact site/window/exporter.
+A mixed-direction fixture confirms address evidence is context, not a directional
+ranking subtotal. Assertions reject wrong-site/exporter requests, exclude unrelated records and
+private payload fields, and distinguish empty data from an unavailable archive.
+Cleanup removes only that test's UUID-named container; no operator `.env` is read.
+
+Local Linux x86_64 execution passed. The onboarding CI runs this test on both native
+Linux architectures; configuring a job is not evidence of its result. Rendering
+uses JSDOM, not a full browser/gateway session. This does not qualify real exporter
+collection, case investigations, model calls, macOS Docker Desktop or Windows/WSL2.
+Run the same commands on an actual Mac/WSL host and retain OS/Docker/Node versions
+and results before marking that host qualified. Missing platform access remains
+an external prerequisite.
