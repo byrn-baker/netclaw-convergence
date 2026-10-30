@@ -360,3 +360,36 @@ test('Convergence OpenAI preset shows applied values, clears fallback and refres
   assert.deepEqual(JSON.parse(calls.find(([url, options]) => url === '/api/models' && options.method === 'POST')[1].body), { preset: 'openai', restart: true });
   assert.deepEqual(errors, []);
 });
+
+test('Convergence refreshes a recovered IDS feed while its section button retains focus', async t => {
+  const calls = []; let status = 'degraded';
+  const { document, window, errors } = await app(t, false, convergenceFetch(calls, path => {
+    if (path === '/api/home/security') return { status: 'active', intrusionDetection: { status, sensors: [] } };
+  }));
+  const timers = [], original = window.setInterval.bind(window);
+  window.setInterval = (callback, delay, ...args) => {
+    if (delay === 30000) timers.push(callback);
+    return original(callback, delay, ...args);
+  };
+  click(document, 'Convergence');
+  await waitFor(() => document.querySelector('.home-kpi-value'), 'Convergence');
+  const section = document.querySelector('[data-home-sub="security"]');
+  section.focus(); section.click();
+  await waitFor(() => document.querySelector('.security-telemetry strong')?.textContent === 'degraded', 'initial degraded IDS feed');
+  assert.equal(document.activeElement, section);
+  status = 'active';
+  assert.ok(timers.length > 0, 'refresh timers are registered');
+  timers.forEach(callback => callback());
+  await waitFor(() => document.querySelector('.security-telemetry strong')?.textContent === 'active', 'recovered IDS feed without another click');
+  assert.equal(document.activeElement, section, 'section navigation retains keyboard focus');
+  document.querySelector('[data-home-sub="triage"]').click();
+  const notes = await waitFor(() => document.querySelector('.home-triage-textarea'), 'triage editor');
+  notes.focus(); notes.value = 'Keep this unsent assessment';
+  notes.dispatchEvent(new window.Event('input', { bubbles: true }));
+  const reads = calls.filter(([url]) => url.startsWith('/api/home/')).length;
+  timers.forEach(callback => callback()); await settle();
+  assert.equal(calls.filter(([url]) => url.startsWith('/api/home/')).length, reads, 'editing still pauses content refresh');
+  assert.equal(document.activeElement, notes);
+  assert.equal(notes.value, 'Keep this unsent assessment');
+  assert.deepEqual(errors, []);
+});

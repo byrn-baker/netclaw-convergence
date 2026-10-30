@@ -36,8 +36,12 @@ export default function DashboardView({ preview, active, refreshKey, onStatus, i
     if (preview || !active) return;
     const timer = setInterval(() => {
       const view = controller.current;
-      // Preserve focus and edits while an operator is working on a form.
-      if (document.hidden || host.current?.contains(document.activeElement) || view?.triageBusy || view?.modelsBusy || view?.incidentPending?.size) return;
+      // Section buttons stay mounted when the content refreshes. Leaving one
+      // focused after navigation must not freeze recovered telemetry. Keep
+      // protecting focus and drafts in the content and site picker.
+      const contentHasFocus = host.current?.contains(document.activeElement)
+        && !document.activeElement?.matches('[data-home-sub]');
+      if (document.hidden || contentHasFocus || view?.triageBusy || view?.modelsBusy || view?.incidentPending?.size) return;
       view?.refresh();
     }, 30000);
     return () => clearInterval(timer);
