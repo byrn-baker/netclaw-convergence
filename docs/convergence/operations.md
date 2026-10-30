@@ -130,8 +130,18 @@ kubectl --context "$context" -n "$namespace" exec "statefulset/$release-postgres
 test -s "$backup_file"
 ```
 
-For Docker, use the same project and complete bundle Compose arguments with
-`exec -T postgres sh -c 'pg_dump -U "$POSTGRES_USER" -d "$POSTGRES_DB" -Fc'`.
+For **Docker**, from the checkout root, set the bundle/project actually installed
+and use the same private backup directory/file variables above:
+
+```bash
+project="convergence-trial"     # your recorded Compose project
+bundle="$HOME/.local/share/convergence/trial"
+docker compose -p "$project" --env-file "$bundle/compose.env" \
+  -f deploy/convergence/docker-compose.yml -f "$bundle/compose.override.json" \
+  exec -T postgres sh -c 'pg_dump -U "$POSTGRES_USER" -d "$POSTGRES_DB" -Fc' > "$backup_file"
+test -s "$backup_file"
+```
+
 The quotes ensure variables are expanded inside the database container. Keep
 command output private; a nonempty file is not proof that restoration works.
 
@@ -175,8 +185,16 @@ and volumes. Preserve the failed state long enough to diagnose it.
 ## Remove services while retaining data
 
 For the Docker trial, `setup.py run --action stop` retains containers and volumes.
-To remove containers, use the exact project/file/env arguments for this bundle
-with `down`, **without `--volumes`**. Keep the bundle for resuming/recovery.
+To remove its containers, from the checkout root with your recorded variables:
+
+```bash
+docker compose -p "$project" --env-file "$bundle/compose.env" \
+  -f deploy/convergence/docker-compose.yml -f "$bundle/compose.override.json" down
+```
+
+Omit `--volumes` and keep the bundle for resuming/recovery. These backup/removal
+commands target the explicitly named project; use the helper for starts/upgrades
+so conflicting shell values cannot change the generated configuration.
 
 For K3s:
 
@@ -186,6 +204,8 @@ kubectl --context "$context" -n "$namespace" get pvc,secrets
 ```
 
 StatefulSet data claims and the separately created credentials Secret are retained.
+If you ran `helm test`, its single completed smoke pod is retained for log inspection
+until the next test; Helm hooks are not ordinary release resources.
 Verify this before planning reuse. Do not delete the namespace: namespace deletion
 also deletes its PVCs/Secrets, and the storage reclaim policy may destroy the data.
 Permanent data removal is a separate, explicit decision after recovery is verified.

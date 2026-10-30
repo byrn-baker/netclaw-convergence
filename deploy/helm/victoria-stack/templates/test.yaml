@@ -13,7 +13,8 @@ metadata:
   name: {{ .Release.Name }}-smoke
   annotations:
     helm.sh/hook: test
-    helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
+    # Keep the single completed pod until the next test so Helm 3 --logs can read it.
+    helm.sh/hook-delete-policy: before-hook-creation
 spec:
   automountServiceAccountToken: false
   restartPolicy: Never
