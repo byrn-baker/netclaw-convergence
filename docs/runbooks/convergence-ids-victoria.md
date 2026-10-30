@@ -229,8 +229,8 @@ Rotation, partial lines and a shipper restart preserve the original history.
 
 The sensor shipper sends up to 256 EVE records per request, bounded by both source
 bytes and serialized JSON size. It reuses one verified HTTPS connection and
-refreshes its Docker/rule/probe heartbeat snapshot at least every five seconds
-while shipping. The receiver's 256-record / 1 MiB limits remain unchanged.
+caches its Docker/rule/probe heartbeat snapshot for five seconds between
+batches. The receiver's 256-record / 1 MiB limits remain unchanged.
 A failed request, incomplete ACK or lost response closes the connection and
 retries from the unchanged durable cursor; there is no internal POST retry.
 SQLite synchronous commits and the four-live-to-one-history scheduling policy
@@ -329,3 +329,28 @@ and [OTel Prometheus receiver](https://github.com/open-telemetry/opentelemetry-c
 New observations can include locally derived country/ASN context in both log
 stores and the case diary. See [public-IP context](convergence-ip-context.md)
 for installation, update cadence, field queries, attribution and limitations.
+
+
+### Sensor replay optimization — 2026-10-30
+
+Deployed the 256-event shipper with persistent verified HTTPS and a five-second
+heartbeat cache to `home-ids-01`. Only the shipper was restarted; Suricata's
+start time was unchanged. Both cursor tables matched their stopped-service
+snapshot exactly before restart (21 historical cursors, 15 live cursors).
+The previous script and consistent cursor backup are retained under
+`/opt/netclaw-ids/rollback/20261030T154939Z/`. Code rollback must retain the current
+cursor database; the snapshot is recovery evidence, not a routine rollback input.
+
+Immediately before deployment, the historical backlog decreased at about
+79 KiB/s over a three-minute sample. Over the first 508 seconds after deployment,
+net reduction averaged 347 KiB/s, about 4.4 times faster. Approximately 8.09 GiB
+remained, projecting about 6.8 hours at that rate. This is a measurement-time
+estimate, not a fixed completion deadline; incoming traffic and downstream load
+change the net rate.
+
+Live status remained active, latest-file live backlog reached zero at the sampled
+point, the capture-drop counter stayed unchanged, and no service restarts or
+delivery errors were reported during the observation interval. All 42 IDS tests
+passed, including real TLS connection reuse, server disconnect/reconnect,
+untrusted-certificate rejection, partial/lost ACK retries without checkpoint
+advance, serialized batch limits, rotation and legacy-cursor continuation.
