@@ -47,7 +47,7 @@ is made for this draft engineering branch; chart/skill versions identify their
 changes independently. macOS, WSL2 and mixed-architecture cluster qualification remain explicit
 follow-up work, as do real telemetry/IDS/model integrations and full disaster recovery.
 
-The API author confirmed ownership of its unreleased predecessor. Added its
+The API author confirmed ownership of its `network-guardian-web` predecessor. Added its
 previously declared MIT license and provenance notice; surrounding licensing is
 unchanged. The upstream port must still review third-party chart/dashboard notices.
 
@@ -119,3 +119,9 @@ The two local Compose fixtures, their synthetic volumes and the disposable k3d
 cluster were removed after evidence collection. The temporary checkout with spaces
 was removed too. Private bundles, a logical test backup and audit evidence remain
 outside Git. The live main checkout and user runtime/cluster services were untouched.
+
+## Source and specification follow-up
+
+Reviewed the author-supplied [standalone repository](https://github.com/byrn-baker/Convergence/tree/fff81b52fdd9b792e375208abfa8d091adf9949a), README and MIT license on 30 October 2026. Recorded its exact copyright notice and separated observability-stack ancestry from API ancestry. Confirmed this PR includes the numbered `specs/1009-convergence-onboarding/` directory with specification, research, plan, tasks and verification; the lowercase `specs/` layout follows CONTRIBUTING.md. This follow-up changes documentation only.
+
+Validation: local Markdown links and `git diff --check` PASS. Spec artifact check retains the same 46 historical findings; none involve this spec. No runtime tests were rerun for these documentation changes.

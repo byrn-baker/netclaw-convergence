@@ -99,6 +99,8 @@ installation dashboard deliberately shows core health only.
 - [Alert investigation controls](CONVERGENCE-ALERT-SAFETY.md)
 - [Optional JEV reviews](runbooks/convergence-jev.md)
 - [Upstream contribution scope](UPSTREAM-CONTRIBUTION.md)
+- [Original project, attribution and licensing](convergence/provenance.md)
+- [Spec Kit specification and acceptance evidence](../specs/1009-convergence-onboarding/spec.md)
 
 The [historical deployment notes](CONVERGENCE-LEGACY.md) retain previous migration
 and implementation details. They are not fresh-install defaults.

@@ -26,3 +26,6 @@ Dependencies: T002 precedes T003/T004, then T005. T006 precedes T007. Documentat
 uses verified command interfaces. Upstream readiness requires maintainer scope
 agreement and a clean tested implementation port, not only completion of this
 fork packaging improvement. All work stays separate from the live main checkout.
+
+## Provenance follow-up
+- [x] T013 [US4] Inspect the author-supplied standalone Convergence repository, preserve its source/license reference, and distinguish stack ancestry from API ancestry in both draft PRs.

@@ -30,3 +30,7 @@ agreement. The public user fork belongs to automateyournetwork/netclaw's network
 A clean spec-only draft can request scope review without exposing local deployment
 history. Full implementation is not ready merely because a home deployment works.
 Independent planning audits cover Docker portability and upstream port dependencies.
+
+## Original project attribution
+
+The author supplied [byrn-baker/Convergence](https://github.com/byrn-baker/Convergence/tree/fff81b52fdd9b792e375208abfa8d091adf9949a) on 30 October 2026. Reviewed its tree, README and MIT license at `fff81b52fdd9b792e375208abfa8d091adf9949a`. It contains the standalone observability stack, discovery and dashboards, but no copy of the NetClaw API. Preserve the original `Copyright (c) 2026 Convergence Project` notice separately from the API's author-confirmed `network-guardian-web` ancestry. See the [provenance record](../../docs/convergence/provenance.md). This source review does not replace per-asset attribution checks during the focused upstream port.
