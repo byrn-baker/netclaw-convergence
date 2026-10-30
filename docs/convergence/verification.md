@@ -19,9 +19,26 @@ backend, OS or network adapter works without qualification.
 The disposable cluster used its own kubeconfig, namespace, release and synthetic
 site. No existing production cluster, sensor, gateway or runtime was changed.
 
+## Hosted architecture acceptance
+
+[Run 41097779673](https://github.com/byrn-baker/netclaw-convergence/actions/runs/41097779673)
+passed all four jobs at source commit `95482b37`:
+
+| Native runner | Docker fresh install/restart | K3s fresh install/upgrade/restart |
+|---|---|---|
+| Ubuntu 24.04 x86_64 | PASS | PASS |
+| Ubuntu 24.04 ARM64 | PASS | PASS |
+
+The K3s jobs use **v1.37.1-k3s1**, k3d 5.9.0 and Helm 3.19.0. They build the API
+natively on each architecture, verify authenticated/scoped case access and Grafana
+queries, write/retrieve canaries, and prove case persistence after upgrade and a
+PostgreSQL restart. Helm tests also exercise metric/log and OTLP round-trips.
+This qualifies those Linux test environments, not macOS/WSL2 host behavior or
+mixed-architecture scheduling.
+
 ## Observed results
 
-- **39 automated tests passed** across the setup helper contracts and Helm chart
+- **40 automated tests passed** across the setup helper contracts and Helm chart
   suite. They include private credentials, rerun preservation, incomplete/mismatched
   bundles, explicit contexts, foreign Secret rejection, portable storage rendering,
   optional Grafana and existing shared-Grafana behavior.
@@ -54,12 +71,12 @@ site. No existing production cluster, sensor, gateway or runtime was changed.
 
 | Combination | Qualification |
 |---|---|
-| Linux x86_64 Docker trial | Executed as above |
-| K3s on x86_64, local-path | Executed in k3d; native-node installation/import instructions reviewed |
+| Linux x86_64 and ARM64 Docker trial | Executed locally/on native hosted runners as above |
+| K3s on x86_64 and ARM64, local-path | Executed in k3d, including current v1.37.1; native-node installation/import instructions reviewed |
 | Helm 3 / Helm 4 | Both exercised against the disposable K3s release |
 | macOS Docker Desktop | Guide reviewed; actual host run still required |
 | Windows WSL2 + Docker Desktop | Guide reviewed; actual host run still required |
-| ARM64/mixed-architecture cluster | Base images publish ARM64 manifests; API build/runtime and scheduling still require actual qualification |
+| Mixed-architecture cluster | Native images work separately; combined registry manifest and cross-node scheduling still require qualification |
 | Shared Grafana | Existing merge/render contracts pass; fresh guide does not mutate an existing Grafana |
 | Device telemetry, IDS, Guardian | Outside core onboarding tests; require source/capture/model-specific acceptance |
 | Public ingress, arbitrary migrations, air-gap, full disaster recovery | Not qualified by this test run |
@@ -71,7 +88,8 @@ for a real installation. Only mark selected layers ready when their evidence exi
 
 ```bash
 python3 -m pytest tests/unit/test_convergence_setup.py \
-  tests/unit/test_convergence_setup_k3s.py deploy/helm/tests/test_charts.py -q
+  tests/unit/test_convergence_setup_k3s.py tests/unit/test_convergence_setup_verify.py \
+  deploy/helm/tests/test_charts.py -q
 python3 scripts/build-catalog.py --check
 python3 scripts/check-catalog-metadata.py
 ```

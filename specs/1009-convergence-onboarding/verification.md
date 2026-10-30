@@ -7,8 +7,8 @@ clean upstream implementation port or a released cross-platform guarantee.
 
 ## Automated checks
 
-- Setup/Helm tests: 39 passed, including 18 Docker helper tests, 10 K3s bundle tests
-  and 11 chart tests. Initial regressions failed before implementation; fixes were
+- Setup/Helm tests: 40 passed, including 18 Docker helper tests, 10 K3s bundle tests
+  one verification recovery test and 11 chart tests. Initial regressions failed before implementation; fixes were
   verified by rerunning the affected checks.
 - Catalog metadata: PASS, 122 components and 251 skills. Updated the setup skill's
   canonical hash and regenerated catalog; parity PASS.
@@ -44,7 +44,7 @@ the checked-in artifacts were completed manually in lifecycle order. The clean
 upstream draft uses spec 161. Maintainer scope agreement, focused implementation
 ports and their own acceptance remain open. No root source release/version claim
 is made for this draft engineering branch; chart/skill versions identify their
-changes independently. macOS, WSL2 and ARM64 runtime qualification remain explicit
+changes independently. macOS, WSL2 and mixed-architecture cluster qualification remain explicit
 follow-up work, as do real telemetry/IDS/model integrations and full disaster recovery.
 
 The API author confirmed ownership of its unreleased predecessor. Added its
@@ -107,3 +107,15 @@ cases before evaluating health and rejects unavailable/empty fallback responses.
 No API recovery semantics were weakened. The fresh CI cluster pin was also updated
 to the verified current K3s release v1.37.1+k3s1; prior v1.33.5 evidence remains
 historical, not a recommendation to install an older release.
+
+## Final focused acceptance
+
+[Hosted onboarding run 41097779673](https://github.com/byrn-baker/netclaw-convergence/actions/runs/41097779673)
+is **PASS on all four native x86_64/ARM64 Docker/K3s jobs** at `95482b37`. K3s uses
+v1.37.1-k3s1 and Helm 3.19.0. This includes the original restart/recovery scenario,
+not only the minimized regression test. Local setup/chart tests total 40 passes.
+
+The two local Compose fixtures, their synthetic volumes and the disposable k3d
+cluster were removed after evidence collection. The temporary checkout with spaces
+was removed too. Private bundles, a logical test backup and audit evidence remain
+outside Git. The live main checkout and user runtime/cluster services were untouched.
