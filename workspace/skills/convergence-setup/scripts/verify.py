@@ -95,9 +95,14 @@ def verify(repo,bundle,canary=False,wait_seconds=60):
                 checks.append({'check':name,'status':'fail','reason':type(exc).__name__});return
     with endpoints(repo,bundle,manifest) as (urls,token,password):
         def api(path,**kwargs): return request(urls['api']+path,token=token,**kwargs)
-        check('API and database',lambda:request(urls['api']+'/healthz')['features']['diary']=='available')
         check('Selected site',lambda:site in [s['id'] for s in api('/api/sites')['sites']])
-        check('Scoped cases',lambda:isinstance(api('/api/events?'+urlencode({'site':site}))['events'],list))
+        # /healthz reports cached DB state. A real query reopens the circuit
+        # after PostgreSQL recovers; polling liveness alone cannot do that.
+        def cases_ready():
+            data=api('/api/events?'+urlencode({'site':site}))
+            return not data.get('unavailable') and isinstance(data.get('events'),list)
+        check('Scoped cases',cases_ready)
+        check('API and database',lambda:request(urls['api']+'/healthz')['features']['diary']=='available')
         def denied(path,authenticated):
             try: request(urls['api']+path,token=token if authenticated else None)
             except HTTPError as exc: return exc.code in (401,403)

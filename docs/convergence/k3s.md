@@ -14,7 +14,8 @@ how to expose it to your NetClaw host or other users.
 
 You need:
 
-- An existing **K3s/Kubernetes 1.29+** cluster with Ready nodes and a working dynamic
+- An existing, supported **K3s release** meeting the chart's Kubernetes 1.29+ constraint,
+  with Ready nodes and a working dynamic
   storage class. Review the [K3s requirements](https://docs.k3s.io/installation/requirements)
   and [quick start](https://docs.k3s.io/quick-start) if creating a new Linux cluster.
   Installing K3s changes the host; it is a separate infrastructure step.

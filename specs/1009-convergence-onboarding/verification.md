@@ -78,3 +78,32 @@ The isolated hosted chart tests also caught subprocesses using system `python3` 
 The dedicated acceptance workflow also targets native GitHub-hosted Ubuntu ARM64 runners, alongside x86_64, to test actual architecture behavior instead of inferring it from manifests. Results are recorded separately from merely configuring that matrix.
 
 Hosted Helm 3 testing found a successful smoke pod was deleted before `helm test --logs` could read it. The Victoria chart now retains that one completed hook pod until the next test (`before-hook-creation`), preserving inspectable evidence without accumulating test pods. This fixes the test command rather than suppressing its failure.
+
+## Broader inherited fork CI failures
+
+The full fork MCP matrix is not green and is not claimed as a pass:
+
+- Spec artifact gate: the 46 historical findings above.
+- FastMCP dependency contract: seven findings in existing fork servers, including
+  `convergence-case-mcp` missing the upstream tested FastMCP/MCP pins. This does not
+  affect the stdlib setup helpers or core container trial; investigation integration
+  needs its own dependency reconciliation before upstream porting.
+- Reconciliation startup fixture: the copied startup checker crashes inside the
+  fixture instead of reporting expected server results. These fixture/checker files
+  are unchanged by this onboarding PR.
+- Full unit collection: the isolated runner lacks `zstandard`, required by the
+  existing OpenClaw metrics SQLite tests. The targeted setup/chart suites pass;
+  this missing test dependency is not converted into a full-unit pass.
+
+These findings remain review gates for the fork. The clean upstream design-only
+proposal has all 32 hosted checks passing because it does not import fork history,
+optional servers or these existing test/declaration gaps.
+
+A hosted PostgreSQL restart exposed an acceptance-order bug: `/healthz` reports
+cached DB state, while a database-backed case read reopens the existing circuit
+breaker after recovery. The verifier polled cached health before issuing that read.
+A minimized regression reproduced the false failure; verification now reads scoped
+cases before evaluating health and rejects unavailable/empty fallback responses.
+No API recovery semantics were weakened. The fresh CI cluster pin was also updated
+to the verified current K3s release v1.37.1+k3s1; prior v1.33.5 evidence remains
+historical, not a recommendation to install an older release.

@@ -293,9 +293,9 @@ def check(repo, bundle, include_receiver=False):
         except Exception as exc:
             # Responses/exception messages may include private data or credentials.
             results.append({'check': name, 'status': 'fail', 'reason': type(exc).__name__})
-    probe('API and diary database', api_url+'/healthz', lambda d: d['features']['diary']=='available')
     probe('Site-scoped diary access', api_url+'/api/events?'+urlencode({'site': options['site'], 'limit': 1}),
           lambda d: not d.get('unavailable') and isinstance(d.get('events'), list), token)
+    probe('API and diary database', api_url+'/healthz', lambda d: d['features']['diary']=='available')
     def core_targets_up(data):
         targets = data['data']['activeTargets']
         return data['status']=='success' and all(
