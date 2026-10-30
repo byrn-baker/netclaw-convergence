@@ -15,11 +15,24 @@ metadata:
   name: {{ $root.Release.Name }}-{{ $component }}
   labels: {{ include "victoria-stack.labels" $root | nindent 4 }}
 spec:
+  {{- if eq $component "collector" }}
+  type: {{ $root.Values.collector.service.type }}
+  {{- end }}
   selector: {app.kubernetes.io/instance: {{ $root.Release.Name }}, app.kubernetes.io/component: {{ $component }}}
   ports:
-    - {name: http, port: {{ $port }}, targetPort: {{ $port }}}
+    - name: http
+      port: {{ $port }}
+      targetPort: {{ $port }}
+      {{- if and (eq $component "collector") $root.Values.collector.service.nodePort }}
+      nodePort: {{ $root.Values.collector.service.nodePort }}
+      {{- end }}
     {{- if eq $component "collector" }}
-    - {name: otlp-grpc, port: 4317, targetPort: 4317}
+    - name: otlp-grpc
+      port: 4317
+      targetPort: 4317
+      {{- if $root.Values.collector.service.grpcNodePort }}
+      nodePort: {{ $root.Values.collector.service.grpcNodePort }}
+      {{- end }}
     {{- with $root.Values.collector.extraServicePorts }}{{ toYaml . | nindent 4 }}{{- end }}
     {{- end }}
 ---
@@ -100,6 +113,9 @@ spec:
             {{- if eq $component "collector" }}
             {{- with $root.Values.collector.extraVolumeMounts }}{{ toYaml . | nindent 12 }}{{- end }}
             {{- end }}
+            {{- if eq $component "alertmanager" }}
+            {{- with $root.Values.alerting.extraVolumeMounts }}{{ toYaml . | nindent 12 }}{{- end }}
+            {{- end }}
       volumes:
         - name: config
           configMap: {name: {{ $root.Release.Name }}-victoria-config}
@@ -109,6 +125,9 @@ spec:
         {{- end }}
         {{- if eq $component "collector" }}
         {{- with $root.Values.collector.extraVolumes }}{{ toYaml . | nindent 8 }}{{- end }}
+        {{- end }}
+        {{- if eq $component "alertmanager" }}
+        {{- with $root.Values.alerting.extraVolumes }}{{ toYaml . | nindent 8 }}{{- end }}
         {{- end }}
   {{- if $stateful }}
   volumeClaimTemplates:

@@ -1,0 +1,46 @@
+# Home SSD placement: two disk replicas on the Mac mini, not two independent hosts.
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata: {name: longhorn-convergence-ssd}
+provisioner: driver.longhorn.io
+allowVolumeExpansion: true
+reclaimPolicy: Retain
+volumeBindingMode: Immediate
+parameters:
+  numberOfReplicas: '2'
+  staleReplicaTimeout: '30'
+  fsType: ext4
+  diskSelector: ssd
+  dataLocality: disabled
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata: {name: convergence-logs-live, namespace: netclaw-convergence}
+spec:
+  accessModes: [ReadWriteOnce]
+  storageClassName: longhorn-convergence-ssd
+  resources: {requests: {storage: 1Ti}}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata: {name: convergence-loki-live, namespace: netclaw-convergence}
+spec:
+  accessModes: [ReadWriteOnce]
+  storageClassName: longhorn-convergence-ssd
+  resources: {requests: {storage: 100Gi}}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata: {name: convergence-ids-live, namespace: netclaw-convergence}
+spec:
+  accessModes: [ReadWriteOnce]
+  storageClassName: longhorn-convergence-ssd
+  resources: {requests: {storage: 100Gi}}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata: {name: convergence-migration-backup, namespace: netclaw-convergence}
+spec:
+  accessModes: [ReadWriteOnce]
+  storageClassName: longhorn-convergence-ssd
+  resources: {requests: {storage: 100Gi}}

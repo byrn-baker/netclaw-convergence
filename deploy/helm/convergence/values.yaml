@@ -1,6 +1,10 @@
 victoria: {}
 nodeSelector: {}
 existingSecret: ''
+queryAccess:
+  enabled: false
+  metricsNodePort: 30429
+  logsNodePort: 30428
 siteConfig:
   home:
     name: Home
@@ -13,6 +17,7 @@ api:
   service: {type: ClusterIP, nodePort: null}
   rateLimitPerMinute: 1000
   idsEnabled: false
+  alertReceiverUrl: ''
   # All application secrets come from an independently managed K8s Secret.
   env: {}
   resources:
@@ -28,7 +33,8 @@ loki:
   enabled: true
   image: grafana/loki:3.1.0
   retention: 336h
-  storage: {className: longhorn, size: 10Gi}
+  storage: {className: longhorn, size: 10Gi, existingClaim: ''}
+  service: {type: ClusterIP, nodePort: null}
   resources:
     requests: {cpu: 100m, memory: 128Mi}
     limits: {cpu: '1', memory: 1Gi}
@@ -40,7 +46,7 @@ blackbox:
       http_2xx: {prober: http, timeout: 5s, http: {preferred_ip_protocol: ip4}}
       icmp: {prober: icmp, timeout: 5s, icmp: {preferred_ip_protocol: ip4}}
       tcp_connect: {prober: tcp, timeout: 5s}
-# Future cutover sources are explicitly enabled; no devices are reconfigured.
+# Optional device sources are explicitly enabled; no devices are reconfigured.
 unifi:
   enabled: false
   image: python:3.12-alpine
@@ -48,3 +54,23 @@ unifi:
 pushgateway:
   enabled: true
   image: prom/pushgateway:v1.10.0
+speedtest:
+  enabled: false
+  image: python:3.12-slim
+  site: home
+  intervalSeconds: 3600
+flowLogs:
+  enabled: false
+  config: {}
+  stateDirectory: ''
+ids:
+  enabled: false
+  replicas: 1
+  image: {repository: netclaw-ids-ingest, tag: '', pullPolicy: IfNotPresent}
+  existingSecret: ''
+  existingClaim: ''
+  service: {type: ClusterIP, nodePort: null}
+  resources:
+    requests: {cpu: 100m, memory: 512Mi}
+    limits: {cpu: '2', memory: 6Gi}
+  ipContextSchedule: '17 4 * * *'

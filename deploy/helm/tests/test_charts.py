@@ -44,6 +44,7 @@ def test_convergence_parallel_profile_keeps_writes_local_and_secrets_external():
     values={e['name']:e.get('value') for e in container['env']}
     assert values['ALERT_RECEIVER_URL']==''
     assert values['PROMETHEUS_URL']=='http://convergence-metrics:8428'
+    assert values['VICTORIAMETRICS_URL']=='http://convergence-metrics:8428'
     assert values['API_RATE_LIMIT_PER_MINUTE']=='1000'
     assert container['envFrom']==[{'secretRef':{'name':'convergence-secrets'}}]
     assert not any(d['kind']=='Secret' for d in objects)
@@ -62,6 +63,37 @@ def test_convergence_parallel_profile_keeps_writes_local_and_secrets_external():
 def test_chart_rejects_missing_application_credentials():
     p=subprocess.run([HELM,'template','test',str(CHART/'convergence'),'--set','api.image.tag=test'],capture_output=True,text=True)
     assert p.returncode and 'existingSecret' in p.stderr
+
+
+def test_live_profile_moves_storage_and_collection_without_embedding_secrets():
+    subprocess.run(['python3',str(CHART/'scripts/build-live-profile.py'),'--check'],check=True,capture_output=True)
+    objects=render('convergence','convergence','netclaw-convergence','-f',str(CHART/'profiles/convergence-home-live.yaml'))
+    assert not any(d['kind']=='Secret' for d in objects)
+    config=next(d for d in objects if d['kind']=='ConfigMap' and d['metadata']['name']=='convergence-victoria-config')
+    assert 'federate' not in config['data']['agent.yml'] and '192.168.3.252:9090' not in config['data']['agent.yml']
+    collector=yaml.safe_load(config['data']['collector.yml'])
+    assert len([k for k in collector['receivers'] if k.startswith('snmp/')])==3
+    assert 'prometheus/ids' in collector['receivers']
+    ids=next(d for d in objects if d['kind']=='Deployment' and d['metadata']['name']=='convergence-ids')
+    assert ids['spec']['strategy']['type']=='Recreate'
+    assert ids['spec']['template']['spec']['volumes'][0]['persistentVolumeClaim']['claimName']=='convergence-ids-live'
+    assert ids['spec']['template']['spec']['containers'][0]['startupProbe']['httpGet']['scheme']=='HTTPS'
+    am=yaml.safe_load(config['data']['alertmanager.yml'])
+    webhook=am['receivers'][0]['webhook_configs'][0]
+    assert webhook['http_config']['authorization']['credentials_file']=='/run/secrets/receiver-token'
+    assert webhook['url']=='http://192.168.3.252:8099/webhook'
+    services={d['metadata']['name']:d for d in objects if d['kind']=='Service'}
+    for name in ('metrics','logs'):
+        assert services[f'convergence-{name}-access']['spec']['selector']==services[f'convergence-{name}']['spec']['selector']
+    flows=next(d for d in objects if d['kind']=='DaemonSet' and d['metadata']['name']=='convergence-flow-logs')
+    assert flows['spec']['template']['spec']['automountServiceAccountToken'] is False
+    flow_config=next(d for d in objects if d['kind']=='ConfigMap' and d['metadata']['name']=='convergence-flow-logs')
+    assert 'http://convergence-logs:9428/' in flow_config['data']['collector.yaml']
+    assert '192.168.3.252:9428' not in flow_config['data']['collector.yaml']
+    relay=yaml.safe_load((CHART/'host-relay/otel.yaml').read_text())
+    assert all(k.startswith('syslog/') for k in relay['receivers'])
+    assert set(relay['service']['pipelines'])=={'logs/devices'}
+    assert relay['exporters']['otlphttp/k3s']['sending_queue']['queue_size']==512
 
 
 def registrar():

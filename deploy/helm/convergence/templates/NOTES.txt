@@ -5,5 +5,5 @@ Application credentials: Secret {{ .Values.existingSecret }} (never included in 
 Run: helm test {{ .Release.Name }} -n {{ .Release.Namespace }} --logs
 Then run deploy/helm/scripts/verify-convergence.py {{ .Release.Namespace }} {{ .Release.Name }}
 
-Existing Docker services and HUD routing are unchanged. Case history is not migrated.
+Helm manages this data plane. External clients and historical data require an explicit cutover.
 Alerts are quiet unless explicitly configured otherwise in this release's values.

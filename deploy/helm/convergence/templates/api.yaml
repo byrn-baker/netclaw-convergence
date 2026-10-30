@@ -56,10 +56,11 @@ spec:
             - {name: PORT, value: '3000'}
             - {name: PGHOST, value: '{{ .Release.Name }}-postgres'}
             - {name: PROMETHEUS_URL, value: 'http://{{ .Release.Name }}-metrics:8428'}
+            - {name: VICTORIAMETRICS_URL, value: 'http://{{ .Release.Name }}-metrics:8428'}
             - {name: LOKI_URL, value: 'http://{{ .Release.Name }}-loki:3100'}
             - {name: FLOW_VICTORIALOGS_URL, value: 'http://{{ .Release.Name }}-logs:9428'}
             - {name: ALERTMANAGER_URL, value: 'http://{{ .Release.Name }}-alertmanager:9093'}
-            - {name: ALERT_RECEIVER_URL, value: ''}
+            - {name: ALERT_RECEIVER_URL, value: {{ .Values.api.alertReceiverUrl | quote }}}
             {{- if .Values.api.idsEnabled }}
             - {name: NODE_EXTRA_CA_CERTS, value: /run/secrets/ids/ca.crt}
             {{- end }}

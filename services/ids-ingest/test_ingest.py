@@ -68,6 +68,26 @@ class IngestionTests(unittest.TestCase):
         self.store.prune(now=time.time()+90*86400)
         self.assertEqual(len(self.store.pending('case')), 1, 'Undelivered cases must never expire')
 
+    def test_pruning_is_bounded_resumes_and_keeps_undelivered_evidence(self):
+        old = time.time()-40*86400
+        self.store.accept(self.sensor, [event(now=old, src_port=n) for n in range(6)], self.hb, now=old)
+        rows = self.store.pending('log')
+        for target in ('log', 'case'):
+            self.store.acknowledge(target, [r['id'] for r in rows[1:]])
+        self.assertTrue(self.store.prune(limit=2))
+        self.assertEqual(self.store.db.execute('SELECT count(*) FROM eve').fetchone()[0], 5)
+        self.store.db.close()
+        self.store = Store(self.path)
+        self.assertTrue(self.store.prune(limit=2))
+        self.assertEqual(self.store.db.execute('SELECT count(*) FROM eve').fetchone()[0], 3)
+        self.assertTrue(self.store.prune(limit=2))
+        self.assertFalse(self.store.prune(limit=2))
+        self.assertEqual([r['id'] for r in self.store.pending('log')], [rows[0]['id']])
+        for target in ('log', 'case'):
+            self.store.acknowledge(target, [rows[0]['id']])
+        self.assertFalse(self.store.prune(limit=2))
+        self.assertEqual(self.store.db.execute('SELECT count(*) FROM eve').fetchone()[0], 0)
+
     def test_full_queue_rolls_back_entire_batch(self):
         self.store.capacity = 1
         with self.assertRaises(OverflowError):

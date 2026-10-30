@@ -240,17 +240,30 @@ class Store:
                 self.db.execute('INSERT INTO metadata VALUES(?,?) ON CONFLICT(key) DO UPDATE SET value=excluded.value',
                                 ('delivery_success_'+target, int(time.time())))
 
-    def prune(self, now=None):
+    def prune(self, now=None, limit=512):
+        """Inspect one bounded rowid range; retain progress across restarts."""
+        if limit < 1:
+            raise ValueError('Prune limit must be positive')
         now = time.time() if now is None else now
         with self.lock, self.db:
+            row = self.db.execute("SELECT value FROM metadata WHERE key='prune_cursor'").fetchone()
+            cursor = row[0] if row else 0
+            rows = self.db.execute('SELECT rowid FROM eve WHERE rowid>? ORDER BY rowid LIMIT ?',
+                                   (cursor, limit)).fetchall()
+            end = rows[-1][0] if rows else cursor
             # Never expire an undelivered row. Upstream outage becomes explicit backpressure.
             archive_guard = ''
             if self.archive_enabled:
                 archive_guard = """ AND archive_done=1 AND (rowid <=
                     (SELECT value FROM metadata WHERE key='archive_backfill_cursor') OR rowid >
                     (SELECT value FROM metadata WHERE key='archive_backfill_end'))"""
-            self.db.execute("DELETE FROM eve WHERE log_done=1 AND case_done=1"+archive_guard+" AND received_ns < ? AND (kind!='alert' OR received_ns < ?)",
-                            (int((now-86400)*1e9), int((now-30*86400)*1e9)))
+            # Force a rowid range scan. The delivery indexes otherwise make
+            # SQLite revisit millions of acknowledged, retained alerts.
+            self.db.execute("DELETE FROM eve NOT INDEXED WHERE rowid>? AND rowid<=? AND log_done=1 AND case_done=1"+archive_guard+" AND received_ns < ? AND (kind!='alert' OR received_ns < ?)",
+                            (cursor, end, int((now-86400)*1e9), int((now-30*86400)*1e9)))
+            more = len(rows) == limit
+            self.db.execute("INSERT OR REPLACE INTO metadata VALUES('prune_cursor',?)", (end if more else 0,))
+            return more
 
     def status(self, configured, site, now=None):
         now = time.time() if now is None else now

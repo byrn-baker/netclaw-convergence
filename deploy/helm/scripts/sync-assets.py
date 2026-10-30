@@ -5,6 +5,7 @@ from pathlib import Path
 import yaml
 root=Path(__file__).resolve().parents[3]
 pairs={
+ 'deploy/convergence/speedtest/run.py':'deploy/helm/convergence/files/speedtest.py',
  'deploy/convergence/adapters/unifi/exporter.py':'deploy/helm/convergence/files/unifi-exporter.py',
  'deploy/convergence/loki/rules/fake/convergence-security.yml':'deploy/helm/convergence/files/loki-security.yml',
 }

@@ -41,7 +41,7 @@ def create_app(config, store, client_factory=httpx.AsyncClient):
                 try:
                     if target == 'archive':
                         store.schedule_backfill()
-                    rows = store.pending(target, limit=512 if target == 'archive' else 128)
+                    rows = store.pending(target, limit=128 if target == 'case' else 512)
                     if not rows:
                         await asyncio.sleep(0.2)
                         continue
@@ -94,8 +94,8 @@ def create_app(config, store, client_factory=httpx.AsyncClient):
 
     async def prune():
         while True:
-            store.prune()
-            await asyncio.sleep(3600)
+            more = store.prune()
+            await asyncio.sleep(0.2 if more else 3600)
 
     @asynccontextmanager
     async def lifespan(app):

@@ -10,8 +10,17 @@ metadata:
   name: {{ $root.Release.Name }}-{{ $component }}
   labels: {{ include "convergence.labels" $root | nindent 4 }}
 spec:
+  {{- if eq $component "loki" }}
+  type: {{ $cfg.service.type }}
+  {{- end }}
   selector: {app.kubernetes.io/instance: {{ $root.Release.Name }}, app.kubernetes.io/component: {{ $component }}}
-  ports: [{name: http, port: {{ $port }}, targetPort: {{ $port }}}]
+  ports:
+    - name: http
+      port: {{ $port }}
+      targetPort: {{ $port }}
+      {{- if and (eq $component "loki") $cfg.service.nodePort }}
+      nodePort: {{ $cfg.service.nodePort }}
+      {{- end }}
 ---
 apiVersion: apps/v1
 kind: StatefulSet
@@ -66,12 +75,17 @@ spec:
       volumes:
         - {name: config, configMap: {name: '{{ $root.Release.Name }}-application-config'}}
         - {name: rules, configMap: {name: '{{ $root.Release.Name }}-loki-rules'}}
+        {{- if $cfg.storage.existingClaim }}
+        - {name: data, persistentVolumeClaim: {claimName: {{ $cfg.storage.existingClaim }}}}
+        {{- end }}
       {{- end }}
+  {{- if not $cfg.storage.existingClaim }}
   volumeClaimTemplates:
     - metadata: {name: data}
       spec:
         storageClassName: {{ $cfg.storage.className | quote }}
         accessModes: [ReadWriteOnce]
         resources: {requests: {storage: {{ $cfg.storage.size }}}}
+  {{- end }}
 {{- end }}
 {{- end }}

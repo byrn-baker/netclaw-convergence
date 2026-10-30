@@ -6,29 +6,30 @@ Each release gets its own namespace, stores, durable queues, rules and Grafana
 UIDs. One existing Grafana can browse every project's data sources and dashboard
 copies. Neither chart installs another Grafana or a cluster-wide operator.
 
-The home release is `convergence` in `netclaw-convergence`, alongside the existing
-Docker stack and the older `observability` namespace. Docker remains authoritative:
-its volumes, sensor destinations, agent receiver and HUD routes are unchanged.
-The new case database starts empty; it is not a migration of investigation history.
-This namespace is now managed by Helm; apply legacy Kustomize deployments to a
-different namespace rather than mixing ownership of these resource names.
+The home production release is `convergence` in `netclaw-convergence`, using
+`profiles/convergence-home-live.yaml`. Its metrics, logs, cases and IDS ingestion
+run on K3s; the existing `observability` namespace supplies shared Grafana and
+GoFlow2 capture. The VM supplies the NetClaw agent/HUD and bounded log forwarding.
+See [the home cutover runbook](HOME-CUTOVER.md) for endpoints, storage, verification
+and rollback. The original `convergence-home.yaml` remains a **preview-only**
+profile; do not apply it to the live release.
 
 ```mermaid
 flowchart LR
-  D[Current Docker Prometheus] -->|read-only preview federation| A[Project vmagent]
-  A --> M[(Project VictoriaMetrics)]
-  T[Project OTLP / syslog] --> O[Project OTel collector]
-  O --> L[(Project VictoriaLogs)]
-  O --> K[(Project Loki compatibility)]
-  O --> M
-  M --> R[Project vmalert]
-  R --> Q[Project Alertmanager: quiet during preview]
-  G[Existing shared Grafana] --> M
+  D[Devices / probes] --> O[K3s collector]
+  H[VM syslog and host-log relays] --> O
+  S[home-ids-01 Suricata] --> I[K3s IDS ingestion]
+  O --> M[(VictoriaMetrics)]
+  O --> L[(VictoriaLogs and Loki)]
+  I --> L
+  I --> A[VM agent receiver]
+  A --> C[K3s Convergence API]
+  C --> P[(PostgreSQL cases)]
+  U[NetClaw HUD] --> C
+  C --> M
+  C --> L
+  G[Shared Grafana] --> M
   G --> L
-  G --> K
-  C[Project Convergence API] --> M
-  C --> K
-  C --> P[(Project PostgreSQL)]
 ```
 
 ## Included services
@@ -39,7 +40,7 @@ flowchart LR
 | vmagent with persistent remote-write queue | Loki compatibility for existing LogQL queries/rules |
 | vmalert and persistent Alertmanager | Blackbox and Pushgateway; optional UniFi exporter |
 | OTel collector with persistent log-delivery queue | Existing syslog parsers and project dashboard copies |
-| Optional registration into shared Grafana | Read-only host IDS status integration |
+| Optional registration into shared Grafana | Optional IDS ingestion, GeoIP updates, speed tests and flow-log forwarding |
 
 The Victoria storage charts are pinned official upstream dependencies; see the
 tracked `Chart.lock` files. vmagent/vmalert use the matching metrics version.
@@ -84,7 +85,7 @@ are ClusterIP by default. Namespace separation gives independent stores and
 configuration; it is not an authentication or hostile-tenant network boundary.
 Release names are limited to 40 characters to leave room for component suffixes.
 
-## Dedicated Convergence parallel release
+## Initial parallel preview (historical staging procedure)
 
 ```sh
 export KUBECONFIG=/home/ubuntu/k3s-observability-stack/kubeconfig
@@ -223,7 +224,7 @@ Primary references: [VictoriaMetrics chart](https://docs.victoriametrics.com/hel
 [VictoriaLogs chart](https://docs.victoriametrics.com/helm/victoria-logs-single/),
 [Grafana provisioning](https://grafana.com/docs/grafana/latest/administration/provisioning/).
 
-## Home acceptance
+## Original preview acceptance
 
 The parallel release passed chart linting, seven focused tests, Kubernetes server
 validation, and live Helm tests for direct metric/log and OTLP round trips. A
