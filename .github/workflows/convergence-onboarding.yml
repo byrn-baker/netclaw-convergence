@@ -7,6 +7,7 @@ on:
       - 'deploy/helm/**'
       - 'deploy/convergence/docker-compose.yml'
       - 'ui/convergence-api/**'
+      - 'scripts/write-env.py'
       - 'tests/unit/test_convergence_setup*'
       - 'docs/convergence/**'
       - '.github/workflows/convergence-onboarding.yml'
@@ -17,7 +18,11 @@ permissions:
 
 jobs:
   docker-trial:
-    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, ubuntu-24.04-arm]
+    runs-on: ${{ matrix.os }}
     timeout-minutes: 15
     defaults:
       run:
@@ -61,7 +66,11 @@ jobs:
           fi
 
   k3s-release:
-    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, ubuntu-24.04-arm]
+    runs-on: ${{ matrix.os }}
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
@@ -75,14 +84,19 @@ jobs:
         run: |
           mkdir -p "$RUNNER_TEMP/convergence-tools"
           cd "$RUNNER_TEMP/convergence-tools"
-          curl -fsSLO https://github.com/k3d-io/k3d/releases/download/v5.9.0/k3d-linux-amd64
+          case "$(uname -m)" in
+            x86_64) k3d_arch=amd64 ;;
+            aarch64) k3d_arch=arm64 ;;
+            *) echo "Unsupported test runner architecture" >&2; exit 1 ;;
+          esac
+          export K3D_ASSET="k3d-linux-$k3d_arch"
+          curl -fsSL "https://github.com/k3d-io/k3d/releases/download/v5.9.0/$K3D_ASSET" -o k3d
           curl -fsSLO https://github.com/k3d-io/k3d/releases/download/v5.9.0/checksums.txt
           python3 - <<'PY'
           from pathlib import Path
-          import hashlib
-          actual=hashlib.sha256(Path('k3d-linux-amd64').read_bytes()).hexdigest()
-          assert any(line.split()[0]==actual and Path(line.split()[-1]).name=='k3d-linux-amd64' for line in Path('checksums.txt').read_text().splitlines())
-          Path('k3d-linux-amd64').rename('k3d')
+          import hashlib, os
+          actual=hashlib.sha256(Path('k3d').read_bytes()).hexdigest()
+          assert any(line.split()[0]==actual and Path(line.split()[-1]).name==os.environ['K3D_ASSET'] for line in Path('checksums.txt').read_text().splitlines())
           Path('k3d').chmod(0o700)
           PY
           echo "$RUNNER_TEMP/convergence-tools" >> "$GITHUB_PATH"

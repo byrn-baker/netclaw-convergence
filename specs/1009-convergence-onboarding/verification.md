@@ -74,3 +74,5 @@ and [upstream scope proposal #309](https://github.com/automateyournetwork/netcla
 Neither PR is a live deployment or a full upstream implementation release.
 
 The isolated hosted chart tests also caught subprocesses using system `python3` instead of the test virtualenv, losing PyYAML. Updated those existing test helper calls to `sys.executable`; end-user setup remains stdlib-only.
+
+The dedicated acceptance workflow also targets native GitHub-hosted Ubuntu ARM64 runners, alongside x86_64, to test actual architecture behavior instead of inferring it from manifests. Results are recorded separately from merely configuring that matrix.
