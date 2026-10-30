@@ -4,6 +4,7 @@
 The EVE files are the durable spool. Unacknowledged files are never pruned.
 Unexpected/oversized records stop shipping and are reported, never silently lost.
 """
+import http.client
 import json
 import logging
 import os
@@ -13,7 +14,7 @@ import shutil
 import ssl
 import subprocess
 import time
-import urllib.request
+from urllib.parse import urlsplit
 
 
 def heartbeat(root):
@@ -36,11 +37,69 @@ def heartbeat(root):
             'disk_free_bytes': shutil.disk_usage(root).free, 'capture_probe': probe}
 
 
+class HeartbeatCache:
+    """Avoid a Docker subprocess per batch while bounding health staleness."""
+    def __init__(self, root, ttl=5, clock=time.monotonic):
+        self.root, self.ttl, self.clock = root, ttl, clock
+        self.value, self.expires = None, 0
+
+    def get(self):
+        if self.value is None or self.clock() >= self.expires:
+            self.value = heartbeat(self.root)
+            self.expires = self.clock()+self.ttl
+        return self.value
+
+
+class DeliveryError(RuntimeError):
+    def __init__(self, status):
+        self.status = status
+        super().__init__(f'HTTP {status}')
+
+
+class PersistentHTTPS:
+    """One verified TLS connection; failures return to the durable retry loop.
+
+    Never retry a POST internally: the server might have committed before a
+    disconnect. The outer loop retains the cursor and resends the same events,
+    which the ingestion service deduplicates before durable acknowledgement.
+    """
+    def __init__(self, endpoint, context, token):
+        url = urlsplit(endpoint)
+        if url.scheme != 'https' or not url.hostname or url.username or url.password or url.fragment:
+            raise ValueError('Sensor delivery requires an HTTPS endpoint without userinfo or fragment')
+        self.target = (url.path or '/')+('?' + url.query if url.query else '')
+        self.headers = {'Authorization': 'Bearer '+token, 'Content-Type': 'application/json'}
+        self.connection = http.client.HTTPSConnection(url.hostname, url.port or 443,
+                                                     context=context, timeout=30)
+
+    def post(self, payload):
+        if len(payload) > 1048576:
+            raise ValueError('Serialized batch exceeds receiver limit; retaining source records')
+        try:
+            self.connection.request('POST', self.target, body=payload, headers=self.headers)
+            response = self.connection.getresponse()
+            # Consume each response before reuse, with a bounded ACK size.
+            body = response.read(65537)
+            if len(body) > 65536:
+                raise ValueError('Oversized delivery acknowledgement')
+            if not 200 <= response.status < 300:
+                raise DeliveryError(response.status)
+            return json.loads(body)
+        except Exception:
+            self.close()
+            raise
+
+    def close(self):
+        # HTTPSConnection reconnects lazily on the next request after close(),
+        # including idle connections closed by the server.
+        self.connection.close()
+
+
 def read_batch(path, offset, max_bytes=524288):
-    events, consumed = [], offset
+    events, consumed, wire_bytes = [], offset, 2
     with path.open('rb') as stream:
         stream.seek(offset)
-        while len(events) < 128:
+        while len(events) < 256:
             start = stream.tell()
             line = stream.readline(262146)
             if not line or not line.endswith(b'\n'):
@@ -52,7 +111,15 @@ def read_batch(path, offset, max_bytes=524288):
             event = json.loads(line)
             if event.get('event_type') not in ('alert', 'stats', 'flow', 'dns', 'tls'):
                 raise ValueError(f'Unexpected event type at {path.name}:{start}; review EVE configuration')
+            # Bound the serialized body too: numbers and escapes can grow when
+            # decoded and re-encoded. Leave half the receiver's 1 MiB limit for
+            # the envelope and heartbeat; never split or skip a source record.
+            encoded_bytes = len(json.dumps(event, separators=(',', ':'),
+                                          ensure_ascii=False, allow_nan=False).encode())
+            if events and wire_bytes+encoded_bytes+1 > max_bytes:
+                break
             events.append(event)
+            wire_bytes += encoded_bytes+1
             consumed = stream.tell()
     return events, consumed
 
@@ -158,29 +225,48 @@ def main():
     token = Path(os.environ['IDS_TOKEN_FILE']).read_text().strip()
     state = sqlite3.connect(root/'shipper.sqlite')
     spool = EveSpool(root, state)
+    health = HeartbeatCache(root)
+    client = PersistentHTTPS(endpoint, context, token)
     last_heartbeat = 0
     backoff = 1
-    while True:
-        try:
-            selected = spool.next_batch()
-            events = selected['events'] if selected else []
-            if not events and time.time()-last_heartbeat < 30:
-                time.sleep(1)
-                continue
-            payload = json.dumps({'events': events, 'heartbeat': heartbeat(root)}, allow_nan=False).encode()
-            request = urllib.request.Request(endpoint, data=payload,
-                headers={'Authorization': 'Bearer '+token, 'Content-Type': 'application/json'})
-            with urllib.request.urlopen(request, context=context, timeout=30) as response:
-                ack = json.load(response)
-            if ack.get('status') != 'accepted' or ack.get('received') != len(events):
-                raise RuntimeError('Receiver did not acknowledge the complete batch')
-            if selected:
-                spool.acknowledge(selected)
-            last_heartbeat, backoff = time.time(), 1
-        except Exception as exc:
-            logging.warning('Delivery paused (%s); retaining EVE and cursor; retry in %ss', type(exc).__name__, backoff)
-            time.sleep(backoff)
-            backoff = min(backoff*2, 30)
+    progress_at = time.monotonic()
+    progress = {'live': 0, 'history': 0, 'batches': 0, 'bytes': 0}
+    try:
+        while True:
+            try:
+                selected = spool.next_batch()
+                events = selected['events'] if selected else []
+                if not events and time.time()-last_heartbeat < 30:
+                    time.sleep(1)
+                    continue
+                payload = json.dumps({'events': events, 'heartbeat': health.get()},
+                                     separators=(',', ':'), ensure_ascii=False, allow_nan=False).encode()
+                ack = client.post(payload)
+                if (not isinstance(ack, dict) or ack.get('status') != 'accepted' or
+                    type(ack.get('received')) is not int or ack['received'] != len(events)):
+                    raise RuntimeError('Receiver did not acknowledge the complete batch')
+                if selected:
+                    spool.acknowledge(selected)
+                    progress[selected['channel']] += len(events)
+                progress['batches'] += 1
+                progress['bytes'] += len(payload)
+                last_heartbeat, backoff = time.time(), 1
+                elapsed = time.monotonic()-progress_at
+                if elapsed >= 60:
+                    logging.info('Delivery progress: live_events=%d history_events=%d batches=%d wire_KiB_s=%.1f interval_s=%.1f',
+                                 progress['live'], progress['history'], progress['batches'],
+                                 progress['bytes']/1024/elapsed, elapsed)
+                    progress_at = time.monotonic()
+                    progress = {'live': 0, 'history': 0, 'batches': 0, 'bytes': 0}
+            except Exception as exc:
+                client.close()
+                logging.warning('Delivery paused (%s, HTTP %s); retaining EVE and cursor; retry in %ss',
+                                type(exc).__name__, getattr(exc, 'status', None), backoff)
+                time.sleep(backoff)
+                backoff = min(backoff*2, 30)
+    finally:
+        client.close()
+        state.close()
 
 
 if __name__ == '__main__':

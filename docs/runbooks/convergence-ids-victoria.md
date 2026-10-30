@@ -227,6 +227,30 @@ after complete ingest acknowledgement. Live-prefix records are retained for
 historical replay, and canonical ingest identities deduplicate the overlap.
 Rotation, partial lines and a shipper restart preserve the original history.
 
+The sensor shipper sends up to 256 EVE records per request, bounded by both source
+bytes and serialized JSON size. It reuses one verified HTTPS connection and
+refreshes its Docker/rule/probe heartbeat snapshot at least every five seconds
+while shipping. The receiver's 256-record / 1 MiB limits remain unchanged.
+A failed request, incomplete ACK or lost response closes the connection and
+retries from the unchanged durable cursor; there is no internal POST retry.
+SQLite synchronous commits and the four-live-to-one-history scheduling policy
+remain unchanged. Completed history alone still authorizes spool pruning.
+
+Once per minute, the shipper logs acknowledged live/history event counts,
+batch count and total wire KiB/s. This wire rate includes overlap and live traffic;
+it is not the net backlog drain rate. Estimate replay completion from two or more
+samples of remaining historical file bytes minus acknowledged cursor offsets,
+accounting for new files/traffic. A healthy live feed does not require the entire
+historical replay to finish.
+
+For a shipper upgrade, stage and compile the new Python script, briefly stop only
+`netclaw-ids-shipper`, retain a copy of its previous script and a consistent SQLite
+cursor backup, atomically replace the script, and start the service. Suricata
+capture stays running. Verify cursor continuity, live status and net backlog
+reduction. To roll back the code, restore the previous script and restart the
+shipper; keep the current cursor database so acknowledged progress is preserved.
+Do not reset or restore older cursors merely to change shipper versions.
+
 Case delivery sends up to 128 alerts in one receiver request and commits its
 inbox ACK only after the receiver confirms the complete alert count. A partial
 admission is retried against the receiver's durable deduplication keys. Half of

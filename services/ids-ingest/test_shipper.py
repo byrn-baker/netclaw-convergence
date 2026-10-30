@@ -73,7 +73,7 @@ def test_restart_preserves_live_ack_and_original_history_cursor(spool):
     history = restarted._history_batch([old, live])
     restarted.acknowledge(history)
     again = shipper.EveSpool(live.parent.parent, state, live_tail_bytes=1024)
-    assert again._history_batch([old, live])['events'][0]['n'] == 128
+    assert again._history_batch([old, live])['events'][0]['n'] == len(history['events'])
 
 
 def test_rotation_keeps_unacknowledged_live_tail_and_history(spool):
@@ -135,8 +135,182 @@ def test_initial_live_tail_does_not_checkpoint_inside_unfinished_record(spool):
 def test_existing_history_cursor_is_preserved_on_upgrade(spool):
     queue, state, old, live = spool
     history = queue._history_batch([old])
+    # Seed a checkpoint made by the original 128-record shipper.
+    with old.open('rb') as stream:
+        for _ in range(128):
+            stream.readline()
+        history['consumed'] = stream.tell()
     queue.acknowledge(history)
     state.execute('DROP TABLE live_cursors')
     upgraded = shipper.EveSpool(live.parent.parent, state, live_tail_bytes=1024)
     upgraded.acknowledge(upgraded.next_batch())
     assert upgraded._history_batch([old])['events'][0]['n'] == 128
+
+
+def test_replay_batches_use_receiver_capacity_without_skipping_records(tmp_path):
+    path = tmp_path/'eve.json'
+    records(path, 300, 'history')
+    events, end = shipper.read_batch(path, 0)
+    assert len(events) == 256
+    rest, final = shipper.read_batch(path, end)
+    assert [e['n'] for e in events+rest] == list(range(300))
+    assert final == path.stat().st_size
+
+
+def test_heartbeat_cache_refreshes_health_after_short_ttl(monkeypatch, tmp_path):
+    clock = [10.0]
+    observed = []
+    def health(root):
+        observed.append(root)
+        return {'capture_running': len(observed) == 1}
+    monkeypatch.setattr(shipper, 'heartbeat', health)
+    cache = shipper.HeartbeatCache(tmp_path, ttl=5, clock=lambda: clock[0])
+    assert cache.get()['capture_running'] is True
+    clock[0] = 14.9
+    assert cache.get()['capture_running'] is True
+    assert len(observed) == 1
+    clock[0] = 15.0
+    assert cache.get()['capture_running'] is False
+    assert len(observed) == 2
+
+
+@pytest.fixture
+def tls_receiver(tmp_path):
+    """Real HTTP/1.1 over verified TLS, including server-side disconnects."""
+    import http.server
+    import ssl
+    import subprocess
+    import threading
+    cert, key = tmp_path/'cert.pem', tmp_path/'key.pem'
+    subprocess.run(['openssl', 'req', '-x509', '-newkey', 'rsa:2048', '-nodes',
+                    '-keyout', str(key), '-out', str(cert), '-days', '1',
+                    '-subj', '/CN=localhost', '-addext', 'subjectAltName=DNS:localhost'],
+                   check=True, capture_output=True)
+    class Handler(http.server.BaseHTTPRequestHandler):
+        protocol_version = 'HTTP/1.1'
+        def log_message(self, *args):
+            pass
+        def do_POST(self):
+            assert self.headers['Authorization'] == 'Bearer test-only-token'
+            body = self.rfile.read(int(self.headers['Content-Length']))
+            data = json.loads(body)
+            self.server.payloads.append(data)
+            status, ack, disconnect = self.server.replies.pop(0) if self.server.replies else (
+                200, {'status': 'accepted', 'received': len(data['events'])}, False)
+            if status is None:
+                # The server received the body, but its ACK was lost.
+                self.close_connection = True
+                return
+            response = json.dumps(ack).encode()
+            self.send_response(status)
+            self.send_header('Content-Length', str(len(response)))
+            if disconnect:
+                self.send_header('Connection', 'close')
+            self.end_headers()
+            self.wfile.write(response)
+            self.wfile.flush()
+    class Server(http.server.ThreadingHTTPServer):
+        daemon_threads = True
+        def get_request(self):
+            request = super().get_request()
+            self.connections += 1
+            return request
+    server = Server(('127.0.0.1', 0), Handler)
+    server.connections, server.payloads, server.replies = 0, [], []
+    context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+    context.load_cert_chain(cert, key)
+    server.socket = context.wrap_socket(server.socket, server_side=True)
+    thread = threading.Thread(target=server.serve_forever, daemon=True)
+    thread.start()
+    try:
+        yield server, ssl.create_default_context(cafile=str(cert)), cert
+    finally:
+        server.shutdown()
+        server.server_close()
+        thread.join(timeout=3)
+
+
+def test_https_transport_reuses_connection_and_reconnects_after_server_close(tls_receiver):
+    server, context, _ = tls_receiver
+    server.replies = [(200, {'status': 'accepted', 'received': 0}, False),
+                      (200, {'status': 'accepted', 'received': 0}, True)]
+    client = shipper.PersistentHTTPS('https://localhost:'+str(server.server_port)+'/v1/eve',
+                                    context, 'test-only-token')
+    try:
+        for expected_connections in [1, 1, 2]:
+            assert client.post(b'{"events":[]}')['status'] == 'accepted'
+            assert server.connections == expected_connections
+    finally:
+        client.close()
+
+
+def test_delivery_errors_and_partial_acks_retry_identical_spool_batch(monkeypatch, tmp_path, tls_receiver):
+    server, _, cert = tls_receiver
+    root = tmp_path/'sensor'
+    (root/'logs').mkdir(parents=True)
+    records(root/'logs/eve-current.json', 256, 'live')
+    token = root/'token'
+    token.write_text('test-only-token')
+    for key, value in {'IDS_SENSOR_ROOT': str(root), 'IDS_CA_FILE': str(cert),
+                       'IDS_TOKEN_FILE': str(token),
+                       'IDS_INGEST_URL': 'https://localhost:'+str(server.server_port)+'/v1/eve'}.items():
+        monkeypatch.setenv(key, value)
+    server.replies = [(503, {'error': 'backpressure'}, False),
+                      (200, {'status': 'accepted', 'received': 1}, False),
+                      (None, {}, True)]
+    checked = []
+    monkeypatch.setattr(shipper, 'heartbeat', lambda root: {'capture_running': True})
+    def retry_sleep(delay):
+        db = sqlite3.connect(root/'shipper.sqlite')
+        try:
+            assert db.execute('SELECT offset FROM live_cursors').fetchone()[0] == 0
+            assert db.execute('SELECT count(*) FROM cursors').fetchone()[0] == 0
+            checked.append(delay)
+        finally:
+            db.close()
+    monkeypatch.setattr(shipper.time, 'sleep', retry_sleep)
+    original = shipper.EveSpool
+    class StopAfterAck(original):
+        def acknowledge(self, batch):
+            super().acknowledge(batch)
+            raise KeyboardInterrupt
+    monkeypatch.setattr(shipper, 'EveSpool', StopAfterAck)
+    with pytest.raises(KeyboardInterrupt):
+        shipper.main()
+    assert checked == [1, 2, 4]
+    assert len(server.payloads) == 4
+    assert all(payload['events'] == server.payloads[0]['events'] for payload in server.payloads)
+    assert len(server.payloads[-1]['events']) == 256
+    db = sqlite3.connect(root/'shipper.sqlite')
+    try:
+        assert db.execute('SELECT offset FROM live_cursors').fetchone()[0] == (root/'logs/eve-current.json').stat().st_size
+    finally:
+        db.close()
+
+
+def test_untrusted_tls_never_reaches_receiver(tls_receiver):
+    import ssl
+    server, _, _ = tls_receiver
+    client = shipper.PersistentHTTPS('https://localhost:'+str(server.server_port)+'/v1/eve',
+                                    ssl.create_default_context(), 'test-only-token')
+    try:
+        with pytest.raises(ssl.SSLCertVerificationError):
+            client.post(b'{"events":[]}')
+        assert not server.payloads
+    finally:
+        client.close()
+
+
+def test_batch_bounds_actual_json_size_and_preserves_expanding_numeric_records(tmp_path):
+    path = tmp_path/'eve.json'
+    # 2e15 expands substantially when Python re-serializes its float value.
+    line = '{"event_type":"flow","values":['+','.join(['2e15']*500)+']}\n'
+    path.write_text(line*256)
+    events, consumed = shipper.read_batch(path, 0)
+    assert len(events) < 256
+    assert len(json.dumps(events, separators=(',', ':'), ensure_ascii=False).encode()) <= 524288
+    total = len(events)
+    while consumed < path.stat().st_size:
+        more, consumed = shipper.read_batch(path, consumed)
+        total += len(more)
+    assert total == 256
