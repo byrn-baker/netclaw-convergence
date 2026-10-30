@@ -6,6 +6,7 @@ import http.server
 import importlib.util
 import json
 import os
+import re
 from pathlib import Path
 import socket
 import subprocess
@@ -139,8 +140,8 @@ def qualify(mode, evidence_dir):
                 statistics = subprocess.check_output(['docker','exec',project+'-exporter',
                     'softflowctl','-c','/run/convergence.ctl','statistics'],text=True,timeout=5)
                 print('Isolated loopback capture statistics:\n'+statistics,flush=True)
-                execute(['docker','exec',project+'-exporter','softflowctl',
-                    '-c','/run/convergence.ctl','expire-all'],timeout=5)
+                processed = re.search(r'Packets processed: (\d+)', statistics)
+                assert processed and int(processed.group(1)) > 0, 'Exporter must process actual fixture packets'
                 result = flows.check(ROOT, bundle)
                 assert result['passed'], result
                 assert all(r['src_addr']=='127.0.0.1' and r['dst_addr']=='127.0.0.1'

@@ -85,3 +85,11 @@ confirms the evidence assertions remain intact; explicit expiration flushes real
 captured flows rather than synthesizing observations. Added five-second bounds
 to control commands so an unresponsive exporter fails explicitly. Native hosted
 qualification remains the merge gate; final exact-head results belong to PR #5.
+
+T008 attempt2: repeated host acceptance at201d4a0c exposes the actual failure:
+libpcap received840 packets while softflowd processed0 and exported0. Readiness
+alone is insufficient. Upstream fix f5c0f99103755b8588159cc8c70e44fc8e7d3b12
+identifies Linux capture ring buffering with a zero timeout on quiet interfaces
+and enables immediate delivery. Pin that source for the exporter image and retain
+the real low-rate fixture; do not increase traffic to conceal the defect. Require
+actual nonzero processed packets and natural expiry before retained evidence checks.
