@@ -1,4 +1,5 @@
-fastmcp
+fastmcp==4.0.11
+mcp==2.3.0
 prisma-sase
 python-dotenv
 pyyaml

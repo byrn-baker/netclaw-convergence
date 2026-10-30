@@ -2561,6 +2561,9 @@ TESTBED_PATH="$NETCLAW_DIR/testbed/testbed.yaml"
 OPENCLAW_DIR="$RUNTIME_HOME"
 if [ ! -d "$OPENCLAW_DIR" ]; then
     log_info "$RUNTIME_NAME directory not found. Bootstrapping..."
+    # The policy reader rejects group-writable ancestors. Make the newly created
+    # runtime private regardless of the caller's umask; preserve existing homes.
+    mkdir -p -m 700 "$OPENCLAW_DIR"
     mkdir -p "$RUNTIME_SKILLS"
     [ "$RUNTIME" = "openclaw" ] && mkdir -p "$OPENCLAW_DIR/agents/main/sessions"
     log_info "Created $OPENCLAW_DIR"

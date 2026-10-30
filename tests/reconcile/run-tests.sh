@@ -182,7 +182,9 @@ echo
 echo "--- startup surface ---"
 SUP="$TMP/startup"
 mkdir -p "$SUP/scripts" "$SUP/mcp-servers/good-mcp" "$SUP/mcp-servers/broken-mcp"
-cp "$REPO_ROOT/scripts/check-server-startup.py" "$SUP/scripts/"
+# The startup checker resolves per-component interpreters through this helper.
+# Copy its real dependency so this fixture tests server startup, not a broken checkout.
+cp "$REPO_ROOT/scripts/check-server-startup.py" "$REPO_ROOT/scripts/runtime-selection.py" "$SUP/scripts/"
 
 # A server that imports cleanly and then blocks reading stdio is CORRECT MCP
 # behaviour -- a timeout must never be reported as a failure. Getting this

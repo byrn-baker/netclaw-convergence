@@ -21,15 +21,14 @@ dashboards. Docker is a smaller trial, not the full Victoria/IDS installation.
 **Start here:** obtain a checkout containing `workspace/skills/convergence-setup/`,
 then follow one guide. Convergence is currently a fork add-on; its upstream
 inclusion is proposed, not released by `automateyournetwork/netclaw`.
-For the onboarding review version:
+Install from the maintained fork:
 
 ```bash
-git clone --branch 1009-convergence-onboarding \
-  https://github.com/byrn-baker/netclaw-convergence.git netclaw
+git clone https://github.com/byrn-baker/netclaw-convergence.git netclaw
 cd netclaw
 ```
 
-This branch contains the guides and helpers below; it is not an upstream release.
+The fork contains the guides and helpers below; it is not an upstream release.
 The [verification record](convergence/verification.md) distinguishes executed
 platform tests from documentation-only guidance.
 

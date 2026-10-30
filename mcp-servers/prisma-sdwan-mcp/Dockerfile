@@ -5,7 +5,8 @@ FROM python:3.11-slim
 WORKDIR /app
 
 # Install dependencies
-RUN pip install --no-cache-dir fastmcp prisma-sase python-dotenv pyyaml jsonschema
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the server script
 COPY prisma_sdwan_mcp_server.py .

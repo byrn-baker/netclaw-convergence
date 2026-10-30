@@ -31,7 +31,8 @@
     "test:artifacts": "node test/artifact-formats.mjs",
     "test:genie": "node test/genie-parser.mjs",
     "test:observability": "node test/observability.mjs",
-    "test:experience": "node --test test/testbed-document.mjs test/mcp-configuration.mjs"
+    "test:experience": "node --test test/testbed-document.mjs test/mcp-configuration.mjs",
+    "test:convergence-flow": "node --test integration/convergence-flow.mjs"
   },
   "dependencies": {
     "@daily-co/daily-js": "0.93.0",

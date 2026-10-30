@@ -12,3 +12,85 @@ Ownership: coordinator owns this spec, CI/test/config changes and integration.
 Upstream proposal worker owns only spec 161 in its existing separate worktree.
 Historical-spec worker owns only missing artifacts in identified older spec dirs.
 No user modifications present at baseline. Initial checks and task attempts follow.
+
+## T004 attempt 1 — reproduce
+
+- `python3 scripts/check-fastmcp-compat.py`: FAIL, seven findings across three fork servers.
+- `python3 scripts/run-contract-tests.py --suite fastmcp --prepare`: 1 failed/12 passed; the failure is the same owned-server declaration audit.
+- `python3 scripts/run-contract-tests.py --suite reconcile --prepare`: 59 passed/5 failed. Minimal copied startup checker fails before probing with FileNotFoundError for scripts/runtime-selection.py.
+- Hypotheses: incomplete fixture dependency, stale SDK imports/manifests, missing unit-runner compression dependency. No gate is weakened.
+
+## T004 attempt 2 — fixes and affected validation
+
+Restored the real runtime-selection helper in the startup fixture; aligned three
+owned-server dependency manifests with repository-tested FastMCP/MCP pins and
+GreyNoise import with FastMCP; Prisma Docker builds now use the manifest too.
+
+- Minimal SQLite metrics test initially failed collection with missing `zstandard`.
+  Added the existing exporter's dependency range and import preflight to the isolated
+  unit suite. The full unit suite is being rerun in that environment.
+- FastMCP suite now passes, including real in-process protocol negotiation for the
+  GreyNoise and case tools in legacy and modern modes. No vendor call was made.
+- Reconciliation startup contracts now pass (64 assertions); no behavior/gate was
+  suppressed. Spec artifacts pass after 46 explicitly retrospective repairs.
+
+## T005 attempts 1–2 — retained observation integration
+
+A new real-store integration test initially exposed a fixture port assumption:
+Docker can reassign an ephemeral published port on container restart. The fixture
+now re-resolves its assigned loopback endpoint after restart. The complete test
+then passed: persisted synthetic records, site/exporter filtering, actual API auth
+and HUD proxy, production renderer, selected-window evidence, payload exclusion,
+empty results and backend outage. The test removes its own container in teardown.
+Added the test to both native Linux Docker CI jobs. This is component integration
+with JSDOM, not actual packet export, full browser/gateway or model/case investigation
+qualification. Those boundaries remain explicit in the public verification guide.
+
+## T006 — platform prerequisite
+
+The current execution host is Linux x86_64. Actual macOS Docker Desktop and Windows/
+WSL2 access was requested; none is currently established. Native ARM64 Linux CI
+cannot substitute. State: BLOCKED on platform access, with executable commands in
+the verification guide; no remote host settings were changed.
+
+## T004 attempt 3 — full-suite finding and regression
+
+The zstandard collection error is resolved (both SQLite metrics tests pass).
+The full isolated unit suite then exposed an existing core-deploy failure under
+this host's umask 002. The same tests passed under 022; minimal reproduction showed
+new runtime mode 0775 rejected by guarded_read as unsafe_parent. A new test with
+explicit umask 002 failed before the fix. Bootstrap now creates only a new runtime
+home as mode 0700; existing home permissions are not rewritten. Existing-runtime
+fixtures now explicitly model private operator homes. Full affected validation follows.
+
+The operator clarified that WSL2 is on a personal, inaccessible Windows machine
+and plans a dedicated VM on Proxmox. No remote WSL target is currently available;
+qualification remains blocked until that environment is reachable. No VM was
+created as part of this task.
+
+T003 completed: 46 missing historical files across 17 directories restored from
+repository evidence, 163 local links checked; spec checker PASS (164 specs, four
+unchanged exceptions). T002 proposal now recommends read-only retained flow evidence
+with ownership, upstream capability comparison, exact source endpoints and proposed
+file/dependency inventory. Independent review is in progress.
+
+The source-version maintenance bump is 1.15.1; release metadata and its six tests
+pass. No tag/publication is requested. The installation landing page now clones
+maintained main rather than the already-merged onboarding review branch.
+
+## Final local results and review
+
+- Full isolated unit suite: PASS in 163 seconds after the bootstrap fix.
+- Core deploy regression family: five tests PASS, including explicit umask 002.
+- FastMCP suite: PASS (17 tests including four real protocol compatibility cases).
+- Reconciliation contracts: PASS; runner contracts: PASS; all six declaration
+  surfaces PASS; FastMCP audit: 40 owned servers, zero failures.
+- New flow integration PASS with real restarted VictoriaLogs and mixed-direction
+  address evidence, site/exporter rejection, payload exclusion and outage handling.
+- Independent readiness review found one packaging issue: the new optional case
+  server requirements file matched an existing vendor ignore rule. It was explicitly
+  staged; committed-tree presence will be checked before publication. No further
+  code blockers were found. Historical records and release limits were reviewed.
+- Proposal review found two semantic ambiguities, both resolved and re-reviewed:
+  address records can run in either direction, and receipt age is not collector
+  health. Upstream PR #309 is now ready for scope review at `f9fc1ffe`.

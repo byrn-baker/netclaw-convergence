@@ -10,6 +10,9 @@ on:
       - 'scripts/write-env.py'
       - 'tests/unit/test_convergence_setup*'
       - 'docs/convergence/**'
+      - 'ui/netclaw-visual/integration/convergence-flow.mjs'
+      - 'ui/netclaw-visual/modules/convergence/**'
+      - 'ui/netclaw-visual/package*.json'
       - '.github/workflows/convergence-onboarding.yml'
   workflow_dispatch:
 
@@ -58,6 +61,14 @@ jobs:
           python3 "$helper" run --bundle "$bundle" --action stop
           python3 "$helper" run --bundle "$bundle" --action start
           python3 workspace/skills/convergence-setup/scripts/verify.py --bundle "$bundle"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Retained observation to HUD evidence
+        run: |
+          npm --prefix ui/convergence-api ci --no-audit --no-fund
+          npm --prefix ui/netclaw-visual ci --no-audit --no-fund
+          npm --prefix ui/netclaw-visual run test:convergence-flow
       - name: Stop only the test project
         if: always()
         run: |
