@@ -21,5 +21,6 @@ the affected scenarios. No runtime tests are needed for instruction-only changes
 ## Compatibility and release
 
 Branch from the reviewed onboarding work and use a separate stacked fork PR so
-upstream's design-only proposal remains focused. No version bump while draft.
+upstream's design-only proposal remains focused. Merge preparation adds source version 1.15.0, changelog and release notes for
+the new development skill; tagging/publication is separate.
 No global assistant configuration, live checkout, cluster or runtime changes.

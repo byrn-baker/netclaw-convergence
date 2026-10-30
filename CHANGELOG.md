@@ -2,6 +2,10 @@
 
 NetClaw source releases use `1.x.y`. Feature specs increment the minor version and reset the patch; fixes, documentation and maintenance increment the patch. Every release records its numbered specs. Component and mobile distribution versions are independent.
 
+## [1.15.0] - 2026-10-30
+
+Spec [1010-convergence-development](specs/1010-convergence-development/spec.md). See [release notes](docs/releases/1.15.0.md).
+
 ## [1.14.0] - 2026-10-30
 
 - Add static/dynamic testbed choice and source selection to VS Code, new-plan terminal setup and `setup.sh`.

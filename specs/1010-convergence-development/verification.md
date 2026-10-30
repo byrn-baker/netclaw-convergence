@@ -70,3 +70,18 @@
   proposal remains limited to its existing specification scope.
 
 Run completed UTC: 2026-10-30T17:37:28.922305+00:00.
+
+## Merge review — 2026-10-30T17:46:16.728125+00:00
+
+The user authorized independent review, fixes and merging into the fork. PR #2
+was already merged at `8a355242`; PR #3 is retargeted from the onboarding branch
+to main. Review baseline: `8a355242...3a6059da`.
+
+- Standards review found missing release preparation now the spec is ready to
+  merge. Prepared 1.15.0 source metadata under the documented new-skill minor
+  policy. No tag or release publication is requested.
+- The new merge review is authorized follow-up work, not a silent restart of the
+  completed development run's budget.
+- Spec review: PASS, zero findings; all requirements represented and 26 local
+  links resolve. Scope remains developer instructions and documentation.
+- Release metadata check PASS at 1.15.0; all six release-helper tests PASS.
