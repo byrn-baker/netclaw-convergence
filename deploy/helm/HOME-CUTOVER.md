@@ -1,7 +1,8 @@
 # Home Convergence on K3s
 
-The production release is `netclaw-convergence/convergence`, installed with
-`profiles/convergence-home-live.yaml`. Keep the original home profile for previews;
+The production release is `netclaw-convergence/convergence`, managed by Argo CD using
+`profiles/convergence-home-live.yaml` followed by
+`profiles/convergence-home-argocd.yaml`. Keep the original home profile for previews;
 it federates Docker metrics and suppresses alert delivery and must not replace live values.
 
 ## Ownership and endpoints
@@ -10,9 +11,9 @@ it federates Docker metrics and suppresses alert delivery and must not replace l
 |---|---|
 | Metrics, VictoriaLogs, Loki, PostgreSQL cases | K3s, `netclaw-convergence` |
 | IDS ingest database, delivery checkpoints, IPinfo update | K3s, `convergence-ids` and `convergence-ip-context` |
-| SNMP, probes, UniFi, speed tests, rules and Alertmanager | K3s, project Helm release |
+| SNMP, probes, UniFi, speed tests, rules and Alertmanager | K3s, Argo-managed project chart |
 | GoFlow2 capture | Existing `observability` namespace |
-| Flow log forwarding | Project Helm DaemonSet; retains original host-file checkpoints |
+| Flow log forwarding | Project DaemonSet; retains original host-file checkpoints |
 | Shared Grafana | Existing `observability/grafana` |
 | Suricata and capture spool | `home-ids-01`, 192.168.3.200 |
 | NetClaw gateway, member, alert receiver, HUD | NetClaw VM, 192.168.3.252 |
@@ -48,24 +49,36 @@ The SSD class uses two replicas on two disks of the Mac mini. This protects
 against a disk failure, **not loss of that whole host**. Copy backups to another
 machine before treating this as host disaster recovery.
 
-## Upgrade
+## Upgrade through Git
+
+The home release is owned by the Argo CD `convergence` Application. Do not run
+`helm upgrade`, `helm rollback` or `helm uninstall` against it. Helm's retained
+revision 14 is pre-adoption history, not current deployment status.
 
 ```sh
-export KUBECONFIG=/home/ubuntu/k3s-observability-stack/kubeconfig
 python3 deploy/helm/scripts/sync-assets.py --check
 python3 deploy/helm/scripts/build-live-profile.py --check
-helm dependency build deploy/helm/victoria-stack
 helm dependency build deploy/helm/convergence
-helm upgrade convergence deploy/helm/convergence -n netclaw-convergence \
-  -f deploy/helm/profiles/convergence-home-live.yaml --wait --timeout 12m
-docker compose -f deploy/helm/host-relay/docker-compose.yml up -d
+helm template convergence deploy/helm/convergence -n netclaw-convergence \
+  -f deploy/helm/profiles/convergence-home-live.yaml \
+  -f deploy/helm/profiles/convergence-home-argocd.yaml --skip-tests
 ```
 
-Build IDS from the repository root (`docker build -f services/ids-ingest/Dockerfile`),
-load the versioned image onto its scheduled node using `scripts/load-api-image.sh`,
-and update the live profile generator's image tag before upgrading. The API uses its
-own existing image. Never apply the retired full Docker Compose stack: it would
-restart duplicate databases, polling and alert evaluation.
+Build API/IDS images from their source, publish them to the private GHCR packages,
+and update the digest pins in the Argo overlay. Review, commit and push the chart
+or values changes; Argo syncs and self-heals with automatic pruning disabled.
+The `ghcr-pull` Secret is provisioned externally. Validate actual HUD, security,
+flow and Grafana queries after the rollout.
+
+Shared Grafana configuration belongs to the `observability` Application in
+`/home/ubuntu/k3s-observability-stack/gitops/home/observability`. The project's
+registration mode is `external`; use `scripts/merge-grafana-gitops.py` to merge
+rendered bundles into those tracked manifests. See the Helm README for usage.
+
+The VM relay remains independently operated with
+`docker compose -f deploy/helm/host-relay/docker-compose.yml up -d` when its
+configuration changes. Never apply the retired full Docker Compose stack: it
+would restart duplicate databases, polling and alert evaluation.
 
 ## Migration and rollback evidence
 
@@ -82,7 +95,8 @@ Private rollback configuration and database dumps are kept in the retained
 copy of configuration evidence. Treat both as secret material. Temporary SSH and
 migration workloads must be removed after verification; the backup PVC stays.
 
-A Helm rollback alone cannot reverse this migration: it does not restore external
+Disable Argo automated reconciliation in Git before any manual recovery.
+A Helm rollback cannot reverse this migration: it does not restore external
 client URLs, Secrets or historical state. For rollback, stop new writers, take a
 fresh cluster backup, restore the required cold archives to their original paths,
 restore the saved Secrets/environment files, and restart the original Docker/IDS
