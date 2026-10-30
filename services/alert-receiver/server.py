@@ -21,6 +21,7 @@ import hmac
 import json
 import logging
 import os
+import sqlite3
 import sys
 import time
 import uuid
@@ -332,9 +333,32 @@ async def wait_for_case(event_id, site, dispatched):
     await patch_guardian_event(event_id, site, status="escalated")
     raise TimeoutError("Investigation exceeded its completion deadline; operator review required")
 
+QUEUE_STORAGE_RETRY_SECONDS = 5
+
+
+async def queue_operation(operation, *args):
+    """Keep workers alive and retry the same queue commit after storage recovers.
+
+    Retrying finish/retry itself avoids re-running external work just because
+    committing its result failed. Cancellation still stops the worker normally.
+    """
+    while True:
+        try:
+            return operation(*args)
+        except sqlite3.OperationalError as exc:
+            code = getattr(exc, 'sqlite_errorcode', 0) & 0xff
+            if code not in (sqlite3.SQLITE_FULL, sqlite3.SQLITE_BUSY,
+                            sqlite3.SQLITE_LOCKED, sqlite3.SQLITE_IOERR,
+                            sqlite3.SQLITE_READONLY):
+                raise
+            log.warning('Receiver queue %s paused (%s); retaining work and retrying',
+                        operation.__name__, getattr(exc, 'sqlite_errorname', type(exc).__name__))
+            await asyncio.sleep(QUEUE_STORAGE_RETRY_SECONDS)
+
+
 async def job_worker(lane='investigation'):
     while True:
-        job = job_store.claim(lane)
+        job = await queue_operation(job_store.claim, lane)
         if not job:
             await asyncio.sleep(1)
             continue
@@ -362,7 +386,7 @@ async def job_worker(lane='investigation'):
             else:
                 if await process_alert(Alert(**body)) == 'promoted':
                     continue
-            job_store.finish(job['id'])
+            await queue_operation(job_store.finish, job['id'])
         except asyncio.CancelledError:
             raise
         except Exception as exc:
@@ -372,7 +396,7 @@ async def job_worker(lane='investigation'):
                     await patch_guardian_event(body['event_id'], body.get('site','home'), status='escalated')
                 except Exception:
                     log.exception('Unable to escalate failed manual investigation')
-            job_store.retry(job, exc)
+            await queue_operation(job_store.retry, job, exc)
         finally:
             active_job.reset(token)
 

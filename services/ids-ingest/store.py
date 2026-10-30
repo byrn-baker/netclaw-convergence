@@ -217,7 +217,20 @@ class Store:
     def pending(self, target, limit=128):
         column = {'log': 'log_done', 'case': 'case_done', 'archive': 'archive_done'}[target]
         with self.lock:
-            return [dict(r) for r in self.db.execute(f'SELECT * FROM eve WHERE {column}=0 ORDER BY received_ns LIMIT ?', (limit,))]
+            rows = [dict(r) for r in self.db.execute(f'SELECT * FROM eve WHERE {column}=0 ORDER BY received_ns LIMIT ?',
+                    ((limit+1)//2 if target == 'case' and limit > 1 else limit,))]
+            if target == 'case' and limit > 1:
+                # Both directions use eve_case_pending. Reserve half the batch
+                # for live arrivals while historical replay keeps progressing.
+                newest = self.db.execute('SELECT * FROM eve WHERE case_done=0 ORDER BY received_ns DESC LIMIT ?', (limit,))
+                seen = {row['id'] for row in rows}
+                for row in newest:
+                    if row['id'] not in seen:
+                        rows.append(dict(row))
+                        seen.add(row['id'])
+                    if len(rows) == limit:
+                        break
+            return rows
 
     def acknowledge(self, target, ids):
         column = {'log': 'log_done', 'case': 'case_done', 'archive': 'archive_done'}[target]

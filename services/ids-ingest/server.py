@@ -71,14 +71,17 @@ def create_app(config, store, client_factory=httpx.AsyncClient):
                             raise RuntimeError('VictoriaLogs did not acknowledge complete batch')
                         store.acknowledge(target, [r['id'] for r in rows])
                     else:
-                        for row in rows:
-                            response = await client.post(config['receiver_url'],
-                                headers={'Authorization': 'Bearer '+config['receiver_token']},
-                                json=json.loads(row['case_payload']))
-                            response.raise_for_status()
-                            if response.json().get('status') != 'accepted':
-                                raise RuntimeError('Case receiver did not acknowledge durable acceptance')
-                            store.acknowledge(target, [row['id']])
+                        payload = {'version': '4', 'status': 'firing', 'receiver': 'suricata',
+                            'alerts': [alert for row in rows for alert in json.loads(row['case_payload'])['alerts']]}
+                        response = await client.post(config['receiver_url'],
+                            headers={'Authorization': 'Bearer '+config['receiver_token']}, json=payload)
+                        response.raise_for_status()
+                        ack = response.json()
+                        if ack.get('status') != 'accepted' or ack.get('alerts_received') != len(payload['alerts']):
+                            raise RuntimeError('Case receiver did not acknowledge the complete batch')
+                        # Partial receiver admission is safe to replay: its
+                        # fingerprint/start/status job keys are durable dedup.
+                        store.acknowledge(target, [row['id'] for row in rows])
                     backoff = 1
                     await asyncio.sleep(0.05)
                 except Exception as exc:

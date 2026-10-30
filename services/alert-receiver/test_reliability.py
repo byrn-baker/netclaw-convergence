@@ -254,3 +254,40 @@ def test_hook_acceptance_waits_for_case(monkeypatch):
     alert=receiver.Alert(status='firing',labels=receiver.AlertLabel(alertname='Test'),annotations=receiver.AlertAnnotation())
     asyncio.run(receiver.trigger_netclaw(alert,{'name':'site:home','site':'home','ip':'','role':'site','platform':'site'}))
     assert wait.await_count==1 and wait.call_args.args[:2]==('case','home')
+
+
+@pytest.mark.parametrize('operation',['claim','finish','retry'])
+def test_workers_resume_after_transient_queue_storage_failure(tmp_path,monkeypatch,operation):
+    store=JobStore(tmp_path/'jobs.db')
+    jid=store.enqueue('storage-recovery','alert',{'status':'firing','labels':{'alertname':'SuricataIntrusion'},'annotations':{}})
+    monkeypatch.setattr(receiver,'job_store',store)
+    monkeypatch.setattr(receiver,'QUEUE_STORAGE_RETRY_SECONDS',0,raising=False)
+    process=AsyncMock(side_effect=RetryableJobError('Temporary downstream outage') if operation=='retry' else None)
+    monkeypatch.setattr(receiver,'process_alert',process)
+    original=getattr(store,operation)
+    failures=0
+    def fail_once(*args,**kwargs):
+        nonlocal failures
+        if not failures:
+            failures+=1
+            error=sqlite3.OperationalError('database or disk is full')
+            error.sqlite_errorcode=sqlite3.SQLITE_FULL
+            raise error
+        return original(*args,**kwargs)
+    monkeypatch.setattr(store,operation,fail_once)
+    async def check():
+        task=asyncio.create_task(receiver.job_worker(lane='ingest'))
+        try:
+            for _ in range(100):
+                if task.done():await task
+                row=store.db.execute('SELECT state,available FROM jobs WHERE id=?',(jid,)).fetchone()
+                expected='queued' if operation=='retry' else 'done'
+                if failures and process.await_count==1 and row['state']==expected and (operation!='retry' or row['available']>time.time()):
+                    assert not task.done()
+                    return
+                await asyncio.sleep(.005)
+            pytest.fail('Worker failed to recover the queue operation without reprocessing the alert')
+        finally:
+            task.cancel();await asyncio.gather(task,return_exceptions=True)
+    try:asyncio.run(check())
+    finally:store.db.close()

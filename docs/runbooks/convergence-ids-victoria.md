@@ -204,6 +204,56 @@ Do not indiscriminately replay model-investigation or JEV jobs. After recovery,
 verify the sensor outbox is current **and** the selected receiver jobs are done;
 an empty upstream outbox alone does not prove all downstream cases were saved.
 
+### Blank recent observations after a full host disk
+
+The October 30, 2026 outage filled the Docker host filesystem. PostgreSQL could
+not write, and SQLite storage errors terminated receiver workers while their
+systemd process stayed active. Its 1,000-job inbox then blocked IDS case
+delivery. The sensor continued capturing to EVE, but oldest-first replay left
+current traffic behind several days of buffered observations. A fresh heartbeat
+alone did not establish current capture visibility.
+
+Receiver workers now retry the same queue claim, completion or retry commit on
+SQLite FULL, BUSY, LOCKED, IOERR and READONLY errors. Successful external work is
+not repeated merely because its completion commit failed. Other SQLite errors
+still surface. Restore writable storage before expecting the queue to recover;
+service `active` is insufficient evidence of working workers.
+
+The sensor now maintains a separate `live_cursors` table in `shipper.sqlite`.
+It starts near the newest EVE file's last 1 MiB and schedules up to four live
+batches per historical batch. Original `cursors` offsets retain the complete
+replay position and exclusively authorize pruning. Both lanes advance only
+after complete ingest acknowledgement. Live-prefix records are retained for
+historical replay, and canonical ingest identities deduplicate the overlap.
+Rotation, partial lines and a shipper restart preserve the original history.
+
+Case delivery sends up to 128 alerts in one receiver request and commits its
+inbox ACK only after the receiver confirms the complete alert count. A partial
+admission is retried against the receiver's durable deduplication keys. Half of
+each case batch is reserved for the oldest pending observations; remaining
+slots take newest arrivals so live cases can progress during historical replay.
+Log and archive delivery retain their independent checkpoints.
+
+For recovery, inspect free bytes on both hosts, sensor heartbeat **and** stats
+timestamps, each delivery queue, receiver job progress, and actual HUD Security
+rows. Back up SQLite through its backup API before deploying, preserve EVE and
+all cursors, and restart only affected services. Never delete a WAL or reset a
+cursor to force the feed green. A remaining backlog, packet drops or unverified
+mirror sources must continue to report degraded health.
+
+This recovery removed rebuildable npm, uv and Poetry download caches, preserving
+virtual environments, container images, EVE evidence and case data. Host storage
+remains constrained; cache cleanup is temporary relief. The parallel K3s Helm
+release remains a preview: HUD reads still use the Docker API, and data migration
+and cutover require their own verification.
+
+Regression checks (run separately because both services have `server.py`):
+
+```bash
+.venv/bin/python -m pytest services/alert-receiver/test_reliability.py services/alert-receiver/test_jev_review.py services/alert-receiver/test_investigation_policy.py -q
+.venv/bin/python -m pytest services/ids-ingest/test_ingest.py services/ids-ingest/test_shipper.py services/ids-ingest/test_ip_context.py -q
+```
+
 The October 25, 2026 pilot recovery also reclaimed 5.8 GB of unused Docker build
 cache after the host approached its disk reserve. No EVE evidence or case data
 was deleted. All 337 observation-only case jobs that exhausted their retries

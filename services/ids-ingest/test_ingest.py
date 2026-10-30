@@ -234,6 +234,43 @@ class IngestionTests(unittest.TestCase):
         self.assertIn('logs', calls)
         self.assertIn('cases', calls)
 
+    def test_case_delivery_reserves_capacity_for_new_and_old_observations(self):
+        self.store.capacity = 1000
+        now = time.time()
+        self.store.accept(self.sensor, [event(now=now-300, src_port=n) for n in range(200)], self.hb, now=now-300)
+        self.store.accept(self.sensor, [event(src_port=9999)], self.hb, now=now)
+        rows = self.store.pending('case', limit=128)
+        ports = [json.loads(row['payload'])['src_port'] for row in rows]
+        self.assertIn(9999, ports, 'Fresh cases must not wait behind the whole outage backlog')
+        self.assertIn(0, ports, 'Historical cases must keep making progress')
+        self.assertEqual(len(set(row['id'] for row in rows)), 128)
+
+    def test_case_batch_retries_same_evidence_until_complete_acceptance(self):
+        records = [event(src_port=n) for n in range(3)]
+        self.store.accept(self.sensor, records, self.hb)
+        bodies = []
+        config = {**self.config, 'loki_url': 'http://logs', 'receiver_url': 'http://cases/webhook',
+                  'receiver_token': 'test'}
+        def upstream(request):
+            if request.url.host != 'cases':
+                return httpx.Response(204)
+            body = json.loads(request.content)
+            bodies.append(body)
+            # A partial batch response must not acknowledge any inbox row.
+            if len(bodies) == 1:
+                return httpx.Response(200, json={'status': 'accepted', 'alerts_received': 1})
+            self.assertEqual(len(self.store.pending('case')), 3)
+            return httpx.Response(200, json={'status': 'accepted', 'alerts_received': 3})
+        factory = lambda **kw: httpx.AsyncClient(transport=httpx.MockTransport(upstream), **kw)
+        with TestClient(create_app(config, self.store, factory)):
+            deadline = time.monotonic()+3
+            while self.store.pending('case') and time.monotonic()<deadline:
+                time.sleep(0.02)
+        self.assertEqual(self.store.pending('case'), [])
+        self.assertEqual(len(bodies), 2)
+        self.assertEqual(bodies[0], bodies[1])
+        self.assertEqual(len(bodies[0]['alerts']), 3)
+
     def test_archive_backfill_is_bounded_restartable_and_protected_from_pruning(self):
         records = [event(now=time.time()-40*86400, src_port=n) for n in range(6)]
         self.store.accept(self.sensor, records, self.hb, now=time.time()-40*86400)
@@ -296,7 +333,8 @@ class IngestionTests(unittest.TestCase):
                 bodies.append(request.content)
                 return httpx.Response(200, json={'errors': failing[0], 'items': [{'create': {'status': 201}}]})
             if request.url.host == 'cases':
-                return httpx.Response(200, json={'status': 'accepted'})
+                return httpx.Response(200, json={'status': 'accepted',
+                    'alerts_received': len(json.loads(request.content)['alerts'])})
             return httpx.Response(204)
         factory = lambda **kw: httpx.AsyncClient(transport=httpx.MockTransport(upstream), **kw)
         app = create_app(config, self.store, factory)
