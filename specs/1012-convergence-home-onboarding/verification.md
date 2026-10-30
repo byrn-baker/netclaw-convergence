@@ -93,3 +93,22 @@ identifies Linux capture ring buffering with a zero timeout on quiet interfaces
 and enables immediate delivery. Pin that source for the exporter image and retain
 the real low-rate fixture; do not increase traffic to conceal the defect. Require
 actual nonzero processed packets and natural expiry before retained evidence checks.
+
+T009 attempt1: the new-source demo exports real records and passes API/MCP/HUD,
+but immediate restart fails the TCP/UDP preflight after stopping the collector.
+Investigate closed TCP health connections in TIME_WAIT; accepting these must not
+permit another active TCP or UDP listener. The original ownership guards remain
+required. Keep this newly observed lifecycle failure open until reproduced/fixed.
+
+T008 attempt2 local host evidence:420 packets processed,40 naturally expired and
+exported records,0 forced expirations,0 reported export failures. Actual retained
+API/MCP/HUD assertions pass. The upstream pin fixes the quiet-traffic failure;
+readiness alone did not. Independent review verifies archive checksum, immediate
+mode source change, installed binaries and preserved license. Image build PASS.
+
+T009 attempt1 regression reproduces the old failure with a real closed TCP
+connection. TCP-only SO_REUSEADDR permits TIME_WAIT reuse; actual active TCP
+listeners (including SO_REUSEADDR listeners) and UDP listeners remain rejected.
+All66 setup helper tests PASS; independent verifier reran37 flow-specific tests
+and passed the change. Local full lifecycle and final native hosted results are
+recorded in PR #5 before any merge; these component passes do not waive that gate.

@@ -164,6 +164,10 @@ def guard_project(bundle, manifest, environment, check_ports=False):
         try:
             for kind in (socket.SOCK_STREAM,socket.SOCK_DGRAM):
                 connection = socket.socket(socket.AF_INET,kind);sockets.append(connection)
+                # Match the collector HTTP server's restart behavior: TIME_WAIT
+                # is not a live listener. Never enable address reuse for UDP.
+                if kind==socket.SOCK_STREAM:
+                    connection.setsockopt(socket.SOL_SOCKET,socket.SO_REUSEADDR,1)
                 connection.bind(('127.0.0.1',manifest['options']['flow_port']))
         except OSError:
             raise ValueError('Flow TCP/UDP port is already occupied by another listener; choose an unused --flow-port. No changes made') from None

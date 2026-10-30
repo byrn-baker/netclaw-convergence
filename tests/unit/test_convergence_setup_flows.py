@@ -300,3 +300,39 @@ def test_running_exporter_keeps_port_owned_after_its_collector_stops(tmp_path,mo
     monkeypatch.setattr(support,'docker_read',read)
     with pytest.raises(ValueError,match='another bundle or mode'):
         support.guard_project(bundle,manifest,{})
+
+
+def test_restart_allows_tcp_time_wait_without_an_active_listener(tmp_path,monkeypatch):
+    import socket
+    with socket.socket() as listener:
+        listener.setsockopt(socket.SOL_SOCKET,socket.SO_REUSEADDR,1)
+        listener.bind(('127.0.0.1',0));listener.listen(1)
+        port=listener.getsockname()[1]
+        with socket.create_connection(('127.0.0.1',port),timeout=2) as client:
+            accepted,_=listener.accept()
+            with accepted:
+                accepted.settimeout(2)
+                accepted.shutdown(socket.SHUT_WR)
+                assert client.recv(1)==b''
+                client.shutdown(socket.SHUT_WR)
+                assert accepted.recv(1)==b''
+    # The server endpoint is now TIME_WAIT. A plain bind reproduces the old guard.
+    with socket.socket() as plain:
+        with pytest.raises(OSError):plain.bind(('127.0.0.1',port))
+    bundle=tmp_path/'bundle';setup.prepare(ROOT,bundle,{**options(),'flow_port':port})
+    manifest=json.loads((bundle/'deployment.json').read_text());support=setup.flow_support()
+    monkeypatch.setattr(support,'docker_read',lambda *_:'')
+    assert support.guard_project(bundle,manifest,{},check_ports=True)
+
+
+def test_active_tcp_listener_remains_rejected_with_reuseaddr(tmp_path,monkeypatch):
+    import socket
+    with socket.socket() as listener:
+        listener.setsockopt(socket.SOL_SOCKET,socket.SO_REUSEADDR,1)
+        listener.bind(('127.0.0.1',0));listener.listen(1)
+        port=listener.getsockname()[1]
+        bundle=tmp_path/'bundle';setup.prepare(ROOT,bundle,{**options(),'flow_port':port})
+        manifest=json.loads((bundle/'deployment.json').read_text());support=setup.flow_support()
+        monkeypatch.setattr(support,'docker_read',lambda *_:'')
+        with pytest.raises(ValueError,match='already occupied'):
+            support.guard_project(bundle,manifest,{},check_ports=True)

@@ -11,4 +11,5 @@
 
 Hosted final-head CI and merge disposition are tracked in fork PR #5; local passes do not stand in for pending native architecture checks.
 
-- [ ] T008 Resolve hosted host-capture acceptance failure with exporter readiness and retained diagnostics; preserve actual packet/evidence assertions.
+- [x] T008 Correct the low-rate host-capture defect and verify processed packets, natural expiry and retained evidence; hosted final-head qualification remains the PR merge gate.
+- [x] T009 Correct restart port checks for closed TCP health connections while preserving rejection of active conflicting listeners.
