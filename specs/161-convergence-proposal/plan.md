@@ -1,7 +1,8 @@
 # Plan: optional read-only flow-evidence integration
 
-**Status:** Scope proposal only; no implementation in this PR. Implementation
-begins after maintainer agreement on this bounded milestone.
+**Status:** Specification only; no implementation in this PR. The contributing
+maintainer approved the bounded milestone in the development conversation on
+2026-10-30. Coordinate its clean upstream implementation and review next.
 
 ## One workflow and one access path
 
@@ -56,7 +57,9 @@ service, storage engine, collector, frontend library or model provider is requir
 
 1. Coordinate the implementation spec and exact connector response/error contract;
    pin the external Convergence revision used by tests, document a public reproducible
-   service build/image and retained-flow setup, and verify notices. The original
+   service build/image and retained-flow setup, and verify notices. Include an
+   equipment-free Docker demonstration and Linux software-exporter recipe with
+   explicit source coverage; keep collection outside the upstream connector. The original
    standalone repository does not currently contain this API; see research.md.
 2. Implement two tools and connection/install coherence. Prove only allowed GET
    paths occur and that endpoint/site/credential cannot be overridden by tool input.

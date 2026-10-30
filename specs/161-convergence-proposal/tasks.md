@@ -6,7 +6,7 @@
 - [x] T002 Compare Grafana/Prometheus/IPFIX/HUD capabilities with retained Convergence flow evidence.
 - [x] T003 Recommend external service ownership and one read-only observation-to-records workflow.
 - [x] T004 Document concrete proposed files/dependencies, acceptance and platform limits; preserve provenance.
-- [ ] T005 Obtain maintainer agreement on this bounded flow-evidence integration.
+- [x] T005 Record contributing maintainer approval of this bounded integration in the development conversation (2026-10-30); upstream PR review remains open.
 
 ## Implementation only after agreement
 
@@ -17,6 +17,11 @@
 - [ ] T010 Run actual connector-to-HUD acceptance, lifecycle and supported-platform checks; record gaps honestly.
 - [ ] T011 Complete independent review, coherence checks and implementation release metadata.
 
-T005 gates T006–T011. No case/server/storage/chart/IDS/automated-investigation port
+T005 is satisfied by the user’s maintainer scope approval. T006–T011 remain unimplemented. No case/server/storage/chart/IDS/automated-investigation port
 is implied or approved by this milestone. Fork maintenance and acceptance work may
 continue independently, but cannot mark upstream implementation tasks complete.
+
+External service acceptance: equipment-free Linux Docker demonstration, explicit
+synthetic/host/network coverage, and a qualified Linux software-exporter pipeline.
+Fork spec1012 tracks that onboarding work; its results do not substitute for the
+clean upstream MCP/HUD implementation acceptance in T010.

@@ -97,3 +97,14 @@ remaining blocker to scope review. Spec artifacts PASS (144 specs, four existing
 exceptions), all six reconciliation surfaces PASS, relative links and whitespace
 PASS. Marking this proposal ready asks for a scope decision, not implementation
 approval or production acceptance.
+
+## 2026-10-30 accessible-home requirement and scope decision
+
+The user identified themselves as a NetClaw maintainer and approved the bounded
+first integration in the development conversation. This records scope approval,
+not a fabricated GitHub review or merge. They additionally approved a Linux-first,
+equipment-free Docker demo and host software-exporter path, with explicit coverage,
+capability-based setup and measured resource use. These are external-service and
+integration acceptance requirements; the two-tool upstream boundary is unchanged.
+Fork spec1012 implements onboarding separately. No new runtime or platform test
+result is claimed by this proposal amendment.
