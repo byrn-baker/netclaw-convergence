@@ -90,6 +90,23 @@ async def _delete(path: str) -> dict:
 @mcp.tool()
 async def n2n_status() -> str:
     """Federation overview: local identity, peers, states, staleness."""
+    if os.environ.get('N2N_ROLE')=='border' and os.environ.get('NETCLAW_SETUP_STATUS_ONLY')=='1':
+        from pathlib import Path
+        import sys
+        sys.path.insert(0,str(Path(__file__).resolve().parents[2]/'scripts/lib'))
+        from setup_border_health import read_status
+        home=os.environ.get('HERMES_HOME') if os.environ.get('NETCLAW_RUNTIME')=='hermes' else os.environ.get('OPENCLAW_STATE_DIR')
+        try:return json.dumps(read_status(home,os.environ.get('NETCLAW_INSTALLATION_ID'),os.environ.get('NETCLAW_RUNTIME')))
+        except Exception:return json.dumps({'enabled':True,'role':'border','ready':False})
+    if os.environ.get('N2N_ROLE')=='member':
+        from pathlib import Path
+        home=os.environ.get('HERMES_HOME') if os.environ.get('NETCLAW_RUNTIME')=='hermes' else os.environ.get('OPENCLAW_STATE_DIR')
+        if home and (Path(home)/'.netclaw-setup-owner.json').is_file():
+            import sys
+            sys.path.insert(0,str(Path(__file__).resolve().parents[2]/'scripts/lib'))
+            from setup_member_health import read_status
+            try:return json.dumps(read_status(home,os.environ.get('NETCLAW_INSTALLATION_ID'),os.environ.get('NETCLAW_RUNTIME')))
+            except Exception:return json.dumps({'enabled':True,'role':'member','ready':False})
     data = await _get("/n2n/status")
     return _gcf_dumps(data)
 

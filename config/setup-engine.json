@@ -1,0 +1,7 @@
+{
+  "protocol": {"major": 1, "minor": 0},
+  "planSchema": 1,
+  "catalogSchema": 1,
+  "entryPoint": "scripts/setup-engine.py",
+  "pythonMinimum": [3, 10]
+}

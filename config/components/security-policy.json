@@ -1,0 +1,11 @@
+{
+  "schema": 1,
+  "minimum": {
+    "host": ["owned-service-manager", "openshell-confinement"],
+    "claw": ["defenseclaw-model-guard", "gait-audit"]
+  },
+  "unsupported": {
+    "hermes": ["defenseclaw-model-guard"]
+  },
+  "qualification": "Controls require installation-bound live evidence from a qualified adapter. Presence of binaries, settings or requested components is not enforcement. Unknown versions fail closed."
+}

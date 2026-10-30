@@ -35,7 +35,9 @@ def migrate(path, repo, apply=False, restore=False):
             entry = servers.get(name, {})
             env = entry.get('env', {})
             if env.get(key) == '${' + key + ':-false}':
-                env[key] = '${' + key + ':-true}'
+                # This safety migration has no selected dotenv input. Pin the
+                # safe literal; operator overrides require reviewed registration.
+                env[key] = 'true'
                 changed.append(name)
         entry = servers.get('zabbix-mcp')
         if entry:

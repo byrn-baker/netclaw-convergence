@@ -26,6 +26,7 @@ not the caller's cwd.
 import argparse
 import json
 import os
+import re
 import sys
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -92,6 +93,17 @@ def check(config_path, repo_root):
         entry = servers[name]
         if not isinstance(entry, dict):
             continue
+
+        def check_substitutions(value, field):
+            if isinstance(value, dict):
+                for key, item in value.items():
+                    check_substitutions(item, field + '.' + key)
+            elif isinstance(value, list):
+                for index, item in enumerate(value):
+                    check_substitutions(item, f'{field}[{index}]')
+            elif isinstance(value, str) and re.search(r'\$\{[^}]*:-[^}]*\}', value):
+                failures.append(f'{name}: {field} has unsupported fallback syntax for the qualified runtime')
+        check_substitutions(entry, 'registration')
 
         fields = [("command", entry.get("command")), ("cwd", entry.get("cwd"))]
         args = entry.get("args")

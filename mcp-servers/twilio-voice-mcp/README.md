@@ -156,3 +156,13 @@ python server.py
 - Quickstart: `/specs/043-full-voice-integration/quickstart.md`
 - Skills: `/workspace/skills/twilio-*/`
 - Voice Config: `~/.openclaw/voice/`
+# Managed installer setup
+
+The Comms step distinguishes native runtime SMS, the pinned core Twilio API MCP
+and this existing voice integration. Full tools belong to a Focused/member claw.
+The managed voice gateway is OpenClaw-only and verifies the selected home's
+identity and loopback gateway; it never borrows a neighboring environment.
+Failed routing does not fall back to direct model calls, device commands or a
+neighboring Memory MCP. Voice webhooks, number routes and calls require their own
+setup/review; discovering the MCP does not start them. See
+[Comms setup](../../docs/COMMS-SETUP.md).

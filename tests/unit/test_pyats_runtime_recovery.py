@@ -17,7 +17,7 @@ def fake_build(monkeypatch, fail=False):
         if args[1] == 'venv':
             root = Path(args[2]);(root/'bin').mkdir();(root/'bin/python').write_text('new interpreter')
         elif args[0] == 'git' and args[1] == 'clone':
-            source = Path(args[-1]);source.mkdir();(source/'pyats_mcp_server.py').write_text('new source');(source/'pyats_tasks.py').write_text('task source')
+            source = Path(args[-1]);source.mkdir();(source/'pyats_mcp_server.py').write_text('new source');(source/'pyats_tasks.py').write_text('task source');(source/'pyats_testbed_builder.py').write_text('builder source')
         elif args[1:3] == ['pip','install'] and fail:
             raise subprocess.CalledProcessError(23, args)
         return subprocess.CompletedProcess(args, 0)

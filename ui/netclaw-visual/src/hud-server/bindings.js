@@ -27,12 +27,25 @@ export class Bindings {
     } else if (state.version !== 1) throw Error('Unauthenticated');
     return state;
   }
-  save(cookie, state) { writePrivateAtomic(this.file(cookie), JSON.stringify(state)); }
-  task(cookie, thread, agentId = 'main') {
+  save(cookie, state) {
+    const data = JSON.stringify(state);
+    if (Buffer.byteLength(data, 'utf8') > 8 * 1024 * 1024) throw Error('Private binding size limit reached');
+    writePrivateAtomic(this.file(cookie), data);
+  }
+  task(cookie, thread, agentId = 'main', initialSeed) {
     if (!/^[a-zA-Z0-9][a-zA-Z0-9_-]*$/.test(agentId)) throw Error('Invalid agent');
     if (!safeId(thread)) throw Error('Invalid thread');
     const state = this.read(cookie); const key = digest(thread); let task = Object.values(state.tasks).find(t => (t.thread === key || (t.resumeThread && digest(t.resumeThread) === key)) && t.gatewayKey.startsWith(`agent:${agentId}:hud:`)); const newlyCreated = !task;
-    if (!task) { if (Object.keys(state.tasks).length >= 500) throw Error('Session task limit reached'); const id = token(); task = { id, thread: key, publicThread: thread, createdAt: this.clock(), gatewayKey: `agent:${agentId}:hud:${id}`, assessments: {} }; state.tasks[id] = task; this.save(cookie, state); }
+    if (!task) {
+      if (Object.keys(state.tasks).length >= 500) throw Error('Session task limit reached');
+      if (initialSeed !== undefined && (agentId !== 'hermes' || !Array.isArray(initialSeed) || initialSeed.length > 200 ||
+          initialSeed.some(m => !m || Object.keys(m).length !== 2 || !['user','assistant'].includes(m.role) || typeof m.content !== 'string') ||
+          Buffer.byteLength(JSON.stringify(initialSeed), 'utf8') > 1024 * 1024)) throw Error('Invalid conversation seed');
+      const id = token();
+      task = { id, thread: key, publicThread: thread, createdAt: this.clock(), gatewayKey: `agent:${agentId}:hud:${id}`, assessments: {},
+        ...(initialSeed !== undefined ? { hermesSeed: structuredClone(initialSeed) } : {}) };
+      state.tasks[id] = task; this.save(cookie, state);
+    }
     return { ...task, newlyCreated };
   }
   lookupTask(cookie, thread, agentId) {

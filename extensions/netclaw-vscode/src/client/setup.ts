@@ -225,6 +225,8 @@ export async function prepareSetup(input: SetupOptions): Promise<Prepared> {
     config + ".netclaw-managed.json",
     path.join(o.home, ".env"),
     path.join(o.root, "config/openclaw.json"),
+    path.join(o.root, "config/mcp-env-defaults.json"),
+    path.join(o.root, "scripts/lib/mcp_environment.py"),
     path.join(o.root, "scripts/lib/catalog.sh"),
   ];
   if (o.action === "install") {

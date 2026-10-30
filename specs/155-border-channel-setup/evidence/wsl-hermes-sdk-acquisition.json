@@ -1,0 +1,39 @@
+{
+  "beforeCount": 93,
+  "afterCount": 155,
+  "changedExistingPackages": [],
+  "results": [
+    {
+      "channel": "build-tools",
+      "exitCode": 0
+    },
+    {
+      "channel": "telegram",
+      "exitCode": 0
+    },
+    {
+      "channel": "teams",
+      "exitCode": 0
+    },
+    {
+      "channel": "google-chat",
+      "exitCode": 0
+    },
+    {
+      "channel": "dingtalk",
+      "exitCode": 0
+    },
+    {
+      "channel": "feishu",
+      "exitCode": 0
+    },
+    {
+      "channel": "wecom-callback",
+      "exitCode": 0
+    },
+    {
+      "channel": "matrix",
+      "exitCode": 0
+    }
+  ]
+}

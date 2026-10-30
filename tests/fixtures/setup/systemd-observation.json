@@ -1,0 +1,899 @@
+[
+  {
+    "name": "literal spaces quotes dollars percent unicode and backslash",
+    "accept": true,
+    "item": {
+      "file": "/fixture/.config/systemd/user/netclaw-fixture_hud.service",
+      "arguments": [
+        "/fixture/Python Space/bin/python3",
+        "/fixture/Claw $literal% \"quoted\"; café\\home/.setup/source/scripts/setup-service.py",
+        "--home",
+        "/fixture/Claw $literal% \"quoted\"; café\\home",
+        "--role",
+        "hud"
+      ],
+      "execFlags": [
+        "no-env-expand"
+      ]
+    },
+    "getUnit": {
+      "type": "o",
+      "data": [
+        "/org/freedesktop/systemd1/unit/netclaw_2dfixture_5fhud_2eservice"
+      ]
+    },
+    "property": {
+      "type": "a(sasasttttuii)",
+      "data": [
+        [
+          "/fixture/Python Space/bin/python3",
+          [
+            "/fixture/Python Space/bin/python3",
+            "/fixture/Claw $literal% \"quoted\"; café\\home/.setup/source/scripts/setup-service.py",
+            "--home",
+            "/fixture/Claw $literal% \"quoted\"; café\\home",
+            "--role",
+            "hud"
+          ],
+          [
+            "no-env-expand"
+          ],
+          1792250000000000,
+          1000000,
+          0,
+          0,
+          900001,
+          0,
+          0
+        ]
+      ]
+    }
+  },
+  {
+    "name": "foreign object identity",
+    "accept": false,
+    "item": {
+      "file": "/fixture/.config/systemd/user/netclaw-fixture_hud.service",
+      "arguments": [
+        "/fixture/Python Space/bin/python3",
+        "/fixture/Claw $literal% \"quoted\"; café\\home/.setup/source/scripts/setup-service.py",
+        "--home",
+        "/fixture/Claw $literal% \"quoted\"; café\\home",
+        "--role",
+        "hud"
+      ],
+      "execFlags": [
+        "no-env-expand"
+      ]
+    },
+    "getUnit": {
+      "type": "o",
+      "data": [
+        "/org/freedesktop/systemd1/unit/neighbor_2eservice"
+      ]
+    },
+    "property": {
+      "type": "a(sasasttttuii)",
+      "data": [
+        [
+          "/fixture/Python Space/bin/python3",
+          [
+            "/fixture/Python Space/bin/python3",
+            "/fixture/Claw $literal% \"quoted\"; café\\home/.setup/source/scripts/setup-service.py",
+            "--home",
+            "/fixture/Claw $literal% \"quoted\"; café\\home",
+            "--role",
+            "hud"
+          ],
+          [
+            "no-env-expand"
+          ],
+          1792250000000000,
+          1000000,
+          0,
+          0,
+          900001,
+          0,
+          0
+        ]
+      ]
+    }
+  },
+  {
+    "name": "wrong object signature",
+    "accept": false,
+    "item": {
+      "file": "/fixture/.config/systemd/user/netclaw-fixture_hud.service",
+      "arguments": [
+        "/fixture/Python Space/bin/python3",
+        "/fixture/Claw $literal% \"quoted\"; café\\home/.setup/source/scripts/setup-service.py",
+        "--home",
+        "/fixture/Claw $literal% \"quoted\"; café\\home",
+        "--role",
+        "hud"
+      ],
+      "execFlags": [
+        "no-env-expand"
+      ]
+    },
+    "getUnit": {
+      "type": "s",
+      "data": [
+        "/org/freedesktop/systemd1/unit/netclaw_2dfixture_5fhud_2eservice"
+      ]
+    },
+    "property": {
+      "type": "a(sasasttttuii)",
+      "data": [
+        [
+          "/fixture/Python Space/bin/python3",
+          [
+            "/fixture/Python Space/bin/python3",
+            "/fixture/Claw $literal% \"quoted\"; café\\home/.setup/source/scripts/setup-service.py",
+            "--home",
+            "/fixture/Claw $literal% \"quoted\"; café\\home",
+            "--role",
+            "hud"
+          ],
+          [
+            "no-env-expand"
+          ],
+          1792250000000000,
+          1000000,
+          0,
+          0,
+          900001,
+          0,
+          0
+        ]
+      ]
+    }
+  },
+  {
+    "name": "legacy display argv is not structured",
+    "accept": false,
+    "item": {
+      "file": "/fixture/.config/systemd/user/netclaw-fixture_hud.service",
+      "arguments": [
+        "/fixture/Python Space/bin/python3",
+        "/fixture/Claw $literal% \"quoted\"; café\\home/.setup/source/scripts/setup-service.py",
+        "--home",
+        "/fixture/Claw $literal% \"quoted\"; café\\home",
+        "--role",
+        "hud"
+      ],
+      "execFlags": [
+        "no-env-expand"
+      ]
+    },
+    "getUnit": {
+      "type": "o",
+      "data": [
+        "/org/freedesktop/systemd1/unit/netclaw_2dfixture_5fhud_2eservice"
+      ]
+    },
+    "property": {
+      "type": "s",
+      "data": "{ argv[]=/fixture/python; }"
+    }
+  },
+  {
+    "name": "extra loaded command",
+    "accept": false,
+    "item": {
+      "file": "/fixture/.config/systemd/user/netclaw-fixture_hud.service",
+      "arguments": [
+        "/fixture/Python Space/bin/python3",
+        "/fixture/Claw $literal% \"quoted\"; café\\home/.setup/source/scripts/setup-service.py",
+        "--home",
+        "/fixture/Claw $literal% \"quoted\"; café\\home",
+        "--role",
+        "hud"
+      ],
+      "execFlags": [
+        "no-env-expand"
+      ]
+    },
+    "getUnit": {
+      "type": "o",
+      "data": [
+        "/org/freedesktop/systemd1/unit/netclaw_2dfixture_5fhud_2eservice"
+      ]
+    },
+    "property": {
+      "type": "a(sasasttttuii)",
+      "data": [
+        [
+          "/fixture/Python Space/bin/python3",
+          [
+            "/fixture/Python Space/bin/python3",
+            "/fixture/Claw $literal% \"quoted\"; café\\home/.setup/source/scripts/setup-service.py",
+            "--home",
+            "/fixture/Claw $literal% \"quoted\"; café\\home",
+            "--role",
+            "hud"
+          ],
+          [
+            "no-env-expand"
+          ],
+          1792250000000000,
+          1000000,
+          0,
+          0,
+          900001,
+          0,
+          0
+        ],
+        [
+          "/fixture/Python Space/bin/python3",
+          [
+            "/fixture/Python Space/bin/python3",
+            "/fixture/Claw $literal% \"quoted\"; café\\home/.setup/source/scripts/setup-service.py",
+            "--home",
+            "/fixture/Claw $literal% \"quoted\"; café\\home",
+            "--role",
+            "hud"
+          ],
+          [
+            "no-env-expand"
+          ],
+          1792250000000000,
+          1000000,
+          0,
+          0,
+          900001,
+          0,
+          0
+        ]
+      ]
+    }
+  },
+  {
+    "name": "changed executable",
+    "accept": false,
+    "item": {
+      "file": "/fixture/.config/systemd/user/netclaw-fixture_hud.service",
+      "arguments": [
+        "/fixture/Python Space/bin/python3",
+        "/fixture/Claw $literal% \"quoted\"; café\\home/.setup/source/scripts/setup-service.py",
+        "--home",
+        "/fixture/Claw $literal% \"quoted\"; café\\home",
+        "--role",
+        "hud"
+      ],
+      "execFlags": [
+        "no-env-expand"
+      ]
+    },
+    "getUnit": {
+      "type": "o",
+      "data": [
+        "/org/freedesktop/systemd1/unit/netclaw_2dfixture_5fhud_2eservice"
+      ]
+    },
+    "property": {
+      "type": "a(sasasttttuii)",
+      "data": [
+        [
+          "/foreign/python",
+          [
+            "/fixture/Python Space/bin/python3",
+            "/fixture/Claw $literal% \"quoted\"; café\\home/.setup/source/scripts/setup-service.py",
+            "--home",
+            "/fixture/Claw $literal% \"quoted\"; café\\home",
+            "--role",
+            "hud"
+          ],
+          [
+            "no-env-expand"
+          ],
+          1792250000000000,
+          1000000,
+          0,
+          0,
+          900001,
+          0,
+          0
+        ]
+      ]
+    }
+  },
+  {
+    "name": "extra argument",
+    "accept": false,
+    "item": {
+      "file": "/fixture/.config/systemd/user/netclaw-fixture_hud.service",
+      "arguments": [
+        "/fixture/Python Space/bin/python3",
+        "/fixture/Claw $literal% \"quoted\"; café\\home/.setup/source/scripts/setup-service.py",
+        "--home",
+        "/fixture/Claw $literal% \"quoted\"; café\\home",
+        "--role",
+        "hud"
+      ],
+      "execFlags": [
+        "no-env-expand"
+      ]
+    },
+    "getUnit": {
+      "type": "o",
+      "data": [
+        "/org/freedesktop/systemd1/unit/netclaw_2dfixture_5fhud_2eservice"
+      ]
+    },
+    "property": {
+      "type": "a(sasasttttuii)",
+      "data": [
+        [
+          "/fixture/Python Space/bin/python3",
+          [
+            "/fixture/Python Space/bin/python3",
+            "/fixture/Claw $literal% \"quoted\"; café\\home/.setup/source/scripts/setup-service.py",
+            "--home",
+            "/fixture/Claw $literal% \"quoted\"; café\\home",
+            "--role",
+            "hud",
+            "foreign"
+          ],
+          [
+            "no-env-expand"
+          ],
+          1792250000000000,
+          1000000,
+          0,
+          0,
+          900001,
+          0,
+          0
+        ]
+      ]
+    }
+  },
+  {
+    "name": "lost argument boundary",
+    "accept": false,
+    "item": {
+      "file": "/fixture/.config/systemd/user/netclaw-fixture_hud.service",
+      "arguments": [
+        "/fixture/Python Space/bin/python3",
+        "/fixture/Claw $literal% \"quoted\"; café\\home/.setup/source/scripts/setup-service.py",
+        "--home",
+        "/fixture/Claw $literal% \"quoted\"; café\\home",
+        "--role",
+        "hud"
+      ],
+      "execFlags": [
+        "no-env-expand"
+      ]
+    },
+    "getUnit": {
+      "type": "o",
+      "data": [
+        "/org/freedesktop/systemd1/unit/netclaw_2dfixture_5fhud_2eservice"
+      ]
+    },
+    "property": {
+      "type": "a(sasasttttuii)",
+      "data": [
+        [
+          "/fixture/Python Space/bin/python3",
+          [
+            "/fixture/Python",
+            "Space/bin/python3",
+            "/fixture/Claw",
+            "$literal%",
+            "\"quoted\";",
+            "café\\home/.setup/source/scripts/setup-service.py",
+            "--home",
+            "/fixture/Claw",
+            "$literal%",
+            "\"quoted\";",
+            "café\\home",
+            "--role",
+            "hud"
+          ],
+          [
+            "no-env-expand"
+          ],
+          1792250000000000,
+          1000000,
+          0,
+          0,
+          900001,
+          0,
+          0
+        ]
+      ]
+    }
+  },
+  {
+    "name": "privileged flag injected",
+    "accept": false,
+    "item": {
+      "file": "/fixture/.config/systemd/user/netclaw-fixture_hud.service",
+      "arguments": [
+        "/fixture/Python Space/bin/python3",
+        "/fixture/Claw $literal% \"quoted\"; café\\home/.setup/source/scripts/setup-service.py",
+        "--home",
+        "/fixture/Claw $literal% \"quoted\"; café\\home",
+        "--role",
+        "hud"
+      ],
+      "execFlags": [
+        "no-env-expand"
+      ]
+    },
+    "getUnit": {
+      "type": "o",
+      "data": [
+        "/org/freedesktop/systemd1/unit/netclaw_2dfixture_5fhud_2eservice"
+      ]
+    },
+    "property": {
+      "type": "a(sasasttttuii)",
+      "data": [
+        [
+          "/fixture/Python Space/bin/python3",
+          [
+            "/fixture/Python Space/bin/python3",
+            "/fixture/Claw $literal% \"quoted\"; café\\home/.setup/source/scripts/setup-service.py",
+            "--home",
+            "/fixture/Claw $literal% \"quoted\"; café\\home",
+            "--role",
+            "hud"
+          ],
+          [
+            "no-env-expand",
+            "privileged"
+          ],
+          1792250000000000,
+          1000000,
+          0,
+          0,
+          900001,
+          0,
+          0
+        ]
+      ]
+    }
+  },
+  {
+    "name": "expansion flag missing",
+    "accept": false,
+    "item": {
+      "file": "/fixture/.config/systemd/user/netclaw-fixture_hud.service",
+      "arguments": [
+        "/fixture/Python Space/bin/python3",
+        "/fixture/Claw $literal% \"quoted\"; café\\home/.setup/source/scripts/setup-service.py",
+        "--home",
+        "/fixture/Claw $literal% \"quoted\"; café\\home",
+        "--role",
+        "hud"
+      ],
+      "execFlags": [
+        "no-env-expand"
+      ]
+    },
+    "getUnit": {
+      "type": "o",
+      "data": [
+        "/org/freedesktop/systemd1/unit/netclaw_2dfixture_5fhud_2eservice"
+      ]
+    },
+    "property": {
+      "type": "a(sasasttttuii)",
+      "data": [
+        [
+          "/fixture/Python Space/bin/python3",
+          [
+            "/fixture/Python Space/bin/python3",
+            "/fixture/Claw $literal% \"quoted\"; café\\home/.setup/source/scripts/setup-service.py",
+            "--home",
+            "/fixture/Claw $literal% \"quoted\"; café\\home",
+            "--role",
+            "hud"
+          ],
+          [],
+          1792250000000000,
+          1000000,
+          0,
+          0,
+          900001,
+          0,
+          0
+        ]
+      ]
+    }
+  },
+  {
+    "name": "unexpected tail field",
+    "accept": false,
+    "item": {
+      "file": "/fixture/.config/systemd/user/netclaw-fixture_hud.service",
+      "arguments": [
+        "/fixture/Python Space/bin/python3",
+        "/fixture/Claw $literal% \"quoted\"; café\\home/.setup/source/scripts/setup-service.py",
+        "--home",
+        "/fixture/Claw $literal% \"quoted\"; café\\home",
+        "--role",
+        "hud"
+      ],
+      "execFlags": [
+        "no-env-expand"
+      ]
+    },
+    "getUnit": {
+      "type": "o",
+      "data": [
+        "/org/freedesktop/systemd1/unit/netclaw_2dfixture_5fhud_2eservice"
+      ]
+    },
+    "property": {
+      "type": "a(sasasttttuii)",
+      "data": [
+        [
+          "/fixture/Python Space/bin/python3",
+          [
+            "/fixture/Python Space/bin/python3",
+            "/fixture/Claw $literal% \"quoted\"; café\\home/.setup/source/scripts/setup-service.py",
+            "--home",
+            "/fixture/Claw $literal% \"quoted\"; café\\home",
+            "--role",
+            "hud"
+          ],
+          [
+            "no-env-expand"
+          ],
+          1792250000000000,
+          1000000,
+          0,
+          0,
+          900001,
+          0,
+          0,
+          0
+        ]
+      ]
+    }
+  },
+  {
+    "name": "boolean timestamp",
+    "accept": false,
+    "item": {
+      "file": "/fixture/.config/systemd/user/netclaw-fixture_hud.service",
+      "arguments": [
+        "/fixture/Python Space/bin/python3",
+        "/fixture/Claw $literal% \"quoted\"; café\\home/.setup/source/scripts/setup-service.py",
+        "--home",
+        "/fixture/Claw $literal% \"quoted\"; café\\home",
+        "--role",
+        "hud"
+      ],
+      "execFlags": [
+        "no-env-expand"
+      ]
+    },
+    "getUnit": {
+      "type": "o",
+      "data": [
+        "/org/freedesktop/systemd1/unit/netclaw_2dfixture_5fhud_2eservice"
+      ]
+    },
+    "property": {
+      "type": "a(sasasttttuii)",
+      "data": [
+        [
+          "/fixture/Python Space/bin/python3",
+          [
+            "/fixture/Python Space/bin/python3",
+            "/fixture/Claw $literal% \"quoted\"; café\\home/.setup/source/scripts/setup-service.py",
+            "--home",
+            "/fixture/Claw $literal% \"quoted\"; café\\home",
+            "--role",
+            "hud"
+          ],
+          [
+            "no-env-expand"
+          ],
+          true,
+          1000000,
+          0,
+          0,
+          900001,
+          0,
+          0
+        ]
+      ]
+    }
+  },
+  {
+    "name": "pid overflow",
+    "accept": false,
+    "item": {
+      "file": "/fixture/.config/systemd/user/netclaw-fixture_hud.service",
+      "arguments": [
+        "/fixture/Python Space/bin/python3",
+        "/fixture/Claw $literal% \"quoted\"; café\\home/.setup/source/scripts/setup-service.py",
+        "--home",
+        "/fixture/Claw $literal% \"quoted\"; café\\home",
+        "--role",
+        "hud"
+      ],
+      "execFlags": [
+        "no-env-expand"
+      ]
+    },
+    "getUnit": {
+      "type": "o",
+      "data": [
+        "/org/freedesktop/systemd1/unit/netclaw_2dfixture_5fhud_2eservice"
+      ]
+    },
+    "property": {
+      "type": "a(sasasttttuii)",
+      "data": [
+        [
+          "/fixture/Python Space/bin/python3",
+          [
+            "/fixture/Python Space/bin/python3",
+            "/fixture/Claw $literal% \"quoted\"; café\\home/.setup/source/scripts/setup-service.py",
+            "--home",
+            "/fixture/Claw $literal% \"quoted\"; café\\home",
+            "--role",
+            "hud"
+          ],
+          [
+            "no-env-expand"
+          ],
+          1792250000000000,
+          1000000,
+          0,
+          0,
+          4294967296,
+          0,
+          0
+        ]
+      ]
+    }
+  },
+  {
+    "name": "bus command failed",
+    "accept": false,
+    "item": {
+      "file": "/fixture/.config/systemd/user/netclaw-fixture_hud.service",
+      "arguments": [
+        "/fixture/Python Space/bin/python3",
+        "/fixture/Claw $literal% \"quoted\"; café\\home/.setup/source/scripts/setup-service.py",
+        "--home",
+        "/fixture/Claw $literal% \"quoted\"; café\\home",
+        "--role",
+        "hud"
+      ],
+      "execFlags": [
+        "no-env-expand"
+      ]
+    },
+    "getUnit": {
+      "type": "o",
+      "data": [
+        "/org/freedesktop/systemd1/unit/netclaw_2dfixture_5fhud_2eservice"
+      ]
+    },
+    "property": {
+      "type": "a(sasasttttuii)",
+      "data": [
+        [
+          "/fixture/Python Space/bin/python3",
+          [
+            "/fixture/Python Space/bin/python3",
+            "/fixture/Claw $literal% \"quoted\"; café\\home/.setup/source/scripts/setup-service.py",
+            "--home",
+            "/fixture/Claw $literal% \"quoted\"; café\\home",
+            "--role",
+            "hud"
+          ],
+          [
+            "no-env-expand"
+          ],
+          1792250000000000,
+          1000000,
+          0,
+          0,
+          900001,
+          0,
+          0
+        ]
+      ]
+    },
+    "returncode": 1
+  },
+  {
+    "name": "extra envelope field",
+    "accept": false,
+    "item": {
+      "file": "/fixture/.config/systemd/user/netclaw-fixture_hud.service",
+      "arguments": [
+        "/fixture/Python Space/bin/python3",
+        "/fixture/Claw $literal% \"quoted\"; café\\home/.setup/source/scripts/setup-service.py",
+        "--home",
+        "/fixture/Claw $literal% \"quoted\"; café\\home",
+        "--role",
+        "hud"
+      ],
+      "execFlags": [
+        "no-env-expand"
+      ]
+    },
+    "getUnit": {
+      "type": "o",
+      "data": [
+        "/org/freedesktop/systemd1/unit/netclaw_2dfixture_5fhud_2eservice"
+      ]
+    },
+    "property": {
+      "type": "a(sasasttttuii)",
+      "data": [
+        [
+          "/fixture/Python Space/bin/python3",
+          [
+            "/fixture/Python Space/bin/python3",
+            "/fixture/Claw $literal% \"quoted\"; café\\home/.setup/source/scripts/setup-service.py",
+            "--home",
+            "/fixture/Claw $literal% \"quoted\"; café\\home",
+            "--role",
+            "hud"
+          ],
+          [
+            "no-env-expand"
+          ],
+          1792250000000000,
+          1000000,
+          0,
+          0,
+          900001,
+          0,
+          0
+        ]
+      ],
+      "other": "unknown"
+    }
+  },
+  {
+    "name": "null expected flags",
+    "accept": false,
+    "item": {
+      "file": "/fixture/.config/systemd/user/netclaw-fixture_hud.service",
+      "arguments": [
+        "/fixture/Python Space/bin/python3",
+        "/fixture/Claw $literal% \"quoted\"; café\\home/.setup/source/scripts/setup-service.py",
+        "--home",
+        "/fixture/Claw $literal% \"quoted\"; café\\home",
+        "--role",
+        "hud"
+      ],
+      "execFlags": null
+    },
+    "getUnit": {
+      "type": "o",
+      "data": [
+        "/org/freedesktop/systemd1/unit/netclaw_2dfixture_5fhud_2eservice"
+      ]
+    },
+    "property": {
+      "type": "a(sasasttttuii)",
+      "data": [
+        [
+          "/fixture/Python Space/bin/python3",
+          [
+            "/fixture/Python Space/bin/python3",
+            "/fixture/Claw $literal% \"quoted\"; café\\home/.setup/source/scripts/setup-service.py",
+            "--home",
+            "/fixture/Claw $literal% \"quoted\"; café\\home",
+            "--role",
+            "hud"
+          ],
+          [
+            "no-env-expand"
+          ],
+          1792250000000000,
+          1000000,
+          0,
+          0,
+          900001,
+          0,
+          0
+        ]
+      ]
+    }
+  },
+  {
+    "name": "legacy definition containing dollars",
+    "accept": false,
+    "item": {
+      "file": "/fixture/.config/systemd/user/netclaw-fixture_hud.service",
+      "arguments": [
+        "/fixture/Python Space/bin/python3",
+        "/fixture/Claw $literal% \"quoted\"; café\\home/.setup/source/scripts/setup-service.py",
+        "--home",
+        "/fixture/Claw $literal% \"quoted\"; café\\home",
+        "--role",
+        "hud"
+      ]
+    },
+    "getUnit": {
+      "type": "o",
+      "data": [
+        "/org/freedesktop/systemd1/unit/netclaw_2dfixture_5fhud_2eservice"
+      ]
+    },
+    "property": {
+      "type": "a(sasasttttuii)",
+      "data": [
+        [
+          "/fixture/Python Space/bin/python3",
+          [
+            "/fixture/Python Space/bin/python3",
+            "/fixture/Claw $literal% \"quoted\"; café\\home/.setup/source/scripts/setup-service.py",
+            "--home",
+            "/fixture/Claw $literal% \"quoted\"; café\\home",
+            "--role",
+            "hud"
+          ],
+          [],
+          1792250000000000,
+          1000000,
+          0,
+          0,
+          900001,
+          0,
+          0
+        ]
+      ]
+    }
+  },
+  {
+    "name": "legacy literal definition without environment expansion candidates",
+    "accept": true,
+    "item": {
+      "file": "/fixture/.config/systemd/user/netclaw-fixture_hud.service",
+      "arguments": [
+        "/fixture/python",
+        "/fixture/service.py",
+        "--home",
+        "/fixture/claw with spaces",
+        "--role",
+        "hud"
+      ]
+    },
+    "getUnit": {
+      "type": "o",
+      "data": [
+        "/org/freedesktop/systemd1/unit/netclaw_2dfixture_5fhud_2eservice"
+      ]
+    },
+    "property": {
+      "type": "a(sasasttttuii)",
+      "data": [
+        [
+          "/fixture/python",
+          [
+            "/fixture/python",
+            "/fixture/service.py",
+            "--home",
+            "/fixture/claw with spaces",
+            "--role",
+            "hud"
+          ],
+          [],
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      ]
+    }
+  }
+]

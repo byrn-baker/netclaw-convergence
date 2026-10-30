@@ -197,6 +197,7 @@ class FederationService:
         }
         # Member-side iN2N handlers (the Border delegates work to us).
         self._in2n_member_handlers = {
+            "in2n/self-status": self._in2n_self_status,
             "n2n/tasks/submit": self._in2n_member_submit,
             "n2n/tasks/status": self.invoker.handle_task_status,
             "n2n/tasks/result": self.invoker.handle_task_result,
@@ -2286,6 +2287,23 @@ class FederationService:
             await ch.close()
             raise
 
+
+    async def _in2n_self_status(self, channel, params):
+        """Content-free local readiness, only for our authenticated Border."""
+        if channel is not self.border_channel or not channel.trusted or getattr(channel,'attestation',None)!='possession' or params != {}:
+            raise RpcError(ERR_NOT_FEDERATED, 'authenticated Border required')
+        runtime=getattr(self,'runtime',None)
+        return {'memberId':self.risk.self_member_id(),
+                'installationId':runtime.installation if runtime else None,
+                'kind':runtime.kind if runtime else None,
+                'ready':bool(runtime and (runtime.kind!='hermes' or getattr(self.hermes_runtime,'ready',False)))}
+
+    async def member_self_status(self, member_id):
+        """Observe an already-connected member; never wake or invoke a model."""
+        channel=self.member_channels.get(member_id)
+        if not self.risk.is_border() or channel is None or not channel.trusted:
+            raise ValueError('member is not authenticated and connected')
+        return await channel.call('in2n/self-status',{},timeout=10.0)
 
     async def start_runtime(self):
         """Explicit owned daemon/member lifecycle, never a descriptor probe."""

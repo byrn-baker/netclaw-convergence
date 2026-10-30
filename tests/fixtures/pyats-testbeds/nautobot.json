@@ -1,0 +1,31 @@
+{
+  "schema": 1,
+  "name": "candidate-nautobot",
+  "sources": [
+    {
+      "kind": "nautobot",
+      "owner": "fixture-controller",
+      "scope": {
+        "site": "fixture-site"
+      },
+      "capturedAt": "2026-10-30T12:00:00Z",
+      "complete": true,
+      "total": 1,
+      "records": [
+        {
+          "id": "node-3",
+          "name": "fixture-nautobot",
+          "primary_ip4": {
+            "address": "192.0.2.3/24"
+          },
+          "platform": {
+            "name": "iosxe"
+          }
+        }
+      ],
+      "defaults": {
+        "port": 22
+      }
+    }
+  ]
+}

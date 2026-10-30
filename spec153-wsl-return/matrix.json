@@ -1,0 +1,514 @@
+{
+  "schema": 1,
+  "recordedAt": "2026-10-24T20:04:49.317609+00:00",
+  "baseline": "89627477fb470cd7c293e33e192c5983819d45d4",
+  "finalTestedCode": "cf97be1c286442660c355d50cf0788199a24c2a1",
+  "windowsQualificationComplete": false,
+  "originalTasks": {
+    "checked": 81,
+    "total": 84,
+    "open": [
+      "T081",
+      "T082",
+      "T084"
+    ]
+  },
+  "statusSemantics": {
+    "PASS": "Listed scoped exercise passed; limitations remain explicit.",
+    "BLOCKED": "Required actual scenario could not complete on available host.",
+    "NOT RUN": "At least one required part was not executed; passed subcases are named.",
+    "FAIL": "An executed check failed; historical failures are separately retained in findings/test history."
+  },
+  "scope": "W01\u2013W07 plus separate native gate; reuse accepted platform-independent Mac evidence; no live resources",
+  "cases": [
+    {
+      "id": "W01",
+      "host": "ubuntu2604",
+      "status": "PASS",
+      "result": "Actual Windows VS Code remote focused OpenClaw and Hermes wizard Tiers 1\u20133, separate new plans/native reviews.",
+      "evidence": [
+        "reports/ubuntu2604-openclaw.json",
+        "reports/ubuntu2604-hermes.json",
+        "environment.json"
+      ],
+      "executionType": "synthetic",
+      "actualHost": true,
+      "observedDate": "2026-10-24",
+      "timestampPrecision": "day",
+      "findingReferences": [
+        "W153-004",
+        "W153-007",
+        "W153-008"
+      ]
+    },
+    {
+      "id": "W01",
+      "host": "ubuntu2404",
+      "status": "BLOCKED",
+      "result": "OpenClaw passed. Hermes lost its engine during verification; no completed report. Subsequent reviewed cleanup verified. A fresh Hermes wizard is still required.",
+      "evidence": [
+        "reports/ubuntu2404-openclaw.json",
+        "evidence/cleanup.json"
+      ],
+      "executionType": "synthetic",
+      "actualHost": true,
+      "observedDate": "2026-10-24",
+      "timestampPrecision": "day",
+      "findingReferences": [
+        "W153-006",
+        "W153-012"
+      ]
+    },
+    {
+      "id": "W02",
+      "host": "ubuntu2604",
+      "status": "NOT RUN",
+      "result": "Installed Codex, Claude and VS Code MCP client discovery passed; actual pinned Specify passed. Legacy CLI installation through controlling PTY remains unrun; CLI cleanup is separate evidence.",
+      "evidence": [
+        "evidence/assistant-clients.json",
+        "evidence/test-results.json",
+        "evidence/cleanup.json"
+      ],
+      "executionType": "synthetic",
+      "actualHost": true,
+      "observedDate": "2026-10-18",
+      "timestampPrecision": "day",
+      "findingReferences": []
+    },
+    {
+      "id": "W02",
+      "host": "ubuntu2404",
+      "status": "NOT RUN",
+      "result": "Pinned Specify three-client/combined/override smoke passed in final setup suite. Installed assistant binaries were provisioned but discovery and a legacy CLI installation remain unrun.",
+      "evidence": [
+        "evidence/test-results.json"
+      ],
+      "executionType": "synthetic",
+      "actualHost": true,
+      "observedDate": "2026-10-24",
+      "timestampPrecision": "day",
+      "findingReferences": []
+    },
+    {
+      "id": "W03",
+      "host": "ubuntu2604",
+      "status": "BLOCKED",
+      "result": "Focused selected management and neighbor preservation passed. Three-claw mixed Risk installation, identity and authenticated hot-member status passed. Full post-fix cold-member wake/configuration preservation rerun remains open after volatile fixture loss.",
+      "evidence": [
+        "reports/ubuntu2604-mixed-risk.json",
+        "evidence/lifecycle.json",
+        "evidence/test-results.json"
+      ],
+      "executionType": "synthetic",
+      "actualHost": true,
+      "observedDate": "2026-10-24",
+      "timestampPrecision": "day",
+      "findingReferences": [
+        "W153-009",
+        "W153-011",
+        "W153-012",
+        "W153-013"
+      ]
+    },
+    {
+      "id": "W03",
+      "host": "ubuntu2404",
+      "status": "BLOCKED",
+      "result": "Initial mixed Risk failed during physical disk exhaustion. No fresh completed Risk/multiclaw management acceptance; further provisioning stopped for host stability.",
+      "evidence": [
+        "evidence/test-results.json"
+      ],
+      "executionType": "synthetic",
+      "actualHost": true,
+      "observedDate": "2026-10-24",
+      "timestampPrecision": "day",
+      "findingReferences": [
+        "W153-006"
+      ]
+    },
+    {
+      "id": "W04",
+      "host": "ubuntu2604",
+      "status": "BLOCKED",
+      "result": "Both native focused lifecycle reruns and special-path/cold-wake regressions passed. Reviewed cleanup includes retained/reconciliation outcomes. Deliberate restart and complete editor-disconnect restoration remain open.",
+      "evidence": [
+        "evidence/lifecycle.json",
+        "evidence/test-results.json",
+        "evidence/cleanup.json"
+      ],
+      "executionType": "synthetic",
+      "actualHost": true,
+      "observedDate": "2026-10-24",
+      "timestampPrecision": "day",
+      "findingReferences": [
+        "W153-004",
+        "W153-005",
+        "W153-009",
+        "W153-010",
+        "W153-012"
+      ]
+    },
+    {
+      "id": "W04",
+      "host": "ubuntu2404",
+      "status": "BLOCKED",
+      "result": "Actual systemd 255 special-path/cold-wake tests and new focused reviewed cleanup passed. Interrupted Hermes remained unknown. Focused management and controlled restart/restoration remain open.",
+      "evidence": [
+        "evidence/test-results.json",
+        "evidence/cleanup.json"
+      ],
+      "executionType": "synthetic",
+      "actualHost": true,
+      "observedDate": "2026-10-24",
+      "timestampPrecision": "day",
+      "findingReferences": [
+        "W153-012"
+      ]
+    },
+    {
+      "id": "W05",
+      "host": "ubuntu2604",
+      "status": "BLOCKED",
+      "result": "Partial shared native Windows gate only; see NW-* rows.",
+      "evidence": [
+        "evidence/native-windows.json"
+      ],
+      "executionType": "synthetic",
+      "actualHost": true,
+      "observedDate": "2026-10-24",
+      "timestampPrecision": "day",
+      "findingReferences": []
+    },
+    {
+      "id": "W05",
+      "host": "ubuntu2404",
+      "status": "BLOCKED",
+      "result": "Partial shared native Windows gate only; see NW-* rows.",
+      "evidence": [
+        "evidence/native-windows.json"
+      ],
+      "executionType": "synthetic",
+      "actualHost": true,
+      "observedDate": "2026-10-24",
+      "timestampPrecision": "day",
+      "findingReferences": []
+    },
+    {
+      "id": "W06",
+      "host": "ubuntu2604",
+      "status": "PASS",
+      "result": "Linux path/executable/permission and process fixes exercised; independent-home component boundaries tested; scoped native management preserves neighbor hashes/PIDs. Cleanup retains changed or uncertain ownership. No unqualified global computer-use/production installer invoked.",
+      "evidence": [
+        "evidence/lifecycle.json",
+        "evidence/cleanup.json",
+        "evidence/test-results.json"
+      ],
+      "executionType": "synthetic",
+      "actualHost": true,
+      "observedDate": "2026-10-24",
+      "timestampPrecision": "day",
+      "findingReferences": [
+        "W153-002",
+        "W153-003",
+        "W153-004",
+        "W153-005",
+        "W153-008"
+      ]
+    },
+    {
+      "id": "W06",
+      "host": "ubuntu2404",
+      "status": "BLOCKED",
+      "result": "Linux filesystem, private files, actual systemd paths and owned cleanup exercised. Actual multiclaw neighbor-preservation management remains unrun. Linux-only disposition contracts do not imply live component qualification.",
+      "evidence": [
+        "reports/ubuntu2404-openclaw.json",
+        "evidence/cleanup.json",
+        "evidence/test-results.json"
+      ],
+      "executionType": "synthetic",
+      "actualHost": true,
+      "observedDate": "2026-10-24",
+      "timestampPrecision": "day",
+      "findingReferences": []
+    },
+    {
+      "id": "W07",
+      "host": "ubuntu2604",
+      "status": "PASS",
+      "result": "Fresh dependency build, extension regression and final 140-test setup suite passed within stated skips. Actual remote plan import/native dialog/keyboard smoke; platform-independent layout/accessibility reused from accepted Mac evidence. Redacted reports/delta scanned.",
+      "evidence": [
+        "evidence/test-results.json",
+        "evidence/privacy-audit.json",
+        "environment.json"
+      ],
+      "executionType": "synthetic",
+      "actualHost": true,
+      "observedDate": "2026-10-24",
+      "timestampPrecision": "day",
+      "findingReferences": []
+    },
+    {
+      "id": "W07",
+      "host": "ubuntu2404",
+      "status": "PASS",
+      "result": "Fresh dependency build, extension regression and final 140-test setup suite passed within stated skips. Actual remote plan import/native dialog/keyboard smoke; platform-independent layout/accessibility reused from accepted Mac evidence. Redacted reports/delta scanned.",
+      "evidence": [
+        "evidence/test-results.json",
+        "evidence/privacy-audit.json",
+        "environment.json"
+      ],
+      "executionType": "synthetic",
+      "actualHost": true,
+      "observedDate": "2026-10-24",
+      "timestampPrecision": "day",
+      "findingReferences": []
+    },
+    {
+      "id": "NW-missing-extension",
+      "host": "windows",
+      "status": "PASS",
+      "result": "Actual guidance; before/after WSL snapshots equal.",
+      "evidence": [
+        "evidence/native-windows.json"
+      ],
+      "executionType": "synthetic",
+      "actualHost": true,
+      "observedDate": "2026-10-18",
+      "timestampPrecision": "day",
+      "findingReferences": []
+    },
+    {
+      "id": "NW-disabled-extension",
+      "host": "windows",
+      "status": "PASS",
+      "result": "Actual disabled-extension guidance; before/after WSL snapshots equal.",
+      "evidence": [
+        "evidence/native-windows.json"
+      ],
+      "executionType": "synthetic",
+      "actualHost": true,
+      "observedDate": "2026-10-24",
+      "timestampPrecision": "day",
+      "findingReferences": []
+    },
+    {
+      "id": "NW-supported-candidate-cancel",
+      "host": "windows",
+      "status": "PASS",
+      "result": "Actual supported candidate picker cancellation; snapshots equal.",
+      "evidence": [
+        "evidence/native-windows.json"
+      ],
+      "executionType": "synthetic",
+      "actualHost": true,
+      "observedDate": "2026-10-18",
+      "timestampPrecision": "day",
+      "findingReferences": []
+    },
+    {
+      "id": "NW-handoff-cancel",
+      "host": "windows",
+      "status": "PASS",
+      "result": "Actual native handoff review canceled; snapshots equal.",
+      "evidence": [
+        "evidence/native-windows.json"
+      ],
+      "executionType": "synthetic",
+      "actualHost": true,
+      "observedDate": "2026-10-18",
+      "timestampPrecision": "day",
+      "findingReferences": []
+    },
+    {
+      "id": "NW-utf16",
+      "host": "windows",
+      "status": "PASS",
+      "result": "Actual UTF-16 WSL status/list decoded in native gate.",
+      "evidence": [
+        "evidence/native-windows.json"
+      ],
+      "executionType": "synthetic",
+      "actualHost": true,
+      "observedDate": "2026-10-18",
+      "timestampPrecision": "day",
+      "findingReferences": []
+    },
+    {
+      "id": "NW-reviewed-handoff",
+      "host": "windows",
+      "status": "PASS",
+      "result": "Fresh native review, private handoff state and non-secret choices restored in qualified WSL development window.",
+      "evidence": [
+        "evidence/native-windows.json"
+      ],
+      "executionType": "synthetic",
+      "actualHost": true,
+      "observedDate": "2026-10-18",
+      "timestampPrecision": "day",
+      "findingReferences": []
+    },
+    {
+      "id": "NW-replay",
+      "host": "windows",
+      "status": "PASS",
+      "result": "Consumed record was not offered again after remote reload.",
+      "evidence": [
+        "evidence/native-windows.json"
+      ],
+      "executionType": "synthetic",
+      "actualHost": true,
+      "observedDate": "2026-10-18",
+      "timestampPrecision": "day",
+      "findingReferences": []
+    },
+    {
+      "id": "NW-wsl-disabled",
+      "host": "windows",
+      "status": "BLOCKED",
+      "result": "No suitable disposable Windows OS fixture available. Owner Windows features and existing distributions were preserved. Mock coverage is not actual-host acceptance.",
+      "evidence": [
+        "evidence/native-windows.json",
+        "evidence/test-results.json"
+      ],
+      "executionType": "synthetic",
+      "actualHost": true,
+      "observedDate": "2026-10-24",
+      "timestampPrecision": "day",
+      "findingReferences": []
+    },
+    {
+      "id": "NW-wsl1-only",
+      "host": "windows",
+      "status": "BLOCKED",
+      "result": "No suitable disposable Windows OS fixture available. Owner Windows features and existing distributions were preserved. Mock coverage is not actual-host acceptance.",
+      "evidence": [
+        "evidence/native-windows.json",
+        "evidence/test-results.json"
+      ],
+      "executionType": "synthetic",
+      "actualHost": true,
+      "observedDate": "2026-10-24",
+      "timestampPrecision": "day",
+      "findingReferences": []
+    },
+    {
+      "id": "NW-no-distribution",
+      "host": "windows",
+      "status": "BLOCKED",
+      "result": "No suitable disposable Windows OS fixture available. Owner Windows features and existing distributions were preserved. Mock coverage is not actual-host acceptance.",
+      "evidence": [
+        "evidence/native-windows.json",
+        "evidence/test-results.json"
+      ],
+      "executionType": "synthetic",
+      "actualHost": true,
+      "observedDate": "2026-10-24",
+      "timestampPrecision": "day",
+      "findingReferences": []
+    },
+    {
+      "id": "NW-unsupported-distribution",
+      "host": "windows",
+      "status": "BLOCKED",
+      "result": "No suitable disposable Windows OS fixture available. Owner Windows features and existing distributions were preserved. Mock coverage is not actual-host acceptance.",
+      "evidence": [
+        "evidence/native-windows.json",
+        "evidence/test-results.json"
+      ],
+      "executionType": "synthetic",
+      "actualHost": true,
+      "observedDate": "2026-10-24",
+      "timestampPrecision": "day",
+      "findingReferences": []
+    },
+    {
+      "id": "NW-ambiguous-error",
+      "host": "windows",
+      "status": "BLOCKED",
+      "result": "No suitable disposable Windows OS fixture available. Owner Windows features and existing distributions were preserved. Mock coverage is not actual-host acceptance.",
+      "evidence": [
+        "evidence/native-windows.json",
+        "evidence/test-results.json"
+      ],
+      "executionType": "synthetic",
+      "actualHost": true,
+      "observedDate": "2026-10-24",
+      "timestampPrecision": "day",
+      "findingReferences": []
+    },
+    {
+      "id": "NW-expiry",
+      "host": "windows",
+      "status": "NOT RUN",
+      "result": "Contract tests exist; actual native/remote negative scenario not executed.",
+      "evidence": [
+        "evidence/test-results.json"
+      ],
+      "executionType": "synthetic",
+      "actualHost": true,
+      "observedDate": "2026-10-24",
+      "timestampPrecision": "day",
+      "findingReferences": []
+    },
+    {
+      "id": "NW-wrong-host",
+      "host": "windows",
+      "status": "NOT RUN",
+      "result": "Contract tests exist; actual native/remote negative scenario not executed.",
+      "evidence": [
+        "evidence/test-results.json"
+      ],
+      "executionType": "synthetic",
+      "actualHost": true,
+      "observedDate": "2026-10-24",
+      "timestampPrecision": "day",
+      "findingReferences": []
+    },
+    {
+      "id": "NW-packaged-activation",
+      "host": "windows",
+      "status": "NOT RUN",
+      "result": "Source-development handoff restore exercised; auto-attachment/activation of a packaged VSIX is not qualified.",
+      "evidence": [
+        "evidence/native-windows.json"
+      ],
+      "executionType": "synthetic",
+      "actualHost": true,
+      "observedDate": "2026-10-24",
+      "timestampPrecision": "day",
+      "findingReferences": []
+    },
+    {
+      "id": "NATIVE-cold-wake",
+      "host": "ubuntu2604",
+      "status": "PASS",
+      "result": "Final actual systemd cold-unit wake and repeat-wake PID preservation regression passed. This is not the complete Risk rerun.",
+      "evidence": [
+        "evidence/test-results.json"
+      ],
+      "executionType": "synthetic",
+      "actualHost": true,
+      "observedDate": "2026-10-24",
+      "timestampPrecision": "day",
+      "findingReferences": [
+        "W153-009"
+      ]
+    },
+    {
+      "id": "NATIVE-cold-wake",
+      "host": "ubuntu2404",
+      "status": "PASS",
+      "result": "Final actual systemd 255 cold-unit wake and repeat-wake PID preservation regression passed in 140-test suite.",
+      "evidence": [
+        "evidence/test-results.json"
+      ],
+      "executionType": "synthetic",
+      "actualHost": true,
+      "observedDate": "2026-10-24",
+      "timestampPrecision": "day",
+      "findingReferences": [
+        "W153-009"
+      ]
+    }
+  ]
+}

@@ -54,8 +54,9 @@ class Bridge:
     def status(self):
         return sanitize(self.http('GET','/health/detailed'))
 
-    def open(self, conversation, seed=None, acknowledgment=None):
-        row=self.ledger.open(conversation,seed,acknowledgment)
+    def open(self, conversation, seed=None, acknowledgment=None, release_capacity=False):
+        if self.namespace!='hud' and release_capacity:raise HudError('owner_invalid')
+        row=self.ledger.open(conversation,seed,acknowledgment,release_capacity)
         if not row['session']:
             data=self.http('POST','/api/sessions',{'title':'NetClaw HUD '+conversation})
             session=data.get('session',{}).get('id')
@@ -107,7 +108,12 @@ class Bridge:
 
     def project(self,row):
         result=json.loads(row['result']) if row['result'] else {}
+        with self.ledger.db() as db:
+            released=bool(db.execute('SELECT 1 FROM capacity_releases WHERE request=?',(row['id'],)).fetchone())
+            scoped=bool(db.execute('SELECT 1 FROM execution_scopes WHERE request=?',(row['id'],)).fetchone())
         return {'requestId':row['id'],'conversationId':row['conversation'],'state':row['state'],**result,
+                'capacityReleased':released,
+                'capacityReleaseEligible':self.namespace=='hud' and not scoped and not released and row['state']=='unknown' and row['run_id'] is None,
                 'runtimeKind':'hermes','mayHaveExecuted':True}
 
     def history(self, conversation, cursor=0, limit=200):

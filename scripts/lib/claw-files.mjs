@@ -247,6 +247,7 @@ export async function resolveTarget(raw) {
     "lib/claw-files.mjs",
     "lib/claw-process.mjs",
     "lib/claw-services.mjs",
+    "lib/claw-setup-services.mjs",
   ]) {
     const p = path.join(t.root, "scripts", name);
     if (fs.existsSync(p)) code.push([name, hash(bytes(p, 4 * LIMIT).b)]);
@@ -360,7 +361,9 @@ export async function inspectFiles(raw) {
     installationId: t.installationId,
     loading:
       t.kind === "hermes"
-        ? "Stored in the native Hermes home. The protected HUD engine does not load these persona files; restart does not change that protection."
+        ? fs.existsSync(path.join(t.home,'.netclaw-setup-owner.json'))
+          ? "Setup-owned Hermes loads reviewed SOUL.md, USER.md and IDENTITY.md as personalization only. Saving these files also reviews their identity manifest; restart to refresh the protected runtime. Other files grant no tools or authority."
+          : "Stored in the native Hermes home. The protected HUD engine does not load these persona files; restart does not change that protection."
         : "OpenClaw loads workspace instructions according to session type. Existing conversations may retain earlier context; HEARTBEAT.md applies to heartbeat cycles.",
     files: FILES.map((f) => {
       try {
@@ -380,6 +383,44 @@ function contentBytes(content) {
     throw Error("Content must contain valid UTF-8 characters.");
   return b;
 }
+const SETUP_PERSONA=new Set(['SOUL.md','USER.md','IDENTITY.md']);
+function identityUpdate(t,name,draft){
+  const marker=path.join(t.home,'.netclaw-setup-owner.json'),manifest=path.join(t.home,'.setup/identity.json');
+  if(t.kind!=='hermes'||!SETUP_PERSONA.has(name)||!fs.existsSync(marker))return null;
+  if(t.workspace!==t.home)throw Error('Setup identity must belong to this Hermes home.');
+  const owner=json(marker);
+  if(owner.schema!==1||typeof owner.runId!=='string'||!owner.runId||typeof owner.installationId!=='string'||!owner.installationId||!/^[a-f0-9]{64}$/.test(owner.planHash))throw Error('Setup identity owner is invalid.');
+  safePath(path.dirname(manifest),{directory:true,privateMode:true});
+  const exists=fs.existsSync(manifest),record=exists?json(manifest):{schema:1,files:{}};
+  if(Object.keys(record).sort().join(',')!=='files,schema'||record.schema!==1||!record.files||typeof record.files!=='object'||Array.isArray(record.files)||Object.keys(record.files).some(n=>!SETUP_PERSONA.has(n)))throw Error('Setup identity manifest is invalid.');
+  for(const [n,sha] of Object.entries(record.files)){
+    const file=path.join(t.home,n);safePath(file,{privateMode:true});
+    if(!/^[a-f0-9]{64}$/.test(sha)||hash(bytes(file,65536).b)!==sha)throw Error('Setup identity changed. Reconcile it before saving.');
+  }
+  const next={schema:1,files:Object.fromEntries(Object.entries({...record.files,[name]:draft}).sort(([a],[b])=>a.localeCompare(b)))};
+  return {marker:fileHash(marker),before:exists?fileHash(manifest):null,after:hash(JSON.stringify(next,null,2)),next};
+}
+function identityMatches(t,change){
+  try{
+    if(!change)return true;
+    const manifest=path.join(t.home,'.setup/identity.json');
+    safePath(manifest,{privateMode:true});safePath(path.join(t.home,'.netclaw-setup-owner.json'),{privateMode:true});
+    if(fileHash(path.join(t.home,'.netclaw-setup-owner.json'))!==change.marker||fileHash(manifest)!==change.after)return false;
+    return Object.entries(change.next.files).every(([name,sha])=>{if(!SETUP_PERSONA.has(name))return false;const file=path.join(t.home,name);safePath(file,{privateMode:true});return hash(bytes(file,65536).b)===sha;});
+  }catch{return false;}
+}
+function finishIdentity(t,change){
+  if(!change)return;
+  const manifest=path.join(t.home,'.setup/identity.json');
+  if(fileHash(path.join(t.home,'.netclaw-setup-owner.json'))!==change.marker||(fs.existsSync(manifest)?fileHash(manifest):null)!==change.before)
+    throw Error('Setup identity manifest changed during save.');
+  for(const [name,sha] of Object.entries(change.next.files)){
+    const file=path.join(t.home,name);safePath(file,{privateMode:true});
+    if(hash(bytes(file,65536).b)!==sha)throw Error('Setup identity file changed during save.');
+  }
+  atomic(manifest,change.next);
+  if(!identityMatches(t,change))throw Error('Setup identity manifest verification failed.');
+}
 export async function prepareWrite(raw, input) {
   const t = await resolveTarget(raw);
   assertSettled(t);
@@ -387,6 +428,8 @@ export async function prepareWrite(raw, input) {
     b = contentBytes(input.content);
   if (c.revision !== input.baseline)
     throw Error("File changed. Reload and review the conflict.");
+  const identity=identityUpdate(t,input.name,hash(b));
+  if(identity&&b.length>65536)throw Error('Setup persona files are limited to 64 KiB.');
   const review = {
     id: randomUUID(),
     type: "write",
@@ -397,6 +440,7 @@ export async function prepareWrite(raw, input) {
     created: Date.now(),
     installationId: t.installationId,
     workspace: t.workspace,
+    identity,
   };
   atomic(path.join(t.state, "reviews", review.id + ".json"), review);
   return review;
@@ -450,6 +494,7 @@ export async function applyWrite(raw, input) {
       throw Error("Workspace directory is not writable.");
     if (before.revision !== r.baseline)
       throw Error("File changed. Reload and review the conflict.");
+    if(digest(identityUpdate(t,r.name,r.draft))!==digest(r.identity??null))throw Error('Setup identity changed after review.');
     const p = path.join(t.workspace, r.name),
       backup = before.exists
         ? path.join(t.state, "backups", r.id + ".md")
@@ -464,6 +509,7 @@ export async function applyWrite(raw, input) {
       phase: "prepared",
       started: Date.now(),
       backup,
+      identity:r.identity??null,
     };
     atomic(evidence, journal);
     let replaced = false,
@@ -478,6 +524,14 @@ export async function applyWrite(raw, input) {
           fs.closeSync(fd);
         }
         syncDirectory(path.dirname(backup));
+      }
+      if(r.identity?.before){
+        const file=path.join(t.home,'.setup/identity.json');
+        if(fileHash(file)!==r.identity.before)throw Error('Setup identity changed after review.');
+        const copy=path.join(t.state,'backups',r.id+'.identity.json');
+        const fd=fs.openSync(copy,'wx',0o600);
+        try{fs.writeFileSync(fd,bytes(file,4096).b);fs.fsyncSync(fd);}finally{fs.closeSync(fd);}
+        syncDirectory(path.dirname(copy));
       }
       if (
         (await resolveTarget(raw)).fingerprint !== r.fingerprint ||
@@ -512,6 +566,7 @@ export async function applyWrite(raw, input) {
       const after = current(t, r.name);
       if (after.sha256 !== r.draft)
         throw Error("Readback verification failed.");
+      finishIdentity(t,r.identity);
       atomic(evidence, {
         ...journal,
         phase: "verified",
@@ -561,6 +616,7 @@ export function reconcileFiles(t) {
   const lock = path.join(t.state, "mutation.lock");
   if (fs.existsSync(lock)) {
     const l = json(lock);
+    if(l.setupCleanup===true)throw Error('Setup cleanup owns this installation. Inspect the setup run and review cleanup recovery before using management controls.');
     try {
       process.kill(l.pid, 0);
       throw Error("A management operation is still active.");
@@ -581,7 +637,7 @@ export function reconcileFiles(t) {
       continue;
     const c = current(t, j.name);
     const phase =
-      c.sha256 === j.draft
+      c.sha256 === j.draft && identityMatches(t,j.identity)
         ? "verified"
         : c.revision === j.baseline
           ? "not-applied"

@@ -1,0 +1,4 @@
+# Hermes v0.21.6 selected extra, constrained to the qualified core.
+dingtalk-stream==0.24.3
+alibabacloud-dingtalk==2.2.42
+qrcode==7.4.2

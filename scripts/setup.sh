@@ -114,7 +114,7 @@ if [ ! -d "$OPENCLAW_DIR" ]; then
     exit 1
 fi
 
-_import_runtime_env
+if [ "${1:-}" != "--testbed-only" ]; then _import_runtime_env; fi
 [ -f "$OPENCLAW_ENV" ] || (umask 077; touch "$OPENCLAW_ENV")
 
 # ───────────────────────────────────────────
@@ -145,17 +145,39 @@ fi
 
 section "Step 1: Network Devices"
 
-echo "  NetClaw uses pyATS to connect to Cisco devices via SSH."
-echo "  Your device inventory goes in testbed/testbed.yaml."
+echo "  pyATS can use a static file or dynamic inventory composed from selected sources."
+echo "  Selected runtime: $RUNTIME_HOME"
+echo "  Setup configures the choice; it does not fetch, activate or connect to devices."
 echo ""
-
-if yesno "Open testbed.yaml in your editor now?"; then
-    EDITOR="${EDITOR:-nano}"
-    "$EDITOR" "$NETCLAW_DIR/testbed/testbed.yaml"
-    ok "Testbed edited"
-else
-    skip "Testbed editing (edit testbed/testbed.yaml later)"
-fi
+testbed_current="$(python3 "$SCRIPT_DIR/configure-testbed.py" --env "$OPENCLAW_ENV" --show-mode)"
+while true; do
+    prompt testbed_choice "Testbed mode: keep / static / dynamic (current: $testbed_current)" "keep"
+    case "$testbed_choice" in
+        keep) skip "Testbed policy unchanged"; break ;;
+        static)
+            testbed_path="$(python3 "$SCRIPT_DIR/configure-testbed.py" --env "$OPENCLAW_ENV" --show-path)"
+            prompt testbed_path "Absolute static testbed path" "${testbed_path:-$RUNTIME_WORKSPACE/testbed/testbed.yaml}"
+            python3 "$SCRIPT_DIR/configure-testbed.py" --env "$OPENCLAW_ENV" --mode static --static-path "$testbed_path" || continue
+            if yesno "Open this static testbed in your editor now?"; then
+                "${EDITOR:-nano}" "$testbed_path"
+            fi
+            ok "Static testbed selected"; break ;;
+        dynamic)
+            python3 "$SCRIPT_DIR/configure-testbed.py" --list-sources
+            prompt testbed_sources "Source IDs, separated by spaces (cancel to keep current policy)" "cancel"
+            [ "$testbed_sources" = "cancel" ] && { skip "Testbed policy unchanged"; break; }
+            python3 "$SCRIPT_DIR/configure-testbed.py" --mode dynamic --sources "$testbed_sources" --validate || continue
+            if yesno "Save these dynamic sources for this runtime?"; then
+                python3 "$SCRIPT_DIR/configure-testbed.py" --env "$OPENCLAW_ENV" --mode dynamic --sources "$testbed_sources"
+                ok "Dynamic policy saved. Configure source readers separately; compose, validate and activate through MCP."
+            else
+                skip "Testbed policy unchanged"
+            fi
+            break ;;
+        *) echo "  Choose keep, static or dynamic." ;;
+    esac
+done
+[ "${1:-}" = "--testbed-only" ] && exit 0
 
 # ═══════════════════════════════════════════
 # Step 2: Network Platforms

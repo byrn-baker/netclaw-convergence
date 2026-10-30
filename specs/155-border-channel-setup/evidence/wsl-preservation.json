@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "method": "SHA-256/mode and read-only SQLite logical-table snapshots; exact service PID/start identities",
+  "observedRoots": "Existing .openclaw and .openclaw-* homes (selected configuration/key/environment files and identity/policy/budget/trust tables), user service definitions, original testbed files. Caches, sources, logs, histories and binaries excluded.",
+  "files": {
+    "before": 8138,
+    "after": 8138
+  },
+  "tables": {
+    "before": 99,
+    "after": 99
+  },
+  "services": {
+    "before": 10,
+    "after": 10
+  },
+  "changedFiles": 0,
+  "changedTables": 0,
+  "changedServices": 0,
+  "originalBranchPreserved": true,
+  "originalWorktreeStatusPreserved": true,
+  "sharedPolicyPostcheck": {
+    "method": "post-run mtime check only; these paths were not in the initial hash snapshot",
+    "files": 52,
+    "modifiedSinceSessionStart": 0
+  },
+  "namedIdentityLimit": "wsl-cml and wsl-viz were not found in the observed roots/tables. No per-identity preservation hash is claimed for those names. No enrollment, key reset or mesh operation was issued; stopped WSL distributions were not started.",
+  "noExistingRuntimeDeployment": true
+}

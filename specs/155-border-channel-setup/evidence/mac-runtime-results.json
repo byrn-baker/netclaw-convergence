@@ -1,0 +1,474 @@
+{
+  "schema": 1,
+  "date": "2026-10-25",
+  "scope": "Mac installer/runtime qualification only; actual public dependency acquisition and local configuration, with controlled provider-free process and manager fixtures",
+  "complete": false,
+  "runtimeAcceptanceComplete": true,
+  "source": {
+    "commit": "04645395530a060b35404ec3a27bc516ae9ba076",
+    "treeHash": "ea382cb7aa2f1bcb01a72235edb9c3c08e5165bee0cfa768ba6df8a69d802881",
+    "dirty": true,
+    "privateSnapshot": "Independent --no-hardlinks clone of the exact WSL return commit, official origin retained, with only the reviewed Mac Matrix test correction overlaid. It stayed unchanged throughout both real engine runs.",
+    "overlay": [
+      "tests/test_setup_comms_hermes.py"
+    ],
+    "overlaySha256": "e2052822322eb627c91fb0f129fb4bc6c1cb041b378769e46bc92454b718818d"
+  },
+  "host": {
+    "platform": "macos",
+    "architecture": "arm64",
+    "osVersion": "26.5.2",
+    "testPython": "3.14.6",
+    "node": "24.19.0"
+  },
+  "commandsAndEnvironment": {
+    "testSource": "<private-runtime-root>/source",
+    "testRunnerSha256": "a419865d7bdf18f2fb1370a62895ca42ed38449391c53a7a9c2ad0c20cffb87e",
+    "actualEngineExecutedRunnerSha256": "46be0746ddad7a7e23fabb470231c550e833f4b46d748211b652e70d7b0c204b",
+    "actualEngineReadOnlyPostcheckSha256": "8945b04e1237663d914c93bdda435e28d22db05951b8b9e93b7a587655055c7a",
+    "configuredInputs": [
+      "NETCLAW_TEST_NODE: qualified standalone Node 24.19.0",
+      "NETCLAW_TEST_UV: existing uv executable",
+      "NETCLAW_TEST_HERMES_PYTHON: isolated pinned Hermes environment with 147 packages",
+      "NETCLAW_SETUP_HERMES_PYTHON: same pinned Hermes interpreter",
+      "NETCLAW_TEST_HERMES_EXTRA_SDKS=1",
+      "NETCLAW_TEST_ZOOM_PYTHON: qualified isolated Zoom SDK interpreter",
+      "NETCLAW_TEST_VOICE_PYTHON: qualified isolated voice SDK interpreter",
+      "NETCLAW_TEST_OPENCLAW: qualified OpenClaw 2026.7.1-2 package",
+      "NETCLAW_TEST_OPENCLAW_SOURCE: pinned OpenClaw 0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+      "NETCLAW_TEST_OPENCLAW_PERSONAL_HOME, NETCLAW_TEST_OPENCLAW_WECOM_HOME, NETCLAW_TEST_YUANBAO_PACKAGE, NETCLAW_TEST_OPENCLAW_CORE: prior isolated exact package fixtures",
+      "Acquisition run only: NETCLAW_TEST_COMMS_ACQUIRE=1 and a new private NETCLAW_TEST_COMMS_ACQUIRE_ROOT",
+      "Hermes owned run only: NETCLAW_TEST_HERMES_OWNED_ACQUISITION=1",
+      "Canary run only: NETCLAW_SETUP_CANARY_PYTHON points at isolated MCP 2.3.0 interpreter",
+      "Certificate run only: NETCLAW_SETUP_CERT_PYTHON points at fresh private cryptography 46.0.5 interpreter"
+    ]
+  },
+  "checks": [
+    {
+      "name": "full-python",
+      "pattern": "test_setup*.py",
+      "tests": 268,
+      "passed": 261,
+      "failures": [],
+      "errors": [],
+      "skipped": [
+        {
+          "test": "test_actual_pinned_sdk_results_decode_without_old_wire_field_names (test_setup_canary.CanaryTests.test_actual_pinned_sdk_results_decode_without_old_wire_field_names)",
+          "reason": "opt-in isolated MCP 2.3 interpreter"
+        },
+        {
+          "test": "test_actual_qualified_helper_uses_private_pipe_and_refuses_file_output (test_setup_certificates.CertificateTests.test_actual_qualified_helper_uses_private_pipe_and_refuses_file_output)",
+          "reason": "optional isolated cryptography 46.0.5 interpreter"
+        },
+        {
+          "test": "test_fresh_actual_twilio_and_zoom_installers_for_both_runtimes (test_setup_comms_acquisition.CommsAcquisitionTests.test_fresh_actual_twilio_and_zoom_installers_for_both_runtimes)",
+          "reason": "explicit isolated acquisition pass required"
+        },
+        {
+          "test": "test_four_configuration_effects_and_unpaired_whatsapp_preserve_other_state (test_setup_comms_hermes_owned.HermesOwnedEffects.test_four_configuration_effects_and_unpaired_whatsapp_preserve_other_state)",
+          "reason": "explicit native acquisition fixture required"
+        },
+        {
+          "test": "test_actual_collected_member_wakes_once_and_repeated_wake_preserves_pid (test_setup_member_start.MemberStartTests.test_actual_collected_member_wakes_once_and_repeated_wake_preserves_pid)",
+          "reason": "opt-in disposable WSL user manager"
+        },
+        {
+          "test": "test_actual_pinned_cli_three_clients_combined_and_override_refusal (test_setup_preset.PresetTests.test_actual_pinned_cli_three_clients_combined_and_override_refusal)",
+          "reason": "Pinned CLI fixture explicitly required"
+        },
+        {
+          "test": "test_actual_descriptor_preserves_special_paths_and_typed_argv (test_setup_systemd.SystemdTests.test_actual_descriptor_preserves_special_paths_and_typed_argv)",
+          "reason": "opt-in disposable WSL user manager"
+        }
+      ],
+      "seconds": 163.14,
+      "successful": true,
+      "privateLog": "<private-runtime-root>/full-python.log",
+      "privateLogSha256": "6fccf17930ae225168b80ba808a1226102fbee5d0b625e0b01988c86ef0ec231",
+      "command": "python3 <private-runtime-root>/run-tests.py full-python test_setup*.py"
+    },
+    {
+      "name": "acquisition",
+      "pattern": "test_setup_comms_acquisition.py",
+      "tests": 3,
+      "passed": 3,
+      "failures": [],
+      "errors": [],
+      "skipped": [],
+      "seconds": 33.881,
+      "successful": true,
+      "privateLog": "<private-runtime-root>/acquisition.log",
+      "privateLogSha256": "fe4c972b800e83b7d8587130873b22c7ef4e486167856cfd5866a88352842030",
+      "command": "python3 <private-runtime-root>/run-tests.py acquisition test_setup_comms_acquisition.py"
+    },
+    {
+      "name": "native",
+      "pattern": "test_setup_comms_native.py",
+      "tests": 1,
+      "passed": 1,
+      "failures": [],
+      "errors": [],
+      "skipped": [],
+      "seconds": 44.196,
+      "successful": true,
+      "privateLog": "<private-runtime-root>/native.log",
+      "privateLogSha256": "6fbcb5bb466a4080ab29f37a5d21c05c9ea8ebc2814a02322552fad1fc189d40",
+      "command": "python3 <private-runtime-root>/run-tests.py native test_setup_comms_native.py"
+    },
+    {
+      "name": "hermes-owned",
+      "pattern": "test_setup_comms_hermes_owned.py",
+      "tests": 1,
+      "passed": 1,
+      "failures": [],
+      "errors": [],
+      "skipped": [],
+      "seconds": 77.11,
+      "successful": true,
+      "privateLog": "<private-runtime-root>/hermes-owned.log",
+      "privateLogSha256": "1c4e267fe82b6e1d54a7264900882e99884ba21d9fa48899e757a169b605f417",
+      "command": "python3 <private-runtime-root>/run-tests.py hermes-owned test_setup_comms_hermes_owned.py"
+    },
+    {
+      "name": "canary",
+      "pattern": "test_setup_canary.py",
+      "tests": 3,
+      "passed": 3,
+      "failures": [],
+      "errors": [],
+      "skipped": [],
+      "seconds": 0.691,
+      "successful": true,
+      "privateLog": "<private-runtime-root>/canary.log",
+      "privateLogSha256": "3c30e67dcbe193c2623d33f1f23d8a869d43a901b5f3a78a499486a8b93c151e",
+      "command": "python3 <private-runtime-root>/run-tests.py canary test_setup_canary.py"
+    },
+    {
+      "name": "certificates",
+      "pattern": "test_setup_certificates.py",
+      "tests": 4,
+      "passed": 4,
+      "failures": [],
+      "errors": [],
+      "skipped": [],
+      "seconds": 1.738,
+      "successful": true,
+      "privateLog": "<private-runtime-root>/certificates.log",
+      "privateLogSha256": "818669ef1c004b522a0211c93a0de663758eba91571f6f95c463d71a0273bdac",
+      "command": "python3 <private-runtime-root>/run-tests.py certificates test_setup_certificates.py"
+    }
+  ],
+  "actualAcquisition": {
+    "state": "passed",
+    "freshHomes": 2,
+    "componentInstalls": 4,
+    "runtimes": [
+      "openclaw",
+      "hermes"
+    ],
+    "components": [
+      "twilio",
+      "zoom-rtms"
+    ],
+    "observedHostLockSelection": true,
+    "completionReceiptAndOwnershipChecks": true,
+    "runtimeEnvironmentFilesAbsent": true,
+    "providerOperations": 0
+  },
+  "nativeRegistryDiscovery": {
+    "state": "passed",
+    "combinations": 4,
+    "actualRegistries": [
+      "openclaw",
+      "hermes"
+    ],
+    "components": [
+      "twilio",
+      "zoom-rtms"
+    ],
+    "interpreterShims": "Owned fixture launchers borrow qualified interpreters; separate acquisition result is the installation evidence.",
+    "socketsAndListeners": "Explicitly refused inside actual server processes",
+    "configurationAndEnvironmentBytesPreserved": true,
+    "providerOperations": 0
+  },
+  "hermesOwnedEffects": {
+    "state": "passed",
+    "actualConfigured": [
+      "photon",
+      "homeassistant",
+      "raft"
+    ],
+    "buzz": "Compiled C contract stub, not actual Buzz upstream binary qualification",
+    "whatsapp": "Frozen bridge dependencies acquired; remained unpaired/configuration_required; native configuration/environment preserved",
+    "retainedSettings": [
+      "model",
+      "neighbor MCP entry",
+      "unrelated Telegram configuration",
+      "unrelated environment canary"
+    ],
+    "accountPairing": false
+  },
+  "actualEngines": [
+    {
+      "cleanupPreviewItems": 7947,
+      "comms": [
+        {
+          "channel": "slack",
+          "state": "verified"
+        },
+        {
+          "channel": "discord",
+          "state": "verified"
+        }
+      ],
+      "delivery": "unverified",
+      "environmentMode": "0600",
+      "fixtureNeighborFilesPreserved": 6,
+      "homeMode": "0700",
+      "ownershipRefusal": "target_ownership_changed",
+      "pauseResume": {
+        "pauseAfterFirstComms": true,
+        "runtimeReplayed": false,
+        "state": "passed",
+        "verifiedBeforePause": 10
+      },
+      "placeholderSettingsPreserved": true,
+      "postcheck": "passed",
+      "providerAuthentication": "unverified",
+      "providerTransport": "unverified",
+      "reviewAuthority": "controlled local fixture; no actual editor approval claimed",
+      "runtime": "openclaw",
+      "services": {
+        "artifacts": 0,
+        "reason": "empty permitted sender/access scope",
+        "state": "configuration_required"
+      },
+      "source": {
+        "commit": "04645395530a060b35404ec3a27bc516ae9ba076",
+        "dirty": true,
+        "treeHash": "ea382cb7aa2f1bcb01a72235edb9c3c08e5165bee0cfa768ba6df8a69d802881"
+      },
+      "state": "configuration_required",
+      "verification": "unverified",
+      "verifiedEffects": 11,
+      "wrapperResult": {
+        "cause": "Private runner referenced a nonexistent runtime_credentials helper after all installer, pause/resume, ownership and access-refusal assertions passed. Read-only postcheck uses actual dotenv parser; journals were not modified or replayed.",
+        "exitCode": 1
+      },
+      "commands": [
+        "python3 <private-runtime-root>/run-engine-v1.py openclaw",
+        "python3 <private-runtime-root>/postcheck-engine.py openclaw"
+      ],
+      "privateLogSha256": "58a72c2bda7a6b17028570629ac0977e0f1cc4bed55cca4205466382e4ecff3d",
+      "privatePostcheckLogSha256": "a34c290141679690339c3f73760576db88d2fe628ba8f9e768279d837cbb9f0c",
+      "redactedReport": {
+        "path": "<private-runtime-root>/engine-openclaw/report-redacted.json",
+        "sha256": "b3cf17add7ebe5449362b965639791603efb9a2a8eb7fdd59b89d28f2478b908",
+        "source": "Engine.report; read-only structural projection of actual run"
+      }
+    },
+    {
+      "cleanupPreviewItems": 1586,
+      "comms": [
+        {
+          "channel": "slack",
+          "state": "verified"
+        },
+        {
+          "channel": "discord",
+          "state": "verified"
+        }
+      ],
+      "delivery": "unverified",
+      "environmentMode": "0600",
+      "fixtureNeighborFilesPreserved": 6,
+      "homeMode": "0700",
+      "ownershipRefusal": "target_ownership_changed",
+      "pauseResume": {
+        "pauseAfterFirstComms": true,
+        "runtimeReplayed": false,
+        "state": "passed",
+        "verifiedBeforePause": 10
+      },
+      "placeholderSettingsPreserved": true,
+      "postcheck": "passed",
+      "providerAuthentication": "unverified",
+      "providerTransport": "unverified",
+      "reviewAuthority": "controlled local fixture; no actual editor approval claimed",
+      "runtime": "hermes",
+      "services": {
+        "artifacts": 0,
+        "reason": "empty permitted sender/access scope",
+        "state": "configuration_required"
+      },
+      "source": {
+        "commit": "04645395530a060b35404ec3a27bc516ae9ba076",
+        "dirty": true,
+        "treeHash": "ea382cb7aa2f1bcb01a72235edb9c3c08e5165bee0cfa768ba6df8a69d802881"
+      },
+      "state": "configuration_required",
+      "verification": "unverified",
+      "verifiedEffects": 11,
+      "wrapperResult": {
+        "cause": "Private runner referenced a nonexistent runtime_credentials helper after all installer, pause/resume, ownership and access-refusal assertions passed. Read-only postcheck uses actual dotenv parser; journals were not modified or replayed.",
+        "exitCode": 1
+      },
+      "commands": [
+        "python3 <private-runtime-root>/run-engine-v1.py hermes",
+        "python3 <private-runtime-root>/postcheck-engine.py hermes"
+      ],
+      "privateLogSha256": "71cbe4e1e6525bc176a4b079c14207147566cb846713af5425b94036137e8320",
+      "privatePostcheckLogSha256": "f43037572d5d52783bd15c0a7d0eba9989b7a8961f7dd758ce79a18fb5569865",
+      "redactedReport": {
+        "path": "<private-runtime-root>/engine-hermes/report-redacted.json",
+        "sha256": "e0042317b3dcc7d704a787ed9d79d7b2ac9db4509a974bf78b7858d9582d2b1c",
+        "source": "Engine.report; read-only structural projection of actual run"
+      }
+    }
+  ],
+  "controlledServices": {
+    "checks": [
+      {
+        "runtime": "openclaw",
+        "state": "passed",
+        "serviceRoles": [
+          "gateway",
+          "hud"
+        ],
+        "serviceDefinitionCount": 2,
+        "realControlledProcesses": 2,
+        "changedDefinitionRefused": true,
+        "deadOwnedProcessRefused": true,
+        "neighborProcessPreserved": true,
+        "commsAccountAndAccessBinding": "actual local configuration/environment hashes",
+        "syntheticEvidence": [
+          "native dependency/configuration inspector responses",
+          "launchctl manager responses",
+          "gateway and HUD child programs"
+        ],
+        "actualEvidence": [
+          "shared configure/install/observe functions",
+          "private owned plist/manifest/source-index writes",
+          "OS child process lifetimes",
+          "Node version policy"
+        ],
+        "providerConnections": 0
+      },
+      {
+        "runtime": "hermes",
+        "state": "passed",
+        "serviceRoles": [
+          "gateway",
+          "hud"
+        ],
+        "serviceDefinitionCount": 2,
+        "realControlledProcesses": 2,
+        "changedDefinitionRefused": true,
+        "deadOwnedProcessRefused": true,
+        "neighborProcessPreserved": true,
+        "commsAccountAndAccessBinding": "actual local configuration/environment hashes",
+        "syntheticEvidence": [
+          "native dependency/configuration inspector responses",
+          "launchctl manager responses",
+          "gateway and HUD child programs"
+        ],
+        "actualEvidence": [
+          "shared configure/install/observe functions",
+          "private owned plist/manifest/source-index writes",
+          "OS child process lifetimes",
+          "Node version policy"
+        ],
+        "providerConnections": 0
+      }
+    ],
+    "state": "passed"
+  },
+  "controlledServicesEvidence": {
+    "command": "python3 <private-runtime-root>/controlled-services-v3.py",
+    "scriptSha256": "4143f515973ae78c846a8e2e238bab5e05b80bc0b3780c76a7bdfe33c962364b",
+    "privateLogSha256": "8c7336eb3131eeb643d844648b12d2077221cfdf0670290b9cbefd2952de6969",
+    "nativeMacServiceManagerActivated": false,
+    "note": "Positive local installer/service ownership acceptance uses controlled native responses and inert OS processes. It does not establish actual launchd service execution or provider authentication/transport."
+  },
+  "recoveryAndLifetimeTests": {
+    "state": "passed",
+    "evidence": "The listed methods passed in the full Python run. Pairing receipts and native status are synthetic; process lifetimes and ownership checks are actual local fixtures.",
+    "methods": [
+      "test_abrupt_supervisor_exit_cleans_granted_detached_server_and_probe (test_setup_comms_discovery.DiscoveryLifetimeTests.test_abrupt_supervisor_exit_cleans_granted_detached_server_and_probe)",
+      "test_lease_cannot_adopt_unrelated_pid_or_changed_generation (test_setup_comms_discovery.DiscoveryLifetimeTests.test_lease_cannot_adopt_unrelated_pid_or_changed_generation)",
+      "test_symlink_and_owner_changed_request_refuse (test_setup_comms_discovery.DiscoveryLifetimeTests.test_symlink_and_owner_changed_request_refuse)",
+      "test_timeout_and_output_limits_clean_detached_child_and_preserve_neighbor (test_setup_comms_discovery.DiscoveryLifetimeTests.test_timeout_and_output_limits_clean_detached_child_and_preserve_neighbor)",
+      "test_ungranted_wrapper_exits_after_request_revocation_without_entering_server (test_setup_comms_discovery.DiscoveryLifetimeTests.test_ungranted_wrapper_exits_after_request_revocation_without_entering_server)",
+      "test_complete_write_rechecks_native_readback_and_never_reexecutes_setup (test_setup_comms_recovery.RecoveryTests.test_complete_write_rechecks_native_readback_and_never_reexecutes_setup)",
+      "test_foreign_edit_and_unknown_dependency_never_gain_retry_authority (test_setup_comms_recovery.RecoveryTests.test_foreign_edit_and_unknown_dependency_never_gain_retry_authority)",
+      "test_interrupted_configuration_intent_is_retryable_only_for_owned_before_image (test_setup_comms_recovery.RecoveryTests.test_interrupted_configuration_intent_is_retryable_only_for_owned_before_image)",
+      "test_native_pairing_partial_promotion_retries_owned_files_without_pair_replay (test_setup_comms_recovery.RecoveryTests.test_native_pairing_partial_promotion_retries_owned_files_without_pair_replay)",
+      "test_rotated_same_account_remains_configured_and_cleanup_preserves_changed_auth (test_setup_comms_recovery.RecoveryTests.test_rotated_same_account_remains_configured_and_cleanup_preserves_changed_auth)",
+      "test_unknown_native_pairing_does_not_run_config_probe_or_open_a_new_pairing (test_setup_comms_recovery.RecoveryTests.test_unknown_native_pairing_does_not_run_config_probe_or_open_a_new_pairing)",
+      "test_verified_native_pairing_never_repromotes_removed_control_receipts (test_setup_comms_recovery.RecoveryTests.test_verified_native_pairing_never_repromotes_removed_control_receipts)",
+      "test_service_install_boundary_refuses_empty_access_and_missing_dependency_before_manager (test_setup_comms_services.MessagingServiceTests.test_service_install_boundary_refuses_empty_access_and_missing_dependency_before_manager)",
+      "test_pause_does_not_start_later_phase_and_resume_requires_action (test_setup_engine.EngineTests.test_pause_does_not_start_later_phase_and_resume_requires_action)",
+      "test_pause_before_native_start_creates_no_writer (test_setup_native.NativeTerminalTests.test_pause_before_native_start_creates_no_writer)"
+    ]
+  },
+  "fixturePreparationFailures": [
+    {
+      "run": "controlled-services-v1",
+      "exitCode": 1,
+      "reason": "Private fixture omitted config/installer-runtime.json, so real Node policy correctly refused configuration. Preserved failed fixture, then used a fresh v2 home."
+    },
+    {
+      "run": "controlled-services-v2",
+      "exitCode": 1,
+      "reason": "Private harness supplied pathlib objects where real Harness supplies string tool directories; strict canonical serialization rejected it. Used fresh v3 homes with faithful string contract; v3 passed for both runtimes."
+    }
+  ],
+  "skipDisposition": {
+    "fullRunSkips": 7,
+    "separatelyPassedOptInMethods": [
+      "actual fresh Twilio/Zoom acquisition",
+      "actual Hermes owned effects and unpaired WhatsApp",
+      "MCP 2.3.0 canary decoding",
+      "cryptography 46.0.5 private helper"
+    ],
+    "stillUnexecuted": [
+      "Two disposable WSL systemd methods are inapplicable to this Mac run",
+      "Optional pinned Specify CLI fixture was not provisioned"
+    ],
+    "noRetroactiveCountChanges": true
+  },
+  "preservation": {
+    "ownFixtureNeighbors": {
+      "files": 12,
+      "unchanged": 12,
+      "controlledServiceNeighborProcesses": 2,
+      "preserved": 2
+    },
+    "allOwnedChildProcessesSettled": true,
+    "existingInstallations": "No writes issued by this workstream; root agent performs the independent full preservation comparison.",
+    "originalCheckout": "No writes issued by this workstream"
+  },
+  "boundaries": {
+    "credentials": "Fixture placeholders only; no .env export or original .env read",
+    "providerAuthentication": "unverified",
+    "providerTransport": "unverified",
+    "inbound": "unverified",
+    "outbound": "unverified",
+    "messages": 0,
+    "calls": 0,
+    "modelSessions": 0,
+    "deviceReads": 0,
+    "accountPairing": 0,
+    "meetingCapture": 0,
+    "reEnrollment": 0,
+    "tokenReplacement": 0,
+    "sharedPolicyChanges": 0,
+    "coordinatedNetworkWindow": false
+  },
+  "remainingGates": [
+    "Actual WSL remote-editor acceptance",
+    "The six recorded WSL isolated service-manager failures and WSL positive service acceptance",
+    "Final combined editor/cross-artifact reconciliation is recorded by the parent workstream"
+  ],
+  "privateArtifacts": "Raw fixture scripts, logs, runtime homes, journals, controlled status, fixture credentials and report files remain outside Git under the private runtime root."
+}

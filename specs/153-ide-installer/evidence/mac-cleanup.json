@@ -1,0 +1,79 @@
+{
+  "date": "2026-10-18",
+  "scope": "Actual reviewed cleanup of exact disposable installations; audit records and dependency directories retained",
+  "cases": [
+    {
+      "case": "wizard-openclaw",
+      "state": "verified",
+      "removed": 1515,
+      "retained": 1,
+      "retentionReasons": {
+        "ownership_evidence_retained": 1
+      },
+      "nativeServices": [
+        "stopped_and_removed"
+      ]
+    },
+    {
+      "case": "wizard-hermes",
+      "state": "verified",
+      "removed": 1516,
+      "retained": 1,
+      "retentionReasons": {
+        "ownership_evidence_retained": 1
+      },
+      "nativeServices": [
+        "stopped_and_removed"
+      ]
+    },
+    {
+      "case": "cli-openclaw",
+      "state": "verified",
+      "removed": 1516,
+      "retained": 1,
+      "retentionReasons": {
+        "ownership_evidence_retained": 1
+      },
+      "nativeServices": [
+        "stopped_and_removed"
+      ]
+    },
+    {
+      "case": "risk-openclaw",
+      "state": "configuration_required",
+      "removed": 6071,
+      "retained": 5,
+      "retentionReasons": {
+        "revision_changed": 1,
+        "ownership_evidence_retained": 4
+      },
+      "nativeServices": [
+        "stopped_and_removed",
+        "stopped_and_removed",
+        "stopped_and_removed",
+        "stopped_and_removed"
+      ]
+    },
+    {
+      "case": "risk-hermes",
+      "state": "verified",
+      "removed": 6078,
+      "retained": 4,
+      "retentionReasons": {
+        "ownership_evidence_retained": 4
+      },
+      "nativeServices": [
+        "stopped_and_removed",
+        "stopped_and_removed",
+        "stopped_and_removed",
+        "stopped_and_removed"
+      ]
+    }
+  ],
+  "riskOpenclawNote": "configuration_required is deliberate retention of the Hermes identity manifest changed by the reviewed management test; all four native controllers stopped and removed. No forced deletion.",
+  "finalObservation": {
+    "claws": 11,
+    "allDeclaredEndpointsUnbound": true,
+    "allExpectedNativeLabelsAbsent": true
+  }
+}

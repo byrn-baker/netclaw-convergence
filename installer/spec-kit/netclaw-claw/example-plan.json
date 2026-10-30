@@ -1,0 +1,14 @@
+{
+  "schema": 1,
+  "shape": "focused",
+  "assumptions": [
+    "Reference-only incomplete example. Choose host/source/harness/provider/model/home in native setup."
+  ],
+  "unresolved": [
+    "host",
+    "source",
+    "claw",
+    "posture",
+    "verification"
+  ]
+}

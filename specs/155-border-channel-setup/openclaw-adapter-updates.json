@@ -1,0 +1,2598 @@
+{
+  "schema": 1,
+  "helperInputSha256": "a9eebc613faac2c4283951bb608d3b78c001234af4de9bd44826a38ad99f8e3a",
+  "updates": {
+    "openclaw-clickclack": {
+      "setup": {
+        "dependencies": [
+          {
+            "id": "openclaw-clickclack",
+            "version": "2026.7.1",
+            "source": "https://registry.npmjs.org/@openclaw/clickclack/-/clickclack-2026.7.1.tgz",
+            "integrity": "sha512-z6B/jTqrn9j5Oagi9J51knH5AU6llFVXw++DMBxIdtE0Lmj90tuxYYepjSCshmkLItCKjzbdZT8lSB4Onzoucw=="
+          },
+          {
+            "id": "openclaw-comms-helper",
+            "version": "0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+            "source": "https://github.com/openclaw/openclaw/tree/0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+            "integrity": "sha256-a9eebc613faac2c4283951bb608d3b78c001234af4de9bd44826a38ad99f8e3a"
+          },
+          {
+            "id": "pnpm-comms-build",
+            "version": "11.2.2",
+            "source": "https://registry.npmjs.org/pnpm/-/pnpm-11.2.2.tgz",
+            "integrity": "sha512-NuZiH61QYXiTZFXnAke4gI707CV5ep9DepMoGgIEhOJgf2pGmiLpgph8PbuIZuMHFRSrEKShdJ4G7c0ewRhDbw=="
+          }
+        ],
+        "disposition": "typed",
+        "method": "typed",
+        "adapter": "typed-openclaw-channel-v1",
+        "reason": "Pinned typed native account configuration; authentication, host prerequisites, transport and delivery are separate evidence.",
+        "settings": [
+          {
+            "key": "CLICKCLACK_BASE_URL",
+            "label": "Clickclack Base Url",
+            "help": "Selected account setting. Secrets stay in this installation; configuration does not prove authentication.",
+            "classification": "private",
+            "valueType": "string",
+            "required": "always",
+            "condition": null,
+            "example": "",
+            "sharedWith": [],
+            "input": "user",
+            "provenance": [
+              {
+                "source": "https://docs.openclaw.ai/channels/clickclack",
+                "checkedAt": "2026-10-25",
+                "note": "Pinned 2026.7.1 channel schema and account/access source."
+              }
+            ]
+          },
+          {
+            "key": "CLICKCLACK_TOKEN",
+            "label": "Clickclack Token",
+            "help": "Selected account setting. Secrets stay in this installation; configuration does not prove authentication.",
+            "classification": "secret",
+            "valueType": "string",
+            "required": "always",
+            "condition": null,
+            "example": "",
+            "sharedWith": [],
+            "input": "user",
+            "provenance": [
+              {
+                "source": "https://docs.openclaw.ai/channels/clickclack",
+                "checkedAt": "2026-10-25",
+                "note": "Pinned 2026.7.1 channel schema and account/access source."
+              }
+            ]
+          },
+          {
+            "key": "CLICKCLACK_WORKSPACE",
+            "label": "Clickclack Workspace",
+            "help": "Selected account setting. Secrets stay in this installation; configuration does not prove authentication.",
+            "classification": "private",
+            "valueType": "string",
+            "required": "always",
+            "condition": null,
+            "example": "",
+            "sharedWith": [],
+            "input": "user",
+            "provenance": [
+              {
+                "source": "https://docs.openclaw.ai/channels/clickclack",
+                "checkedAt": "2026-10-25",
+                "note": "Pinned 2026.7.1 channel schema and account/access source."
+              }
+            ]
+          },
+          {
+            "key": "CLICKCLACK_ALLOWED_USERS",
+            "label": "Allowed sender IDs",
+            "help": "Comma-separated exact sender IDs. Empty grants no access. Applies to messages in the selected workspace, including shared channels; the native plugin has no separate group switch.",
+            "classification": "private",
+            "valueType": "string",
+            "required": "optional",
+            "condition": null,
+            "example": "",
+            "sharedWith": [],
+            "input": "user",
+            "provenance": [
+              {
+                "source": "https://docs.openclaw.ai/channels/clickclack",
+                "checkedAt": "2026-10-25",
+                "note": "Restrictive source-bound access policy."
+              }
+            ]
+          }
+        ],
+        "access": [
+          "CLICKCLACK_ALLOWED_USERS"
+        ],
+        "startupEffects": [
+          "provider-connection",
+          "inbound-agent-dispatch",
+          "pinned-dependency-install",
+          "selected-workspace-message-ingress"
+        ],
+        "readback": "owned-config-and-native-schema-v1"
+      }
+    },
+    "openclaw-discord": {
+      "setup": {
+        "dependencies": [
+          {
+            "id": "openclaw-discord",
+            "version": "2026.7.1",
+            "source": "https://registry.npmjs.org/@openclaw/discord/-/discord-2026.7.1.tgz",
+            "integrity": "sha512-tZfdC1YA8oVLvc2BK1w0F6rUljS5ugCOp2uWe0vPsbG1fbzVVIO4V32RoqZznGHe5u2R9u4n1aV5Z/qa1m2oFg=="
+          },
+          {
+            "id": "openclaw-comms-helper",
+            "version": "0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+            "source": "https://github.com/openclaw/openclaw/tree/0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+            "integrity": "sha256-a9eebc613faac2c4283951bb608d3b78c001234af4de9bd44826a38ad99f8e3a"
+          },
+          {
+            "id": "pnpm-comms-build",
+            "version": "11.2.2",
+            "source": "https://registry.npmjs.org/pnpm/-/pnpm-11.2.2.tgz",
+            "integrity": "sha512-NuZiH61QYXiTZFXnAke4gI707CV5ep9DepMoGgIEhOJgf2pGmiLpgph8PbuIZuMHFRSrEKShdJ4G7c0ewRhDbw=="
+          }
+        ]
+      }
+    },
+    "openclaw-feishu": {
+      "setup": {
+        "dependencies": [
+          {
+            "id": "openclaw-feishu",
+            "version": "2026.7.1",
+            "source": "https://registry.npmjs.org/@openclaw/feishu/-/feishu-2026.7.1.tgz",
+            "integrity": "sha512-ZqiRTnlJlmTeWEdWYmjATePC2WOqi2HPq/yeZr2orASWHuYonO38mnU7RU3UvYVQQ3vHAPCPSpMLsKPlCquIPA=="
+          },
+          {
+            "id": "openclaw-comms-helper",
+            "version": "0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+            "source": "https://github.com/openclaw/openclaw/tree/0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+            "integrity": "sha256-a9eebc613faac2c4283951bb608d3b78c001234af4de9bd44826a38ad99f8e3a"
+          },
+          {
+            "id": "pnpm-comms-build",
+            "version": "11.2.2",
+            "source": "https://registry.npmjs.org/pnpm/-/pnpm-11.2.2.tgz",
+            "integrity": "sha512-NuZiH61QYXiTZFXnAke4gI707CV5ep9DepMoGgIEhOJgf2pGmiLpgph8PbuIZuMHFRSrEKShdJ4G7c0ewRhDbw=="
+          }
+        ],
+        "disposition": "typed",
+        "method": "typed",
+        "adapter": "typed-openclaw-channel-v1",
+        "reason": "Pinned typed native account configuration; authentication, host prerequisites, transport and delivery are separate evidence.",
+        "settings": [
+          {
+            "key": "FEISHU_APP_ID",
+            "label": "Feishu App Id",
+            "help": "Selected account setting. Secrets stay in this installation; configuration does not prove authentication.",
+            "classification": "private",
+            "valueType": "string",
+            "required": "always",
+            "condition": null,
+            "example": "",
+            "sharedWith": [],
+            "input": "user",
+            "provenance": [
+              {
+                "source": "https://docs.openclaw.ai/channels/feishu",
+                "checkedAt": "2026-10-25",
+                "note": "Pinned 2026.7.1 channel schema and account/access source."
+              }
+            ]
+          },
+          {
+            "key": "FEISHU_APP_SECRET",
+            "label": "Feishu App Secret",
+            "help": "Selected account setting. Secrets stay in this installation; configuration does not prove authentication.",
+            "classification": "secret",
+            "valueType": "string",
+            "required": "always",
+            "condition": null,
+            "example": "",
+            "sharedWith": [],
+            "input": "user",
+            "provenance": [
+              {
+                "source": "https://docs.openclaw.ai/channels/feishu",
+                "checkedAt": "2026-10-25",
+                "note": "Pinned 2026.7.1 channel schema and account/access source."
+              }
+            ]
+          },
+          {
+            "key": "FEISHU_ALLOWED_USERS",
+            "label": "Allowed sender IDs",
+            "help": "Comma-separated exact sender IDs. Empty grants no access. This form disables group ingress; no wildcard or automatic pairing.",
+            "classification": "private",
+            "valueType": "string",
+            "required": "optional",
+            "condition": null,
+            "example": "",
+            "sharedWith": [],
+            "input": "user",
+            "provenance": [
+              {
+                "source": "https://docs.openclaw.ai/channels/feishu",
+                "checkedAt": "2026-10-25",
+                "note": "Restrictive source-bound access policy."
+              }
+            ]
+          }
+        ],
+        "access": [
+          "FEISHU_ALLOWED_USERS"
+        ],
+        "startupEffects": [
+          "provider-connection",
+          "inbound-agent-dispatch",
+          "pinned-dependency-install"
+        ],
+        "readback": "owned-config-and-native-schema-v1"
+      }
+    },
+    "openclaw-googlechat": {
+      "setup": {
+        "dependencies": [
+          {
+            "id": "openclaw-googlechat",
+            "version": "2026.7.1",
+            "source": "https://registry.npmjs.org/@openclaw/googlechat/-/googlechat-2026.7.1.tgz",
+            "integrity": "sha512-Dv0xOmcxAThEr6hoK+ioofHNu18hfbIceQrEHX3AHZPpOUiTJvToVpA5eX87NQINewwfSJf0gVhE6kSbSk2Aew=="
+          },
+          {
+            "id": "openclaw-comms-helper",
+            "version": "0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+            "source": "https://github.com/openclaw/openclaw/tree/0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+            "integrity": "sha256-a9eebc613faac2c4283951bb608d3b78c001234af4de9bd44826a38ad99f8e3a"
+          },
+          {
+            "id": "pnpm-comms-build",
+            "version": "11.2.2",
+            "source": "https://registry.npmjs.org/pnpm/-/pnpm-11.2.2.tgz",
+            "integrity": "sha512-NuZiH61QYXiTZFXnAke4gI707CV5ep9DepMoGgIEhOJgf2pGmiLpgph8PbuIZuMHFRSrEKShdJ4G7c0ewRhDbw=="
+          }
+        ],
+        "disposition": "typed",
+        "method": "typed",
+        "adapter": "typed-openclaw-channel-v1",
+        "reason": "Pinned typed native account configuration; authentication, host prerequisites, transport and delivery are separate evidence.",
+        "settings": [
+          {
+            "key": "GOOGLE_CHAT_SERVICE_ACCOUNT_JSON",
+            "label": "Google Chat Service Account Json",
+            "help": "Minified service-account JSON for this installation; entered privately.",
+            "classification": "secret",
+            "valueType": "string",
+            "required": "always",
+            "condition": null,
+            "example": "",
+            "sharedWith": [],
+            "input": "user",
+            "provenance": [
+              {
+                "source": "https://docs.openclaw.ai/channels/googlechat",
+                "checkedAt": "2026-10-25",
+                "note": "Pinned 2026.7.1 channel schema and account/access source."
+              }
+            ]
+          },
+          {
+            "key": "GOOGLE_CHAT_PUBLIC_URL",
+            "label": "Google Chat Public Url",
+            "help": "Prepared public HTTPS URL ending in /googlechat. Setup does not create a tunnel or provider route.",
+            "classification": "private",
+            "valueType": "string",
+            "required": "always",
+            "condition": null,
+            "example": "",
+            "sharedWith": [],
+            "input": "user",
+            "provenance": [
+              {
+                "source": "https://docs.openclaw.ai/channels/googlechat",
+                "checkedAt": "2026-10-25",
+                "note": "Pinned 2026.7.1 channel schema and account/access source."
+              }
+            ]
+          },
+          {
+            "key": "GOOGLECHAT_ALLOWED_USERS",
+            "label": "Allowed sender IDs",
+            "help": "Comma-separated exact sender IDs. Empty grants no access. This form disables group ingress; no wildcard or automatic pairing.",
+            "classification": "private",
+            "valueType": "string",
+            "required": "optional",
+            "condition": null,
+            "example": "",
+            "sharedWith": [],
+            "input": "user",
+            "provenance": [
+              {
+                "source": "https://docs.openclaw.ai/channels/googlechat",
+                "checkedAt": "2026-10-25",
+                "note": "Restrictive source-bound access policy."
+              }
+            ]
+          }
+        ],
+        "access": [
+          "GOOGLECHAT_ALLOWED_USERS"
+        ],
+        "startupEffects": [
+          "provider-connection",
+          "inbound-agent-dispatch",
+          "pinned-dependency-install",
+          "public-callback-prerequisite"
+        ],
+        "readback": "owned-config-and-native-schema-v1"
+      }
+    },
+    "openclaw-irc": {
+      "setup": {
+        "dependencies": [
+          {
+            "id": "openclaw-irc",
+            "version": "2026.7.1",
+            "source": "https://registry.npmjs.org/@openclaw/irc/-/irc-2026.7.1.tgz",
+            "integrity": "sha512-ZMLaCcRiyz5l2PezbNPpCZ15GkpoBm813yQJcbIr84j7vfG9Nk5vJiUjdT1IaRih2YsoVhtvPVuHCJPNVl70Ng=="
+          },
+          {
+            "id": "openclaw-comms-helper",
+            "version": "0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+            "source": "https://github.com/openclaw/openclaw/tree/0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+            "integrity": "sha256-a9eebc613faac2c4283951bb608d3b78c001234af4de9bd44826a38ad99f8e3a"
+          },
+          {
+            "id": "pnpm-comms-build",
+            "version": "11.2.2",
+            "source": "https://registry.npmjs.org/pnpm/-/pnpm-11.2.2.tgz",
+            "integrity": "sha512-NuZiH61QYXiTZFXnAke4gI707CV5ep9DepMoGgIEhOJgf2pGmiLpgph8PbuIZuMHFRSrEKShdJ4G7c0ewRhDbw=="
+          }
+        ],
+        "disposition": "typed",
+        "method": "typed",
+        "adapter": "typed-openclaw-channel-v1",
+        "reason": "Pinned typed native account configuration; authentication, host prerequisites, transport and delivery are separate evidence.",
+        "settings": [
+          {
+            "key": "IRC_HOST",
+            "label": "Irc Host",
+            "help": "Selected account setting. Secrets stay in this installation; configuration does not prove authentication.",
+            "classification": "private",
+            "valueType": "string",
+            "required": "always",
+            "condition": null,
+            "example": "",
+            "sharedWith": [],
+            "input": "user",
+            "provenance": [
+              {
+                "source": "https://docs.openclaw.ai/channels/irc",
+                "checkedAt": "2026-10-25",
+                "note": "Pinned 2026.7.1 channel schema and account/access source."
+              }
+            ]
+          },
+          {
+            "key": "IRC_PORT",
+            "label": "Irc Port",
+            "help": "Selected account setting. Secrets stay in this installation; configuration does not prove authentication.",
+            "classification": "public",
+            "valueType": "integer",
+            "required": "always",
+            "condition": null,
+            "example": "",
+            "sharedWith": [],
+            "input": "user",
+            "provenance": [
+              {
+                "source": "https://docs.openclaw.ai/channels/irc",
+                "checkedAt": "2026-10-25",
+                "note": "Pinned 2026.7.1 channel schema and account/access source."
+              }
+            ]
+          },
+          {
+            "key": "IRC_NICK",
+            "label": "Irc Nick",
+            "help": "Selected account setting. Secrets stay in this installation; configuration does not prove authentication.",
+            "classification": "private",
+            "valueType": "string",
+            "required": "always",
+            "condition": null,
+            "example": "",
+            "sharedWith": [],
+            "input": "user",
+            "provenance": [
+              {
+                "source": "https://docs.openclaw.ai/channels/irc",
+                "checkedAt": "2026-10-25",
+                "note": "Pinned 2026.7.1 channel schema and account/access source."
+              }
+            ]
+          },
+          {
+            "key": "IRC_PASSWORD",
+            "label": "Irc Password",
+            "help": "Selected account setting. Secrets stay in this installation; configuration does not prove authentication.",
+            "classification": "secret",
+            "valueType": "string",
+            "required": "always",
+            "condition": null,
+            "example": "",
+            "sharedWith": [],
+            "input": "user",
+            "provenance": [
+              {
+                "source": "https://docs.openclaw.ai/channels/irc",
+                "checkedAt": "2026-10-25",
+                "note": "Pinned 2026.7.1 channel schema and account/access source."
+              }
+            ]
+          },
+          {
+            "key": "IRC_ALLOWED_USERS",
+            "label": "Allowed sender IDs",
+            "help": "Comma-separated exact sender IDs. Empty grants no access. This form disables group ingress; no wildcard or automatic pairing.",
+            "classification": "private",
+            "valueType": "string",
+            "required": "optional",
+            "condition": null,
+            "example": "",
+            "sharedWith": [],
+            "input": "user",
+            "provenance": [
+              {
+                "source": "https://docs.openclaw.ai/channels/irc",
+                "checkedAt": "2026-10-25",
+                "note": "Restrictive source-bound access policy."
+              }
+            ]
+          }
+        ],
+        "access": [
+          "IRC_ALLOWED_USERS"
+        ],
+        "startupEffects": [
+          "provider-connection",
+          "inbound-agent-dispatch",
+          "pinned-dependency-install"
+        ],
+        "readback": "owned-config-and-native-schema-v1"
+      }
+    },
+    "openclaw-line": {
+      "setup": {
+        "dependencies": [
+          {
+            "id": "openclaw-line",
+            "version": "2026.7.1",
+            "source": "https://registry.npmjs.org/@openclaw/line/-/line-2026.7.1.tgz",
+            "integrity": "sha512-hIKwXAHSCX8jkrxXjLFaeKBeeYFSj0wk57pwLx9STSwiiJKZHBGIubG1jVjP8sJOAtug3/pFnvBxLpD3foBtKA=="
+          },
+          {
+            "id": "openclaw-comms-helper",
+            "version": "0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+            "source": "https://github.com/openclaw/openclaw/tree/0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+            "integrity": "sha256-a9eebc613faac2c4283951bb608d3b78c001234af4de9bd44826a38ad99f8e3a"
+          },
+          {
+            "id": "pnpm-comms-build",
+            "version": "11.2.2",
+            "source": "https://registry.npmjs.org/pnpm/-/pnpm-11.2.2.tgz",
+            "integrity": "sha512-NuZiH61QYXiTZFXnAke4gI707CV5ep9DepMoGgIEhOJgf2pGmiLpgph8PbuIZuMHFRSrEKShdJ4G7c0ewRhDbw=="
+          }
+        ],
+        "disposition": "typed",
+        "method": "typed",
+        "adapter": "typed-openclaw-channel-v1",
+        "reason": "Pinned typed native account configuration; authentication, host prerequisites, transport and delivery are separate evidence.",
+        "settings": [
+          {
+            "key": "LINE_CHANNEL_ACCESS_TOKEN",
+            "label": "Line Channel Access Token",
+            "help": "Selected account setting. Secrets stay in this installation; configuration does not prove authentication.",
+            "classification": "secret",
+            "valueType": "string",
+            "required": "always",
+            "condition": null,
+            "example": "",
+            "sharedWith": [],
+            "input": "user",
+            "provenance": [
+              {
+                "source": "https://docs.openclaw.ai/channels/line",
+                "checkedAt": "2026-10-25",
+                "note": "Pinned 2026.7.1 channel schema and account/access source."
+              }
+            ]
+          },
+          {
+            "key": "LINE_CHANNEL_SECRET",
+            "label": "Line Channel Secret",
+            "help": "Selected account setting. Secrets stay in this installation; configuration does not prove authentication.",
+            "classification": "secret",
+            "valueType": "string",
+            "required": "always",
+            "condition": null,
+            "example": "",
+            "sharedWith": [],
+            "input": "user",
+            "provenance": [
+              {
+                "source": "https://docs.openclaw.ai/channels/line",
+                "checkedAt": "2026-10-25",
+                "note": "Pinned 2026.7.1 channel schema and account/access source."
+              }
+            ]
+          },
+          {
+            "key": "NETCLAW_LINE_PUBLIC_URL",
+            "label": "Netclaw Line Public Url",
+            "help": "Prepared public HTTPS URL ending in /line/webhook. Setup does not create a tunnel or provider route.",
+            "classification": "private",
+            "valueType": "string",
+            "required": "always",
+            "condition": null,
+            "example": "",
+            "sharedWith": [],
+            "input": "user",
+            "provenance": [
+              {
+                "source": "https://docs.openclaw.ai/channels/line",
+                "checkedAt": "2026-10-25",
+                "note": "Pinned 2026.7.1 channel schema and account/access source."
+              }
+            ]
+          },
+          {
+            "key": "LINE_ALLOWED_USERS",
+            "label": "Allowed sender IDs",
+            "help": "Comma-separated exact sender IDs. Empty grants no access. This form disables group ingress; no wildcard or automatic pairing.",
+            "classification": "private",
+            "valueType": "string",
+            "required": "optional",
+            "condition": null,
+            "example": "",
+            "sharedWith": [],
+            "input": "user",
+            "provenance": [
+              {
+                "source": "https://docs.openclaw.ai/channels/line",
+                "checkedAt": "2026-10-25",
+                "note": "Restrictive source-bound access policy."
+              }
+            ]
+          }
+        ],
+        "access": [
+          "LINE_ALLOWED_USERS"
+        ],
+        "startupEffects": [
+          "provider-connection",
+          "inbound-agent-dispatch",
+          "pinned-dependency-install",
+          "public-callback-prerequisite"
+        ],
+        "readback": "owned-config-and-native-schema-v1"
+      }
+    },
+    "openclaw-matrix": {
+      "setup": {
+        "dependencies": [
+          {
+            "id": "openclaw-matrix",
+            "version": "2026.7.1",
+            "source": "https://registry.npmjs.org/@openclaw/matrix/-/matrix-2026.7.1.tgz",
+            "integrity": "sha512-xAEcPHVbj8GwvSLBlbkP8KSqzaD0E98WJVSoZq2B/kYFsHP5zp9TX/6uhF/W2c+vNpjxMgJfKh0Rg3GvpALfkA=="
+          },
+          {
+            "id": "openclaw-comms-helper",
+            "version": "0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+            "source": "https://github.com/openclaw/openclaw/tree/0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+            "integrity": "sha256-a9eebc613faac2c4283951bb608d3b78c001234af4de9bd44826a38ad99f8e3a"
+          },
+          {
+            "id": "pnpm-comms-build",
+            "version": "11.2.2",
+            "source": "https://registry.npmjs.org/pnpm/-/pnpm-11.2.2.tgz",
+            "integrity": "sha512-NuZiH61QYXiTZFXnAke4gI707CV5ep9DepMoGgIEhOJgf2pGmiLpgph8PbuIZuMHFRSrEKShdJ4G7c0ewRhDbw=="
+          }
+        ],
+        "disposition": "typed",
+        "method": "typed",
+        "adapter": "typed-openclaw-channel-v1",
+        "reason": "Pinned typed native account configuration; authentication, host prerequisites, transport and delivery are separate evidence.",
+        "settings": [
+          {
+            "key": "MATRIX_HOMESERVER",
+            "label": "Matrix Homeserver",
+            "help": "Selected account setting. Secrets stay in this installation; configuration does not prove authentication.",
+            "classification": "private",
+            "valueType": "string",
+            "required": "always",
+            "condition": null,
+            "example": "",
+            "sharedWith": [],
+            "input": "user",
+            "provenance": [
+              {
+                "source": "https://docs.openclaw.ai/channels/matrix",
+                "checkedAt": "2026-10-25",
+                "note": "Pinned 2026.7.1 channel schema and account/access source."
+              }
+            ]
+          },
+          {
+            "key": "MATRIX_USER_ID",
+            "label": "Matrix User Id",
+            "help": "Selected account setting. Secrets stay in this installation; configuration does not prove authentication.",
+            "classification": "private",
+            "valueType": "string",
+            "required": "always",
+            "condition": null,
+            "example": "",
+            "sharedWith": [],
+            "input": "user",
+            "provenance": [
+              {
+                "source": "https://docs.openclaw.ai/channels/matrix",
+                "checkedAt": "2026-10-25",
+                "note": "Pinned 2026.7.1 channel schema and account/access source."
+              }
+            ]
+          },
+          {
+            "key": "MATRIX_ACCESS_TOKEN",
+            "label": "Matrix Access Token",
+            "help": "Selected account setting. Secrets stay in this installation; configuration does not prove authentication.",
+            "classification": "secret",
+            "valueType": "string",
+            "required": "always",
+            "condition": null,
+            "example": "",
+            "sharedWith": [],
+            "input": "user",
+            "provenance": [
+              {
+                "source": "https://docs.openclaw.ai/channels/matrix",
+                "checkedAt": "2026-10-25",
+                "note": "Pinned 2026.7.1 channel schema and account/access source."
+              }
+            ]
+          },
+          {
+            "key": "MATRIX_ALLOWED_USERS",
+            "label": "Allowed sender IDs",
+            "help": "Comma-separated exact sender IDs. Empty grants no access. This form disables group ingress; no wildcard or automatic pairing.",
+            "classification": "private",
+            "valueType": "string",
+            "required": "optional",
+            "condition": null,
+            "example": "",
+            "sharedWith": [],
+            "input": "user",
+            "provenance": [
+              {
+                "source": "https://docs.openclaw.ai/channels/matrix",
+                "checkedAt": "2026-10-25",
+                "note": "Restrictive source-bound access policy."
+              }
+            ]
+          }
+        ],
+        "access": [
+          "MATRIX_ALLOWED_USERS"
+        ],
+        "startupEffects": [
+          "provider-connection",
+          "inbound-agent-dispatch",
+          "pinned-dependency-install"
+        ],
+        "readback": "owned-config-and-native-schema-v1"
+      }
+    },
+    "openclaw-mattermost": {
+      "setup": {
+        "dependencies": [
+          {
+            "id": "openclaw-mattermost",
+            "version": "2026.7.1",
+            "source": "https://registry.npmjs.org/@openclaw/mattermost/-/mattermost-2026.7.1.tgz",
+            "integrity": "sha512-d7NZ1x1r91JCzVWee5I9NU6MUWE77bNDqeKi7WdvWlKm7vKwR/4QGzJsMYF0kTlJtzapFPIvQptDXx/kU5LvAg=="
+          },
+          {
+            "id": "openclaw-comms-helper",
+            "version": "0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+            "source": "https://github.com/openclaw/openclaw/tree/0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+            "integrity": "sha256-a9eebc613faac2c4283951bb608d3b78c001234af4de9bd44826a38ad99f8e3a"
+          },
+          {
+            "id": "pnpm-comms-build",
+            "version": "11.2.2",
+            "source": "https://registry.npmjs.org/pnpm/-/pnpm-11.2.2.tgz",
+            "integrity": "sha512-NuZiH61QYXiTZFXnAke4gI707CV5ep9DepMoGgIEhOJgf2pGmiLpgph8PbuIZuMHFRSrEKShdJ4G7c0ewRhDbw=="
+          }
+        ],
+        "disposition": "typed",
+        "method": "typed",
+        "adapter": "typed-openclaw-channel-v1",
+        "reason": "Pinned typed native account configuration; authentication, host prerequisites, transport and delivery are separate evidence.",
+        "settings": [
+          {
+            "key": "MATTERMOST_URL",
+            "label": "Mattermost Url",
+            "help": "Selected account setting. Secrets stay in this installation; configuration does not prove authentication.",
+            "classification": "private",
+            "valueType": "string",
+            "required": "always",
+            "condition": null,
+            "example": "",
+            "sharedWith": [],
+            "input": "user",
+            "provenance": [
+              {
+                "source": "https://docs.openclaw.ai/channels/mattermost",
+                "checkedAt": "2026-10-25",
+                "note": "Pinned 2026.7.1 channel schema and account/access source."
+              }
+            ]
+          },
+          {
+            "key": "MATTERMOST_BOT_TOKEN",
+            "label": "Mattermost Bot Token",
+            "help": "Selected account setting. Secrets stay in this installation; configuration does not prove authentication.",
+            "classification": "secret",
+            "valueType": "string",
+            "required": "always",
+            "condition": null,
+            "example": "",
+            "sharedWith": [],
+            "input": "user",
+            "provenance": [
+              {
+                "source": "https://docs.openclaw.ai/channels/mattermost",
+                "checkedAt": "2026-10-25",
+                "note": "Pinned 2026.7.1 channel schema and account/access source."
+              }
+            ]
+          },
+          {
+            "key": "MATTERMOST_ALLOWED_USERS",
+            "label": "Allowed sender IDs",
+            "help": "Comma-separated exact sender IDs. Empty grants no access. This form disables group ingress; no wildcard or automatic pairing.",
+            "classification": "private",
+            "valueType": "string",
+            "required": "optional",
+            "condition": null,
+            "example": "",
+            "sharedWith": [],
+            "input": "user",
+            "provenance": [
+              {
+                "source": "https://docs.openclaw.ai/channels/mattermost",
+                "checkedAt": "2026-10-25",
+                "note": "Restrictive source-bound access policy."
+              }
+            ]
+          }
+        ],
+        "access": [
+          "MATTERMOST_ALLOWED_USERS"
+        ],
+        "startupEffects": [
+          "provider-connection",
+          "inbound-agent-dispatch",
+          "pinned-dependency-install"
+        ],
+        "readback": "owned-config-and-native-schema-v1"
+      }
+    },
+    "openclaw-msteams": {
+      "setup": {
+        "dependencies": [
+          {
+            "id": "openclaw-msteams",
+            "version": "2026.7.1",
+            "source": "https://registry.npmjs.org/@openclaw/msteams/-/msteams-2026.7.1.tgz",
+            "integrity": "sha512-gG/Yk6HZAguHwrmKjsqdONbFz5WNy126PEAXQWNW/TulO1kIifQ6tktM16BQPNLnkmWqLbj+TrrO55Cjas1aFg=="
+          },
+          {
+            "id": "openclaw-comms-helper",
+            "version": "0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+            "source": "https://github.com/openclaw/openclaw/tree/0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+            "integrity": "sha256-a9eebc613faac2c4283951bb608d3b78c001234af4de9bd44826a38ad99f8e3a"
+          },
+          {
+            "id": "pnpm-comms-build",
+            "version": "11.2.2",
+            "source": "https://registry.npmjs.org/pnpm/-/pnpm-11.2.2.tgz",
+            "integrity": "sha512-NuZiH61QYXiTZFXnAke4gI707CV5ep9DepMoGgIEhOJgf2pGmiLpgph8PbuIZuMHFRSrEKShdJ4G7c0ewRhDbw=="
+          }
+        ],
+        "disposition": "typed",
+        "method": "typed",
+        "adapter": "typed-openclaw-channel-v1",
+        "reason": "Pinned typed native account configuration; authentication, host prerequisites, transport and delivery are separate evidence.",
+        "settings": [
+          {
+            "key": "MSTEAMS_APP_ID",
+            "label": "Msteams App Id",
+            "help": "Selected account setting. Secrets stay in this installation; configuration does not prove authentication.",
+            "classification": "private",
+            "valueType": "string",
+            "required": "always",
+            "condition": null,
+            "example": "",
+            "sharedWith": [],
+            "input": "user",
+            "provenance": [
+              {
+                "source": "https://docs.openclaw.ai/channels/msteams",
+                "checkedAt": "2026-10-25",
+                "note": "Pinned 2026.7.1 channel schema and account/access source."
+              }
+            ]
+          },
+          {
+            "key": "MSTEAMS_TENANT_ID",
+            "label": "Msteams Tenant Id",
+            "help": "Selected account setting. Secrets stay in this installation; configuration does not prove authentication.",
+            "classification": "private",
+            "valueType": "string",
+            "required": "always",
+            "condition": null,
+            "example": "",
+            "sharedWith": [],
+            "input": "user",
+            "provenance": [
+              {
+                "source": "https://docs.openclaw.ai/channels/msteams",
+                "checkedAt": "2026-10-25",
+                "note": "Pinned 2026.7.1 channel schema and account/access source."
+              }
+            ]
+          },
+          {
+            "key": "MSTEAMS_APP_PASSWORD",
+            "label": "Msteams App Password",
+            "help": "Selected account setting. Secrets stay in this installation; configuration does not prove authentication.",
+            "classification": "secret",
+            "valueType": "string",
+            "required": "always",
+            "condition": null,
+            "example": "",
+            "sharedWith": [],
+            "input": "user",
+            "provenance": [
+              {
+                "source": "https://docs.openclaw.ai/channels/msteams",
+                "checkedAt": "2026-10-25",
+                "note": "Pinned 2026.7.1 channel schema and account/access source."
+              }
+            ]
+          },
+          {
+            "key": "MSTEAMS_WEBHOOK_PORT",
+            "label": "Msteams Webhook Port",
+            "help": "Selected account setting. Secrets stay in this installation; configuration does not prove authentication.",
+            "classification": "public",
+            "valueType": "integer",
+            "required": "always",
+            "condition": null,
+            "example": "",
+            "sharedWith": [],
+            "input": "user",
+            "provenance": [
+              {
+                "source": "https://docs.openclaw.ai/channels/msteams",
+                "checkedAt": "2026-10-25",
+                "note": "Pinned 2026.7.1 channel schema and account/access source."
+              }
+            ]
+          },
+          {
+            "key": "NETCLAW_MSTEAMS_PUBLIC_URL",
+            "label": "Netclaw Msteams Public Url",
+            "help": "Prepared public HTTPS URL ending in /api/messages. Setup does not create a tunnel or provider route.",
+            "classification": "private",
+            "valueType": "string",
+            "required": "always",
+            "condition": null,
+            "example": "",
+            "sharedWith": [],
+            "input": "user",
+            "provenance": [
+              {
+                "source": "https://docs.openclaw.ai/channels/msteams",
+                "checkedAt": "2026-10-25",
+                "note": "Pinned 2026.7.1 channel schema and account/access source."
+              }
+            ]
+          },
+          {
+            "key": "MSTEAMS_ALLOWED_USERS",
+            "label": "Allowed sender IDs",
+            "help": "Comma-separated exact sender IDs. Empty grants no access. This form disables group ingress; no wildcard or automatic pairing.",
+            "classification": "private",
+            "valueType": "string",
+            "required": "optional",
+            "condition": null,
+            "example": "",
+            "sharedWith": [],
+            "input": "user",
+            "provenance": [
+              {
+                "source": "https://docs.openclaw.ai/channels/msteams",
+                "checkedAt": "2026-10-25",
+                "note": "Restrictive source-bound access policy."
+              }
+            ]
+          }
+        ],
+        "access": [
+          "MSTEAMS_ALLOWED_USERS"
+        ],
+        "startupEffects": [
+          "provider-connection",
+          "inbound-agent-dispatch",
+          "pinned-dependency-install",
+          "public-callback-prerequisite",
+          "public-listener"
+        ],
+        "readback": "owned-config-and-native-schema-v1"
+      }
+    },
+    "openclaw-nextcloud-talk": {
+      "setup": {
+        "dependencies": [
+          {
+            "id": "openclaw-nextcloud-talk",
+            "version": "2026.7.1",
+            "source": "https://registry.npmjs.org/@openclaw/nextcloud-talk/-/nextcloud-talk-2026.7.1.tgz",
+            "integrity": "sha512-a+ret5WnmxLjEBwU26wl5YicOcDSEY3E34yoakQ8OKlDrwH5jIM2UbKUnq4kkoMJtROw/FF3j/GFA7ISlIXQIA=="
+          },
+          {
+            "id": "openclaw-comms-helper",
+            "version": "0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+            "source": "https://github.com/openclaw/openclaw/tree/0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+            "integrity": "sha256-a9eebc613faac2c4283951bb608d3b78c001234af4de9bd44826a38ad99f8e3a"
+          },
+          {
+            "id": "pnpm-comms-build",
+            "version": "11.2.2",
+            "source": "https://registry.npmjs.org/pnpm/-/pnpm-11.2.2.tgz",
+            "integrity": "sha512-NuZiH61QYXiTZFXnAke4gI707CV5ep9DepMoGgIEhOJgf2pGmiLpgph8PbuIZuMHFRSrEKShdJ4G7c0ewRhDbw=="
+          }
+        ],
+        "disposition": "typed",
+        "method": "typed",
+        "adapter": "typed-openclaw-channel-v1",
+        "reason": "Pinned typed native account configuration; authentication, host prerequisites, transport and delivery are separate evidence.",
+        "settings": [
+          {
+            "key": "NEXTCLOUD_TALK_URL",
+            "label": "Nextcloud Talk Url",
+            "help": "Selected account setting. Secrets stay in this installation; configuration does not prove authentication.",
+            "classification": "private",
+            "valueType": "string",
+            "required": "always",
+            "condition": null,
+            "example": "",
+            "sharedWith": [],
+            "input": "user",
+            "provenance": [
+              {
+                "source": "https://docs.openclaw.ai/channels/nextcloud-talk",
+                "checkedAt": "2026-10-25",
+                "note": "Pinned 2026.7.1 channel schema and account/access source."
+              }
+            ]
+          },
+          {
+            "key": "NEXTCLOUD_TALK_BOT_SECRET",
+            "label": "Nextcloud Talk Bot Secret",
+            "help": "Selected account setting. Secrets stay in this installation; configuration does not prove authentication.",
+            "classification": "secret",
+            "valueType": "string",
+            "required": "always",
+            "condition": null,
+            "example": "",
+            "sharedWith": [],
+            "input": "user",
+            "provenance": [
+              {
+                "source": "https://docs.openclaw.ai/channels/nextcloud-talk",
+                "checkedAt": "2026-10-25",
+                "note": "Pinned 2026.7.1 channel schema and account/access source."
+              }
+            ]
+          },
+          {
+            "key": "NEXTCLOUD_TALK_API_USER",
+            "label": "Nextcloud Talk Api User",
+            "help": "Selected account setting. Secrets stay in this installation; configuration does not prove authentication.",
+            "classification": "private",
+            "valueType": "string",
+            "required": "always",
+            "condition": null,
+            "example": "",
+            "sharedWith": [],
+            "input": "user",
+            "provenance": [
+              {
+                "source": "https://docs.openclaw.ai/channels/nextcloud-talk",
+                "checkedAt": "2026-10-25",
+                "note": "Pinned 2026.7.1 channel schema and account/access source."
+              }
+            ]
+          },
+          {
+            "key": "NEXTCLOUD_TALK_API_PASSWORD",
+            "label": "Nextcloud Talk Api Password",
+            "help": "Selected account setting. Secrets stay in this installation; configuration does not prove authentication.",
+            "classification": "secret",
+            "valueType": "string",
+            "required": "always",
+            "condition": null,
+            "example": "",
+            "sharedWith": [],
+            "input": "user",
+            "provenance": [
+              {
+                "source": "https://docs.openclaw.ai/channels/nextcloud-talk",
+                "checkedAt": "2026-10-25",
+                "note": "Pinned 2026.7.1 channel schema and account/access source."
+              }
+            ]
+          },
+          {
+            "key": "NEXTCLOUD_TALK_WEBHOOK_PORT",
+            "label": "Nextcloud Talk Webhook Port",
+            "help": "Selected account setting. Secrets stay in this installation; configuration does not prove authentication.",
+            "classification": "public",
+            "valueType": "integer",
+            "required": "always",
+            "condition": null,
+            "example": "",
+            "sharedWith": [],
+            "input": "user",
+            "provenance": [
+              {
+                "source": "https://docs.openclaw.ai/channels/nextcloud-talk",
+                "checkedAt": "2026-10-25",
+                "note": "Pinned 2026.7.1 channel schema and account/access source."
+              }
+            ]
+          },
+          {
+            "key": "NEXTCLOUD_TALK_PUBLIC_URL",
+            "label": "Nextcloud Talk Public Url",
+            "help": "Prepared public HTTPS URL ending in /nextcloud-talk-webhook. Setup does not create a tunnel or provider route.",
+            "classification": "private",
+            "valueType": "string",
+            "required": "always",
+            "condition": null,
+            "example": "",
+            "sharedWith": [],
+            "input": "user",
+            "provenance": [
+              {
+                "source": "https://docs.openclaw.ai/channels/nextcloud-talk",
+                "checkedAt": "2026-10-25",
+                "note": "Pinned 2026.7.1 channel schema and account/access source."
+              }
+            ]
+          },
+          {
+            "key": "NEXTCLOUD_TALK_ALLOWED_USERS",
+            "label": "Allowed sender IDs",
+            "help": "Comma-separated exact sender IDs. Empty grants no access. This form disables group ingress; no wildcard or automatic pairing.",
+            "classification": "private",
+            "valueType": "string",
+            "required": "optional",
+            "condition": null,
+            "example": "",
+            "sharedWith": [],
+            "input": "user",
+            "provenance": [
+              {
+                "source": "https://docs.openclaw.ai/channels/nextcloud-talk",
+                "checkedAt": "2026-10-25",
+                "note": "Restrictive source-bound access policy."
+              }
+            ]
+          }
+        ],
+        "access": [
+          "NEXTCLOUD_TALK_ALLOWED_USERS"
+        ],
+        "startupEffects": [
+          "provider-connection",
+          "inbound-agent-dispatch",
+          "pinned-dependency-install",
+          "public-callback-prerequisite",
+          "loopback-listener"
+        ],
+        "readback": "owned-config-and-native-schema-v1"
+      }
+    },
+    "openclaw-nostr": {
+      "setup": {
+        "dependencies": [
+          {
+            "id": "openclaw-nostr",
+            "version": "2026.7.1",
+            "source": "https://registry.npmjs.org/@openclaw/nostr/-/nostr-2026.7.1.tgz",
+            "integrity": "sha512-s/WG9pqYFAZNLgFtlycYY33vFwBMOqdmC95gc7cn59uJsHfZiw4gyQq7MoKwHPmehgxxcKxiU6T1IBWGOVBnMg=="
+          },
+          {
+            "id": "openclaw-comms-helper",
+            "version": "0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+            "source": "https://github.com/openclaw/openclaw/tree/0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+            "integrity": "sha256-a9eebc613faac2c4283951bb608d3b78c001234af4de9bd44826a38ad99f8e3a"
+          },
+          {
+            "id": "pnpm-comms-build",
+            "version": "11.2.2",
+            "source": "https://registry.npmjs.org/pnpm/-/pnpm-11.2.2.tgz",
+            "integrity": "sha512-NuZiH61QYXiTZFXnAke4gI707CV5ep9DepMoGgIEhOJgf2pGmiLpgph8PbuIZuMHFRSrEKShdJ4G7c0ewRhDbw=="
+          }
+        ],
+        "disposition": "typed",
+        "method": "typed",
+        "adapter": "typed-openclaw-channel-v1",
+        "reason": "Pinned typed native account configuration; authentication, host prerequisites, transport and delivery are separate evidence.",
+        "settings": [
+          {
+            "key": "NOSTR_PRIVATE_KEY",
+            "label": "Nostr Private Key",
+            "help": "Selected account setting. Secrets stay in this installation; configuration does not prove authentication.",
+            "classification": "secret",
+            "valueType": "string",
+            "required": "always",
+            "condition": null,
+            "example": "",
+            "sharedWith": [],
+            "input": "user",
+            "provenance": [
+              {
+                "source": "https://docs.openclaw.ai/channels/nostr",
+                "checkedAt": "2026-10-25",
+                "note": "Pinned 2026.7.1 channel schema and account/access source."
+              }
+            ]
+          },
+          {
+            "key": "NOSTR_RELAYS",
+            "label": "Nostr Relays",
+            "help": "Selected account setting. Secrets stay in this installation; configuration does not prove authentication.",
+            "classification": "private",
+            "valueType": "string",
+            "required": "always",
+            "condition": null,
+            "example": "",
+            "sharedWith": [],
+            "input": "user",
+            "provenance": [
+              {
+                "source": "https://docs.openclaw.ai/channels/nostr",
+                "checkedAt": "2026-10-25",
+                "note": "Pinned 2026.7.1 channel schema and account/access source."
+              }
+            ]
+          },
+          {
+            "key": "NOSTR_ALLOWED_USERS",
+            "label": "Allowed sender IDs",
+            "help": "Comma-separated exact sender IDs. Empty grants no access. This form disables group ingress; no wildcard or automatic pairing.",
+            "classification": "private",
+            "valueType": "string",
+            "required": "optional",
+            "condition": null,
+            "example": "",
+            "sharedWith": [],
+            "input": "user",
+            "provenance": [
+              {
+                "source": "https://docs.openclaw.ai/channels/nostr",
+                "checkedAt": "2026-10-25",
+                "note": "Restrictive source-bound access policy."
+              }
+            ]
+          }
+        ],
+        "access": [
+          "NOSTR_ALLOWED_USERS"
+        ],
+        "startupEffects": [
+          "provider-connection",
+          "inbound-agent-dispatch",
+          "pinned-dependency-install"
+        ],
+        "readback": "owned-config-and-native-schema-v1"
+      }
+    },
+    "openclaw-qqbot": {
+      "setup": {
+        "dependencies": [
+          {
+            "id": "openclaw-qqbot",
+            "version": "2026.7.1",
+            "source": "https://registry.npmjs.org/@openclaw/qqbot/-/qqbot-2026.7.1.tgz",
+            "integrity": "sha512-h5Ak9UyoIzMl1qs88vYwPBdtXDXfUZmta4Tjo1JVtZjEFF/3zl8JOwAfUv739mgBwJ2D7frHz+yvdLXkSV0lfA=="
+          },
+          {
+            "id": "openclaw-comms-helper",
+            "version": "0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+            "source": "https://github.com/openclaw/openclaw/tree/0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+            "integrity": "sha256-a9eebc613faac2c4283951bb608d3b78c001234af4de9bd44826a38ad99f8e3a"
+          },
+          {
+            "id": "pnpm-comms-build",
+            "version": "11.2.2",
+            "source": "https://registry.npmjs.org/pnpm/-/pnpm-11.2.2.tgz",
+            "integrity": "sha512-NuZiH61QYXiTZFXnAke4gI707CV5ep9DepMoGgIEhOJgf2pGmiLpgph8PbuIZuMHFRSrEKShdJ4G7c0ewRhDbw=="
+          }
+        ],
+        "disposition": "typed",
+        "method": "typed",
+        "adapter": "typed-openclaw-channel-v1",
+        "reason": "Pinned typed native account configuration; authentication, host prerequisites, transport and delivery are separate evidence.",
+        "settings": [
+          {
+            "key": "QQBOT_APP_ID",
+            "label": "Qqbot App Id",
+            "help": "Selected account setting. Secrets stay in this installation; configuration does not prove authentication.",
+            "classification": "private",
+            "valueType": "string",
+            "required": "always",
+            "condition": null,
+            "example": "",
+            "sharedWith": [],
+            "input": "user",
+            "provenance": [
+              {
+                "source": "https://docs.openclaw.ai/channels/qqbot",
+                "checkedAt": "2026-10-25",
+                "note": "Pinned 2026.7.1 channel schema and account/access source."
+              }
+            ]
+          },
+          {
+            "key": "QQBOT_CLIENT_SECRET",
+            "label": "Qqbot Client Secret",
+            "help": "Selected account setting. Secrets stay in this installation; configuration does not prove authentication.",
+            "classification": "secret",
+            "valueType": "string",
+            "required": "always",
+            "condition": null,
+            "example": "",
+            "sharedWith": [],
+            "input": "user",
+            "provenance": [
+              {
+                "source": "https://docs.openclaw.ai/channels/qqbot",
+                "checkedAt": "2026-10-25",
+                "note": "Pinned 2026.7.1 channel schema and account/access source."
+              }
+            ]
+          },
+          {
+            "key": "QQBOT_ALLOWED_USERS",
+            "label": "Allowed sender IDs",
+            "help": "Comma-separated exact sender IDs. Empty grants no access. This form disables group ingress; no wildcard or automatic pairing.",
+            "classification": "private",
+            "valueType": "string",
+            "required": "optional",
+            "condition": null,
+            "example": "",
+            "sharedWith": [],
+            "input": "user",
+            "provenance": [
+              {
+                "source": "https://docs.openclaw.ai/channels/qqbot",
+                "checkedAt": "2026-10-25",
+                "note": "Restrictive source-bound access policy."
+              }
+            ]
+          }
+        ],
+        "access": [
+          "QQBOT_ALLOWED_USERS"
+        ],
+        "startupEffects": [
+          "provider-connection",
+          "inbound-agent-dispatch",
+          "pinned-dependency-install"
+        ],
+        "readback": "owned-config-and-native-schema-v1"
+      }
+    },
+    "openclaw-raft": {
+      "setup": {
+        "dependencies": [
+          {
+            "id": "openclaw-raft",
+            "version": "2026.7.1",
+            "source": "https://registry.npmjs.org/@openclaw/raft/-/raft-2026.7.1.tgz",
+            "integrity": "sha512-esDQP1KKddkB3l0JcNn7KYvAtufKGIQ5edqmvp2DZutMleGxeZ3OCAetDvQtoczkpSzPQoYHY2CMoGbiB3DBiA=="
+          },
+          {
+            "id": "openclaw-comms-helper",
+            "version": "0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+            "source": "https://github.com/openclaw/openclaw/tree/0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+            "integrity": "sha256-a9eebc613faac2c4283951bb608d3b78c001234af4de9bd44826a38ad99f8e3a"
+          },
+          {
+            "id": "pnpm-comms-build",
+            "version": "11.2.2",
+            "source": "https://registry.npmjs.org/pnpm/-/pnpm-11.2.2.tgz",
+            "integrity": "sha512-NuZiH61QYXiTZFXnAke4gI707CV5ep9DepMoGgIEhOJgf2pGmiLpgph8PbuIZuMHFRSrEKShdJ4G7c0ewRhDbw=="
+          },
+          {
+            "id": "openclaw-raft-native",
+            "version": "0.0.26",
+            "source": "https://www.npmjs.com/package/@botiverse/raft/v/0.0.26",
+            "integrity": "sha256-15f9faf66de512a3fa0960595656febf34685abc0c8fe73bcc2904ee2ce8a9c7"
+          }
+        ],
+        "disposition": "typed",
+        "method": "typed",
+        "adapter": "typed-openclaw-channel-v1",
+        "reason": "Pinned typed native account configuration; authentication, host prerequisites, transport and delivery are separate evidence.",
+        "settings": [
+          {
+            "key": "RAFT_PROFILE",
+            "label": "Raft Profile",
+            "help": "Prepared Raft External Agent profile authenticated in this installation's private CLI home. Its workspace authorization controls access; setup does not copy another profile.",
+            "classification": "private",
+            "valueType": "string",
+            "required": "always",
+            "condition": null,
+            "example": "",
+            "sharedWith": [],
+            "input": "user",
+            "provenance": [
+              {
+                "source": "https://docs.openclaw.ai/channels/raft",
+                "checkedAt": "2026-10-25",
+                "note": "Pinned 2026.7.1 channel schema and account/access source."
+              }
+            ]
+          },
+          {
+            "key": "NETCLAW_RAFT_CREDENTIAL_JSON",
+            "label": "Netclaw Raft Credential Json",
+            "help": "Prepared Raft External Agent profile authenticated in this installation's private CLI home. Its workspace authorization controls access; setup does not copy another profile.",
+            "classification": "secret",
+            "valueType": "string",
+            "required": "always",
+            "condition": null,
+            "example": "",
+            "sharedWith": [],
+            "input": "user",
+            "provenance": [
+              {
+                "source": "https://docs.openclaw.ai/channels/raft",
+                "checkedAt": "2026-10-25",
+                "note": "Pinned 2026.7.1 channel schema and account/access source."
+              }
+            ]
+          }
+        ],
+        "access": [],
+        "startupEffects": [
+          "owned-cli-profile-prerequisite",
+          "external-cli-spawn",
+          "loopback-listener",
+          "inbound-agent-dispatch",
+          "pinned-dependency-install"
+        ],
+        "readback": "owned-config-and-native-schema-v1"
+      }
+    },
+    "openclaw-signal": {
+      "setup": {
+        "dependencies": [
+          {
+            "id": "openclaw-signal",
+            "version": "2026.7.1",
+            "source": "https://registry.npmjs.org/@openclaw/signal/-/signal-2026.7.1.tgz",
+            "integrity": "sha512-+sx2zNIpcVw4J4AiqtNulzKRId0tBtBclG5RncUlQ45ac4BZDrbQs4C6GkI2KU9Qzbxd+Fxt/ivalmLxcVbbIA=="
+          },
+          {
+            "id": "openclaw-comms-helper",
+            "version": "0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+            "source": "https://github.com/openclaw/openclaw/tree/0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+            "integrity": "sha256-a9eebc613faac2c4283951bb608d3b78c001234af4de9bd44826a38ad99f8e3a"
+          },
+          {
+            "id": "pnpm-comms-build",
+            "version": "11.2.2",
+            "source": "https://registry.npmjs.org/pnpm/-/pnpm-11.2.2.tgz",
+            "integrity": "sha512-NuZiH61QYXiTZFXnAke4gI707CV5ep9DepMoGgIEhOJgf2pGmiLpgph8PbuIZuMHFRSrEKShdJ4G7c0ewRhDbw=="
+          }
+        ],
+        "disposition": "typed",
+        "method": "typed",
+        "adapter": "typed-openclaw-channel-v1",
+        "reason": "Pinned typed native account configuration; authentication, host prerequisites, transport and delivery are separate evidence.",
+        "settings": [
+          {
+            "key": "SIGNAL_PHONE_NUMBER",
+            "label": "Signal Phone Number",
+            "help": "Selected account setting. Secrets stay in this installation; configuration does not prove authentication.",
+            "classification": "private",
+            "valueType": "string",
+            "required": "always",
+            "condition": null,
+            "example": "",
+            "sharedWith": [],
+            "input": "user",
+            "provenance": [
+              {
+                "source": "https://docs.openclaw.ai/channels/signal",
+                "checkedAt": "2026-10-25",
+                "note": "Pinned 2026.7.1 channel schema and account/access source."
+              }
+            ]
+          },
+          {
+            "key": "SIGNAL_HTTP_URL",
+            "label": "Signal Http Url",
+            "help": "Prepared signal-cli native daemon on this installation's loopback endpoint. Link its dedicated account separately; setup never starts or registers the daemon.",
+            "classification": "private",
+            "valueType": "string",
+            "required": "always",
+            "condition": null,
+            "example": "",
+            "sharedWith": [],
+            "input": "user",
+            "provenance": [
+              {
+                "source": "https://docs.openclaw.ai/channels/signal",
+                "checkedAt": "2026-10-25",
+                "note": "Pinned 2026.7.1 channel schema and account/access source."
+              }
+            ]
+          },
+          {
+            "key": "SIGNAL_ALLOWED_USERS",
+            "label": "Allowed sender IDs",
+            "help": "Comma-separated exact sender IDs. Empty grants no access. This form disables group ingress; no wildcard or automatic pairing.",
+            "classification": "private",
+            "valueType": "string",
+            "required": "optional",
+            "condition": null,
+            "example": "",
+            "sharedWith": [],
+            "input": "user",
+            "provenance": [
+              {
+                "source": "https://docs.openclaw.ai/channels/signal",
+                "checkedAt": "2026-10-25",
+                "note": "Restrictive source-bound access policy."
+              }
+            ]
+          }
+        ],
+        "access": [
+          "SIGNAL_ALLOWED_USERS"
+        ],
+        "startupEffects": [
+          "prepared-signal-daemon-prerequisite",
+          "provider-connection",
+          "inbound-agent-dispatch",
+          "pinned-dependency-install"
+        ],
+        "readback": "owned-config-and-native-schema-v1"
+      }
+    },
+    "openclaw-slack": {
+      "setup": {
+        "dependencies": [
+          {
+            "id": "openclaw-slack",
+            "version": "2026.7.1",
+            "source": "https://registry.npmjs.org/@openclaw/slack/-/slack-2026.7.1.tgz",
+            "integrity": "sha512-dwVGEVCmoTQrOIeZaSCIOPg8pT7hB883QQEXdp9EZUDzTGuvSc+KxH2iERSOV/59hROQctYdcobGn/vdB1H4XA=="
+          },
+          {
+            "id": "openclaw-comms-helper",
+            "version": "0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+            "source": "https://github.com/openclaw/openclaw/tree/0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+            "integrity": "sha256-a9eebc613faac2c4283951bb608d3b78c001234af4de9bd44826a38ad99f8e3a"
+          },
+          {
+            "id": "pnpm-comms-build",
+            "version": "11.2.2",
+            "source": "https://registry.npmjs.org/pnpm/-/pnpm-11.2.2.tgz",
+            "integrity": "sha512-NuZiH61QYXiTZFXnAke4gI707CV5ep9DepMoGgIEhOJgf2pGmiLpgph8PbuIZuMHFRSrEKShdJ4G7c0ewRhDbw=="
+          }
+        ]
+      }
+    },
+    "openclaw-sms": {
+      "setup": {
+        "dependencies": [
+          {
+            "id": "openclaw-sms",
+            "version": "2026.7.1",
+            "source": "https://registry.npmjs.org/@openclaw/sms/-/sms-2026.7.1.tgz",
+            "integrity": "sha512-G2oxpX6O/UfdhJhNclznqBZdWLyY8Ysg2gZZs+jiIRBGfymV+AGiD8tL+4JGAH4nGSNLBRMjDzzmh8hiEEa/QA=="
+          },
+          {
+            "id": "openclaw-comms-helper",
+            "version": "0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+            "source": "https://github.com/openclaw/openclaw/tree/0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+            "integrity": "sha256-a9eebc613faac2c4283951bb608d3b78c001234af4de9bd44826a38ad99f8e3a"
+          },
+          {
+            "id": "pnpm-comms-build",
+            "version": "11.2.2",
+            "source": "https://registry.npmjs.org/pnpm/-/pnpm-11.2.2.tgz",
+            "integrity": "sha512-NuZiH61QYXiTZFXnAke4gI707CV5ep9DepMoGgIEhOJgf2pGmiLpgph8PbuIZuMHFRSrEKShdJ4G7c0ewRhDbw=="
+          }
+        ],
+        "disposition": "typed",
+        "method": "typed",
+        "adapter": "typed-openclaw-channel-v1",
+        "reason": "Pinned typed native account configuration; authentication, host prerequisites, transport and delivery are separate evidence.",
+        "settings": [
+          {
+            "key": "TWILIO_ACCOUNT_SID",
+            "label": "Twilio Account Sid",
+            "help": "Selected account setting. Secrets stay in this installation; configuration does not prove authentication.",
+            "classification": "private",
+            "valueType": "string",
+            "required": "always",
+            "condition": null,
+            "example": "",
+            "sharedWith": [],
+            "input": "user",
+            "provenance": [
+              {
+                "source": "https://docs.openclaw.ai/channels/sms",
+                "checkedAt": "2026-10-25",
+                "note": "Pinned 2026.7.1 channel schema and account/access source."
+              }
+            ]
+          },
+          {
+            "key": "TWILIO_AUTH_TOKEN",
+            "label": "Twilio Auth Token",
+            "help": "Selected account setting. Secrets stay in this installation; configuration does not prove authentication.",
+            "classification": "secret",
+            "valueType": "string",
+            "required": "always",
+            "condition": null,
+            "example": "",
+            "sharedWith": [],
+            "input": "user",
+            "provenance": [
+              {
+                "source": "https://docs.openclaw.ai/channels/sms",
+                "checkedAt": "2026-10-25",
+                "note": "Pinned 2026.7.1 channel schema and account/access source."
+              }
+            ]
+          },
+          {
+            "key": "TWILIO_PHONE_NUMBER",
+            "label": "Twilio Phone Number",
+            "help": "Selected account setting. Secrets stay in this installation; configuration does not prove authentication.",
+            "classification": "private",
+            "valueType": "string",
+            "required": "always",
+            "condition": null,
+            "example": "",
+            "sharedWith": [],
+            "input": "user",
+            "provenance": [
+              {
+                "source": "https://docs.openclaw.ai/channels/sms",
+                "checkedAt": "2026-10-25",
+                "note": "Pinned 2026.7.1 channel schema and account/access source."
+              }
+            ]
+          },
+          {
+            "key": "SMS_PUBLIC_WEBHOOK_URL",
+            "label": "Sms Public Webhook Url",
+            "help": "Prepared public HTTPS URL ending in /sms/webhook. Setup does not create a tunnel or provider route.",
+            "classification": "private",
+            "valueType": "string",
+            "required": "always",
+            "condition": null,
+            "example": "",
+            "sharedWith": [],
+            "input": "user",
+            "provenance": [
+              {
+                "source": "https://docs.openclaw.ai/channels/sms",
+                "checkedAt": "2026-10-25",
+                "note": "Pinned 2026.7.1 channel schema and account/access source."
+              }
+            ]
+          },
+          {
+            "key": "SMS_ALLOWED_USERS",
+            "label": "Allowed sender IDs",
+            "help": "Comma-separated exact sender IDs. Empty grants no access. This form disables group ingress; no wildcard or automatic pairing.",
+            "classification": "private",
+            "valueType": "string",
+            "required": "optional",
+            "condition": null,
+            "example": "",
+            "sharedWith": [],
+            "input": "user",
+            "provenance": [
+              {
+                "source": "https://docs.openclaw.ai/channels/sms",
+                "checkedAt": "2026-10-25",
+                "note": "Restrictive source-bound access policy."
+              }
+            ]
+          }
+        ],
+        "access": [
+          "SMS_ALLOWED_USERS"
+        ],
+        "startupEffects": [
+          "provider-connection",
+          "inbound-agent-dispatch",
+          "pinned-dependency-install",
+          "public-callback-prerequisite"
+        ],
+        "readback": "owned-config-and-native-schema-v1"
+      }
+    },
+    "openclaw-synology-chat": {
+      "setup": {
+        "dependencies": [
+          {
+            "id": "openclaw-synology-chat",
+            "version": "2026.7.1",
+            "source": "https://registry.npmjs.org/@openclaw/synology-chat/-/synology-chat-2026.7.1.tgz",
+            "integrity": "sha512-TfFGi4cWKCR0ptXGNKmTorCJ8Jh0EoMs7Sek1Iz5a4eEgUuT5bI3Ae+vZBYDhNQ4XLgGnvzISFEP7p7AKsCIRQ=="
+          },
+          {
+            "id": "openclaw-comms-helper",
+            "version": "0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+            "source": "https://github.com/openclaw/openclaw/tree/0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+            "integrity": "sha256-a9eebc613faac2c4283951bb608d3b78c001234af4de9bd44826a38ad99f8e3a"
+          },
+          {
+            "id": "pnpm-comms-build",
+            "version": "11.2.2",
+            "source": "https://registry.npmjs.org/pnpm/-/pnpm-11.2.2.tgz",
+            "integrity": "sha512-NuZiH61QYXiTZFXnAke4gI707CV5ep9DepMoGgIEhOJgf2pGmiLpgph8PbuIZuMHFRSrEKShdJ4G7c0ewRhDbw=="
+          }
+        ],
+        "disposition": "typed",
+        "method": "typed",
+        "adapter": "typed-openclaw-channel-v1",
+        "reason": "Pinned typed native account configuration; authentication, host prerequisites, transport and delivery are separate evidence.",
+        "settings": [
+          {
+            "key": "SYNOLOGY_CHAT_TOKEN",
+            "label": "Synology Chat Token",
+            "help": "Selected account setting. Secrets stay in this installation; configuration does not prove authentication.",
+            "classification": "secret",
+            "valueType": "string",
+            "required": "always",
+            "condition": null,
+            "example": "",
+            "sharedWith": [],
+            "input": "user",
+            "provenance": [
+              {
+                "source": "https://docs.openclaw.ai/channels/synology-chat",
+                "checkedAt": "2026-10-25",
+                "note": "Pinned 2026.7.1 channel schema and account/access source."
+              }
+            ]
+          },
+          {
+            "key": "SYNOLOGY_CHAT_INCOMING_URL",
+            "label": "Synology Chat Incoming Url",
+            "help": "Selected account setting. Secrets stay in this installation; configuration does not prove authentication.",
+            "classification": "secret",
+            "valueType": "string",
+            "required": "always",
+            "condition": null,
+            "example": "",
+            "sharedWith": [],
+            "input": "user",
+            "provenance": [
+              {
+                "source": "https://docs.openclaw.ai/channels/synology-chat",
+                "checkedAt": "2026-10-25",
+                "note": "Pinned 2026.7.1 channel schema and account/access source."
+              }
+            ]
+          },
+          {
+            "key": "SYNOLOGY_CHAT_NAS_HOST",
+            "label": "Synology Chat Nas Host",
+            "help": "Selected account setting. Secrets stay in this installation; configuration does not prove authentication.",
+            "classification": "private",
+            "valueType": "string",
+            "required": "always",
+            "condition": null,
+            "example": "",
+            "sharedWith": [],
+            "input": "user",
+            "provenance": [
+              {
+                "source": "https://docs.openclaw.ai/channels/synology-chat",
+                "checkedAt": "2026-10-25",
+                "note": "Pinned 2026.7.1 channel schema and account/access source."
+              }
+            ]
+          },
+          {
+            "key": "NETCLAW_SYNOLOGY_CHAT_PUBLIC_URL",
+            "label": "Netclaw Synology Chat Public Url",
+            "help": "Prepared public HTTPS URL ending in /webhook/synology. Setup does not create a tunnel or provider route.",
+            "classification": "private",
+            "valueType": "string",
+            "required": "always",
+            "condition": null,
+            "example": "",
+            "sharedWith": [],
+            "input": "user",
+            "provenance": [
+              {
+                "source": "https://docs.openclaw.ai/channels/synology-chat",
+                "checkedAt": "2026-10-25",
+                "note": "Pinned 2026.7.1 channel schema and account/access source."
+              }
+            ]
+          },
+          {
+            "key": "SYNOLOGY_CHAT_ALLOWED_USERS",
+            "label": "Allowed sender IDs",
+            "help": "Comma-separated exact sender IDs. Empty grants no access. This form disables group ingress; no wildcard or automatic pairing.",
+            "classification": "private",
+            "valueType": "string",
+            "required": "optional",
+            "condition": null,
+            "example": "",
+            "sharedWith": [],
+            "input": "user",
+            "provenance": [
+              {
+                "source": "https://docs.openclaw.ai/channels/synology-chat",
+                "checkedAt": "2026-10-25",
+                "note": "Restrictive source-bound access policy."
+              }
+            ]
+          }
+        ],
+        "access": [
+          "SYNOLOGY_CHAT_ALLOWED_USERS"
+        ],
+        "startupEffects": [
+          "provider-connection",
+          "inbound-agent-dispatch",
+          "pinned-dependency-install",
+          "public-callback-prerequisite"
+        ],
+        "readback": "owned-config-and-native-schema-v1"
+      }
+    },
+    "openclaw-tlon": {
+      "setup": {
+        "dependencies": [
+          {
+            "id": "openclaw-tlon",
+            "version": "2026.7.1",
+            "source": "https://registry.npmjs.org/@openclaw/tlon/-/tlon-2026.7.1.tgz",
+            "integrity": "sha512-EFTQAgagLJ/5a7/C6mBEwVBPA01zQa0PtGSvgL6HFLY3N5I/xEp1Vw94GxRff9mPQjDyU8t1v2FfKr15QrIuVg=="
+          },
+          {
+            "id": "openclaw-comms-helper",
+            "version": "0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+            "source": "https://github.com/openclaw/openclaw/tree/0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+            "integrity": "sha256-a9eebc613faac2c4283951bb608d3b78c001234af4de9bd44826a38ad99f8e3a"
+          },
+          {
+            "id": "pnpm-comms-build",
+            "version": "11.2.2",
+            "source": "https://registry.npmjs.org/pnpm/-/pnpm-11.2.2.tgz",
+            "integrity": "sha512-NuZiH61QYXiTZFXnAke4gI707CV5ep9DepMoGgIEhOJgf2pGmiLpgph8PbuIZuMHFRSrEKShdJ4G7c0ewRhDbw=="
+          }
+        ],
+        "disposition": "typed",
+        "method": "typed",
+        "adapter": "typed-openclaw-channel-v1",
+        "reason": "Pinned typed native account configuration; authentication, host prerequisites, transport and delivery are separate evidence.",
+        "settings": [
+          {
+            "key": "TLON_SHIP",
+            "label": "Tlon Ship",
+            "help": "Selected account setting. Secrets stay in this installation; configuration does not prove authentication.",
+            "classification": "private",
+            "valueType": "string",
+            "required": "always",
+            "condition": null,
+            "example": "",
+            "sharedWith": [],
+            "input": "user",
+            "provenance": [
+              {
+                "source": "https://docs.openclaw.ai/channels/tlon",
+                "checkedAt": "2026-10-25",
+                "note": "Pinned 2026.7.1 channel schema and account/access source."
+              }
+            ]
+          },
+          {
+            "key": "TLON_URL",
+            "label": "Tlon Url",
+            "help": "Selected account setting. Secrets stay in this installation; configuration does not prove authentication.",
+            "classification": "private",
+            "valueType": "string",
+            "required": "always",
+            "condition": null,
+            "example": "",
+            "sharedWith": [],
+            "input": "user",
+            "provenance": [
+              {
+                "source": "https://docs.openclaw.ai/channels/tlon",
+                "checkedAt": "2026-10-25",
+                "note": "Pinned 2026.7.1 channel schema and account/access source."
+              }
+            ]
+          },
+          {
+            "key": "TLON_CODE",
+            "label": "Tlon Code",
+            "help": "Selected account setting. Secrets stay in this installation; configuration does not prove authentication.",
+            "classification": "secret",
+            "valueType": "string",
+            "required": "always",
+            "condition": null,
+            "example": "",
+            "sharedWith": [],
+            "input": "user",
+            "provenance": [
+              {
+                "source": "https://docs.openclaw.ai/channels/tlon",
+                "checkedAt": "2026-10-25",
+                "note": "Pinned 2026.7.1 channel schema and account/access source."
+              }
+            ]
+          },
+          {
+            "key": "TLON_ALLOWED_USERS",
+            "label": "Allowed sender IDs",
+            "help": "Comma-separated exact sender IDs. Empty grants no access. This form disables group ingress; no wildcard or automatic pairing.",
+            "classification": "private",
+            "valueType": "string",
+            "required": "optional",
+            "condition": null,
+            "example": "",
+            "sharedWith": [],
+            "input": "user",
+            "provenance": [
+              {
+                "source": "https://docs.openclaw.ai/channels/tlon",
+                "checkedAt": "2026-10-25",
+                "note": "Restrictive source-bound access policy."
+              }
+            ]
+          }
+        ],
+        "access": [
+          "TLON_ALLOWED_USERS"
+        ],
+        "startupEffects": [
+          "provider-connection",
+          "inbound-agent-dispatch",
+          "pinned-dependency-install"
+        ],
+        "readback": "owned-config-and-native-schema-v1"
+      }
+    },
+    "openclaw-twitch": {
+      "setup": {
+        "dependencies": [
+          {
+            "id": "openclaw-twitch",
+            "version": "2026.7.1",
+            "source": "https://registry.npmjs.org/@openclaw/twitch/-/twitch-2026.7.1.tgz",
+            "integrity": "sha512-avPL8XslyRrwHGIt+P+EQidCuAsxofJa/mWWQjhgQ+bG5MJIeuo0HAwaUU5NfwYuszL2K0xIS/k8GPnr006j0g=="
+          },
+          {
+            "id": "openclaw-comms-helper",
+            "version": "0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+            "source": "https://github.com/openclaw/openclaw/tree/0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+            "integrity": "sha256-a9eebc613faac2c4283951bb608d3b78c001234af4de9bd44826a38ad99f8e3a"
+          },
+          {
+            "id": "pnpm-comms-build",
+            "version": "11.2.2",
+            "source": "https://registry.npmjs.org/pnpm/-/pnpm-11.2.2.tgz",
+            "integrity": "sha512-NuZiH61QYXiTZFXnAke4gI707CV5ep9DepMoGgIEhOJgf2pGmiLpgph8PbuIZuMHFRSrEKShdJ4G7c0ewRhDbw=="
+          }
+        ],
+        "disposition": "typed",
+        "method": "typed",
+        "adapter": "typed-openclaw-channel-v1",
+        "reason": "Pinned typed native account configuration; authentication, host prerequisites, transport and delivery are separate evidence.",
+        "settings": [
+          {
+            "key": "TWITCH_USERNAME",
+            "label": "Twitch Username",
+            "help": "Selected account setting. Secrets stay in this installation; configuration does not prove authentication.",
+            "classification": "private",
+            "valueType": "string",
+            "required": "always",
+            "condition": null,
+            "example": "",
+            "sharedWith": [],
+            "input": "user",
+            "provenance": [
+              {
+                "source": "https://docs.openclaw.ai/channels/twitch",
+                "checkedAt": "2026-10-25",
+                "note": "Pinned 2026.7.1 channel schema and account/access source."
+              }
+            ]
+          },
+          {
+            "key": "TWITCH_CHANNEL",
+            "label": "Twitch Channel",
+            "help": "Selected account setting. Secrets stay in this installation; configuration does not prove authentication.",
+            "classification": "private",
+            "valueType": "string",
+            "required": "always",
+            "condition": null,
+            "example": "",
+            "sharedWith": [],
+            "input": "user",
+            "provenance": [
+              {
+                "source": "https://docs.openclaw.ai/channels/twitch",
+                "checkedAt": "2026-10-25",
+                "note": "Pinned 2026.7.1 channel schema and account/access source."
+              }
+            ]
+          },
+          {
+            "key": "TWITCH_CLIENT_ID",
+            "label": "Twitch Client Id",
+            "help": "Selected account setting. Secrets stay in this installation; configuration does not prove authentication.",
+            "classification": "private",
+            "valueType": "string",
+            "required": "always",
+            "condition": null,
+            "example": "",
+            "sharedWith": [],
+            "input": "user",
+            "provenance": [
+              {
+                "source": "https://docs.openclaw.ai/channels/twitch",
+                "checkedAt": "2026-10-25",
+                "note": "Pinned 2026.7.1 channel schema and account/access source."
+              }
+            ]
+          },
+          {
+            "key": "TWITCH_ACCESS_TOKEN",
+            "label": "Twitch Access Token",
+            "help": "Selected account setting. Secrets stay in this installation; configuration does not prove authentication.",
+            "classification": "secret",
+            "valueType": "string",
+            "required": "always",
+            "condition": null,
+            "example": "",
+            "sharedWith": [],
+            "input": "user",
+            "provenance": [
+              {
+                "source": "https://docs.openclaw.ai/channels/twitch",
+                "checkedAt": "2026-10-25",
+                "note": "Pinned 2026.7.1 channel schema and account/access source."
+              }
+            ]
+          },
+          {
+            "key": "TWITCH_ALLOWED_USERS",
+            "label": "Allowed sender IDs",
+            "help": "Comma-separated exact sender IDs for the selected Twitch channel. Empty grants no access; role-wide access is disabled.",
+            "classification": "private",
+            "valueType": "string",
+            "required": "optional",
+            "condition": null,
+            "example": "",
+            "sharedWith": [],
+            "input": "user",
+            "provenance": [
+              {
+                "source": "https://docs.openclaw.ai/channels/twitch",
+                "checkedAt": "2026-10-25",
+                "note": "Restrictive source-bound access policy."
+              }
+            ]
+          }
+        ],
+        "access": [
+          "TWITCH_ALLOWED_USERS"
+        ],
+        "startupEffects": [
+          "provider-connection",
+          "inbound-agent-dispatch",
+          "pinned-dependency-install",
+          "selected-channel-message-ingress"
+        ],
+        "readback": "owned-config-and-native-schema-v1"
+      }
+    },
+    "openclaw-whatsapp": {
+      "setup": {
+        "dependencies": [
+          {
+            "id": "openclaw-whatsapp",
+            "version": "2026.7.1",
+            "source": "https://registry.npmjs.org/@openclaw/whatsapp/-/whatsapp-2026.7.1.tgz",
+            "integrity": "sha512-wLY/Omc5fleRpl2lKGN8sxt/8hYfHGwLRezmWsk8oCbea5pRKUPE6ZX+wJO1O52NOJkAGCuiXvS7x0qIeKxXbQ=="
+          },
+          {
+            "id": "openclaw-comms-helper",
+            "version": "0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+            "source": "https://github.com/openclaw/openclaw/tree/0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+            "integrity": "sha256-a9eebc613faac2c4283951bb608d3b78c001234af4de9bd44826a38ad99f8e3a"
+          },
+          {
+            "id": "pnpm-comms-build",
+            "version": "11.2.2",
+            "source": "https://registry.npmjs.org/pnpm/-/pnpm-11.2.2.tgz",
+            "integrity": "sha512-NuZiH61QYXiTZFXnAke4gI707CV5ep9DepMoGgIEhOJgf2pGmiLpgph8PbuIZuMHFRSrEKShdJ4G7c0ewRhDbw=="
+          }
+        ],
+        "disposition": "native",
+        "method": "native",
+        "adapter": "openclaw-whatsapp-pair-v1",
+        "reason": "Private reviewed linked-device QR with no gateway/message handlers; failed or unknown attempts never automatically link again.",
+        "settings": [
+          {
+            "key": "WHATSAPP_ACCOUNT_PHONE",
+            "label": "Account phone number",
+            "help": "E.164 phone number of the dedicated WhatsApp account you will link in the private native QR terminal.",
+            "classification": "private",
+            "valueType": "string",
+            "required": "always",
+            "condition": null,
+            "example": "",
+            "sharedWith": [],
+            "input": "user",
+            "provenance": [
+              {
+                "source": "https://docs.openclaw.ai/channels/whatsapp",
+                "checkedAt": "2026-10-25",
+                "note": "Pinned Baileys linked-device attempt, exact account identity and private auth-directory promotion."
+              }
+            ]
+          },
+          {
+            "key": "WHATSAPP_ALLOWED_USERS",
+            "label": "Allowed sender phone numbers",
+            "help": "Comma-separated E.164 sender numbers. Empty grants no access. Group ingress and read receipts stay disabled.",
+            "classification": "private",
+            "valueType": "string",
+            "required": "optional",
+            "condition": null,
+            "example": "",
+            "sharedWith": [],
+            "input": "user",
+            "provenance": [
+              {
+                "source": "https://docs.openclaw.ai/channels/whatsapp",
+                "checkedAt": "2026-10-25",
+                "note": "Pinned Baileys linked-device attempt, exact account identity and private auth-directory promotion."
+              }
+            ]
+          }
+        ],
+        "access": [
+          "WHATSAPP_ALLOWED_USERS"
+        ],
+        "startupEffects": [
+          "pinned-dependency-install",
+          "account-link",
+          "private-auth-write",
+          "provider-connection",
+          "inbound-agent-dispatch"
+        ],
+        "readback": "owned-whatsapp-pairing-and-native-schema-v1"
+      }
+    },
+    "openclaw-zalo": {
+      "setup": {
+        "dependencies": [
+          {
+            "id": "openclaw-zalo",
+            "version": "2026.7.1",
+            "source": "https://registry.npmjs.org/@openclaw/zalo/-/zalo-2026.7.1.tgz",
+            "integrity": "sha512-SQFbysP8K6PbhZ2V01LxCVlyPTlSie2/YR6pIIB0TzWkuGF4hhMYRtKlxdHTkD9HTOipqu5Kt4JaIfiT1mq9sA=="
+          },
+          {
+            "id": "openclaw-comms-helper",
+            "version": "0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+            "source": "https://github.com/openclaw/openclaw/tree/0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+            "integrity": "sha256-a9eebc613faac2c4283951bb608d3b78c001234af4de9bd44826a38ad99f8e3a"
+          },
+          {
+            "id": "pnpm-comms-build",
+            "version": "11.2.2",
+            "source": "https://registry.npmjs.org/pnpm/-/pnpm-11.2.2.tgz",
+            "integrity": "sha512-NuZiH61QYXiTZFXnAke4gI707CV5ep9DepMoGgIEhOJgf2pGmiLpgph8PbuIZuMHFRSrEKShdJ4G7c0ewRhDbw=="
+          }
+        ],
+        "disposition": "typed",
+        "method": "typed",
+        "adapter": "typed-openclaw-channel-v1",
+        "reason": "Pinned typed native account configuration; authentication, host prerequisites, transport and delivery are separate evidence.",
+        "settings": [
+          {
+            "key": "ZALO_BOT_TOKEN",
+            "label": "Zalo Bot Token",
+            "help": "Selected account setting. Secrets stay in this installation; configuration does not prove authentication.",
+            "classification": "secret",
+            "valueType": "string",
+            "required": "always",
+            "condition": null,
+            "example": "",
+            "sharedWith": [],
+            "input": "user",
+            "provenance": [
+              {
+                "source": "https://docs.openclaw.ai/channels/zalo",
+                "checkedAt": "2026-10-25",
+                "note": "Pinned 2026.7.1 channel schema and account/access source."
+              }
+            ]
+          },
+          {
+            "key": "ZALO_ALLOWED_USERS",
+            "label": "Allowed sender IDs",
+            "help": "Comma-separated exact sender IDs. Empty grants no access. This form disables group ingress; no wildcard or automatic pairing.",
+            "classification": "private",
+            "valueType": "string",
+            "required": "optional",
+            "condition": null,
+            "example": "",
+            "sharedWith": [],
+            "input": "user",
+            "provenance": [
+              {
+                "source": "https://docs.openclaw.ai/channels/zalo",
+                "checkedAt": "2026-10-25",
+                "note": "Restrictive source-bound access policy."
+              }
+            ]
+          }
+        ],
+        "access": [
+          "ZALO_ALLOWED_USERS"
+        ],
+        "startupEffects": [
+          "provider-connection",
+          "inbound-agent-dispatch",
+          "pinned-dependency-install"
+        ],
+        "readback": "owned-config-and-native-schema-v1"
+      }
+    },
+    "openclaw-zalouser": {
+      "setup": {
+        "dependencies": [
+          {
+            "id": "openclaw-zalouser",
+            "version": "2026.7.1",
+            "source": "https://registry.npmjs.org/@openclaw/zalouser/-/zalouser-2026.7.1.tgz",
+            "integrity": "sha512-klg0BOOTDv4xUykgA/pTZDsRrI9dzagq23OlPupCLrFijDOebPxGYaYdWDSPy4zBJAWjjnSrgyCB+5OuCMvZGw=="
+          },
+          {
+            "id": "openclaw-comms-helper",
+            "version": "0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+            "source": "https://github.com/openclaw/openclaw/tree/0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+            "integrity": "sha256-a9eebc613faac2c4283951bb608d3b78c001234af4de9bd44826a38ad99f8e3a"
+          },
+          {
+            "id": "pnpm-comms-build",
+            "version": "11.2.2",
+            "source": "https://registry.npmjs.org/pnpm/-/pnpm-11.2.2.tgz",
+            "integrity": "sha512-NuZiH61QYXiTZFXnAke4gI707CV5ep9DepMoGgIEhOJgf2pGmiLpgph8PbuIZuMHFRSrEKShdJ4G7c0ewRhDbw=="
+          },
+          {
+            "id": "openclaw-zalouser-sdk",
+            "version": "2.1.2",
+            "source": "https://registry.npmjs.org/zca-js/-/zca-js-2.1.2.tgz",
+            "integrity": "sha512-82+zCqoIXnXEF6C9YuN3Kf7WKlyyujY/6Ejl2n8PkwazYkBK0k7kiPd8S7nHvC5Wl7vjwGRhDYeAM8zTHyoRxQ=="
+          }
+        ],
+        "disposition": "native",
+        "method": "native",
+        "adapter": "openclaw-personal-pair-v1",
+        "reason": "One bounded private QR attempt binds the reviewed owner and promotes only native account artifacts. No conversation gateway or model session starts.",
+        "settings": [
+          {
+            "key": "ZALOUSER_OWNER_ID",
+            "label": "Expected account owner ID",
+            "help": "Exact owner ID of the dedicated account that will scan the private QR. Setup refuses a different account; only this owner is authorized.",
+            "classification": "private",
+            "valueType": "string",
+            "required": "always",
+            "condition": null,
+            "example": "",
+            "sharedWith": [],
+            "input": "user",
+            "provenance": [
+              {
+                "source": "https://docs.openclaw.ai/channels/zalouser",
+                "checkedAt": "2026-10-25",
+                "note": "Exact pinned native account login and storage contract; no gateway activation."
+              }
+            ]
+          }
+        ],
+        "access": [
+          "ZALOUSER_OWNER_ID"
+        ],
+        "startupEffects": [
+          "pinned-dependency-install",
+          "account-link",
+          "private-auth-write",
+          "provider-connection",
+          "inbound-agent-dispatch"
+        ],
+        "readback": "owned-personal-pairing-and-native-schema-v1"
+      }
+    },
+    "openclaw-imessage": {
+      "setup": {
+        "disposition": "typed",
+        "method": "typed",
+        "adapter": "typed-openclaw-channel-v1",
+        "reason": "Pinned typed native account configuration; authentication, host prerequisites, transport and delivery are separate evidence.",
+        "settings": [
+          {
+            "key": "IMESSAGE_CLI_PATH",
+            "label": "Imessage Cli Path",
+            "help": "Prepared same-user native imsg binary: enter its resolved real path and SHA-256, plus the dedicated Messages database path. Prepare macOS permissions separately. Setup checks file identity without reading chats or changing permissions.",
+            "classification": "private",
+            "valueType": "string",
+            "required": "always",
+            "condition": null,
+            "example": "",
+            "sharedWith": [],
+            "input": "user",
+            "provenance": [
+              {
+                "source": "https://docs.openclaw.ai/channels/imessage",
+                "checkedAt": "2026-10-25",
+                "note": "Pinned 2026.7.1 channel schema and account/access source."
+              }
+            ]
+          },
+          {
+            "key": "IMESSAGE_DB_PATH",
+            "label": "Imessage Db Path",
+            "help": "Prepared same-user native imsg binary: enter its resolved real path and SHA-256, plus the dedicated Messages database path. Prepare macOS permissions separately. Setup checks file identity without reading chats or changing permissions.",
+            "classification": "private",
+            "valueType": "string",
+            "required": "always",
+            "condition": null,
+            "example": "",
+            "sharedWith": [],
+            "input": "user",
+            "provenance": [
+              {
+                "source": "https://docs.openclaw.ai/channels/imessage",
+                "checkedAt": "2026-10-25",
+                "note": "Pinned 2026.7.1 channel schema and account/access source."
+              }
+            ]
+          },
+          {
+            "key": "IMESSAGE_CLI_SHA256",
+            "label": "Imessage Cli Sha256",
+            "help": "Prepared same-user native imsg binary: enter its resolved real path and SHA-256, plus the dedicated Messages database path. Prepare macOS permissions separately. Setup checks file identity without reading chats or changing permissions.",
+            "classification": "private",
+            "valueType": "string",
+            "required": "always",
+            "condition": null,
+            "example": "",
+            "sharedWith": [],
+            "input": "user",
+            "provenance": [
+              {
+                "source": "https://docs.openclaw.ai/channels/imessage",
+                "checkedAt": "2026-10-25",
+                "note": "Pinned 2026.7.1 channel schema and account/access source."
+              }
+            ]
+          },
+          {
+            "key": "IMESSAGE_ALLOWED_USERS",
+            "label": "Allowed sender IDs",
+            "help": "Comma-separated exact sender IDs. Empty grants no access. This form disables group ingress; no wildcard or automatic pairing.",
+            "classification": "private",
+            "valueType": "string",
+            "required": "optional",
+            "condition": null,
+            "example": "",
+            "sharedWith": [],
+            "input": "user",
+            "provenance": [
+              {
+                "source": "https://docs.openclaw.ai/channels/imessage",
+                "checkedAt": "2026-10-25",
+                "note": "Restrictive source-bound access policy."
+              }
+            ]
+          }
+        ],
+        "access": [
+          "IMESSAGE_ALLOWED_USERS"
+        ],
+        "startupEffects": [
+          "macos-messages-account-prerequisite",
+          "full-disk-access-prerequisite",
+          "external-cli-spawn",
+          "inbound-agent-dispatch"
+        ],
+        "readback": "owned-config-and-native-schema-v1",
+        "dependencies": []
+      }
+    },
+    "openclaw-yuanbao": {
+      "setup": {
+        "disposition": "incompatible-dependency",
+        "adapter": null,
+        "reason": "Pinned openclaw-plugin-yuanbao 2.15.0 does not enforce the configured allowlist for ordinary senders; both disabled and allowlist policies permit an unlisted ordinary sender through its native guards. Restrictive Border onboarding is blocked at this baseline.",
+        "dependencies": [
+          {
+            "id": "openclaw-yuanbao",
+            "version": "2.15.0",
+            "source": "https://registry.npmjs.org/openclaw-plugin-yuanbao/-/openclaw-plugin-yuanbao-2.15.0.tgz",
+            "integrity": "sha512-3GD+mf3EjTSUTOAREjTHAyp/deXdpgqB+q+xE0b19Qtat4ADhUV1mHDwFkVCRqTCBY5ATFKtKcipoDejqFj/+w=="
+          }
+        ]
+      },
+      "qualification": "unverified"
+    },
+    "openclaw-wecom": {
+      "setup": {
+        "dependencies": [
+          {
+            "id": "openclaw-wecom",
+            "version": "2026.5.7",
+            "source": "https://registry.npmjs.org/@wecom/wecom-openclaw-plugin/-/wecom-openclaw-plugin-2026.5.7.tgz",
+            "integrity": "sha512-TCkP9as00WfEhgFWG8YL/rcmaWGIshAki2HQh83nTRccGfVBCoGjrEboTTqq3yDmK9koWTV11zi8u8A4dNtvug=="
+          },
+          {
+            "id": "openclaw-comms-helper",
+            "version": "0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+            "source": "https://github.com/openclaw/openclaw/tree/0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+            "integrity": "sha256-a9eebc613faac2c4283951bb608d3b78c001234af4de9bd44826a38ad99f8e3a"
+          },
+          {
+            "id": "pnpm-comms-build",
+            "version": "11.2.2",
+            "source": "https://registry.npmjs.org/pnpm/-/pnpm-11.2.2.tgz",
+            "integrity": "sha512-NuZiH61QYXiTZFXnAke4gI707CV5ep9DepMoGgIEhOJgf2pGmiLpgph8PbuIZuMHFRSrEKShdJ4G7c0ewRhDbw=="
+          }
+        ],
+        "disposition": "typed",
+        "method": "typed",
+        "adapter": "typed-openclaw-channel-v1",
+        "reason": "Pinned typed native account configuration; authentication, host prerequisites, transport and delivery are separate evidence.",
+        "settings": [
+          {
+            "key": "WECOM_BOT_ID",
+            "label": "Wecom Bot Id",
+            "help": "Selected account setting. Secrets stay in this installation; configuration does not prove authentication.",
+            "classification": "private",
+            "valueType": "string",
+            "required": "always",
+            "condition": null,
+            "example": "",
+            "sharedWith": [],
+            "input": "user",
+            "provenance": [
+              {
+                "source": "https://docs.openclaw.ai/channels/wecom",
+                "checkedAt": "2026-10-25",
+                "note": "Pinned 2026.7.1 channel schema and account/access source."
+              }
+            ]
+          },
+          {
+            "key": "WECOM_SECRET",
+            "label": "Wecom Secret",
+            "help": "Selected account setting. Secrets stay in this installation; configuration does not prove authentication.",
+            "classification": "secret",
+            "valueType": "string",
+            "required": "always",
+            "condition": null,
+            "example": "",
+            "sharedWith": [],
+            "input": "user",
+            "provenance": [
+              {
+                "source": "https://docs.openclaw.ai/channels/wecom",
+                "checkedAt": "2026-10-25",
+                "note": "Pinned 2026.7.1 channel schema and account/access source."
+              }
+            ]
+          },
+          {
+            "key": "WECOM_ALLOWED_USERS",
+            "label": "Allowed sender IDs",
+            "help": "Comma-separated exact sender IDs. Empty grants no access. This form disables group ingress; no wildcard or automatic pairing.",
+            "classification": "private",
+            "valueType": "string",
+            "required": "optional",
+            "condition": null,
+            "example": "",
+            "sharedWith": [],
+            "input": "user",
+            "provenance": [
+              {
+                "source": "https://docs.openclaw.ai/channels/wecom",
+                "checkedAt": "2026-10-25",
+                "note": "Restrictive source-bound access policy."
+              }
+            ]
+          }
+        ],
+        "access": [
+          "WECOM_ALLOWED_USERS"
+        ],
+        "startupEffects": [
+          "provider-connection",
+          "inbound-agent-dispatch",
+          "pinned-dependency-install",
+          "plugin-tool-registration",
+          "gateway-webhook-registration"
+        ],
+        "readback": "owned-config-and-native-schema-v1"
+      }
+    },
+    "openclaw-wechat": {
+      "setup": {
+        "dependencies": [
+          {
+            "id": "openclaw-wechat",
+            "version": "2.4.6",
+            "source": "https://registry.npmjs.org/@tencent-weixin/openclaw-weixin/-/openclaw-weixin-2.4.6.tgz",
+            "integrity": "sha512-qw9k3PLTiMWGNjjsknHgcTManH1w4j+Ji1ArWIaYLKCq3aFRsVwcqnPi127bvOoVMJGW4dbyJ8NECEMgoO+iRw=="
+          },
+          {
+            "id": "openclaw-comms-helper",
+            "version": "0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+            "source": "https://github.com/openclaw/openclaw/tree/0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+            "integrity": "sha256-a9eebc613faac2c4283951bb608d3b78c001234af4de9bd44826a38ad99f8e3a"
+          },
+          {
+            "id": "pnpm-comms-build",
+            "version": "11.2.2",
+            "source": "https://registry.npmjs.org/pnpm/-/pnpm-11.2.2.tgz",
+            "integrity": "sha512-NuZiH61QYXiTZFXnAke4gI707CV5ep9DepMoGgIEhOJgf2pGmiLpgph8PbuIZuMHFRSrEKShdJ4G7c0ewRhDbw=="
+          }
+        ],
+        "disposition": "native",
+        "method": "native",
+        "adapter": "openclaw-personal-pair-v1",
+        "reason": "One bounded private QR attempt binds the reviewed owner and promotes only native account artifacts. No conversation gateway or model session starts.",
+        "settings": [
+          {
+            "key": "WECHAT_OWNER_ID",
+            "label": "Expected account owner ID",
+            "help": "Exact owner ID of the dedicated account that will scan the private QR. Setup refuses a different account; only this owner is authorized.",
+            "classification": "private",
+            "valueType": "string",
+            "required": "always",
+            "condition": null,
+            "example": "",
+            "sharedWith": [],
+            "input": "user",
+            "provenance": [
+              {
+                "source": "https://docs.openclaw.ai/channels/wechat",
+                "checkedAt": "2026-10-25",
+                "note": "Exact pinned native account login and storage contract; no gateway activation."
+              }
+            ]
+          }
+        ],
+        "access": [
+          "WECHAT_OWNER_ID"
+        ],
+        "startupEffects": [
+          "pinned-dependency-install",
+          "account-link",
+          "private-auth-write",
+          "provider-connection",
+          "inbound-agent-dispatch"
+        ],
+        "readback": "owned-personal-pairing-and-native-schema-v1"
+      }
+    },
+    "openclaw-zaloclawbot": {
+      "setup": {
+        "dependencies": [
+          {
+            "id": "openclaw-zaloclawbot",
+            "version": "0.1.4",
+            "source": "https://registry.npmjs.org/@zalo-platforms/openclaw-zaloclawbot/-/openclaw-zaloclawbot-0.1.4.tgz",
+            "integrity": "sha512-5IxZriHJYACLLGqkCPPsTP9tas62kXEOFqTFAFMdunAM3SPhIJwVFRp0WvoP/m7L2PX85weD0g8LOtxM93VDYg=="
+          },
+          {
+            "id": "openclaw-comms-helper",
+            "version": "0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+            "source": "https://github.com/openclaw/openclaw/tree/0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+            "integrity": "sha256-a9eebc613faac2c4283951bb608d3b78c001234af4de9bd44826a38ad99f8e3a"
+          },
+          {
+            "id": "pnpm-comms-build",
+            "version": "11.2.2",
+            "source": "https://registry.npmjs.org/pnpm/-/pnpm-11.2.2.tgz",
+            "integrity": "sha512-NuZiH61QYXiTZFXnAke4gI707CV5ep9DepMoGgIEhOJgf2pGmiLpgph8PbuIZuMHFRSrEKShdJ4G7c0ewRhDbw=="
+          }
+        ],
+        "disposition": "native",
+        "method": "native",
+        "adapter": "openclaw-personal-pair-v1",
+        "reason": "One bounded private QR attempt binds the reviewed owner and promotes only native account artifacts. No conversation gateway or model session starts.",
+        "settings": [
+          {
+            "key": "ZALOCLAWBOT_OWNER_ID",
+            "label": "Expected account owner ID",
+            "help": "Exact owner ID of the dedicated account that will scan the private QR. Setup refuses a different account; only this owner is authorized.",
+            "classification": "private",
+            "valueType": "string",
+            "required": "always",
+            "condition": null,
+            "example": "",
+            "sharedWith": [],
+            "input": "user",
+            "provenance": [
+              {
+                "source": "https://docs.openclaw.ai/channels/zaloclawbot",
+                "checkedAt": "2026-10-25",
+                "note": "Exact pinned native account login and storage contract; no gateway activation."
+              }
+            ]
+          }
+        ],
+        "access": [
+          "ZALOCLAWBOT_OWNER_ID"
+        ],
+        "startupEffects": [
+          "pinned-dependency-install",
+          "account-link",
+          "private-auth-write",
+          "provider-connection",
+          "inbound-agent-dispatch"
+        ],
+        "readback": "owned-personal-pairing-and-native-schema-v1"
+      }
+    }
+  }
+}

@@ -1,8 +1,9 @@
 # Convergence upstream contribution
 
 The fork's `main` is the working integration branch. It includes the upstream
-v1.11.0 baseline and the Convergence/Guardian work through `042572c`, followed by
-the portable model-provider configuration. Runtime credentials, OAuth sessions,
+v1.14.0 baseline (`b18d51c0`) and the Convergence/Guardian additions, including
+the portable model-provider configuration and IDS replay optimization. See the
+[30 October synchronization record](runbooks/upstream-sync.md). Runtime credentials, OAuth sessions,
 private member environments and database contents stay outside Git.
 
 ## Proposed contribution path

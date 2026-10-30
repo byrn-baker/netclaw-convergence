@@ -106,22 +106,10 @@ def test_missing_unselected_tools_and_optional_tools_do_not_block():
     assert 'capinfos' in report['components'][0]['warnings'][0]
 
 
-@pytest.mark.parametrize('go,ok', [('go version go1.24.9 darwin/arm64',False),
-    ('go version go1.25.1 darwin/arm64',True), ('go version go2.0.0 linux/amd64',True), ('invalid',False)])
-def test_forward_go_versions(go, ok):
-    host = FixtureHost(commands={'go','clang'})
-    host.outputs[('go','version')] = go
-    assert evaluate('forward', host)['ok'] == ok
-
-
-@pytest.mark.parametrize('failure', ['missing-go','cgo','compiler','xcode'])
-def test_forward_build_prerequisites(failure):
-    host = FixtureHost(commands={'go','clang'})
-    if failure == 'missing-go': host.commands.remove('go')
-    if failure == 'cgo': host.outputs[('go','env','CGO_ENABLED')] = '0'
-    if failure == 'compiler': host.commands.remove('clang')
-    if failure == 'xcode': host.outputs[('xcode-select','-p')] = None
-    assert not evaluate('forward', host)['ok']
+def test_forward_official_mcp_needs_no_host_toolchain():
+    host = FixtureHost()
+    assert evaluate('forward', host)['ok']
+    assert not any(c[0] in ('go','git','clang') for c in host.calls)
 
 
 def test_docker_daemon_readiness_and_selection_isolation():
@@ -132,7 +120,7 @@ def test_docker_daemon_readiness_and_selection_isolation():
 
 
 def test_aggregate_blockers_and_supported_linux_desktop():
-    report = evaluate('forward panorama zoom-rtms computer-use', FixtureHost(version=(3,14)))
+    report = evaluate('panorama zoom-rtms computer-use', FixtureHost(version=(3,14)))
     assert all(row['errors'] for row in report['components'])
     assert evaluate('computer-use', system='Linux', arch='x86_64')['ok']
 

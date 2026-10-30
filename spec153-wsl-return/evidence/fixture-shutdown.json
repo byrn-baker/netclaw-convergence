@@ -1,0 +1,18 @@
+{
+  "operations": [
+    {
+      "fixture": "2404",
+      "operation": "terminate-disposable-fixture",
+      "exit": 0
+    },
+    {
+      "fixture": "2604",
+      "operation": "terminate-disposable-fixture",
+      "exit": 0
+    }
+  ],
+  "bothFixturesObservedStopped": true,
+  "ownerDistributionsTouched": false,
+  "globalWslShutdown": false,
+  "windowsRestart": false
+}

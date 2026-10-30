@@ -13,3 +13,14 @@ Required backend environment: `NETCLAW_RUNTIME=hermes`, `HERMES_HOME`, `NETCLAW_
 Only the reviewed subnet calculator currently qualifies. Policy validates source hashes, registration and arguments; the protected agent checks tools/schemas/handlers/configuration/source before provider and dispatch boundaries. Python 3.14 is required for the pinned agent; bridge Python 3.12 and exact dependencies remain separate. Full source hashes are intentional compatibility gates, not an assertion that arbitrary upstream updates are safe.
 
 Run `bash tests/hermes-hud/run-tests.sh` for offline contracts; `python3 tests/hermes-hud/run_real_fixture.py` exercises real pinned Hermes and installer-patched MCP with a controlled local provider. `live_acceptance.py --run` is a separate explicit provider test. See [setup, limitations and recovery](../../docs/HERMES-HUD.md). Status reads do not launch the companion or perform inference.
+
+Reviewed capacity recovery adds optional `releaseUncertainCapacity=false` to
+`hermes_hud_conversation_open`, paired with exact
+`acknowledgedUncertainRequestId`. The HUD must obtain separate operator review
+and overlap-risk confirmation. Only unknown/no-native-ID, non-federation requests
+qualify. A durable `capacity_releases` record excludes that reservation from the
+installation count, while unknown state, evidence, nonce and the original
+conversation guard remain. Status exposes `capacityReleaseEligible` and
+`capacityReleased`. Neither ordinary acknowledgment nor stop releases capacity.
+The eight-tool inventory is unchanged; upgrade HUD and bridge together. See
+[recovery contract](../../specs/159-hermes-uncertain-capacity/contracts/recovery.md).

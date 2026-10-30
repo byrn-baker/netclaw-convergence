@@ -1,0 +1,217 @@
+{
+  "recordedAt": "2026-10-24T20:04:49.317609+00:00",
+  "tests": [
+    {
+      "name": "setup",
+      "host": "ubuntu2404",
+      "status": "PASS",
+      "passed": 140,
+      "skipped": 0,
+      "rawLogSha256": "594840a79efcb9b1d3a3e49a090026a9588cc54b58924dccaa43c0d6c013ea0b",
+      "rawLogBytes": 551,
+      "rawLogKeptLocal": true,
+      "seconds": 65.323,
+      "sourceCommit": "cf97be1c286442660c355d50cf0788199a24c2a1",
+      "optIns": [
+        "systemd",
+        "Specify 0.7.1",
+        "cryptography 46.0.5",
+        "MCP 2.3.0",
+        "Hermes pinned interpreter"
+      ]
+    },
+    {
+      "name": "setup",
+      "host": "ubuntu2604",
+      "status": "PASS",
+      "passed": 140,
+      "skipped": 0,
+      "rawLogSha256": "1d55c5520f52609753fdab2af15cb89b269887702ba5ada9652db75ef999529b",
+      "rawLogBytes": 551,
+      "rawLogKeptLocal": true,
+      "seconds": 33.639,
+      "sourceCommit": "cf97be1c286442660c355d50cf0788199a24c2a1",
+      "optIns": [
+        "systemd",
+        "Specify 0.7.1",
+        "cryptography 46.0.5",
+        "MCP 2.3.0",
+        "Hermes pinned interpreter"
+      ]
+    },
+    {
+      "name": "extension",
+      "host": "ubuntu2404",
+      "status": "PASS",
+      "passed": 136,
+      "skipped": 3,
+      "rawLogSha256": "5bb781a08da413b77bfbc2be27d450a33effa9a3203da2193a9c0c1b93c77b56",
+      "rawLogBytes": 14985,
+      "rawLogKeptLocal": true,
+      "seconds": 76.5727,
+      "sourceCommit": "30dbf6a99f676abe6e45b844a700128c84c0cdfb"
+    },
+    {
+      "name": "extension",
+      "host": "ubuntu2604",
+      "status": "PASS",
+      "passed": 136,
+      "skipped": 3,
+      "rawLogSha256": "c37d15e98d831aa6c0b6372eb0b7727046d0efc30b25785ad4ac6f21c9264213",
+      "rawLogBytes": 14949,
+      "rawLogKeptLocal": true,
+      "seconds": 42.691676664,
+      "sourceCommit": "7080df8d16e72b5c5e03b354dcf487679e3ddefe",
+      "date": "2026-10-18"
+    },
+    {
+      "name": "installer selection",
+      "host": "wsl-development-checkout",
+      "status": "PASS",
+      "passed": 216,
+      "skipped": 0,
+      "rawLogSha256": "020123d5ab99a396cf061d756706b8c3625998ce9fc317e29107774e54f6af3a",
+      "rawLogBytes": 345,
+      "rawLogKeptLocal": true,
+      "subtestsPassed": 16,
+      "seconds": 29.46,
+      "node": "24.19.0"
+    },
+    {
+      "name": "native cold-wake and typed systemd",
+      "host": "ubuntu2604",
+      "status": "PASS",
+      "passed": 8,
+      "skipped": 0,
+      "rawLogSha256": "f67de6c9dd99f5c2ab14e96331a2db2822a19122174b8cb9de81e959412879a7",
+      "rawLogBytes": 106,
+      "rawLogKeptLocal": true,
+      "seconds": 0.894,
+      "sourceCommit": "cf97be1c286442660c355d50cf0788199a24c2a1"
+    }
+  ],
+  "builds": [
+    {
+      "host": "ubuntu2404",
+      "date": "2026-10-24",
+      "freshNpmCi": true,
+      "typescript": "PASS",
+      "build": "PASS",
+      "rawLogSha256": "3fddbbc9bab4f95a2f631b0677f4ab14a46c7d8cfcb157081763bdb979f80f3d"
+    },
+    {
+      "host": "ubuntu2604",
+      "date": "2026-10-18",
+      "freshNpmCi": true,
+      "typescript": "PASS",
+      "build": "PASS",
+      "rawLogSha256": "e6ec362590f83477029f5a67c32010baf6b8c1dc2cb8ad9109d805f8487c6747"
+    }
+  ],
+  "extensionSkipReasons": [
+    "Installed-native OpenClaw workspace fixture not supplied to that suite.",
+    "Cached RAG embedding model unavailable; retrieval outside frozen installer smoke.",
+    "macOS native service test is not applicable on Linux."
+  ],
+  "catalog": {
+    "metadata": "PASS",
+    "generation": "PASS",
+    "coverage": "PASS",
+    "components": 110,
+    "skills": 237,
+    "registeredMcpServers": 124,
+    "externalIntegrations": 52,
+    "unexplainedGaps": 0
+  },
+  "warnings": [
+    "Pinned federation code emits a datetime.utcnow deprecation warning; tests pass."
+  ],
+  "unsuccessfulHistory": [
+    {
+      "case": "Initial legacy installer suite",
+      "result": "FAIL",
+      "reason": "Default Node 25 was outside policy; qualified Node 24.19.0 rerun passed."
+    },
+    {
+      "case": "Initial Linux native terminal survivor",
+      "result": "FAIL",
+      "finding": "W153-001",
+      "rerun": "PASS"
+    },
+    {
+      "case": "Initial native services on both WSL releases",
+      "result": "FAIL",
+      "findings": [
+        "W153-002",
+        "W153-004",
+        "W153-005"
+      ],
+      "rerun": "Targeted native systemd and lifecycle pass."
+    },
+    {
+      "case": "Ubuntu 24.04 extension earlier runs",
+      "result": "FAIL",
+      "reason": "Two earlier process/preservation failures, including selected-port collision. Final fresh suite passed 136/139; transient load cause not proven."
+    },
+    {
+      "case": "Disk-full provisioning",
+      "result": "FAIL",
+      "finding": "W153-006",
+      "rerun": "Restored VHD verified; fresh Ubuntu 24.04 OpenClaw passed."
+    },
+    {
+      "case": "Hermes system interpreter Tier 1",
+      "result": "UNVERIFIED",
+      "finding": "W153-008",
+      "rerun": "Fresh owned managed Python installation passed all required tiers on Ubuntu 26.04."
+    },
+    {
+      "case": "Initial small-Risk preflight",
+      "result": "REFUSED",
+      "finding": "W153-013",
+      "effects": false,
+      "rerun": "New synthetic plan passed installation."
+    },
+    {
+      "case": "OpenClaw lifecycle first attempt",
+      "result": "UNKNOWN",
+      "finding": "W153-010",
+      "rerun": "Native reconciliation/start plus complete lifecycle passed."
+    },
+    {
+      "case": "Hermes neighbor comparison first attempt",
+      "result": "FAIL",
+      "finding": "W153-011",
+      "rerun": "Complete lifecycle with persisted before/after snapshots passed; initial difference unresolved."
+    },
+    {
+      "case": "Mixed Risk cold wake before fix",
+      "result": "FAIL",
+      "finding": "W153-009",
+      "rerun": "Native isolated regression passed both releases; complete Risk rerun BLOCKED after fixture loss."
+    },
+    {
+      "case": "First cold-wake patch native regression",
+      "result": "FAIL",
+      "reason": "Expected flat rather than nested method-result array. Corrected in cf97be1; native rerun and both complete setup suites pass."
+    },
+    {
+      "case": "Ubuntu 24.04 Hermes wizard",
+      "result": "UNKNOWN",
+      "finding": "W153-012",
+      "rerun": "NOT RUN; engine absent while journal remained in verification. Later reviewed cleanup verified."
+    },
+    {
+      "case": "First Ubuntu 24.04 cleanup invocation",
+      "result": "HARNESS ERROR",
+      "reason": "Private PTY helper was absent. Copied helper, then both fresh reviewed cleanups verified."
+    },
+    {
+      "case": "Older Ubuntu 26.04 Hermes cleanup",
+      "result": "REFUSED",
+      "code": "cleanup_loaded_service_changed",
+      "followUp": "Observed unit absent afterward; fresh reviewed retry recorded in cleanup evidence."
+    }
+  ],
+  "remainingActualCases": "See matrix.json; no skipped or unrun case is inferred passed."
+}

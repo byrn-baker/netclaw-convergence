@@ -1,0 +1,57 @@
+{
+  "schema": 1,
+  "date": "2026-10-25",
+  "method": "SHA-256 and mode comparisons of selected existing configuration/credential/identity/certificate/policy files; read-only SQLite logical identity, membership, enrollment, channel, token and budget table hashes; process PID/start identity. Private contents and individual hashes are not exported.",
+  "observedRoots": [
+    "existing default .openclaw tree",
+    "existing NetClaw application-support data",
+    "owner-provided ignored unpacked export",
+    "original checkout root .env"
+  ],
+  "files": {
+    "selectedRuntimeAndRootFiles": 8012,
+    "supplementalApplicationAndExportFiles": 469,
+    "changed": 0,
+    "missing": 0
+  },
+  "databases": {
+    "observed": 6,
+    "selectedLogicalTables": 11,
+    "changed": 0
+  },
+  "processes": {
+    "baselineEditorAndRuntimeIdentities": 20,
+    "changed": 0,
+    "additionalSelectedLiveServiceIdentities": 1,
+    "changedSelectedLiveServices": 0,
+    "newProcessesAtFinalSnapshot": 1
+  },
+  "snapshotTimes": {
+    "primaryBefore": "2026-10-25T21:09:13.157894+00:00",
+    "supplementalBefore": "2026-10-25T21:11:41.498298+00:00",
+    "after": "2026-10-25T21:17:22.435048+00:00"
+  },
+  "privateSnapshotHashes": {
+    "before.json": "7def286adb6b281b8a3111ba52a89a52a22de638f6dfa49b8c122c9004b34a6f",
+    "final.json": "375cf0f8fd111afbc25ee01daa00de392d160dda7d56aca460a4794c5ae56fa1",
+    "supplemental-before.json": "8175f4a55bada3a77977cf521826b4683fa24fd47779a7682c065bcdcbbd4253",
+    "live-services-before.json": "cd8720c8fce8a6052450edf864770a82e4729c3833c3ba47cf81c55b872c388f"
+  },
+  "originalCheckout": {
+    "branch": "155-border-channel-setup",
+    "commit": "c3aa0951519a0be79db085f7092043ee1c97d830",
+    "cleanBefore": true,
+    "cleanAfter": true,
+    "branchPreserved": true,
+    "headPreserved": true,
+    "worktreeStatusPreserved": true
+  },
+  "scopeLimits": [
+    "Selected local files/tables/processes only; not a claim about unobserved installations or WSL identities.",
+    "Runtime session logs, caches, source/venvs and mutable database journals are excluded; selected SQLite logical rows are compared instead of whole database bytes.",
+    "Supplemental application/export and live-service identity baselines were captured after private test work started; those paths were not test targets.",
+    "Private raw exports and credentials were only hashed for preservation; no credential values were imported into test configuration or Git."
+  ],
+  "noExistingRuntimeDeployment": true,
+  "prohibitedOperationsPerformed": false
+}

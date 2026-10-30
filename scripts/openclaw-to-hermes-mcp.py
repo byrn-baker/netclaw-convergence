@@ -40,6 +40,9 @@ import re
 import sys
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent / 'lib'))
+from mcp_environment import native_entry
+
 _writer_spec = importlib.util.spec_from_file_location("netclaw_literal_writer", Path(__file__).with_name("write-env.py"))
 _writer = importlib.util.module_from_spec(_writer_spec)
 _writer_spec.loader.exec_module(_writer)
@@ -140,6 +143,7 @@ def emit_yaml(
 ) -> str:
     lines = ["mcp_servers:"]
     for name, spec in servers.items():
+        spec = native_entry(name, spec, env, allow_legacy=True)
         lines.append(f"  {name}:")
         command = spec.get("command")
         url = spec.get("url")
@@ -214,7 +218,8 @@ def main() -> int:
     existing = config.read_text() if config.is_file() else ""
     has_block = bool(re.search(r"(?m)^mcp_servers:\s*$", existing))
 
-    disabled = sum(1 for s in servers.values() if not is_configured(s, repo, env))
+    disabled = sum(1 for name,s in servers.items() if not is_configured(
+        native_entry(name,s,env,allow_legacy=True), repo, env))
     if disabled:
         print(f"[INFO] {disabled}/{len(servers)} servers have unresolved required "
               f"env → emitted enabled:false (fill creds in .env + re-run to enable).")

@@ -1,0 +1,10 @@
+{
+  "schema": 1,
+  "package": "@botiverse/raft",
+  "version": "0.0.26",
+  "documentation": "https://docs.raft.build/features/agents/external/",
+  "files": {
+    "package.json": "ac51705e8d9203bc657a868e8ae27e86994140f9af79d57873269905d2a84da4",
+    "package-lock.json": "15f9faf66de512a3fa0960595656febf34685abc0c8fe73bcc2904ee2ce8a9c7"
+  }
+}

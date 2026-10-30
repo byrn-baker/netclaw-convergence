@@ -1,0 +1,55 @@
+{
+  "export": "redacted",
+  "generatedAt": 1792358450,
+  "installations": [
+    {
+      "components": [
+        {
+          "code": "discovery_verified",
+          "id": "subnet-calc",
+          "state": "verified"
+        }
+      ],
+      "harness": "openclaw",
+      "installation": "claw-1",
+      "provenance": {
+        "checker": "netclaw-setup",
+        "protocol": 1
+      },
+      "tiers": [
+        {
+          "code": "artifact_present",
+          "state": "verified",
+          "tier": 1
+        },
+        {
+          "code": "discovery_verified",
+          "state": "verified",
+          "tier": 2
+        },
+        {
+          "code": "identity_verified",
+          "state": "verified",
+          "tier": 3
+        },
+        {
+          "code": "not_selected",
+          "state": "skipped",
+          "tier": 4
+        },
+        {
+          "code": "not_selected",
+          "state": "skipped",
+          "tier": 5
+        },
+        {
+          "code": "not_selected",
+          "state": "skipped",
+          "tier": 6
+        }
+      ],
+      "version": "2026.7.1-2"
+    }
+  ],
+  "schema": 1
+}

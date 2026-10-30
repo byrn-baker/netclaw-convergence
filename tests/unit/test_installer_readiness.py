@@ -86,6 +86,20 @@ def test_provider_check_is_opt_in_and_does_not_download():
     assert result['status']=='unverified'
 
 
+def test_dynamic_policy_does_not_require_static_path_or_claim_source_access(tmp_path):
+    rule=module.launcher.CONTRACT['pyats']
+    env={key:'fixture' for key in rule['required_env'] if key!='PYATS_TESTBED_PATH'}
+    env.update(NETCLAW_TESTBED_MODE='dynamic',NETCLAW_TESTBED_SOURCES='netbox,cml')
+    assert module.missing_credentials(rule,env)==[]
+    result=module.report(['pyats'],set(),{},{},env,tmp_path/'cfg','openclaw')
+    assert result['components'][0]['testbed']=={'mode':'dynamic','sources':['cml','netbox'],
+        'sourceAccess':'unverified','candidate':'not_built','activation':'not_observed','execution':'not_checked'}
+    env['NETCLAW_TESTBED_SOURCES']='unknown'
+    assert 'NETCLAW_TESTBED_SOURCES' in module.missing_credentials(rule,env)
+    env['NETCLAW_TESTBED_MODE']='static'
+    assert 'PYATS_TESTBED_PATH' in module.missing_credentials(rule,env)
+
+
 def test_failed_install_and_missing_registration_cannot_be_success(tmp_path):
     result=module.report(['netbox','pyats'],{'netbox'},{},{},{'NETCLAW_RUNTIME_ROOT':str(tmp_path)},tmp_path/'cfg','openclaw')
     assert not result['ok']

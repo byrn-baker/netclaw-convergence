@@ -4,7 +4,7 @@
 # Editing THIS file will never conflict with upstream catalog.sh changes.
 
 # ── Convergence components ────────────────────────────────────────
-CATALOG+=(
+_CONVERGENCE_CATALOG=(
     "convergence-core|Convergence|Convergence Core|convergence-api + CONVERGENCE tab config (080) — diary API, inventory SoT, shared adapter config"
     "convergence-metrics|Convergence|Convergence Metrics Stack|Prometheus + Alertmanager + blackbox (Docker or K3s deploy/convergence)"
     "convergence-unifi|Convergence|Convergence UniFi Adapter|UniFi Integration API exporter + UNIFI_* env for Wi‑Fi metrics"
@@ -18,6 +18,11 @@ CATALOG+=(
     "convergence-grafana-dashboards|Convergence|Grafana Dashboards|Provision network + NetClaw quota dashboards (full profile)"
     "visual-hud|Convergence|Visual HUD|NetClaw Visual HUD (COMMAND|CONVERGENCE) on :3001 + systemd user unit"
 )
+
+for _entry in "${_CONVERGENCE_CATALOG[@]}"; do
+    catalog_has "${_entry%%|*}" || CATALOG+=("$_entry")
+done
+unset _entry _CONVERGENCE_CATALOG
 
 # ── Convergence profile ───────────────────────────────────────────
 # NetClaw Convergence pipeline (080): OBS + convergence-api + HUD + investigator path.

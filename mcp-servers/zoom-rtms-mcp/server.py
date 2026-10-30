@@ -8,42 +8,74 @@ context and historical meeting correlation. The autonomous recognition path
 independently of any tool call here — these tools are the on-demand query
 surface for the agent/operator, per that contract's own framing.
 
-Background services (webhook receiver, panel feed, Border channel client) are
-started at import time so they're live for the whole process lifetime,
-regardless of which MCP tool (if any) gets called.
+Background services (webhook receiver, panel feed, Border channel client) share
+one process and registry. Transient installer discovery imports no ingress/SDK
+modules, starts no services, and refuses tool calls.
 """
 
 import asyncio
 import logging
 import os
 import threading
+from contextlib import asynccontextmanager
+
+_DISCOVERY_ONLY = os.environ.get("NETCLAW_MCP_DISCOVERY_ONLY") == "1"
+if _DISCOVERY_ONLY:
+    os.environ["FASTMCP_CHECK_FOR_UPDATES"] = "off"
 
 from functools import wraps
 from fastmcp.utilities.async_utils import call_sync_fn_in_threadpool
 from fastmcp_tasks import TasksExtension
 from fastmcp import FastMCP
 
-import panel_feed
-import recognition
-import rtms_listener
-import webhook
-import zoom_channel_client
+if not _DISCOVERY_ONLY:
+    import panel_feed
+    import recognition
+    import rtms_listener
+    import webhook
+    import zoom_channel_client
 from models import registry
 
 logging.basicConfig(level=os.environ.get("ZOOM_RTMS_LOG_LEVEL", "INFO"))
 logger = logging.getLogger("zoom_rtms.server")
 
-mcp = FastMCP("zoom-rtms")
+@asynccontextmanager
+async def _lifespan(_server):
+    # Native MCP startup and shutdown own the same in-memory meeting registry.
+    # Merely importing a module (or listing it in the installer) starts nothing.
+    try:
+        if not _DISCOVERY_ONLY:await asyncio.to_thread(_start_background_services)
+        yield {}
+    finally:
+        if not _DISCOVERY_ONLY:await asyncio.to_thread(_stop_background_services)
+
+
+mcp = FastMCP("zoom-rtms",lifespan=_lifespan)
 mcp.add_extension(TasksExtension(name="netclaw-zoom-rtms-mcp", concurrency=1))
 
 
 def _task_tool(fn):
     """Register a threaded MCP task while preserving the direct Python callable."""
     @wraps(fn)
+    def guarded(*args, **kwargs):
+        if _DISCOVERY_ONLY:
+            return {"error": "installer_discovery_only", "active": False}
+        return fn(*args, **kwargs)
+    @wraps(fn)
     async def run(*args, **kwargs):
-        return await call_sync_fn_in_threadpool(fn, *args, **kwargs)
+        return await call_sync_fn_in_threadpool(guarded, *args, **kwargs)
     mcp.tool(task=True)(run)
-    return fn
+    return guarded
+
+
+def _tool(fn):
+    @wraps(fn)
+    def run(*args, **kwargs):
+        if _DISCOVERY_ONLY:
+            return {"error": "installer_discovery_only", "active": False}
+        return fn(*args, **kwargs)
+    mcp.tool()(run)
+    return run
 
 
 # ---------------------------------------------------------------------------
@@ -51,6 +83,12 @@ def _task_tool(fn):
 # ---------------------------------------------------------------------------
 
 _bg_loop: asyncio.AbstractEventLoop | None = None
+_bg_thread: threading.Thread | None = None
+_webhook_thread: threading.Thread | None = None
+_panel_server = None
+_bg_ready = threading.Event()
+_bg_failure = None
+_lifecycle_lock = threading.Lock()
 
 
 def _on_meeting_started(meeting_uuid: str, payload: dict):
@@ -67,38 +105,73 @@ def _on_meeting_stopped(meeting_uuid: str):
 
 
 def _run_background_loop():
-    global _bg_loop
+    global _bg_loop,_panel_server,_bg_failure
     loop = asyncio.new_event_loop()
     _bg_loop = loop
     recognition.set_bg_loop(loop)
     asyncio.set_event_loop(loop)
 
     async def _startup():
-        await panel_feed.start_panel_feed_server()
+        global _panel_server
+        _panel_server=await panel_feed.start_panel_feed_server()
         await zoom_channel_client.get_client()
-
-    loop.run_until_complete(_startup())
-    loop.run_forever()
+    try:
+        loop.run_until_complete(_startup())
+        _bg_ready.set()
+        loop.run_forever()
+    except BaseException as error:
+        _bg_failure=error;_bg_ready.set()
+    finally:
+        pending=asyncio.all_tasks(loop)
+        for task in pending:task.cancel()
+        if pending:loop.run_until_complete(asyncio.gather(*pending,return_exceptions=True))
+        if _panel_server is not None:
+            _panel_server.close();loop.run_until_complete(_panel_server.wait_closed())
+            _panel_server=None
+        loop.close();_bg_loop=None
 
 
 def _start_background_services():
-    webhook.on_meeting_started = _on_meeting_started
-    webhook.on_meeting_stopped = _on_meeting_stopped
-    zoom_channel_client.on_investigate_result = recognition.handle_investigate_result
-    webhook.start_webhook_server()
-    thread = threading.Thread(target=_run_background_loop, daemon=True,
-                               name="zoom-rtms-bg-loop")
-    thread.start()
+    global _bg_thread,_webhook_thread,_bg_failure
+    if _DISCOVERY_ONLY:raise RuntimeError('installer_discovery_only')
+    with _lifecycle_lock:
+        if _bg_thread is not None:raise RuntimeError('background_services_already_owned')
+        _bg_ready.clear();_bg_failure=None
+        webhook.on_meeting_started = _on_meeting_started
+        webhook.on_meeting_stopped = _on_meeting_stopped
+        zoom_channel_client.on_investigate_result = recognition.handle_investigate_result
+        _bg_thread=threading.Thread(target=_run_background_loop,daemon=True,name='zoom-rtms-bg-loop')
+        _bg_thread.start()
+        if not _bg_ready.wait(40) or _bg_failure is not None:
+            raise RuntimeError('background_services_unavailable')
+        _webhook_thread=webhook.start_webhook_server()
 
 
-_start_background_services()
+def _stop_background_services():
+    global _bg_thread,_webhook_thread
+    with _lifecycle_lock:
+        if _webhook_thread is not None:
+            webhook.stop_webhook_server(_webhook_thread);_webhook_thread=None
+        loop=_bg_loop
+        if loop is not None and loop.is_running():
+            async def close():
+                for meeting_uuid in list(rtms_listener._active_listeners):await rtms_listener.stop_listener(meeting_uuid)
+                await zoom_channel_client.close_client()
+            asyncio.run_coroutine_threadsafe(close(),loop).result(timeout=10)
+            loop.call_soon_threadsafe(loop.stop)
+        if _bg_thread is not None:
+            _bg_thread.join(timeout=12)
+            if _bg_thread.is_alive():raise RuntimeError('background_shutdown_unverified')
+            _bg_thread=None
+        webhook.on_meeting_started=None;webhook.on_meeting_stopped=None
+        zoom_channel_client.on_investigate_result=None
 
 # ---------------------------------------------------------------------------
 # MCP tools (contracts/zoom-rtms-mcp-tools.md)
 # ---------------------------------------------------------------------------
 
 
-@mcp.tool()
+@_tool
 def zoom_enable_listening(meeting_id: str) -> dict:
     """Enable RTMS listening for a meeting (FR-001/FR-015).
 
@@ -125,14 +198,14 @@ def zoom_enable_listening(meeting_id: str) -> dict:
                       "rely on auto-start (already enabled for this app) instead"}
 
 
-@mcp.tool()
+@_tool
 def zoom_disable_listening(meeting_uuid: str) -> dict:
     """Disable listening and destroy the live buffer immediately (FR-014)."""
     existed = registry.destroy(meeting_uuid)
     return {"listening_enabled": False, "existed": existed}
 
 
-@mcp.tool()
+@_tool
 def zoom_list_active_meetings() -> dict:
     """FR-015: which meetings currently have listening enabled."""
     return {"meetings": [
@@ -142,7 +215,7 @@ def zoom_list_active_meetings() -> dict:
     ]}
 
 
-@mcp.tool()
+@_tool
 def zoom_meeting_status(meeting_uuid: str) -> dict:
     session = registry.get(meeting_uuid)
     if not session:
@@ -151,7 +224,7 @@ def zoom_meeting_status(meeting_uuid: str) -> dict:
             "participant_count": len(session.viewers)}
 
 
-@mcp.tool()
+@_tool
 def zoom_recent_transcript(meeting_uuid: str, minutes: float = None) -> dict:
     session = registry.get(meeting_uuid)
     if not session:
@@ -162,7 +235,7 @@ def zoom_recent_transcript(meeting_uuid: str, minutes: float = None) -> dict:
                          for e in entries]}
 
 
-@mcp.tool()
+@_tool
 def zoom_recent_chat(meeting_uuid: str, minutes: float = None) -> dict:
     session = registry.get(meeting_uuid)
     if not session:
@@ -173,7 +246,7 @@ def zoom_recent_chat(meeting_uuid: str, minutes: float = None) -> dict:
                          for e in entries]}
 
 
-@mcp.tool()
+@_tool
 def zoom_active_speaker(meeting_uuid: str) -> dict:
     session = registry.get(meeting_uuid)
     if not session:
@@ -182,7 +255,7 @@ def zoom_active_speaker(meeting_uuid: str) -> dict:
     return {"participant_id": speaker_entries[-1].participant_id if speaker_entries else None}
 
 
-@mcp.tool()
+@_tool
 def zoom_live_context(meeting_uuid: str) -> dict:
     session = registry.get(meeting_uuid)
     if not session:
@@ -221,4 +294,4 @@ def zoom_search_historical_meetings(query: str, time_hint: str = None) -> dict:
 
 
 if __name__ == "__main__":
-    mcp.run()
+    mcp.run(show_banner=not _DISCOVERY_ONLY)

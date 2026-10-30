@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "name": "candidate-ipfabric",
+  "sources": [
+    {
+      "kind": "ipfabric",
+      "owner": "fixture-controller",
+      "scope": {
+        "site": "fixture-site",
+        "snapshot_id": "fixture-snapshot"
+      },
+      "capturedAt": "2026-10-30T12:00:00Z",
+      "complete": true,
+      "total": 1,
+      "records": [
+        {
+          "id": "node-11",
+          "hostname": "fixture-ipfabric",
+          "loginIpv4": "192.0.2.11/24",
+          "family": "iosxe"
+        }
+      ],
+      "defaults": {
+        "port": 22
+      },
+      "snapshotCapturedAt": "2026-10-30T11:00:00Z"
+    }
+  ]
+}

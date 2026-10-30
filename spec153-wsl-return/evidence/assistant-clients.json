@@ -1,0 +1,50 @@
+{
+  "scope": "installed clients, actual remote editor setup broker, isolated empty client homes; no provider turn",
+  "registrationPrivate": "0o600",
+  "socketPrivate": "0o600",
+  "providerTurns": 0,
+  "codex": {
+    "version": "codex-cli 0.163.0",
+    "registered": true,
+    "tools": [
+      "netclaw_setup_catalog",
+      "netclaw_setup_draft",
+      "netclaw_setup_explain",
+      "netclaw_setup_observe",
+      "netclaw_setup_review",
+      "netclaw_setup_secret_entry",
+      "netclaw_setup_status",
+      "netclaw_setup_validate"
+    ],
+    "toolsError": null,
+    "serverInfo": {
+      "name": "netclaw-setup",
+      "title": null,
+      "version": "1.0.0",
+      "description": null,
+      "icons": null,
+      "websiteUrl": null
+    },
+    "runtimeStatus": null
+  },
+  "claude": {
+    "version": "2.1.286 (Claude Code)",
+    "registered": true,
+    "exit": 0,
+    "connected": true,
+    "toolListExposed": false
+  },
+  "vscodeMcpTools": [
+    "mcp_netclaw-setup_netclaw_setup_catalog",
+    "mcp_netclaw-setup_netclaw_setup_draft",
+    "mcp_netclaw-setup_netclaw_setup_explain",
+    "mcp_netclaw-setup_netclaw_setup_observe",
+    "mcp_netclaw-setup_netclaw_setup_review",
+    "mcp_netclaw-setup_netclaw_setup_secret_entry",
+    "mcp_netclaw-setup_netclaw_setup_status",
+    "mcp_netclaw-setup_netclaw_setup_validate"
+  ],
+  "date": "2026-10-18",
+  "host": "ubuntu2604",
+  "execution": "actual installed clients and remote VS Code MCP client; synthetic isolated profiles"
+}

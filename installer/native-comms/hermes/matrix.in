@@ -1,0 +1,6 @@
+# Hermes v0.21.6 selected extra, constrained to the qualified core.
+mautrix[encryption]==0.21.1; sys_platform == "linux"
+aiosqlite==0.22.1; sys_platform == "linux"
+asyncpg==0.31.0; sys_platform == "linux"
+aiohttp-socks==0.11.0; sys_platform == "linux"
+aiohttp==3.14.4

@@ -153,6 +153,13 @@ def start_webhook_server() -> threading.Thread:
     host = os.environ.get("ZOOM_RTMS_WEBHOOK_HOST", "127.0.0.1")
     server = http.server.HTTPServer((host, PORT), _Handler)
     thread = threading.Thread(target=server.serve_forever, daemon=True, name="zoom-rtms-webhook")
+    thread.netclaw_http_server=server
     thread.start()
     logger.info("RTMS webhook server listening on %s:%d", host, PORT)
     return thread
+
+
+def stop_webhook_server(thread):
+    server=thread.netclaw_http_server
+    server.shutdown();server.server_close();thread.join(timeout=5)
+    if thread.is_alive():raise RuntimeError('webhook_shutdown_unverified')

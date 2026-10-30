@@ -1,0 +1,17 @@
+{
+  "export": "redacted",
+  "generatedAt": 1792871743,
+  "installations": [
+    {
+      "components": [],
+      "harness": "unknown",
+      "installation": "claw-1",
+      "provenance": {
+        "checker": "netclaw-setup",
+        "protocol": 1
+      },
+      "tiers": []
+    }
+  ],
+  "schema": 1
+}

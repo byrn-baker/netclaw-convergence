@@ -154,5 +154,11 @@ jobs:
         if: matrix.suite == 'hermes-hud' || matrix.suite == 'unit'
         run: npm --prefix ui/netclaw-visual ci
 
+      - name: Qualified Node for offline installer contracts
+        if: matrix.suite == 'setup-installer'
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24.19.0'
+
       - name: Prepare isolated dependencies and run offline contracts
         run: python3 scripts/run-contract-tests.py --suite "${{ matrix.suite }}" --prepare

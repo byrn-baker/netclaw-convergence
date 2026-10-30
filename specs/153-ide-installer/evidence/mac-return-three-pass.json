@@ -1,0 +1,528 @@
+{
+  "scope": "NetClaw Spec153 installer only; three additional local Mac scenarios, no operation-capability qualification",
+  "candidateCommit": "575bb084a8ca54c629b8f39434539cbd10597065",
+  "originalCommit": "89627477fb470cd7c293e33e192c5983819d45d4",
+  "originalBranch": "153-ide-installer",
+  "sourceTreeHash": "7ca7e18644b446aa4c5dbdfa55b242f50afc1a1f25944c2006c67d075ddb4758",
+  "host": {
+    "platform": "macos",
+    "architecture": "arm64",
+    "version": "26.5.2",
+    "editor": "1.109.0",
+    "node": "24.19.0",
+    "uv": "0.10.12"
+  },
+  "testData": "fixed synthetic saved plans, actual native VS Code review via CUA, real pinned installers and fresh homes; existing Mac, not a clean OS VM",
+  "verification": {
+    "requiredTiers": [
+      1,
+      2,
+      3
+    ],
+    "riskInstallationChecks": true,
+    "providerTurns": 0,
+    "deviceCalls": 0,
+    "channelMessages": 0
+  },
+  "regression": {
+    "extension": {
+      "pass": 136,
+      "skip": 3,
+      "fail": 0,
+      "skips": [
+        "native OpenClaw custom agent workspace opt-in",
+        "Linux service timezone case",
+        "RAG cached embeddings opt-in"
+      ]
+    },
+    "setup": {
+      "defined": 140,
+      "passedIncludingOptInFollowups": 138,
+      "platformSkips": 2,
+      "fail": 0,
+      "skips": [
+        "native WSL systemd fixture",
+        "native WSL member start fixture"
+      ]
+    },
+    "installer": {
+      "pass": 216,
+      "subtests": 16,
+      "fail": 0
+    },
+    "catalog": [
+      "metadata 110 components / 237 skills",
+      "generation parity",
+      "zero unexplained coverage gaps"
+    ],
+    "extensionCheckAndBuild": "passed"
+  },
+  "fixtureCorrection": "Initial disposable attempt omitted uv from launch PATH, then VS Code GUI shell resolution replaced qualified Node with ambient 25.3.0. Recreated editor with explicit VSCODE_CLI/force-disable-user-env and private tools; qualifying OpenClaw run used a new empty home. Initial unknown run retained for reviewed cleanup; no state forced to passed.",
+  "result": "passed",
+  "passedScenarios": 3,
+  "totalScenarios": 3,
+  "date": "2026-10-24",
+  "passes": [
+    {
+      "id": 1,
+      "scenario": "Focused OpenClaw from empty home",
+      "result": "passed",
+      "freshHomes": 1,
+      "verifiedPhases": 11,
+      "planHash": "9e13dc78c840bcabc6a642557f8b8e5f4ac83e3226a3e3ad8e47baa69f44dfde",
+      "completedJournalSha256": "8603b0b846741d915e503108a47fff5490efdcba66d8011a974b7744ab545a65",
+      "nativeVsCodeReview": "synthetic engineering via CUA",
+      "vsCodeConnectionSaved": true,
+      "vsCodeOverviewReady": true,
+      "connectionCandidateCount": 1,
+      "report": {
+        "export": "redacted",
+        "generatedAt": 1792880897,
+        "installations": [
+          {
+            "components": [
+              {
+                "code": "discovery_verified",
+                "id": "subnet-calc",
+                "state": "verified"
+              }
+            ],
+            "harness": "openclaw",
+            "installation": "claw-1",
+            "provenance": {
+              "checker": "netclaw-setup",
+              "protocol": 1
+            },
+            "tiers": [
+              {
+                "code": "artifact_present",
+                "state": "verified",
+                "tier": 1
+              },
+              {
+                "code": "discovery_verified",
+                "state": "verified",
+                "tier": 2
+              },
+              {
+                "code": "identity_verified",
+                "state": "verified",
+                "tier": 3
+              },
+              {
+                "code": "not_selected",
+                "state": "skipped",
+                "tier": 4
+              },
+              {
+                "code": "not_selected",
+                "state": "skipped",
+                "tier": 5
+              },
+              {
+                "code": "not_selected",
+                "state": "skipped",
+                "tier": 6
+              }
+            ],
+            "version": "2026.7.1-2"
+          }
+        ],
+        "schema": 1
+      },
+      "cleanup": {
+        "state": "verified",
+        "removed": 1516,
+        "retained": 1,
+        "alreadyAbsent": 0,
+        "directories": "retained",
+        "audit": "retained"
+      },
+      "retainedReasons": {
+        "ownership_evidence_retained": 1
+      }
+    },
+    {
+      "id": 2,
+      "scenario": "Focused Hermes cancellation and checkpoint resume",
+      "result": "passed",
+      "freshHomes": 1,
+      "verifiedPhases": 11,
+      "planHash": "5fdf5798ebc885e150c6d78074ced8d4d4498c40004f0a4ba8bf3356820050f4",
+      "completedJournalSha256": "41104d5b012f0d8e24ec917de5c7fa603c7ee201f890347ceb5ea8d477b44060",
+      "nativeVsCodeReview": "synthetic engineering via CUA",
+      "vsCodeConnectionSaved": true,
+      "vsCodeOverviewReady": true,
+      "connectionCandidateCount": 1,
+      "report": {
+        "export": "redacted",
+        "generatedAt": 1792881158,
+        "installations": [
+          {
+            "components": [
+              {
+                "code": "discovery_verified",
+                "id": "subnet-calc",
+                "state": "verified"
+              }
+            ],
+            "harness": "hermes",
+            "installation": "claw-1",
+            "provenance": {
+              "checker": "netclaw-setup",
+              "protocol": 1
+            },
+            "tiers": [
+              {
+                "code": "artifact_present",
+                "state": "verified",
+                "tier": 1
+              },
+              {
+                "code": "discovery_verified",
+                "state": "verified",
+                "tier": 2
+              },
+              {
+                "code": "identity_verified",
+                "state": "verified",
+                "tier": 3
+              },
+              {
+                "code": "not_selected",
+                "state": "skipped",
+                "tier": 4
+              },
+              {
+                "code": "not_selected",
+                "state": "skipped",
+                "tier": 5
+              },
+              {
+                "code": "not_selected",
+                "state": "skipped",
+                "tier": 6
+              }
+            ],
+            "version": "v0.21.6"
+          }
+        ],
+        "schema": 1
+      },
+      "cleanup": {
+        "state": "verified",
+        "removed": 1517,
+        "retained": 1,
+        "alreadyAbsent": 0,
+        "directories": "retained",
+        "audit": "retained"
+      },
+      "retainedReasons": {
+        "ownership_evidence_retained": 1
+      },
+      "recovery": {
+        "nativeCancelCreatedNoHome": true,
+        "pauseAtVerifiedRuntimeCheckpoint": true,
+        "sameRunAndPlanResumed": true,
+        "privatePython314": true
+      }
+    },
+    {
+      "id": 3,
+      "scenario": "Mixed Risk: OpenClaw Border, OpenClaw hot member, Hermes hot member, OpenClaw on-demand member",
+      "result": "passed",
+      "freshHomes": 4,
+      "verifiedPhases": 52,
+      "planHash": "3a63796735d953bdc5c9312dcbad4504c91f06d507c0140a730d1c6fe1a8e0e5",
+      "completedJournalSha256": "1090ba804c3b1b78842bb67968e77dee8a0ddde7cd70d128fbb2d0bf6b036a7d",
+      "nativeVsCodeReview": "synthetic engineering via CUA",
+      "vsCodeConnectionSaved": true,
+      "vsCodeOverviewReady": true,
+      "connectionCandidateCount": 4,
+      "report": {
+        "export": "redacted",
+        "generatedAt": 1792881569,
+        "installations": [
+          {
+            "components": [
+              {
+                "code": "discovery_verified",
+                "id": "n2n",
+                "state": "verified"
+              },
+              {
+                "code": "discovery_verified",
+                "id": "protocol",
+                "state": "verified"
+              }
+            ],
+            "harness": "openclaw",
+            "installation": "claw-1",
+            "provenance": {
+              "checker": "netclaw-setup",
+              "protocol": 1
+            },
+            "tiers": [
+              {
+                "code": "artifact_present",
+                "state": "verified",
+                "tier": 1
+              },
+              {
+                "code": "discovery_verified",
+                "state": "verified",
+                "tier": 2
+              },
+              {
+                "code": "identity_verified",
+                "state": "verified",
+                "tier": 3
+              },
+              {
+                "code": "not_selected",
+                "state": "skipped",
+                "tier": 4
+              },
+              {
+                "code": "not_selected",
+                "state": "skipped",
+                "tier": 5
+              },
+              {
+                "code": "not_selected",
+                "state": "skipped",
+                "tier": 6
+              },
+              {
+                "code": "risk_verified",
+                "state": "verified",
+                "tier": "risk"
+              }
+            ],
+            "version": "2026.7.1-2"
+          },
+          {
+            "components": [
+              {
+                "code": "discovery_verified",
+                "id": "subnet-calc",
+                "state": "verified"
+              },
+              {
+                "code": "discovery_verified",
+                "id": "n2n",
+                "state": "verified"
+              }
+            ],
+            "harness": "openclaw",
+            "installation": "claw-2",
+            "provenance": {
+              "checker": "netclaw-setup",
+              "protocol": 1
+            },
+            "tiers": [
+              {
+                "code": "artifact_present",
+                "state": "verified",
+                "tier": 1
+              },
+              {
+                "code": "discovery_verified",
+                "state": "verified",
+                "tier": 2
+              },
+              {
+                "code": "identity_verified",
+                "state": "verified",
+                "tier": 3
+              },
+              {
+                "code": "not_selected",
+                "state": "skipped",
+                "tier": 4
+              },
+              {
+                "code": "not_selected",
+                "state": "skipped",
+                "tier": 5
+              },
+              {
+                "code": "not_selected",
+                "state": "skipped",
+                "tier": 6
+              },
+              {
+                "code": "risk_verified",
+                "state": "verified",
+                "tier": "risk"
+              }
+            ],
+            "version": "2026.7.1-2"
+          },
+          {
+            "components": [
+              {
+                "code": "discovery_verified",
+                "id": "subnet-calc",
+                "state": "verified"
+              },
+              {
+                "code": "discovery_verified",
+                "id": "n2n",
+                "state": "verified"
+              }
+            ],
+            "harness": "hermes",
+            "installation": "claw-3",
+            "provenance": {
+              "checker": "netclaw-setup",
+              "protocol": 1
+            },
+            "tiers": [
+              {
+                "code": "artifact_present",
+                "state": "verified",
+                "tier": 1
+              },
+              {
+                "code": "discovery_verified",
+                "state": "verified",
+                "tier": 2
+              },
+              {
+                "code": "identity_verified",
+                "state": "verified",
+                "tier": 3
+              },
+              {
+                "code": "not_selected",
+                "state": "skipped",
+                "tier": 4
+              },
+              {
+                "code": "not_selected",
+                "state": "skipped",
+                "tier": 5
+              },
+              {
+                "code": "not_selected",
+                "state": "skipped",
+                "tier": 6
+              },
+              {
+                "code": "risk_verified",
+                "state": "verified",
+                "tier": "risk"
+              }
+            ],
+            "version": "v0.21.6"
+          },
+          {
+            "components": [
+              {
+                "code": "discovery_verified",
+                "id": "subnet-calc",
+                "state": "verified"
+              },
+              {
+                "code": "discovery_verified",
+                "id": "n2n",
+                "state": "verified"
+              }
+            ],
+            "harness": "openclaw",
+            "installation": "claw-4",
+            "provenance": {
+              "checker": "netclaw-setup",
+              "protocol": 1
+            },
+            "tiers": [
+              {
+                "code": "artifact_present",
+                "state": "verified",
+                "tier": 1
+              },
+              {
+                "code": "discovery_verified",
+                "state": "verified",
+                "tier": 2
+              },
+              {
+                "code": "identity_verified",
+                "state": "verified",
+                "tier": 3
+              },
+              {
+                "code": "not_selected",
+                "state": "skipped",
+                "tier": 4
+              },
+              {
+                "code": "not_selected",
+                "state": "skipped",
+                "tier": 5
+              },
+              {
+                "code": "not_selected",
+                "state": "skipped",
+                "tier": 6
+              },
+              {
+                "code": "risk_verified",
+                "state": "verified",
+                "tier": "risk"
+              }
+            ],
+            "version": "2026.7.1-2"
+          }
+        ],
+        "schema": 1
+      },
+      "cleanup": {
+        "state": "verified",
+        "removed": 6076,
+        "retained": 4,
+        "alreadyAbsent": 0,
+        "directories": "retained",
+        "audit": "retained"
+      },
+      "retainedReasons": {
+        "ownership_evidence_retained": 4
+      },
+      "onDemand": {
+        "gatewayLoaded": true,
+        "hudLoaded": true,
+        "federationWorkerLoaded": false,
+        "wakeTestSelected": false
+      }
+    }
+  ],
+  "initialFixtureCleanup": {
+    "state": "verified",
+    "removed": 1503,
+    "retained": 1,
+    "alreadyAbsent": 0
+  },
+  "preservation": {
+    "ownerConfigHashesEqual": true,
+    "focusedNeighborHashesEqual": true,
+    "focusedNeighborFiles": 6,
+    "ownerConfigHashesEqualAfterCleanup": true,
+    "ownerNativeServicePidsEqual": true,
+    "ownerNativeServicesChecked": 1,
+    "remainingTestServices": 0,
+    "originalBranch": "153-ide-installer",
+    "originalHead": "89627477fb470cd7c293e33e192c5983819d45d4",
+    "originalGitStatus": ""
+  },
+  "sourceChangesRequired": false,
+  "mergePerformed": false,
+  "publicationPerformed": false,
+  "privateLogHashes": {
+    "extension-tests-rerun.log": "a912e85ab6459478d13d3b7e47f3954f7f321564252b53898314d2f6e4993b86",
+    "setup-tests-initial.log": "888557f80704ddcbc37f0c96e45ee57b1d539ba938d2f288ff177a051bb35153",
+    "setup-hermes-tests.log": "c74ad10e433fb383b2b580938bdee9b62b6e8c17efb8bb22d8804bb4341aad18",
+    "setup-preset-tests.log": "aa90e2a2dc170edd89a6f36707bdbb94e5b71afe1f86c5f4d90dcef609889793",
+    "installer-tests.log": "80479786b449d4cf195709c72d40a21eea6eb9e2b80c52e9ddf0b28db0385c63"
+  }
+}

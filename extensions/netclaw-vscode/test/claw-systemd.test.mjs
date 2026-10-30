@@ -73,6 +73,21 @@ test("Hermes discovery never inspects an OpenClaw-only gateway definition", asyn
   );
 });
 
+test("literal unquoted spaces and interior quotes do not block neighboring or selected gateways", async () => {
+  const selected = fileFixture(), neighbor = fileFixture();
+  for (const f of [selected, neighbor]) {
+    const raw = unit(f, {
+      contents: scope(f) + `LABEL=literal interior spaces\nNAME=claw's "label"\nEMPTY=\n`,
+    });
+    const found = await discoverSystemdServices(
+      await resolveTarget(selected.target),
+      transport({ "openclaw-gateway.service": raw }),
+    );
+    assert.equal(found.length, f === selected ? 1 : 0);
+    assert.ok(!JSON.stringify(found).includes("interior spaces"));
+  }
+});
+
 test("selected gateway.systemd.env is private, hashed, and qualified using literal effective scope", async () => {
   const f = fileFixture(),
     t = await resolveTarget(f.target);

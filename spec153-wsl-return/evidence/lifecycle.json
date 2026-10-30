@@ -1,0 +1,111 @@
+{
+  "openclaw": {
+    "scope": "actual selected native systemd controllers; synthetic reviewed management, no provider turn",
+    "harness": "openclaw",
+    "results": [
+      {
+        "op": "stop",
+        "outcome": "verified"
+      },
+      {
+        "op": "start",
+        "outcome": "verified"
+      },
+      {
+        "op": "restart",
+        "outcome": "verified"
+      }
+    ],
+    "neighborPreserved": true,
+    "selectedPidsChanged": true,
+    "selectedReady": true,
+    "neighborBefore": [
+      {
+        "harness": "hermes",
+        "fileHashes": [
+          "30943b455a811043dfffa4e98567f9f764e4263c4f1c16895599113a01bca8ef",
+          "c58a40b36d2f941c5ca38f31a73da30d9c3a4c165e7f7fdbe563176a8396e735",
+          "0f36c51a2c9efdebd1a8d2ba2779a50d981360d3e4d5859e2220d818119ddcbf",
+          "7e8f8fad1c493d64f8041b698d6ff61f54d6a903747661285e95637a8eaef3ba",
+          null
+        ],
+        "health": {
+          "state": "verified",
+          "code": "identity_verified"
+        }
+      }
+    ],
+    "neighborAfter": [
+      {
+        "harness": "hermes",
+        "fileHashes": [
+          "30943b455a811043dfffa4e98567f9f764e4263c4f1c16895599113a01bca8ef",
+          "c58a40b36d2f941c5ca38f31a73da30d9c3a4c165e7f7fdbe563176a8396e735",
+          "0f36c51a2c9efdebd1a8d2ba2779a50d981360d3e4d5859e2220d818119ddcbf",
+          "7e8f8fad1c493d64f8041b698d6ff61f54d6a903747661285e95637a8eaef3ba",
+          null
+        ],
+        "health": {
+          "state": "verified",
+          "code": "identity_verified"
+        }
+      }
+    ]
+  },
+  "hermes": {
+    "scope": "actual selected native systemd controllers; synthetic reviewed management, no provider turn",
+    "harness": "hermes",
+    "results": [
+      {
+        "op": "stop",
+        "outcome": "verified"
+      },
+      {
+        "op": "start",
+        "outcome": "verified"
+      },
+      {
+        "op": "restart",
+        "outcome": "verified"
+      }
+    ],
+    "neighborPreserved": true,
+    "selectedPidsChanged": true,
+    "selectedReady": true,
+    "neighborBefore": [
+      {
+        "harness": "openclaw",
+        "fileHashes": [
+          "959ea2950af4abcb2f7ba3159a416b95b121028e8bb45cf1ced9aec824270721",
+          "a2a59ce4d4173e2e7922b5ac4053ad9cc9513f16425fda1113107d4b867db9fd",
+          "7a7e32f4cf53a20af90afdbef38cb8aa0fe83dcb56b96d18445b20a3b2037052",
+          "d037571666e5f45e4d20c57d3b9a3e5e3833eda93e27ce6f6c8b9d231a8ce538",
+          "e3065a66332bfa252543c1b9fcb3a9700fa8767a253d3859b98e43d3b2cdfdbc"
+        ],
+        "health": {
+          "state": "verified",
+          "code": "identity_verified"
+        }
+      }
+    ],
+    "neighborAfter": [
+      {
+        "harness": "openclaw",
+        "fileHashes": [
+          "959ea2950af4abcb2f7ba3159a416b95b121028e8bb45cf1ced9aec824270721",
+          "a2a59ce4d4173e2e7922b5ac4053ad9cc9513f16425fda1113107d4b867db9fd",
+          "7a7e32f4cf53a20af90afdbef38cb8aa0fe83dcb56b96d18445b20a3b2037052",
+          "d037571666e5f45e4d20c57d3b9a3e5e3833eda93e27ce6f6c8b9d231a8ce538",
+          "e3065a66332bfa252543c1b9fcb3a9700fa8767a253d3859b98e43d3b2cdfdbc"
+        ],
+        "health": {
+          "state": "verified",
+          "code": "identity_verified"
+        }
+      }
+    ]
+  },
+  "date": "2026-10-24",
+  "host": "ubuntu2604",
+  "note": "Hashes compare synthetic neighbor files. Exact PIDs stay local; equality was asserted by the driver. Initial failed attempts are retained in findings/history."
+}

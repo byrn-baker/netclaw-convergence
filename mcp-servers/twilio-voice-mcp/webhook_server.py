@@ -30,6 +30,7 @@ from typing import Optional
 from flask import Flask, request, Response, abort
 from twilio.twiml.voice_response import VoiceResponse, Gather
 from twilio.request_validator import RequestValidator
+from managed import is_managed, gateway_binding
 
 from guardrails import (
     is_whitelisted,
@@ -734,6 +735,11 @@ async def process_with_gateway(user_message: str, ctx: ConversationContext = Non
     This is the TRUE universal voice handler - routes to the gateway
     which has access to ALL 40+ MCPs and 100+ skills.
     """
+    binding=gateway_binding() if is_managed() else None
+    if is_managed() and binding is None:
+        return "Voice routing is unavailable for this installation."
+    gateway_url=binding['url'] if binding else OPENCLAW_GATEWAY_URL
+    gateway_token=binding['token'] if binding else OPENCLAW_GATEWAY_TOKEN
     # Build context-aware system message with voice-specific instructions
     voice_instructions = """
 IMPORTANT VOICE RESPONSE RULES:
@@ -755,9 +761,9 @@ IMPORTANT VOICE RESPONSE RULES:
         # Longer timeout for operations like pyATS (5 minutes)
         async with httpx.AsyncClient(timeout=300.0) as client:
             response = await client.post(
-                f"{OPENCLAW_GATEWAY_URL}/v1/chat/completions",
+                f"{gateway_url}/v1/chat/completions",
                 headers={
-                    "Authorization": f"Bearer {OPENCLAW_GATEWAY_TOKEN}",
+                    "Authorization": f"Bearer {gateway_token}",
                     "Content-Type": "application/json"
                 },
                 json={
@@ -772,16 +778,19 @@ IMPORTANT VOICE RESPONSE RULES:
                 content = data.get("choices", [{}])[0].get("message", {}).get("content", "")
                 return content if content else "I processed your request but have no response."
             else:
-                logger.error(f"Gateway error: {response.status_code} - {response.text}")
+                if is_managed():logger.error("Owned gateway request failed")
+                else:logger.error(f"Gateway error: {response.status_code} - {response.text}")
                 return await process_with_claude_fallback(user_message, ctx)
 
     except Exception as e:
-        logger.error(f"Gateway connection error: {e}")
+        if is_managed():logger.error("Owned gateway connection failed")
+        else:logger.error(f"Gateway connection error: {e}")
         return await process_with_claude_fallback(user_message, ctx)
 
 
 async def process_with_claude_fallback(user_message: str, ctx: ConversationContext = None) -> str:
     """Fallback to direct Claude API with limited tools if gateway unavailable."""
+    if is_managed():return "Voice routing is unavailable for this installation."
     if not ANTHROPIC_API_KEY:
         return await process_basic_command(user_message)
 
@@ -864,6 +873,8 @@ async def process_with_claude_agent(
     Returns:
         Speech-formatted response
     """
+    if is_managed() and gateway_binding() is None:
+        return "Voice routing is unavailable for this installation."
     # T011: Load or use provided context
     if ctx is None and caller_id:
         context_manager = get_context_manager()
@@ -891,6 +902,7 @@ async def process_with_claude_agent(
 
 async def process_basic_command(command: str) -> str:
     """Basic command processing as fallback when no API key."""
+    if is_managed():return "Voice routing is unavailable for this installation."
     command_lower = command.lower()
 
     # CML-related

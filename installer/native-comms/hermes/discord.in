@@ -1,0 +1,3 @@
+# SDK pin from Hermes 818c13be1dc4fd28987e1e881a9408224afd4535.
+# Existing qualified core packages are constrained during lock generation.
+discord.py[voice]==2.7.1

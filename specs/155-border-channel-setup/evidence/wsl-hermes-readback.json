@@ -1,0 +1,126 @@
+{
+  "scope": "actual pinned source/SDK in temporary homes with synthetic configuration; no provider operations",
+  "channels": [
+    {
+      "channel": "google-chat",
+      "configured": true,
+      "dependencies": true,
+      "source": "818c13be1dc4fd28987e1e881a9408224afd4535"
+    },
+    {
+      "channel": "email",
+      "configured": true,
+      "dependencies": true,
+      "source": "818c13be1dc4fd28987e1e881a9408224afd4535"
+    },
+    {
+      "channel": "mattermost",
+      "configured": true,
+      "dependencies": true,
+      "source": "818c13be1dc4fd28987e1e881a9408224afd4535"
+    },
+    {
+      "channel": "matrix",
+      "configured": true,
+      "dependencies": true,
+      "source": "818c13be1dc4fd28987e1e881a9408224afd4535"
+    },
+    {
+      "channel": "dingtalk",
+      "configured": true,
+      "dependencies": true,
+      "source": "818c13be1dc4fd28987e1e881a9408224afd4535"
+    },
+    {
+      "channel": "feishu",
+      "configured": true,
+      "dependencies": true,
+      "source": "818c13be1dc4fd28987e1e881a9408224afd4535"
+    },
+    {
+      "channel": "wecom",
+      "configured": true,
+      "dependencies": true,
+      "source": "818c13be1dc4fd28987e1e881a9408224afd4535"
+    },
+    {
+      "channel": "wecom-callback",
+      "configured": true,
+      "dependencies": true,
+      "source": "818c13be1dc4fd28987e1e881a9408224afd4535"
+    },
+    {
+      "channel": "signal",
+      "configured": true,
+      "dependencies": true,
+      "source": "818c13be1dc4fd28987e1e881a9408224afd4535"
+    },
+    {
+      "channel": "weixin",
+      "configured": true,
+      "dependencies": true,
+      "source": "818c13be1dc4fd28987e1e881a9408224afd4535"
+    },
+    {
+      "channel": "bluebubbles",
+      "configured": true,
+      "dependencies": true,
+      "source": "818c13be1dc4fd28987e1e881a9408224afd4535"
+    },
+    {
+      "channel": "qqbot",
+      "configured": true,
+      "dependencies": true,
+      "source": "818c13be1dc4fd28987e1e881a9408224afd4535"
+    },
+    {
+      "channel": "yuanbao",
+      "configured": true,
+      "dependencies": true,
+      "source": "818c13be1dc4fd28987e1e881a9408224afd4535"
+    },
+    {
+      "channel": "line",
+      "configured": true,
+      "dependencies": true,
+      "source": "818c13be1dc4fd28987e1e881a9408224afd4535"
+    },
+    {
+      "channel": "ntfy",
+      "configured": true,
+      "dependencies": true,
+      "source": "818c13be1dc4fd28987e1e881a9408224afd4535"
+    },
+    {
+      "channel": "simplex",
+      "configured": true,
+      "dependencies": true,
+      "source": "818c13be1dc4fd28987e1e881a9408224afd4535"
+    },
+    {
+      "channel": "irc",
+      "configured": true,
+      "dependencies": true,
+      "source": "818c13be1dc4fd28987e1e881a9408224afd4535"
+    },
+    {
+      "channel": "telegram",
+      "configured": true,
+      "dependencies": true,
+      "source": "818c13be1dc4fd28987e1e881a9408224afd4535"
+    },
+    {
+      "channel": "discord",
+      "configured": true,
+      "dependencies": true,
+      "source": "818c13be1dc4fd28987e1e881a9408224afd4535"
+    },
+    {
+      "channel": "slack",
+      "configured": true,
+      "dependencies": true,
+      "source": "818c13be1dc4fd28987e1e881a9408224afd4535"
+    }
+  ],
+  "dependenciesMeaning": "Selected SDK/module dependencies only. External daemons, provider accounts and callback reachability are not established."
+}

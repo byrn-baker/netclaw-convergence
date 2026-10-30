@@ -16,6 +16,7 @@ import urllib.error
 import urllib.request
 from urllib.parse import quote
 import re
+import tempfile
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -87,8 +88,16 @@ def main():
         sock.bind(('127.0.0.1', 0))
         port = sock.getsockname()[1]
     env = dict(os.environ, PYATS_MCP_HTTP_HOST='127.0.0.1', PYATS_MCP_HTTP_PORT=str(port),
-               PYATS_MCP_TRANSPORT_MODE='stateless')
-    proc = subprocess.Popen([str(python), '-u', str(script)], env=env,
+               PYATS_MCP_TRANSPORT_MODE='stateless',PYTHON_DOTENV_DISABLED='1')
+    if env.get('NETCLAW_TESTBED_MODE')=='dynamic':
+        env.pop('PYATS_TESTBED_PATH',None);env['PYATS_MCP_DYNAMIC_ONLY']='1'
+    # Upstream's task store is exclusive. Each owned process gets private
+    # artifacts/evidence; clients never share an active inventory or task DB.
+    artifacts=Path(env.get('PYATS_MCP_ARTIFACTS_DIR',str(python.parent.parent.parent/'pyats-artifacts')))
+    artifacts.mkdir(parents=True,exist_ok=True,mode=0o700)
+    session=Path(tempfile.mkdtemp(prefix='session-',dir=artifacts))
+    env['PYATS_MCP_ARTIFACTS_DIR']=str(session);env['PYATS_MCP_TASK_DB']=str(session/'tasks.sqlite3')
+    proc = subprocess.Popen([str(python), '-u', str(ROOT/'scripts/pyats-managed.py'),'--upstream',str(script)], env=env,
                             stdin=subprocess.DEVNULL, stdout=sys.stderr, stderr=sys.stderr, start_new_session=True)
     def interrupted(signum, frame):
         raise SystemExit(128 + signum)

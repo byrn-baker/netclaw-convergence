@@ -1,0 +1,93 @@
+{
+  "scope": "actual native Windows VS Code; fixed read-only WSL queries and reviewed handoff; synthetic choices",
+  "snapshotScope": "WSL status and distribution/state/version listing; hashes only, not exhaustive Windows filesystem/process forensics",
+  "cases": [
+    {
+      "case": "missing-extension",
+      "date": "2026-10-18",
+      "stateUnchanged": true,
+      "probes": {
+        "status": {
+          "exitBefore": 0,
+          "exitAfter": 0,
+          "beforeSha256": "277c27da6f65fd7c7b936f15d1c908f98dbfaa0c36b9cc6226982e174aaa98fa",
+          "afterSha256": "277c27da6f65fd7c7b936f15d1c908f98dbfaa0c36b9cc6226982e174aaa98fa"
+        },
+        "list": {
+          "exitBefore": 0,
+          "exitAfter": 0,
+          "beforeSha256": "4749f539d7e16c8feceb100d3c49a0658afcabed62496a320649c46b3914147f",
+          "afterSha256": "4749f539d7e16c8feceb100d3c49a0658afcabed62496a320649c46b3914147f"
+        }
+      }
+    },
+    {
+      "case": "supported-cancel",
+      "date": "2026-10-18",
+      "stateUnchanged": true,
+      "probes": {
+        "status": {
+          "exitBefore": 0,
+          "exitAfter": 0,
+          "beforeSha256": "277c27da6f65fd7c7b936f15d1c908f98dbfaa0c36b9cc6226982e174aaa98fa",
+          "afterSha256": "277c27da6f65fd7c7b936f15d1c908f98dbfaa0c36b9cc6226982e174aaa98fa"
+        },
+        "list": {
+          "exitBefore": 0,
+          "exitAfter": 0,
+          "beforeSha256": "4749f539d7e16c8feceb100d3c49a0658afcabed62496a320649c46b3914147f",
+          "afterSha256": "4749f539d7e16c8feceb100d3c49a0658afcabed62496a320649c46b3914147f"
+        }
+      }
+    },
+    {
+      "case": "handoff-cancel",
+      "date": "2026-10-18",
+      "stateUnchanged": true,
+      "probes": {
+        "status": {
+          "exitBefore": 0,
+          "exitAfter": 0,
+          "beforeSha256": "277c27da6f65fd7c7b936f15d1c908f98dbfaa0c36b9cc6226982e174aaa98fa",
+          "afterSha256": "277c27da6f65fd7c7b936f15d1c908f98dbfaa0c36b9cc6226982e174aaa98fa"
+        },
+        "list": {
+          "exitBefore": 0,
+          "exitAfter": 0,
+          "beforeSha256": "4749f539d7e16c8feceb100d3c49a0658afcabed62496a320649c46b3914147f",
+          "afterSha256": "4749f539d7e16c8feceb100d3c49a0658afcabed62496a320649c46b3914147f"
+        }
+      }
+    },
+    {
+      "case": "disabled-extension",
+      "date": "2026-10-24",
+      "stateUnchanged": true,
+      "probes": {
+        "status": {
+          "exitBefore": 0,
+          "exitAfter": 0,
+          "beforeSha256": "277c27da6f65fd7c7b936f15d1c908f98dbfaa0c36b9cc6226982e174aaa98fa",
+          "afterSha256": "277c27da6f65fd7c7b936f15d1c908f98dbfaa0c36b9cc6226982e174aaa98fa"
+        },
+        "list": {
+          "exitBefore": 0,
+          "exitAfter": 0,
+          "beforeSha256": "ee065610a20c5e67253ec90fbf28de226c48cdbc29fb19c689561d6f4739cf06",
+          "afterSha256": "ee065610a20c5e67253ec90fbf28de226c48cdbc29fb19c689561d6f4739cf06"
+        }
+      }
+    }
+  ],
+  "handoff": {
+    "date": "2026-10-18",
+    "reviewed": true,
+    "privateDirectoryMode": "0700",
+    "privateRecordMode": "0600",
+    "restoredInWsl": true,
+    "consumedOnce": true,
+    "replayOfferedAgain": false,
+    "limitation": "Source-development launch did not auto-attach the UNC extension in the new handoff window; an existing qualified remote development window consumed the record on reload. Packaged VSIX handoff is unqualified."
+  },
+  "actualUtf16Detection": true
+}

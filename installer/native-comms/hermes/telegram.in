@@ -1,0 +1,2 @@
+# SDK pin from Hermes 818c13be1dc4fd28987e1e881a9408224afd4535.
+python-telegram-bot[webhooks]==22.8

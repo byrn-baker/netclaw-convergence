@@ -1,0 +1,47 @@
+{
+  "recordedAt": "2026-10-24T20:09:05.248186+00:00",
+  "scope": "This return folder, all source deltas relative to the accepted Mac baseline and the changed qualification documents. Unchanged accepted Mac history is not re-audited.",
+  "textFilesScanned": [
+    "matrix.json",
+    "RETURN-TO-MAC.md",
+    "SUMMARY.md",
+    "environment.json",
+    "evidence/cleanup.json",
+    "evidence/implementation-files.json",
+    "evidence/test-results.json",
+    "evidence/assistant-clients.json",
+    "evidence/lifecycle.json",
+    "evidence/fixture-shutdown.json",
+    "evidence/native-windows.json",
+    "demo/verification.json",
+    "demo/tour-details.json",
+    "reports/ubuntu2404-hermes-interrupted.json",
+    "reports/ubuntu2604-openclaw.json",
+    "reports/ubuntu2604-hermes.json",
+    "reports/ubuntu2404-openclaw.json",
+    "reports/ubuntu2604-hermes-before-managed-fix.json",
+    "reports/ubuntu2604-mixed-risk.json"
+  ],
+  "seededMarkerCount": 16,
+  "seededMarkerHits": 0,
+  "privatePatternHits": 0,
+  "defaultReportStructure": "All exported reports checked against the closed public projection; no identity, raw error, URL or arbitrary nested field.",
+  "sourceDeltaReview": "13 implementation/test files compared byte-for-byte with final tested code and reviewed; documentation deltas inspected. Test fixtures may intentionally contain synthetic canaries; runtime data is excluded.",
+  "media": {
+    "sha256": "c9db26887c74f8556126b3b1b48e600151c51211049e183008d49a232833783e",
+    "reusedVerifiedArtifact": true,
+    "visualReview": "Previously inspected October 18 captions/native dialogs and keyframes; poster re-inspected October 24. Actual synthetic draft only.",
+    "containerMetadata": "Only format/encoder, public tour title and synthetic-scope comment."
+  },
+  "excluded": [
+    "Raw credentials and generated runtime tokens",
+    "Raw logs, runtime homes, provider transcripts and testbeds",
+    "Setup journals and native registrations",
+    "Private editor state, VHDs, daily memory and GAIT store"
+  ],
+  "limitations": [
+    "Pattern scans cannot establish absence of every unknown secret.",
+    "No whole-video OCR or speech-recognition audit was performed; exact hash preserves the previously inspected artifact.",
+    "Hashes/alias comparisons are evidence of the sampled synthetic files; they are not a complete filesystem forensics claim."
+  ]
+}

@@ -16,7 +16,12 @@ Devices are defined in `testbed/testbed.yaml`. Update that file with your SSH-ac
 
 ## Platform Credentials
 
-All credentials are in `~/.openclaw/.env`. Never put credentials in skill files or this document.
+Credentials belong to the **selected installation's** private `.env`. The historical default is `~/.openclaw/.env`; a separate setup-owned OpenClaw or Hermes home has its own file. Verify the selected home and installation identity first. Never borrow another claw's credentials or put values in skill files, plans, reports or this document. [Separate-claw setup](docs/GETTING-STARTED-VSCODE.md) includes Spec155 Comms in source 1.13.0 / extension 1.3.0. Publishing these artifacts does not install or change any existing local runtime.
+
+The source Comms installer distinguishes native conversation ingress, Twilio API
+and voice tools, and Zoom meeting services. Use [Comms setup](docs/COMMS-SETUP.md)
+for account preparation and exact owner placement. Installer discovery is inert;
+configuration, authentication, transport and message delivery retain separate results.
 
 ```
 ### Batfish Configuration Analysis (reference only — actual values in .env)
@@ -1059,3 +1064,22 @@ Full selected-installation controls include verified owned gateway/engine, HUD/c
 Source preview and acceptance: `specs/152-workspace-claw-controls/verification.md`. The owner subsequently authorized packaging and feature-branch push for an isolated WSL preview connected to real NetClaw. See `specs/152-workspace-claw-controls/WSL-HANDOFF.md`. Merge, live deployment and Marketplace publication remain held.
 
 Spec152 production authorization (2026-10-16) supersedes its prior holds. WSL corrected native OpenClaw home/tilde resolution; follow-up systemd discovery isolates explicit foreign installations and qualifies private literal gateway.systemd.env. Symlink files remain refused, and live WSL lifecycle was not exercised. See specs/152-workspace-claw-controls/release-verification.md.
+
+## Dynamic pyATS testbeds (Spec160)
+
+The managed isolated pyATS server pins upstream 4a3c1e3404d5ed7a78cb094bf26d2a49065497d9
+and exposes 35 tools: 34 upstream plus `netclaw_testbed_compose`. Select static or
+dynamic per installation in either installer. Compose scoped read-only source MCP
+output/export, review provenance/endpoints, validate with real pyATS and environment
+credential references, then explicitly activate. No console-to-SSH inference, raw
+source fetch/credential merge, silent fallback or inventory-based device authority.
+All twelve requested lab/CMDB/SoT/assurance sources plus structured/REST exports have
+contracts and synthetic tests; service access is separately qualified. ServiceNow
+needs a verified CMDB reader/export, and lab console-only rows need management facts.
+
+The registry lasts one owned MCP process. Use a persistent native client for device
+operations or `scripts/pyats-testbed-session.py` for one-process preview/activate/list.
+Separate MCP_CALL invocations cannot share dynamic state. HUD static inventory,
+Terminal Intent and collector grants remain separate. See `docs/DYNAMIC-TESTBEDS.md`
+and `specs/160-dynamic-pyats-testbeds/verification.md`. No owner device/source service
+was contacted during synthetic qualification.

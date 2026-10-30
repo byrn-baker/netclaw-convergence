@@ -14,6 +14,7 @@ from datetime import datetime
 from dataclasses import dataclass, field, asdict
 from typing import Optional
 from pathlib import Path
+from managed import is_managed, context_directory, context_name, private_json, write_context
 
 logger = logging.getLogger("voice-context")
 
@@ -140,13 +141,16 @@ class ContextManager:
     """
 
     def __init__(self, memory_mcp_url: str = None):
-        self.memory_mcp_url = memory_mcp_url or MEMORY_MCP_URL
+        # No implicit neighboring Memory MCP in a managed installation. An
+        # authenticated, owner-bound remote memory adapter is a separate gate.
+        self.memory_mcp_url = None if is_managed() else memory_mcp_url or MEMORY_MCP_URL
         self._local_cache: dict[str, ConversationContext] = {}
-        self._context_dir = Path.home() / ".openclaw" / "voice" / "contexts"
-        self._context_dir.mkdir(parents=True, exist_ok=True)
+        self._context_dir = context_directory() if is_managed() else Path.home() / ".openclaw" / "voice" / "contexts"
+        self._context_dir.mkdir(parents=True, exist_ok=True,mode=0o700)
 
     def _get_context_file(self, caller_id: str) -> Path:
         """Get the local file path for a caller's context."""
+        if is_managed():return self._context_dir/context_name(caller_id)
         # Sanitize caller ID for filename
         safe_id = caller_id.replace("+", "").replace("-", "").replace(" ", "")
         return self._context_dir / f"{safe_id}.json"
@@ -172,8 +176,10 @@ class ContextManager:
         context_file = self._get_context_file(caller_id)
         if context_file.exists():
             try:
-                with open(context_file, "r") as f:
-                    data = json.load(f)
+                if is_managed():data=private_json(context_file)
+                else:
+                    with open(context_file, "r") as f:data=json.load(f)
+                if data:
                     ctx = ConversationContext.from_dict(data)
                     ctx.caller_name = caller_name or ctx.caller_name
                     ctx.last_interaction = datetime.utcnow().isoformat()
@@ -185,6 +191,7 @@ class ContextManager:
 
         # Try Memory MCP
         try:
+            if not self.memory_mcp_url:raise RuntimeError('remote_memory_not_bound')
             async with httpx.AsyncClient(timeout=5.0) as client:
                 response = await client.post(
                     f"{self.memory_mcp_url}/tools/recall",
@@ -234,14 +241,16 @@ class ContextManager:
         # Always save to local file as backup
         context_file = self._get_context_file(ctx.caller_id)
         try:
-            with open(context_file, "w") as f:
-                json.dump(ctx.to_dict(), f, indent=2)
+            if is_managed():write_context(context_file,ctx.to_dict())
+            else:
+                with open(context_file, "w") as f:json.dump(ctx.to_dict(), f, indent=2)
             logger.debug(f"Saved context to {context_file}")
         except IOError as e:
             logger.warning(f"Failed to save context file: {e}")
 
         # Try to save to Memory MCP
         try:
+            if not self.memory_mcp_url:raise RuntimeError('remote_memory_not_bound')
             async with httpx.AsyncClient(timeout=5.0) as client:
                 response = await client.post(
                     f"{self.memory_mcp_url}/tools/store",
@@ -285,6 +294,7 @@ class ContextManager:
 
         # Try to clear from Memory MCP
         try:
+            if not self.memory_mcp_url:raise RuntimeError('remote_memory_not_bound')
             async with httpx.AsyncClient(timeout=5.0) as client:
                 await client.post(
                     f"{self.memory_mcp_url}/tools/forget",

@@ -1,0 +1,121 @@
+{
+  "schema": 1,
+  "export": "redacted",
+  "generatedAt": 1792951455,
+  "installations": [
+    {
+      "installation": "claw-1",
+      "harness": "hermes",
+      "tiers": [
+        {
+          "tier": 1,
+          "state": "verified",
+          "code": "artifact_present"
+        },
+        {
+          "tier": 2,
+          "state": "unverified",
+          "code": "discovery_unverified"
+        },
+        {
+          "tier": 3,
+          "state": "unverified",
+          "code": "service_unverified"
+        },
+        {
+          "tier": 4,
+          "state": "skipped",
+          "code": "not_selected"
+        },
+        {
+          "tier": 5,
+          "state": "skipped",
+          "code": "not_selected"
+        },
+        {
+          "tier": 6,
+          "state": "skipped",
+          "code": "not_selected"
+        }
+      ],
+      "components": [
+        {
+          "id": "subnet-calc",
+          "state": "unverified",
+          "code": "probe_failed"
+        }
+      ],
+      "version": "0.21.6",
+      "comms": [
+        {
+          "channel": "slack",
+          "account": "account-1",
+          "configuration": {
+            "state": "verified",
+            "code": "configuration_valid",
+            "checker": "hermes-config",
+            "observedAt": 1792951451
+          },
+          "authentication": {
+            "state": "unverified",
+            "code": "not_checked",
+            "checker": "hermes-gateway",
+            "observedAt": 1792951452
+          },
+          "transport": {
+            "state": "unverified",
+            "code": "transport_unverified",
+            "checker": "hermes-gateway",
+            "observedAt": 1792951452
+          },
+          "inbound": {
+            "state": "skipped",
+            "code": "not_requested",
+            "checker": "netclaw-setup"
+          },
+          "outbound": {
+            "state": "skipped",
+            "code": "not_requested",
+            "checker": "netclaw-setup"
+          }
+        },
+        {
+          "channel": "discord",
+          "account": "account-1",
+          "configuration": {
+            "state": "verified",
+            "code": "configuration_valid",
+            "checker": "hermes-config",
+            "observedAt": 1792951452
+          },
+          "authentication": {
+            "state": "unverified",
+            "code": "not_checked",
+            "checker": "hermes-gateway",
+            "observedAt": 1792951455
+          },
+          "transport": {
+            "state": "unverified",
+            "code": "transport_unverified",
+            "checker": "hermes-gateway",
+            "observedAt": 1792951455
+          },
+          "inbound": {
+            "state": "skipped",
+            "code": "not_requested",
+            "checker": "netclaw-setup"
+          },
+          "outbound": {
+            "state": "skipped",
+            "code": "not_requested",
+            "checker": "netclaw-setup"
+          }
+        }
+      ],
+      "provenance": {
+        "checker": "netclaw-setup",
+        "protocol": 1
+      }
+    }
+  ]
+}

@@ -1,0 +1,188 @@
+{
+  "date": "2026-10-25",
+  "sourceCommit": "a5480b4cea4cf3729a25576fa75394b41257faab",
+  "method": "read-only source inspection and pure adapter/validator calls; no installation or external channel calls",
+  "channels": [
+    {
+      "id": "slack",
+      "harnesses": [
+        "openclaw",
+        "hermes"
+      ],
+      "settingKeys": [
+        "SLACK_BOT_TOKEN",
+        "SLACK_APP_TOKEN"
+      ],
+      "availability": "supported"
+    },
+    {
+      "id": "telegram",
+      "harnesses": [
+        "openclaw",
+        "hermes"
+      ],
+      "settingKeys": [
+        "TELEGRAM_BOT_TOKEN"
+      ],
+      "availability": "supported"
+    },
+    {
+      "id": "discord",
+      "harnesses": [
+        "openclaw",
+        "hermes"
+      ],
+      "settingKeys": [
+        "DISCORD_BOT_TOKEN"
+      ],
+      "availability": "supported"
+    },
+    {
+      "id": "webex",
+      "harnesses": [
+        "openclaw"
+      ],
+      "settingKeys": [
+        "WEBEX_BOT_TOKEN",
+        "WEBEX_WEBHOOK_URL",
+        "WEBEX_WEBHOOK_SECRET",
+        "WEBEX_ALERTS_ROOM_ID",
+        "WEBEX_REPORTS_ROOM_ID",
+        "WEBEX_INCIDENTS_ROOM_ID"
+      ],
+      "availability": "native"
+    },
+    {
+      "id": "none",
+      "harnesses": [
+        "openclaw",
+        "hermes"
+      ],
+      "settingKeys": [],
+      "availability": "supported"
+    }
+  ],
+  "openclawSlackGeneratedChannelConfig": {
+    "enabled": true,
+    "configWrites": false,
+    "groupPolicy": "allowlist"
+  },
+  "hermesRiskServiceRoles": [
+    "hud",
+    "federation"
+  ],
+  "webexRejectedBeforeApply": true,
+  "webexReason": "channel_plugin_api_incompatible",
+  "teamsCatalogEntryPresent": false,
+  "wizardSelection": "replaces the channels array with one selected entry or empty",
+  "wizardTier5": "selects tier 5 but does not create channelTests entries; imported entries are retained",
+  "memberChannels": "forbidden by wizard and plan validator",
+  "liveChannelEvidence": "not claimed; Spec153 required acceptance did not send real channel messages",
+  "commsRoleChecks": [
+    {
+      "harness": "openclaw",
+      "component": "twilio",
+      "role": "focused",
+      "componentAllowedByRole": true,
+      "validationErrors": [],
+      "qualification": "synthetic draft validation only; no configuration, discovery or activation"
+    },
+    {
+      "harness": "openclaw",
+      "component": "twilio",
+      "role": "border",
+      "componentAllowedByRole": false,
+      "validationErrors": [
+        "border_domain_capability"
+      ],
+      "qualification": "synthetic draft validation only; no configuration, discovery or activation"
+    },
+    {
+      "harness": "openclaw",
+      "component": "twilio",
+      "role": "member",
+      "componentAllowedByRole": true,
+      "validationErrors": [],
+      "qualification": "synthetic draft validation only; no configuration, discovery or activation"
+    },
+    {
+      "harness": "openclaw",
+      "component": "zoom-rtms",
+      "role": "focused",
+      "componentAllowedByRole": true,
+      "validationErrors": [],
+      "qualification": "synthetic draft validation only; no configuration, discovery or activation"
+    },
+    {
+      "harness": "openclaw",
+      "component": "zoom-rtms",
+      "role": "border",
+      "componentAllowedByRole": false,
+      "validationErrors": [
+        "border_domain_capability"
+      ],
+      "qualification": "synthetic draft validation only; no configuration, discovery or activation"
+    },
+    {
+      "harness": "openclaw",
+      "component": "zoom-rtms",
+      "role": "member",
+      "componentAllowedByRole": true,
+      "validationErrors": [],
+      "qualification": "synthetic draft validation only; no configuration, discovery or activation"
+    },
+    {
+      "harness": "hermes",
+      "component": "twilio",
+      "role": "focused",
+      "componentAllowedByRole": true,
+      "validationErrors": [],
+      "qualification": "synthetic draft validation only; no configuration, discovery or activation"
+    },
+    {
+      "harness": "hermes",
+      "component": "twilio",
+      "role": "border",
+      "componentAllowedByRole": false,
+      "validationErrors": [
+        "border_domain_capability"
+      ],
+      "qualification": "synthetic draft validation only; no configuration, discovery or activation"
+    },
+    {
+      "harness": "hermes",
+      "component": "twilio",
+      "role": "member",
+      "componentAllowedByRole": true,
+      "validationErrors": [],
+      "qualification": "synthetic draft validation only; no configuration, discovery or activation"
+    },
+    {
+      "harness": "hermes",
+      "component": "zoom-rtms",
+      "role": "focused",
+      "componentAllowedByRole": true,
+      "validationErrors": [],
+      "qualification": "synthetic draft validation only; no configuration, discovery or activation"
+    },
+    {
+      "harness": "hermes",
+      "component": "zoom-rtms",
+      "role": "border",
+      "componentAllowedByRole": false,
+      "validationErrors": [
+        "border_domain_capability"
+      ],
+      "qualification": "synthetic draft validation only; no configuration, discovery or activation"
+    },
+    {
+      "harness": "hermes",
+      "component": "zoom-rtms",
+      "role": "member",
+      "componentAllowedByRole": true,
+      "validationErrors": [],
+      "qualification": "synthetic draft validation only; no configuration, discovery or activation"
+    }
+  ],
+  "commsMemberProfilePresent": false
+}

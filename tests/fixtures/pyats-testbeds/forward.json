@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "name": "candidate-forward",
+  "sources": [
+    {
+      "kind": "forward",
+      "owner": "fixture-controller",
+      "scope": {
+        "site": "fixture-site",
+        "snapshot_id": "fixture-snapshot"
+      },
+      "capturedAt": "2026-10-30T12:00:00Z",
+      "complete": true,
+      "total": 1,
+      "records": [
+        {
+          "id": "node-12",
+          "name": "fixture-forward",
+          "management_ip": "192.0.2.12/24",
+          "os": "iosxe"
+        }
+      ],
+      "defaults": {
+        "port": 22
+      },
+      "snapshotCapturedAt": "2026-10-30T11:00:00Z"
+    }
+  ]
+}

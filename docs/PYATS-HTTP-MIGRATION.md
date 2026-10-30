@@ -1,7 +1,7 @@
 # Upgrade pyATS to stateless HTTP
 
-NetClaw uses pyATS MCP revision `d4971436328369ef0a581ca5359dc8700fb2939b`,
-including native process pCalls. This upstream release requires MCP SDK 2.x and
+NetClaw uses pyATS MCP revision `4a3c1e3404d5ed7a78cb094bf26d2a49065497d9`,
+including native process pCalls, Tasks and dynamic testbeds. This upstream release requires MCP SDK 2.x and
 supports Streamable HTTP rather than direct STDIO. Install its dependencies in a
 separate environment so other MCP 1.x integrations keep working.
 
@@ -32,7 +32,8 @@ The three settings are `PYATS_MCP_SCRIPT` (NetClaw bridge),
 `PYATS_UPSTREAM_SCRIPT` (upstream server), and `PYATS_VENV` (dedicated environment).
 The bridge expands no shell commands. Prefer absolute paths in environment files.
 
-Existing skill calls keep this form:
+Existing static-mode skill calls keep this form. Dynamic mode requires a persistent
+MCP process or the bounded preview helper described in [Dynamic testbeds](DYNAMIC-TESTBEDS.md):
 
 ```bash
 MCP_CALL_TIMEOUT=120 python3 "$MCP_CALL" "python3 -u $PYATS_MCP_SCRIPT" \
@@ -47,7 +48,7 @@ Check each device's status and aggregate failure counts.
 ## Runtime lifecycle
 
 The bridge owns a stateless HTTP server on a temporary loopback port. It forwards
-MCP messages without changing tool schemas and stops the server when the client
+MCP messages while preserving original input schemas and stops the server when the client
 exits. There is no permanent listener or system service to manage. The environment
 and device credentials remain local. HTTP proxies are bypassed for loopback RPC.
 
@@ -57,10 +58,11 @@ have separate process state. Export baselines explicitly; never assume a previou
 process's in-memory snapshot still exists. All device configuration changes still
 require the baseline, approved change, and verification workflow.
 
-For a persistent HTTP client, run the upstream server with the dedicated venv and
-explicit `PYATS_MCP_HTTP_HOST=127.0.0.1`, `PYATS_MCP_TRANSPORT_MODE=stateless`, and
-an available `PYATS_MCP_HTTP_PORT`. Its unauthenticated HTTP endpoint must remain
-local; use an authenticated tunnel for remote access.
+For persistent clients, keep the owned `scripts/pyats-stdio.py` process alive across
+calls. It launches `scripts/pyats-managed.py` around the pinned upstream and adds
+the managed composition/lifecycle checks. Direct unmodified upstream HTTP launch
+does not provide those checks and is not a managed dynamic deployment. The owned
+HTTP endpoint remains on loopback and has no permanent shared listener.
 
 ## Recovery
 
@@ -80,3 +82,20 @@ into the shared environment. The migration does not modify the testbed or device
 
 Managed generations retain the previous runtime at `pyats-venv.previous` and
 leave legacy source clones intact. See [preservation and recovery details](AUDIT124-MIGRATIONS.md).
+
+## Static or dynamic pyATS inventory (Spec160)
+
+Select pyATS, then choose **Testbed mode & sources** in the VS Code setup wizard
+or static/dynamic in the terminal plan. Existing-runtime `scripts/setup.sh --testbed-only`
+configures the selected home. Dynamic mode stores selected sources privately and
+creates no dummy YAML; setup performs no inventory fetch or device operation.
+Source service credentials and device login references remain separate.
+
+The managed MCP requires scoped, complete, fresh records, then actual schema and
+credential validation before explicit activation. Inventory belongs to one MCP
+process; separate one-shot calls do not share it. Use a persistent client or the
+bounded session helper. The HUD static editor and collector grants are separate.
+Readiness reports source access, candidate, activation and execution independently.
+See [Dynamic testbeds](DYNAMIC-TESTBEDS.md) for all source contracts, unavailable
+reader gaps, restart behavior and feasible qualification. Existing runtimes require
+an explicit reviewed component upgrade; source selection alone does not install it.

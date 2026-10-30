@@ -1,5 +1,6 @@
-import { runtimeInfo, runtimeStorage, sendChat, observeRequest, pendingRequest, newConversation, requestControl } from '../shared/runtime-client.js';
+import { runtimeInfo, runtimeStorage, sendChat, observeRequest, pendingRequest, restoreOwnedRequest, newConversation, requestControl } from '../shared/runtime-client.js';
 import { loadChat, saveChat, loadChatArchive, archiveChat } from './chat-storage.js';
+import { recoveryAnchor, mergeRecoveredTurn, recoveredDraft } from './chat-recovery.js';
 import ChatUsage from './ChatUsage.jsx';
 import { randomId } from '../shared/random-id.js';
 import React, { lazy, Suspense, useEffect, useRef, useState } from 'react';
@@ -108,9 +109,11 @@ export default function StandardChat({ preview = false, active = true, pal = fal
         target = await response.json();
         if (!validId(target.thread) || !Array.isArray(target.messages)) throw Error();
         const local = savedChats.find(chat => chat.thread === target.thread);
-        target = { ...target, draft: local?.draft || '', interrupted: target.active === true || local?.interrupted || false };
+        target = { ...target, draft: local?.draft || '', interrupted: Boolean(target.pendingRequest) || target.active === true || local?.interrupted || false };
       }
       thread.current = target.thread; setMessages(target.messages); setDraft(target.draft || '');
+      inFlight.current=null;setRequestState(null);
+      if(selectedRuntime?.kind==='hermes' && target.pendingRequest)setRequestState(restoreOwnedRequest(target.thread,target.pendingRequest));
       setPalReply(null);
       setChatModel(target.chatModel || ''); setChatEffort(target.chatEffort || '');
       setUncertain(target.interrupted === true); setRemoteActive(target.active === true); setOpenedChat(value);
@@ -124,6 +127,8 @@ export default function StandardChat({ preview = false, active = true, pal = fal
     event.preventDefault();
     const prompt = draft.trim();
     if (!prompt || sending.current || preview || loadingChat || remoteActive) return;
+    const receipt=pendingRequest(thread.current);
+    if (selectedRuntime?.kind==='hermes' && uncertain && receipt && !['failed','cancelled','interrupted'].includes(receipt.state)) {setError('Check the unresolved request status or start a new conversation before submitting more work.');return;}
     if (pal) palVoice.current?.prepareForReply();
     sending.current = true; setPending(true); setError('');
     const before = messages, context = [...messages, { role: 'user', content: prompt }];
@@ -133,39 +138,47 @@ export default function StandardChat({ preview = false, active = true, pal = fal
     try {
       const session = await fetch('/api/hud/session', { method: 'POST', credentials: 'same-origin', cache: 'no-store' });
       if (!session.ok) throw Error('The private HUD session is unavailable. Your draft has been restored.');
-      const data = await sendChat({ message: prompt, messages: context.slice(-40).map(({role,content}) => ({role,content})), hudThread: thread.current, chatModel, chatEffort }, setRequestState);
+      const anchor=selectedRuntime?.kind==='hermes' ? await recoveryAnchor(before) : undefined;
+      const data = await sendChat({ message: prompt, messages: context.slice(-40).map(({role,content}) => ({role,content})), hudThread: thread.current, chatModel, chatEffort }, setRequestState, anchor);
       if (data.fromGateway !== true) throw Error((typeof data.gatewayIssue === 'string' ? data.gatewayIssue : 'The gateway did not return a confirmed reply.') + ' Your draft has been restored.');
       if (typeof data.response !== 'string' || !data.response.trim()) throw Error('The gateway returned an empty reply. Check the gateway before retrying; your draft has been restored.');
       const assessmentRefs = (Array.isArray(data.assessmentRefs) ? data.assessmentRefs : [])
         .filter(ref => validId(ref?.taskRef) && validId(ref?.assessmentId)).slice(0, 20);
+      const completed = selectedRuntime?.kind==='hermes' ? await mergeRecoveredTurn(before,data)
+        : [...context, { role: 'assistant', content: data.response, assessmentRefs }];
       setUncertain(false);
-      const completed = [...context, { role: 'assistant', content: data.response, assessmentRefs }];
       persist({ messages: completed, draft: '', interrupted: false });
       setMessages(completed);
       setPalReply({ id: randomId(), text: data.response });
     } catch (err) {
       setMessages(before); setDraft(prompt);
       setError(err instanceof TypeError || err instanceof SyntaxError ? 'The reply could not be received. Your draft has been restored. The gateway may still be working; check before retrying.' : err.message || 'Chat unavailable. Your draft has been restored.');
-    } finally { sending.current = false; setPending(false); refreshChats(); }
+    } finally { inFlight.current=null; sending.current = false; setPending(false); refreshChats(); }
   };
   const recover = async () => {
     if (sending.current) return;
     sending.current=true; setPending(true); setError('');
-    try { const data=await observeRequest(thread.current,setRequestState); const completed=[...messages,{role:'user',content:draft},{role:'assistant',content:data.response || data.output}]; setMessages(completed); setDraft(''); setUncertain(false); persist({messages:completed,draft:'',interrupted:false}); }
+    try {
+      const data=await observeRequest(thread.current,setRequestState);
+      const completed=await mergeRecoveredTurn(messages,data), nextDraft=recoveredDraft(draft,data.submission.prompt);
+      if (!persist({messages:completed,draft:nextDraft,interrupted:false})) throw Error('Recovered reply could not be saved. Check status again; your draft is unchanged.');
+      setMessages(completed);setDraft(nextDraft);setUncertain(false);
+    }
     catch (error) { setError(error.message); }
     finally { sending.current=false; setPending(false); }
   };
   const control = async (action,body) => { try { setRequestState(await requestControl(thread.current,action,body)); } catch (error) { setError(error.message); } };
-  const reset = async () => {
+  const reset = async ({releaseCapacity=false}={}) => {
     if (sending.current || preview) return;
     if (!persist({ messages, draft, interrupted: uncertain })) return;
     let nextThread = makeThread();
     const unresolved = pendingRequest(thread.current);
     if (selectedRuntime?.kind === 'hermes' && unresolved) {
-      try { const conversation=await newConversation(thread.current); if(!conversation)return; nextThread=conversation.thread; }
+      try { const conversation=await newConversation(thread.current,{releaseCapacity}); if(!conversation)return; nextThread=conversation.thread; }
       catch(error) { setError(error.message); return; }
     }
     thread.current = nextThread; setOpenedChat(''); setRemoteActive(false); setUncertain(false);
+    inFlight.current=null;setRequestState(null);
     setPalReply(null);
     persist({ messages: [], draft: '', interrupted: false }); setMessages([]); setDraft(''); setError('');
     refreshChats(); composer.current?.focus();
@@ -182,9 +195,11 @@ export default function StandardChat({ preview = false, active = true, pal = fal
       <span>{requestState?.state || 'Unresolved request'}{requestState?.runtime?.model ? ` · ${requestState.runtime.provider || 'Hermes'} / ${requestState.runtime.model}` : ''}</span>
       <button onClick={recover} disabled={pending}>Check status</button>
       <button onClick={()=>control('stop')}>Request stop</button>
+      {requestState?.capacityReleaseEligible && <button disabled={pending || loadingChat || preview} onClick={()=>reset({releaseCapacity:true})}>Release slot and start new chat</button>}
+      {requestState?.capacityReleased && <span>Admission slot was released after review.</span>}
       {requestState?.approval && <><p>{requestState.approval.description || 'Pending tool approval'}</p><button onClick={()=>control('approval',{approvalId:requestState.approval.id || requestState.approval.request_id,choice:'once'})}>Allow once</button><button onClick={()=>control('approval',{approvalId:requestState.approval.id || requestState.approval.request_id,choice:'deny'})}>Deny</button></>}
     </div>}
-    <div className="chat-intro"><div><span className="eyebrow">Your network engineering coworker</span><h2>A conversation with NetClaw</h2><p>Ask a question, review the evidence, then follow up.</p></div><button onClick={reset} disabled={pending || loadingChat || preview}>New chat</button></div>
+    <div className="chat-intro"><div><span className="eyebrow">Your network engineering coworker</span><h2>A conversation with NetClaw</h2><p>Ask a question, review the evidence, then follow up.</p></div><button onClick={()=>reset()} disabled={pending || loadingChat || preview}>New chat</button></div>
     <div className="chat-history-controls">
       <label htmlFor="previous-chat">Previous chats</label>
       <select id="previous-chat" value={openedChat} disabled={pending || loadingChat || preview} onChange={event => openChat(event.target.value)}>

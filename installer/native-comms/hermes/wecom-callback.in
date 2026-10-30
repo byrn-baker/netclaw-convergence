@@ -1,0 +1,2 @@
+# Hermes v0.21.6 selected extra, constrained to the qualified core.
+defusedxml==0.7.1

@@ -10,6 +10,9 @@ from pathlib import Path
 import sys
 import time
 
+sys.path.insert(0, str(Path(__file__).resolve().parent / 'lib'))
+from mcp_environment import native_entry, migrate_known_value
+
 
 def load_helper(name, filename):
     spec = importlib.util.spec_from_file_location(name, Path(__file__).with_name(filename))
@@ -103,6 +106,18 @@ def merge_config(path, generated, template, expected_revision=None, expected_man
                 else:
                     updated.pop(key, None)
             updated['env'] = {**entry.get('env', {}), **existing.get('env', {})}
+            for key, value in existing.get('env', {}).items():
+                old_managed = prior.get(name, {}).get('env', {})
+                if key in old_managed and value == old_managed[key] and key in entry.get('env', {}):
+                    updated['env'][key] = entry['env'][key]
+                else:
+                    updated['env'][key] = migrate_known_value(name, value,
+                        template[name].get('env', {}).get(key), entry.get('env', {}).get(key))
+            for key in ('url',):
+                if key in existing:
+                    updated[key] = (entry.get(key) if key in prior.get(name, {})
+                        and existing[key] == prior[name][key] else migrate_known_value(
+                            name, existing[key], template[name].get(key), entry.get(key)))
             if not updated['env']:
                 updated.pop('env')
             if 'transport' in entry:
@@ -148,6 +163,10 @@ def main():
     repo = args.repo.resolve()
     template = json.loads((repo / 'config/openclaw.json').read_text())['mcpServers']
     selected = set(args.components.split())
+    values = dict(os.environ)
+    env_path = args.runtime_root.resolve().parent / '.env'
+    if env_path.is_file():
+        values.update(writer.values(env_path.read_text()))
     generated = {}
     for name, entry in template.items():
         if name == "hermes-hud-mcp":
@@ -157,7 +176,7 @@ def main():
             continue
         record = args.runtime_root / 'records' / component
         runtime = record.read_text().strip() if record.exists() else None
-        generated[name] = bind_entry(entry, repo, runtime)
+        generated[name] = native_entry(name, bind_entry(entry, repo, runtime), values, repo)
         if component == 'gait':
             generated[name].setdefault('env', {})['GAIT_VENV'] = str(args.runtime_root.resolve().parent / 'gait-venv')
         if 'scripts/component-launch.py' in entry.get('args', []):

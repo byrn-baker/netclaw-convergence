@@ -1,0 +1,352 @@
+{
+  "schema": 1,
+  "date": "2026-10-25",
+  "sourceBase": "04645395530a060b35404ec3a27bc516ae9ba076",
+  "qualification": "Actual local macOS VS Code 1.109 source-development extension host; synthetic non-secret draft inputs and actual separately generated redacted engine reports",
+  "macEditorAcceptanceComplete": true,
+  "specComplete": false,
+  "runs": {
+    "passed": 5,
+    "failed": 0,
+    "finalScenarios": 4,
+    "note": "One preliminary OpenClaw Focused pass succeeded before an actual report was available; a new profile repeated it with the OpenClaw report and explicit neighbor preservation assertions."
+  },
+  "scenarios": [
+    {
+      "harness": "openclaw",
+      "shape": "focused",
+      "result": "passed",
+      "editor": "1.109.0",
+      "checks": [
+        "Existing NetClaw fixture disclosure visible; separate installation explained.",
+        "All 110 catalog component cards rendered without fetching their links.",
+        "Keyboard search retains typed text and Tab reaches the next native disclosure control.",
+        "WhatsApp, Twilio and Zoom are discoverable; keyboard multiselection and Slack removal preserve Discord and its native-entered non-secret setting.",
+        "Cancelling a native setting edit preserves its saved value.",
+        "Focused claw exposes conversation channels and Twilio/Zoom tools as selectable Comms options.",
+        "Closing and reopening the actual setup panel retains channel selection and native setting.",
+        "Light/dark/high-contrast layouts at 360/700/1200px and 200% zoom retain reachable controls without horizontal overflow.",
+        "Actual VS Code window and extension-host reload retained Discord selection and native setting value.",
+        "Actual redacted engine report opened in the isolated editor; no setup action or provider connection executed."
+      ],
+      "layout": [
+        {
+          "theme": "Default Light Modern",
+          "width": 360,
+          "viewport": 360,
+          "scroll": 360,
+          "client": 360
+        },
+        {
+          "theme": "Default Dark Modern",
+          "width": 700,
+          "viewport": 700,
+          "scroll": 700,
+          "client": 700
+        },
+        {
+          "theme": "Default High Contrast",
+          "width": 1200,
+          "viewport": 1200,
+          "scroll": 1200,
+          "client": 1200
+        }
+      ],
+      "zoomGeometry": {
+        "scroll": 576,
+        "client": 576
+      },
+      "reportInspection": {
+        "method": "Opened and inspected actual engine-generated redacted report without editing; did not invoke setup report command",
+        "sha256": "b3cf17add7ebe5449362b965639791603efb9a2a8eb7fdd59b89d28f2478b908",
+        "export": "redacted"
+      },
+      "preservation": {
+        "neighborFiles": 3,
+        "unchanged": true,
+        "newRuntimeHomesCreated": 0
+      },
+      "privateReportSha256": "6202fe6949c49d4ec79e05d4ca8c0c02815a24e8897245684de5f7a13dc1efe4",
+      "privateLogSha256": "e89969e4a0264043d593d17ffdc342cdf0028167cad57c848134d4bf3d59883d",
+      "screenshots": [
+        {
+          "width": 360,
+          "theme": "Default Light Modern",
+          "sha256": "ad3cea3d6f2eb19917e72f6756d5bb544595e963efa878919f43817dc00df3e6"
+        },
+        {
+          "width": 700,
+          "theme": "Default Dark Modern",
+          "sha256": "bbf22172d0bfc3198595a713cadf0d295d20d45d95105f36b80fffb5fb24cabf"
+        },
+        {
+          "width": 1200,
+          "theme": "Default High Contrast",
+          "sha256": "d8f27bdae20e0b5b44b21b6ac8160c93c5f28b9d1bc0fa54689aa2be75ae4f59"
+        }
+      ]
+    },
+    {
+      "harness": "hermes",
+      "shape": "focused",
+      "result": "passed",
+      "editor": "1.109.0",
+      "checks": [
+        "Existing NetClaw fixture disclosure visible; separate installation explained.",
+        "All 110 catalog component cards rendered without fetching their links.",
+        "Keyboard search retains typed text and Tab reaches the next native disclosure control.",
+        "WhatsApp, Twilio and Zoom are discoverable; keyboard multiselection and Slack removal preserve Discord and its native-entered non-secret setting.",
+        "Cancelling a native setting edit preserves its saved value.",
+        "Hermes Matrix is visible with a host restriction and disabled on this Mac.",
+        "Focused claw exposes conversation channels and Twilio/Zoom tools as selectable Comms options.",
+        "Closing and reopening the actual setup panel retains channel selection and native setting.",
+        "Light/dark/high-contrast layouts at 360/700/1200px and 200% zoom retain reachable controls without horizontal overflow.",
+        "Actual VS Code window and extension-host reload retained Discord selection and native setting value.",
+        "Actual redacted engine report opened in the isolated editor; no setup action or provider connection executed."
+      ],
+      "layout": [
+        {
+          "theme": "Default Light Modern",
+          "width": 360,
+          "viewport": 360,
+          "scroll": 360,
+          "client": 360
+        },
+        {
+          "theme": "Default Dark Modern",
+          "width": 700,
+          "viewport": 700,
+          "scroll": 700,
+          "client": 700
+        },
+        {
+          "theme": "Default High Contrast",
+          "width": 1200,
+          "viewport": 1200,
+          "scroll": 1200,
+          "client": 1200
+        }
+      ],
+      "zoomGeometry": {
+        "scroll": 576,
+        "client": 576
+      },
+      "reportInspection": {
+        "method": "Opened and inspected actual engine-generated redacted report without editing; did not invoke setup report command",
+        "sha256": "e0042317b3dcc7d704a787ed9d79d7b2ac9db4509a974bf78b7858d9582d2b1c",
+        "export": "redacted"
+      },
+      "preservation": {
+        "neighborFiles": 3,
+        "unchanged": true,
+        "newRuntimeHomesCreated": 0
+      },
+      "privateReportSha256": "b81e3d8291cf02712ba2685ce07af4fae1c0a63963fbc5ca75b16ae8517ad7f2",
+      "privateLogSha256": "46d19d68659a05555d301d4ee730121cbe4ef4804b199b1177f0e88264229e51",
+      "screenshots": [
+        {
+          "width": 360,
+          "theme": "Default Light Modern",
+          "sha256": "8ce92e89eef3cb7e5adc347194154c37110a4229e9810e3be3489e93b921062b"
+        },
+        {
+          "width": 700,
+          "theme": "Default Dark Modern",
+          "sha256": "8924bd3171f33b22b67d472cd1b7fc145c0783146151dba9580530f74bd63537"
+        },
+        {
+          "width": 1200,
+          "theme": "Default High Contrast",
+          "sha256": "ee6fa5112529869b860f15e3c2ad9f6ab5b3bf6fd8632dd820520eb9c7b26e0a"
+        }
+      ]
+    },
+    {
+      "harness": "openclaw",
+      "shape": "risk",
+      "result": "passed",
+      "editor": "1.109.0",
+      "checks": [
+        "Existing NetClaw fixture disclosure visible; separate installation explained.",
+        "All 110 catalog component cards rendered without fetching their links.",
+        "Keyboard search retains typed text and Tab reaches the next native disclosure control.",
+        "WhatsApp, Twilio and Zoom are discoverable; keyboard multiselection and Slack removal preserve Discord and its native-entered non-secret setting.",
+        "Cancelling a native setting edit preserves its saved value.",
+        "Border conversation controls stay available; Border Twilio/Zoom tool selection and member conversation controls refuse ownership. Member Twilio/Zoom tool selection succeeds without activation.",
+        "Closing and reopening the actual setup panel retains channel selection and native setting.",
+        "Light/dark/high-contrast layouts at 360/700/1200px and 200% zoom retain reachable controls without horizontal overflow.",
+        "Actual VS Code window and extension-host reload retained Discord selection and native setting value."
+      ],
+      "layout": [
+        {
+          "theme": "Default Light Modern",
+          "width": 360,
+          "viewport": 360,
+          "scroll": 360,
+          "client": 360
+        },
+        {
+          "theme": "Default Dark Modern",
+          "width": 700,
+          "viewport": 700,
+          "scroll": 700,
+          "client": 700
+        },
+        {
+          "theme": "Default High Contrast",
+          "width": 1200,
+          "viewport": 1200,
+          "scroll": 1200,
+          "client": 1200
+        }
+      ],
+      "zoomGeometry": {
+        "scroll": 576,
+        "client": 576
+      },
+      "reportInspection": {
+        "status": "not_executed",
+        "reason": "No actual engine report supplied to this isolated editor pass."
+      },
+      "preservation": {
+        "neighborFiles": 3,
+        "unchanged": true,
+        "newRuntimeHomesCreated": 0
+      },
+      "privateReportSha256": "c6e763b88696f5f81d4e0239a872e921f096ec2ca129c678e6e6aa3a406f62e3",
+      "privateLogSha256": "6ad675b4c18ecfa242931a4c572be95cedd749451fe813056365487cbb2abdd8",
+      "screenshots": [
+        {
+          "width": 360,
+          "theme": "Default Light Modern",
+          "sha256": "f64a69a0c8185d166878086f379f876eeb5cba75def235eb5083b9258cb49227"
+        },
+        {
+          "width": 700,
+          "theme": "Default Dark Modern",
+          "sha256": "70200ff4c1691e9e2eae6e779747352b86710a81a1c532ef87fc0357a1713d42"
+        },
+        {
+          "width": 1200,
+          "theme": "Default High Contrast",
+          "sha256": "0e7aa5323c3848b95fb4c0f1e03add65219e7b9a11aa63c357ca59c979db76b1"
+        }
+      ]
+    },
+    {
+      "harness": "hermes",
+      "shape": "risk",
+      "result": "passed",
+      "editor": "1.109.0",
+      "checks": [
+        "Existing NetClaw fixture disclosure visible; separate installation explained.",
+        "All 110 catalog component cards rendered without fetching their links.",
+        "Keyboard search retains typed text and Tab reaches the next native disclosure control.",
+        "WhatsApp, Twilio and Zoom are discoverable; keyboard multiselection and Slack removal preserve Discord and its native-entered non-secret setting.",
+        "Cancelling a native setting edit preserves its saved value.",
+        "Hermes Matrix is visible with a host restriction and disabled on this Mac.",
+        "Border conversation controls stay available; Border Twilio/Zoom tool selection and member conversation controls refuse ownership. Member Twilio/Zoom tool selection succeeds without activation.",
+        "Closing and reopening the actual setup panel retains channel selection and native setting.",
+        "Light/dark/high-contrast layouts at 360/700/1200px and 200% zoom retain reachable controls without horizontal overflow.",
+        "Actual VS Code window and extension-host reload retained Discord selection and native setting value.",
+        "Actual redacted engine report opened in the isolated editor; no setup action or provider connection executed."
+      ],
+      "layout": [
+        {
+          "theme": "Default Light Modern",
+          "width": 360,
+          "viewport": 360,
+          "scroll": 360,
+          "client": 360
+        },
+        {
+          "theme": "Default Dark Modern",
+          "width": 700,
+          "viewport": 700,
+          "scroll": 700,
+          "client": 700
+        },
+        {
+          "theme": "Default High Contrast",
+          "width": 1200,
+          "viewport": 1200,
+          "scroll": 1200,
+          "client": 1200
+        }
+      ],
+      "zoomGeometry": {
+        "scroll": 576,
+        "client": 576
+      },
+      "reportInspection": {
+        "method": "Opened and inspected actual engine-generated redacted report without editing; did not invoke setup report command",
+        "sha256": "e0042317b3dcc7d704a787ed9d79d7b2ac9db4509a974bf78b7858d9582d2b1c",
+        "export": "redacted"
+      },
+      "preservation": {
+        "neighborFiles": 3,
+        "unchanged": true,
+        "newRuntimeHomesCreated": 0
+      },
+      "privateReportSha256": "3d8ea4824aa76c0d0f940b41faf483304f3e3b363e460b53eb959ddae27bc6f8",
+      "privateLogSha256": "56720b8683e9fdcb48168494d9a3c203b04cddf303879c7c8ee4c3baa5c1ec00",
+      "screenshots": [
+        {
+          "width": 360,
+          "theme": "Default Light Modern",
+          "sha256": "d6219e5eb566c975a91b013b5913c33185ca5f1eb1be2f509967fe06b430ad26"
+        },
+        {
+          "width": 700,
+          "theme": "Default Dark Modern",
+          "sha256": "3c590e1d5736ebd5a4dc29926fa4faea7995632378e3be4e1a9c737d3b717ca7"
+        },
+        {
+          "width": 1200,
+          "theme": "Default High Contrast",
+          "sha256": "05b7a920ef19d49bc1b8cda55e3496ed34c181e84484640f6b9f19b024bbb8c7"
+        }
+      ]
+    }
+  ],
+  "actualReports": {
+    "openclaw": {
+      "sha256": "b3cf17add7ebe5449362b965639791603efb9a2a8eb7fdd59b89d28f2478b908",
+      "openedInEditor": true
+    },
+    "hermes": {
+      "sha256": "e0042317b3dcc7d704a787ed9d79d7b2ac9db4509a974bf78b7858d9582d2b1c",
+      "openedInEditor": true
+    },
+    "method": "Directly opened the real engine-generated redacted JSON as a local document; the product View Claw Report button and report export dialog were not exercised.",
+    "productReportControl": {
+      "status": "not_executed",
+      "reason": "The product report action invokes setup-engine.py report --run-id. Its default_state_root uses the OS account home from pwd.getpwuid, deliberately ignoring the disposable editor HOME. Actual qualification journals use separate explicit engine-*/state roots, which the product command cannot select. A faithful successful report-button pass would require copying journals into shared owner state, changing production state routing, or substituting the backend; none was done.",
+      "inspectedSource": [
+        "extensions/netclaw-vscode/src/views/setup-wizard.ts report action",
+        "extensions/netclaw-vscode/src/setup/engine.ts SetupEngine.read and environment",
+        "scripts/setup-engine.py report operation",
+        "scripts/lib/setup_engine.py default_state_root and Engine.report"
+      ],
+      "journalWritesPerformed": false,
+      "productionStateRoutingChanged": false,
+      "backendSubstituted": false
+    }
+  },
+  "preservation": {
+    "ordinaryEditorProfilesUsed": false,
+    "ownEditorProcessesRemaining": 0,
+    "freshRuntimeHomesCreatedByEditor": 0,
+    "finalScenarioNeighborFilesChecked": 12,
+    "allNeighborFilesUnchanged": true
+  },
+  "scopeLimits": [
+    "This is local Mac acceptance, not WSL remote extension-host qualification.",
+    "The extension ran from reconciled source; packaged VSIX installation was not tested.",
+    "Draft creation and ownership restrictions used seeded synthetic drafts; channel selection and settings changes used actual webview controls and native VS Code prompts.",
+    "Actual runtime acquisition/configuration and pause/resume evidence is separate from these UI passes.",
+    "Configuration, authentication and transport in inspected reports retain the actual engine states; no authentication or delivery success is inferred.",
+    "Provider calls, model sessions, device reads, account pairing, messages, calls and meeting capture were not invoked."
+  ],
+  "prohibitedOperationsPerformed": false
+}

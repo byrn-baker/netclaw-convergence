@@ -1,0 +1,2990 @@
+{
+  "schema": 1,
+  "date": "2026-10-25",
+  "branch": "155-comms-mac-reconciliation-20261025",
+  "baseCommit": "04645395530a060b35404ec3a27bc516ae9ba076",
+  "scope": "Installer contracts and isolated local qualification; no operational capability retesting.",
+  "complete": false,
+  "inventoryCount": 77,
+  "unexplainedOmissions": 0,
+  "sourceImplementation": {
+    "typed": 56,
+    "native": 5,
+    "unavailableBaseline": 4,
+    "incompatible": 3,
+    "relatedAdaptersIncomplete": 8,
+    "retiredReference": 1
+  },
+  "limits": [
+    "WSL installer checks were executed; required editor, isolated-manager and package/positive-service gates remain open. See evidence/wsl-results.json.",
+    "Synthetic pairing or binary fixtures do not establish an external account link or upstream binary qualification.",
+    "Eight related interfaces are discoverable context with no selectable managed installer adapter; they are not counted as implemented conversation channels.",
+    "Twilio live operations are excluded by the owner.",
+    "Saved configuration, provider authentication, transport and delivery remain separate."
+  ],
+  "priorIndependentAuthentication": [
+    "Discord bot GET /users/@me HTTP 200",
+    "Slack auth.test HTTP 200",
+    "Webex GET /people/me HTTP 200",
+    "Disposable Teams Bot Framework credential request HTTP 200"
+  ],
+  "entries": [
+    {
+      "id": "openclaw-a2a",
+      "inventory": "channel",
+      "harness": "openclaw",
+      "channel": "a2a",
+      "kind": "agent-protocol",
+      "disposition": "unavailable-baseline",
+      "roles": [
+        "focused",
+        "border"
+      ],
+      "hosts": [
+        "macos",
+        "wsl2"
+      ],
+      "documentation": "https://docs.openclaw.ai/channels/a2a",
+      "setupContract": null,
+      "mac": {
+        "state": "prerequisite-incomplete",
+        "configured": false,
+        "dependencies": false,
+        "evidence": "absent-at-pinned-baseline",
+        "detail": "openclaw-adapter-evidence.json#a2a"
+      },
+      "wsl": {
+        "state": "catalog-restriction-observed",
+        "configured": false,
+        "dependencies": false,
+        "reason": "unavailable-baseline",
+        "evidence": "tests/test_setup_comms_catalog.py",
+        "limitation": "Catalog/plan refusal evidence only; existing Mac provider/package findings were not requalified."
+      },
+      "provider": {
+        "authentication": "unverified",
+        "transport": "unverified",
+        "inbound": "unverified",
+        "outbound": "unverified"
+      }
+    },
+    {
+      "id": "openclaw-buzz",
+      "inventory": "channel",
+      "harness": "openclaw",
+      "channel": "buzz",
+      "kind": "conversation-channel",
+      "disposition": "unavailable-baseline",
+      "roles": [
+        "focused",
+        "border"
+      ],
+      "hosts": [
+        "macos",
+        "wsl2"
+      ],
+      "documentation": "https://docs.openclaw.ai/channels/buzz",
+      "setupContract": null,
+      "mac": {
+        "state": "prerequisite-incomplete",
+        "configured": false,
+        "dependencies": false,
+        "evidence": "absent-at-pinned-baseline",
+        "detail": "openclaw-adapter-evidence.json#buzz"
+      },
+      "wsl": {
+        "state": "catalog-restriction-observed",
+        "configured": false,
+        "dependencies": false,
+        "reason": "unavailable-baseline",
+        "evidence": "tests/test_setup_comms_catalog.py",
+        "limitation": "Catalog/plan refusal evidence only; existing Mac provider/package findings were not requalified."
+      },
+      "provider": {
+        "authentication": "unverified",
+        "transport": "unverified",
+        "inbound": "unverified",
+        "outbound": "unverified"
+      }
+    },
+    {
+      "id": "openclaw-clickclack",
+      "inventory": "channel",
+      "harness": "openclaw",
+      "channel": "clickclack",
+      "kind": "conversation-channel",
+      "disposition": "typed",
+      "roles": [
+        "focused",
+        "border"
+      ],
+      "hosts": [
+        "macos",
+        "wsl2"
+      ],
+      "documentation": "https://docs.openclaw.ai/channels/clickclack",
+      "setupContract": "typed-openclaw-channel-v1",
+      "mac": {
+        "state": "local-contract-observed",
+        "configured": true,
+        "dependencies": true,
+        "evidence": "actual-SRI-acquisition-native-SQLite-registration-and-native-config-validation",
+        "detail": "openclaw-adapter-evidence.json#clickclack",
+        "limitation": "Exact sender allowlist applies in the selected workspace, including shared channels; native adapter has no separate group-disable control."
+      },
+      "wsl": {
+        "state": "native-schema-contract-observed",
+        "configured": false,
+        "dependencies": false,
+        "evidence": "tests/test_setup_comms_openclaw_config.py",
+        "limitation": "Actual pinned source validates synthetic form input. Selected plugin acquisition/registration/configuration effect was not exercised for this entry."
+      },
+      "provider": {
+        "authentication": "unverified",
+        "transport": "unverified",
+        "inbound": "unverified",
+        "outbound": "unverified"
+      }
+    },
+    {
+      "id": "openclaw-discord",
+      "inventory": "channel",
+      "harness": "openclaw",
+      "channel": "discord",
+      "kind": "conversation-channel",
+      "disposition": "typed",
+      "roles": [
+        "focused",
+        "border"
+      ],
+      "hosts": [
+        "macos",
+        "wsl2"
+      ],
+      "documentation": "https://docs.openclaw.ai/channels/discord",
+      "setupContract": "typed-bot-v1",
+      "mac": {
+        "state": "engine-configuration-and-dependencies-observed",
+        "configured": true,
+        "dependencies": true,
+        "evidence": "evidence/mac-runtime-results.json",
+        "limitation": "Fresh Focused-home actual engine and native readback with fixture credentials; checkpoint recovery and empty-access service refusal passed. No provider authentication/transport/delivery claim."
+      },
+      "wsl": {
+        "state": "engine-configuration-and-dependencies-observed",
+        "configured": true,
+        "dependencies": true,
+        "evidence": "evidence/wsl-openclaw-engine.json",
+        "limitation": "Actual fresh engine, fixture credentials, empty sender access. Service activation refused; final verification unverified. No authentication or transport."
+      },
+      "provider": {
+        "authentication": "unverified",
+        "transport": "unverified",
+        "inbound": "unverified",
+        "outbound": "unverified"
+      }
+    },
+    {
+      "id": "openclaw-feishu",
+      "inventory": "channel",
+      "harness": "openclaw",
+      "channel": "feishu",
+      "kind": "conversation-channel",
+      "disposition": "typed",
+      "roles": [
+        "focused",
+        "border"
+      ],
+      "hosts": [
+        "macos",
+        "wsl2"
+      ],
+      "documentation": "https://docs.openclaw.ai/channels/feishu",
+      "setupContract": "typed-openclaw-channel-v1",
+      "mac": {
+        "state": "local-contract-observed",
+        "configured": true,
+        "dependencies": true,
+        "evidence": "actual-SRI-acquisition-native-SQLite-registration-and-native-config-validation",
+        "detail": "openclaw-adapter-evidence.json#feishu"
+      },
+      "wsl": {
+        "state": "native-schema-contract-observed",
+        "configured": false,
+        "dependencies": false,
+        "evidence": "tests/test_setup_comms_openclaw_config.py",
+        "limitation": "Actual pinned source validates synthetic form input. Selected plugin acquisition/registration/configuration effect was not exercised for this entry."
+      },
+      "provider": {
+        "authentication": "unverified",
+        "transport": "unverified",
+        "inbound": "unverified",
+        "outbound": "unverified"
+      }
+    },
+    {
+      "id": "openclaw-googlechat",
+      "inventory": "channel",
+      "harness": "openclaw",
+      "channel": "googlechat",
+      "kind": "conversation-channel",
+      "disposition": "typed",
+      "roles": [
+        "focused",
+        "border"
+      ],
+      "hosts": [
+        "macos",
+        "wsl2"
+      ],
+      "documentation": "https://docs.openclaw.ai/channels/googlechat",
+      "setupContract": "typed-openclaw-channel-v1",
+      "mac": {
+        "state": "local-contract-observed",
+        "configured": true,
+        "dependencies": true,
+        "evidence": "actual-SRI-acquisition-native-SQLite-registration-and-native-config-validation",
+        "detail": "openclaw-adapter-evidence.json#googlechat"
+      },
+      "wsl": {
+        "state": "native-schema-contract-observed",
+        "configured": false,
+        "dependencies": false,
+        "evidence": "tests/test_setup_comms_openclaw_config.py",
+        "limitation": "Actual pinned source validates synthetic form input. Selected plugin acquisition/registration/configuration effect was not exercised for this entry."
+      },
+      "provider": {
+        "authentication": "unverified",
+        "transport": "unverified",
+        "inbound": "unverified",
+        "outbound": "unverified"
+      }
+    },
+    {
+      "id": "openclaw-imessage",
+      "inventory": "channel",
+      "harness": "openclaw",
+      "channel": "imessage",
+      "kind": "conversation-channel",
+      "disposition": "typed",
+      "roles": [
+        "focused",
+        "border"
+      ],
+      "hosts": [
+        "macos"
+      ],
+      "documentation": "https://docs.openclaw.ai/channels/imessage",
+      "setupContract": "typed-openclaw-channel-v1",
+      "mac": {
+        "state": "local-contract-observed",
+        "configured": true,
+        "dependencies": true,
+        "evidence": "actual-native-config-validation-with-prepared-account-fixture",
+        "detail": "openclaw-adapter-evidence.json#imessage",
+        "limitation": "Actual imsg, signed-in Messages and macOS privacy permissions were not exercised; no database content was read."
+      },
+      "wsl": {
+        "state": "unsupported-host",
+        "configured": false,
+        "dependencies": false,
+        "reason": "catalog host restriction; no native host operation attempted"
+      },
+      "provider": {
+        "authentication": "unverified",
+        "transport": "unverified",
+        "inbound": "unverified",
+        "outbound": "unverified"
+      }
+    },
+    {
+      "id": "openclaw-irc",
+      "inventory": "channel",
+      "harness": "openclaw",
+      "channel": "irc",
+      "kind": "conversation-channel",
+      "disposition": "typed",
+      "roles": [
+        "focused",
+        "border"
+      ],
+      "hosts": [
+        "macos",
+        "wsl2"
+      ],
+      "documentation": "https://docs.openclaw.ai/channels/irc",
+      "setupContract": "typed-openclaw-channel-v1",
+      "mac": {
+        "state": "local-contract-observed",
+        "configured": true,
+        "dependencies": true,
+        "evidence": "actual-SRI-acquisition-native-SQLite-registration-and-native-config-validation",
+        "detail": "openclaw-adapter-evidence.json#irc"
+      },
+      "wsl": {
+        "state": "native-schema-contract-observed",
+        "configured": false,
+        "dependencies": false,
+        "evidence": "tests/test_setup_comms_openclaw_config.py",
+        "limitation": "Actual pinned source validates synthetic form input. Selected plugin acquisition/registration/configuration effect was not exercised for this entry."
+      },
+      "provider": {
+        "authentication": "unverified",
+        "transport": "unverified",
+        "inbound": "unverified",
+        "outbound": "unverified"
+      }
+    },
+    {
+      "id": "openclaw-line",
+      "inventory": "channel",
+      "harness": "openclaw",
+      "channel": "line",
+      "kind": "conversation-channel",
+      "disposition": "typed",
+      "roles": [
+        "focused",
+        "border"
+      ],
+      "hosts": [
+        "macos",
+        "wsl2"
+      ],
+      "documentation": "https://docs.openclaw.ai/channels/line",
+      "setupContract": "typed-openclaw-channel-v1",
+      "mac": {
+        "state": "local-contract-observed",
+        "configured": true,
+        "dependencies": true,
+        "evidence": "actual-SRI-acquisition-native-SQLite-registration-and-native-config-validation",
+        "detail": "openclaw-adapter-evidence.json#line"
+      },
+      "wsl": {
+        "state": "native-schema-contract-observed",
+        "configured": false,
+        "dependencies": false,
+        "evidence": "tests/test_setup_comms_openclaw_config.py",
+        "limitation": "Actual pinned source validates synthetic form input. Selected plugin acquisition/registration/configuration effect was not exercised for this entry."
+      },
+      "provider": {
+        "authentication": "unverified",
+        "transport": "unverified",
+        "inbound": "unverified",
+        "outbound": "unverified"
+      }
+    },
+    {
+      "id": "openclaw-matrix",
+      "inventory": "channel",
+      "harness": "openclaw",
+      "channel": "matrix",
+      "kind": "conversation-channel",
+      "disposition": "typed",
+      "roles": [
+        "focused",
+        "border"
+      ],
+      "hosts": [
+        "macos",
+        "wsl2"
+      ],
+      "documentation": "https://docs.openclaw.ai/channels/matrix",
+      "setupContract": "typed-openclaw-channel-v1",
+      "mac": {
+        "state": "local-contract-observed",
+        "configured": true,
+        "dependencies": true,
+        "evidence": "actual-SRI-acquisition-native-SQLite-registration-and-native-config-validation",
+        "detail": "openclaw-adapter-evidence.json#matrix"
+      },
+      "wsl": {
+        "state": "native-schema-contract-observed",
+        "configured": false,
+        "dependencies": false,
+        "evidence": "tests/test_setup_comms_openclaw_config.py",
+        "limitation": "Actual pinned source validates synthetic form input. Selected plugin acquisition/registration/configuration effect was not exercised for this entry."
+      },
+      "provider": {
+        "authentication": "unverified",
+        "transport": "unverified",
+        "inbound": "unverified",
+        "outbound": "unverified"
+      }
+    },
+    {
+      "id": "openclaw-mattermost",
+      "inventory": "channel",
+      "harness": "openclaw",
+      "channel": "mattermost",
+      "kind": "conversation-channel",
+      "disposition": "typed",
+      "roles": [
+        "focused",
+        "border"
+      ],
+      "hosts": [
+        "macos",
+        "wsl2"
+      ],
+      "documentation": "https://docs.openclaw.ai/channels/mattermost",
+      "setupContract": "typed-openclaw-channel-v1",
+      "mac": {
+        "state": "local-contract-observed",
+        "configured": true,
+        "dependencies": true,
+        "evidence": "actual-SRI-acquisition-native-SQLite-registration-and-native-config-validation",
+        "detail": "openclaw-adapter-evidence.json#mattermost"
+      },
+      "wsl": {
+        "state": "native-schema-contract-observed",
+        "configured": false,
+        "dependencies": false,
+        "evidence": "tests/test_setup_comms_openclaw_config.py",
+        "limitation": "Actual pinned source validates synthetic form input. Selected plugin acquisition/registration/configuration effect was not exercised for this entry."
+      },
+      "provider": {
+        "authentication": "unverified",
+        "transport": "unverified",
+        "inbound": "unverified",
+        "outbound": "unverified"
+      }
+    },
+    {
+      "id": "openclaw-msteams",
+      "inventory": "channel",
+      "harness": "openclaw",
+      "channel": "msteams",
+      "kind": "conversation-channel",
+      "disposition": "typed",
+      "roles": [
+        "focused",
+        "border"
+      ],
+      "hosts": [
+        "macos",
+        "wsl2"
+      ],
+      "documentation": "https://docs.openclaw.ai/channels/msteams",
+      "setupContract": "typed-openclaw-channel-v1",
+      "mac": {
+        "state": "local-contract-observed",
+        "configured": true,
+        "dependencies": true,
+        "evidence": "actual-SRI-acquisition-native-SQLite-registration-and-native-config-validation",
+        "detail": "openclaw-adapter-evidence.json#msteams",
+        "limitation": "Native Teams listener binds wildcard; explicit port and public-listener effect are reviewed. No Teams callback delivery test ran."
+      },
+      "wsl": {
+        "state": "native-schema-contract-observed",
+        "configured": false,
+        "dependencies": false,
+        "evidence": "tests/test_setup_comms_openclaw_config.py",
+        "limitation": "Actual pinned source validates synthetic form input. Selected plugin acquisition/registration/configuration effect was not exercised for this entry."
+      },
+      "provider": {
+        "authentication": "unverified",
+        "transport": "unverified",
+        "inbound": "unverified",
+        "outbound": "unverified"
+      }
+    },
+    {
+      "id": "openclaw-nextcloud-talk",
+      "inventory": "channel",
+      "harness": "openclaw",
+      "channel": "nextcloud-talk",
+      "kind": "conversation-channel",
+      "disposition": "typed",
+      "roles": [
+        "focused",
+        "border"
+      ],
+      "hosts": [
+        "macos",
+        "wsl2"
+      ],
+      "documentation": "https://docs.openclaw.ai/channels/nextcloud-talk",
+      "setupContract": "typed-openclaw-channel-v1",
+      "mac": {
+        "state": "local-contract-observed",
+        "configured": true,
+        "dependencies": true,
+        "evidence": "actual-SRI-acquisition-native-SQLite-registration-and-native-config-validation",
+        "detail": "openclaw-adapter-evidence.json#nextcloud-talk"
+      },
+      "wsl": {
+        "state": "native-schema-contract-observed",
+        "configured": false,
+        "dependencies": false,
+        "evidence": "tests/test_setup_comms_openclaw_config.py",
+        "limitation": "Actual pinned source validates synthetic form input. Selected plugin acquisition/registration/configuration effect was not exercised for this entry."
+      },
+      "provider": {
+        "authentication": "unverified",
+        "transport": "unverified",
+        "inbound": "unverified",
+        "outbound": "unverified"
+      }
+    },
+    {
+      "id": "openclaw-nostr",
+      "inventory": "channel",
+      "harness": "openclaw",
+      "channel": "nostr",
+      "kind": "conversation-channel",
+      "disposition": "typed",
+      "roles": [
+        "focused",
+        "border"
+      ],
+      "hosts": [
+        "macos",
+        "wsl2"
+      ],
+      "documentation": "https://docs.openclaw.ai/channels/nostr",
+      "setupContract": "typed-openclaw-channel-v1",
+      "mac": {
+        "state": "local-contract-observed",
+        "configured": true,
+        "dependencies": true,
+        "evidence": "actual-SRI-acquisition-native-SQLite-registration-and-native-config-validation",
+        "detail": "openclaw-adapter-evidence.json#nostr"
+      },
+      "wsl": {
+        "state": "native-schema-contract-observed",
+        "configured": false,
+        "dependencies": false,
+        "evidence": "tests/test_setup_comms_openclaw_config.py",
+        "limitation": "Actual pinned source validates synthetic form input. Selected plugin acquisition/registration/configuration effect was not exercised for this entry."
+      },
+      "provider": {
+        "authentication": "unverified",
+        "transport": "unverified",
+        "inbound": "unverified",
+        "outbound": "unverified"
+      }
+    },
+    {
+      "id": "openclaw-qqbot",
+      "inventory": "channel",
+      "harness": "openclaw",
+      "channel": "qqbot",
+      "kind": "conversation-channel",
+      "disposition": "typed",
+      "roles": [
+        "focused",
+        "border"
+      ],
+      "hosts": [
+        "macos",
+        "wsl2"
+      ],
+      "documentation": "https://docs.openclaw.ai/channels/qqbot",
+      "setupContract": "typed-openclaw-channel-v1",
+      "mac": {
+        "state": "local-contract-observed",
+        "configured": true,
+        "dependencies": true,
+        "evidence": "actual-SRI-acquisition-native-SQLite-registration-and-native-config-validation",
+        "detail": "openclaw-adapter-evidence.json#qqbot"
+      },
+      "wsl": {
+        "state": "native-schema-contract-observed",
+        "configured": false,
+        "dependencies": false,
+        "evidence": "tests/test_setup_comms_openclaw_config.py",
+        "limitation": "Actual pinned source validates synthetic form input. Selected plugin acquisition/registration/configuration effect was not exercised for this entry."
+      },
+      "provider": {
+        "authentication": "unverified",
+        "transport": "unverified",
+        "inbound": "unverified",
+        "outbound": "unverified"
+      }
+    },
+    {
+      "id": "openclaw-raft",
+      "inventory": "channel",
+      "harness": "openclaw",
+      "channel": "raft",
+      "kind": "conversation-channel",
+      "disposition": "typed",
+      "roles": [
+        "focused",
+        "border"
+      ],
+      "hosts": [
+        "macos",
+        "wsl2"
+      ],
+      "documentation": "https://docs.openclaw.ai/channels/raft",
+      "setupContract": "typed-openclaw-channel-v1",
+      "mac": {
+        "state": "local-contract-observed",
+        "configured": true,
+        "dependencies": true,
+        "evidence": "actual-native-config-validation-with-prepared-account-fixture",
+        "detail": "openclaw-adapter-evidence.json#raft"
+      },
+      "wsl": {
+        "state": "native-schema-contract-observed",
+        "configured": false,
+        "dependencies": false,
+        "evidence": "tests/test_setup_comms_openclaw_config.py",
+        "limitation": "Actual pinned source validates synthetic form input. Selected plugin acquisition/registration/configuration effect was not exercised for this entry."
+      },
+      "provider": {
+        "authentication": "unverified",
+        "transport": "unverified",
+        "inbound": "unverified",
+        "outbound": "unverified"
+      }
+    },
+    {
+      "id": "openclaw-reef",
+      "inventory": "channel",
+      "harness": "openclaw",
+      "channel": "reef",
+      "kind": "conversation-channel",
+      "disposition": "unavailable-baseline",
+      "roles": [
+        "focused",
+        "border"
+      ],
+      "hosts": [
+        "macos",
+        "wsl2"
+      ],
+      "documentation": "https://docs.openclaw.ai/channels/reef",
+      "setupContract": null,
+      "mac": {
+        "state": "prerequisite-incomplete",
+        "configured": false,
+        "dependencies": false,
+        "evidence": "absent-at-pinned-baseline",
+        "detail": "openclaw-adapter-evidence.json#reef"
+      },
+      "wsl": {
+        "state": "catalog-restriction-observed",
+        "configured": false,
+        "dependencies": false,
+        "reason": "unavailable-baseline",
+        "evidence": "tests/test_setup_comms_catalog.py",
+        "limitation": "Catalog/plan refusal evidence only; existing Mac provider/package findings were not requalified."
+      },
+      "provider": {
+        "authentication": "unverified",
+        "transport": "unverified",
+        "inbound": "unverified",
+        "outbound": "unverified"
+      }
+    },
+    {
+      "id": "openclaw-signal",
+      "inventory": "channel",
+      "harness": "openclaw",
+      "channel": "signal",
+      "kind": "conversation-channel",
+      "disposition": "typed",
+      "roles": [
+        "focused",
+        "border"
+      ],
+      "hosts": [
+        "macos",
+        "wsl2"
+      ],
+      "documentation": "https://docs.openclaw.ai/channels/signal",
+      "setupContract": "typed-openclaw-channel-v1",
+      "mac": {
+        "state": "local-contract-observed",
+        "configured": true,
+        "dependencies": true,
+        "evidence": "actual-native-config-validation-with-prepared-account-fixture",
+        "detail": "openclaw-adapter-evidence.json#signal",
+        "limitation": "Prepared external loopback signal-cli daemon required; this form never starts or links it. No daemon/account authentication was tested."
+      },
+      "wsl": {
+        "state": "native-schema-contract-observed",
+        "configured": false,
+        "dependencies": false,
+        "evidence": "tests/test_setup_comms_openclaw_config.py",
+        "limitation": "Actual pinned source validates synthetic form input. Selected plugin acquisition/registration/configuration effect was not exercised for this entry."
+      },
+      "provider": {
+        "authentication": "unverified",
+        "transport": "unverified",
+        "inbound": "unverified",
+        "outbound": "unverified"
+      }
+    },
+    {
+      "id": "openclaw-slack",
+      "inventory": "channel",
+      "harness": "openclaw",
+      "channel": "slack",
+      "kind": "conversation-channel",
+      "disposition": "typed",
+      "roles": [
+        "focused",
+        "border"
+      ],
+      "hosts": [
+        "macos",
+        "wsl2"
+      ],
+      "documentation": "https://docs.openclaw.ai/channels/slack",
+      "setupContract": "typed-bot-v1",
+      "mac": {
+        "state": "engine-configuration-and-dependencies-observed",
+        "configured": true,
+        "dependencies": true,
+        "evidence": "evidence/mac-runtime-results.json",
+        "limitation": "Fresh Focused-home actual engine and native readback with fixture credentials; checkpoint recovery and empty-access service refusal passed. No provider authentication/transport/delivery claim."
+      },
+      "wsl": {
+        "state": "engine-configuration-and-dependencies-observed",
+        "configured": true,
+        "dependencies": true,
+        "evidence": "evidence/wsl-openclaw-engine.json",
+        "limitation": "Actual fresh engine, fixture credentials, empty sender access. Service activation refused; final verification unverified. No authentication or transport."
+      },
+      "provider": {
+        "authentication": "unverified",
+        "transport": "unverified",
+        "inbound": "unverified",
+        "outbound": "unverified"
+      }
+    },
+    {
+      "id": "openclaw-sms",
+      "inventory": "channel",
+      "harness": "openclaw",
+      "channel": "sms",
+      "kind": "conversation-channel",
+      "disposition": "typed",
+      "roles": [
+        "focused",
+        "border"
+      ],
+      "hosts": [
+        "macos",
+        "wsl2"
+      ],
+      "documentation": "https://docs.openclaw.ai/channels/sms",
+      "setupContract": "typed-openclaw-channel-v1",
+      "mac": {
+        "state": "local-contract-observed",
+        "configured": true,
+        "dependencies": true,
+        "evidence": "actual-SRI-acquisition-native-SQLite-registration-and-native-config-validation",
+        "detail": "openclaw-adapter-evidence.json#sms"
+      },
+      "wsl": {
+        "state": "native-schema-contract-observed",
+        "configured": false,
+        "dependencies": false,
+        "evidence": "tests/test_setup_comms_openclaw_config.py",
+        "limitation": "Actual pinned source validates synthetic form input. Selected plugin acquisition/registration/configuration effect was not exercised for this entry."
+      },
+      "provider": {
+        "authentication": "unverified",
+        "transport": "unverified",
+        "inbound": "unverified",
+        "outbound": "unverified"
+      }
+    },
+    {
+      "id": "openclaw-synology-chat",
+      "inventory": "channel",
+      "harness": "openclaw",
+      "channel": "synology-chat",
+      "kind": "conversation-channel",
+      "disposition": "typed",
+      "roles": [
+        "focused",
+        "border"
+      ],
+      "hosts": [
+        "macos",
+        "wsl2"
+      ],
+      "documentation": "https://docs.openclaw.ai/channels/synology-chat",
+      "setupContract": "typed-openclaw-channel-v1",
+      "mac": {
+        "state": "local-contract-observed",
+        "configured": true,
+        "dependencies": true,
+        "evidence": "actual-SRI-acquisition-native-SQLite-registration-and-native-config-validation",
+        "detail": "openclaw-adapter-evidence.json#synology-chat"
+      },
+      "wsl": {
+        "state": "native-schema-contract-observed",
+        "configured": false,
+        "dependencies": false,
+        "evidence": "tests/test_setup_comms_openclaw_config.py",
+        "limitation": "Actual pinned source validates synthetic form input. Selected plugin acquisition/registration/configuration effect was not exercised for this entry."
+      },
+      "provider": {
+        "authentication": "unverified",
+        "transport": "unverified",
+        "inbound": "unverified",
+        "outbound": "unverified"
+      }
+    },
+    {
+      "id": "openclaw-telegram",
+      "inventory": "channel",
+      "harness": "openclaw",
+      "channel": "telegram",
+      "kind": "conversation-channel",
+      "disposition": "typed",
+      "roles": [
+        "focused",
+        "border"
+      ],
+      "hosts": [
+        "macos",
+        "wsl2"
+      ],
+      "documentation": "https://docs.openclaw.ai/channels/telegram",
+      "setupContract": "typed-bot-v1",
+      "mac": {
+        "state": "local-contract-observed",
+        "configured": true,
+        "dependencies": true,
+        "evidence": "actual-bundled-native-setup-inspection-and-config-validation",
+        "detail": "openclaw-adapter-evidence.json#telegram"
+      },
+      "wsl": {
+        "state": "not-qualified",
+        "configured": false,
+        "dependencies": false,
+        "reason": "not exercised as an actual installed path in this WSL pass"
+      },
+      "provider": {
+        "authentication": "unverified",
+        "transport": "unverified",
+        "inbound": "unverified",
+        "outbound": "unverified"
+      }
+    },
+    {
+      "id": "openclaw-tlon",
+      "inventory": "channel",
+      "harness": "openclaw",
+      "channel": "tlon",
+      "kind": "conversation-channel",
+      "disposition": "typed",
+      "roles": [
+        "focused",
+        "border"
+      ],
+      "hosts": [
+        "macos",
+        "wsl2"
+      ],
+      "documentation": "https://docs.openclaw.ai/channels/tlon",
+      "setupContract": "typed-openclaw-channel-v1",
+      "mac": {
+        "state": "local-contract-observed",
+        "configured": true,
+        "dependencies": true,
+        "evidence": "actual-SRI-acquisition-native-SQLite-registration-and-native-config-validation",
+        "detail": "openclaw-adapter-evidence.json#tlon"
+      },
+      "wsl": {
+        "state": "native-schema-contract-observed",
+        "configured": false,
+        "dependencies": false,
+        "evidence": "tests/test_setup_comms_openclaw_config.py",
+        "limitation": "Actual pinned source validates synthetic form input. Selected plugin acquisition/registration/configuration effect was not exercised for this entry."
+      },
+      "provider": {
+        "authentication": "unverified",
+        "transport": "unverified",
+        "inbound": "unverified",
+        "outbound": "unverified"
+      }
+    },
+    {
+      "id": "openclaw-twitch",
+      "inventory": "channel",
+      "harness": "openclaw",
+      "channel": "twitch",
+      "kind": "conversation-channel",
+      "disposition": "typed",
+      "roles": [
+        "focused",
+        "border"
+      ],
+      "hosts": [
+        "macos",
+        "wsl2"
+      ],
+      "documentation": "https://docs.openclaw.ai/channels/twitch",
+      "setupContract": "typed-openclaw-channel-v1",
+      "mac": {
+        "state": "local-contract-observed",
+        "configured": true,
+        "dependencies": true,
+        "evidence": "actual-SRI-acquisition-native-SQLite-registration-and-native-config-validation",
+        "detail": "openclaw-adapter-evidence.json#twitch",
+        "limitation": "Exact sender allowlist applies in the selected Twitch channel; native role-wide access is disabled."
+      },
+      "wsl": {
+        "state": "native-schema-contract-observed",
+        "configured": false,
+        "dependencies": false,
+        "evidence": "tests/test_setup_comms_openclaw_config.py",
+        "limitation": "Actual pinned source validates synthetic form input. Selected plugin acquisition/registration/configuration effect was not exercised for this entry."
+      },
+      "provider": {
+        "authentication": "unverified",
+        "transport": "unverified",
+        "inbound": "unverified",
+        "outbound": "unverified"
+      }
+    },
+    {
+      "id": "openclaw-webchat",
+      "inventory": "channel",
+      "harness": "openclaw",
+      "channel": "webchat",
+      "kind": "browser-interface",
+      "disposition": "typed",
+      "roles": [
+        "focused",
+        "border"
+      ],
+      "hosts": [
+        "macos",
+        "wsl2"
+      ],
+      "documentation": "https://docs.openclaw.ai/web/webchat",
+      "setupContract": "typed-webchat-v1",
+      "mac": {
+        "state": "local-contract-observed",
+        "configured": true,
+        "dependencies": true,
+        "evidence": "actual-native-loopback-gateway-auth-config-validation-and-parent-owned-configuration-contract",
+        "detail": "openclaw-adapter-evidence.json#webchat",
+        "limitation": "Gateway/browser operation was not started by this child qualification; no channels.webchat object is written."
+      },
+      "wsl": {
+        "state": "not-qualified",
+        "configured": false,
+        "dependencies": false,
+        "reason": "not exercised as an actual installed path in this WSL pass"
+      },
+      "provider": {
+        "authentication": "unverified",
+        "transport": "unverified",
+        "inbound": "unverified",
+        "outbound": "unverified"
+      }
+    },
+    {
+      "id": "openclaw-wechat",
+      "inventory": "channel",
+      "harness": "openclaw",
+      "channel": "wechat",
+      "kind": "conversation-channel",
+      "disposition": "native",
+      "roles": [
+        "focused",
+        "border"
+      ],
+      "hosts": [
+        "macos",
+        "wsl2"
+      ],
+      "documentation": "https://docs.openclaw.ai/channels/wechat",
+      "setupContract": "openclaw-personal-pair-v1",
+      "mac": {
+        "state": "local-contract-observed",
+        "configured": true,
+        "dependencies": true,
+        "evidence": "actual-pinned-package-acquisition-registration-and-native-config-with-synthetic-auth-layout",
+        "detail": "openclaw-adapter-evidence.json#wechat",
+        "limitation": "No real QR/account connection. Owner identity, account files, unknown outcome and interrupted promotion are fixture-qualified only."
+      },
+      "wsl": {
+        "state": "not-qualified",
+        "configured": false,
+        "dependencies": false,
+        "reason": "not exercised as an actual installed path in this WSL pass"
+      },
+      "provider": {
+        "authentication": "unverified",
+        "transport": "unverified",
+        "inbound": "unverified",
+        "outbound": "unverified"
+      }
+    },
+    {
+      "id": "openclaw-wecom",
+      "inventory": "channel",
+      "harness": "openclaw",
+      "channel": "wecom",
+      "kind": "conversation-channel",
+      "disposition": "typed",
+      "roles": [
+        "focused",
+        "border"
+      ],
+      "hosts": [
+        "macos",
+        "wsl2"
+      ],
+      "documentation": "https://docs.openclaw.ai/channels/wecom",
+      "setupContract": "typed-openclaw-channel-v1",
+      "mac": {
+        "state": "local-contract-observed",
+        "configured": true,
+        "dependencies": true,
+        "evidence": "actual-published-plugin-account-access-guards-and-native-config-validation",
+        "detail": "openclaw-adapter-evidence.json#wecom",
+        "limitation": "WeCom plugin additionally registers its documented tool and gateway webhook paths; startup review declares those effects."
+      },
+      "wsl": {
+        "state": "not-qualified",
+        "configured": false,
+        "dependencies": false,
+        "reason": "not exercised as an actual installed path in this WSL pass"
+      },
+      "provider": {
+        "authentication": "unverified",
+        "transport": "unverified",
+        "inbound": "unverified",
+        "outbound": "unverified"
+      }
+    },
+    {
+      "id": "openclaw-whatsapp",
+      "inventory": "channel",
+      "harness": "openclaw",
+      "channel": "whatsapp",
+      "kind": "conversation-channel",
+      "disposition": "native",
+      "roles": [
+        "focused",
+        "border"
+      ],
+      "hosts": [
+        "macos",
+        "wsl2"
+      ],
+      "documentation": "https://docs.openclaw.ai/channels/whatsapp",
+      "setupContract": "openclaw-whatsapp-pair-v1",
+      "mac": {
+        "state": "local-contract-observed",
+        "configured": true,
+        "dependencies": true,
+        "evidence": "actual-package-registration-SDK-import-and-native-schema-plus-synthetic-pairing-events",
+        "detail": "openclaw-adapter-evidence.json#whatsapp",
+        "limitation": "No real QR scan or linked account. Fixture verifies matching phone, timeout, mismatch, one SDK restart, full auth receipt and key-rotation readback."
+      },
+      "wsl": {
+        "state": "not-qualified",
+        "configured": false,
+        "dependencies": false,
+        "reason": "not exercised as an actual installed path in this WSL pass"
+      },
+      "provider": {
+        "authentication": "unverified",
+        "transport": "unverified",
+        "inbound": "unverified",
+        "outbound": "unverified"
+      }
+    },
+    {
+      "id": "openclaw-x",
+      "inventory": "channel",
+      "harness": "openclaw",
+      "channel": "x",
+      "kind": "conversation-channel",
+      "disposition": "unavailable-baseline",
+      "roles": [
+        "focused",
+        "border"
+      ],
+      "hosts": [
+        "macos",
+        "wsl2"
+      ],
+      "documentation": "https://docs.openclaw.ai/channels/x",
+      "setupContract": null,
+      "mac": {
+        "state": "prerequisite-incomplete",
+        "configured": false,
+        "dependencies": false,
+        "evidence": "absent-at-pinned-baseline",
+        "detail": "openclaw-adapter-evidence.json#x"
+      },
+      "wsl": {
+        "state": "catalog-restriction-observed",
+        "configured": false,
+        "dependencies": false,
+        "reason": "unavailable-baseline",
+        "evidence": "tests/test_setup_comms_catalog.py",
+        "limitation": "Catalog/plan refusal evidence only; existing Mac provider/package findings were not requalified."
+      },
+      "provider": {
+        "authentication": "unverified",
+        "transport": "unverified",
+        "inbound": "unverified",
+        "outbound": "unverified"
+      }
+    },
+    {
+      "id": "openclaw-yuanbao",
+      "inventory": "channel",
+      "harness": "openclaw",
+      "channel": "yuanbao",
+      "kind": "conversation-channel",
+      "disposition": "incompatible-dependency",
+      "roles": [
+        "focused",
+        "border"
+      ],
+      "hosts": [
+        "macos",
+        "wsl2"
+      ],
+      "documentation": "https://docs.openclaw.ai/channels/yuanbao",
+      "setupContract": null,
+      "mac": {
+        "state": "prerequisite-incomplete",
+        "configured": false,
+        "dependencies": false,
+        "evidence": "exact-published-access-guard-regression",
+        "detail": "openclaw-adapter-evidence.json#yuanbao",
+        "limitation": "Pinned ordinary messages from an unlisted sender pass both native access guards under disabled and allowlist policies; no channel activation is permitted."
+      },
+      "wsl": {
+        "state": "catalog-restriction-observed",
+        "configured": false,
+        "dependencies": false,
+        "reason": "incompatible-dependency",
+        "evidence": "tests/test_setup_comms_catalog.py",
+        "limitation": "Catalog/plan refusal evidence only; existing Mac provider/package findings were not requalified."
+      },
+      "provider": {
+        "authentication": "unverified",
+        "transport": "unverified",
+        "inbound": "unverified",
+        "outbound": "unverified"
+      }
+    },
+    {
+      "id": "openclaw-zalo",
+      "inventory": "channel",
+      "harness": "openclaw",
+      "channel": "zalo",
+      "kind": "conversation-channel",
+      "disposition": "typed",
+      "roles": [
+        "focused",
+        "border"
+      ],
+      "hosts": [
+        "macos",
+        "wsl2"
+      ],
+      "documentation": "https://docs.openclaw.ai/channels/zalo",
+      "setupContract": "typed-openclaw-channel-v1",
+      "mac": {
+        "state": "local-contract-observed",
+        "configured": true,
+        "dependencies": true,
+        "evidence": "actual-SRI-acquisition-native-SQLite-registration-and-native-config-validation",
+        "detail": "openclaw-adapter-evidence.json#zalo"
+      },
+      "wsl": {
+        "state": "native-schema-contract-observed",
+        "configured": false,
+        "dependencies": false,
+        "evidence": "tests/test_setup_comms_openclaw_config.py",
+        "limitation": "Actual pinned source validates synthetic form input. Selected plugin acquisition/registration/configuration effect was not exercised for this entry."
+      },
+      "provider": {
+        "authentication": "unverified",
+        "transport": "unverified",
+        "inbound": "unverified",
+        "outbound": "unverified"
+      }
+    },
+    {
+      "id": "openclaw-zaloclawbot",
+      "inventory": "channel",
+      "harness": "openclaw",
+      "channel": "zaloclawbot",
+      "kind": "conversation-channel",
+      "disposition": "native",
+      "roles": [
+        "focused",
+        "border"
+      ],
+      "hosts": [
+        "macos",
+        "wsl2"
+      ],
+      "documentation": "https://docs.openclaw.ai/channels/zaloclawbot",
+      "setupContract": "openclaw-personal-pair-v1",
+      "mac": {
+        "state": "local-contract-observed",
+        "configured": true,
+        "dependencies": true,
+        "evidence": "actual-pinned-package-acquisition-registration-and-native-config-with-synthetic-auth-layout",
+        "detail": "openclaw-adapter-evidence.json#zaloclawbot",
+        "limitation": "No real QR/account connection. Owner identity, account files, unknown outcome and interrupted promotion are fixture-qualified only."
+      },
+      "wsl": {
+        "state": "not-qualified",
+        "configured": false,
+        "dependencies": false,
+        "reason": "not exercised as an actual installed path in this WSL pass"
+      },
+      "provider": {
+        "authentication": "unverified",
+        "transport": "unverified",
+        "inbound": "unverified",
+        "outbound": "unverified"
+      }
+    },
+    {
+      "id": "openclaw-zalouser",
+      "inventory": "channel",
+      "harness": "openclaw",
+      "channel": "zalouser",
+      "kind": "conversation-channel",
+      "disposition": "native",
+      "roles": [
+        "focused",
+        "border"
+      ],
+      "hosts": [
+        "macos",
+        "wsl2"
+      ],
+      "documentation": "https://docs.openclaw.ai/channels/zalouser",
+      "setupContract": "openclaw-personal-pair-v1",
+      "mac": {
+        "state": "local-contract-observed",
+        "configured": true,
+        "dependencies": true,
+        "evidence": "actual-pinned-package-acquisition-registration-and-native-config-with-synthetic-auth-layout",
+        "detail": "openclaw-adapter-evidence.json#zalouser",
+        "limitation": "No real QR/account connection. Owner identity, account files, unknown outcome and interrupted promotion are fixture-qualified only."
+      },
+      "wsl": {
+        "state": "not-qualified",
+        "configured": false,
+        "dependencies": false,
+        "reason": "not exercised as an actual installed path in this WSL pass"
+      },
+      "provider": {
+        "authentication": "unverified",
+        "transport": "unverified",
+        "inbound": "unverified",
+        "outbound": "unverified"
+      }
+    },
+    {
+      "id": "hermes-telegram",
+      "inventory": "channel",
+      "harness": "hermes",
+      "channel": "telegram",
+      "kind": "conversation-channel",
+      "disposition": "typed",
+      "roles": [
+        "focused",
+        "border"
+      ],
+      "hosts": [
+        "macos",
+        "wsl2"
+      ],
+      "documentation": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/telegram",
+      "setupContract": "typed-bot-v1",
+      "mac": {
+        "state": "local-contract-observed",
+        "configured": true,
+        "dependencies": true,
+        "evidence": "actual-pinned-Hermes-passive-readback",
+        "detail": "hermes-adapter-evidence.json#telegram"
+      },
+      "wsl": {
+        "state": "selected-native-readback-observed",
+        "configured": true,
+        "dependencies": true,
+        "evidence": "evidence/wsl-hermes-readback.json",
+        "limitation": "Synthetic configuration in temporary private homes; selected SDK/module dependencies only. No external daemon, account authentication, provider callback or transport qualification."
+      },
+      "provider": {
+        "authentication": "unverified",
+        "transport": "unverified",
+        "inbound": "unverified",
+        "outbound": "unverified"
+      }
+    },
+    {
+      "id": "hermes-discord",
+      "inventory": "channel",
+      "harness": "hermes",
+      "channel": "discord",
+      "kind": "conversation-channel",
+      "disposition": "typed",
+      "roles": [
+        "focused",
+        "border"
+      ],
+      "hosts": [
+        "macos",
+        "wsl2"
+      ],
+      "documentation": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/discord",
+      "setupContract": "typed-bot-v1",
+      "mac": {
+        "state": "engine-configuration-and-dependencies-observed",
+        "configured": true,
+        "dependencies": true,
+        "evidence": "evidence/mac-runtime-results.json",
+        "limitation": "Fresh Focused-home actual engine and native readback with fixture credentials; checkpoint recovery and empty-access service refusal passed. No provider authentication/transport/delivery claim."
+      },
+      "wsl": {
+        "state": "engine-configuration-and-dependencies-observed",
+        "configured": true,
+        "dependencies": true,
+        "evidence": "evidence/wsl-hermes-engine.json",
+        "limitation": "Actual fresh engine, fixture credentials, empty sender access. Service activation refused; final verification unverified. No authentication or transport."
+      },
+      "provider": {
+        "authentication": "unverified",
+        "transport": "unverified",
+        "inbound": "unverified",
+        "outbound": "unverified"
+      }
+    },
+    {
+      "id": "hermes-slack",
+      "inventory": "channel",
+      "harness": "hermes",
+      "channel": "slack",
+      "kind": "conversation-channel",
+      "disposition": "typed",
+      "roles": [
+        "focused",
+        "border"
+      ],
+      "hosts": [
+        "macos",
+        "wsl2"
+      ],
+      "documentation": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/slack",
+      "setupContract": "typed-bot-v1",
+      "mac": {
+        "state": "engine-configuration-and-dependencies-observed",
+        "configured": true,
+        "dependencies": true,
+        "evidence": "evidence/mac-runtime-results.json",
+        "limitation": "Fresh Focused-home actual engine and native readback with fixture credentials; checkpoint recovery and empty-access service refusal passed. No provider authentication/transport/delivery claim."
+      },
+      "wsl": {
+        "state": "engine-configuration-and-dependencies-observed",
+        "configured": true,
+        "dependencies": true,
+        "evidence": "evidence/wsl-hermes-engine.json",
+        "limitation": "Actual fresh engine, fixture credentials, empty sender access. Service activation refused; final verification unverified. No authentication or transport."
+      },
+      "provider": {
+        "authentication": "unverified",
+        "transport": "unverified",
+        "inbound": "unverified",
+        "outbound": "unverified"
+      }
+    },
+    {
+      "id": "hermes-google-chat",
+      "inventory": "channel",
+      "harness": "hermes",
+      "channel": "google-chat",
+      "kind": "conversation-channel",
+      "disposition": "typed",
+      "roles": [
+        "focused",
+        "border"
+      ],
+      "hosts": [
+        "macos",
+        "wsl2"
+      ],
+      "documentation": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/google_chat",
+      "setupContract": "typed-hermes-platform-v1",
+      "mac": {
+        "state": "local-contract-observed",
+        "configured": true,
+        "dependencies": true,
+        "evidence": "actual-pinned-Hermes-passive-readback",
+        "detail": "hermes-adapter-evidence.json#google-chat"
+      },
+      "wsl": {
+        "state": "selected-native-readback-observed",
+        "configured": true,
+        "dependencies": true,
+        "evidence": "evidence/wsl-hermes-readback.json",
+        "limitation": "Synthetic configuration in temporary private homes; selected SDK/module dependencies only. No external daemon, account authentication, provider callback or transport qualification."
+      },
+      "provider": {
+        "authentication": "unverified",
+        "transport": "unverified",
+        "inbound": "unverified",
+        "outbound": "unverified"
+      }
+    },
+    {
+      "id": "hermes-whatsapp",
+      "inventory": "channel",
+      "harness": "hermes",
+      "channel": "whatsapp",
+      "kind": "conversation-channel",
+      "disposition": "native",
+      "roles": [
+        "focused",
+        "border"
+      ],
+      "hosts": [
+        "macos",
+        "wsl2"
+      ],
+      "documentation": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/whatsapp",
+      "setupContract": "native-hermes-whatsapp-v1",
+      "mac": {
+        "state": "prerequisite-incomplete",
+        "configured": false,
+        "dependencies": true,
+        "evidence": "actual-frozen-npm-plus-unpaired-config-required; synthetic-Node-pairing-and-full-session-recovery-contracts",
+        "detail": "hermes-adapter-evidence.json#whatsapp",
+        "limitation": "No real QR/pair/account; configured remains false until explicitly reviewed native pairing completes. Synthetic pairing and recovery are not live pairing proof."
+      },
+      "wsl": {
+        "state": "configuration-required",
+        "configured": false,
+        "dependencies": true,
+        "evidence": "tests/test_setup_comms_hermes_owned.py",
+        "limitation": "Actual bridge acquisition. No QR, account linking or native pairing; receipts in other tests are synthetic."
+      },
+      "provider": {
+        "authentication": "unverified",
+        "transport": "unverified",
+        "inbound": "unverified",
+        "outbound": "unverified"
+      }
+    },
+    {
+      "id": "hermes-whatsapp-cloud",
+      "inventory": "channel",
+      "harness": "hermes",
+      "channel": "whatsapp-cloud",
+      "kind": "conversation-channel",
+      "disposition": "typed",
+      "roles": [
+        "focused",
+        "border"
+      ],
+      "hosts": [
+        "macos",
+        "wsl2"
+      ],
+      "documentation": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/whatsapp-cloud",
+      "setupContract": "typed-whatsapp-cloud-v1",
+      "mac": {
+        "state": "local-contract-observed",
+        "configured": true,
+        "dependencies": true,
+        "evidence": "actual-pinned-Hermes-passive-readback",
+        "detail": "hermes-adapter-evidence.json#whatsapp-cloud"
+      },
+      "wsl": {
+        "state": "selected-native-readback-observed",
+        "configured": true,
+        "dependencies": true,
+        "evidence": "tests/test_setup_comms_hermes.py",
+        "limitation": "Synthetic configuration in temporary private homes; selected SDK/module dependencies only. No external daemon, account authentication, provider callback or transport qualification."
+      },
+      "provider": {
+        "authentication": "unverified",
+        "transport": "unverified",
+        "inbound": "unverified",
+        "outbound": "unverified"
+      }
+    },
+    {
+      "id": "hermes-signal",
+      "inventory": "channel",
+      "harness": "hermes",
+      "channel": "signal",
+      "kind": "conversation-channel",
+      "disposition": "typed",
+      "roles": [
+        "focused",
+        "border"
+      ],
+      "hosts": [
+        "macos",
+        "wsl2"
+      ],
+      "documentation": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/signal",
+      "setupContract": "typed-hermes-platform-v1",
+      "mac": {
+        "state": "local-contract-observed",
+        "configured": true,
+        "dependencies": true,
+        "evidence": "actual-pinned-Hermes-passive-readback",
+        "detail": "hermes-adapter-evidence.json#signal"
+      },
+      "wsl": {
+        "state": "selected-native-readback-observed",
+        "configured": true,
+        "dependencies": true,
+        "evidence": "evidence/wsl-hermes-readback.json",
+        "limitation": "Synthetic configuration in temporary private homes; selected SDK/module dependencies only. No external daemon, account authentication, provider callback or transport qualification."
+      },
+      "provider": {
+        "authentication": "unverified",
+        "transport": "unverified",
+        "inbound": "unverified",
+        "outbound": "unverified"
+      }
+    },
+    {
+      "id": "hermes-sms",
+      "inventory": "channel",
+      "harness": "hermes",
+      "channel": "sms",
+      "kind": "conversation-channel",
+      "disposition": "typed",
+      "roles": [
+        "focused",
+        "border"
+      ],
+      "hosts": [
+        "macos",
+        "wsl2"
+      ],
+      "documentation": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/sms",
+      "setupContract": "typed-hermes-webhook-v1",
+      "mac": {
+        "state": "local-contract-observed",
+        "configured": true,
+        "dependencies": true,
+        "evidence": "actual-pinned-Hermes-passive-readback",
+        "detail": "hermes-adapter-evidence.json#sms"
+      },
+      "wsl": {
+        "state": "selected-native-readback-observed",
+        "configured": true,
+        "dependencies": true,
+        "evidence": "tests/test_setup_comms_hermes.py",
+        "limitation": "Synthetic configuration in temporary private homes; selected SDK/module dependencies only. No external daemon, account authentication, provider callback or transport qualification."
+      },
+      "provider": {
+        "authentication": "unverified",
+        "transport": "unverified",
+        "inbound": "unverified",
+        "outbound": "unverified"
+      }
+    },
+    {
+      "id": "hermes-email",
+      "inventory": "channel",
+      "harness": "hermes",
+      "channel": "email",
+      "kind": "conversation-channel",
+      "disposition": "typed",
+      "roles": [
+        "focused",
+        "border"
+      ],
+      "hosts": [
+        "macos",
+        "wsl2"
+      ],
+      "documentation": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/email",
+      "setupContract": "typed-hermes-platform-v1",
+      "mac": {
+        "state": "local-contract-observed",
+        "configured": true,
+        "dependencies": true,
+        "evidence": "actual-pinned-Hermes-passive-readback",
+        "detail": "hermes-adapter-evidence.json#email"
+      },
+      "wsl": {
+        "state": "selected-native-readback-observed",
+        "configured": true,
+        "dependencies": true,
+        "evidence": "evidence/wsl-hermes-readback.json",
+        "limitation": "Synthetic configuration in temporary private homes; selected SDK/module dependencies only. No external daemon, account authentication, provider callback or transport qualification."
+      },
+      "provider": {
+        "authentication": "unverified",
+        "transport": "unverified",
+        "inbound": "unverified",
+        "outbound": "unverified"
+      }
+    },
+    {
+      "id": "hermes-homeassistant",
+      "inventory": "channel",
+      "harness": "hermes",
+      "channel": "homeassistant",
+      "kind": "event-tool-integration",
+      "disposition": "typed",
+      "roles": [
+        "focused"
+      ],
+      "hosts": [
+        "macos",
+        "wsl2"
+      ],
+      "documentation": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/homeassistant",
+      "setupContract": "typed-hermes-platform-v1",
+      "mac": {
+        "state": "local-contract-observed",
+        "configured": true,
+        "dependencies": true,
+        "evidence": "actual-official-external-plugin-plus-shared-effect-and-pinned-Hermes-readback",
+        "detail": "hermes-adapter-evidence.json#homeassistant"
+      },
+      "wsl": {
+        "state": "owned-configuration-effect-observed",
+        "configured": true,
+        "dependencies": true,
+        "evidence": "tests/test_setup_comms_hermes_owned.py",
+        "limitation": "Frozen dependencies and private configuration; no provider or external native service operation."
+      },
+      "provider": {
+        "authentication": "unverified",
+        "transport": "unverified",
+        "inbound": "unverified",
+        "outbound": "unverified"
+      }
+    },
+    {
+      "id": "hermes-mattermost",
+      "inventory": "channel",
+      "harness": "hermes",
+      "channel": "mattermost",
+      "kind": "conversation-channel",
+      "disposition": "typed",
+      "roles": [
+        "focused",
+        "border"
+      ],
+      "hosts": [
+        "macos",
+        "wsl2"
+      ],
+      "documentation": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/mattermost",
+      "setupContract": "typed-hermes-platform-v1",
+      "mac": {
+        "state": "local-contract-observed",
+        "configured": true,
+        "dependencies": true,
+        "evidence": "actual-pinned-Hermes-passive-readback",
+        "detail": "hermes-adapter-evidence.json#mattermost"
+      },
+      "wsl": {
+        "state": "selected-native-readback-observed",
+        "configured": true,
+        "dependencies": true,
+        "evidence": "evidence/wsl-hermes-readback.json",
+        "limitation": "Synthetic configuration in temporary private homes; selected SDK/module dependencies only. No external daemon, account authentication, provider callback or transport qualification."
+      },
+      "provider": {
+        "authentication": "unverified",
+        "transport": "unverified",
+        "inbound": "unverified",
+        "outbound": "unverified"
+      }
+    },
+    {
+      "id": "hermes-matrix",
+      "inventory": "channel",
+      "harness": "hermes",
+      "channel": "matrix",
+      "kind": "conversation-channel",
+      "disposition": "typed",
+      "roles": [
+        "focused",
+        "border"
+      ],
+      "hosts": [
+        "wsl2"
+      ],
+      "documentation": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/matrix",
+      "setupContract": "typed-hermes-platform-v1",
+      "mac": {
+        "state": "local-contract-observed",
+        "configured": true,
+        "dependencies": false,
+        "evidence": "actual-pinned-Hermes-passive-readback",
+        "detail": "hermes-adapter-evidence.json#matrix",
+        "limitation": "Passive native configuration contract only. Catalog remains WSL-only; dependency assertion is strict on WSL. Actual Mac editor disables selection for host incompatibility."
+      },
+      "wsl": {
+        "state": "selected-native-readback-observed",
+        "configured": true,
+        "dependencies": true,
+        "evidence": "evidence/wsl-hermes-readback.json",
+        "limitation": "Synthetic configuration in temporary private homes; selected SDK/module dependencies only. No external daemon, account authentication, provider callback or transport qualification."
+      },
+      "provider": {
+        "authentication": "unverified",
+        "transport": "unverified",
+        "inbound": "unverified",
+        "outbound": "unverified"
+      }
+    },
+    {
+      "id": "hermes-dingtalk",
+      "inventory": "channel",
+      "harness": "hermes",
+      "channel": "dingtalk",
+      "kind": "conversation-channel",
+      "disposition": "typed",
+      "roles": [
+        "focused",
+        "border"
+      ],
+      "hosts": [
+        "macos",
+        "wsl2"
+      ],
+      "documentation": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/dingtalk",
+      "setupContract": "typed-hermes-platform-v1",
+      "mac": {
+        "state": "local-contract-observed",
+        "configured": true,
+        "dependencies": true,
+        "evidence": "actual-pinned-Hermes-passive-readback",
+        "detail": "hermes-adapter-evidence.json#dingtalk"
+      },
+      "wsl": {
+        "state": "selected-native-readback-observed",
+        "configured": true,
+        "dependencies": true,
+        "evidence": "evidence/wsl-hermes-readback.json",
+        "limitation": "Synthetic configuration in temporary private homes; selected SDK/module dependencies only. No external daemon, account authentication, provider callback or transport qualification."
+      },
+      "provider": {
+        "authentication": "unverified",
+        "transport": "unverified",
+        "inbound": "unverified",
+        "outbound": "unverified"
+      }
+    },
+    {
+      "id": "hermes-feishu",
+      "inventory": "channel",
+      "harness": "hermes",
+      "channel": "feishu",
+      "kind": "conversation-channel",
+      "disposition": "typed",
+      "roles": [
+        "focused",
+        "border"
+      ],
+      "hosts": [
+        "macos",
+        "wsl2"
+      ],
+      "documentation": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/feishu",
+      "setupContract": "typed-hermes-platform-v1",
+      "mac": {
+        "state": "local-contract-observed",
+        "configured": true,
+        "dependencies": true,
+        "evidence": "actual-pinned-Hermes-passive-readback",
+        "detail": "hermes-adapter-evidence.json#feishu"
+      },
+      "wsl": {
+        "state": "selected-native-readback-observed",
+        "configured": true,
+        "dependencies": true,
+        "evidence": "evidence/wsl-hermes-readback.json",
+        "limitation": "Synthetic configuration in temporary private homes; selected SDK/module dependencies only. No external daemon, account authentication, provider callback or transport qualification."
+      },
+      "provider": {
+        "authentication": "unverified",
+        "transport": "unverified",
+        "inbound": "unverified",
+        "outbound": "unverified"
+      }
+    },
+    {
+      "id": "hermes-wecom",
+      "inventory": "channel",
+      "harness": "hermes",
+      "channel": "wecom",
+      "kind": "conversation-channel",
+      "disposition": "typed",
+      "roles": [
+        "focused",
+        "border"
+      ],
+      "hosts": [
+        "macos",
+        "wsl2"
+      ],
+      "documentation": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/wecom",
+      "setupContract": "typed-hermes-platform-v1",
+      "mac": {
+        "state": "local-contract-observed",
+        "configured": true,
+        "dependencies": true,
+        "evidence": "actual-pinned-Hermes-passive-readback",
+        "detail": "hermes-adapter-evidence.json#wecom"
+      },
+      "wsl": {
+        "state": "selected-native-readback-observed",
+        "configured": true,
+        "dependencies": true,
+        "evidence": "evidence/wsl-hermes-readback.json",
+        "limitation": "Synthetic configuration in temporary private homes; selected SDK/module dependencies only. No external daemon, account authentication, provider callback or transport qualification."
+      },
+      "provider": {
+        "authentication": "unverified",
+        "transport": "unverified",
+        "inbound": "unverified",
+        "outbound": "unverified"
+      }
+    },
+    {
+      "id": "hermes-wecom-callback",
+      "inventory": "channel",
+      "harness": "hermes",
+      "channel": "wecom-callback",
+      "kind": "conversation-channel",
+      "disposition": "typed",
+      "roles": [
+        "focused",
+        "border"
+      ],
+      "hosts": [
+        "macos",
+        "wsl2"
+      ],
+      "documentation": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/wecom-callback",
+      "setupContract": "typed-hermes-platform-v1",
+      "mac": {
+        "state": "local-contract-observed",
+        "configured": true,
+        "dependencies": true,
+        "evidence": "actual-pinned-Hermes-passive-readback",
+        "detail": "hermes-adapter-evidence.json#wecom-callback"
+      },
+      "wsl": {
+        "state": "selected-native-readback-observed",
+        "configured": true,
+        "dependencies": true,
+        "evidence": "evidence/wsl-hermes-readback.json",
+        "limitation": "Synthetic configuration in temporary private homes; selected SDK/module dependencies only. No external daemon, account authentication, provider callback or transport qualification."
+      },
+      "provider": {
+        "authentication": "unverified",
+        "transport": "unverified",
+        "inbound": "unverified",
+        "outbound": "unverified"
+      }
+    },
+    {
+      "id": "hermes-weixin",
+      "inventory": "channel",
+      "harness": "hermes",
+      "channel": "weixin",
+      "kind": "conversation-channel",
+      "disposition": "typed",
+      "roles": [
+        "focused",
+        "border"
+      ],
+      "hosts": [
+        "macos",
+        "wsl2"
+      ],
+      "documentation": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/weixin",
+      "setupContract": "typed-hermes-platform-v1",
+      "mac": {
+        "state": "local-contract-observed",
+        "configured": true,
+        "dependencies": true,
+        "evidence": "actual-pinned-Hermes-passive-readback",
+        "detail": "hermes-adapter-evidence.json#weixin"
+      },
+      "wsl": {
+        "state": "selected-native-readback-observed",
+        "configured": true,
+        "dependencies": true,
+        "evidence": "evidence/wsl-hermes-readback.json",
+        "limitation": "Synthetic configuration in temporary private homes; selected SDK/module dependencies only. No external daemon, account authentication, provider callback or transport qualification."
+      },
+      "provider": {
+        "authentication": "unverified",
+        "transport": "unverified",
+        "inbound": "unverified",
+        "outbound": "unverified"
+      }
+    },
+    {
+      "id": "hermes-bluebubbles",
+      "inventory": "channel",
+      "harness": "hermes",
+      "channel": "bluebubbles",
+      "kind": "conversation-channel",
+      "disposition": "typed",
+      "roles": [
+        "focused",
+        "border"
+      ],
+      "hosts": [
+        "macos"
+      ],
+      "documentation": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/bluebubbles",
+      "setupContract": "typed-hermes-platform-v1",
+      "mac": {
+        "state": "local-contract-observed",
+        "configured": true,
+        "dependencies": true,
+        "evidence": "actual-pinned-Hermes-passive-readback",
+        "detail": "hermes-adapter-evidence.json#bluebubbles"
+      },
+      "wsl": {
+        "state": "unsupported-host",
+        "configured": false,
+        "dependencies": false,
+        "reason": "catalog host restriction; no native host operation attempted"
+      },
+      "provider": {
+        "authentication": "unverified",
+        "transport": "unverified",
+        "inbound": "unverified",
+        "outbound": "unverified"
+      }
+    },
+    {
+      "id": "hermes-photon",
+      "inventory": "channel",
+      "harness": "hermes",
+      "channel": "photon",
+      "kind": "conversation-channel",
+      "disposition": "typed",
+      "roles": [
+        "focused",
+        "border"
+      ],
+      "hosts": [
+        "macos"
+      ],
+      "documentation": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/photon",
+      "setupContract": "typed-hermes-platform-v1",
+      "mac": {
+        "state": "local-contract-observed",
+        "configured": true,
+        "dependencies": true,
+        "evidence": "actual-frozen-npm-plus-shared-effect-and-pinned-Hermes-readback",
+        "detail": "hermes-adapter-evidence.json#photon"
+      },
+      "wsl": {
+        "state": "unsupported-host",
+        "configured": false,
+        "dependencies": false,
+        "reason": "catalog host restriction; no native host operation attempted"
+      },
+      "provider": {
+        "authentication": "unverified",
+        "transport": "unverified",
+        "inbound": "unverified",
+        "outbound": "unverified"
+      }
+    },
+    {
+      "id": "hermes-qqbot",
+      "inventory": "channel",
+      "harness": "hermes",
+      "channel": "qqbot",
+      "kind": "conversation-channel",
+      "disposition": "typed",
+      "roles": [
+        "focused",
+        "border"
+      ],
+      "hosts": [
+        "macos",
+        "wsl2"
+      ],
+      "documentation": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/qqbot",
+      "setupContract": "typed-hermes-platform-v1",
+      "mac": {
+        "state": "local-contract-observed",
+        "configured": true,
+        "dependencies": true,
+        "evidence": "actual-pinned-Hermes-passive-readback",
+        "detail": "hermes-adapter-evidence.json#qqbot"
+      },
+      "wsl": {
+        "state": "selected-native-readback-observed",
+        "configured": true,
+        "dependencies": true,
+        "evidence": "evidence/wsl-hermes-readback.json",
+        "limitation": "Synthetic configuration in temporary private homes; selected SDK/module dependencies only. No external daemon, account authentication, provider callback or transport qualification."
+      },
+      "provider": {
+        "authentication": "unverified",
+        "transport": "unverified",
+        "inbound": "unverified",
+        "outbound": "unverified"
+      }
+    },
+    {
+      "id": "hermes-yuanbao",
+      "inventory": "channel",
+      "harness": "hermes",
+      "channel": "yuanbao",
+      "kind": "conversation-channel",
+      "disposition": "typed",
+      "roles": [
+        "focused",
+        "border"
+      ],
+      "hosts": [
+        "macos",
+        "wsl2"
+      ],
+      "documentation": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/yuanbao",
+      "setupContract": "typed-hermes-platform-v1",
+      "mac": {
+        "state": "local-contract-observed",
+        "configured": true,
+        "dependencies": true,
+        "evidence": "actual-pinned-Hermes-passive-readback",
+        "detail": "hermes-adapter-evidence.json#yuanbao"
+      },
+      "wsl": {
+        "state": "selected-native-readback-observed",
+        "configured": true,
+        "dependencies": true,
+        "evidence": "evidence/wsl-hermes-readback.json",
+        "limitation": "Synthetic configuration in temporary private homes; selected SDK/module dependencies only. No external daemon, account authentication, provider callback or transport qualification."
+      },
+      "provider": {
+        "authentication": "unverified",
+        "transport": "unverified",
+        "inbound": "unverified",
+        "outbound": "unverified"
+      }
+    },
+    {
+      "id": "hermes-teams",
+      "inventory": "channel",
+      "harness": "hermes",
+      "channel": "teams",
+      "kind": "conversation-channel",
+      "disposition": "typed",
+      "roles": [
+        "focused",
+        "border"
+      ],
+      "hosts": [
+        "macos",
+        "wsl2"
+      ],
+      "documentation": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/teams",
+      "setupContract": "typed-hermes-webhook-v1",
+      "mac": {
+        "state": "local-contract-observed",
+        "configured": true,
+        "dependencies": true,
+        "evidence": "actual-pinned-Hermes-passive-readback",
+        "detail": "hermes-adapter-evidence.json#teams"
+      },
+      "wsl": {
+        "state": "selected-native-readback-observed",
+        "configured": true,
+        "dependencies": true,
+        "evidence": "tests/test_setup_comms_hermes.py",
+        "limitation": "Synthetic configuration in temporary private homes; selected SDK/module dependencies only. No external daemon, account authentication, provider callback or transport qualification."
+      },
+      "provider": {
+        "authentication": "unverified",
+        "transport": "unverified",
+        "inbound": "unverified",
+        "outbound": "unverified"
+      }
+    },
+    {
+      "id": "hermes-line",
+      "inventory": "channel",
+      "harness": "hermes",
+      "channel": "line",
+      "kind": "conversation-channel",
+      "disposition": "typed",
+      "roles": [
+        "focused",
+        "border"
+      ],
+      "hosts": [
+        "macos",
+        "wsl2"
+      ],
+      "documentation": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/line",
+      "setupContract": "typed-hermes-platform-v1",
+      "mac": {
+        "state": "local-contract-observed",
+        "configured": true,
+        "dependencies": true,
+        "evidence": "actual-pinned-Hermes-passive-readback",
+        "detail": "hermes-adapter-evidence.json#line"
+      },
+      "wsl": {
+        "state": "selected-native-readback-observed",
+        "configured": true,
+        "dependencies": true,
+        "evidence": "evidence/wsl-hermes-readback.json",
+        "limitation": "Synthetic configuration in temporary private homes; selected SDK/module dependencies only. No external daemon, account authentication, provider callback or transport qualification."
+      },
+      "provider": {
+        "authentication": "unverified",
+        "transport": "unverified",
+        "inbound": "unverified",
+        "outbound": "unverified"
+      }
+    },
+    {
+      "id": "hermes-ntfy",
+      "inventory": "channel",
+      "harness": "hermes",
+      "channel": "ntfy",
+      "kind": "conversation-channel",
+      "disposition": "typed",
+      "roles": [
+        "focused",
+        "border"
+      ],
+      "hosts": [
+        "macos",
+        "wsl2"
+      ],
+      "documentation": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/ntfy",
+      "setupContract": "typed-hermes-platform-v1",
+      "mac": {
+        "state": "local-contract-observed",
+        "configured": true,
+        "dependencies": true,
+        "evidence": "actual-pinned-Hermes-passive-readback",
+        "detail": "hermes-adapter-evidence.json#ntfy"
+      },
+      "wsl": {
+        "state": "selected-native-readback-observed",
+        "configured": true,
+        "dependencies": true,
+        "evidence": "evidence/wsl-hermes-readback.json",
+        "limitation": "Synthetic configuration in temporary private homes; selected SDK/module dependencies only. No external daemon, account authentication, provider callback or transport qualification."
+      },
+      "provider": {
+        "authentication": "unverified",
+        "transport": "unverified",
+        "inbound": "unverified",
+        "outbound": "unverified"
+      }
+    },
+    {
+      "id": "hermes-simplex",
+      "inventory": "channel",
+      "harness": "hermes",
+      "channel": "simplex",
+      "kind": "conversation-channel",
+      "disposition": "typed",
+      "roles": [
+        "focused",
+        "border"
+      ],
+      "hosts": [
+        "macos",
+        "wsl2"
+      ],
+      "documentation": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/simplex",
+      "setupContract": "typed-hermes-platform-v1",
+      "mac": {
+        "state": "local-contract-observed",
+        "configured": true,
+        "dependencies": true,
+        "evidence": "actual-pinned-Hermes-passive-readback",
+        "detail": "hermes-adapter-evidence.json#simplex"
+      },
+      "wsl": {
+        "state": "selected-native-readback-observed",
+        "configured": true,
+        "dependencies": true,
+        "evidence": "evidence/wsl-hermes-readback.json",
+        "limitation": "Synthetic configuration in temporary private homes; selected SDK/module dependencies only. No external daemon, account authentication, provider callback or transport qualification."
+      },
+      "provider": {
+        "authentication": "unverified",
+        "transport": "unverified",
+        "inbound": "unverified",
+        "outbound": "unverified"
+      }
+    },
+    {
+      "id": "hermes-raft",
+      "inventory": "channel",
+      "harness": "hermes",
+      "channel": "raft",
+      "kind": "conversation-channel",
+      "disposition": "typed",
+      "roles": [
+        "focused",
+        "border"
+      ],
+      "hosts": [
+        "macos",
+        "wsl2"
+      ],
+      "documentation": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/raft",
+      "setupContract": "typed-hermes-platform-v1",
+      "mac": {
+        "state": "local-contract-observed",
+        "configured": true,
+        "dependencies": true,
+        "evidence": "actual-frozen-official-CLI-and-version-plus-synthetic-profile-and-shared-effect-readback",
+        "detail": "hermes-adapter-evidence.json#raft"
+      },
+      "wsl": {
+        "state": "owned-configuration-effect-observed",
+        "configured": true,
+        "dependencies": true,
+        "evidence": "tests/test_setup_comms_hermes_owned.py",
+        "limitation": "Frozen dependencies and private configuration; no provider or external native service operation."
+      },
+      "provider": {
+        "authentication": "unverified",
+        "transport": "unverified",
+        "inbound": "unverified",
+        "outbound": "unverified"
+      }
+    },
+    {
+      "id": "hermes-irc",
+      "inventory": "channel",
+      "harness": "hermes",
+      "channel": "irc",
+      "kind": "conversation-channel",
+      "disposition": "typed",
+      "roles": [
+        "focused",
+        "border"
+      ],
+      "hosts": [
+        "macos",
+        "wsl2"
+      ],
+      "documentation": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/irc",
+      "setupContract": "typed-hermes-platform-v1",
+      "mac": {
+        "state": "local-contract-observed",
+        "configured": true,
+        "dependencies": true,
+        "evidence": "actual-pinned-Hermes-passive-readback",
+        "detail": "hermes-adapter-evidence.json#irc"
+      },
+      "wsl": {
+        "state": "selected-native-readback-observed",
+        "configured": true,
+        "dependencies": true,
+        "evidence": "evidence/wsl-hermes-readback.json",
+        "limitation": "Synthetic configuration in temporary private homes; selected SDK/module dependencies only. No external daemon, account authentication, provider callback or transport qualification."
+      },
+      "provider": {
+        "authentication": "unverified",
+        "transport": "unverified",
+        "inbound": "unverified",
+        "outbound": "unverified"
+      }
+    },
+    {
+      "id": "hermes-buzz",
+      "inventory": "channel",
+      "harness": "hermes",
+      "channel": "buzz",
+      "kind": "conversation-channel",
+      "disposition": "typed",
+      "roles": [
+        "focused",
+        "border"
+      ],
+      "hosts": [
+        "macos",
+        "wsl2"
+      ],
+      "documentation": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/buzz",
+      "setupContract": "typed-hermes-platform-v1",
+      "mac": {
+        "state": "local-contract-observed",
+        "configured": true,
+        "dependencies": true,
+        "evidence": "actual-native-binary-handoff-using-explicit-C-stub-plus-pinned-Hermes-readback",
+        "detail": "hermes-adapter-evidence.json#buzz",
+        "limitation": "Actual upstream Buzz binary build and community account not exercised; prepared binary import contract was exercised with explicitly synthetic compiled native executable."
+      },
+      "wsl": {
+        "state": "owned-configuration-effect-observed",
+        "configured": true,
+        "dependencies": true,
+        "evidence": "tests/test_setup_comms_hermes_owned.py",
+        "limitation": "Fake accounts. Buzz is a compiled binary fixture, not upstream binary qualification."
+      },
+      "provider": {
+        "authentication": "unverified",
+        "transport": "unverified",
+        "inbound": "unverified",
+        "outbound": "unverified"
+      }
+    },
+    {
+      "id": "openclaw-voice-call",
+      "inventory": "related",
+      "harness": "openclaw",
+      "channel": "voice-call",
+      "kind": "related-telephony-plugin",
+      "disposition": "incomplete-adapter",
+      "roles": [
+        "focused"
+      ],
+      "hosts": [
+        "macos",
+        "wsl2"
+      ],
+      "documentation": "https://docs.openclaw.ai/plugins/voice-call",
+      "setupContract": null,
+      "mac": {
+        "state": "not-implemented",
+        "reason": "Related interface has a separate installation contract; not ordinary human-chat readiness."
+      },
+      "wsl": {
+        "state": "catalog-restriction-observed",
+        "configured": false,
+        "dependencies": false,
+        "reason": "incomplete-adapter",
+        "evidence": "tests/test_setup_comms_catalog.py",
+        "limitation": "Catalog/plan refusal evidence only; existing Mac provider/package findings were not requalified."
+      },
+      "provider": {
+        "authentication": "unverified",
+        "transport": "unverified",
+        "inbound": "unverified",
+        "outbound": "unverified"
+      }
+    },
+    {
+      "id": "openclaw-bluebubbles-migration",
+      "inventory": "related",
+      "harness": "openclaw",
+      "channel": "bluebubbles-migration",
+      "kind": "retired-path-reference",
+      "disposition": "reference-only",
+      "roles": [
+        "focused"
+      ],
+      "hosts": [
+        "macos",
+        "wsl2"
+      ],
+      "documentation": "https://docs.openclaw.ai/announcements/bluebubbles-imessage",
+      "setupContract": null,
+      "mac": {
+        "state": "reference-only",
+        "reason": "Related interface has a separate installation contract; not ordinary human-chat readiness."
+      },
+      "wsl": {
+        "state": "catalog-restriction-observed",
+        "configured": false,
+        "dependencies": false,
+        "reason": "reference-only",
+        "evidence": "tests/test_setup_comms_catalog.py",
+        "limitation": "Catalog/plan refusal evidence only; existing Mac provider/package findings were not requalified."
+      },
+      "provider": {
+        "authentication": "unverified",
+        "transport": "unverified",
+        "inbound": "unverified",
+        "outbound": "unverified"
+      }
+    },
+    {
+      "id": "hermes-open-webui",
+      "inventory": "related",
+      "harness": "hermes",
+      "channel": "open-webui",
+      "kind": "browser-api-interface",
+      "disposition": "incomplete-adapter",
+      "roles": [
+        "focused"
+      ],
+      "hosts": [
+        "macos",
+        "wsl2"
+      ],
+      "documentation": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/open-webui",
+      "setupContract": null,
+      "mac": {
+        "state": "not-implemented",
+        "reason": "Related interface has a separate installation contract; not ordinary human-chat readiness."
+      },
+      "wsl": {
+        "state": "catalog-restriction-observed",
+        "configured": false,
+        "dependencies": false,
+        "reason": "incomplete-adapter",
+        "evidence": "tests/test_setup_comms_catalog.py",
+        "limitation": "Catalog/plan refusal evidence only; existing Mac provider/package findings were not requalified."
+      },
+      "provider": {
+        "authentication": "unverified",
+        "transport": "unverified",
+        "inbound": "unverified",
+        "outbound": "unverified"
+      }
+    },
+    {
+      "id": "hermes-a2a",
+      "inventory": "related",
+      "harness": "hermes",
+      "channel": "a2a",
+      "kind": "agent-protocol",
+      "disposition": "incomplete-adapter",
+      "roles": [
+        "focused"
+      ],
+      "hosts": [
+        "macos",
+        "wsl2"
+      ],
+      "documentation": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/a2a",
+      "setupContract": null,
+      "mac": {
+        "state": "not-implemented",
+        "reason": "Related interface has a separate installation contract; not ordinary human-chat readiness."
+      },
+      "wsl": {
+        "state": "catalog-restriction-observed",
+        "configured": false,
+        "dependencies": false,
+        "reason": "incomplete-adapter",
+        "evidence": "tests/test_setup_comms_catalog.py",
+        "limitation": "Catalog/plan refusal evidence only; existing Mac provider/package findings were not requalified."
+      },
+      "provider": {
+        "authentication": "unverified",
+        "transport": "unverified",
+        "inbound": "unverified",
+        "outbound": "unverified"
+      }
+    },
+    {
+      "id": "hermes-webhooks",
+      "inventory": "related",
+      "harness": "hermes",
+      "channel": "webhooks",
+      "kind": "event-ingress",
+      "disposition": "incomplete-adapter",
+      "roles": [
+        "focused"
+      ],
+      "hosts": [
+        "macos",
+        "wsl2"
+      ],
+      "documentation": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/webhooks",
+      "setupContract": null,
+      "mac": {
+        "state": "not-implemented",
+        "reason": "Related interface has a separate installation contract; not ordinary human-chat readiness."
+      },
+      "wsl": {
+        "state": "catalog-restriction-observed",
+        "configured": false,
+        "dependencies": false,
+        "reason": "incomplete-adapter",
+        "evidence": "tests/test_setup_comms_catalog.py",
+        "limitation": "Catalog/plan refusal evidence only; existing Mac provider/package findings were not requalified."
+      },
+      "provider": {
+        "authentication": "unverified",
+        "transport": "unverified",
+        "inbound": "unverified",
+        "outbound": "unverified"
+      }
+    },
+    {
+      "id": "hermes-relay",
+      "inventory": "related",
+      "harness": "hermes",
+      "channel": "relay",
+      "kind": "connector-transport",
+      "disposition": "incomplete-adapter",
+      "roles": [
+        "focused"
+      ],
+      "hosts": [
+        "macos",
+        "wsl2"
+      ],
+      "documentation": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/relay",
+      "setupContract": null,
+      "mac": {
+        "state": "not-implemented",
+        "reason": "Related interface has a separate installation contract; not ordinary human-chat readiness."
+      },
+      "wsl": {
+        "state": "catalog-restriction-observed",
+        "configured": false,
+        "dependencies": false,
+        "reason": "incomplete-adapter",
+        "evidence": "tests/test_setup_comms_catalog.py",
+        "limitation": "Catalog/plan refusal evidence only; existing Mac provider/package findings were not requalified."
+      },
+      "provider": {
+        "authentication": "unverified",
+        "transport": "unverified",
+        "inbound": "unverified",
+        "outbound": "unverified"
+      }
+    },
+    {
+      "id": "hermes-teams-meetings",
+      "inventory": "related",
+      "harness": "hermes",
+      "channel": "teams-meetings",
+      "kind": "meeting-workflow",
+      "disposition": "incomplete-adapter",
+      "roles": [
+        "focused"
+      ],
+      "hosts": [
+        "macos",
+        "wsl2"
+      ],
+      "documentation": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/teams-meetings",
+      "setupContract": null,
+      "mac": {
+        "state": "not-implemented",
+        "reason": "Related interface has a separate installation contract; not ordinary human-chat readiness."
+      },
+      "wsl": {
+        "state": "catalog-restriction-observed",
+        "configured": false,
+        "dependencies": false,
+        "reason": "incomplete-adapter",
+        "evidence": "tests/test_setup_comms_catalog.py",
+        "limitation": "Catalog/plan refusal evidence only; existing Mac provider/package findings were not requalified."
+      },
+      "provider": {
+        "authentication": "unverified",
+        "transport": "unverified",
+        "inbound": "unverified",
+        "outbound": "unverified"
+      }
+    },
+    {
+      "id": "hermes-msgraph-webhook",
+      "inventory": "related",
+      "harness": "hermes",
+      "channel": "msgraph-webhook",
+      "kind": "microsoft-365-event-ingress",
+      "disposition": "incomplete-adapter",
+      "roles": [
+        "focused"
+      ],
+      "hosts": [
+        "macos",
+        "wsl2"
+      ],
+      "documentation": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/msgraph-webhook",
+      "setupContract": null,
+      "mac": {
+        "state": "not-implemented",
+        "reason": "Related interface has a separate installation contract; not ordinary human-chat readiness."
+      },
+      "wsl": {
+        "state": "catalog-restriction-observed",
+        "configured": false,
+        "dependencies": false,
+        "reason": "incomplete-adapter",
+        "evidence": "tests/test_setup_comms_catalog.py",
+        "limitation": "Catalog/plan refusal evidence only; existing Mac provider/package findings were not requalified."
+      },
+      "provider": {
+        "authentication": "unverified",
+        "transport": "unverified",
+        "inbound": "unverified",
+        "outbound": "unverified"
+      }
+    },
+    {
+      "id": "openclaw-webex",
+      "inventory": "related",
+      "harness": "openclaw",
+      "channel": "webex",
+      "kind": "explicitly-requested-external-plugin",
+      "disposition": "incompatible-dependency",
+      "roles": [
+        "focused",
+        "border"
+      ],
+      "hosts": [
+        "macos",
+        "wsl2"
+      ],
+      "documentation": "https://github.com/JimiHFord/openclaw-webex/blob/1bc3274f262f946e0929de501d0d40c48bf3ef5a/src/plugin.ts",
+      "setupContract": null,
+      "mac": {
+        "state": "incompatible-dependency",
+        "reason": "Pinned Webex plugin 0.1.3 uses removed registerHttpHandler API."
+      },
+      "wsl": {
+        "state": "catalog-restriction-observed",
+        "configured": false,
+        "dependencies": false,
+        "reason": "incompatible-dependency",
+        "evidence": "tests/test_setup_comms_catalog.py",
+        "limitation": "Catalog/plan refusal evidence only; existing Mac provider/package findings were not requalified."
+      },
+      "provider": {
+        "authentication": "unverified",
+        "transport": "unverified",
+        "inbound": "unverified",
+        "outbound": "unverified"
+      }
+    },
+    {
+      "id": "hermes-telephony-skill",
+      "inventory": "related",
+      "harness": "hermes",
+      "channel": "telephony-skill",
+      "kind": "related-optional-telephony-skill",
+      "disposition": "incomplete-adapter",
+      "roles": [
+        "focused"
+      ],
+      "hosts": [
+        "macos",
+        "wsl2"
+      ],
+      "documentation": "https://github.com/NousResearch/hermes-agent/blob/818c13be1dc4fd28987e1e881a9408224afd4535/optional-skills/productivity/telephony/SKILL.md",
+      "setupContract": null,
+      "mac": {
+        "state": "not-implemented",
+        "reason": "Related interface has a separate installation contract; not ordinary human-chat readiness."
+      },
+      "wsl": {
+        "state": "catalog-restriction-observed",
+        "configured": false,
+        "dependencies": false,
+        "reason": "incomplete-adapter",
+        "evidence": "tests/test_setup_comms_catalog.py",
+        "limitation": "Catalog/plan refusal evidence only; existing Mac provider/package findings were not requalified."
+      },
+      "provider": {
+        "authentication": "unverified",
+        "transport": "unverified",
+        "inbound": "unverified",
+        "outbound": "unverified"
+      }
+    },
+    {
+      "id": "openclaw-twilio-core",
+      "inventory": "netclaw",
+      "harness": "openclaw",
+      "channel": "twilio-core",
+      "kind": "outbound-and-account-tools",
+      "disposition": "typed",
+      "roles": [
+        "focused",
+        "member"
+      ],
+      "hosts": [
+        "macos",
+        "wsl2"
+      ],
+      "documentation": "https://github.com/twilio-labs/mcp",
+      "setupContract": "managed-comms-component-v1",
+      "mac": {
+        "state": "local-installation-and-discovery-observed",
+        "evidence": [
+          "tests/test_setup_comms_acquisition.py",
+          "tests/test_setup_comms_native.py",
+          "evidence/mac-runtime-results.json"
+        ],
+        "limitation": "Placeholder credentials; no provider operations. Voice routing tested separately with a controlled fixture."
+      },
+      "wsl": {
+        "state": "local-installation-and-discovery-observed",
+        "configured": false,
+        "dependencies": true,
+        "evidence": [
+          "tests/test_setup_comms_acquisition.py",
+          "tests/test_setup_comms_native.py",
+          "evidence/wsl-results.json"
+        ],
+        "limitation": "Real locked acquisition. Inert core/Zoom discovery uses native registries and owned interpreter shims; voice uses real SDK contracts with synthetic routing. No provider configuration/authentication/delivery claim."
+      },
+      "provider": {
+        "authentication": "unverified",
+        "transport": "unverified",
+        "inbound": "unverified",
+        "outbound": "unverified"
+      }
+    },
+    {
+      "id": "hermes-twilio-core",
+      "inventory": "netclaw",
+      "harness": "hermes",
+      "channel": "twilio-core",
+      "kind": "outbound-and-account-tools",
+      "disposition": "typed",
+      "roles": [
+        "focused",
+        "member"
+      ],
+      "hosts": [
+        "macos",
+        "wsl2"
+      ],
+      "documentation": "https://github.com/twilio-labs/mcp",
+      "setupContract": "managed-comms-component-v1",
+      "mac": {
+        "state": "local-installation-and-discovery-observed",
+        "evidence": [
+          "tests/test_setup_comms_acquisition.py",
+          "tests/test_setup_comms_native.py",
+          "evidence/mac-runtime-results.json"
+        ],
+        "limitation": "Placeholder credentials; no provider operations. Voice routing tested separately with a controlled fixture."
+      },
+      "wsl": {
+        "state": "local-installation-and-discovery-observed",
+        "configured": false,
+        "dependencies": true,
+        "evidence": [
+          "tests/test_setup_comms_acquisition.py",
+          "tests/test_setup_comms_native.py",
+          "evidence/wsl-results.json"
+        ],
+        "limitation": "Real locked acquisition. Inert core/Zoom discovery uses native registries and owned interpreter shims; voice uses real SDK contracts with synthetic routing. No provider configuration/authentication/delivery claim."
+      },
+      "provider": {
+        "authentication": "unverified",
+        "transport": "unverified",
+        "inbound": "unverified",
+        "outbound": "unverified"
+      }
+    },
+    {
+      "id": "openclaw-twilio-voice",
+      "inventory": "netclaw",
+      "harness": "openclaw",
+      "channel": "twilio-voice",
+      "kind": "voice-tools-and-separate-webhook-ingress",
+      "disposition": "typed",
+      "roles": [
+        "focused",
+        "member"
+      ],
+      "hosts": [
+        "macos",
+        "wsl2"
+      ],
+      "documentation": "https://www.twilio.com/docs/voice",
+      "setupContract": "managed-comms-component-v1",
+      "mac": {
+        "state": "local-dependencies-and-routing-contract-observed",
+        "evidence": [
+          "tests/test_setup_comms_acquisition.py",
+          "tests/test_setup_comms_voice.py"
+        ],
+        "limitation": "Real locked dependency acquisition and real SDK contracts with synthetic routing. Voice MCP native registry discovery was not tested. No provider configuration/authentication/delivery claim."
+      },
+      "wsl": {
+        "state": "local-dependencies-and-routing-contract-observed",
+        "configured": false,
+        "dependencies": true,
+        "evidence": [
+          "tests/test_setup_comms_acquisition.py",
+          "tests/test_setup_comms_voice.py",
+          "evidence/wsl-results.json"
+        ],
+        "limitation": "Real locked dependency acquisition and real SDK contracts with synthetic routing. Voice MCP native registry discovery was not tested. No provider configuration/authentication/delivery claim."
+      },
+      "provider": {
+        "authentication": "unverified",
+        "transport": "unverified",
+        "inbound": "unverified",
+        "outbound": "unverified"
+      }
+    },
+    {
+      "id": "hermes-twilio-voice",
+      "inventory": "netclaw",
+      "harness": "hermes",
+      "channel": "twilio-voice",
+      "kind": "voice-tools-and-separate-webhook-ingress",
+      "disposition": "incompatible-dependency",
+      "roles": [
+        "focused",
+        "member"
+      ],
+      "hosts": [
+        "macos",
+        "wsl2"
+      ],
+      "documentation": "https://www.twilio.com/docs/voice",
+      "setupContract": null,
+      "mac": {
+        "state": "incompatible-dependency",
+        "reason": "NetClaw managed voice routes through the OpenClaw session API. Hermes voice is refused; Twilio core MCP remains available on Hermes."
+      },
+      "wsl": {
+        "state": "catalog-restriction-observed",
+        "configured": false,
+        "dependencies": false,
+        "reason": "incompatible-dependency",
+        "evidence": "tests/test_setup_comms_catalog.py",
+        "limitation": "Catalog/plan refusal evidence only; existing Mac provider/package findings were not requalified."
+      },
+      "provider": {
+        "authentication": "unverified",
+        "transport": "unverified",
+        "inbound": "unverified",
+        "outbound": "unverified"
+      }
+    },
+    {
+      "id": "openclaw-zoom",
+      "inventory": "netclaw",
+      "harness": "openclaw",
+      "channel": "zoom",
+      "kind": "meeting-ingress-and-context-tools",
+      "disposition": "typed",
+      "roles": [
+        "focused",
+        "member"
+      ],
+      "hosts": [
+        "macos",
+        "wsl2"
+      ],
+      "documentation": "https://developers.zoom.us/docs/rtms/meetings/getting-started/",
+      "setupContract": "managed-comms-component-v1",
+      "mac": {
+        "state": "local-installation-and-discovery-observed",
+        "evidence": [
+          "tests/test_setup_comms_acquisition.py",
+          "tests/test_setup_comms_native.py",
+          "evidence/mac-runtime-results.json"
+        ],
+        "limitation": "Placeholder credentials; no provider operations. Voice routing tested separately with a controlled fixture."
+      },
+      "wsl": {
+        "state": "local-installation-and-discovery-observed",
+        "configured": false,
+        "dependencies": true,
+        "evidence": [
+          "tests/test_setup_comms_acquisition.py",
+          "tests/test_setup_comms_native.py",
+          "evidence/wsl-results.json"
+        ],
+        "limitation": "Real locked acquisition. Inert core/Zoom discovery uses native registries and owned interpreter shims; voice uses real SDK contracts with synthetic routing. No provider configuration/authentication/delivery claim."
+      },
+      "provider": {
+        "authentication": "unverified",
+        "transport": "unverified",
+        "inbound": "unverified",
+        "outbound": "unverified"
+      }
+    },
+    {
+      "id": "hermes-zoom",
+      "inventory": "netclaw",
+      "harness": "hermes",
+      "channel": "zoom",
+      "kind": "meeting-ingress-and-context-tools",
+      "disposition": "typed",
+      "roles": [
+        "focused",
+        "member"
+      ],
+      "hosts": [
+        "macos",
+        "wsl2"
+      ],
+      "documentation": "https://developers.zoom.us/docs/rtms/meetings/getting-started/",
+      "setupContract": "managed-comms-component-v1",
+      "mac": {
+        "state": "local-installation-and-discovery-observed",
+        "evidence": [
+          "tests/test_setup_comms_acquisition.py",
+          "tests/test_setup_comms_native.py",
+          "evidence/mac-runtime-results.json"
+        ],
+        "limitation": "Placeholder credentials; no provider operations. Voice routing tested separately with a controlled fixture."
+      },
+      "wsl": {
+        "state": "local-installation-and-discovery-observed",
+        "configured": false,
+        "dependencies": true,
+        "evidence": [
+          "tests/test_setup_comms_acquisition.py",
+          "tests/test_setup_comms_native.py",
+          "evidence/wsl-results.json"
+        ],
+        "limitation": "Real locked acquisition. Inert core/Zoom discovery uses native registries and owned interpreter shims; voice uses real SDK contracts with synthetic routing. No provider configuration/authentication/delivery claim."
+      },
+      "provider": {
+        "authentication": "unverified",
+        "transport": "unverified",
+        "inbound": "unverified",
+        "outbound": "unverified"
+      }
+    }
+  ],
+  "wslQualification": {
+    "date": "2026-10-25",
+    "sourceCommit": "c3aa0951519a0be79db085f7092043ee1c97d830",
+    "branch": "155-comms-wsl-qualification-20261025",
+    "complete": false,
+    "evidence": "evidence/wsl-results.json",
+    "preservation": "evidence/wsl-preservation.json",
+    "requiredGatesOpen": true
+  },
+  "macReconciliation": {
+    "date": "2026-10-25",
+    "branch": "155-comms-mac-reconciliation-20261025",
+    "sourceCommit": "04645395530a060b35404ec3a27bc516ae9ba076",
+    "complete": true,
+    "status": "installer-acceptance-complete-with-recorded-scope-limits",
+    "scope": "Mac installer acceptance only; WSL gates and provider readiness remain separate.",
+    "evidence": [
+      "evidence/mac-reconciliation-results.json",
+      "evidence/mac-runtime-results.json",
+      "evidence/mac-editor-results.json",
+      "evidence/mac-preservation.json"
+    ],
+    "providerReadiness": "unverified",
+    "reportControlLimit": "Both actual redacted reports were opened and inspected without edits. Product report/export controls were not exercised: engine reads the OS account shared state root, while qualification journals remain isolated.",
+    "remainingRequiredMacGates": false
+  },
+  "featureBaseCommit": "a5480b4cea4cf3729a25576fa75394b41257faab",
+  "originalFeatureBranch": "155-border-channel-setup"
+}

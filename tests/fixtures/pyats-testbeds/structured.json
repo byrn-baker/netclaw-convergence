@@ -1,0 +1,28 @@
+{
+  "schema": 1,
+  "name": "candidate-structured",
+  "sources": [
+    {
+      "kind": "structured",
+      "owner": "fixture-controller",
+      "scope": {
+        "site": "fixture-site"
+      },
+      "capturedAt": "2026-10-30T12:00:00Z",
+      "complete": true,
+      "total": 1,
+      "records": [
+        {
+          "id": "node-13",
+          "name": "fixture-structured",
+          "management_ip": "192.0.2.13/24",
+          "os": "iosxe",
+          "management_port": 22
+        }
+      ],
+      "defaults": {
+        "port": 22
+      }
+    }
+  ]
+}

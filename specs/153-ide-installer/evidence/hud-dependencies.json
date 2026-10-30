@@ -1,0 +1,14 @@
+{
+  "schema": 1,
+  "date": "2026-10-17",
+  "scope": "Actual isolated HUD npm ci and read-only dependency observation; no services started or existing installation files touched. Not whole-claw or clean-host acceptance.",
+  "node": "24.19.0",
+  "installed": true,
+  "missingDependencyAccepted": false,
+  "restored": true,
+  "checks": [
+    "every direct runtime dependency matches package-lock",
+    "offline full npm runtime dependency tree",
+    "actual server-library imports"
+  ]
+}

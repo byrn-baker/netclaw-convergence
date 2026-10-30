@@ -32,11 +32,11 @@ def hermes_hud_status(installationId:str)->dict:
 
 @mcp.tool()
 @safe_errors
-def hermes_hud_conversation_open(installationId:str,conversationId:str,seed:list[dict]|None=None,seedDigest:str|None=None,acknowledgedUncertainRequestId:str|None=None)->dict:
-    """Create an owned session, optionally seeding a validated Canvas ancestor prefix."""
+def hermes_hud_conversation_open(installationId:str,conversationId:str,seed:list[dict]|None=None,seedDigest:str|None=None,acknowledgedUncertainRequestId:str|None=None,releaseUncertainCapacity:bool=False)->dict:
+    """Open an owned session; optional explicit reviewed release preserves unknown outcomes."""
     from ledger import digest
     if seedDigest and seedDigest!=digest(seed or []):raise HudError('input_invalid')
-    return scoped(installationId).open(conversationId,seed,acknowledgedUncertainRequestId)
+    return scoped(installationId).open(conversationId,seed,acknowledgedUncertainRequestId,releaseUncertainCapacity)
 
 @mcp.tool()
 @safe_errors

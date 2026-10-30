@@ -1,0 +1,7 @@
+{
+  "module": "github.com/hervehildenbrand/gtrace/cmd/gtrace@v0.15.1",
+  "version": "gtrace version v0.15.1",
+  "go": "1.26.5 darwin/arm64",
+  "source": "https://github.com/hervehildenbrand/gtrace/releases/tag/v0.15.1",
+  "scope": "isolated HOME, Go caches, module cache and binary prefix; version probe only; no packets, tool requests or service changes"
+}

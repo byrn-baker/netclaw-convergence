@@ -1,0 +1,812 @@
+{
+  "date": "2026-10-18",
+  "scope": "Actual disposable macOS homes; native launchd and VS Code; synthetic operator input; no hosted provider qualification",
+  "providerCalls": 0,
+  "channelMessages": 0,
+  "deviceCalls": 0,
+  "runs": [
+    {
+      "case": "wizard-openclaw",
+      "report": {
+        "schema": 1,
+        "export": "redacted",
+        "generatedAt": 1792353526,
+        "installations": [
+          {
+            "installation": "claw-1",
+            "harness": "openclaw",
+            "tiers": [
+              {
+                "tier": 1,
+                "state": "verified",
+                "code": "artifact_present"
+              },
+              {
+                "tier": 2,
+                "state": "verified",
+                "code": "discovery_verified"
+              },
+              {
+                "tier": 3,
+                "state": "verified",
+                "code": "identity_verified"
+              },
+              {
+                "tier": 4,
+                "state": "skipped",
+                "code": "not_selected"
+              },
+              {
+                "tier": 5,
+                "state": "skipped",
+                "code": "not_selected"
+              },
+              {
+                "tier": 6,
+                "state": "skipped",
+                "code": "not_selected"
+              }
+            ],
+            "components": [
+              {
+                "id": "subnet-calc",
+                "state": "verified",
+                "code": "discovery_verified"
+              }
+            ],
+            "version": "2026.7.1-2",
+            "provenance": {
+              "checker": "netclaw-setup",
+              "protocol": 1
+            }
+          }
+        ]
+      },
+      "claws": [
+        {
+          "role": "focused",
+          "harness": "openclaw",
+          "harnessChoice": "explicit",
+          "provider": "ollama",
+          "providerEvidence": "configuration only; model not invoked",
+          "mode": "hot",
+          "components": [
+            "subnet-calc"
+          ]
+        }
+      ],
+      "privatePlanSha256": "f09d8389532edf781c8e90524af43ff0c0e5ba6621190e3131b9a3f3a0ffb599",
+      "timing": {
+        "reviewClickMs": 3272,
+        "applyMs": 48943,
+        "scope": "Saved-plan wizard; existing host; includes acquisition; not blank-wizard decision time"
+      }
+    },
+    {
+      "case": "wizard-hermes",
+      "report": {
+        "schema": 1,
+        "export": "redacted",
+        "generatedAt": 1792353526,
+        "installations": [
+          {
+            "installation": "claw-1",
+            "harness": "hermes",
+            "tiers": [
+              {
+                "tier": 1,
+                "state": "verified",
+                "code": "artifact_present"
+              },
+              {
+                "tier": 2,
+                "state": "verified",
+                "code": "discovery_verified"
+              },
+              {
+                "tier": 3,
+                "state": "verified",
+                "code": "identity_verified"
+              },
+              {
+                "tier": 4,
+                "state": "skipped",
+                "code": "not_selected"
+              },
+              {
+                "tier": 5,
+                "state": "skipped",
+                "code": "not_selected"
+              },
+              {
+                "tier": 6,
+                "state": "skipped",
+                "code": "not_selected"
+              }
+            ],
+            "components": [
+              {
+                "id": "subnet-calc",
+                "state": "verified",
+                "code": "discovery_verified"
+              }
+            ],
+            "version": "v0.21.6",
+            "provenance": {
+              "checker": "netclaw-setup",
+              "protocol": 1
+            }
+          }
+        ]
+      },
+      "claws": [
+        {
+          "role": "focused",
+          "harness": "hermes",
+          "harnessChoice": "explicit",
+          "provider": "ollama",
+          "providerEvidence": "configuration only; model not invoked",
+          "mode": "hot",
+          "components": [
+            "subnet-calc"
+          ]
+        }
+      ],
+      "privatePlanSha256": "75e1801c46660600769ce475e8866cbc8ad483f14f7b7b8b813361213cd23672",
+      "timing": {
+        "reviewClickMs": 3280,
+        "applyMs": 169442,
+        "scope": "Saved-plan wizard; existing host; includes acquisition; not blank-wizard decision time"
+      }
+    },
+    {
+      "case": "risk-openclaw",
+      "report": {
+        "schema": 1,
+        "export": "redacted",
+        "generatedAt": 1792353526,
+        "installations": [
+          {
+            "installation": "claw-1",
+            "harness": "openclaw",
+            "tiers": [
+              {
+                "tier": 1,
+                "state": "verified",
+                "code": "artifact_present"
+              },
+              {
+                "tier": 2,
+                "state": "verified",
+                "code": "discovery_verified"
+              },
+              {
+                "tier": 3,
+                "state": "verified",
+                "code": "identity_verified"
+              },
+              {
+                "tier": 4,
+                "state": "skipped",
+                "code": "not_selected"
+              },
+              {
+                "tier": 5,
+                "state": "skipped",
+                "code": "not_selected"
+              },
+              {
+                "tier": 6,
+                "state": "skipped",
+                "code": "not_selected"
+              },
+              {
+                "tier": "risk",
+                "state": "verified",
+                "code": "risk_verified"
+              }
+            ],
+            "components": [
+              {
+                "id": "n2n",
+                "state": "verified",
+                "code": "discovery_verified"
+              },
+              {
+                "id": "protocol",
+                "state": "verified",
+                "code": "discovery_verified"
+              }
+            ],
+            "version": "2026.7.1-2",
+            "provenance": {
+              "checker": "netclaw-setup",
+              "protocol": 1
+            }
+          },
+          {
+            "installation": "claw-2",
+            "harness": "openclaw",
+            "tiers": [
+              {
+                "tier": 1,
+                "state": "verified",
+                "code": "artifact_present"
+              },
+              {
+                "tier": 2,
+                "state": "verified",
+                "code": "discovery_verified"
+              },
+              {
+                "tier": 3,
+                "state": "verified",
+                "code": "identity_verified"
+              },
+              {
+                "tier": 4,
+                "state": "skipped",
+                "code": "not_selected"
+              },
+              {
+                "tier": 5,
+                "state": "skipped",
+                "code": "not_selected"
+              },
+              {
+                "tier": 6,
+                "state": "skipped",
+                "code": "not_selected"
+              },
+              {
+                "tier": "risk",
+                "state": "verified",
+                "code": "risk_verified"
+              }
+            ],
+            "components": [
+              {
+                "id": "subnet-calc",
+                "state": "verified",
+                "code": "discovery_verified"
+              },
+              {
+                "id": "n2n",
+                "state": "verified",
+                "code": "discovery_verified"
+              }
+            ],
+            "version": "2026.7.1-2",
+            "provenance": {
+              "checker": "netclaw-setup",
+              "protocol": 1
+            }
+          },
+          {
+            "installation": "claw-3",
+            "harness": "hermes",
+            "tiers": [
+              {
+                "tier": 1,
+                "state": "verified",
+                "code": "artifact_present"
+              },
+              {
+                "tier": 2,
+                "state": "verified",
+                "code": "discovery_verified"
+              },
+              {
+                "tier": 3,
+                "state": "verified",
+                "code": "identity_verified"
+              },
+              {
+                "tier": 4,
+                "state": "skipped",
+                "code": "not_selected"
+              },
+              {
+                "tier": 5,
+                "state": "skipped",
+                "code": "not_selected"
+              },
+              {
+                "tier": 6,
+                "state": "skipped",
+                "code": "not_selected"
+              },
+              {
+                "tier": "risk",
+                "state": "verified",
+                "code": "risk_verified"
+              }
+            ],
+            "components": [
+              {
+                "id": "subnet-calc",
+                "state": "verified",
+                "code": "discovery_verified"
+              },
+              {
+                "id": "n2n",
+                "state": "verified",
+                "code": "discovery_verified"
+              }
+            ],
+            "version": "v0.21.6",
+            "provenance": {
+              "checker": "netclaw-setup",
+              "protocol": 1
+            }
+          },
+          {
+            "installation": "claw-4",
+            "harness": "openclaw",
+            "tiers": [
+              {
+                "tier": 1,
+                "state": "verified",
+                "code": "artifact_present"
+              },
+              {
+                "tier": 2,
+                "state": "verified",
+                "code": "discovery_verified"
+              },
+              {
+                "tier": 3,
+                "state": "verified",
+                "code": "identity_verified"
+              },
+              {
+                "tier": 4,
+                "state": "skipped",
+                "code": "not_selected"
+              },
+              {
+                "tier": 5,
+                "state": "skipped",
+                "code": "not_selected"
+              },
+              {
+                "tier": 6,
+                "state": "skipped",
+                "code": "not_selected"
+              },
+              {
+                "tier": "risk",
+                "state": "verified",
+                "code": "risk_verified"
+              }
+            ],
+            "components": [
+              {
+                "id": "subnet-calc",
+                "state": "verified",
+                "code": "discovery_verified"
+              },
+              {
+                "id": "n2n",
+                "state": "verified",
+                "code": "discovery_verified"
+              }
+            ],
+            "version": "2026.7.1-2",
+            "provenance": {
+              "checker": "netclaw-setup",
+              "protocol": 1
+            }
+          }
+        ]
+      },
+      "claws": [
+        {
+          "role": "border",
+          "harness": "openclaw",
+          "harnessChoice": "explicit",
+          "provider": "ollama",
+          "providerEvidence": "configuration only; model not invoked",
+          "mode": "hot",
+          "components": [
+            "n2n",
+            "protocol"
+          ]
+        },
+        {
+          "role": "member",
+          "harness": "openclaw",
+          "harnessChoice": "inherit",
+          "provider": "ollama",
+          "providerEvidence": "configuration only; model not invoked",
+          "mode": "hot",
+          "components": [
+            "subnet-calc",
+            "n2n"
+          ]
+        },
+        {
+          "role": "member",
+          "harness": "hermes",
+          "harnessChoice": "explicit",
+          "provider": "lm-studio",
+          "providerEvidence": "configuration only; model not invoked",
+          "mode": "hot",
+          "components": [
+            "subnet-calc",
+            "n2n"
+          ]
+        },
+        {
+          "role": "member",
+          "harness": "openclaw",
+          "harnessChoice": "inherit",
+          "provider": "ollama",
+          "providerEvidence": "configuration only; model not invoked",
+          "mode": "on-demand",
+          "components": [
+            "subnet-calc",
+            "n2n"
+          ]
+        }
+      ],
+      "privatePlanSha256": "f180c823c667793b83a6d47c29f1644bddd24d2aeac7b8b4834139ffe6f11e87",
+      "management": {
+        "editor": "1.109.0",
+        "harness": "openclaw",
+        "checks": [
+          "Authenticated selected-claw connection saved through native review",
+          "Selected installation workspace write passed native diff/review and exact reread",
+          "Reviewed stop of selected native services completed",
+          "Reviewed start of selected native services completed",
+          "Reviewed restart of selected native services completed",
+          "Existing NetClaw detection and separate-installation disclosure after saving binding"
+        ],
+        "providerCalls": 0,
+        "channelMessages": 0,
+        "deviceCalls": 0
+      },
+      "onDemand": {
+        "initiallyStopped": true,
+        "wakeExit": 0,
+        "identityBoundLocalHealthReady": true,
+        "scope": "Actual disposable OpenClaw on-demand wake; private identity-bound local health"
+      },
+      "memberManagement": [
+        {
+          "editor": "1.109.0",
+          "harness": "openclaw",
+          "checks": [
+            "Authenticated selected-claw connection saved through native review",
+            "Selected installation workspace write passed native diff/review and exact reread",
+            "Reviewed stop of selected native services completed",
+            "Reviewed start of selected native services completed",
+            "Reviewed restart of selected native services completed",
+            "Existing NetClaw detection and separate-installation disclosure after saving binding",
+            "Neighbor configuration, identities, services and PIDs unchanged"
+          ],
+          "providerCalls": 0,
+          "channelMessages": 0,
+          "deviceCalls": 0
+        },
+        {
+          "editor": "1.109.0",
+          "harness": "hermes",
+          "checks": [
+            "Authenticated selected-claw connection saved through native review",
+            "Selected installation workspace write passed native diff/review and exact reread",
+            "Reviewed stop of selected native services completed",
+            "Reviewed start of selected native services completed",
+            "Reviewed restart of selected native services completed",
+            "Existing NetClaw detection and separate-installation disclosure after saving binding",
+            "Neighbor configuration, identities, services and PIDs unchanged"
+          ],
+          "providerCalls": 0,
+          "channelMessages": 0,
+          "deviceCalls": 0
+        }
+      ]
+    },
+    {
+      "case": "risk-hermes",
+      "report": {
+        "schema": 1,
+        "export": "redacted",
+        "generatedAt": 1792353526,
+        "installations": [
+          {
+            "installation": "claw-1",
+            "harness": "hermes",
+            "tiers": [
+              {
+                "tier": 1,
+                "state": "verified",
+                "code": "artifact_present"
+              },
+              {
+                "tier": 2,
+                "state": "verified",
+                "code": "discovery_verified"
+              },
+              {
+                "tier": 3,
+                "state": "verified",
+                "code": "identity_verified"
+              },
+              {
+                "tier": 4,
+                "state": "skipped",
+                "code": "not_selected"
+              },
+              {
+                "tier": 5,
+                "state": "skipped",
+                "code": "not_selected"
+              },
+              {
+                "tier": 6,
+                "state": "skipped",
+                "code": "not_selected"
+              },
+              {
+                "tier": "risk",
+                "state": "verified",
+                "code": "risk_verified"
+              }
+            ],
+            "components": [
+              {
+                "id": "n2n",
+                "state": "verified",
+                "code": "discovery_verified"
+              },
+              {
+                "id": "protocol",
+                "state": "verified",
+                "code": "discovery_verified"
+              }
+            ],
+            "version": "v0.21.6",
+            "provenance": {
+              "checker": "netclaw-setup",
+              "protocol": 1
+            }
+          },
+          {
+            "installation": "claw-2",
+            "harness": "hermes",
+            "tiers": [
+              {
+                "tier": 1,
+                "state": "verified",
+                "code": "artifact_present"
+              },
+              {
+                "tier": 2,
+                "state": "verified",
+                "code": "discovery_verified"
+              },
+              {
+                "tier": 3,
+                "state": "verified",
+                "code": "identity_verified"
+              },
+              {
+                "tier": 4,
+                "state": "skipped",
+                "code": "not_selected"
+              },
+              {
+                "tier": 5,
+                "state": "skipped",
+                "code": "not_selected"
+              },
+              {
+                "tier": 6,
+                "state": "skipped",
+                "code": "not_selected"
+              },
+              {
+                "tier": "risk",
+                "state": "verified",
+                "code": "risk_verified"
+              }
+            ],
+            "components": [
+              {
+                "id": "subnet-calc",
+                "state": "verified",
+                "code": "discovery_verified"
+              },
+              {
+                "id": "n2n",
+                "state": "verified",
+                "code": "discovery_verified"
+              }
+            ],
+            "version": "v0.21.6",
+            "provenance": {
+              "checker": "netclaw-setup",
+              "protocol": 1
+            }
+          },
+          {
+            "installation": "claw-3",
+            "harness": "openclaw",
+            "tiers": [
+              {
+                "tier": 1,
+                "state": "verified",
+                "code": "artifact_present"
+              },
+              {
+                "tier": 2,
+                "state": "verified",
+                "code": "discovery_verified"
+              },
+              {
+                "tier": 3,
+                "state": "verified",
+                "code": "identity_verified"
+              },
+              {
+                "tier": 4,
+                "state": "skipped",
+                "code": "not_selected"
+              },
+              {
+                "tier": 5,
+                "state": "skipped",
+                "code": "not_selected"
+              },
+              {
+                "tier": 6,
+                "state": "skipped",
+                "code": "not_selected"
+              },
+              {
+                "tier": "risk",
+                "state": "verified",
+                "code": "risk_verified"
+              }
+            ],
+            "components": [
+              {
+                "id": "subnet-calc",
+                "state": "verified",
+                "code": "discovery_verified"
+              },
+              {
+                "id": "n2n",
+                "state": "verified",
+                "code": "discovery_verified"
+              }
+            ],
+            "version": "2026.7.1-2",
+            "provenance": {
+              "checker": "netclaw-setup",
+              "protocol": 1
+            }
+          },
+          {
+            "installation": "claw-4",
+            "harness": "hermes",
+            "tiers": [
+              {
+                "tier": 1,
+                "state": "verified",
+                "code": "artifact_present"
+              },
+              {
+                "tier": 2,
+                "state": "verified",
+                "code": "discovery_verified"
+              },
+              {
+                "tier": 3,
+                "state": "verified",
+                "code": "identity_verified"
+              },
+              {
+                "tier": 4,
+                "state": "skipped",
+                "code": "not_selected"
+              },
+              {
+                "tier": 5,
+                "state": "skipped",
+                "code": "not_selected"
+              },
+              {
+                "tier": 6,
+                "state": "skipped",
+                "code": "not_selected"
+              },
+              {
+                "tier": "risk",
+                "state": "verified",
+                "code": "risk_verified"
+              }
+            ],
+            "components": [
+              {
+                "id": "subnet-calc",
+                "state": "verified",
+                "code": "discovery_verified"
+              },
+              {
+                "id": "n2n",
+                "state": "verified",
+                "code": "discovery_verified"
+              }
+            ],
+            "version": "v0.21.6",
+            "provenance": {
+              "checker": "netclaw-setup",
+              "protocol": 1
+            }
+          }
+        ]
+      },
+      "claws": [
+        {
+          "role": "border",
+          "harness": "hermes",
+          "harnessChoice": "explicit",
+          "provider": "ollama",
+          "providerEvidence": "configuration only; model not invoked",
+          "mode": "hot",
+          "components": [
+            "n2n",
+            "protocol"
+          ]
+        },
+        {
+          "role": "member",
+          "harness": "hermes",
+          "harnessChoice": "inherit",
+          "provider": "ollama",
+          "providerEvidence": "configuration only; model not invoked",
+          "mode": "hot",
+          "components": [
+            "subnet-calc",
+            "n2n"
+          ]
+        },
+        {
+          "role": "member",
+          "harness": "openclaw",
+          "harnessChoice": "explicit",
+          "provider": "lm-studio",
+          "providerEvidence": "configuration only; model not invoked",
+          "mode": "hot",
+          "components": [
+            "subnet-calc",
+            "n2n"
+          ]
+        },
+        {
+          "role": "member",
+          "harness": "hermes",
+          "harnessChoice": "inherit",
+          "provider": "ollama",
+          "providerEvidence": "configuration only; model not invoked",
+          "mode": "on-demand",
+          "components": [
+            "subnet-calc",
+            "n2n"
+          ]
+        }
+      ],
+      "privatePlanSha256": "c62e36a91f2f9a02a45bfa80f320481d27ef0c8d262f5a0e6fd73f495d386bf9",
+      "onDemand": {
+        "wakeExit": 0,
+        "selfStatusReady": true,
+        "identityBound": true,
+        "idempotentWakeKeptPid": true,
+        "harness": "hermes",
+        "scope": "actual on-demand wake and routed self-status after startup; immediate first self-status returned 409 during startup; zero provider calls"
+      }
+    }
+  ]
+}

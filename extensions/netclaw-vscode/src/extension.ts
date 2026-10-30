@@ -25,6 +25,11 @@ import { openIntent, peerChat } from "./views/intent";
 import { prepareService } from "./views/services";
 import { configureSettings, environment } from "./views/settings";
 import { AssistantProvider } from "./assistants/provider";
+import { SetupWizard } from "./views/setup-wizard";
+import {SetupAssistant} from './setup/assistant-session';
+import {distributeSetupSkill} from './setup/skills';
+import {createPreset} from './setup/preset';
+import {inspectSetupConnection,SetupConnection} from './setup/connections';
 
 export async function activate(context: vscode.ExtensionContext) {
   const local = new LocalState(
@@ -34,6 +39,9 @@ export async function activate(context: vscode.ExtensionContext) {
     connection = new Connection(context.secrets),
     assistants = new AssistantProvider(context, connection);
   const management = new Management(local);
+  const setupWizard = new SetupWizard(context, local);
+  const setupAssistant=new SetupAssistant(context,setupWizard);
+  context.subscriptions.push(setupWizard,setupAssistant,vscode.lm.registerMcpServerDefinitionProvider('netclaw.setupAssistant',setupAssistant));
   const workspace = new WorkspaceFiles(context, management, connection);
   context.subscriptions.push(management, workspace);
   const output = vscode.window.createOutputChannel("NetClaw"),
@@ -114,6 +122,23 @@ export async function activate(context: vscode.ExtensionContext) {
     }
     refresh();
   };
+  register("setupClaw", () => setupWizard.open());
+  register('setupAssistant',()=>setupAssistant.enable());
+  register('setupSkill',()=>distributeSetupSkill(context));
+  register('setupSpec',()=>createPreset(context,local,setupWizard.snapshot().answers));
+  register('setupSpecReport',()=>setupWizard.writeDeploymentReport());
+  register('setupConnect',async()=>{
+    if(!vscode.workspace.isTrusted)throw Error('Trust this workspace first.');
+    const candidates:SetupConnection[]=await setupWizard.connectionCandidates();
+    if(!candidates.length)throw Error('No claw has verified runtime/HUD readiness. Run local verification first.');
+    const selected=await vscode.window.showQuickPick(candidates.map(c=>({label:c.label,description:c.harness+' · '+c.home,c})),{title:'Save a new claw connection'});if(!selected)return;
+    const candidate=await inspectSetupConnection(selected.c);
+    if((await vscode.window.showInformationMessage('Save this verified claw in Connections?',{modal:true,detail:`${candidate.label}\n${candidate.harness}\n${candidate.home}\n${candidate.url}\n${candidate.installationId}`},'Save connection'))!=='Save connection')return;
+    await inspectSetupConnection(candidate);
+    const existing=profiles.list().find(p=>p.installationId===candidate.installationId&&p.url===candidate.url);
+    const profile=existing||await profiles.save({label:candidate.label,url:candidate.url,harness:candidate.harness,installationId:candidate.installationId});
+    await connect(profile);await vscode.commands.executeCommand('netclaw.openOverview');
+  });
   register("workspaceControls", async () => {
     if (!management.selected) await management.bind(connection);
     if (management.selected)
@@ -467,6 +492,12 @@ export async function activate(context: vscode.ExtensionContext) {
   const items = (group: string): Navigation[] => {
     if (group === "connections")
       return [
+        {
+          label: "Set up a new NetClaw",
+          description: "Separate installation",
+          command: "netclaw.setupClaw",
+          icon: "new-folder",
+        },
         {
           label: "Workspace & Claw",
           description: management.selected?.profile.label || "Enable controls",

@@ -10,6 +10,43 @@ class LedgerTests(unittest.TestCase):
         self.tmp=tempfile.TemporaryDirectory();self.file=Path(self.tmp.name)/'private/ledger.db'
         self.ledger=Ledger(self.file,'installation-A');self.ledger.open('chat-A')
     def tearDown(self): self.tmp.cleanup()
+    def test_reviewed_release_eligibility_durability_and_concurrency(self):
+        from concurrent.futures import ThreadPoolExecutor
+        self.ledger.admit('chat-A','request-A','nonce-A','hello',1000)
+        with self.assertRaises(HudError):self.ledger.open('fresh',acknowledgment='request-A',release_capacity=True)
+        self.ledger.update('chat-A','request-A','unknown')
+        for acknowledgment in (None,'missing'):
+            with self.assertRaises(HudError):self.ledger.open('fresh',acknowledgment=acknowledgment,release_capacity=True)
+        for value in ('true',1,None):
+            with self.assertRaises(HudError):self.ledger.open('fresh',acknowledgment='request-A',release_capacity=value)
+        with self.assertRaises(HudError):self.ledger.open('chat-A',acknowledgment='request-A',release_capacity=True)
+        self.ledger.record('request-A','call','show','completed','evidence retained')
+        with ThreadPoolExecutor(max_workers=4) as pool:
+            list(pool.map(lambda _:self.ledger.open('fresh',acknowledgment='request-A',release_capacity=True),range(4)))
+        restarted=Ledger(self.file,'installation-A')
+        with restarted.db() as db:
+            self.assertEqual(db.execute('SELECT count(*) FROM capacity_releases').fetchone()[0],1)
+            db.execute('UPDATE requests SET created=0')
+        self.assertEqual(Ledger(self.file,'installation-A').request('chat-A','request-A')['state'],'unknown')
+        self.assertEqual(restarted.events('chat-A','request-A')[0]['summary'],'evidence retained')
+        with self.assertRaises(HudError):restarted.open('fresh',acknowledgment='missing',release_capacity=True)
+        restarted.update('chat-A','request-A','unknown',run_id='late-native')
+        with self.assertRaises(HudError):restarted.open('newer',acknowledgment='request-A',release_capacity=True)
+        for n in range(3):
+            restarted.open(f'other{n}');restarted.admit(f'other{n}',f'r{n}',f'n{n}','work',1000)
+        with self.assertRaises(HudError):restarted.admit('fresh','new','new','work',1000)
+    def test_reviewed_release_rejects_terminal_scoped_and_failed_transaction(self):
+        import sqlite3
+        self.ledger.admit('chat-A','r','n','hello',1000);self.ledger.update('chat-A','r','unknown')
+        with self.ledger.db() as db:db.execute('INSERT INTO execution_scopes VALUES (?,?)',('r','{}'))
+        with self.assertRaises(HudError):self.ledger.open('fresh',acknowledgment='r',release_capacity=True)
+        with self.ledger.db() as db:
+            db.execute('DELETE FROM execution_scopes')
+            db.execute("CREATE TRIGGER fail_open BEFORE INSERT ON conversations BEGIN SELECT RAISE(ABORT, 'disk unavailable'); END")
+        with self.assertRaises(sqlite3.DatabaseError):self.ledger.open('fresh',acknowledgment='r',release_capacity=True)
+        with self.ledger.db() as db:self.assertEqual(db.execute('SELECT count(*) FROM capacity_releases').fetchone()[0],0)
+        self.ledger.update('chat-A','r','completed')
+        with self.assertRaises(HudError):self.ledger.open('fresh',acknowledgment='r',release_capacity=True)
     def test_restart_retry_never_readmits_unknown(self):
         row,created=self.ledger.admit('chat-A','request-A','nonce-A','hello',1000);self.assertTrue(created)
         self.ledger.update('chat-A','request-A','unknown')

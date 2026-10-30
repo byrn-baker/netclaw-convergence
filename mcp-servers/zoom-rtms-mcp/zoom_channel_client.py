@@ -132,6 +132,22 @@ class ZoomChannelClient:
 _client: Optional[ZoomChannelClient] = None
 
 
+async def close_client():
+    global _client
+    client=_client;_client=None
+    if client is None:return
+    client.connected=False
+    if client._read_task is not None:
+        client._read_task.cancel()
+        await asyncio.gather(client._read_task,return_exceptions=True)
+    if client.writer is not None:
+        client.writer.close()
+        await client.writer.wait_closed()
+    for future in client._pending.values():
+        if not future.done():future.cancel()
+    client._pending.clear()
+
+
 async def get_client() -> ZoomChannelClient:
     global _client
     if _client is None or not _client.connected:

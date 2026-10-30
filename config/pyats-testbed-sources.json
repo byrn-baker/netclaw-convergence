@@ -1,0 +1,214 @@
+{
+  "schema": 1,
+  "sources": [
+    {
+      "id": "itential_inventory",
+      "label": "Itential Inventory Manager",
+      "component": "itential",
+      "upstreamNative": "itential_inventory",
+      "route": "mcp-or-reviewed-export",
+      "mapping": {
+        "id": "name",
+        "name": "name",
+        "host": "attributes.itential_host",
+        "os": "attributes.itential_platform",
+        "port": "attributes.itential_port"
+      },
+      "help": "Discover get_inventories / describe_inventory and an inventory node reader. Export result.data; verify all pages.",
+      "reference": "https://docs.itential.com/itential-platform/6/6/api-reference/inventory-manager/get-nodes-by-inventory"
+    },
+    {
+      "id": "netbox",
+      "label": "NetBox",
+      "component": "netbox",
+      "upstreamNative": "netbox",
+      "route": "mcp-or-reviewed-export",
+      "mapping": {
+        "id": "id",
+        "name": "name",
+        "host": "primary_ip4.address",
+        "os": "platform.slug"
+      },
+      "help": "netbox_get_objects(dcim.devices); full records and count/next completion. IPv6 requires explicit mapping.",
+      "reference": "https://netbox.readthedocs.io/en/stable/integrations/rest-api/"
+    },
+    {
+      "id": "nautobot",
+      "label": "Nautobot",
+      "component": "nautobot",
+      "upstreamNative": "nautobot",
+      "route": "mcp-or-reviewed-export",
+      "mapping": {
+        "id": "id",
+        "name": "name",
+        "host": "primary_ip4.address",
+        "os": "platform.name"
+      },
+      "help": "nautobot_get_devices MCP differs from REST: devices[] vs results[], address vs host. Enrich identity and prove page completion.",
+      "reference": "https://docs.nautobot.com/projects/core/en/stable/user-guide/platform-functionality/rest-api/overview/"
+    },
+    {
+      "id": "catalyst_center",
+      "label": "Cisco Catalyst Center",
+      "component": "catc",
+      "upstreamNative": "catalyst_center",
+      "route": "mcp-or-reviewed-export",
+      "mapping": {
+        "id": "id",
+        "name": "hostname",
+        "host": "managementIpAddress",
+        "os": "softwareType"
+      },
+      "help": "Discover catc_find / catc_describe_operation then catc_devices. Page exact scope; controller reachability is separate evidence.",
+      "reference": "https://developer.cisco.com/docs/catalyst-center/get-device-list/"
+    },
+    {
+      "id": "cml",
+      "label": "Cisco Modeling Labs",
+      "component": "cml",
+      "upstreamNative": null,
+      "route": "mcp-or-reviewed-export",
+      "mapping": {
+        "id": "id",
+        "name": "label",
+        "os": "node_definition"
+      },
+      "help": "Probe get_nodes_for_cml_lab vs older get_nodes; management endpoint enrichment required. Never import console/credential-bearing pyATS exports blindly.",
+      "reference": "https://github.com/xorrkaz/cml-mcp/blob/main/src/cml_mcp/tools/nodes.py"
+    },
+    {
+      "id": "containerlab",
+      "label": "containerlab",
+      "component": "clab",
+      "upstreamNative": null,
+      "route": "mcp-or-reviewed-export",
+      "mapping": {
+        "id": "container_id",
+        "name": "name",
+        "host": "ipv4_address",
+        "os": "kind"
+      },
+      "help": "listLabs / inspectLab brief; select exact lab and inspect actual API wrapper. Never import Docker environment. Map kind explicitly.",
+      "reference": "https://containerlab.dev/cmd/inspect/"
+    },
+    {
+      "id": "eve_ng",
+      "label": "EVE-NG",
+      "component": "eve-ng",
+      "upstreamNative": null,
+      "route": "mcp-or-reviewed-export",
+      "mapping": {
+        "id": "id",
+        "name": "name",
+        "os": "template"
+      },
+      "help": "eve_list_nodes lab_path/page/page_size; verify has_next=false and total_count. Management endpoint enrichment required; console_port is not SSH.",
+      "reference": "https://www.eve-ng.net/index.php/how-to-eve-ng-api/"
+    },
+    {
+      "id": "gns3",
+      "label": "GNS3",
+      "component": "gns3",
+      "upstreamNative": null,
+      "route": "mcp-or-reviewed-export",
+      "mapping": {
+        "id": "node_id",
+        "name": "name"
+      },
+      "help": "gns3_list_nodes project_id; management endpoint and OS enrichment required. node_type=qemu and console endpoints are not management facts.",
+      "reference": "https://api.gns3.net/en/latest/api/v2/controller/node/projectsprojectidnodesnodeid.html"
+    },
+    {
+      "id": "servicenow",
+      "label": "ServiceNow CMDB",
+      "component": "servicenow",
+      "upstreamNative": null,
+      "route": "mcp-or-reviewed-export",
+      "mapping": {
+        "id": "sys_id",
+        "name": "name",
+        "host": "ip_address",
+        "os": "os"
+      },
+      "help": "No verified CMDB reader in bundled MCP. Import authorized scoped Table API result[] or capability-probe a suitable read tool. Prove ACL-aware completion.",
+      "reference": "https://www.servicenow.com/docs/r/api-reference/rest-api-explorer/c_RESTAPI.html"
+    },
+    {
+      "id": "infrahub",
+      "label": "OpsMill Infrahub",
+      "component": "infrahub",
+      "upstreamNative": null,
+      "route": "mcp-or-reviewed-export",
+      "mapping": {
+        "id": "id",
+        "name": "name",
+        "host": "management_ip",
+        "os": "os"
+      },
+      "help": "get_schema then read-only query_graphql with explicit JSON projection. Schema-specific; TOON/has_more=null is not complete JSON inventory.",
+      "reference": "https://docs.infrahub.app/mcp/references/methods"
+    },
+    {
+      "id": "ipfabric",
+      "label": "IP Fabric",
+      "component": "ipfabric",
+      "upstreamNative": null,
+      "route": "mcp-or-reviewed-export",
+      "mapping": {
+        "id": "id",
+        "name": "hostname",
+        "host": "loginIpv4",
+        "os": "family"
+      },
+      "help": "Discover ipf_api_endpoint_search/details then api_invoke inventory table. Resolve concrete snapshot. SDK8 loginIpv4/loginIpv6 replaces loginIp.",
+      "reference": "https://docs.ipfabric.io/8.0/IP_Fabric_Settings/integration/mcp/"
+    },
+    {
+      "id": "forward",
+      "label": "Forward Networks",
+      "component": "forward-official-mcp",
+      "upstreamNative": null,
+      "route": "mcp-or-reviewed-export",
+      "mapping": {
+        "id": "id",
+        "name": "name",
+        "host": "management_ip",
+        "os": "os"
+      },
+      "help": "Explicit network, concrete processed snapshot and device names; get_device or approved structured export. Discover schema; NQE prose is not complete inventory.",
+      "reference": "docs/FORWARD.md"
+    },
+    {
+      "id": "structured",
+      "label": "Structured inventory",
+      "component": null,
+      "upstreamNative": null,
+      "route": "mcp-or-reviewed-export",
+      "mapping": {
+        "id": "id",
+        "name": "name",
+        "host": "management_ip",
+        "os": "os",
+        "port": "management_port"
+      },
+      "help": "Explicit reviewed JSON records, or convert CSV/YAML/XML with a trusted local parser. No arbitrary raw configuration or credentials.",
+      "reference": "docs/DYNAMIC-TESTBEDS.md"
+    },
+    {
+      "id": "rest",
+      "label": "Permitted REST export",
+      "component": null,
+      "upstreamNative": null,
+      "route": "mcp-or-reviewed-export",
+      "mapping": {
+        "id": "id",
+        "name": "name",
+        "host": "management_ip",
+        "os": "os",
+        "port": "management_port"
+      },
+      "help": "Use an explicitly authorized existing MCP reader/export with exact origin, TLS and pagination bounds. pyATS does not fetch arbitrary URLs.",
+      "reference": "docs/DYNAMIC-TESTBEDS.md"
+    }
+  ]
+}

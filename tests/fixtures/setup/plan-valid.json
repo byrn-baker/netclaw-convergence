@@ -1,0 +1,93 @@
+{
+  "schema": 1,
+  "source": {
+    "channel": "main",
+    "ref": "main",
+    "commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "treeHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "path": "/private/tmp/netclaw-fixture/source",
+    "dirty": false
+  },
+  "host": {
+    "platform": "macos",
+    "architecture": "arm64",
+    "osVersion": "26.0",
+    "remote": "local",
+    "distribution": "",
+    "fingerprint": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+  },
+  "shape": "focused",
+  "claws": [
+    {
+      "id": "fixture-claw",
+      "displayName": "Example separate claw",
+      "role": "focused",
+      "runtimeHome": "/private/tmp/netclaw-fixture/claw",
+      "workspace": "/private/tmp/netclaw-fixture/claw/workspace",
+      "harness": "openclaw",
+      "harnessChoice": "explicit",
+      "runtimeVersion": "2026.7.1-2",
+      "provider": {
+        "kind": "cloud",
+        "id": "anthropic",
+        "model": "fixture-model",
+        "apiMode": "anthropic",
+        "endpoint": "",
+        "credentialKeys": [
+          "ANTHROPIC_API_KEY"
+        ]
+      },
+      "channels": [],
+      "capabilities": {
+        "profile": "minimal",
+        "components": [
+          "subnet-calc"
+        ],
+        "skills": [
+          "subnet-calculator"
+        ],
+        "trustDomain": "lab"
+      },
+      "settings": {
+        "ANTHROPIC_API_KEY": {
+          "kind": "secret",
+          "key": "ANTHROPIC_API_KEY",
+          "owner": "fixture-claw",
+          "source": "prompt"
+        }
+      },
+      "endpoints": {
+        "gatewayPort": 18791,
+        "hudPort": 3001,
+        "hudUiPort": 3000,
+        "companionPort": 8643,
+        "bgpApiPort": 8179,
+        "bgpPort": 1179,
+        "federationPort": 5001
+      },
+      "service": {
+        "mode": "hot",
+        "name": "netclaw-fixture"
+      }
+    }
+  ],
+  "inventory": [],
+  "identity": [],
+  "posture": {
+    "mode": "testing",
+    "requiredControls": []
+  },
+  "verification": {
+    "tiers": [
+      1,
+      2,
+      3
+    ],
+    "risk": false,
+    "costConsent": false,
+    "networkReadOnly": true,
+    "channelTests": []
+  },
+  "assumptions": [],
+  "unresolved": []
+}

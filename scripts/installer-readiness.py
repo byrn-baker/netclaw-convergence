@@ -84,6 +84,12 @@ def native_probe(server, expected, env, config, timeout):
 
 def missing_credentials(rule, env):
     missing = [key for key in rule.get('required_env', []) if not env.get(key)]
+    if 'pyats-mcp' in rule.get('servers',[]) and env.get('NETCLAW_TESTBED_MODE')=='dynamic':
+        missing=[key for key in missing if key!='PYATS_TESTBED_PATH']
+        sys.path.insert(0,str(ROOT/'scripts/lib'))
+        from pyats_testbeds import environment_policy,TestbedError
+        try:environment_policy(env)
+        except TestbedError:missing.append('NETCLAW_TESTBED_SOURCES')
     if 'SERVICENOW_INSTANCE_URL' in rule.get('required_env', []):
         auth = env.get('SERVICENOW_AUTH_TYPE') or 'basic'
         required = {'basic':['SERVICENOW_USERNAME','SERVICENOW_PASSWORD'],
@@ -211,6 +217,14 @@ def report(selected, failed, templates, live, env, config_path, runtime, do_prob
         rule = launcher.CONTRACT.get(component, {})
         expected = rule.get('servers') or [name for name in templates if registration.component_for(name) == component]
         row = {'component':component, 'installation':'failed' if component in failed else 'recorded', 'servers':[]}
+        if component=='pyats':
+            sys.path.insert(0,str(ROOT/'scripts/lib'))
+            from pyats_testbeds import environment_policy,TestbedError
+            try:
+                choice=environment_policy(env)
+                row['testbed']={**choice,'sourceAccess':'unverified','candidate':'not_built',
+                                'activation':'not_observed','execution':'not_checked'}
+            except TestbedError:row['testbed']={'mode':'invalid','sourceAccess':'configuration_required'}
         if component in failed:
             row['status'] = 'failed'
         elif rule.get('access') == 'hud-private':

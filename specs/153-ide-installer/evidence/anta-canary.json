@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "date": "2026-10-17",
+  "scope": "Actual local ANTA MCP tool call in a disposable owned home; no device, provider, service, or existing installation access. Dependency acquisition was isolated. Not full installer or clean-host acceptance.",
+  "versions": {
+    "python": "3.12.12",
+    "anta": "1.10.0",
+    "fastmcp": "4.0.11",
+    "mcp": "2.3.0",
+    "cryptography": "50.0.2"
+  },
+  "tool": "anta_list_tests",
+  "arguments": {
+    "category": "",
+    "keyword": "",
+    "limit": 1
+  },
+  "result": {
+    "state": "verified",
+    "code": "canary_verified"
+  },
+  "stderrBytes": 0
+}

@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { createHash, randomUUID } from "node:crypto";
+import { COMPONENT_ALIASES, COMPONENT_SETTINGS } from "./env-map.js";
 import {
   regularTarget,
   updateEnvironment,
@@ -10,23 +11,7 @@ const fail = (message, status = 400) => {
   throw Object.assign(new Error(message), { status, controlled: true });
 };
 const hash = (s) => createHash("sha256").update(s).digest("hex");
-export const componentAliases = {
-  rag: ["rag-mcp"],
-  catc: ["catalyst-center"],
-  arista: ["arista-cvp"],
-  paloalto: ["panorama"],
-  nvd: ["nvd-cve"],
-  clab: ["containerlab"],
-  drawio: ["drawio-rfc"],
-  "azure-network": ["azure"],
-  wiki: ["wikipedia", "arxiv", "context7"],
-  thousandeyes: ["te-official", "te-community"],
-  asa: ["pyats"],
-  evpn: ["pyats"],
-  security: [],
-  jev: ["jev"],
-  protocol: ["protocol", "n2n"],
-};
+export const componentAliases = COMPONENT_ALIASES;
 const required = {
   pyats: ["PYATS_TESTBED_PATH"],
   netbox: ["NETBOX_URL", "NETBOX_TOKEN"],
@@ -111,13 +96,21 @@ function field(key, id, mapping, values) {
     kind = "number";
   if (bools.has(key)) kind = "boolean";
   if (Object.hasOwn(enums, key)) kind = "enum";
-  const requirement = (required[id] || []).includes(key)
+  let requirement = (required[id] || []).includes(key)
     ? "required"
     : optional.has(key)
       ? "optional"
       : id === "servicenow" && /USERNAME|PASSWORD/.test(key)
         ? "conditional"
         : "unknown";
+  const canonical = (componentAliases[id] || [id])
+    .flatMap(component => COMPONENT_SETTINGS[component] || [])
+    .find(setting => setting.key === key);
+  if (canonical) {
+    kind = canonical.classification === "secret" ? "secret" : ({integer: "number", boolean: "boolean", url: "url", path: "path"}[canonical.valueType] || "text");
+    requirement = canonical.required === "always" ? "required" : canonical.required;
+  }
+  if(id==='pyats'&&key==='PYATS_TESTBED_PATH')requirement=values.NETCLAW_TESTBED_MODE==='dynamic'?'optional':'required';
   return {
     key,
     label: key
@@ -132,7 +125,7 @@ function field(key, id, mapping, values) {
     sharedWith: Object.entries(mapping)
       .filter(([other, m]) => other !== id && m.env.includes(key))
       .map(([other]) => other),
-    help:
+    help: canonical?.help || (
       kind === "secret"
         ? "Confidential value. Existing contents are never sent to this view."
         : kind === "path"
@@ -141,7 +134,7 @@ function field(key, id, mapping, values) {
             ? "HTTP or HTTPS endpoint for this integration. Saving does not test connectivity."
             : requirement === "unknown"
               ? "Requirement depends on the integration’s selected mode. Review its setup guidance."
-              : "Review this value for the selected integration.",
+              : "Review this value for the selected integration."),
     example:
       kind === "url"
         ? "https://controller.example"

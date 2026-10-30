@@ -1,0 +1,640 @@
+{
+  "schema": 1,
+  "results": [
+    {
+      "url": "https://claroty.com/industrial-cybersecurity/xdome",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://clawhub.ai/",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://dev.epicgames.com/documentation/en-us/unreal-engine",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://developer.cisco.com/meraki/api-v1/mcp-server/",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://developer.hashicorp.com/terraform/mcp-server",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://developer.hashicorp.com/vault",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://developer.webex.com/messaging/docs/bots",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://developers.cloudflare.com/agents/model-context-protocol/",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://docs.cloud.google.com/compute/docs/reference/mcp",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://docs.datadoghq.com/bits_ai/mcp_server/",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://docs.ipfabric.io/",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://docs.ollama.com/api/tags",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://docs.openclaw.ai/channels",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://docs.openclaw.ai/channels/discord",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://docs.openclaw.ai/channels/slack",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://docs.openclaw.ai/channels/telegram",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://docs.openclaw.ai/cli/onboard",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://docs.openclaw.ai/providers/anthropic",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://docs.openclaw.ai/providers/openai",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://docs.openclaw.ai/providers/openrouter",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/AutomateIP/fwrule-mcp",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/CheckPointSW/mcp-servers",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/ChromeDevTools/chrome-devtools-mcp",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/CiscoDevNet/CiscoFMC-MCP-server-community",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/CiscoDevNet/ThousandEyes-MCP-Server-official",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/CiscoDevNet/devnet-content-search-mcp",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/CiscoDevNet/radkit-mcp-server-community",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/CiscoDevNet/thousandeyes-mcp-community",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/Juniper/junos-mcp-server",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/Lantronix/percepxion-mcp-server",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/Lantronix/slc-mcp-server",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/NSO-developer/cisco-nso-mcp-server",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/NVIDIA/OpenShell",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/NousResearch/hermes-agent",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/Vadims06/topolograph-mcp-server",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/ahujasid/blender-mcp",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/antoinebou12/uml-mcp",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/automateyournetwork/ACI_MCP",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/automateyournetwork/GeminiCLI_SubnetCalculator_Extension",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/automateyournetwork/ISE_MCP",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/automateyournetwork/Wikipedia_MCP",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/automateyournetwork/WontYouBeMyNeighbour",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/automateyournetwork/gait_mcp",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/automateyournetwork/markmap_mcp",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/automateyournetwork/netclaw/blob/main/docs/N2N-RISK.md",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/automateyournetwork/netclaw/tree/main/mcp-servers/analysis-mcp",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/automateyournetwork/netclaw/tree/main/mcp-servers/anta-mcp",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/automateyournetwork/netclaw/tree/main/mcp-servers/auvik-mcp",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/automateyournetwork/netclaw/tree/main/mcp-servers/azure-network-mcp",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/automateyournetwork/netclaw/tree/main/mcp-servers/bgp-intel-mcp",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/automateyournetwork/netclaw/tree/main/mcp-servers/cisco-psirt-mcp",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/automateyournetwork/netclaw/tree/main/mcp-servers/document-mcp",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/automateyournetwork/netclaw/tree/main/mcp-servers/fortinet-mcp",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/automateyournetwork/netclaw/tree/main/mcp-servers/gnmi-mcp",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/automateyournetwork/netclaw/tree/main/mcp-servers/gns3-mcp-server",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/automateyournetwork/netclaw/tree/main/mcp-servers/halo-mcp",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/automateyournetwork/netclaw/tree/main/mcp-servers/hermes-hud-mcp",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/automateyournetwork/netclaw/tree/main/mcp-servers/jev-mcp",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/automateyournetwork/netclaw/tree/main/mcp-servers/memory-mcp",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/automateyournetwork/netclaw/tree/main/mcp-servers/multivendor-cli-mcp",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/automateyournetwork/netclaw/tree/main/mcp-servers/nautobot-golden-config-mcp",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/automateyournetwork/netclaw/tree/main/mcp-servers/nautobot-mcp-v2",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/automateyournetwork/netclaw/tree/main/mcp-servers/nautobot-routing-mcp",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/automateyournetwork/netclaw/tree/main/mcp-servers/nsm-mcp",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/automateyournetwork/netclaw/tree/main/mcp-servers/ollama-mcp",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/automateyournetwork/netclaw/tree/main/mcp-servers/packet-buddy-mcp",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/automateyournetwork/netclaw/tree/main/mcp-servers/rag-mcp",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/automateyournetwork/netclaw/tree/main/mcp-servers/redfish-mcp",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/automateyournetwork/netclaw/tree/main/mcp-servers/snmptrap-mcp",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/automateyournetwork/netclaw/tree/main/mcp-servers/suzieq-mcp",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/automateyournetwork/netclaw/tree/main/mcp-servers/tavus-pal-mcp",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/automateyournetwork/netclaw/tree/main/mcp-servers/tts-mcp",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/automateyournetwork/netclaw/tree/main/mcp-servers/twitter-mcp",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/automateyournetwork/netclaw/tree/main/mcp-servers/worldlabs-marble-mcp",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/automateyournetwork/netclaw/tree/main/mcp-servers/zoom-rtms-mcp",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/automateyournetwork/pyATS_MCP",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/awslabs/mcp",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/cisco-en-programmability/catc-mcp-oss",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/containers/kubernetes-mcp-server",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/czirakim/F5.MCP.server",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/echelon-ai-labs/servicenow-mcp",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/elastic/mcp-server-elasticsearch",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/forwardnetworks/forward-mcp",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/github/github-mcp-server",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/grafana/mcp-grafana",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/gregkop/sketchfab-mcp-server",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/gregkop/sketchfab-mcp-server.git",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/hervehildenbrand/gtrace",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/iamdheerajdubey/prisma-sdwan-mcp",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/infobloxopen/infoblox-mcp",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/itential/itential-mcp",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/jgraph/drawio-mcp",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/kubeshark/kubeshark",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/marcoeg/mcp-nvd",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/milla-jovovich/mempalace",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/mpeirone/zabbix-mcp-server",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/netboxlabs/netbox-mcp-server",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/noredistribution/mcp-cvp-fun",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/opsmill/infrahub-mcp",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/opsmill/infrahub-mcp.git",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/pab1it0/prometheus-mcp-server",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/prime001/humanrail-mcp-server",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/richbibby/catalyst-center-mcp",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/sbmilburn/nmap-mcp",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/seanerama/clab-mcp-server",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/shawnrushefsky/comfyui-mcp",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/sibilleb/AAP-Enterprise-MCP-Server",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/siddhartha2303/cisco-sdwan-mcp",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/slientnight/aruba-cx-mcp-server",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/sooperset/mcp-atlassian",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/twilio-labs/mcp",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/xorrkaz/cml-mcp",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/zereight/gitlab-mcp",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://github.com/zscaler/zscaler-mcp-server",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://hermes-agent.nousresearch.com/docs/integrations/providers",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://hermes-agent.nousresearch.com/docs/reference/cli-commands",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://letsencrypt.org/docs/",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://lmstudio.ai/docs/cli/local-models/ls",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://mcp.equinix.com/fabric",
+      "state": "needs_review",
+      "code": 401
+    },
+    {
+      "url": "https://plugins.jenkins.io/mcp-server/",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://pypi.org/project/iflow-mcp-cdot65-palo-alto-mcp/",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://pypi.org/project/pagerduty-mcp/",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://pypi.org/project/splunk-mcp/",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://www.batfish.org/",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://www.globalping.io",
+      "state": "verified",
+      "code": 200
+    },
+    {
+      "url": "https://www.npmjs.com/package/@anthropic-ai/microsoft-graph-mcp",
+      "state": "needs_review",
+      "code": 403
+    }
+  ],
+  "checkedAt": "2026-10-17T18:10:36Z",
+  "reviewNotes": {
+    "https://mcp.equinix.com/fabric": "401 is expected for this authenticated MCP endpoint; it is not a public documentation page. The component also links docs/EQUINIX.md.",
+    "https://www.npmjs.com/package/@anthropic-ai/microsoft-graph-mcp": "npm denies unauthenticated automated HEAD (403); package/source availability needs native/package-manager confirmation before install, never marked verified."
+  }
+}

@@ -2,6 +2,37 @@
 
 NetClaw source releases use `1.x.y`. Feature specs increment the minor version and reset the patch; fixes, documentation and maintenance increment the patch. Every release records its numbered specs. Component and mobile distribution versions are independent.
 
+## [1.14.0] - 2026-10-30
+
+- Add static/dynamic testbed choice and source selection to VS Code, new-plan terminal setup and `setup.sh`.
+- Pin upstream pyATS MCP dynamic tooling and compose reviewed inventories through a managed build/validate/activate lifecycle.
+- Add source contracts, examples and fixture coverage for 12 named platforms plus structured/REST exports; preserve static inventory and existing change controls.
+
+Spec [160-dynamic-pyats-testbeds](specs/160-dynamic-pyats-testbeds/spec.md). See [release notes](docs/releases/1.14.0.md).
+
+## [1.13.1] - 2026-10-29
+
+Minor fixes, addressed oldest to newest:
+
+- #262 / [Spec156](specs/156-openclaw-env-defaults/spec.md): resolve optional MCP defaults during installation for qualified native runtimes; preserve operator overrides and required inputs.
+- #300 / [Spec157](specs/157-hermes-canvas-retry/spec.md): retain Canvas ancestor context across Hermes conversation-setup retries.
+- #301 / [Spec158](specs/158-hermes-chat-recovery/spec.md): recover the original submitted question while preserving edited or cleared drafts and preventing duplicate transcript entries.
+- #302 / [Spec159](specs/159-hermes-uncertain-capacity/spec.md): explicitly release a reviewed unknown admission reservation without erasing uncertainty or replaying work.
+
+See [release notes](docs/releases/1.13.1.md) for upgrade guidance and verification limits.
+
+## [1.13.0] - 2026-10-25
+
+Spec [155-border-channel-setup](specs/155-border-channel-setup/spec.md). See [release notes](docs/releases/1.13.0.md).
+
+## [1.12.0] - 2026-10-24
+
+- Install separate Focused NetClaws and mixed OpenClaw/Hermes Risks from VS Code, CLI or assistant-guided plans, with exact native review and independent homes/credentials.
+- Add a canonical setup catalog, durable pause/resume, verified connection handoff, private reports and ownership-safe cleanup.
+- Include Windows/WSL return fixes and three additional actual Mac installer passes; retain explicit incomplete platform qualification.
+
+Spec [153-ide-installer](specs/153-ide-installer/spec.md). See [release notes](docs/releases/1.12.0.md).
+
 ## [1.11.0] - 2026-10-16
 
 - Add VS Code native workspace Markdown read/edit/upload without delete, verified owned-claw lifecycle and offline recovery, and Save & Restart.

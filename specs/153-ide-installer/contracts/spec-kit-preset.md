@@ -1,0 +1,9 @@
+# Deployment preset contract
+
+Source: `installer/spec-kit/netclaw-claw/`. Stable compatibility target Specify 0.7.1, commit `c12293c3dac84bf20fccb7dfc455a76792d7a6d6`; current NetClaw development integration 0.7.1.dev0 is not changed. Manifest follows v0.7.1 `preset.yml`, schema_version 1.0, named/versioned/license metadata, requires.speckit_version and explicit provides.templates file/type/name/replaces entries.
+
+Native command creates a fresh, reviewed deployment workspace outside the checkout and real installations, initializes the selected assistant using a pinned isolated Specify environment, adds the verified preset, resolves every effective template, and checks emitted content/hash. It never uses unattended workflow dispatch. Existing workspace overrides/collisions are disclosed and cannot be labelled active NetClaw workflow without resolution.
+
+Files: spec, plan, tasks and constitution templates; specify/clarify/plan/tasks/analyze/implement commands; secret-reference example plan; README with pinned invocation and manual recovery. Client emissions: Codex `.agents/skills/speckit-*`, Claude `.claude/skills/speckit-*`, Copilot `.github/agents` + `.github/prompts`. Test each separately and deliberate combined installation.
+
+Output workspace: `deployment-spec.md`, `netclaw-plan.json`, `deployment-tasks.md`, `analysis.md`, redacted `claw-report.json`, `.specify/` and selected assistant metadata. Planning emits canonical plan JSON; analyze compares all required choices and refuses unresolved apply. Implement submits the exact hash to the native review tool and records the eventual typed report; no installer execution. Write-back validates destination ownership and revision and never overwrites arbitrary user files. Detailed exports remain separately reviewed and outside automatic report write-back.

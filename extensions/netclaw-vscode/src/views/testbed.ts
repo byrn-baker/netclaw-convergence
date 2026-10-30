@@ -14,9 +14,10 @@ export function openTestbed(
     context,
     connection,
     "testbed",
-    "Testbed inventory",
+    "Static testbed inventory",
     `
  <div class="toolbar"><button id="add">Add device</button><button id="import" class="secondary">Import file</button><button id="export" class="secondary">Export</button><button id="recover" class="secondary">Recovery copies</button><button id="refresh" class="secondary">Reload</button></div>
+ <p class="hint">This edits the HUD static inventory. Dynamic MCP testbeds are reviewed and activated in their MCP session; activation does not change collector or Terminal Intent access.</p>
  <p id="status" role="status" aria-live="polite">Loading testbed…</p><p id="target" class="provenance"></p><p id="note" class="hint"></p>
  <div class="toolbar" role="group" aria-label="Editing mode"><button id="cards-mode" class="secondary">Device cards</button><button id="yaml-mode" class="secondary">Advanced YAML</button></div>
  <section id="cards-pane"><label for="filter">Find a device</label><input id="filter" type="search" placeholder="Search by name, platform or address"><p id="count" class="hint"></p><div id="devices" class="card-grid"></div><div class="toolbar"><button id="previous" class="secondary">Previous</button><button id="next" class="secondary">Next</button></div></section>
@@ -299,7 +300,7 @@ export function openTestbed(
             : path.resolve(snapshot.source);
           if (resolvedDestination === sourcePath)
             throw Error(
-              "Export to a separate file. Use the reviewed testbed save to update the active inventory.",
+              "Export to a separate file. Use the reviewed testbed save to update the HUD static inventory. Dynamic MCP inventory is separate.",
             );
           p.bound.current();
           if (

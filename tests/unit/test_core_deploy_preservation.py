@@ -3,6 +3,7 @@ import importlib.util
 import os
 from pathlib import Path
 import subprocess
+import shutil
 
 ROOT = Path(__file__).resolve().parents[2]
 spec = importlib.util.spec_from_file_location('deploy_env_writer', ROOT / 'scripts/write-env.py')
@@ -17,6 +18,9 @@ def deploy(tmp_path):
     (repo / 'workspace/skills/example/SKILL.md').write_text('new skill\n')
     (repo / 'testbed').mkdir(exist_ok=True)
     (repo / 'testbed/testbed.yaml').write_text('devices: {}\n')
+    for name in ('scripts/configure-testbed.py','scripts/write-env.py','scripts/lib/pyats_testbeds.py',
+                 'scripts/lib/setup_state.py','scripts/lib/setup_schema.py','config/pyats-testbed-sources.json'):
+        target=repo/name;target.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(ROOT/name,target)
     for name in ('SOUL.md', 'USER.md', 'TOOLS.md'):
         (repo / name).write_text('repository default\n')
     runtime = tmp_path / '.openclaw'
@@ -84,3 +88,16 @@ def test_upgrade_retains_skill_original_and_ignores_custom_only_file(tmp_path):
     assert (generations[0] / 'originals/example/SKILL.md').read_text() == 'operator skill\n'
     deploy(tmp_path)
     assert len(list((runtime / 'skill-deployment-backups').glob('deploy-*'))) == 1
+
+
+def test_dynamic_deploy_preserves_policy_and_never_creates_static_placeholder(tmp_path):
+    runtime=tmp_path/'.openclaw';runtime.mkdir(mode=0o700)
+    env=runtime/'.env'
+    env.write_text('NETCLAW_TESTBED_MODE=dynamic\nNETCLAW_TESTBED_SOURCES=cml,netbox\nNETCLAW_PASSWORD=fixture-private\n')
+    env.chmod(0o600)
+    deploy(tmp_path)
+    assert not (runtime/'workspace/testbed').exists()
+    data=env.read_text()
+    assert 'PYATS_TESTBED_PATH=' not in data
+    assert 'NETCLAW_TESTBED_MODE=dynamic' in data
+    assert 'NETCLAW_PASSWORD=fixture-private' in data

@@ -1,0 +1,43 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+import {spawnSync} from 'node:child_process';
+import {load} from './load.mjs';
+const {createHandoff,acceptHandoff,handoffCommand,remoteFolder,pendingHandoffs,claimHandoff,handoffProgram}=await load('src/setup/handoff.ts');
+const {detectInstallations}=await load('src/setup/installations.ts');
+test('handoff preserves complete non-secret answers and refuses expiry/replay/secret literals',()=>{
+  const answers={shape:'risk',claws:[{harness:'hermes',provider:{id:'anthropic',model:'selected'},settings:{ANTHROPIC_API_KEY:{kind:'secret',source:'prompt',key:'ANTHROPIC_API_KEY',owner:'one'}}}],unresolved:['inventory']};
+  const record=createHandoff('Ubuntu-26.04',answers,1000),used=new Set();
+  assert.deepEqual(JSON.parse(JSON.stringify(acceptHandoff(JSON.stringify(record),'Ubuntu-26.04',used,1001).answers)),answers);
+  assert.throws(()=>acceptHandoff(JSON.stringify(record),'Ubuntu-26.04',used,1001));
+  assert.throws(()=>acceptHandoff(JSON.stringify(record),'Ubuntu-26.04',new Set(),10000000));
+  assert.throws(()=>createHandoff('Ubuntu',{password:'secret-canary'}));
+  assert.throws(()=>createHandoff('Ubuntu',{model:'sk-ant-secret-canary'}));
+  assert.equal(handoffCommand(record)[0],'--distribution');
+  assert.equal(remoteFolder('Ubuntu-26.04','/home/example/new-claw').scheme,'vscode-remote');
+});
+test('bounded installation detection reads identity metadata and preserves both homes',t=>{
+  const root=fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(),'nc153-detect-')));t.after(()=>fs.rmSync(root,{recursive:true,force:true}));
+  const homes=['first','second'].map((n,i)=>{const home=path.join(root,n);fs.mkdirSync(path.join(home,'netclaw-hud'),{recursive:true});
+    fs.writeFileSync(path.join(home,'netclaw-hud/installation.json'),JSON.stringify({schemaVersion:1,installationId:(i?'b':'a').repeat(36)}));
+    fs.writeFileSync(path.join(home,'.env'),'CANARY=must-not-read');return {home,harness:i?'hermes':'openclaw'};});
+  const before=homes.map(h=>fs.readFileSync(path.join(h.home,'.env'),'utf8'));
+  const found=detectInstallations(homes,[],root);assert.equal(found.length,2);assert.ok(found.every(x=>x.netclaw&&x.reason.includes('separate installation')));
+  assert.equal(JSON.stringify(found).includes('CANARY'),false);assert.deepEqual(homes.map(h=>fs.readFileSync(path.join(h.home,'.env'),'utf8')),before);
+});
+test('private handoff writer and remote consumer preserve answers and persist replay refusal',t=>{
+  const home=fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(),'nc153-handoff-')));t.after(()=>fs.rmSync(home,{recursive:true,force:true}));
+  const answers={schema:1,shape:'risk',assumptions:['three members'],unresolved:['providers'],claws:[{id:'border',displayName:'Network 🦞',harness:'hermes',provider:{id:'openai',model:'selected'}}]};
+  const record=createHandoff('Ubuntu-26.04',answers);
+  const result=spawnSync('python3',['-c',handoffProgram,record.nonce],{env:{...process.env,HOME:home},input:JSON.stringify(record),encoding:'utf8'});
+  assert.equal(result.status,0,result.stderr);
+  const directory=path.join(home,'.local/state/netclaw/setup/handoffs');
+  const [pending]=pendingHandoffs(directory,'Ubuntu-26.04');assert.equal(pending.digest,record.digest);
+  assert.deepEqual(JSON.parse(JSON.stringify(claimHandoff(directory,pending))),answers);
+  assert.equal(pendingHandoffs(directory,'Ubuntu-26.04').length,0);
+  assert.throws(()=>claimHandoff(directory,pending));
+  assert.equal(fs.statSync(path.join(directory,record.nonce+'.json')).mode&0o077,0);
+  assert.equal(fs.statSync(path.join(directory,'.used-'+record.nonce)).mode&0o077,0);
+});

@@ -39,8 +39,9 @@ async def serve(home,source,installation,port,namespace='hud'):
     os.replace(temporary,launch_file)
     # Isolated generated profile prevents upstream plugin startup/migration,
     # dynamic memory and default DB paths from touching the ordinary profile.
-    model=config.get('model') or {}
-    if isinstance(model,dict):model={k:v for k,v in model.items() if k in ('default','model','provider','base_url','context_length')}
+    from model_config import protected_model
+    model_projection=protected_model(config)
+    model=model_projection['model']
     derived={'model':model,'mcp_servers':servers,'toolsets':[],
              'platform_toolsets':{'api_server':[]},'tool_search':{'enabled':'off'},
              'memory':{'memory_enabled':False,'user_profile_enabled':False},
@@ -53,6 +54,7 @@ async def serve(home,source,installation,port,namespace='hud'):
              'plugins':{'enabled':[]},
              'agent':{'max_iterations':30},'display':{'interim_assistant_messages':False},
              'approvals':{'mode':'manual','unattended_mode':'deny'}}
+    derived.update(model_projection)
     target=shadow/'config.yaml'
     import io
     buffer=io.StringIO();yaml.dump(derived,buffer)
@@ -89,6 +91,10 @@ async def serve(home,source,installation,port,namespace='hud'):
         policy.runtime_source=source
         policy.owner_home=original
         policy.skill_context=qualified_skills(original)
+        from setup_identity import load_identity
+        policy.identity_context,policy.identity_hashes=load_identity(original)
+        from ledger import digest
+        policy.fingerprint=digest({'policy':policy.fingerprint,'identity':policy.identity_hashes})
         from protected_agent import protected_class
         run_agent.AIAgent=protected_class(run_agent.AIAgent,policy,ledger,REQUEST)
         key=os.environ.get('NETCLAW_HERMES_'+namespace.upper()+'_API_KEY','')

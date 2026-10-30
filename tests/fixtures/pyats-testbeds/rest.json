@@ -1,0 +1,28 @@
+{
+  "schema": 1,
+  "name": "candidate-rest",
+  "sources": [
+    {
+      "kind": "rest",
+      "owner": "fixture-controller",
+      "scope": {
+        "site": "fixture-site"
+      },
+      "capturedAt": "2026-10-30T12:00:00Z",
+      "complete": true,
+      "total": 1,
+      "records": [
+        {
+          "id": "node-14",
+          "name": "fixture-rest",
+          "management_ip": "192.0.2.14/24",
+          "os": "iosxe",
+          "management_port": 22
+        }
+      ],
+      "defaults": {
+        "port": 22
+      }
+    }
+  ]
+}

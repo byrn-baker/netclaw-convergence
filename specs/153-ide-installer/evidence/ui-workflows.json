@@ -1,0 +1,99 @@
+{
+  "editor": "1.109.0",
+  "scope": "synthetic keyboard interaction in actual VS Code, native cancellation and real retained report; no new installation",
+  "matrix": [
+    {
+      "theme": "Default Light Modern",
+      "width": 360,
+      "scroll": 360,
+      "client": 360,
+      "keyboardDialogs": 6,
+      "keyboardSearch": true
+    },
+    {
+      "theme": "Default Light Modern",
+      "width": 700,
+      "scroll": 700,
+      "client": 700,
+      "keyboardDialogs": 6,
+      "keyboardSearch": true
+    },
+    {
+      "theme": "Default Light Modern",
+      "width": 1200,
+      "scroll": 1200,
+      "client": 1200,
+      "keyboardDialogs": 6,
+      "keyboardSearch": true
+    },
+    {
+      "theme": "Default Dark Modern",
+      "width": 360,
+      "scroll": 360,
+      "client": 360,
+      "keyboardDialogs": 6,
+      "keyboardSearch": true
+    },
+    {
+      "theme": "Default Dark Modern",
+      "width": 700,
+      "scroll": 700,
+      "client": 700,
+      "keyboardDialogs": 6,
+      "keyboardSearch": true
+    },
+    {
+      "theme": "Default Dark Modern",
+      "width": 1200,
+      "scroll": 1200,
+      "client": 1200,
+      "keyboardDialogs": 6,
+      "keyboardSearch": true
+    },
+    {
+      "theme": "Default High Contrast",
+      "width": 360,
+      "scroll": 360,
+      "client": 360,
+      "keyboardDialogs": 6,
+      "keyboardSearch": true
+    },
+    {
+      "theme": "Default High Contrast",
+      "width": 700,
+      "scroll": 700,
+      "client": 700,
+      "keyboardDialogs": 6,
+      "keyboardSearch": true
+    },
+    {
+      "theme": "Default High Contrast",
+      "width": 1200,
+      "scroll": 1200,
+      "client": 1200,
+      "keyboardDialogs": 6,
+      "keyboardSearch": true
+    }
+  ],
+  "zoom": {
+    "scroll": 576,
+    "client": 576
+  },
+  "renderMs": [
+    2.3000000044703484,
+    2.7000000029802322,
+    2.7000000029802322,
+    2.600000001490116,
+    2.6999999955296516,
+    2.6999999955296516,
+    2.600000001490116,
+    2.8000000044703484,
+    2.7000000029802322
+  ],
+  "shapeOverride": true,
+  "advisorNumeric": true,
+  "reportVerified": true,
+  "providerCalls": 0,
+  "deviceCalls": 0,
+  "channelMessages": 0
+}

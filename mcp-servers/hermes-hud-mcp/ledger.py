@@ -64,6 +64,9 @@ class Ledger:
                 created REAL NOT NULL, PRIMARY KEY(request,conversation));
               CREATE TABLE IF NOT EXISTS execution_scopes (request TEXT PRIMARY KEY,
                 scope TEXT NOT NULL, FOREIGN KEY(request) REFERENCES requests(id) ON DELETE CASCADE);
+              CREATE TABLE IF NOT EXISTS capacity_releases (request TEXT PRIMARY KEY,
+                conversation TEXT NOT NULL, created REAL NOT NULL,
+                FOREIGN KEY(request) REFERENCES requests(id) ON DELETE CASCADE);
             ''')
             row = db.execute('SELECT value FROM metadata WHERE key=?', ('installation',)).fetchone()
             if row and row[0] != installation: raise HudError('owner_invalid')
@@ -93,11 +96,21 @@ class Ledger:
     def scope(self, installation):
         if installation != self.installation: raise HudError('owner_invalid')
 
-    def open(self, conversation, seed=None, acknowledgment=None):
+    def open(self, conversation, seed=None, acknowledgment=None, release_capacity=False):
         identifier(conversation); seed = seed or []
+        if type(release_capacity) is not bool or (release_capacity and not acknowledgment):raise HudError('input_invalid')
         if not isinstance(seed, list) or len(json.dumps(seed).encode()) > 1024*1024: raise HudError('input_invalid')
         if any(not isinstance(m, dict) or set(m) != {'role','content'} or m['role'] not in ('user','assistant') or not isinstance(m['content'], str) for m in seed): raise HudError('input_invalid')
         with self.db() as db:
+            if release_capacity:
+                old=db.execute('SELECT * FROM requests WHERE id=?',(identifier(acknowledgment),)).fetchone()
+                if (not old or old['state']!='unknown' or old['run_id'] is not None
+                    or old['conversation']==conversation
+                    or db.execute('SELECT 1 FROM execution_scopes WHERE request=?',(acknowledgment,)).fetchone()):
+                    raise HudError('input_invalid','Only an owned unknown admission without a native run ID can release its slot.')
+                # This records an operator capacity decision, never nonexecution.
+                # Keep state/nonce/evidence and the original conversation guard.
+                db.execute('INSERT OR IGNORE INTO capacity_releases VALUES (?,?,?)',(acknowledgment,conversation,time.time()))
             row = db.execute('SELECT * FROM conversations WHERE id=?', (conversation,)).fetchone()
             if row:
                 if seed and digest(seed)!=row['seed_digest']:raise HudError('input_invalid','Conversation seed is immutable.')
@@ -137,7 +150,9 @@ class Ledger:
                 if old['fingerprint'] != fingerprint: raise HudError('input_invalid', 'Retry nonce conflicts with original request')
                 return dict(old), False
             if db.execute('SELECT 1 FROM requests WHERE conversation=? AND state IN (?,?,?,?,?,?)', (conversation,*ACTIVE)).fetchone(): raise HudError('conversation_busy')
-            if db.execute('SELECT count(*) FROM requests WHERE state IN (?,?,?,?,?,?)', ACTIVE).fetchone()[0] >= 4: raise HudError('conversation_busy')
+            if db.execute('''SELECT count(*) FROM requests r WHERE state IN (?,?,?,?,?,?)
+                AND NOT (state='unknown' AND run_id IS NULL AND EXISTS
+                  (SELECT 1 FROM capacity_releases c WHERE c.request=r.id))''', ACTIVE).fetchone()[0] >= 4: raise HudError('conversation_busy')
             now=time.time()
             db.execute('INSERT INTO requests VALUES (?,?,?,?,?,?,NULL,NULL,?,?)', (request,conversation,nonce,fingerprint,text,'submitting',now+deadline_ms/1000,now))
             if execution_scope is not None:

@@ -1,0 +1,65 @@
+{
+  "scope": "actual legacy --plan CLI through controlling PTY; synthetic exact-hash review",
+  "reviewed": true,
+  "exit": 0,
+  "seconds": 49.58,
+  "providerCalls": 0,
+  "channelMessages": 0,
+  "deviceCalls": 0,
+  "report": {
+    "schema": 1,
+    "export": "redacted",
+    "generatedAt": 1792354047,
+    "installations": [
+      {
+        "installation": "claw-1",
+        "harness": "openclaw",
+        "tiers": [
+          {
+            "tier": 1,
+            "state": "verified",
+            "code": "artifact_present"
+          },
+          {
+            "tier": 2,
+            "state": "verified",
+            "code": "discovery_verified"
+          },
+          {
+            "tier": 3,
+            "state": "verified",
+            "code": "identity_verified"
+          },
+          {
+            "tier": 4,
+            "state": "skipped",
+            "code": "not_selected"
+          },
+          {
+            "tier": 5,
+            "state": "skipped",
+            "code": "not_selected"
+          },
+          {
+            "tier": 6,
+            "state": "skipped",
+            "code": "not_selected"
+          }
+        ],
+        "components": [
+          {
+            "id": "subnet-calc",
+            "state": "verified",
+            "code": "discovery_verified"
+          }
+        ],
+        "version": "2026.7.1-2",
+        "provenance": {
+          "checker": "netclaw-setup",
+          "protocol": 1
+        }
+      }
+    ]
+  },
+  "source": "legacy scripts/install.sh --plan with actual controlling PTY"
+}

@@ -1,6 +1,31 @@
 import { build } from "esbuild";
 import fs from "node:fs";
 import path from "node:path";
+import { createHash } from "node:crypto";
+fs.mkdirSync('dist/setup',{recursive:true});
+const setupFiles=['config/installer-runtime.json','config/installer-preflight.json','config/claw-plan.schema.json','config/pyats-testbed-sources.json',
+  'config/setup-engine.json','config/components/catalog.json','config/components/schema.json','config/components/comms.json','config/components/comms.schema.json',
+  'config/components/security-policy.json','config/components/harness-adapters.json','docs/WINDOWS-WSL-PREREQUISITES.md'];
+const setupStamp={schema:1,files:{}};
+for(const source of setupFiles){
+  const data=fs.readFileSync(path.join('../..',source)),name=path.basename(source);
+  fs.writeFileSync(path.join('dist/setup',name),data);
+  setupStamp.files[name]=createHash('sha256').update(data).digest('hex');
+}
+fs.writeFileSync('dist/setup/stamp.json',JSON.stringify(setupStamp,null,2)+'\n');
+const installSkill=fs.readFileSync('../../installer/assistant-skills/netclaw-install/SKILL.md');
+fs.mkdirSync('dist/skills/netclaw-install',{recursive:true});
+fs.writeFileSync('dist/skills/netclaw-install/SKILL.md',installSkill);
+fs.writeFileSync('dist/skills/stamp.json',JSON.stringify({schema:1,sha256:createHash('sha256').update(installSkill).digest('hex')})+'\n');
+const presetRoot='../../installer/spec-kit/netclaw-claw',presetStamp={schema:1,files:{}};
+function copyPreset(relative=''){
+  for(const entry of fs.readdirSync(path.join(presetRoot,relative),{withFileTypes:true})){
+    const name=path.posix.join(relative,entry.name);if(entry.isSymbolicLink())throw Error('Preset links are unsupported.');
+    if(entry.isDirectory()){if(entry.name!=='__pycache__')copyPreset(name);continue;}
+    const data=fs.readFileSync(path.join(presetRoot,name));fs.mkdirSync(path.dirname(path.join('dist/preset',name)),{recursive:true});
+    fs.writeFileSync(path.join('dist/preset',name),data);presetStamp.files[name]=createHash('sha256').update(data).digest('hex');
+  }
+}copyPreset();fs.writeFileSync('dist/preset/stamp.json',JSON.stringify(presetStamp,null,2)+'\n');
 const dependencies = new Map();
 async function bundle(options) {
   const result = await build({ ...options, metafile: true });

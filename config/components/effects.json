@@ -1,0 +1,1120 @@
+{
+  "schema": 1,
+  "sourceSha256": "2cd10a4dfe787d016debc73a9b43f81ef22e1e2395047c78a4c13203b34cc090",
+  "components": [
+    {
+      "id": "hermes-hud",
+      "function": "component_install_hermes_hud",
+      "sha256": "94818472d99210427db0bb2a0feb0f1f5f94780439f9233290f7e4459069fe3f",
+      "adapter": "isolated-python",
+      "reason": "dedicated-hud-adapter",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_hermes_hud"
+    },
+    {
+      "id": "pyats",
+      "function": "component_install_pyats",
+      "sha256": "8ffb749c5a6b32c1ec2924e92597606ec6bea8ddc9fda5cb60a6465cc34148a0",
+      "adapter": "isolated-python",
+      "reason": "Pinned dependency-only pyATS acquisition; generated environment is written only by the classified credentials phase.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_pyats"
+    },
+    {
+      "id": "junos",
+      "function": "component_install_junos",
+      "sha256": "13588765269d8e7518c7f1fa3b5fc4f855bb0194cafa6f9d2ab36faca230aabb",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_junos"
+    },
+    {
+      "id": "arista-cvp",
+      "function": "component_install_arista_cvp",
+      "sha256": "cbff04b9d11dbbf173401fc53f3c877e775b6fce0422db06e19906aa2edb5b8c",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_arista_cvp"
+    },
+    {
+      "id": "f5",
+      "function": "component_install_f5",
+      "sha256": "77fb972de0057fc24036900e3e1dd8897db5ccbf77699d2ce0c6e1f0e5c86d45",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_f5"
+    },
+    {
+      "id": "catc",
+      "function": "component_install_catc",
+      "sha256": "01b1010afcb6734262c8b0895b754eb3756916d340b7209618284d1d92c8b4aa",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_catc"
+    },
+    {
+      "id": "aruba-cx",
+      "function": "component_install_aruba_cx",
+      "sha256": "03e3fb1ca2c2b6b735bd50a7b9cf64b80c15de4680e50b1a06bef03d8dedc723",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_aruba_cx"
+    },
+    {
+      "id": "gnmi",
+      "function": "component_install_gnmi",
+      "sha256": "7c698daea1da1170ea11ce2ea8765d8d03bcb14a25553f7d7b02018689d228b5",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_gnmi"
+    },
+    {
+      "id": "radkit",
+      "function": "component_install_radkit",
+      "sha256": "f02b63ddf70e4de740c2fa3c0fc5774132d0f0bca40700bc22c5aeba4e70897a",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_radkit"
+    },
+    {
+      "id": "multivendor-cli",
+      "function": "component_install_multivendor_cli",
+      "sha256": "91730492a47191b4803e1bd9a6ca16f05d87e2ff747dc044cbd789861d910460",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_multivendor_cli"
+    },
+    {
+      "id": "percepxion",
+      "function": "component_install_percepxion",
+      "sha256": "c13f4681063e7a36f5621667385be810e24e0dad4a731d52112f140952bae9a9",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_percepxion"
+    },
+    {
+      "id": "slc",
+      "function": "component_install_slc",
+      "sha256": "b61f392ed785757148ea6b6b130cd0f9900a934c1472e7c4af62156efc44455c",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_slc"
+    },
+    {
+      "id": "netbox",
+      "function": "component_install_netbox",
+      "sha256": "118a88a6a401fa602aebd80dc3a10c465d00657088e4ae9a2425d5d6851267a7",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_netbox"
+    },
+    {
+      "id": "nautobot",
+      "function": "component_install_nautobot",
+      "sha256": "f537db95bf1bf1939638b28798c924f92e5082abe40d9d66a006f6474364661b",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_nautobot"
+    },
+    {
+      "id": "nautobot-golden-config",
+      "function": "component_install_nautobot_golden_config",
+      "sha256": "8b4d292df3fab4be9ebbdf6497e4415b8f5ba873205fabe6e87efcd4bf46ad5e",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_nautobot_golden_config"
+    },
+    {
+      "id": "nautobot-routing",
+      "function": "component_install_nautobot_routing",
+      "sha256": "7eacb3ce9169ca875754988d512d509bf0879c70cbc015d7a144c3f53bad0f57",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_nautobot_routing"
+    },
+    {
+      "id": "infrahub",
+      "function": "component_install_infrahub",
+      "sha256": "522cb9713866af9e0563a3c8ae48e598c93a900292d8002740b41f4371008b22",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_infrahub"
+    },
+    {
+      "id": "infoblox",
+      "function": "component_install_infoblox",
+      "sha256": "bdc7756b39c62f0c005f96047cedbbe0cd1166024958b6af43253805fd517974",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_infoblox"
+    },
+    {
+      "id": "aci",
+      "function": "component_install_aci",
+      "sha256": "09825579970d88ba1472cee73299c9bda84d8dec64163607c66b2a4861a2303f",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_aci"
+    },
+    {
+      "id": "nso",
+      "function": "component_install_nso",
+      "sha256": "2dc8ab130609047ec7df2f55a68670107980d4e24c59af45db03ae4b6caf75a5",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_nso"
+    },
+    {
+      "id": "itential",
+      "function": "component_install_itential",
+      "sha256": "2b4d175334711797fe1e08fe0dd3c1155c91a223e230c2968a5b2029f589d2af",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_itential"
+    },
+    {
+      "id": "meraki",
+      "function": "component_install_meraki",
+      "sha256": "93bc92f6f14e993d39bc6e55b557a69ddc359343a950bfb863c46fde25d3de87",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_meraki"
+    },
+    {
+      "id": "nsm",
+      "function": "component_install_nsm",
+      "sha256": "6a0da06f465f1f88fab38508ff40f2f6ded106ec5fd03829483fe4fcb5fecbbb",
+      "adapter": "scoped-special",
+      "reason": "Dedicated dependency-only recipe; no legacy credential prompt, global package/service change, container start or API call.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_nsm",
+      "replacement": "scripts/lib/plan-special.sh"
+    },
+    {
+      "id": "analysis",
+      "function": "component_install_analysis",
+      "sha256": "8f5832974389cde927a1f33e71ec67e54ab2d0132720852436c1823f3287094b",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_analysis"
+    },
+    {
+      "id": "redfish",
+      "function": "component_install_redfish",
+      "sha256": "baff8651d058c3f55b60c4fedb8a0a02c7555190b5c7281d9805eae0b2a94062",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_redfish"
+    },
+    {
+      "id": "anta",
+      "function": "component_install_anta",
+      "sha256": "c5eca8681c1a314cab3a99cd0058b124a37c1c62389fb640e08877fa1135b980",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_anta"
+    },
+    {
+      "id": "elastic",
+      "function": "component_install_elastic",
+      "sha256": "a4b49b12d34d243540928fcc6d000a35208b3964daa656038df6b61a4b22a143",
+      "adapter": "scoped-special",
+      "reason": "Dedicated dependency-only recipe; no legacy credential prompt, global package/service change, container start or API call.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_elastic",
+      "replacement": "scripts/lib/plan-special.sh"
+    },
+    {
+      "id": "sdwan",
+      "function": "component_install_sdwan",
+      "sha256": "4dd1351a961055f7d52c0fc7c84317281f26a452b42f9435f24e1d6321ec5356",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_sdwan"
+    },
+    {
+      "id": "prisma-sdwan",
+      "function": "component_install_prisma_sdwan",
+      "sha256": "673b79f3028c0389bde111da3cf1e0532b85a2ae2ce73a69ccb829083f9cf9fd",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_prisma_sdwan"
+    },
+    {
+      "id": "aap",
+      "function": "component_install_aap",
+      "sha256": "b1661aa19037aca486212d74e989667491a3f54b105a8ce965917ddd6d7f4f36",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_aap"
+    },
+    {
+      "id": "ise",
+      "function": "component_install_ise",
+      "sha256": "e01af7b00da2ddd304b8a56356f0fe34f9318e84ec26ed8aef04303857eed559",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_ise"
+    },
+    {
+      "id": "fmc",
+      "function": "component_install_fmc",
+      "sha256": "d2cbb0632f123047a51a8fb6c8305d84297e75007f15ae7d6e9a8def59d014b3",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_fmc"
+    },
+    {
+      "id": "panorama",
+      "function": "component_install_panorama",
+      "sha256": "0a0feb922329aa9d68f18385f9238e2ee9953f141c9e06daf7c3f315aef30040",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_panorama"
+    },
+    {
+      "id": "fortinet",
+      "function": "component_install_fortinet",
+      "sha256": "410e75bf0bfb716a09dac3fbfbbc8c09af36b93188a40682d6c78aebb7867d5f",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_fortinet"
+    },
+    {
+      "id": "checkpoint",
+      "function": "component_install_checkpoint",
+      "sha256": "67773a57997e4733e3e885ce46f9444c149cbdd25fc3398039a195b79cbf7298",
+      "adapter": "scoped-special",
+      "reason": "Dedicated dependency-only recipe; no legacy credential prompt, global package/service change, container start or API call.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_checkpoint",
+      "replacement": "scripts/lib/plan-special.sh"
+    },
+    {
+      "id": "zscaler",
+      "function": "component_install_zscaler",
+      "sha256": "7ff26af40d7d9383852aa7f8198ee7cdef9ac1eab3280f665c616d59ca0f5f1a",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_zscaler"
+    },
+    {
+      "id": "claroty",
+      "function": "component_install_claroty",
+      "sha256": "7d374667f58abb89c0cb5dfe60a9517e6f30e4693c04ac67e7985c7aae1cd901",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_claroty"
+    },
+    {
+      "id": "nvd-cve",
+      "function": "component_install_nvd_cve",
+      "sha256": "23c3410dd3dd002c65f5eec8d052caa18adff916a0caac06a2337f53e717d751",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_nvd_cve"
+    },
+    {
+      "id": "cisco-psirt",
+      "function": "component_install_cisco_psirt",
+      "sha256": "88a54c2ca682db26ff37205290822cade4d858fb998fc4d205dfb7dc47e63256",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_cisco_psirt"
+    },
+    {
+      "id": "nmap",
+      "function": "component_install_nmap",
+      "sha256": "2bc3a0763d39e782be069352a083321b0ba7b612f1d728d6a0745425ee2137e3",
+      "adapter": "scoped-special",
+      "reason": "Dedicated dependency-only recipe; no legacy credential prompt, global package/service change, container start or API call.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_nmap",
+      "replacement": "scripts/lib/plan-special.sh"
+    },
+    {
+      "id": "fwrule",
+      "function": "component_install_fwrule",
+      "sha256": "11597a43dabde993c7277c109d78a200ef0c970c877143a1c8a89d0d6bb66629",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_fwrule"
+    },
+    {
+      "id": "aws",
+      "function": "component_install_aws",
+      "sha256": "9791a105f6d3622324e70154788bce4395bd254661d4de2cd124c174d11c58ab",
+      "adapter": "scoped-special",
+      "reason": "Dedicated dependency-only recipe; no legacy credential prompt, global package/service change, container start or API call.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_aws",
+      "replacement": "scripts/lib/plan-special.sh"
+    },
+    {
+      "id": "azure",
+      "function": "component_install_azure",
+      "sha256": "d7b8ebbffe670c84d50be499a12c2c75939bf6c7bf8aacd3a25d5cf7c37ba19e",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_azure"
+    },
+    {
+      "id": "gcp",
+      "function": "component_install_gcp",
+      "sha256": "88f719de1e8b4adfad03efbfe19a82c00329d2084ad059bed9e35d57a7172740",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_gcp"
+    },
+    {
+      "id": "equinix",
+      "function": "component_install_equinix",
+      "sha256": "cb26462286203aefc24726189be7276e28f1fda92104788df4789c5c017f152f",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_equinix"
+    },
+    {
+      "id": "cloudflare",
+      "function": "component_install_cloudflare",
+      "sha256": "81239aab3189be375359044b7e40d997be37d83ebc94f5efac08f623102a117d",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_cloudflare"
+    },
+    {
+      "id": "terraform",
+      "function": "component_install_terraform",
+      "sha256": "278c5fe525e7d9f7149e00a74a68f31d5f817604c357f264c629bc315b9e014f",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_terraform"
+    },
+    {
+      "id": "vault",
+      "function": "component_install_vault",
+      "sha256": "8e85b8e88118d51f5b1d141a3d8b3c5e966ace3a5aaffe3cf262542b8df35546",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_vault"
+    },
+    {
+      "id": "grafana",
+      "function": "component_install_grafana",
+      "sha256": "3e9da6a14afd2d14b0c06049f72d3e4bd2750d429ce1e3a3a47484d6bdd7c37e",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_grafana"
+    },
+    {
+      "id": "prometheus",
+      "function": "component_install_prometheus",
+      "sha256": "f62afe7fbb5ea6972a08d897c40a857cb494c77af4f5e0ec532e802912adee85",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_prometheus"
+    },
+    {
+      "id": "datadog",
+      "function": "component_install_datadog",
+      "sha256": "351b2c82f65d11b619a6771341df4c30bc9d5cf3076b5c346d6ce04a3d849400",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_datadog"
+    },
+    {
+      "id": "splunk",
+      "function": "component_install_splunk",
+      "sha256": "00e9aec76b6f4641ace27ea7e7806d428a16b65712abab692745e34a84cf71fd",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_splunk"
+    },
+    {
+      "id": "pagerduty",
+      "function": "component_install_pagerduty",
+      "sha256": "dc3d63140c864e69b61bbf7d4f83a66052225be18a514a0e2017ee8ddb388b3d",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_pagerduty"
+    },
+    {
+      "id": "te-community",
+      "function": "component_install_te_community",
+      "sha256": "4c9d57a9258a8c95a8af01d549e8dfd7c13785f7797c41611085f15ee40055dd",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_te_community"
+    },
+    {
+      "id": "te-official",
+      "function": "component_install_te_official",
+      "sha256": "c58e52513882ae2037d555bdca5951b5dcd05cc8724771719b04c564751acc8f",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_te_official"
+    },
+    {
+      "id": "ipfabric",
+      "function": "component_install_ipfabric",
+      "sha256": "6bc410bee9a25f246cbc228364bb5c5f0facda3bb982892d1d634486b449edc4",
+      "adapter": "scoped-special",
+      "reason": "Dedicated dependency-only recipe; no legacy credential prompt, global package/service change, container start or API call.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_ipfabric",
+      "replacement": "scripts/lib/plan-special.sh"
+    },
+    {
+      "id": "forward",
+      "function": "component_install_forward",
+      "sha256": "cc0f199d606c19300e76e089a079250a127f5b0da3d6e6fff0fe3b29b2eec96d",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_forward"
+    },
+    {
+      "id": "suzieq",
+      "function": "component_install_suzieq",
+      "sha256": "3f15ec5935df9c7e3de42ee2b31ff1d2bd8cadf5a2c92afb30bd17f67425dfb1",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_suzieq"
+    },
+    {
+      "id": "kubeshark",
+      "function": "component_install_kubeshark",
+      "sha256": "ba5fc5ae9b85d977184a846492064f0cf19331d86bcddfb4dcbcdf08c04cc89c",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_kubeshark"
+    },
+    {
+      "id": "gtrace",
+      "function": "component_install_gtrace",
+      "sha256": "61299ab32417153eef7291aff04fbaad3ba97fcb9be453a344222dc3f3ea1ef1",
+      "adapter": "scoped-special",
+      "reason": "Pinned gtrace v0.15.1 Go build uses installation-owned GOBIN/GOPATH/cache and GOTOOLCHAIN=local. Requires existing Go >=1.24.2; never sudo, host copying or capability changes. Version and actual launcher are observed.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_gtrace"
+    },
+    {
+      "id": "k8s",
+      "function": "component_install_k8s",
+      "sha256": "35374ed91450fd24f52c5938621e4e4633cbfdefabab174e4bca7768c5af306b",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_k8s"
+    },
+    {
+      "id": "zabbix",
+      "function": "component_install_zabbix",
+      "sha256": "aa22d27b16a55029f4ee6896d7dd68f27db169d99acf68c1af289fa0fdc2a60a",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_zabbix"
+    },
+    {
+      "id": "bgp-intel",
+      "function": "component_install_bgp_intel",
+      "sha256": "91779bfba4ec024ceac7304a4ceea6f275218facc854c6092e5475e70624e647",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_bgp_intel"
+    },
+    {
+      "id": "globalping",
+      "function": "component_install_globalping",
+      "sha256": "a2358a9db5049b574772d59df1306aa334de2245c1bea3ea5dedc9c7a250b09d",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_globalping"
+    },
+    {
+      "id": "topolograph",
+      "function": "component_install_topolograph",
+      "sha256": "495c58ffecfcad7758616042524428b7fc8e7dd58889fe1c4b3311f703e740f7",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_topolograph"
+    },
+    {
+      "id": "telemetry-receivers",
+      "function": "component_install_telemetry_receivers",
+      "sha256": "30d5e5ea0faa79f171b51741929cf99c7f4f4cbf7359dd310b261c1387162217",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_telemetry_receivers"
+    },
+    {
+      "id": "auvik",
+      "function": "component_install_auvik",
+      "sha256": "77bf7d80f2c42f19dde59279264ea47491fa7d11e3067f194a54810364a06efc",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_auvik"
+    },
+    {
+      "id": "cml",
+      "function": "component_install_cml",
+      "sha256": "1f3e072bbe01808d84aa994e31b06796de18c2a4ba487946d160305c272447c1",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_cml"
+    },
+    {
+      "id": "gns3",
+      "function": "component_install_gns3",
+      "sha256": "cfba81cf6d28fbfa48172c3c79fbab4d5675eacc89c2a6fac7bc000d26773f74",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_gns3"
+    },
+    {
+      "id": "containerlab",
+      "function": "component_install_containerlab",
+      "sha256": "55d438b16d889a71990958be1aefa90b5ca4b255f9fbf6687ec78a7a9e4b7998",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_containerlab"
+    },
+    {
+      "id": "batfish",
+      "function": "component_install_batfish",
+      "sha256": "45b22b68e8e3ac835d9d8630cb2510ff5c7b79d60fd705b3dde4133370a4b039",
+      "adapter": "scoped-special",
+      "reason": "Dedicated dependency-only recipe; no legacy credential prompt, global package/service change, container start or API call.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_batfish",
+      "replacement": "scripts/lib/plan-special.sh"
+    },
+    {
+      "id": "protocol",
+      "function": "component_install_protocol",
+      "sha256": "3b7caa031de12d575d0e413e10398258351bca924e0ee2a392ca9a3bb4d451d7",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_protocol"
+    },
+    {
+      "id": "peering",
+      "function": "component_install_peering",
+      "sha256": "53ae87c9c8c74e364488ed9a210343c550a285b4dfdba780f1fe7e7291b09a95",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_peering"
+    },
+    {
+      "id": "n2n",
+      "function": "component_install_n2n",
+      "sha256": "5de4fa9067afd4bda327bf7fe0f3d222ec77920d1f77b18d246302ba18c26496",
+      "adapter": "isolated-python",
+      "reason": "dedicated-risk-adapter",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_n2n"
+    },
+    {
+      "id": "in2n-production",
+      "function": "component_install_in2n_production",
+      "sha256": "704de1bba369c6306c4beeccbec059450c8703047371494824237cad15968329",
+      "adapter": "native",
+      "reason": "dedicated-control-adapter",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_in2n_production"
+    },
+    {
+      "id": "claw-certs",
+      "function": "component_install_claw_certs",
+      "sha256": "5215c694ae2a15105315eaeafa5bf65dbabb10a23b728cb50e9c27f1b9bcadb9",
+      "adapter": "isolated-python",
+      "reason": "owned-pinned-certificate-with-private-material-recovery",
+      "postcondition": "owned-ec-key-certificate-and-installed-cryptography",
+      "source": "scripts/lib/install-steps.sh#component_install_claw_certs"
+    },
+    {
+      "id": "servicenow",
+      "function": "component_install_servicenow",
+      "sha256": "9ef152879b3e53e168eb59243739ce3143a0c0b82a4092bf78bb40e227294026",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_servicenow"
+    },
+    {
+      "id": "github",
+      "function": "component_install_github",
+      "sha256": "815227a2cf054be7056c530abeac17acebae374fe9028377842696e7c24a4450",
+      "adapter": "scoped-special",
+      "reason": "Dedicated dependency-only recipe; no legacy credential prompt, global package/service change, container start or API call.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_github",
+      "replacement": "scripts/lib/plan-special.sh"
+    },
+    {
+      "id": "gitlab",
+      "function": "component_install_gitlab",
+      "sha256": "c64ebe7054ebdb00e6007d18c5bd609568eaf374c3da2f25b234b27498fc97ba",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_gitlab"
+    },
+    {
+      "id": "jenkins",
+      "function": "component_install_jenkins",
+      "sha256": "6df7fc1e56453db42d1c8979bb81ea88a9e5decdc6d67aba9de1da6ec56f1102",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_jenkins"
+    },
+    {
+      "id": "atlassian",
+      "function": "component_install_atlassian",
+      "sha256": "5931d378609a0346b5bdda1fea7167c74ec70f215478b4bf7d0d5998cea08540",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_atlassian"
+    },
+    {
+      "id": "msgraph",
+      "function": "component_install_msgraph",
+      "sha256": "7a25a38e1199b448c98a855523af5babf5e09d1e2ec3006736328c34c9f4e33a",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_msgraph"
+    },
+    {
+      "id": "halo",
+      "function": "component_install_halo",
+      "sha256": "020f69759d7e77ab8ee708d857149605181fbc66e610cb46b2536722318311c9",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_halo"
+    },
+    {
+      "id": "packet-buddy",
+      "function": "component_install_packet_buddy",
+      "sha256": "16860841d5dfbfdc7572927c74461b1d94fc5b38a6b62110c803b596d4c0d190",
+      "adapter": "scoped-special",
+      "reason": "Dedicated dependency-only recipe; no legacy credential prompt, global package/service change, container start or API call.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_packet_buddy",
+      "replacement": "scripts/lib/plan-special.sh"
+    },
+    {
+      "id": "markmap",
+      "function": "component_install_markmap",
+      "sha256": "6b4f0a5bd93947fba85f2e29c67caefaab942bbd71b804cd0eedffc32e1112fa",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_markmap"
+    },
+    {
+      "id": "drawio-rfc",
+      "function": "component_install_drawio_rfc",
+      "sha256": "b49f619327f63629792f048273fad576df90adc35eca6a3e0054286ad6896d2d",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_drawio_rfc"
+    },
+    {
+      "id": "uml",
+      "function": "component_install_uml",
+      "sha256": "63d368488b9ddb18a1742c096db2f77c791de84eebced4c610a24d11c4fc333f",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_uml"
+    },
+    {
+      "id": "subnet-calc",
+      "function": "component_install_subnet_calc",
+      "sha256": "d0b1bd64c04ff6652b30815e4c37ed4a4742c8980d6edb8fee8fea5ac2faf998",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_subnet_calc"
+    },
+    {
+      "id": "wikipedia",
+      "function": "component_install_wikipedia",
+      "sha256": "960834876cc88f568bc16bb49cfd3a5f279e2140b0fda071106aca07ee0c6dd9",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_wikipedia"
+    },
+    {
+      "id": "devnet-content-search",
+      "function": "component_install_devnet_content_search",
+      "sha256": "8329d4178096efb6897bf67879edb09fff8867a9454df2005a14afb9510f59ce",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_devnet_content_search"
+    },
+    {
+      "id": "blender",
+      "function": "component_install_blender",
+      "sha256": "7699106df1f2d870d7701c88e486d0e79bbc348c88bfbe75454348b70cb87222",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_blender"
+    },
+    {
+      "id": "ue5",
+      "function": "component_install_ue5",
+      "sha256": "99cf45d47a3c3ea1f1471c3cfaebce16a0a3062cbfaebff1705ae923fa13ba35",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_ue5"
+    },
+    {
+      "id": "threejs-viz",
+      "function": "component_install_threejs_viz",
+      "sha256": "76667ab360ae9baaade84c8015c24fd2be3f4a19acb54c2b01818f4bd4a49858",
+      "adapter": "scoped-special",
+      "reason": "Dedicated dependency-only recipe; no legacy credential prompt, global package/service change, container start or API call.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_threejs_viz",
+      "replacement": "scripts/lib/plan-special.sh"
+    },
+    {
+      "id": "comfyui-viz",
+      "function": "component_install_comfyui_viz",
+      "sha256": "21bdc3edc5cb8da9afeec95e4606c8e698ffd523ad22e2eef86ff7a71adfa6ce",
+      "adapter": "scoped-special",
+      "reason": "Dedicated dependency-only recipe; no legacy credential prompt, global package/service change, container start or API call.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_comfyui_viz",
+      "replacement": "scripts/lib/plan-special.sh"
+    },
+    {
+      "id": "worldlabs-marble",
+      "function": "component_install_worldlabs_marble",
+      "sha256": "f537c5013d4bf79e895584f9ff954a2102d9207055590a931cea21c94e051aaf",
+      "adapter": "scoped-special",
+      "reason": "Dedicated dependency-only recipe; no legacy credential prompt, global package/service change, container start or API call.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_worldlabs_marble",
+      "replacement": "scripts/lib/plan-special.sh"
+    },
+    {
+      "id": "chrome-devtools",
+      "function": "component_install_chrome_devtools",
+      "sha256": "d38b479447f934468554ef79cc8e6a2dbc30b82752ffdffadc74632214ad8b8b",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_chrome_devtools"
+    },
+    {
+      "id": "computer-use",
+      "function": "component_install_computer_use",
+      "sha256": "b692de7b718a6dc19740122b07a288104b36d18912b63d10b67062fbda29c69f",
+      "adapter": "native",
+      "reason": "system-services-and-packages",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_computer_use"
+    },
+    {
+      "id": "tts",
+      "function": "component_install_tts",
+      "sha256": "74ec6f5a982e000be1e7ae5053fa8f9868c45ca35950edcb969b06dea9af6fc2",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_tts"
+    },
+    {
+      "id": "tavus-pal",
+      "function": "component_install_tavus_pal",
+      "sha256": "15ce63459212b44fdd2242d74283b7875fbea417a473b9629da541237fc6df69",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_tavus_pal"
+    },
+    {
+      "id": "twitter",
+      "function": "component_install_twitter",
+      "sha256": "14a819f0f2453e05ff04dfaf4aad8c9e8e54a986a278f2ec764746a66fb937f4",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_twitter"
+    },
+    {
+      "id": "twilio",
+      "function": "component_install_twilio",
+      "sha256": "6e3a065cdcd9f2aaa81df66b1b866c927e0110c1bb70b58f6b50e39371aed996",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_twilio"
+    },
+    {
+      "id": "zoom-rtms",
+      "function": "component_install_zoom_rtms",
+      "sha256": "b2853c032925bc83554fbfa21333c857b6820d3f8f1107aa947ea27ee33447aa",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_zoom_rtms"
+    },
+    {
+      "id": "gait",
+      "function": "component_install_gait",
+      "sha256": "11b5ec98bed366be9530754333b517e1068cb4b5ef488f547e5d71bea3f5a3e0",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_gait"
+    },
+    {
+      "id": "mempalace",
+      "function": "component_install_mempalace",
+      "sha256": "4dedc0518cf6fef925c1f10507b4e5aaa4f0827c3c9ebaca189dddf99651f50f",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_mempalace"
+    },
+    {
+      "id": "memory-mcp",
+      "function": "component_install_memory_mcp",
+      "sha256": "e3063b932d52464d22127aedbc13e406d1acadd6aa55558da7e61f94730b35fd",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_memory_mcp"
+    },
+    {
+      "id": "document",
+      "function": "component_install_document",
+      "sha256": "db4a14b90933cdb5a33692f8c7a63cfeb3ad9517d40a19913085eeffed1e34a2",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_document"
+    },
+    {
+      "id": "rag-mcp",
+      "function": "component_install_rag_mcp",
+      "sha256": "9672c687388318e4410b2014664b47fc1b6576dc4b4e8f8a151f5677d8004bc8",
+      "adapter": "scoped-special",
+      "reason": "Dedicated dependency-only recipe; no legacy credential prompt, global package/service change, container start or API call.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_rag_mcp",
+      "replacement": "scripts/lib/plan-special.sh"
+    },
+    {
+      "id": "ollama",
+      "function": "component_install_ollama",
+      "sha256": "37d36a484de7a61f17b62fe88c19e4c98e5a1989e5dd22d9b6e3ff99cd138137",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_ollama"
+    },
+    {
+      "id": "jev",
+      "function": "component_install_jev",
+      "sha256": "14afd508d2433d157a86dbf1b36726f68f7c4af4d5bcdfffc1354b94a9ba4705",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_jev"
+    },
+    {
+      "id": "humanrail",
+      "function": "component_install_humanrail",
+      "sha256": "62446e831e57303f2ad42e339fdd1fde29f4ca2aedc73042d5fd0716d19cb159",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_humanrail"
+    },
+    {
+      "id": "convergence-core",
+      "function": "component_install_convergence_core",
+      "sha256": "2a189c4a22840b179ed40a147a5c2d2e23366d2073c92f62e7ca07cf60f4f199",
+      "adapter": "unsupported",
+      "reason": "Convergence add-on uses the legacy installer and Helm runbooks. Separate-claw wizard deployment is not qualified; use docs/runbooks/convergence-setup.md.",
+      "postcondition": "not-qualified-for-separate-claw-setup",
+      "source": "scripts/lib/install-steps.d/convergence.sh#component_install_convergence_core"
+    },
+    {
+      "id": "convergence-metrics",
+      "function": "component_install_convergence_metrics",
+      "sha256": "777068945f2852aa01784a1816f7eb892afd6c1a1512891bbdf9a8614110f28c",
+      "adapter": "unsupported",
+      "reason": "Convergence add-on uses the legacy installer and Helm runbooks. Separate-claw wizard deployment is not qualified; use docs/runbooks/convergence-setup.md.",
+      "postcondition": "not-qualified-for-separate-claw-setup",
+      "source": "scripts/lib/install-steps.d/convergence.sh#component_install_convergence_metrics"
+    },
+    {
+      "id": "convergence-unifi",
+      "function": "component_install_convergence_unifi",
+      "sha256": "57578b1ba092d11582b3694cfe4346e8455b75d97e5efff0ccad5eecc8dc84c2",
+      "adapter": "unsupported",
+      "reason": "Convergence add-on uses the legacy installer and Helm runbooks. Separate-claw wizard deployment is not qualified; use docs/runbooks/convergence-setup.md.",
+      "postcondition": "not-qualified-for-separate-claw-setup",
+      "source": "scripts/lib/install-steps.d/convergence.sh#component_install_convergence_unifi"
+    },
+    {
+      "id": "convergence-pfsense",
+      "function": "component_install_convergence_pfsense",
+      "sha256": "722174c0d5b7bd9a64ef7fbc78ea30952db78574523d3ff540cefd0ea01cd607",
+      "adapter": "unsupported",
+      "reason": "Convergence add-on uses the legacy installer and Helm runbooks. Separate-claw wizard deployment is not qualified; use docs/runbooks/convergence-setup.md.",
+      "postcondition": "not-qualified-for-separate-claw-setup",
+      "source": "scripts/lib/install-steps.d/convergence.sh#component_install_convergence_pfsense"
+    },
+    {
+      "id": "convergence-sot-nautobot",
+      "function": "component_install_convergence_sot_nautobot",
+      "sha256": "2af1c77818bed75be570ca8d8cf4d7083e89c0fbc1d1e5f01bad777f36f8fe24",
+      "adapter": "unsupported",
+      "reason": "Convergence add-on uses the legacy installer and Helm runbooks. Separate-claw wizard deployment is not qualified; use docs/runbooks/convergence-setup.md.",
+      "postcondition": "not-qualified-for-separate-claw-setup",
+      "source": "scripts/lib/install-steps.d/convergence.sh#component_install_convergence_sot_nautobot"
+    },
+    {
+      "id": "convergence-sot-netbox",
+      "function": "component_install_convergence_sot_netbox",
+      "sha256": "8b01442e15fb8a50befd6c7a5e8a7a499f1b7dff724d1197e808777445eb64e2",
+      "adapter": "unsupported",
+      "reason": "Convergence add-on uses the legacy installer and Helm runbooks. Separate-claw wizard deployment is not qualified; use docs/runbooks/convergence-setup.md.",
+      "postcondition": "not-qualified-for-separate-claw-setup",
+      "source": "scripts/lib/install-steps.d/convergence.sh#component_install_convergence_sot_netbox"
+    },
+    {
+      "id": "convergence-device-snmp",
+      "function": "component_install_convergence_device_snmp",
+      "sha256": "cfe0b778f3e9017735890f2e5d47126ab729c38086b498ee2679ef8c777ca633",
+      "adapter": "unsupported",
+      "reason": "Convergence add-on uses the legacy installer and Helm runbooks. Separate-claw wizard deployment is not qualified; use docs/runbooks/convergence-setup.md.",
+      "postcondition": "not-qualified-for-separate-claw-setup",
+      "source": "scripts/lib/install-steps.d/convergence.sh#component_install_convergence_device_snmp"
+    },
+    {
+      "id": "convergence-device-syslog",
+      "function": "component_install_convergence_device_syslog",
+      "sha256": "ea03c9fc203bd7b190703a62e041258d32a9afc1af1d6955aceb1d063d9b7c64",
+      "adapter": "unsupported",
+      "reason": "Convergence add-on uses the legacy installer and Helm runbooks. Separate-claw wizard deployment is not qualified; use docs/runbooks/convergence-setup.md.",
+      "postcondition": "not-qualified-for-separate-claw-setup",
+      "source": "scripts/lib/install-steps.d/convergence.sh#component_install_convergence_device_syslog"
+    },
+    {
+      "id": "convergence-agent-metrics",
+      "function": "component_install_convergence_agent_metrics",
+      "sha256": "b63a9aa611d4cada25491f98155715f8dcd0c4eeeeb3dbfb90fe410f0e8b4aeb",
+      "adapter": "unsupported",
+      "reason": "Convergence add-on uses the legacy installer and Helm runbooks. Separate-claw wizard deployment is not qualified; use docs/runbooks/convergence-setup.md.",
+      "postcondition": "not-qualified-for-separate-claw-setup",
+      "source": "scripts/lib/install-steps.d/convergence.sh#component_install_convergence_agent_metrics"
+    },
+    {
+      "id": "convergence-agent-logs",
+      "function": "component_install_convergence_agent_logs",
+      "sha256": "abdff085e287b1644472cb9fea222f3445dae5dddbb98f68fff57aed036dfe50",
+      "adapter": "unsupported",
+      "reason": "Convergence add-on uses the legacy installer and Helm runbooks. Separate-claw wizard deployment is not qualified; use docs/runbooks/convergence-setup.md.",
+      "postcondition": "not-qualified-for-separate-claw-setup",
+      "source": "scripts/lib/install-steps.d/convergence.sh#component_install_convergence_agent_logs"
+    },
+    {
+      "id": "convergence-grafana-dashboards",
+      "function": "component_install_convergence_grafana_dashboards",
+      "sha256": "761d18ecea4d93f966ec7bb4050c1abf95bc496f77f758dac383c4ff717ff308",
+      "adapter": "unsupported",
+      "reason": "Convergence add-on uses the legacy installer and Helm runbooks. Separate-claw wizard deployment is not qualified; use docs/runbooks/convergence-setup.md.",
+      "postcondition": "not-qualified-for-separate-claw-setup",
+      "source": "scripts/lib/install-steps.d/convergence.sh#component_install_convergence_grafana_dashboards"
+    },
+    {
+      "id": "visual-hud",
+      "function": "component_install_visual_hud",
+      "sha256": "f8363ef79c82f3723030121281ad59305c44aadf17d1932a7e6ae7dfe97d2036",
+      "adapter": "unsupported",
+      "reason": "Convergence add-on uses the legacy installer and Helm runbooks. Separate-claw wizard deployment is not qualified; use docs/runbooks/convergence-setup.md.",
+      "postcondition": "not-qualified-for-separate-claw-setup",
+      "source": "scripts/lib/install-steps.d/convergence.sh#component_install_visual_hud"
+    }
+  ],
+  "fragmentSha256": {
+    "scripts/lib/install-steps.d/convergence.sh": "e9ea14a19c8b26e501c20f00952566e9389465baa88c88a2070e6ca3f04fd07c"
+  }
+}

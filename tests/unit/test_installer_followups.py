@@ -111,7 +111,8 @@ def test_legacy_skill_matches_only_owned_invocations():
     assert launch.legacy_component(['python3','/operator/custom.py'],{}) is None
 
 
-def test_generated_entries_carry_runtime_location_without_credentials(tmp_path):
+def test_generated_entries_carry_runtime_location_without_credentials(tmp_path,monkeypatch):
+    monkeypatch.delenv('BGP_DAEMON_API',raising=False)
     out=tmp_path/'selected.json'
     result=subprocess.run([sys.executable,str(ROOT/'scripts/install-mcp-config.py'), '--repo',str(ROOT),
         '--runtime-root',str(tmp_path/'runtimes'),'--components',' '.join(launch.CONTRACT), '--output',str(out)],
@@ -124,7 +125,7 @@ def test_generated_entries_carry_runtime_location_without_credentials(tmp_path):
         assert entry['env']['NETCLAW_RUNTIME_ROOT']==str(tmp_path/'runtimes')
         assert set(entry['env']) <= {'NETCLAW_RUNTIME_ROOT','NETCLAW_RUNTIME_ENV','BGP_DAEMON_API'}
         if 'BGP_DAEMON_API' in entry['env']:
-            assert entry['env']['BGP_DAEMON_API']=='${BGP_DAEMON_API:-http://127.0.0.1:8179}'
+            assert entry['env']['BGP_DAEMON_API']=='http://127.0.0.1:8179'
 
 
 @pytest.mark.parametrize('npm_rc,version_rc,expected', [(0,0,0),(1,0,1),(0,1,1)])

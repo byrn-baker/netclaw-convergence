@@ -3,6 +3,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
+import { setupServices } from './claw-setup-services.mjs';
 import {
   resolveTarget,
   scopedEnv,
@@ -27,6 +28,7 @@ import {
   startOwned,
   stopOwned,
   processIdentity,
+  sameProcessStart,
   healthy,
   delay,
   endpointOwned,
@@ -194,7 +196,10 @@ function systemdEnvironment(text) {
     const m = line.match(/^([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.*)$/);
     if (!m) throw Error("Native environment file uses unsupported syntax.");
     const value = m[2].trim();
-    if (/^[^\s"'\\]*$/.test(value)) env[m[1]] = value;
+    // EnvironmentFile preserves interior whitespace and quotes when the value
+    // starts unquoted (systemd.exec). These are literal bytes, not shell words.
+    // Keep escapes and multiline values outside this qualified subset.
+    if (/^(?:[^"'\\\s][^\\]*)?$/.test(value)) env[m[1]] = value;
     else if (/^"[^"\\]*"$/.test(value) || /^'[^'\\]*'$/.test(value))
       env[m[1]] = value.slice(1, -1);
     else throw Error("Native environment file uses unsupported syntax.");
@@ -409,12 +414,12 @@ export async function inspectServices(raw) {
       const d = definition(t, role);
       if (d) services.push({ ...d, definition: definitionHash(t, role) });
     }
-    const native =
+    const native = [...await setupServices(t,command),...(
       process.platform === "darwin"
         ? await launchd(t)
         : process.platform === "linux"
           ? await discoverSystemdServices(t)
-          : [];
+          : [])];
     for (const d of native) {
       if (services.some((s) => s.role === d.role))
         throw Error(
@@ -556,7 +561,7 @@ async function nativeAction(d, action) {
     }
     if (action === "stop" && s.state === "stopped") {
       const live = previous ? await processIdentity(previous.pid) : null;
-      if (!live || live.birth !== previous.birth) return s;
+      if (!sameProcessStart(live, previous)) return s;
     }
     if (action === "start" && s.state === "ready") return s;
     await delay(150);

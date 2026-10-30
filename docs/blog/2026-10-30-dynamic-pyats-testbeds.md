@@ -1,0 +1,7 @@
+# NetClaw 1.14.0: build the testbed for the task
+
+NetClaw 1.14.0 and VS Code extension 1.4.0 bring **dynamic pyATS testbeds** to the installer. Keep your static YAML, or select Dynamic and compose scoped inventory from 14 routes across lab platforms, sources of truth, CMDBs and assurance systems. The new [pyATS MCP](https://github.com/automateyournetwork/pyATS_MCP) supplies the dynamic engine; NetClaw adds source selection, provenance, completeness checks, credential references and explicit review → validation → activation.
+
+Think CML + NetBox: bring observed lab management endpoints and source-of-truth records into one reviewed candidate, then use the existing pyATS tools in that session. We verified that composition with synthetic data through the real upstream builder and MCP runtime, alongside installer and regression checks. Live source/device qualification remains separate. Existing installations are unchanged until you explicitly update and configure them.
+
+[Get NetClaw 1.14.0](https://github.com/automateyournetwork/netclaw/releases/tag/v1.14.0) · [Install the extension](https://marketplace.visualstudio.com/items?itemName=NetClaw.netclaw) · [Read the guide](https://github.com/automateyournetwork/netclaw/blob/v1.14.0/docs/DYNAMIC-TESTBEDS.md) · [See the test evidence](https://github.com/automateyournetwork/netclaw/blob/v1.14.0/specs/160-dynamic-pyats-testbeds/verification.md)

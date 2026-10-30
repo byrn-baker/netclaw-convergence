@@ -1,0 +1,121 @@
+{
+  "schema": 1,
+  "export": "redacted",
+  "generatedAt": 1792951471,
+  "installations": [
+    {
+      "installation": "claw-1",
+      "harness": "openclaw",
+      "tiers": [
+        {
+          "tier": 1,
+          "state": "verified",
+          "code": "artifact_present"
+        },
+        {
+          "tier": 2,
+          "state": "verified",
+          "code": "discovery_verified"
+        },
+        {
+          "tier": 3,
+          "state": "unverified",
+          "code": "service_unverified"
+        },
+        {
+          "tier": 4,
+          "state": "skipped",
+          "code": "not_selected"
+        },
+        {
+          "tier": 5,
+          "state": "skipped",
+          "code": "not_selected"
+        },
+        {
+          "tier": 6,
+          "state": "skipped",
+          "code": "not_selected"
+        }
+      ],
+      "components": [
+        {
+          "id": "subnet-calc",
+          "state": "verified",
+          "code": "discovery_verified"
+        }
+      ],
+      "version": "2026.7.1-2",
+      "comms": [
+        {
+          "channel": "slack",
+          "account": "account-1",
+          "configuration": {
+            "state": "verified",
+            "code": "configuration_valid",
+            "checker": "openclaw-config",
+            "observedAt": 1792951462
+          },
+          "authentication": {
+            "state": "unverified",
+            "code": "not_checked",
+            "checker": "netclaw-setup",
+            "observedAt": 1792951466
+          },
+          "transport": {
+            "state": "unverified",
+            "code": "transport_unverified",
+            "checker": "netclaw-setup",
+            "observedAt": 1792951466
+          },
+          "inbound": {
+            "state": "skipped",
+            "code": "not_requested",
+            "checker": "netclaw-setup"
+          },
+          "outbound": {
+            "state": "skipped",
+            "code": "not_requested",
+            "checker": "netclaw-setup"
+          }
+        },
+        {
+          "channel": "discord",
+          "account": "account-1",
+          "configuration": {
+            "state": "verified",
+            "code": "configuration_valid",
+            "checker": "openclaw-config",
+            "observedAt": 1792951466
+          },
+          "authentication": {
+            "state": "unverified",
+            "code": "not_checked",
+            "checker": "netclaw-setup",
+            "observedAt": 1792951471
+          },
+          "transport": {
+            "state": "unverified",
+            "code": "transport_unverified",
+            "checker": "netclaw-setup",
+            "observedAt": 1792951471
+          },
+          "inbound": {
+            "state": "skipped",
+            "code": "not_requested",
+            "checker": "netclaw-setup"
+          },
+          "outbound": {
+            "state": "skipped",
+            "code": "not_requested",
+            "checker": "netclaw-setup"
+          }
+        }
+      ],
+      "provenance": {
+        "checker": "netclaw-setup",
+        "protocol": 1
+      }
+    }
+  ]
+}

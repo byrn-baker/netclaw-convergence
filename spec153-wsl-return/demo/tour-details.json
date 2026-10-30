@@ -1,0 +1,121 @@
+{
+  "durationSeconds": 60,
+  "resolution": "1920x1080",
+  "fps": 30,
+  "chapters": [
+    {
+      "duration": 8,
+      "title": "Choose your\nshape",
+      "desc": "One Focused claw,\nor a Risk with\nindependent members.",
+      "foot": "Windows VS Code\nUbuntu 26.04 / WSL2",
+      "clips": [
+        [
+          "01-shape-clean",
+          0,
+          null,
+          8,
+          "normal"
+        ]
+      ]
+    },
+    {
+      "duration": 9,
+      "title": "Name the\nBorder",
+      "desc": "A separate identity\nand runtime home\nfor every claw.",
+      "foot": "Demo Border\nLocal placeholder model",
+      "clips": [
+        [
+          "02-border-clean",
+          0,
+          null,
+          9,
+          "normal"
+        ]
+      ]
+    },
+    {
+      "duration": 10,
+      "title": "Build a\nmixed team",
+      "desc": "OpenClaw + Hermes\nHot + on-demand\nSeparate capabilities",
+      "foot": "One Border\nTwo independent members",
+      "clips": [
+        [
+          "04-diagram",
+          1,
+          9.5,
+          5.5,
+          "normal"
+        ],
+        [
+          "09-overview",
+          0,
+          null,
+          4.5,
+          "normal"
+        ]
+      ]
+    },
+    {
+      "duration": 12,
+      "title": "Add MCP\ncapabilities",
+      "desc": "Subnet Calculator\nDraw.io + RFC\n\nInspect requirements\nbefore installing.",
+      "foot": "Selections in a draft\nNo tool calls made",
+      "clips": [
+        [
+          "05-subnet",
+          1.6,
+          null,
+          6,
+          "normal"
+        ],
+        [
+          "06-drawio",
+          0.5,
+          null,
+          6,
+          "normal"
+        ]
+      ]
+    },
+    {
+      "duration": 10,
+      "title": "Review the\nchecks",
+      "desc": "Tiers 1\u20133 required\n\nLive inference,\nchannel delivery and\ndevice checks require\nseparate approval.",
+      "foot": "No optional live tiers\nselected in this demo",
+      "clips": [
+        [
+          "07-tiers",
+          1.4,
+          7.1,
+          10,
+          "normal"
+        ]
+      ]
+    },
+    {
+      "duration": 11,
+      "title": "Validate.\nReview.",
+      "desc": "Plan structure valid\n0 missing settings\n\nInspect the exact\ninstallation before\nyou approve it.",
+      "foot": "CONFIGURED, NOT DEPLOYED\nReview canceled for this tour",
+      "clips": [
+        [
+          "08-review",
+          0,
+          3.2,
+          3,
+          "normal"
+        ],
+        [
+          "08-review",
+          5.7,
+          9.1,
+          8,
+          "review"
+        ]
+      ]
+    }
+  ],
+  "sourceCommit": "30dbf6a99f676abe6e45b844a700128c84c0cdfb",
+  "demonstration": "Actual UI capture; captions and local synthetic speech added. Draft only; not deployed.",
+  "voice": "Microsoft Zira Desktop; locally synthesized"
+}

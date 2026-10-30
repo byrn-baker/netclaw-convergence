@@ -136,14 +136,6 @@
       ],
       "reason": "the Xvfb/XFCE virtual desktop requires Linux"
     },
-    "forward": {
-      "go_min": [
-        1,
-        25
-      ],
-      "cgo": true,
-      "source": "https://github.com/forwardnetworks/forward-mcp#prerequisites"
-    },
     "radkit": {
       "vendor_index": "https://radkit.cisco.com/pip",
       "vendor_wheel": "cisco_radkit_client-1.9.0-*.whl",

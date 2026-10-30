@@ -1,0 +1,197 @@
+{
+  "date": "2026-10-18",
+  "scope": "Actual fresh macOS VM, native wizard prerequisite actions and blank Minimal install. Synthetic keyboard operator; no human decision-time or hosted-provider claim. Public development checkout supplied without owner files or credentials.",
+  "environment": {
+    "macos": "26.6.2",
+    "build": "25G83",
+    "node": "v24.22.0",
+    "python": "Python 3.12.15",
+    "uv": "uv 0.13.1 (Homebrew 2026-10-14 aarch64-apple-darwin)",
+    "git": "git version 2.54.0 (Apple Git-157)",
+    "architecture": "arm64",
+    "editor": "1.109.0",
+    "virtualCPUs": 4,
+    "memoryGiB": 8,
+    "virtualDiskGiB": 80
+  },
+  "prerequisites": {
+    "editor": "1.109.0",
+    "checks": [
+      {
+        "id": "uv",
+        "state": "package-step-completed"
+      },
+      {
+        "id": "python3",
+        "state": "package-step-completed"
+      },
+      {
+        "id": "node",
+        "state": "package-step-completed"
+      },
+      {
+        "id": "git",
+        "state": "already-ready"
+      }
+    ],
+    "scope": "fresh macOS VM; native wizard package actions; synthetic password/confirmation input"
+  },
+  "checks": [
+    "Explicit native review of the provided development checkout",
+    "Blank wizard completed by keyboard with unmodified minimal component profile",
+    "Progress view restored immediately after native Apply review"
+  ],
+  "report": {
+    "export": "redacted",
+    "generatedAt": 1792355088,
+    "installations": [
+      {
+        "components": [
+          {
+            "code": "discovery_verified",
+            "id": "pyats",
+            "state": "verified"
+          },
+          {
+            "code": "discovery_verified",
+            "id": "gait",
+            "state": "verified"
+          },
+          {
+            "code": "discovery_verified",
+            "id": "subnet-calc",
+            "state": "verified"
+          },
+          {
+            "code": "discovery_verified",
+            "id": "drawio-rfc",
+            "state": "verified"
+          }
+        ],
+        "harness": "openclaw",
+        "installation": "claw-1",
+        "provenance": {
+          "checker": "netclaw-setup",
+          "protocol": 1
+        },
+        "tiers": [
+          {
+            "code": "artifact_present",
+            "state": "verified",
+            "tier": 1
+          },
+          {
+            "code": "discovery_verified",
+            "state": "verified",
+            "tier": 2
+          },
+          {
+            "code": "identity_verified",
+            "state": "verified",
+            "tier": 3
+          },
+          {
+            "code": "not_selected",
+            "state": "skipped",
+            "tier": 4
+          },
+          {
+            "code": "not_selected",
+            "state": "skipped",
+            "tier": 5
+          },
+          {
+            "code": "not_selected",
+            "state": "skipped",
+            "tier": 6
+          }
+        ],
+        "version": "2026.7.1-2"
+      }
+    ],
+    "schema": 1
+  },
+  "benchmark": {
+    "profile": "minimal",
+    "decisionSamplesMs": [
+      8289,
+      7556,
+      7519
+    ],
+    "decisionMedianMs": 7556,
+    "decisionSamples": "One full install and two separate blank-draft keyboard journeys; automated choice/input latency only",
+    "applyToTier3Ms": 110755,
+    "downloadAcquisitionPhases": [
+      {
+        "phase": "runtime",
+        "milliseconds": 20118,
+        "canDownload": true
+      },
+      {
+        "phase": "pyats",
+        "milliseconds": 20991,
+        "canDownload": true
+      },
+      {
+        "phase": "gait",
+        "milliseconds": 4097,
+        "canDownload": true
+      },
+      {
+        "phase": "subnet-calc",
+        "milliseconds": 10712,
+        "canDownload": true
+      },
+      {
+        "phase": "drawio-rfc",
+        "milliseconds": 1973,
+        "canDownload": false
+      }
+    ],
+    "downloadAcquisitionTotalMs": 55918,
+    "downloadTimingBoundary": "Engine phases which acquire packages, including resolution/unpack/build/install; wire-only transfer time is not separately observable. The OS/Homebrew prerequisite bootstrap preceded this benchmark and is not included. No model was downloaded.",
+    "progressSamples": 29,
+    "progressLatencyMs": [
+      1,
+      14,
+      12,
+      0,
+      1,
+      1,
+      1,
+      1,
+      1,
+      0,
+      7,
+      1,
+      8,
+      1,
+      0,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      0,
+      1,
+      1,
+      1,
+      1,
+      2,
+      1,
+      1
+    ],
+    "progressMeasurement": "Actual engine stdout frame received in extension host to next animation frame after webview progress handling, same machine wall clock; transport and rendering, not a user reaction time."
+  },
+  "providerCalls": 0,
+  "deviceCalls": 0,
+  "channelMessages": 0,
+  "cleanup": {
+    "exit": 0,
+    "state": "verified",
+    "removed": 1496,
+    "retained": 1
+  },
+  "postAcceptanceGuard": "Final source additionally refuses a pre-existing unjournaled GAIT runtime-record file; existing Deployment ownership/recovery tests pass. Successful fresh-home path is unchanged."
+}

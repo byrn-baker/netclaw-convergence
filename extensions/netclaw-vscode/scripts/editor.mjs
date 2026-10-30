@@ -102,7 +102,7 @@ try {
         name: "netclaw-installed-editor-driver",
         publisher: "fixture",
         version: "0.0.0",
-        engines: { vscode: "^1.102.0" },
+        engines: { vscode: "^1.109.0" },
         main: "index.cjs",
       }),
     );
@@ -145,7 +145,7 @@ try {
     if (!ready) throw Error("RAG fixture indexing unavailable");
   }
   const options = {
-    version: process.env.VSCODE_VERSION || "1.102.0",
+    version: process.env.VSCODE_VERSION || "1.109.0",
     ...(process.env.VSCODE_EXECUTABLE
       ? { vscodeExecutablePath: process.env.VSCODE_EXECUTABLE }
       : {}),
@@ -195,7 +195,7 @@ try {
           name: "netclaw-local-observer",
           publisher: "fixture",
           version: "0.0.0",
-          engines: { vscode: "^1.102.0" },
+          engines: { vscode: "^1.109.0" },
           main: "index.cjs",
         }),
       );

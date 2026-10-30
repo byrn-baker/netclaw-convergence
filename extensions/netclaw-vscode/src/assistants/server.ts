@@ -2,6 +2,12 @@ import { McpServer } from "@modelcontextprotocol/server";
 import { StdioServerTransport } from "@modelcontextprotocol/server/stdio";
 import { z } from "zod";
 import { AssistantService, assistantDomains } from "./service";
+import {startSetupServer} from './setup-server';
+const setupIndex=process.argv.indexOf('--setup-registration');
+if(setupIndex>=0){
+  const file=process.argv[setupIndex+1];if(!file)throw Error('Setup registration required.');
+  void startSetupServer(file).catch(()=>{process.stderr.write('Setup registration unavailable.\n');process.exitCode=1;});
+}else{
 const index = process.argv.indexOf("--registration"),
   file = index >= 0 ? process.argv[index + 1] : undefined;
 if (!file) throw Error("A reviewed --registration file is required.");
@@ -89,3 +95,4 @@ process.on("SIGTERM", () => {
   void server.close();
 });
 void server.connect(new StdioServerTransport());
+}

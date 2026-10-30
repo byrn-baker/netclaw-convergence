@@ -78,7 +78,6 @@ or an explicit `NETCLAW_VENV` must have a supported Python and usable pip.
 
 | Selection | Declared prerequisite |
 | --- | --- |
-| Forward Networks | Go 1.25+, CGO enabled, C compiler; Apple Command Line Tools on macOS |
 | Panorama | Python >=3.10,<3.13 |
 | Zoom RTMS | Python >=3.10,<3.14; Darwin arm64 or Linux x86_64 with glibc >=2.34 |
 | CML, NSO, UML, ThousandEyes Community | Python >=3.12 |
@@ -86,7 +85,6 @@ or an explicit `NETCLAW_VENV` must have a supported Python and usable pip.
 | Computer Use virtual desktop | Linux (Xvfb/XFCE); unavailable in the macOS custom picker |
 | RADKit | Explicit Cisco SDK index in `PIP_INDEX_URL`/`PIP_EXTRA_INDEX_URL`, or local `PIP_FIND_LINKS` directory containing the pinned 1.9.0 SDK wheel |
 
-[Forward's prerequisites](https://github.com/forwardnetworks/forward-mcp#prerequisites),
 [Panorama package metadata](https://pypi.org/project/iflow-mcp-cdot65-palo-alto-mcp/),
 [Zoom's rtms 1.1.0 wheels](https://pypi.org/project/rtms/1.1.0/), and
 [Cisco's RADKit package notice](https://pypi.org/project/cisco-radkit-client/)

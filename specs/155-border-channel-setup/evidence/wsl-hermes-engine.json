@@ -1,0 +1,99 @@
+{
+  "runtime": "hermes-stable",
+  "state": "configuration_required",
+  "source": {
+    "channel": "existing",
+    "commit": "c3aa0951519a0be79db085f7092043ee1c97d830",
+    "dirty": false,
+    "ref": "155-border-channel-setup",
+    "treeHash": "95c75e4b22e52b48b9f79d21bc5d4c0835f5ce4b4c9ee1c5521c3a4d9ad06b46"
+  },
+  "effects": [
+    {
+      "phase": "home",
+      "channel": null,
+      "state": "verified",
+      "code": null
+    },
+    {
+      "phase": "runtime",
+      "channel": null,
+      "state": "verified",
+      "code": null
+    },
+    {
+      "phase": "credentials",
+      "channel": null,
+      "state": "verified",
+      "code": null
+    },
+    {
+      "phase": "onboard",
+      "channel": null,
+      "state": "verified",
+      "code": null
+    },
+    {
+      "phase": "components",
+      "channel": null,
+      "state": "verified",
+      "code": null
+    },
+    {
+      "phase": "skills",
+      "channel": null,
+      "state": "verified",
+      "code": null
+    },
+    {
+      "phase": "registration",
+      "channel": null,
+      "state": "verified",
+      "code": null
+    },
+    {
+      "phase": "inventory",
+      "channel": null,
+      "state": "verified",
+      "code": null
+    },
+    {
+      "phase": "identity",
+      "channel": null,
+      "state": "verified",
+      "code": null
+    },
+    {
+      "phase": "comms",
+      "channel": "slack",
+      "state": "verified",
+      "code": null
+    },
+    {
+      "phase": "comms",
+      "channel": "discord",
+      "state": "verified",
+      "code": null
+    },
+    {
+      "phase": "services",
+      "channel": null,
+      "state": "configuration_required",
+      "code": null
+    },
+    {
+      "phase": "verification",
+      "channel": null,
+      "state": "unverified",
+      "code": null
+    }
+  ],
+  "noServiceArtifacts": true,
+  "homeMode": "0o700",
+  "environmentMode": "0o600",
+  "verification": "unverified",
+  "authentication": "unverified",
+  "transport": "unverified",
+  "inbound": "unverified",
+  "outbound": "unverified"
+}

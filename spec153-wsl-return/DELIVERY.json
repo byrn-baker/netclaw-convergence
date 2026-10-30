@@ -1,0 +1,25 @@
+{
+  "repository": "https://github.com/automateyournetwork/netclaw.git",
+  "branch": "153-ide-installer-wsl-qualification",
+  "baselineCommit": "89627477fb470cd7c293e33e192c5983819d45d4",
+  "finalTestedImplementationCommit": "cf97be1c286442660c355d50cf0788199a24c2a1",
+  "qualificationEvidenceCommit": "6428e122e02e1436ece468366a838b4d3605b7d7",
+  "qualificationSourceTreeHash": "989bb594a1d8b86d01ab93371a6fac5b8d315c3f92f9aec1df6ef0cd9ef3d74c",
+  "bundle": {
+    "file": "qualification.bundle",
+    "head": "6428e122e02e1436ece468366a838b4d3605b7d7",
+    "requiredBaseline": "89627477fb470cd7c293e33e192c5983819d45d4",
+    "sha256": "481625fd0ea7d0e0387ad4041c5c00f575d5a83011b0fa56bb149b4aab9e19a4",
+    "bytes": 4159602,
+    "gitBundleVerify": "PASS"
+  },
+  "deliveryCommit": "The commit containing this file adds only transport metadata and the bundle. Its exact SHA is supplied in the handoff message; verify with git rev-parse HEAD after fetching the named branch. It cannot embed its own SHA.",
+  "windowsQualificationComplete": false,
+  "openTasks": [
+    "T081",
+    "T082",
+    "T084"
+  ],
+  "fixtureState": "Both disposable distributions observed stopped; disks/private evidence retained. No global WSL shutdown, Windows restart or owner-distribution mutation.",
+  "authorization": "Owner requested remote delivery and Mac handoff after earlier PR/merge/cleanup intent. Integration is deferred to Mac after affected regressions and unresolved gates; no release publication authorized here."
+}

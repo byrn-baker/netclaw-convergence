@@ -1,0 +1,9 @@
+# Shared installation skill contract
+
+Source: `installer/assistant-skills/netclaw-install/SKILL.md`. A build-stamped copy is bundled under extension resources; CI verifies byte/hash equality. This is an end-user deployment skill, separate from NetClaw development Spec Kit skills and network-operational skills.
+
+Question order: host/prerequisites → source → per-claw harness → local/cloud provider and model → channels/none → focused/Risk and advisor → components/skills per claw → classified settings → optional inventory → identity/posture → verification → explain/native review. Use canonical tools and IDs; never invent fields, runtime flags, availability or completed tests. Intent mode explicitly records assumptions and unresolved choices. Existing installation detection always offers manage existing versus separate new home.
+
+Never ask the human to paste secrets into chat. Request native secret entry and receive presence only. Never apply, stage an unattended approval, run an arbitrary installer, borrow a nearby credential or treat a permission-mode setting as native review. Stage commands for human terminal execution when UI is absent, explaining that the client's own terminal permissions remain authoritative. “Implement” means submit the exact plan for review and observe/report outcomes.
+
+Consent-based distribution: Codex project `.agents/skills/netclaw-install/`; Claude `.claude/skills/netclaw-install/`; Copilot bundled `chatSkills` (>=1.109) or chosen workspace `.github/skills/netclaw-install/`. Show destination/scope/hash, refuse differing existing content unless separately reviewed. No automatic user-home writes during extension activation or tests. Include Q&A, focused intent, mixed Risk intent, production refusal, reconnect/resume and Spec starter prompts. All examples use secret references.

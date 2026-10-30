@@ -1,0 +1,153 @@
+{
+  "recordedAt": "2026-10-24T20:04:49.317609+00:00",
+  "windows": {
+    "osVersion": "10.0.26300.0",
+    "architecture": "AMD64",
+    "observedDate": "2026-10-24",
+    "editorVersion": "1.143.1",
+    "editorCommit": "e646868227c3e3a9e3f24277c8c7220be42c0be7",
+    "earlierEditorVersion": "1.142.0",
+    "remoteWslExtension": "0.104.3",
+    "nativeExtensionHost": {
+      "platform": "win32",
+      "remote": null
+    },
+    "wslVersion": {
+      "value": "3.0.3.0",
+      "observedDate": "2026-10-18"
+    },
+    "wslgVersion": {
+      "value": "1.0.79",
+      "observedDate": "2026-10-18"
+    },
+    "physicalVolume": {
+      "totalBytes": 1004109369344,
+      "freeBytesAtLastCapacityProbe": 13154586624,
+      "probeDate": "2026-10-24",
+      "notAReservation": true
+    }
+  },
+  "hosts": {
+    "ubuntu2404": {
+      "observedAt": "2026-10-24T19:55:32.506583+00:00",
+      "os": {
+        "PRETTY_NAME": "Ubuntu 24.04.5 LTS",
+        "VERSION_ID": "24.04",
+        "ID": "ubuntu"
+      },
+      "architecture": "x86_64",
+      "kernel": "6.18.54.1-microsoft-standard-WSL2",
+      "python": "3.12.3",
+      "packages": {
+        "jsonschema": "4.26.0",
+        "PyYAML": "6.0.3",
+        "pytest": "9.1.1",
+        "pytest-subtests": "0.15.0",
+        "cryptography": "50.0.2"
+      },
+      "node": {
+        "exit": 0,
+        "version": "v24.19.0"
+      },
+      "git": {
+        "exit": 0,
+        "version": "git version 2.43.0"
+      },
+      "uv": {
+        "exit": 0,
+        "version": "uv 0.13.1 (x86_64-unknown-linux-gnu)"
+      },
+      "systemd": {
+        "exit": 0,
+        "version": "systemd 255 (255.4-1ubuntu8.17)"
+      },
+      "userManager": {
+        "exit": 0,
+        "version": "running"
+      },
+      "userBus": {
+        "available": true
+      },
+      "editor": {
+        "editor": "1.143.1",
+        "remote": "wsl",
+        "platform": "linux"
+      },
+      "source": {
+        "commit": "30dbf6a99f676abe6e45b844a700128c84c0cdfb",
+        "treeHash": "b2535298751b1e002815f50b22ee7c3bf95fa7a779ebc5992e5702058522b9ce",
+        "dirty": false
+      },
+      "finalTestSourceCommit": "cf97be1c286442660c355d50cf0788199a24c2a1"
+    },
+    "ubuntu2604": {
+      "observedAt": "2026-10-24T20:01:57.299669+00:00",
+      "os": {
+        "PRETTY_NAME": "Ubuntu 26.04.1 LTS",
+        "VERSION_ID": "26.04",
+        "ID": "ubuntu"
+      },
+      "architecture": "x86_64",
+      "kernel": "6.18.54.1-microsoft-standard-WSL2",
+      "python": "3.12.10",
+      "packages": {
+        "jsonschema": "4.26.0",
+        "PyYAML": "6.0.3",
+        "pytest": "9.1.1",
+        "pytest-subtests": "0.15.0",
+        "cryptography": "50.0.2"
+      },
+      "node": {
+        "exit": 0,
+        "version": "v24.19.0"
+      },
+      "git": {
+        "exit": 0,
+        "version": "git version 2.53.0"
+      },
+      "uv": {
+        "exit": 0,
+        "version": "uv 0.13.1 (x86_64-unknown-linux-gnu)"
+      },
+      "systemd": {
+        "exit": 0,
+        "version": "systemd 259 (259.5-0ubuntu3.4)"
+      },
+      "userManager": {
+        "exit": 0,
+        "version": "running"
+      },
+      "userBus": {
+        "available": true
+      },
+      "editor": {
+        "editor": "1.143.1",
+        "remote": "wsl",
+        "platform": "linux"
+      },
+      "source": {
+        "commit": "cf97be1c286442660c355d50cf0788199a24c2a1",
+        "treeHash": "92260f4711c8f751ce735f004e990129c98546b68e71641404e77ac226386c7f",
+        "dirty": false
+      }
+    }
+  },
+  "qualifiedRuntimes": {
+    "node": "24.19.0",
+    "openclaw": "2026.7.1-2",
+    "hermes": "v0.21.6",
+    "managedHermesPython": "3.14.8",
+    "specify": "0.7.1",
+    "specifySource": "c12293c3dac84bf20fccb7dfc455a76792d7a6d6",
+    "certificateOptInCryptography": "46.0.5",
+    "componentMcp": "2.3.0",
+    "componentFastMcp": "4.0.11"
+  },
+  "notes": [
+    "Registration names are not OS-release evidence. Actual /etc/os-release was checked.",
+    "Qualified Node and executable paths were Linux-local; appendWindowsPath was false in fixtures.",
+    "Native Windows and remote WSL editors used separate disposable profiles.",
+    "Test interpreter cryptography 50.0.2 is distinct from pinned certificate qualification interpreter 46.0.5.",
+    "Owner files, distribution identities and account paths are excluded."
+  ]
+}

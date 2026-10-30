@@ -1,0 +1,12 @@
+{
+  "name": "netclaw-twilio-env-mcp",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Pinned Twilio MCP launcher with private environment credentials",
+  "engines": {"node": ">=24.19.0 <25 || >=26.1.0"},
+  "dependencies": {
+    "@twilio-alpha/mcp": "0.7.0",
+    "@modelcontextprotocol/sdk": "1.29.0"
+  }
+}

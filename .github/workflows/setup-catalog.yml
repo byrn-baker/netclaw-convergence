@@ -1,0 +1,61 @@
+name: Setup catalog coherence
+on:
+  pull_request:
+    paths:
+      - 'config/components/**'
+      - 'config/pyats-testbed-sources.json'
+      - 'config/claw-plan.schema.json'
+      - 'scripts/lib/pyats_testbeds.py'
+      - 'scripts/lib/setup_*.py'
+      - 'scripts/configure-testbed.py'
+      - 'scripts/setup.sh'
+      - 'tests/test_pyats_testbeds.py'
+      - 'tests/test_testbed_setup.py'
+      - 'tests/fixtures/pyats-testbeds/**'
+      - 'scripts/*catalog*'
+      - 'scripts/lib/catalog.sh'
+      - 'scripts/lib/install-steps.sh'
+      - 'workspace/skills/**'
+      - 'ui/netclaw-visual/env-map.js'
+      - '.github/workflows/setup-catalog.yml'
+  schedule:
+    - cron: '31 7 * * 1'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  catalog:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.19.0'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: npm --prefix extensions/netclaw-vscode ci --ignore-scripts
+      - run: node scripts/build-catalog.mjs --check
+      - run: python3 scripts/build-catalog.py --check
+      - run: python3 scripts/check-catalog-metadata.py
+      - run: python3 scripts/verify-catalog-coverage.py
+      - run: python3 -m unittest discover -s tests -p test_setup_catalog.py
+      - run: python3 -m unittest discover -s tests -p test_pyats_testbeds.py
+      - run: python3 -m unittest discover -s tests -p test_testbed_setup.py
+      - name: Check changed public documentation links
+        if: github.event_name == 'pull_request'
+        env:
+          CATALOG_BASE_REF: ${{ github.event.pull_request.base.sha }}
+        run: python3 scripts/check-catalog-links.py --base-ref "$CATALOG_BASE_REF" --output catalog-links.json
+      - name: Check all public documentation links
+        if: github.event_name != 'pull_request'
+        run: python3 scripts/check-catalog-links.py --output catalog-links.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: catalog-link-report
+          path: catalog-links.json
+          if-no-files-found: error

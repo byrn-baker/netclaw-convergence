@@ -1,0 +1,14 @@
+{
+  "schema": 1,
+  "version": "153.2",
+  "focusedComponentCeiling": 24,
+  "focusedSchemaCeiling": 150,
+  "focusedSkillCeiling": 40,
+  "focusedServerCeiling": 20,
+  "costSensitiveServerCeiling": 10,
+  "costSensitiveSchemaCeiling": 75,
+  "hostReserveBytes": 4294967296,
+  "cloudClawEstimateBytes": 1073741824,
+  "maxSuggestedMembers": 8,
+  "basis": "Planning allowances, not measured runtime requirements. Local model memory and context are unknown unless separately observed. Never infer a shared credential trust domain or production enforcement."
+}

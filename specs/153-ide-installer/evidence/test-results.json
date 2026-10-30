@@ -1,0 +1,31 @@
+{
+  "date": "2026-10-18",
+  "scope": "isolated fixtures; not clean-host qualification",
+  "results": [
+    {
+      "suite": "setup",
+      "passed": 136,
+      "skipped": 0,
+      "logSha256": "2d3c907265c28473c8c6c93129faa70dcacf87548c82154f55fe6476cec06051",
+      "seconds": "20.703",
+      "date": "2026-10-18"
+    },
+    {
+      "suite": "extension",
+      "passed": 134,
+      "skipped": 2,
+      "total": 136,
+      "logSha256": "91e4b5e3e2da16915562610e8126bf46853f4d8ff438be7c91f5fb1c304a5374",
+      "seconds": "25.351",
+      "date": "2026-10-18"
+    },
+    {
+      "suite": "installer",
+      "passed": 216,
+      "subtestsPassed": 16,
+      "logSha256": "3049b041a42fe8dabc2ad089f49a6e75943581a03e8e8662bbb27dc764234c8c",
+      "seconds": "31.33",
+      "date": "2026-10-18"
+    }
+  ]
+}

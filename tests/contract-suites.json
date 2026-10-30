@@ -711,6 +711,27 @@
       },
       "timeout_seconds": 600
     },
+    "setup-installer": {
+      "kind": "shell",
+      "command": [
+        "bash",
+        "tests/setup-installer/run-tests.sh"
+      ],
+      "environment": {
+        "path": ".contract-test-envs/setup-installer",
+        "requirements": [],
+        "packages": [
+          "jsonschema==4.26.0",
+          "cryptography==46.0.5"
+        ],
+        "required_imports": [
+          "jsonschema",
+          "cryptography"
+        ],
+        "prepend_path": true
+      },
+      "timeout_seconds": 600
+    },
     "dot": {
       "kind": "pytest",
       "paths": [

@@ -3,6 +3,15 @@ import assert from 'node:assert/strict';
 import { loadChat, saveChat } from './chat-storage.js';
 function storage(){let text=null;return {getItem:()=>text,setItem:(_k,v)=>{text=v;}};}
 const state={thread:'chat-owned',messages:[{role:'user',content:'Hello'},{role:'assistant',content:'Hi'}],draft:'Next question',chatModel:'model-id',interrupted:false};
+test('recovery identities survive chat and archive storage while invalid IDs are omitted',async()=>{
+ const {archiveChat,loadChatArchive}=await import('./chat-storage.js');
+ const map=new Map(),s={getItem:k=>map.get(k)||null,setItem:(k,v)=>map.set(k,v)};
+ const value={...state,messages:state.messages.map(m=>({...m,requestId:'owned-request'}))};
+ assert.equal(saveChat(s,value),'');assert.equal(loadChat(s).state.messages[0].requestId,'owned-request');
+ archiveChat(s,value);assert.equal(loadChatArchive(s)[0].messages[1].requestId,'owned-request');
+ saveChat(s,{...state,messages:[{role:'user',content:'text',requestId:'../invalid'}]});
+ assert.equal(loadChat(s).state.messages[0].requestId,undefined);
+});
 test('saved chat restores thread, transcript, draft and selected model',()=>{
  const s=storage();assert.equal(saveChat(s,state),'');
  assert.deepEqual(loadChat(s).state,{version:1,...state,messages:state.messages.map(m=>({...m,assessmentRefs:[]}))});

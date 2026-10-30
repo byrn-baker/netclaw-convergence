@@ -1,0 +1,27 @@
+{
+  "schema": 1,
+  "name": "candidate-servicenow",
+  "sources": [
+    {
+      "kind": "servicenow",
+      "owner": "fixture-controller",
+      "scope": {
+        "site": "fixture-site"
+      },
+      "capturedAt": "2026-10-30T12:00:00Z",
+      "complete": true,
+      "total": 1,
+      "records": [
+        {
+          "sys_id": "node-9",
+          "name": "fixture-servicenow",
+          "ip_address": "192.0.2.9/24",
+          "os": "iosxe"
+        }
+      ],
+      "defaults": {
+        "port": 22
+      }
+    }
+  ]
+}

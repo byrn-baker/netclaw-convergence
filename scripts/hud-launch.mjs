@@ -59,7 +59,7 @@ try {
         const target=await resolveTarget(await managementDiscovery(selected,root,env.HUD_AGENT_ID,env));
         const existing=definition(target,'hud');
         if(existing && (await ownedState(target,existing)).state!=='stopped')throw Error('This HUD already has an active owner.');
-        const descriptor=registerOwned(target,'hud',process.execPath,[path.join(root,'scripts/hud-launch.mjs'),'start','--runtime',selected.kind,'--home',selected.home],env,root,{url:`http://127.0.0.1:${hudPorts(env).api}/api/runtime`,installationId:selected.installationId,kind:selected.kind});
+        const descriptor=registerOwned(target,'hud',process.execPath,[path.join(root,'scripts/hud-launch.mjs'),'start','--runtime',selected.kind,'--home',selected.home],env,root,{url:`http://127.0.0.1:${hudPorts(env).api}/api/runtime`,httpUrls:[`http://127.0.0.1:${hudPorts(env).ui}/`],installationId:selected.installationId,kind:selected.kind});
         await startOwned(target,descriptor);
         console.log('Managed HUD ready. Its private ownership record supports offline VS Code controls.');
         process.exit(0);

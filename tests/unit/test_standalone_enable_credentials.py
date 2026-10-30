@@ -1,5 +1,5 @@
 from pathlib import Path
-import importlib.util, os, re, subprocess
+import importlib.util, os, re, subprocess, sys
 import pytest
 ROOT=Path(__file__).resolve().parents[2]
 spec=importlib.util.spec_from_file_location('envwriter',ROOT/'scripts/write-env.py'); writer=importlib.util.module_from_spec(spec); spec.loader.exec_module(writer)
@@ -124,14 +124,130 @@ def test_checkpoint_required_failure_is_not_success(tmp_path,stage):
     if stage!='verification':assert not (home/'.openclaw/.env').exists()
 
 
-def test_forward_failed_smoke_is_not_installed(tmp_path):
+class FakeForwardMcp:
+    """Local stand-in for Forward's /api/mcp: records requests, answers with `status`.
+
+    `sessions` makes it a strict stateful server: it issues an Mcp-Session-Id on initialize and
+    rejects tools/list unless that id came back and notifications/initialized was sent first.
+    """
+    def __init__(self, status, sessions=False):
+        import http.server, json, threading
+        outer=self;self.status=status;self.requests=[];self.initialized=False
+        class Handler(http.server.BaseHTTPRequestHandler):
+            def do_POST(self):
+                body=json.loads(self.rfile.read(int(self.headers['Content-Length'])))
+                outer.requests.append((self.path,self.headers.get('Authorization'),body['method']))
+                if body['method']=='notifications/initialized' and outer.status==200:
+                    outer.initialized=True;self.send_response(202);self.send_header('Content-Length','0');self.end_headers();return
+                if self.path!='/api/mcp':
+                    self.send_response(200);self.send_header('Content-Length','0');self.end_headers();return
+                if 300<=outer.status<400:
+                    self.send_response(outer.status);self.send_header('Location','/elsewhere');self.send_header('Content-Length','0');self.end_headers();return
+                if outer.status!=200:
+                    data=json.dumps({'message':'MCP is not enabled for this organization','status':str(outer.status)}).encode()
+                    self.send_response(outer.status);self.send_header('Content-Type','application/json');self.send_header('Content-Length',str(len(data)));self.end_headers();self.wfile.write(data);return
+                if sessions and body['method']=='tools/list' and (self.headers.get('Mcp-Session-Id')!='sess-1' or not outer.initialized):
+                    self.send_response(400);self.send_header('Content-Length','0');self.end_headers();return
+                result={'initialize':{'serverInfo':{'name':'fake-forward','version':'1'}},'tools/list':{'tools':[{'name':'get_paths'},{'name':'get_device'}]}}[body['method']]
+                data=json.dumps({'jsonrpc':'2.0','id':body['id'],'result':result}).encode()
+                self.send_response(200);self.send_header('Content-Type','application/json');self.send_header('Content-Length',str(len(data)))
+                if sessions and body['method']=='initialize':self.send_header('Mcp-Session-Id','sess-1')
+                self.end_headers();self.wfile.write(data)
+            def log_message(self,*args):pass
+        self.server=http.server.HTTPServer(('127.0.0.1',0),Handler)
+        self.url=f'http://127.0.0.1:{self.server.server_port}'
+        threading.Thread(target=self.server.serve_forever,daemon=True).start()
+    def close(self):
+        self.server.shutdown();self.server.server_close()
+
+
+def clean_env(home):
+    # Loopback fixtures must never be routed through a developer's proxy.
+    env={k:v for k,v in os.environ.items() if k.lower() not in ('http_proxy','https_proxy','all_proxy','no_proxy')}
+    return {**env,'HOME':str(home)}
+
+
+def run_forward_enable(tmp_path,inputs):
+    import shutil
     repo,home=fixture_checkout(tmp_path,'forward-enable.sh')
-    (repo/'scripts/mcp-call.py').write_text('raise SystemExit(7)\n')
-    forward=repo/'mcp-servers/forward-mcp';(forward/'.git').mkdir(parents=True)
-    bins=tmp_path/'bin';bins.mkdir()
-    for name,code in {'git':'exit 0','go':'case "$1" in version) echo "go version go1.25.0 linux/amd64";; env) echo 1;; esac'}.items():
-        p=bins/name;p.write_text('#!/bin/sh\n'+code+'\n');p.chmod(0o700)
-    proc=subprocess.run(['bash',str(repo/'scripts/forward-enable.sh')],input='n\n',env={**os.environ,'HOME':str(home),'PATH':str(bins)+os.pathsep+os.environ['PATH']},capture_output=True,text=True,timeout=15)
+    shutil.copy2(ROOT/'scripts/forward-mcp-check.py',repo/'scripts/forward-mcp-check.py')
+    proc=subprocess.run(['bash',str(repo/'scripts/forward-enable.sh')],input=inputs,env=clean_env(home),capture_output=True,text=True,timeout=30,check=False)
+    return proc,home/'.openclaw/.env'
+
+
+def run_forward_check(tmp_path,url,auth='a2V5OnNlY3JldA=='):
+    return subprocess.run([sys.executable,str(ROOT/'scripts/forward-mcp-check.py')],env={**clean_env(tmp_path),'FORWARD_URL':url,'FORWARD_AUTH_BASE64':auth},capture_output=True,text=True,timeout=30,check=False)
+
+
+def test_forward_enable_stores_basic_credential_and_verifies_endpoint(tmp_path):
+    import base64
+    server=FakeForwardMcp(200)
+    try:
+        proc,env=run_forward_enable(tmp_path,f'y\n{server.url}/api/mcp\naccess-key\nsecret&|$x\n')
+    finally:server.close()
+    assert proc.returncode==0,proc.stderr
+    expected=base64.b64encode(b'access-key:secret&|$x').decode()
+    stored=writer.values(env.read_text())
+    assert stored['FORWARD_URL']==server.url
+    assert stored['FORWARD_AUTH_BASE64']==expected
+    assert server.requests==[('/api/mcp','Basic '+expected,m) for m in ('initialize','notifications/initialized','tools/list')]
+    assert 'integration is installed.' in proc.stdout
+    assert 'secret&|$x' not in proc.stdout+proc.stderr and expected not in proc.stdout+proc.stderr
+
+
+@pytest.mark.parametrize('status',[401,403])
+def test_forward_enable_rejected_endpoint_is_not_installed(tmp_path,status):
+    server=FakeForwardMcp(status)
+    try:
+        proc,_=run_forward_enable(tmp_path,f'y\n{server.url}\naccess-key\nsecret\n')
+    finally:server.close()
     assert proc.returncode!=0
     assert 'Smoke test failed' in proc.stdout
+    assert f'HTTP {status}' in proc.stderr
+    assert 'MCP is not enabled for this organization' in proc.stderr
     assert 'integration is installed.' not in proc.stdout
+
+
+def test_forward_enable_skipped_credentials_do_not_claim_installed(tmp_path):
+    proc,env=run_forward_enable(tmp_path,'n\n')
+    assert proc.returncode==0,proc.stderr
+    assert 'skipping the smoke test' in proc.stdout
+    assert 'integration is installed.' not in proc.stdout
+    assert 'FORWARD_AUTH_BASE64' not in writer.values(env.read_text())
+
+
+def test_forward_enable_key_without_secret_is_not_stored(tmp_path):
+    proc,env=run_forward_enable(tmp_path,'y\nhttps://fwd.example.com\naccess-key\n\n')
+    assert proc.returncode==0,proc.stderr
+    assert 'Both the access key and the secret are required' in proc.stdout
+    assert 'FORWARD_AUTH_BASE64' not in writer.values(env.read_text())
+
+
+def test_forward_check_completes_the_handshake_for_a_stateful_server(tmp_path):
+    server=FakeForwardMcp(200,sessions=True)
+    try:proc=run_forward_check(tmp_path,server.url)
+    finally:server.close()
+    assert proc.returncode==0,proc.stderr
+    assert 'tools (2): get_device, get_paths' in proc.stdout
+
+
+def test_forward_check_never_follows_a_redirect_with_the_credential(tmp_path):
+    server=FakeForwardMcp(302)
+    try:proc=run_forward_check(tmp_path,server.url)
+    finally:server.close()
+    assert proc.returncode!=0
+    assert 'HTTP 302' in proc.stderr
+    assert [r[0] for r in server.requests]==['/api/mcp']
+
+
+def test_forward_check_refuses_plain_http_to_a_remote_host(tmp_path):
+    proc=run_forward_check(tmp_path,'http://fwd.example.com')
+    assert proc.returncode==2
+    assert 'must be https' in proc.stderr
+
+
+@pytest.mark.parametrize('url',['http://localhost.example.com','http://127.0.0.1.evil.example.com','http://fwd.example.com'])
+def test_forward_enable_refuses_to_store_a_non_loopback_http_url(tmp_path,url):
+    proc,env=run_forward_enable(tmp_path,f'y\n{url}\nkey\nsecret\n')
+    assert 'must start with https://' in proc.stdout
+    assert 'FORWARD_URL' not in writer.values(env.read_text())

@@ -23,6 +23,10 @@ class ToolPolicy:
     def check_sources(self):
         if getattr(self, "runtime_source", None):verify_source(self.runtime_source)
         if hashlib.sha256(self.config_file.read_bytes()).hexdigest()!=self.config_digest:raise HudError('policy_unverified','Selected configuration changed. Restart and requalify.')
+        if getattr(self,'identity_hashes',None):
+            from setup_identity import read_private
+            for name,expected in self.identity_hashes.items():
+                if hashlib.sha256(read_private(name,65536)).hexdigest()!=expected:raise HudError('policy_unverified','Selected identity changed. Review and restart.')
         for entry in self.entries.values():
             if hashlib.sha256(Path(entry['source']).read_bytes()).hexdigest()!=entry['sourceHash']:raise HudError('policy_unverified')
     def check_arguments(self,name,args):

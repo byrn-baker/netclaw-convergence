@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "repository": "https://github.com/NousResearch/hermes-homeassistant",
+  "revision": "ba30cb0cf86c52bdb5cde98974bc062e97966529",
+  "version": "2.0.1",
+  "files": {
+    "__init__.py": "646ca7f4f011e4db996f1590c187ee4e2fc6e6acc9b3b0b29494be137d809cdb",
+    "adapter.py": "05f3826c09297216694b5c4ae11f7daadfc95660e1d58068b085bcbb127accf1",
+    "tools.py": "05c0a2fd04a5746f360393b9d765d473c17e253a695a83c110d3936495416916",
+    "plugin.yaml": "7a3655acde9c602acac819db47d9cb9e3124728d495dc8e15dd40171b7c51618",
+    "LICENSE": "5f79d321c17de8ef6e5f34967dc5b484afebeeefd87180890d9741941f6b815f"
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "date": "2026-10-18",
+  "scope": "Installed clients in disposable homes and actual VS Code setup broker; no hosted-provider turns",
+  "codex": {
+    "version": "0.163.0",
+    "registration": true,
+    "actualAppServerDiscovery": [
+      "netclaw_setup_catalog",
+      "netclaw_setup_draft",
+      "netclaw_setup_explain",
+      "netclaw_setup_observe",
+      "netclaw_setup_review",
+      "netclaw_setup_secret_entry",
+      "netclaw_setup_status",
+      "netclaw_setup_validate"
+    ],
+    "serverVersion": "1.0.0",
+    "toolsError": null
+  },
+  "claudeCode": {
+    "version": "2.1.286",
+    "registration": true,
+    "connected": true,
+    "capabilities": {
+      "hasTools": true,
+      "hasPrompts": false,
+      "hasResources": false
+    },
+    "scope": "Actual CLI mcp list handshake; full tool list not exposed by this command"
+  },
+  "copilotIntegration": {
+    "editor": "1.109.0",
+    "scope": "Actual VS Code MCP client used by Copilot; no signed-in chat turn",
+    "registered": true,
+    "discoveredTools": 8
+  },
+  "reviewBoundary": "All eight tools retain native review; none execute apply or arbitrary commands or return secrets. Contract and intent tests cover three client formats.",
+  "providerCalls": 0,
+  "channelMessages": 0,
+  "deviceCalls": 0
+}

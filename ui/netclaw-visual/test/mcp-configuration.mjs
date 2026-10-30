@@ -6,6 +6,17 @@ import path from "node:path";
 import { createMcpConfiguration } from "../mcp-configuration.js";
 import { ENV_MAP } from "../env-map.js";
 import { parseEnvData } from "../src/security/private-files.js";
+test("dynamic pyATS policy removes static-path requirement without claiming readiness", () => {
+  for (const mode of ["static", "dynamic"]) {
+    const snapshot = createMcpConfiguration({getFile: () => "/missing/fixture.env",
+      getValues: () => ({NETCLAW_TESTBED_MODE: mode, NETCLAW_TESTBED_SOURCES: mode === "dynamic" ? "netbox" : ""}),
+      mapping: ENV_MAP, installationId: "x"}).snapshot();
+    const pyats = snapshot.integrations.find(d => d.id === "pyats");
+    assert.equal(pyats.fields.find(f => f.key === "PYATS_TESTBED_PATH").requirement,
+      mode === "dynamic" ? "optional" : "required");
+    assert.equal(pyats.fields.find(f => f.key === "PYATS_TESTBED_PATH").isSet, false);
+  }
+});
 test("every known MCP has a scoped descriptor; aliases and unknown secrets are honest", () => {
   const s = createMcpConfiguration({
     getFile: () => "/missing/fixture.env",
@@ -22,7 +33,7 @@ test("every known MCP has a scoped descriptor; aliases and unknown secrets are h
     "secret",
   );
   assert.deepEqual(s.integrations.find((d) => d.id === "catc").components, [
-    "catalyst-center",
+    "catc",
   ]);
   assert.ok(
     !s.integrations

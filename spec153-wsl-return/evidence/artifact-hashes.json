@@ -1,0 +1,115 @@
+{
+  "scope": "Evidence snapshot; excludes this self-referential manifest and subsequent delivery metadata/bundle.",
+  "files": [
+    {
+      "path": "RETURN-TO-MAC.md",
+      "bytes": 5384,
+      "sha256": "6f00d3eb737d11b40fafafebcc900abbac525a978b518f631206748f044919b1"
+    },
+    {
+      "path": "SUMMARY.md",
+      "bytes": 5893,
+      "sha256": "41105f4624be66e3a4f043bd554616e24d0bfbd3d0dd88ed21895e895cf26c8d"
+    },
+    {
+      "path": "demo/netclaw-setup-60s.mp4",
+      "bytes": 3732920,
+      "sha256": "c9db26887c74f8556126b3b1b48e600151c51211049e183008d49a232833783e"
+    },
+    {
+      "path": "demo/poster.png",
+      "bytes": 590697,
+      "sha256": "1d080e9c7839fea90890a482e5a15911d56a792df896fb3916126c361c4711c2"
+    },
+    {
+      "path": "demo/tour-details.json",
+      "bytes": 2774,
+      "sha256": "2be25a53db07bd54fbfb9aeb2f9ca7cc2f6006bdac2b01d282deb62432e654f4"
+    },
+    {
+      "path": "demo/verification.json",
+      "bytes": 756,
+      "sha256": "02bdc81ef667b9580eb61181d845f5e4dae7c238612f8c9a9884545396bbdc85"
+    },
+    {
+      "path": "environment.json",
+      "bytes": 4296,
+      "sha256": "ad174852bf273b7fa27480aa3fa39cf558a0a3d1341ddf6d712da093ad784426"
+    },
+    {
+      "path": "evidence/assistant-clients.json",
+      "bytes": 1482,
+      "sha256": "eacbbdb50195619b1d1af756b522cf15603a6b1a497aa4da045426aedc625414"
+    },
+    {
+      "path": "evidence/cleanup.json",
+      "bytes": 10740,
+      "sha256": "23312c71964263b4b5f2878ced646bf094156785d44518bfd6f30ff532fd1c18"
+    },
+    {
+      "path": "evidence/fixture-shutdown.json",
+      "bytes": 369,
+      "sha256": "9e5e6d52369ddfb6429813a377dbf27e40abea36e67703439d400cca9e12d57a"
+    },
+    {
+      "path": "evidence/implementation-files.json",
+      "bytes": 2935,
+      "sha256": "67cccc57701026e69d620cd3e489e1006a336f8dd5cdd9076b1f52e2170080f7"
+    },
+    {
+      "path": "evidence/lifecycle.json",
+      "bytes": 3453,
+      "sha256": "3f6a32063677a73c503808820bd5b5188fc6dd46ab75bcc6f641b4e3f3a39b85"
+    },
+    {
+      "path": "evidence/native-windows.json",
+      "bytes": 3427,
+      "sha256": "4c2dbdf33cf9cd86e39354969802415dc3046b3dcd192e2d6bda910e81b84978"
+    },
+    {
+      "path": "evidence/privacy-audit.json",
+      "bytes": 2372,
+      "sha256": "205119fc79efd10f2c6d2d79d5f08d1cc2943ad93d357d8c3e687ceed1f2532c"
+    },
+    {
+      "path": "evidence/test-results.json",
+      "bytes": 6875,
+      "sha256": "cb2866a9c4ac9fb57dd893f5d788682a03bdf7ba0ad574404404fec95692be28"
+    },
+    {
+      "path": "matrix.json",
+      "bytes": 17227,
+      "sha256": "e439672db9d2f3af13108fcafd7fa148f4229d973685a8a9088c43cb59816be3"
+    },
+    {
+      "path": "reports/ubuntu2404-hermes-interrupted.json",
+      "bytes": 300,
+      "sha256": "0a1707137d0006072358e824437ef02853ab0888530f688cee181d9b8c963337"
+    },
+    {
+      "path": "reports/ubuntu2404-openclaw.json",
+      "bytes": 1114,
+      "sha256": "4c8462805eb5ae9b0713f78a7c89b0a8b64ab3cda97a36f39fa43dcefbd2d9d6"
+    },
+    {
+      "path": "reports/ubuntu2604-hermes-before-managed-fix.json",
+      "bytes": 1111,
+      "sha256": "8a8f538ebec5f649c31d7c8d6f053bec431419f7d8e86bf67a7995a1594b4020"
+    },
+    {
+      "path": "reports/ubuntu2604-hermes.json",
+      "bytes": 1109,
+      "sha256": "5dde1b2a6edbb824edef5146f3db8e844b6cf01e035714272a63ab421a94f2e8"
+    },
+    {
+      "path": "reports/ubuntu2604-mixed-risk.json",
+      "bytes": 3820,
+      "sha256": "16e62cc4748dbd7df434b4b8fae9b31efc04a079a7758db71387c6aea916eee2"
+    },
+    {
+      "path": "reports/ubuntu2604-openclaw.json",
+      "bytes": 1114,
+      "sha256": "2d6328e0066917550088833f4b7a0302f634612ed32fce5b4281f40a256e5012"
+    }
+  ]
+}

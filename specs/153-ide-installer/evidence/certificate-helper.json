@@ -1,0 +1,7 @@
+{
+  "scope": "actual isolated helper, fixture homes; no peer/ACME/network calls",
+  "python": "3.12.12",
+  "cryptography": "46.0.5",
+  "source": "https://pypi.org/project/cryptography/46.0.5/",
+  "result": "passed: generation, observation, private pipe and redirected-file refusal; keypair recovery/mismatch/ownership fixtures also pass"
+}

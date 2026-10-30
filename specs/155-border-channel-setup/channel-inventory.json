@@ -1,0 +1,1511 @@
+{
+  "schema": 1,
+  "checkedAt": "2026-10-25",
+  "localSourceCommit": "a5480b4cea4cf3729a25576fa75394b41257faab",
+  "scope": "Documented upstream channel/interface inventory, not live qualification or blanket compatibility with a selected installation.",
+  "sources": {
+    "openclaw": "https://docs.openclaw.ai/channels",
+    "openclawPinned": "https://github.com/openclaw/openclaw/blob/0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c/docs/channels/index.md",
+    "hermes": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging",
+    "hermesPinned": "https://github.com/NousResearch/hermes-agent/blob/818c13be1dc4fd28987e1e881a9408224afd4535/website/docs/user-guide/messaging/index.md",
+    "twilioWebhookSecurity": "https://www.twilio.com/docs/usage/webhooks/webhooks-security",
+    "twilioDeliveryStatus": "https://www.twilio.com/docs/messaging/guides/track-outbound-message-status"
+  },
+  "openclaw": [
+    {
+      "id": "a2a",
+      "name": "A2A",
+      "documentation": "https://docs.openclaw.ai/channels/a2a",
+      "upstreamClass": "bundled",
+      "pinnedDocs": "not-listed-in-pinned-index",
+      "installer153": "not-in-channel-catalog",
+      "canonicalId": "a2a",
+      "nativeId": "a2a",
+      "kind": "agent-protocol",
+      "eligibleRoles": [
+        "focused",
+        "border"
+      ],
+      "pinnedSupport": {
+        "version": "2026.7.1-2",
+        "commit": "0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+        "state": "not-found",
+        "evidence": "https://github.com/openclaw/openclaw/tree/0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+        "qualification": "source-inspection-only",
+        "implementationKind": "absent"
+      }
+    },
+    {
+      "id": "buzz",
+      "name": "Buzz",
+      "documentation": "https://docs.openclaw.ai/channels/buzz",
+      "upstreamClass": "official-plugin",
+      "pinnedDocs": "not-listed-in-pinned-index",
+      "installer153": "not-in-channel-catalog",
+      "canonicalId": "buzz",
+      "nativeId": "buzz",
+      "kind": "conversation-channel",
+      "eligibleRoles": [
+        "focused",
+        "border"
+      ],
+      "pinnedSupport": {
+        "version": "2026.7.1-2",
+        "commit": "0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+        "state": "not-found",
+        "evidence": "https://github.com/openclaw/openclaw/tree/0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+        "qualification": "source-inspection-only",
+        "implementationKind": "absent"
+      }
+    },
+    {
+      "id": "clickclack",
+      "name": "ClickClack",
+      "documentation": "https://docs.openclaw.ai/channels/clickclack",
+      "upstreamClass": "official-plugin",
+      "pinnedDocs": "not-listed-in-pinned-index",
+      "installer153": "not-in-channel-catalog",
+      "canonicalId": "clickclack",
+      "nativeId": "clickclack",
+      "kind": "conversation-channel",
+      "eligibleRoles": [
+        "focused",
+        "border"
+      ],
+      "pinnedSupport": {
+        "version": "2026.7.1-2",
+        "commit": "0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+        "state": "present",
+        "evidence": "https://github.com/openclaw/openclaw/tree/0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+        "qualification": "source-inspection-only",
+        "implementationKind": "official-plugin"
+      }
+    },
+    {
+      "id": "discord",
+      "name": "Discord",
+      "documentation": "https://docs.openclaw.ai/channels/discord",
+      "upstreamClass": "official-plugin",
+      "pinnedDocs": "listed-in-pinned-index",
+      "installer153": "basic-token-selection",
+      "canonicalId": "discord",
+      "nativeId": "discord",
+      "kind": "conversation-channel",
+      "eligibleRoles": [
+        "focused",
+        "border"
+      ],
+      "pinnedSupport": {
+        "version": "2026.7.1-2",
+        "commit": "0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+        "state": "present",
+        "evidence": "https://github.com/openclaw/openclaw/tree/0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+        "qualification": "source-inspection-only",
+        "implementationKind": "official-plugin"
+      }
+    },
+    {
+      "id": "feishu",
+      "name": "Feishu",
+      "documentation": "https://docs.openclaw.ai/channels/feishu",
+      "upstreamClass": "official-plugin",
+      "pinnedDocs": "listed-in-pinned-index",
+      "installer153": "not-in-channel-catalog",
+      "canonicalId": "feishu",
+      "nativeId": "feishu",
+      "kind": "conversation-channel",
+      "eligibleRoles": [
+        "focused",
+        "border"
+      ],
+      "pinnedSupport": {
+        "version": "2026.7.1-2",
+        "commit": "0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+        "state": "present",
+        "evidence": "https://github.com/openclaw/openclaw/tree/0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+        "qualification": "source-inspection-only",
+        "implementationKind": "official-plugin"
+      }
+    },
+    {
+      "id": "googlechat",
+      "name": "Google Chat",
+      "documentation": "https://docs.openclaw.ai/channels/googlechat",
+      "upstreamClass": "official-plugin",
+      "pinnedDocs": "listed-in-pinned-index",
+      "installer153": "not-in-channel-catalog",
+      "canonicalId": "googlechat",
+      "nativeId": "googlechat",
+      "kind": "conversation-channel",
+      "eligibleRoles": [
+        "focused",
+        "border"
+      ],
+      "pinnedSupport": {
+        "version": "2026.7.1-2",
+        "commit": "0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+        "state": "present",
+        "evidence": "https://github.com/openclaw/openclaw/tree/0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+        "qualification": "source-inspection-only",
+        "implementationKind": "official-plugin"
+      }
+    },
+    {
+      "id": "imessage",
+      "name": "iMessage",
+      "documentation": "https://docs.openclaw.ai/channels/imessage",
+      "upstreamClass": "official-plugin",
+      "pinnedDocs": "listed-in-pinned-index",
+      "installer153": "not-in-channel-catalog",
+      "canonicalId": "imessage",
+      "nativeId": "imessage",
+      "kind": "conversation-channel",
+      "eligibleRoles": [
+        "focused",
+        "border"
+      ],
+      "pinnedSupport": {
+        "version": "2026.7.1-2",
+        "commit": "0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+        "state": "present",
+        "evidence": "https://github.com/openclaw/openclaw/tree/0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+        "qualification": "source-inspection-only",
+        "implementationKind": "core"
+      }
+    },
+    {
+      "id": "irc",
+      "name": "IRC",
+      "documentation": "https://docs.openclaw.ai/channels/irc",
+      "upstreamClass": "official-plugin",
+      "pinnedDocs": "listed-in-pinned-index",
+      "installer153": "not-in-channel-catalog",
+      "canonicalId": "irc",
+      "nativeId": "irc",
+      "kind": "conversation-channel",
+      "eligibleRoles": [
+        "focused",
+        "border"
+      ],
+      "pinnedSupport": {
+        "version": "2026.7.1-2",
+        "commit": "0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+        "state": "present",
+        "evidence": "https://github.com/openclaw/openclaw/tree/0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+        "qualification": "source-inspection-only",
+        "implementationKind": "official-plugin"
+      }
+    },
+    {
+      "id": "line",
+      "name": "LINE",
+      "documentation": "https://docs.openclaw.ai/channels/line",
+      "upstreamClass": "official-plugin",
+      "pinnedDocs": "listed-in-pinned-index",
+      "installer153": "not-in-channel-catalog",
+      "canonicalId": "line",
+      "nativeId": "line",
+      "kind": "conversation-channel",
+      "eligibleRoles": [
+        "focused",
+        "border"
+      ],
+      "pinnedSupport": {
+        "version": "2026.7.1-2",
+        "commit": "0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+        "state": "present",
+        "evidence": "https://github.com/openclaw/openclaw/tree/0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+        "qualification": "source-inspection-only",
+        "implementationKind": "official-plugin"
+      }
+    },
+    {
+      "id": "matrix",
+      "name": "Matrix",
+      "documentation": "https://docs.openclaw.ai/channels/matrix",
+      "upstreamClass": "official-plugin",
+      "pinnedDocs": "listed-in-pinned-index",
+      "installer153": "not-in-channel-catalog",
+      "canonicalId": "matrix",
+      "nativeId": "matrix",
+      "kind": "conversation-channel",
+      "eligibleRoles": [
+        "focused",
+        "border"
+      ],
+      "pinnedSupport": {
+        "version": "2026.7.1-2",
+        "commit": "0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+        "state": "present",
+        "evidence": "https://github.com/openclaw/openclaw/tree/0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+        "qualification": "source-inspection-only",
+        "implementationKind": "official-plugin"
+      }
+    },
+    {
+      "id": "mattermost",
+      "name": "Mattermost",
+      "documentation": "https://docs.openclaw.ai/channels/mattermost",
+      "upstreamClass": "official-plugin",
+      "pinnedDocs": "listed-in-pinned-index",
+      "installer153": "not-in-channel-catalog",
+      "canonicalId": "mattermost",
+      "nativeId": "mattermost",
+      "kind": "conversation-channel",
+      "eligibleRoles": [
+        "focused",
+        "border"
+      ],
+      "pinnedSupport": {
+        "version": "2026.7.1-2",
+        "commit": "0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+        "state": "present",
+        "evidence": "https://github.com/openclaw/openclaw/tree/0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+        "qualification": "source-inspection-only",
+        "implementationKind": "official-plugin"
+      }
+    },
+    {
+      "id": "msteams",
+      "name": "Microsoft Teams",
+      "documentation": "https://docs.openclaw.ai/channels/msteams",
+      "upstreamClass": "official-plugin",
+      "pinnedDocs": "listed-in-pinned-index",
+      "installer153": "not-in-channel-catalog",
+      "canonicalId": "msteams",
+      "nativeId": "msteams",
+      "kind": "conversation-channel",
+      "eligibleRoles": [
+        "focused",
+        "border"
+      ],
+      "pinnedSupport": {
+        "version": "2026.7.1-2",
+        "commit": "0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+        "state": "present",
+        "evidence": "https://github.com/openclaw/openclaw/tree/0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+        "qualification": "source-inspection-only",
+        "implementationKind": "official-plugin"
+      }
+    },
+    {
+      "id": "nextcloud-talk",
+      "name": "Nextcloud Talk",
+      "documentation": "https://docs.openclaw.ai/channels/nextcloud-talk",
+      "upstreamClass": "official-plugin",
+      "pinnedDocs": "listed-in-pinned-index",
+      "installer153": "not-in-channel-catalog",
+      "canonicalId": "nextcloud-talk",
+      "nativeId": "nextcloud-talk",
+      "kind": "conversation-channel",
+      "eligibleRoles": [
+        "focused",
+        "border"
+      ],
+      "pinnedSupport": {
+        "version": "2026.7.1-2",
+        "commit": "0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+        "state": "present",
+        "evidence": "https://github.com/openclaw/openclaw/tree/0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+        "qualification": "source-inspection-only",
+        "implementationKind": "official-plugin"
+      }
+    },
+    {
+      "id": "nostr",
+      "name": "Nostr",
+      "documentation": "https://docs.openclaw.ai/channels/nostr",
+      "upstreamClass": "official-plugin",
+      "pinnedDocs": "listed-in-pinned-index",
+      "installer153": "not-in-channel-catalog",
+      "canonicalId": "nostr",
+      "nativeId": "nostr",
+      "kind": "conversation-channel",
+      "eligibleRoles": [
+        "focused",
+        "border"
+      ],
+      "pinnedSupport": {
+        "version": "2026.7.1-2",
+        "commit": "0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+        "state": "present",
+        "evidence": "https://github.com/openclaw/openclaw/tree/0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+        "qualification": "source-inspection-only",
+        "implementationKind": "official-plugin"
+      }
+    },
+    {
+      "id": "qqbot",
+      "name": "QQ bot",
+      "documentation": "https://docs.openclaw.ai/channels/qqbot",
+      "upstreamClass": "official-plugin",
+      "pinnedDocs": "listed-in-pinned-index",
+      "installer153": "not-in-channel-catalog",
+      "canonicalId": "qqbot",
+      "nativeId": "qqbot",
+      "kind": "conversation-channel",
+      "eligibleRoles": [
+        "focused",
+        "border"
+      ],
+      "pinnedSupport": {
+        "version": "2026.7.1-2",
+        "commit": "0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+        "state": "present",
+        "evidence": "https://github.com/openclaw/openclaw/tree/0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+        "qualification": "source-inspection-only",
+        "implementationKind": "official-plugin"
+      }
+    },
+    {
+      "id": "raft",
+      "name": "Raft",
+      "documentation": "https://docs.openclaw.ai/channels/raft",
+      "upstreamClass": "official-plugin",
+      "pinnedDocs": "listed-in-pinned-index",
+      "installer153": "not-in-channel-catalog",
+      "canonicalId": "raft",
+      "nativeId": "raft",
+      "kind": "conversation-channel",
+      "eligibleRoles": [
+        "focused",
+        "border"
+      ],
+      "pinnedSupport": {
+        "version": "2026.7.1-2",
+        "commit": "0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+        "state": "present",
+        "evidence": "https://github.com/openclaw/openclaw/tree/0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+        "qualification": "source-inspection-only",
+        "implementationKind": "official-plugin"
+      }
+    },
+    {
+      "id": "reef",
+      "name": "Reef",
+      "documentation": "https://docs.openclaw.ai/channels/reef",
+      "upstreamClass": "bundled",
+      "pinnedDocs": "not-listed-in-pinned-index",
+      "installer153": "not-in-channel-catalog",
+      "canonicalId": "reef",
+      "nativeId": "reef",
+      "kind": "conversation-channel",
+      "eligibleRoles": [
+        "focused",
+        "border"
+      ],
+      "pinnedSupport": {
+        "version": "2026.7.1-2",
+        "commit": "0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+        "state": "not-found",
+        "evidence": "https://github.com/openclaw/openclaw/tree/0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+        "qualification": "source-inspection-only",
+        "implementationKind": "absent"
+      }
+    },
+    {
+      "id": "signal",
+      "name": "Signal",
+      "documentation": "https://docs.openclaw.ai/channels/signal",
+      "upstreamClass": "official-plugin",
+      "pinnedDocs": "listed-in-pinned-index",
+      "installer153": "not-in-channel-catalog",
+      "canonicalId": "signal",
+      "nativeId": "signal",
+      "kind": "conversation-channel",
+      "eligibleRoles": [
+        "focused",
+        "border"
+      ],
+      "pinnedSupport": {
+        "version": "2026.7.1-2",
+        "commit": "0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+        "state": "present",
+        "evidence": "https://github.com/openclaw/openclaw/tree/0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+        "qualification": "source-inspection-only",
+        "implementationKind": "official-plugin"
+      }
+    },
+    {
+      "id": "slack",
+      "name": "Slack",
+      "documentation": "https://docs.openclaw.ai/channels/slack",
+      "upstreamClass": "official-plugin",
+      "pinnedDocs": "listed-in-pinned-index",
+      "installer153": "basic-token-selection",
+      "canonicalId": "slack",
+      "nativeId": "slack",
+      "kind": "conversation-channel",
+      "eligibleRoles": [
+        "focused",
+        "border"
+      ],
+      "pinnedSupport": {
+        "version": "2026.7.1-2",
+        "commit": "0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+        "state": "present",
+        "evidence": "https://github.com/openclaw/openclaw/tree/0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+        "qualification": "source-inspection-only",
+        "implementationKind": "official-plugin"
+      }
+    },
+    {
+      "id": "sms",
+      "name": "SMS (Twilio)",
+      "documentation": "https://docs.openclaw.ai/channels/sms",
+      "upstreamClass": "official-plugin",
+      "pinnedDocs": "listed-in-pinned-index",
+      "installer153": "not-in-channel-catalog",
+      "provider": "twilio",
+      "searchAliases": [
+        "Twilio",
+        "Twilio SMS"
+      ],
+      "canonicalId": "sms",
+      "nativeId": "sms",
+      "kind": "conversation-channel",
+      "eligibleRoles": [
+        "focused",
+        "border"
+      ],
+      "pinnedSupport": {
+        "version": "2026.7.1-2",
+        "commit": "0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+        "state": "present",
+        "evidence": "https://github.com/openclaw/openclaw/tree/0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+        "qualification": "source-inspection-only",
+        "implementationKind": "official-plugin"
+      }
+    },
+    {
+      "id": "synology-chat",
+      "name": "Synology Chat",
+      "documentation": "https://docs.openclaw.ai/channels/synology-chat",
+      "upstreamClass": "official-plugin",
+      "pinnedDocs": "listed-in-pinned-index",
+      "installer153": "not-in-channel-catalog",
+      "canonicalId": "synology-chat",
+      "nativeId": "synology-chat",
+      "kind": "conversation-channel",
+      "eligibleRoles": [
+        "focused",
+        "border"
+      ],
+      "pinnedSupport": {
+        "version": "2026.7.1-2",
+        "commit": "0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+        "state": "present",
+        "evidence": "https://github.com/openclaw/openclaw/tree/0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+        "qualification": "source-inspection-only",
+        "implementationKind": "official-plugin"
+      }
+    },
+    {
+      "id": "telegram",
+      "name": "Telegram",
+      "documentation": "https://docs.openclaw.ai/channels/telegram",
+      "upstreamClass": "bundled",
+      "pinnedDocs": "listed-in-pinned-index",
+      "installer153": "basic-token-selection",
+      "canonicalId": "telegram",
+      "nativeId": "telegram",
+      "kind": "conversation-channel",
+      "eligibleRoles": [
+        "focused",
+        "border"
+      ],
+      "pinnedSupport": {
+        "version": "2026.7.1-2",
+        "commit": "0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+        "state": "present",
+        "evidence": "https://github.com/openclaw/openclaw/tree/0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+        "qualification": "source-inspection-only",
+        "implementationKind": "core"
+      }
+    },
+    {
+      "id": "tlon",
+      "name": "Tlon",
+      "documentation": "https://docs.openclaw.ai/channels/tlon",
+      "upstreamClass": "official-plugin",
+      "pinnedDocs": "listed-in-pinned-index",
+      "installer153": "not-in-channel-catalog",
+      "canonicalId": "tlon",
+      "nativeId": "tlon",
+      "kind": "conversation-channel",
+      "eligibleRoles": [
+        "focused",
+        "border"
+      ],
+      "pinnedSupport": {
+        "version": "2026.7.1-2",
+        "commit": "0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+        "state": "present",
+        "evidence": "https://github.com/openclaw/openclaw/tree/0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+        "qualification": "source-inspection-only",
+        "implementationKind": "official-plugin"
+      }
+    },
+    {
+      "id": "twitch",
+      "name": "Twitch",
+      "documentation": "https://docs.openclaw.ai/channels/twitch",
+      "upstreamClass": "official-plugin",
+      "pinnedDocs": "listed-in-pinned-index",
+      "installer153": "not-in-channel-catalog",
+      "canonicalId": "twitch",
+      "nativeId": "twitch",
+      "kind": "conversation-channel",
+      "eligibleRoles": [
+        "focused",
+        "border"
+      ],
+      "pinnedSupport": {
+        "version": "2026.7.1-2",
+        "commit": "0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+        "state": "present",
+        "evidence": "https://github.com/openclaw/openclaw/tree/0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+        "qualification": "source-inspection-only",
+        "implementationKind": "official-plugin"
+      }
+    },
+    {
+      "id": "webchat",
+      "name": "WebChat",
+      "documentation": "https://docs.openclaw.ai/web/webchat",
+      "upstreamClass": "core",
+      "pinnedDocs": "listed-in-pinned-index",
+      "installer153": "native-interface-not-channel-choice",
+      "canonicalId": "webchat",
+      "nativeId": "webchat",
+      "kind": "browser-interface",
+      "eligibleRoles": [
+        "focused",
+        "border"
+      ],
+      "pinnedSupport": {
+        "version": "2026.7.1-2",
+        "commit": "0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+        "state": "present",
+        "evidence": "https://github.com/openclaw/openclaw/tree/0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+        "qualification": "source-inspection-only",
+        "implementationKind": "core"
+      }
+    },
+    {
+      "id": "wechat",
+      "name": "WeChat",
+      "documentation": "https://docs.openclaw.ai/channels/wechat",
+      "upstreamClass": "external-plugin",
+      "pinnedDocs": "listed-in-pinned-index",
+      "installer153": "not-in-channel-catalog",
+      "canonicalId": "wechat",
+      "nativeId": "openclaw-weixin",
+      "kind": "conversation-channel",
+      "eligibleRoles": [
+        "focused",
+        "border"
+      ],
+      "pinnedSupport": {
+        "version": "2026.7.1-2",
+        "commit": "0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+        "state": "present",
+        "evidence": "https://github.com/openclaw/openclaw/blob/0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c/scripts/lib/official-external-channel-catalog.json",
+        "qualification": "source-inspection-only",
+        "implementationKind": "external-plugin"
+      }
+    },
+    {
+      "id": "wecom",
+      "name": "WeCom",
+      "documentation": "https://docs.openclaw.ai/channels/wecom",
+      "upstreamClass": "external-plugin",
+      "pinnedDocs": "not-listed-in-pinned-index",
+      "installer153": "not-in-channel-catalog",
+      "canonicalId": "wecom",
+      "nativeId": "wecom",
+      "kind": "conversation-channel",
+      "eligibleRoles": [
+        "focused",
+        "border"
+      ],
+      "pinnedSupport": {
+        "version": "2026.7.1-2",
+        "commit": "0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+        "state": "present",
+        "evidence": "https://github.com/openclaw/openclaw/blob/0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c/scripts/lib/official-external-channel-catalog.json",
+        "qualification": "source-inspection-only",
+        "implementationKind": "external-plugin"
+      }
+    },
+    {
+      "id": "whatsapp",
+      "name": "WhatsApp",
+      "documentation": "https://docs.openclaw.ai/channels/whatsapp",
+      "upstreamClass": "official-plugin",
+      "pinnedDocs": "listed-in-pinned-index",
+      "installer153": "not-in-channel-catalog",
+      "canonicalId": "whatsapp",
+      "nativeId": "whatsapp",
+      "kind": "conversation-channel",
+      "eligibleRoles": [
+        "focused",
+        "border"
+      ],
+      "pinnedSupport": {
+        "version": "2026.7.1-2",
+        "commit": "0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+        "state": "present",
+        "evidence": "https://github.com/openclaw/openclaw/tree/0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+        "qualification": "source-inspection-only",
+        "implementationKind": "official-plugin"
+      }
+    },
+    {
+      "id": "x",
+      "name": "X / Twitter",
+      "documentation": "https://docs.openclaw.ai/channels/x",
+      "upstreamClass": "bundled",
+      "pinnedDocs": "not-listed-in-pinned-index",
+      "installer153": "not-in-channel-catalog",
+      "canonicalId": "x",
+      "nativeId": "x",
+      "kind": "conversation-channel",
+      "eligibleRoles": [
+        "focused",
+        "border"
+      ],
+      "pinnedSupport": {
+        "version": "2026.7.1-2",
+        "commit": "0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+        "state": "not-found",
+        "evidence": "https://github.com/openclaw/openclaw/tree/0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+        "qualification": "source-inspection-only",
+        "implementationKind": "absent"
+      }
+    },
+    {
+      "id": "yuanbao",
+      "name": "Yuanbao",
+      "documentation": "https://docs.openclaw.ai/channels/yuanbao",
+      "upstreamClass": "external-plugin",
+      "pinnedDocs": "listed-in-pinned-index",
+      "installer153": "not-in-channel-catalog",
+      "canonicalId": "yuanbao",
+      "nativeId": "yuanbao",
+      "kind": "conversation-channel",
+      "eligibleRoles": [
+        "focused",
+        "border"
+      ],
+      "pinnedSupport": {
+        "version": "2026.7.1-2",
+        "commit": "0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+        "state": "present",
+        "evidence": "https://github.com/openclaw/openclaw/blob/0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c/scripts/lib/official-external-channel-catalog.json",
+        "qualification": "source-inspection-only",
+        "implementationKind": "external-plugin"
+      }
+    },
+    {
+      "id": "zalo",
+      "name": "Zalo",
+      "documentation": "https://docs.openclaw.ai/channels/zalo",
+      "upstreamClass": "official-plugin",
+      "pinnedDocs": "listed-in-pinned-index",
+      "installer153": "not-in-channel-catalog",
+      "canonicalId": "zalo",
+      "nativeId": "zalo",
+      "kind": "conversation-channel",
+      "eligibleRoles": [
+        "focused",
+        "border"
+      ],
+      "pinnedSupport": {
+        "version": "2026.7.1-2",
+        "commit": "0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+        "state": "present",
+        "evidence": "https://github.com/openclaw/openclaw/tree/0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+        "qualification": "source-inspection-only",
+        "implementationKind": "official-plugin"
+      }
+    },
+    {
+      "id": "zaloclawbot",
+      "name": "Zalo ClawBot",
+      "documentation": "https://docs.openclaw.ai/channels/zaloclawbot",
+      "upstreamClass": "external-plugin",
+      "pinnedDocs": "listed-in-pinned-index",
+      "installer153": "not-in-channel-catalog",
+      "canonicalId": "zaloclawbot",
+      "nativeId": "openclaw-zaloclawbot",
+      "kind": "conversation-channel",
+      "eligibleRoles": [
+        "focused",
+        "border"
+      ],
+      "pinnedSupport": {
+        "version": "2026.7.1-2",
+        "commit": "0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+        "state": "present",
+        "evidence": "https://github.com/openclaw/openclaw/blob/0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c/scripts/lib/official-external-channel-catalog.json",
+        "qualification": "source-inspection-only",
+        "implementationKind": "external-plugin"
+      }
+    },
+    {
+      "id": "zalouser",
+      "name": "Zalo personal",
+      "documentation": "https://docs.openclaw.ai/channels/zalouser",
+      "upstreamClass": "official-plugin",
+      "pinnedDocs": "listed-in-pinned-index",
+      "installer153": "not-in-channel-catalog",
+      "canonicalId": "zalouser",
+      "nativeId": "zalouser",
+      "kind": "conversation-channel",
+      "eligibleRoles": [
+        "focused",
+        "border"
+      ],
+      "pinnedSupport": {
+        "version": "2026.7.1-2",
+        "commit": "0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+        "state": "present",
+        "evidence": "https://github.com/openclaw/openclaw/tree/0790d9f593ad30c940ed93b5872a8cf6d6f3cf8c",
+        "qualification": "source-inspection-only",
+        "implementationKind": "official-plugin"
+      }
+    }
+  ],
+  "hermes": [
+    {
+      "id": "telegram",
+      "name": "Telegram",
+      "documentation": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/telegram",
+      "pinnedDocs": "listed-in-pinned-index",
+      "installer153": "token-selection-without-owned-messaging-service",
+      "canonicalId": "telegram",
+      "nativeId": "telegram",
+      "kind": "conversation-channel",
+      "eligibleRoles": [
+        "focused",
+        "border"
+      ],
+      "pinnedSupport": {
+        "version": "0.21.6",
+        "commit": "818c13be1dc4fd28987e1e881a9408224afd4535",
+        "state": "present",
+        "evidence": "https://github.com/NousResearch/hermes-agent/tree/818c13be1dc4fd28987e1e881a9408224afd4535",
+        "qualification": "source-inspection-only"
+      }
+    },
+    {
+      "id": "discord",
+      "name": "Discord",
+      "documentation": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/discord",
+      "pinnedDocs": "listed-in-pinned-index",
+      "installer153": "token-selection-without-owned-messaging-service",
+      "canonicalId": "discord",
+      "nativeId": "discord",
+      "kind": "conversation-channel",
+      "eligibleRoles": [
+        "focused",
+        "border"
+      ],
+      "pinnedSupport": {
+        "version": "0.21.6",
+        "commit": "818c13be1dc4fd28987e1e881a9408224afd4535",
+        "state": "present",
+        "evidence": "https://github.com/NousResearch/hermes-agent/tree/818c13be1dc4fd28987e1e881a9408224afd4535",
+        "qualification": "source-inspection-only"
+      }
+    },
+    {
+      "id": "slack",
+      "name": "Slack",
+      "documentation": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/slack",
+      "pinnedDocs": "listed-in-pinned-index",
+      "installer153": "token-selection-without-owned-messaging-service",
+      "canonicalId": "slack",
+      "nativeId": "slack",
+      "kind": "conversation-channel",
+      "eligibleRoles": [
+        "focused",
+        "border"
+      ],
+      "pinnedSupport": {
+        "version": "0.21.6",
+        "commit": "818c13be1dc4fd28987e1e881a9408224afd4535",
+        "state": "present",
+        "evidence": "https://github.com/NousResearch/hermes-agent/tree/818c13be1dc4fd28987e1e881a9408224afd4535",
+        "qualification": "source-inspection-only"
+      }
+    },
+    {
+      "id": "google_chat",
+      "name": "Google Chat",
+      "documentation": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/google_chat",
+      "pinnedDocs": "listed-in-pinned-index",
+      "installer153": "not-in-channel-catalog",
+      "canonicalId": "google-chat",
+      "nativeId": "google_chat",
+      "kind": "conversation-channel",
+      "eligibleRoles": [
+        "focused",
+        "border"
+      ],
+      "pinnedSupport": {
+        "version": "0.21.6",
+        "commit": "818c13be1dc4fd28987e1e881a9408224afd4535",
+        "state": "present",
+        "evidence": "https://github.com/NousResearch/hermes-agent/tree/818c13be1dc4fd28987e1e881a9408224afd4535",
+        "qualification": "source-inspection-only"
+      }
+    },
+    {
+      "id": "whatsapp",
+      "name": "WhatsApp",
+      "documentation": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/whatsapp",
+      "pinnedDocs": "listed-in-pinned-index",
+      "installer153": "not-in-channel-catalog",
+      "canonicalId": "whatsapp",
+      "nativeId": "whatsapp",
+      "kind": "conversation-channel",
+      "eligibleRoles": [
+        "focused",
+        "border"
+      ],
+      "pinnedSupport": {
+        "version": "0.21.6",
+        "commit": "818c13be1dc4fd28987e1e881a9408224afd4535",
+        "state": "present",
+        "evidence": "https://github.com/NousResearch/hermes-agent/tree/818c13be1dc4fd28987e1e881a9408224afd4535",
+        "qualification": "source-inspection-only"
+      }
+    },
+    {
+      "id": "whatsapp-cloud",
+      "name": "WhatsApp Business (Cloud API)",
+      "documentation": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/whatsapp-cloud",
+      "pinnedDocs": "listed-in-pinned-index",
+      "installer153": "not-in-channel-catalog",
+      "canonicalId": "whatsapp-cloud",
+      "nativeId": "whatsapp_cloud",
+      "kind": "conversation-channel",
+      "eligibleRoles": [
+        "focused",
+        "border"
+      ],
+      "pinnedSupport": {
+        "version": "0.21.6",
+        "commit": "818c13be1dc4fd28987e1e881a9408224afd4535",
+        "state": "present",
+        "evidence": "https://github.com/NousResearch/hermes-agent/tree/818c13be1dc4fd28987e1e881a9408224afd4535",
+        "qualification": "source-inspection-only"
+      }
+    },
+    {
+      "id": "signal",
+      "name": "Signal",
+      "documentation": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/signal",
+      "pinnedDocs": "listed-in-pinned-index",
+      "installer153": "not-in-channel-catalog",
+      "canonicalId": "signal",
+      "nativeId": "signal",
+      "kind": "conversation-channel",
+      "eligibleRoles": [
+        "focused",
+        "border"
+      ],
+      "pinnedSupport": {
+        "version": "0.21.6",
+        "commit": "818c13be1dc4fd28987e1e881a9408224afd4535",
+        "state": "present",
+        "evidence": "https://github.com/NousResearch/hermes-agent/tree/818c13be1dc4fd28987e1e881a9408224afd4535",
+        "qualification": "source-inspection-only"
+      }
+    },
+    {
+      "id": "sms",
+      "name": "SMS (Twilio)",
+      "documentation": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/sms",
+      "pinnedDocs": "listed-in-pinned-index",
+      "installer153": "not-in-channel-catalog",
+      "provider": "twilio",
+      "searchAliases": [
+        "Twilio",
+        "Twilio SMS"
+      ],
+      "canonicalId": "sms",
+      "nativeId": "sms",
+      "kind": "conversation-channel",
+      "eligibleRoles": [
+        "focused",
+        "border"
+      ],
+      "pinnedSupport": {
+        "version": "0.21.6",
+        "commit": "818c13be1dc4fd28987e1e881a9408224afd4535",
+        "state": "present",
+        "evidence": "https://github.com/NousResearch/hermes-agent/tree/818c13be1dc4fd28987e1e881a9408224afd4535",
+        "qualification": "source-inspection-only"
+      }
+    },
+    {
+      "id": "email",
+      "name": "Email",
+      "documentation": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/email",
+      "pinnedDocs": "listed-in-pinned-index",
+      "installer153": "not-in-channel-catalog",
+      "canonicalId": "email",
+      "nativeId": "email",
+      "kind": "conversation-channel",
+      "eligibleRoles": [
+        "focused",
+        "border"
+      ],
+      "pinnedSupport": {
+        "version": "0.21.6",
+        "commit": "818c13be1dc4fd28987e1e881a9408224afd4535",
+        "state": "present",
+        "evidence": "https://github.com/NousResearch/hermes-agent/tree/818c13be1dc4fd28987e1e881a9408224afd4535",
+        "qualification": "source-inspection-only"
+      }
+    },
+    {
+      "id": "homeassistant",
+      "name": "Home Assistant",
+      "documentation": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/homeassistant",
+      "pinnedDocs": "listed-in-pinned-index",
+      "installer153": "not-in-channel-catalog",
+      "canonicalId": "homeassistant",
+      "nativeId": "homeassistant",
+      "kind": "event-tool-integration",
+      "eligibleRoles": [
+        "focused"
+      ],
+      "pinnedSupport": {
+        "version": "0.21.6",
+        "commit": "818c13be1dc4fd28987e1e881a9408224afd4535",
+        "state": "present",
+        "evidence": "https://github.com/NousResearch/hermes-agent/blob/818c13be1dc4fd28987e1e881a9408224afd4535/website/docs/user-guide/messaging/homeassistant.md",
+        "qualification": "source-inspection-only"
+      },
+      "roleReason": "Native plugin shares event ingress and device-control tools; Focused-only until an explicit scoped member integration exists."
+    },
+    {
+      "id": "mattermost",
+      "name": "Mattermost",
+      "documentation": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/mattermost",
+      "pinnedDocs": "listed-in-pinned-index",
+      "installer153": "not-in-channel-catalog",
+      "canonicalId": "mattermost",
+      "nativeId": "mattermost",
+      "kind": "conversation-channel",
+      "eligibleRoles": [
+        "focused",
+        "border"
+      ],
+      "pinnedSupport": {
+        "version": "0.21.6",
+        "commit": "818c13be1dc4fd28987e1e881a9408224afd4535",
+        "state": "present",
+        "evidence": "https://github.com/NousResearch/hermes-agent/tree/818c13be1dc4fd28987e1e881a9408224afd4535",
+        "qualification": "source-inspection-only"
+      }
+    },
+    {
+      "id": "matrix",
+      "name": "Matrix",
+      "documentation": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/matrix",
+      "pinnedDocs": "listed-in-pinned-index",
+      "installer153": "not-in-channel-catalog",
+      "canonicalId": "matrix",
+      "nativeId": "matrix",
+      "kind": "conversation-channel",
+      "eligibleRoles": [
+        "focused",
+        "border"
+      ],
+      "pinnedSupport": {
+        "version": "0.21.6",
+        "commit": "818c13be1dc4fd28987e1e881a9408224afd4535",
+        "state": "present",
+        "evidence": "https://github.com/NousResearch/hermes-agent/tree/818c13be1dc4fd28987e1e881a9408224afd4535",
+        "qualification": "source-inspection-only"
+      }
+    },
+    {
+      "id": "dingtalk",
+      "name": "DingTalk",
+      "documentation": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/dingtalk",
+      "pinnedDocs": "listed-in-pinned-index",
+      "installer153": "not-in-channel-catalog",
+      "canonicalId": "dingtalk",
+      "nativeId": "dingtalk",
+      "kind": "conversation-channel",
+      "eligibleRoles": [
+        "focused",
+        "border"
+      ],
+      "pinnedSupport": {
+        "version": "0.21.6",
+        "commit": "818c13be1dc4fd28987e1e881a9408224afd4535",
+        "state": "present",
+        "evidence": "https://github.com/NousResearch/hermes-agent/tree/818c13be1dc4fd28987e1e881a9408224afd4535",
+        "qualification": "source-inspection-only"
+      }
+    },
+    {
+      "id": "feishu",
+      "name": "Feishu / Lark",
+      "documentation": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/feishu",
+      "pinnedDocs": "listed-in-pinned-index",
+      "installer153": "not-in-channel-catalog",
+      "canonicalId": "feishu",
+      "nativeId": "feishu",
+      "kind": "conversation-channel",
+      "eligibleRoles": [
+        "focused",
+        "border"
+      ],
+      "pinnedSupport": {
+        "version": "0.21.6",
+        "commit": "818c13be1dc4fd28987e1e881a9408224afd4535",
+        "state": "present",
+        "evidence": "https://github.com/NousResearch/hermes-agent/tree/818c13be1dc4fd28987e1e881a9408224afd4535",
+        "qualification": "source-inspection-only"
+      }
+    },
+    {
+      "id": "wecom",
+      "name": "WeCom (Enterprise WeChat)",
+      "documentation": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/wecom",
+      "pinnedDocs": "listed-in-pinned-index",
+      "installer153": "not-in-channel-catalog",
+      "canonicalId": "wecom",
+      "nativeId": "wecom",
+      "kind": "conversation-channel",
+      "eligibleRoles": [
+        "focused",
+        "border"
+      ],
+      "pinnedSupport": {
+        "version": "0.21.6",
+        "commit": "818c13be1dc4fd28987e1e881a9408224afd4535",
+        "state": "present",
+        "evidence": "https://github.com/NousResearch/hermes-agent/tree/818c13be1dc4fd28987e1e881a9408224afd4535",
+        "qualification": "source-inspection-only"
+      }
+    },
+    {
+      "id": "wecom-callback",
+      "name": "WeCom Callback (Self-Built App)",
+      "documentation": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/wecom-callback",
+      "pinnedDocs": "listed-in-pinned-index",
+      "installer153": "not-in-channel-catalog",
+      "canonicalId": "wecom-callback",
+      "nativeId": "wecom_callback",
+      "kind": "conversation-channel",
+      "eligibleRoles": [
+        "focused",
+        "border"
+      ],
+      "pinnedSupport": {
+        "version": "0.21.6",
+        "commit": "818c13be1dc4fd28987e1e881a9408224afd4535",
+        "state": "present",
+        "evidence": "https://github.com/NousResearch/hermes-agent/tree/818c13be1dc4fd28987e1e881a9408224afd4535",
+        "qualification": "source-inspection-only"
+      }
+    },
+    {
+      "id": "weixin",
+      "name": "Weixin (WeChat)",
+      "documentation": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/weixin",
+      "pinnedDocs": "listed-in-pinned-index",
+      "installer153": "not-in-channel-catalog",
+      "canonicalId": "weixin",
+      "nativeId": "weixin",
+      "kind": "conversation-channel",
+      "eligibleRoles": [
+        "focused",
+        "border"
+      ],
+      "pinnedSupport": {
+        "version": "0.21.6",
+        "commit": "818c13be1dc4fd28987e1e881a9408224afd4535",
+        "state": "present",
+        "evidence": "https://github.com/NousResearch/hermes-agent/tree/818c13be1dc4fd28987e1e881a9408224afd4535",
+        "qualification": "source-inspection-only"
+      }
+    },
+    {
+      "id": "bluebubbles",
+      "name": "BlueBubbles (iMessage)",
+      "documentation": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/bluebubbles",
+      "pinnedDocs": "listed-in-pinned-index",
+      "installer153": "not-in-channel-catalog",
+      "canonicalId": "bluebubbles",
+      "nativeId": "bluebubbles",
+      "kind": "conversation-channel",
+      "eligibleRoles": [
+        "focused",
+        "border"
+      ],
+      "pinnedSupport": {
+        "version": "0.21.6",
+        "commit": "818c13be1dc4fd28987e1e881a9408224afd4535",
+        "state": "present",
+        "evidence": "https://github.com/NousResearch/hermes-agent/tree/818c13be1dc4fd28987e1e881a9408224afd4535",
+        "qualification": "source-inspection-only"
+      }
+    },
+    {
+      "id": "photon",
+      "name": "Photon iMessage",
+      "documentation": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/photon",
+      "pinnedDocs": "listed-in-pinned-index",
+      "installer153": "not-in-channel-catalog",
+      "canonicalId": "photon",
+      "nativeId": "photon",
+      "kind": "conversation-channel",
+      "eligibleRoles": [
+        "focused",
+        "border"
+      ],
+      "pinnedSupport": {
+        "version": "0.21.6",
+        "commit": "818c13be1dc4fd28987e1e881a9408224afd4535",
+        "state": "present",
+        "evidence": "https://github.com/NousResearch/hermes-agent/tree/818c13be1dc4fd28987e1e881a9408224afd4535",
+        "qualification": "source-inspection-only"
+      }
+    },
+    {
+      "id": "qqbot",
+      "name": "QQ Bot",
+      "documentation": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/qqbot",
+      "pinnedDocs": "listed-in-pinned-index",
+      "installer153": "not-in-channel-catalog",
+      "canonicalId": "qqbot",
+      "nativeId": "qqbot",
+      "kind": "conversation-channel",
+      "eligibleRoles": [
+        "focused",
+        "border"
+      ],
+      "pinnedSupport": {
+        "version": "0.21.6",
+        "commit": "818c13be1dc4fd28987e1e881a9408224afd4535",
+        "state": "present",
+        "evidence": "https://github.com/NousResearch/hermes-agent/tree/818c13be1dc4fd28987e1e881a9408224afd4535",
+        "qualification": "source-inspection-only"
+      }
+    },
+    {
+      "id": "yuanbao",
+      "name": "Yuanbao",
+      "documentation": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/yuanbao",
+      "pinnedDocs": "listed-in-pinned-index",
+      "installer153": "not-in-channel-catalog",
+      "canonicalId": "yuanbao",
+      "nativeId": "yuanbao",
+      "kind": "conversation-channel",
+      "eligibleRoles": [
+        "focused",
+        "border"
+      ],
+      "pinnedSupport": {
+        "version": "0.21.6",
+        "commit": "818c13be1dc4fd28987e1e881a9408224afd4535",
+        "state": "present",
+        "evidence": "https://github.com/NousResearch/hermes-agent/tree/818c13be1dc4fd28987e1e881a9408224afd4535",
+        "qualification": "source-inspection-only"
+      }
+    },
+    {
+      "id": "teams",
+      "name": "Microsoft Teams",
+      "documentation": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/teams",
+      "pinnedDocs": "listed-in-pinned-index",
+      "installer153": "not-in-channel-catalog",
+      "canonicalId": "teams",
+      "nativeId": "teams",
+      "kind": "conversation-channel",
+      "eligibleRoles": [
+        "focused",
+        "border"
+      ],
+      "pinnedSupport": {
+        "version": "0.21.6",
+        "commit": "818c13be1dc4fd28987e1e881a9408224afd4535",
+        "state": "present",
+        "evidence": "https://github.com/NousResearch/hermes-agent/tree/818c13be1dc4fd28987e1e881a9408224afd4535",
+        "qualification": "source-inspection-only"
+      }
+    },
+    {
+      "id": "line",
+      "name": "LINE",
+      "documentation": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/line",
+      "pinnedDocs": "listed-in-pinned-index",
+      "installer153": "not-in-channel-catalog",
+      "canonicalId": "line",
+      "nativeId": "line",
+      "kind": "conversation-channel",
+      "eligibleRoles": [
+        "focused",
+        "border"
+      ],
+      "pinnedSupport": {
+        "version": "0.21.6",
+        "commit": "818c13be1dc4fd28987e1e881a9408224afd4535",
+        "state": "present",
+        "evidence": "https://github.com/NousResearch/hermes-agent/tree/818c13be1dc4fd28987e1e881a9408224afd4535",
+        "qualification": "source-inspection-only"
+      }
+    },
+    {
+      "id": "ntfy",
+      "name": "ntfy",
+      "documentation": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/ntfy",
+      "pinnedDocs": "listed-in-pinned-index",
+      "installer153": "not-in-channel-catalog",
+      "canonicalId": "ntfy",
+      "nativeId": "ntfy",
+      "kind": "conversation-channel",
+      "eligibleRoles": [
+        "focused",
+        "border"
+      ],
+      "pinnedSupport": {
+        "version": "0.21.6",
+        "commit": "818c13be1dc4fd28987e1e881a9408224afd4535",
+        "state": "present",
+        "evidence": "https://github.com/NousResearch/hermes-agent/tree/818c13be1dc4fd28987e1e881a9408224afd4535",
+        "qualification": "source-inspection-only"
+      }
+    },
+    {
+      "id": "simplex",
+      "name": "SimpleX Chat",
+      "documentation": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/simplex",
+      "pinnedDocs": "listed-in-pinned-index",
+      "installer153": "not-in-channel-catalog",
+      "canonicalId": "simplex",
+      "nativeId": "simplex",
+      "kind": "conversation-channel",
+      "eligibleRoles": [
+        "focused",
+        "border"
+      ],
+      "pinnedSupport": {
+        "version": "0.21.6",
+        "commit": "818c13be1dc4fd28987e1e881a9408224afd4535",
+        "state": "present",
+        "evidence": "https://github.com/NousResearch/hermes-agent/tree/818c13be1dc4fd28987e1e881a9408224afd4535",
+        "qualification": "source-inspection-only"
+      }
+    },
+    {
+      "id": "raft",
+      "name": "Raft",
+      "documentation": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/raft",
+      "pinnedDocs": "listed-in-pinned-index",
+      "installer153": "not-in-channel-catalog",
+      "canonicalId": "raft",
+      "nativeId": "raft",
+      "kind": "conversation-channel",
+      "eligibleRoles": [
+        "focused",
+        "border"
+      ],
+      "pinnedSupport": {
+        "version": "0.21.6",
+        "commit": "818c13be1dc4fd28987e1e881a9408224afd4535",
+        "state": "present",
+        "evidence": "https://github.com/NousResearch/hermes-agent/tree/818c13be1dc4fd28987e1e881a9408224afd4535",
+        "qualification": "source-inspection-only"
+      }
+    },
+    {
+      "id": "irc",
+      "name": "IRC",
+      "documentation": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/irc",
+      "pinnedDocs": "listed-in-pinned-index",
+      "installer153": "not-in-channel-catalog",
+      "canonicalId": "irc",
+      "nativeId": "irc",
+      "kind": "conversation-channel",
+      "eligibleRoles": [
+        "focused",
+        "border"
+      ],
+      "pinnedSupport": {
+        "version": "0.21.6",
+        "commit": "818c13be1dc4fd28987e1e881a9408224afd4535",
+        "state": "present",
+        "evidence": "https://github.com/NousResearch/hermes-agent/tree/818c13be1dc4fd28987e1e881a9408224afd4535",
+        "qualification": "source-inspection-only"
+      }
+    },
+    {
+      "id": "buzz",
+      "name": "Buzz",
+      "documentation": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/buzz",
+      "pinnedDocs": "listed-in-pinned-index",
+      "installer153": "not-in-channel-catalog",
+      "canonicalId": "buzz",
+      "nativeId": "buzz",
+      "kind": "conversation-channel",
+      "eligibleRoles": [
+        "focused",
+        "border"
+      ],
+      "pinnedSupport": {
+        "version": "0.21.6",
+        "commit": "818c13be1dc4fd28987e1e881a9408224afd4535",
+        "state": "present",
+        "evidence": "https://github.com/NousResearch/hermes-agent/tree/818c13be1dc4fd28987e1e881a9408224afd4535",
+        "qualification": "source-inspection-only"
+      }
+    }
+  ],
+  "related": [
+    {
+      "harness": "openclaw",
+      "name": "Voice call plugin (including Twilio)",
+      "documentation": "https://docs.openclaw.ai/plugins/voice-call",
+      "kind": "related-telephony-plugin",
+      "providers": [
+        "twilio",
+        "telnyx",
+        "plivo",
+        "mock"
+      ],
+      "scopeNote": "Separate optional voice setup; SMS readiness does not qualify calls."
+    },
+    {
+      "harness": "openclaw",
+      "name": "BlueBubbles removal and the imsg iMessage path",
+      "documentation": "https://docs.openclaw.ai/announcements/bluebubbles-imessage",
+      "kind": "retired-path-reference"
+    },
+    {
+      "harness": "hermes",
+      "name": "Open WebUI",
+      "documentation": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/open-webui",
+      "kind": "browser-api-interface"
+    },
+    {
+      "harness": "hermes",
+      "name": "A2A (Agent-to-Agent)",
+      "documentation": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/a2a",
+      "kind": "agent-protocol"
+    },
+    {
+      "harness": "hermes",
+      "name": "Webhooks",
+      "documentation": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/webhooks",
+      "kind": "event-ingress"
+    },
+    {
+      "harness": "hermes",
+      "name": "Hermes Relay",
+      "documentation": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/relay",
+      "kind": "connector-transport"
+    },
+    {
+      "harness": "hermes",
+      "name": "Teams Meetings",
+      "documentation": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/teams-meetings",
+      "kind": "meeting-workflow"
+    },
+    {
+      "harness": "hermes",
+      "name": "Microsoft Graph Webhook Listener",
+      "documentation": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/msgraph-webhook",
+      "kind": "microsoft-365-event-ingress"
+    },
+    {
+      "harness": "openclaw",
+      "name": "Webex",
+      "documentation": "https://github.com/JimiHFord/openclaw-webex/blob/1bc3274f262f946e0929de501d0d40c48bf3ef5a/src/plugin.ts",
+      "vendorDocumentation": "https://developer.webex.com/messaging/docs/bots",
+      "kind": "explicitly-requested-external-plugin",
+      "installer153": "blocked-plugin-api-incompatible"
+    },
+    {
+      "harness": "hermes",
+      "name": "Optional telephony skill (Twilio)",
+      "documentation": "https://github.com/NousResearch/hermes-agent/blob/818c13be1dc4fd28987e1e881a9408224afd4535/optional-skills/productivity/telephony/SKILL.md",
+      "kind": "related-optional-telephony-skill",
+      "provider": "twilio",
+      "pinnedDocs": "present-in-pinned-source",
+      "scopeNote": "SMS/MMS sending, inbound SMS polling and direct outbound Twilio calls; distinct from the SMS gateway and not a realtime inbound voice gateway. Additional AI-call providers are separately configured operational capabilities, not implicit installer tests."
+    }
+  ],
+  "netclawComms": [
+    {
+      "id": "twilio-core",
+      "name": "Twilio core MCP",
+      "component": "twilio",
+      "kind": "outbound-and-account-tools",
+      "servers": [
+        "twilio-mcp"
+      ],
+      "source": "config/openclaw.json",
+      "documentation": "https://github.com/twilio-labs/mcp",
+      "currentRoleEligibility": {
+        "focused": "allowed-by-plan-validator",
+        "member": "allowed-by-plan-validator-with-explicit-component",
+        "border": "rejected-border_domain_capability"
+      },
+      "qualification": "not-live-tested-in-this-investigation"
+    },
+    {
+      "id": "twilio-voice",
+      "name": "NetClaw Twilio Voice MCP",
+      "component": "twilio",
+      "kind": "voice-tools-and-separate-webhook-ingress",
+      "servers": [
+        "twilio-voice-mcp"
+      ],
+      "skills": [
+        "twilio-daily-briefing",
+        "twilio-emergency-call",
+        "twilio-inbound-voice",
+        "twilio-outbound-call"
+      ],
+      "source": "mcp-servers/twilio-voice-mcp/README.md",
+      "currentRoleEligibility": {
+        "focused": "allowed-by-plan-validator",
+        "member": "allowed-by-plan-validator-with-explicit-component",
+        "border": "full-component-rejected; conversation-ingress-placement-needs-design"
+      },
+      "qualification": "historical OpenClaw gateway/home assumptions require selected-installation verification"
+    },
+    {
+      "id": "zoom",
+      "name": "Zoom Meeting Intelligence",
+      "component": "zoom-rtms",
+      "kind": "meeting-ingress-and-context-tools",
+      "servers": [
+        "zoom-rtms-mcp"
+      ],
+      "skills": [
+        "zoom-meeting-context"
+      ],
+      "source": "docs/ZOOM-MEETING-INTELLIGENCE.md",
+      "documentation": "https://developers.zoom.us/docs/rtms/meetings/getting-started/",
+      "relatedDocumentation": "https://developers.zoom.us/docs/mcp/servers/",
+      "currentRoleEligibility": {
+        "focused": "allowed-by-plan-validator; Border investigation path separately requires a Border",
+        "member": "allowed-by-plan-validator; local Border binding still required for meeting investigations",
+        "border": "full-component-rejected; existing Border-facing bridge requires explicit local service placement"
+      },
+      "qualification": "source inspection only; RTMS, panel, history connector and optional camera readiness remain distinct"
+    }
+  ]
+}

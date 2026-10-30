@@ -166,7 +166,7 @@ define_paths() {
     NVD_MCP_DIR="$MCP_DIR/mcp-nvd"
     SUBNET_MCP_DIR="$MCP_DIR/subnet-calculator-mcp"
     F5_MCP_DIR="$MCP_DIR/f5-mcp-server"
-    CATC_MCP_DIR="$MCP_DIR/catalyst-center-mcp"
+    CATC_MCP_DIR="$MCP_DIR/catc-mcp"
     GITHUB_MCP_IMAGE="ghcr.io/github/github-mcp-server"
     PACKET_BUDDY_MCP_DIR="$MCP_DIR/packet-buddy-mcp"
     FMC_MCP_DIR="$MCP_DIR/CiscoFMC-MCP-server-community"
@@ -188,7 +188,6 @@ define_paths() {
     MEMPALACE_MCP_DIR="$MCP_DIR/mempalace"
     HUMANRAIL_MCP_DIR="$MCP_DIR/humanrail-mcp-server"
     CHECKPOINT_MCP_DIR="$MCP_DIR/checkpoint-mcp-servers"
-    FORWARD_MCP_DIR="$MCP_DIR/forward-mcp"
 
     # Bundled with the NetClaw repo (prefer in-repo copy)
     SUZIEQ_MCP_DIR="$MCP_DIR/suzieq-mcp"

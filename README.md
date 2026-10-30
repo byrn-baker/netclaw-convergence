@@ -4,15 +4,23 @@
 
 # NetClaw
 
-A CCIE-level AI network engineering coworker that runs on [OpenClaw](https://github.com/openclaw/openclaw) or [Hermes](https://github.com/NousResearch/hermes-agent), with **249 skills and 177 MCP integrations** in its catalog. Investigate live networks, learn from your own documentation, coordinate specialist agents, and carry out approved changes with baselines, verification and an immutable audit trail. Available tools and HUD controls depend on the selected runtime and installed components.
+A CCIE-level AI network engineering coworker that runs on [OpenClaw](https://github.com/openclaw/openclaw) or [Hermes](https://github.com/NousResearch/hermes-agent), with **251 skills and 178 MCP integrations** in its catalog. Investigate live networks, learn from your own documentation, coordinate specialist agents, and carry out approved changes with baselines, verification and an immutable audit trail. Available tools and HUD controls depend on the selected runtime and installed components.
 
 Work from chat, the visual HUD, your phone, or a Zoom meeting. Start with one NetClaw, or build [a risk of specialist NetClaws](#a-risk-of-netclaws-in2n) behind a single Border.
 
 **Start here:** [Choose a runtime](#hermes-or-openclaw) · [Install](#quick-install) · [Capabilities](#what-it-does) · [RAG](#rag--answers-grounded-in-your-documents) · [GCF](#gcf--compact-network-evidence) · [Mobile](#netclaw-mobile--your-network-in-your-pocket) · [Zoom](#zoom--network-investigations-in-the-meeting) · [VS Code](#vs-code-extension) · [HUD](#visual-hud) · [Jev](#optional-jev-science-officer)
 
-**Project:** [Source version 1.9.0 — unpublished](VERSION) · [Release notes](docs/releases/1.9.0.md) · [Contributing — numbered specs + Spec Kit](CONTRIBUTING.md) · [Changelog](CHANGELOG.md)
+**Project:** [Source version 1.14.0](VERSION) · [Release notes](docs/releases/1.14.0.md) · [Contributing — numbered specs + Spec Kit](CONTRIBUTING.md) · [Changelog](CHANGELOG.md)
 
-**VS Code:** [Install NetClaw](https://marketplace.visualstudio.com/items?itemName=NetClaw.netclaw) or [explore the VS Code Extension](#vs-code-extension): a native workbench for your existing NetClaw, with Chat, Canvas, RAG, Testbed management, per-MCP configuration and reviewed security controls.
+**New in 1.14.0 — testbeds on demand:** choose Static or Dynamic in VS Code or terminal setup, then compose scoped inventory from 14 source routes with the new [pyATS MCP](https://github.com/automateyournetwork/pyATS_MCP). Review, validate and explicitly activate the candidate before using it. [How it works](docs/DYNAMIC-TESTBEDS.md) · [Community announcement](docs/blog/2026-10-30-dynamic-pyats-testbeds.md) · [Tested scope](specs/160-dynamic-pyats-testbeds/verification.md).
+
+**VS Code:** [Install NetClaw](https://marketplace.visualstudio.com/items?itemName=NetClaw.netclaw) or [explore the VS Code Extension](#vs-code-extension): set up a separate NetClaw or mixed Risk from empty homes, or connect your existing installation for Chat, Canvas, RAG, Testbed management, per-MCP configuration and reviewed security controls.
+
+**Comms setup (source development):** select multiple runtime-specific channels,
+including the distinct WhatsApp paths, or choose None. Twilio tools/voice and Zoom
+appear with their eligible owners and separate prerequisites. See the
+[setup guide](docs/COMMS-SETUP.md) and [current installer evidence](specs/155-border-channel-setup/verification.md).
+Discovery, saved configuration, authentication, connection and delivery are separate results.
 
 **Reference:** [Architecture](#architecture) · [MCP servers](#mcp-servers-176) · [Skills](#skills-237) · [Workflows](#standard-workflows) · [Safety](#safety)
 
@@ -164,6 +172,10 @@ backed by retained flow records in VictoriaLogs.
 
 ## Quick Install
 
+**New in source 1.13.0 / extension 1.3.0 (Spec155):** [Guided Comms setup](docs/COMMS-SETUP.md) covers the complete documented OpenClaw/Hermes inventory, independent channel selection, private settings and access, plus eligible Twilio/Zoom tools. Configuration and provider readiness remain separate. See [release qualification and open WSL gates](specs/155-border-channel-setup/release-verification.md).
+
+**Underlying separate-claw setup (Spec153):** [VS Code wizard](docs/GETTING-STARTED-VSCODE.md), [CLI Claw Plans](docs/CLAW-PLAN.md) and [assistant guidance](docs/ASSISTANT-INSTALL.md) now share a separate-home setup engine. A [deployment Spec Kit preset](docs/SPEC-KIT-CLAWS.md) stages the same native review. Existing claws are detected and preserved; each new claw has independent identity, credentials, services and connection. Extension 1.2.0 requires VS Code 1.109+. See [verification and open acceptance work](specs/153-ide-installer/verification.md) before real installation; the historical installer below retains its existing behavior.
+
 See [setup-instructions](docs/setup-instructions.md) for Ubuntu prerequisites, then:
 
 ```bash
@@ -207,12 +219,12 @@ explicit selections and profiles fail with all detected blockers rather than
 silently dropping components. A full selection can therefore be blocked on macOS.
 
 ```bash
-./scripts/install.sh --runtime hermes --preflight --components "forward panorama zabbix zoom-rtms"
+./scripts/install.sh --runtime hermes --preflight --components "panorama zabbix zoom-rtms"
 ./scripts/install.sh --preflight --all             # report all declared prerequisites; no installation
 ```
 
-Preflight checks declared Python bounds, native SDK platforms, external commands,
-Forward's Go/CGO toolchain and Docker daemon availability. It does not prove package
+Preflight checks declared Python bounds, native SDK platforms, external commands
+and Docker daemon availability. It does not prove package
 resolution or vendor connectivity. Existing Python 3.12 is preferred for component
 runtimes unless `NETCLAW_PY` is explicitly set; `python3` on PATH must still be 3.10+.
 See [Python compatibility and prerequisites](docs/PYTHON-RUNTIME-MIGRATION.md).
@@ -457,7 +469,7 @@ claw
   <img src="ui/netclaw-visual/logos/netclawvisualhud.png" alt="NetClaw Visual HUD — operations workspace" width="800">
 </p>
 
-The capability catalogue covers currently 177 MCP integrations and 249 skills; configured entries are not proof of live connectivity.
+The capability catalogue covers currently 178 MCP integrations and 251 skills; configured entries are not proof of live connectivity.
 
 The function-first HUD opens on standard Chat, with an operations dashboard and a preserved, branching
 **Canvas** workspace. Inspect internal Claws, mobile edges and external neighbours;
@@ -503,7 +515,7 @@ security modes and Canvas storage; it does not pull Git or restart services.
 <details>
 <summary>Full platform capability overview</summary>
 
-A CCIE-level AI network engineering coworker. Built on [OpenClaw](https://github.com/openclaw/openclaw) with Anthropic Claude, 249 skills, and 177 MCP integrations for complete network automation with ITSM gating, source-of-truth reconciliation, immutable audit trails, gNMI streaming telemetry, NetFlow/IPFIX flow telemetry, Canvas/A2UI inline network visualizations, packet capture analysis, GitHub config-as-code, GitLab DevOps (issues, merge requests, pipelines, repositories, wikis), Jenkins CI/CD (job monitoring, build triggering, log analysis, SCM tracking), Chrome DevTools browser automation (visualization render QA, controller GUI gap-filling, undocumented API discovery, headless or watchable-headed), Computer Use full-desktop automation (legacy desktop-only tools with no browser or API path, virtual XFCE desktop with VNC/noVNC Watch Mode), Cisco CML lab simulation, ContainerLab containerized network labs, Cisco NSO orchestration, Cisco SD-WAN vManage monitoring, Grafana observability (dashboards, Prometheus, Loki, alerting, incidents), Prometheus direct PromQL monitoring, Kubeshark Kubernetes traffic analysis, Cisco Meraki Dashboard management, Cisco ThousandEyes network intelligence, AWS and Azure cloud networking, Cisco Secure Firewall policy auditing, Check Point Security (15 MCPs: policy, threat intel, gateway, SASE, malware), Itential network orchestration, Juniper JunOS device automation, Arista CloudVision Portal monitoring, F5 BIG-IP pyATS iControl REST coverage, Infoblox DDI, Palo Alto Panorama, FortiManager, Batfish offline configuration analysis, UML diagram generation, EVPN/VXLAN fabric workflows, live BGP/OSPF control-plane participation, OSPF/IS-IS link-state and BGP topology analysis over stored Topolograph snapshots, nmap network scanning, gtrace path analysis and IP enrichment, Slack-native operations, Cisco WebEx-native operations, Microsoft 365 integration, Twilio voice/SMS, Twitter/X integration, Claroty OT/IoT asset management, Forward Networks digital twin, Ollama local LLM routing, an offline agentic RAG document knowledge base (cited answers from user-uploaded vendor guides and standards), layered Memory MCP, MemPalace persistent AI memory, and Lantronix Percepxion/SLC out-of-band console-server management (fleet-wide and direct single-device).
+A CCIE-level AI network engineering coworker. Built on [OpenClaw](https://github.com/openclaw/openclaw) with Anthropic Claude, 251 skills, and 178 MCP integrations for complete network automation with ITSM gating, source-of-truth reconciliation, immutable audit trails, gNMI streaming telemetry, NetFlow/IPFIX flow telemetry, Canvas/A2UI inline network visualizations, packet capture analysis, GitHub config-as-code, GitLab DevOps (issues, merge requests, pipelines, repositories, wikis), Jenkins CI/CD (job monitoring, build triggering, log analysis, SCM tracking), Chrome DevTools browser automation (visualization render QA, controller GUI gap-filling, undocumented API discovery, headless or watchable-headed), Computer Use full-desktop automation (legacy desktop-only tools with no browser or API path, virtual XFCE desktop with VNC/noVNC Watch Mode), Cisco CML lab simulation, ContainerLab containerized network labs, Cisco NSO orchestration, Cisco SD-WAN vManage monitoring, Grafana observability (dashboards, Prometheus, Loki, alerting, incidents), Prometheus direct PromQL monitoring, Kubeshark Kubernetes traffic analysis, Cisco Meraki Dashboard management, Cisco ThousandEyes network intelligence, AWS and Azure cloud networking, Cisco Secure Firewall policy auditing, Check Point Security (15 MCPs: policy, threat intel, gateway, SASE, malware), Itential network orchestration, Juniper JunOS device automation, Arista CloudVision Portal monitoring, F5 BIG-IP pyATS iControl REST coverage, Infoblox DDI, Palo Alto Panorama, FortiManager, Batfish offline configuration analysis, UML diagram generation, EVPN/VXLAN fabric workflows, live BGP/OSPF control-plane participation, OSPF/IS-IS link-state and BGP topology analysis over stored Topolograph snapshots, nmap network scanning, gtrace path analysis and IP enrichment, Slack-native operations, Cisco WebEx-native operations, Microsoft 365 integration, Twilio voice/SMS, Twitter/X integration, Claroty OT/IoT asset management, Forward Networks digital twin, Ollama local LLM routing, an offline agentic RAG document knowledge base (cited answers from user-uploaded vendor guides and standards), layered Memory MCP, MemPalace persistent AI memory, and Lantronix Percepxion/SLC out-of-band console-server management (fleet-wide and direct single-device).
 
 </details>
 
@@ -800,7 +812,7 @@ NetClaw ships with the full set of OpenClaw workspace markdown files. These are 
 
 The HUD's fourth Chat interface, **Avatar**, offers selectable local John and Lobster 3D characters beside the existing Chat, preserving its configured model, conversation and approvals. Rotate, pan and zoom the character; enable the Mac system voice for local audio-reactive animation. Cloned voice, dedicated microphone input and custom-avatar import are follow-on work. Tavus remains an experimental, disabled-by-default stock-video foundation with its own key, bounded Free allowance and restricted agent; live hosted acceptance is pending. See [setup, recording guidance and limitations](docs/TAVUS-PAL.md) and [spec 144](specs/144-tavus-netclaw-pal/spec.md).
 
-## MCP Servers (177)
+## MCP Servers (178)
 
 **Existing voice installations:** complete the [voice authentication migration](docs/VOICE-SECURITY.md) before restarting the upgraded Twilio webhook service. Callbacks now require valid signatures; alert triggers require a separate bearer token.
 
@@ -889,7 +901,7 @@ The HUD's fourth Chat interface, **Avatar**, offers selectable local John and Lo
 | 78 | Atlassian | [sooperset/mcp-atlassian](https://github.com/sooperset/mcp-atlassian) | stdio (Python, uvx) | Jira and Confluence — issues, projects, pages, spaces (72 tools) |
 | 79 | Jenkins | Jenkins MCP Server Plugin (official) | Streamable HTTP (Java, in-JVM) | CI/CD — job monitoring, build triggering, log analysis, SCM tracking (16 tools across 5 categories) |
 | 80 | Claroty xDome | Built-in (`claroty-mcp`), wraps [Claroty xDome](https://claroty.com/industrial-cybersecurity/xdome) | stdio (Python) | OT/IoT/IoMT asset visibility and threat detection — device inventory, communication maps, alerts, Purdue-level classification (21 tools: 15 read-only + 6 ITSM-gated writes) |
-| 81 | Forward Networks | Built-in (`forward-mcp`) | stdio (Go) | Digital twin and Network Query Engine (NQE) — path analysis, intent verification, semantic cache and knowledge-graph memory (54 tools + 6 workflow prompts) |
+| 81 | Forward Networks | Forward's official MCP (served at `/api/mcp`) | Streamable HTTP (remote) | Digital twin, **read-only** — path search, device/interface/VLAN/VRF/host and subnet lookups, CVE exposure, network complexity, NQE generation and docs search (up to 14 tools, depending on license and AI). API token as HTTP Basic; every call needs a `networkId`. See [docs/FORWARD.md](docs/FORWARD.md) |
 | 82 | Twilio | [@twilio-alpha/mcp](https://www.npmjs.com/package/@twilio-alpha/mcp) | stdio (Node) | Core Twilio API access — messaging, phone numbers, account resources |
 | 83 | Twilio Voice | Built-in (`twilio-voice-mcp`) | stdio/HTTP (Node + Python) | Universal voice interface — inbound/outbound calls, proactive PagerDuty/Datadog alerts, per-caller context via Memory MCP, natural speech formatting |
 | 84 | Twitter/X | Built-in (`twitter-mcp`), via tweepy | stdio (Python) | Post tweets/threads/media, monitor and reply to mentions, content guardrails (blocks IPs/credentials/customer names) |
@@ -971,7 +983,7 @@ All MCP servers communicate via stdio (JSON-RPC 2.0) through `scripts/mcp-call.p
 
 ---
 
-## Skills (249)
+## Skills (251)
 
 ### Jev Science Officer (6)
 
@@ -990,7 +1002,7 @@ Questions are authored dynamically; none of these skills executes a network chan
 
 | Skill | What the Agent Knows |
 |-------|---------------------|
-| **pyats-network** | All 8 pyATS MCP tools: `show commands` with Genie structured parsing (100+ IOS-XE parsers), `ping` from device, `configure`, `running-config`, `logging`, `device list`, `Linux commands`, `dynamic AEtest scripts`. Direct Python pyATS with Genie Learn (34 features) and Genie Diff for state comparison. |
+| **pyats-network** | Managed static/dynamic inventory and selected pyATS device tools: `show commands` with Genie structured parsing (100+ IOS-XE parsers), `ping` from device, `configure`, `running-config`, `logging`, `device list`, `Linux commands`, `dynamic AEtest scripts`. Direct Python pyATS with Genie Learn (34 features) and Genie Diff for state comparison. |
 | **pyats-health-check** | 8-step health procedure with threshold tables and severity ratings. Cross-references NetBox for expected vs actual interface state. Fleet-wide parallel execution via pCall. GAIT audit trail. |
 | **pyats-routing** | Full routing table analysis with route source codes and ECMP. OSPF: neighbor states, LSA types 1-7, LSDB analysis, SPF runs. BGP: 11-step best path selection, NOTIFICATION error codes, policy verification. EIGRP: DUAL states, SIA detection. Redistribution audit. |
 | **pyats-security** | 9-step CIS-style audit: management plane, AAA, ACLs, CoPP, routing auth, infrastructure security, encryption, SNMP. Integrates ISE NAD verification and NVD CVE vulnerability scanning (CVSS >= 7.0). Fleet-wide pCall. GAIT audit trail. |
@@ -1446,7 +1458,7 @@ Questions are authored dynamically; none of these skills executes a network chan
 
 | Skill | Purpose |
 |-------|---------|
-| **forward** | Forward Networks snapshot assurance, path search, app-aware path search, NQE, checks, vulnerabilities, diffs, configuration, lifecycle, and topology workflows |
+| **forward** | Read-only Forward Networks analysis through Forward's official MCP: path search, device/interface/VLAN/VRF/host and subnet lookups, vulnerabilities, network complexity, and NQE generation and documentation search |
 
 ### GitLab & Jenkins Skills (2)
 
@@ -2681,7 +2693,7 @@ netclaw/
 ├── MISSION01.md                          # Completed — core pyATS + 11 skills
 ├── MISSION02.md                          # Completed — full platform, 78 skills, 32 MCP
 ├── workspace/
-│   └── skills/                           # 249 skill definitions (source of truth)
+│   └── skills/                           # 251 skill definitions (source of truth)
 │       ├── pyats-network/                # Core device automation (8 MCP tools)
 │       ├── pyats-health-check/           # Health + NetBox cross-ref + pCall
 │       ├── pyats-routing/                # OSPF, BGP, EIGRP, IS-IS analysis
@@ -2863,6 +2875,10 @@ The installer is an interactive TUI (pure bash — works over SSH, degrades grac
 ---
 
 ## Testbed Configuration
+
+Choose **Static** or **Dynamic** in VS Code’s **Testbed mode & sources**, the terminal new-claw plan, or `./scripts/setup.sh --testbed-only`. Dynamic mode composes scoped Itential, CML, containerlab, EVE-NG, GNS3, ServiceNow, Catalyst Center, NetBox, Nautobot, OpsMill Infrahub, IP Fabric and Forward inventory, plus structured/REST exports. The managed server exposes 35 tools (34 upstream + composition), requires review, actual schema/credential validation and explicit activation, and creates no placeholder YAML. Source selection is not live access. [Dynamic testbeds guide and source matrix](docs/DYNAMIC-TESTBEDS.md).
+
+Dynamic inventory lives in one MCP process. Use a persistent client or the one-process preview/activate/list helper; separate `MCP_CALL` calls do not share it. The HUD static editor, collector grants and Terminal Intent inventory remain separate.
 
 Edit `testbed/testbed.yaml` to define your network devices:
 

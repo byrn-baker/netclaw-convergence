@@ -857,7 +857,7 @@ echo ""
 # ── Step 24b: GitLab MCP Server ─────────────────────────────────
 component_install_gitlab() {
 log_step "Configuring GitLab MCP Server..."
-echo "  Source: https://github.com/zereight/mcp-gitlab"
+echo "  Source: https://github.com/zereight/gitlab-mcp"
 echo "  Auth: GitLab Personal Access Token (PAT)"
 echo "  Transport: stdio via npx @zereight/mcp-gitlab"
 
@@ -2525,158 +2525,26 @@ fi
 echo ""
 }
 
-# ── Step 50h: Forward MCP Integration ───────────────────────────
+# ── Step 50h: Forward Networks (official MCP) ──────────────────
 component_install_forward() {
-log_step "Forward MCP Integration..."
-echo "  Source: https://github.com/forwardnetworks/forward-mcp"
-echo "  Snapshot assurance, path search, NQE, config search, config diffs"
-echo ""
+log_step "Enabling Forward Networks (official remote MCP)..."
+echo "  Served by Forward itself at <your-forward-host>/api/mcp (SaaS and self-hosted)"
+echo "  Read-only: path search, device/interface/VLAN/VRF/host lookups,"
+echo "  vulnerabilities, network complexity, NQE (AI-enabled orgs)."
 
-enable_forward=y  # selection handled by installer menu
+# Nothing to clone or build: the MCP server is part of Forward. "Installing"
+# is registration from config/openclaw.json; scripts/forward-enable.sh stores
+# and verifies the credential.
+log_info "Registered from config/openclaw.json (<FORWARD_URL>/api/mcp, HTTP Basic)"
+log_info "Set FORWARD_URL and FORWARD_AUTH_BASE64 in .env, or run scripts/forward-enable.sh (it verifies them)."
+log_info "  FORWARD_URL: your Forward base URL, e.g. https://fwd.app (no trailing /api/mcp)"
+log_info "  Mint an API token: Settings > Account > API tokens."
+log_info "  FORWARD_AUTH_BASE64: echo -n 'accessKey:secret' | base64"
+log_warn "The endpoint returns 403 if an admin disabled 'Enable MCP server' or the license expired."
 
-if [[ "$enable_forward" =~ ^[Yy]$ ]]; then
-    FORWARD_MCP_DIR="$MCP_DIR/forward-mcp"
-    FORWARD_MCP_BIN="$FORWARD_MCP_DIR/forward-mcp"
-    FORWARD_MCP_REPO="${FORWARD_MCP_REPO:-https://github.com/forwardnetworks/forward-mcp.git}"
-    FORWARD_MCP_REF="${FORWARD_MCP_REF:-netclaw}"
-    FORWARD_STATE_DIR="$RUNTIME_HOME/forward"
-    FORWARD_LOCK_DIR="$FORWARD_STATE_DIR/locks"
-    FORWARD_BLOOM_INDEX_PATH="$FORWARD_STATE_DIR/bloom-indexes"
-    FORWARD_CACHE_PATH="$FORWARD_STATE_DIR/cache"
-    OPENCLAW_ENV="$RUNTIME_ENV"
-
-    forward_set_env_var() {
-        local key="$1" val="$2"
-        [ -z "$val" ] && return 0
-        _set_env_var "$key" "$val"
-    }
-
-    forward_set_env_placeholder() {
-        local key="$1" val="$2"
-        if ! grep -q "^${key}=" "$OPENCLAW_ENV" 2>/dev/null; then
-            forward_set_env_var "$key" "$val"
-        fi
-    }
-
-    forward_go_major() {
-        go version | awk '{print $3}' | sed 's/^go//' | cut -d. -f1
-    }
-
-    forward_go_minor() {
-        go version | awk '{print $3}' | sed 's/^go//' | cut -d. -f2
-    }
-
-    forward_checkout_ref() {
-        local dir="$1" repo="$2" ref="$3"
-        if [ -d "$dir/.git" ]; then
-            log_info "Updating existing checkout at $dir"
-            git -C "$dir" remote set-url origin "$repo"
-            git -C "$dir" fetch origin --tags
-        else
-            log_info "Cloning forward-mcp into $dir"
-            git clone "$repo" "$dir"
-        fi
-
-        if git -C "$dir" rev-parse --verify --quiet "origin/$ref" >/dev/null; then
-            git -C "$dir" checkout -B "$ref" "origin/$ref"
-        else
-            git -C "$dir" checkout "$ref"
-        fi
-    }
-
-    if ! command -v go >/dev/null 2>&1; then
-        log_error "Go 1.25 or later is required for forward-mcp"
-        return 1
-    fi
-
-    forward_go_major_version="$(forward_go_major)"
-    forward_go_minor_version="$(forward_go_minor)"
-    if [ "$forward_go_major_version" -lt 1 ] || { [ "$forward_go_major_version" -eq 1 ] && [ "$forward_go_minor_version" -lt 25 ]; }; then
-        log_error "Go 1.25 or later is required for forward-mcp. Found: $(go version)"
-        return 1
-    fi
-
-    if [ "$(go env CGO_ENABLED)" = "0" ]; then
-        log_error "CGO must be enabled for forward-mcp"
-        return 1
-    fi
-
-    mkdir -p "$FORWARD_LOCK_DIR" "$FORWARD_BLOOM_INDEX_PATH" "$FORWARD_CACHE_PATH"
-
-    log_info "Using forward-mcp repo: $FORWARD_MCP_REPO"
-    log_info "Using forward-mcp ref: $FORWARD_MCP_REF"
-    forward_checkout_ref "$FORWARD_MCP_DIR" "$FORWARD_MCP_REPO" "$FORWARD_MCP_REF"
-
-    log_info "Building forward-mcp..."
-    if CGO_ENABLED=1 go -C "$FORWARD_MCP_DIR" build -o "$FORWARD_MCP_BIN" ./cmd/server; then
-        log_info "forward-mcp built: $FORWARD_MCP_BIN"
-    else
-        log_error "forward-mcp build failed"
-        return 1
-    fi
-
-    forward_set_env_var "FORWARD_LOCK_DIR" "$FORWARD_LOCK_DIR"
-    forward_set_env_var "FORWARD_BLOOM_ENABLED" "true"
-    forward_set_env_var "FORWARD_BLOOM_INDEX_PATH" "$FORWARD_BLOOM_INDEX_PATH"
-    forward_set_env_var "FORWARD_SEMANTIC_CACHE_ENABLED" "true"
-    forward_set_env_var "FORWARD_SEMANTIC_CACHE_DISK_PATH" "$FORWARD_CACHE_PATH"
-
-    read -r -p "Configure Forward credentials now? [y/N] " config_forward
-    if [[ "$config_forward" =~ ^[Yy]$ ]]; then
-        read -r -p "Forward API base URL (e.g., https://fwd.app): " forward_url
-        if [ -n "$forward_url" ]; then
-            forward_set_env_var "FORWARD_API_BASE_URL" "${forward_url%/}"
-            log_info "Set FORWARD_API_BASE_URL"
-        fi
-
-        read -r -p "Forward API key or username: " forward_key
-        if [ -n "$forward_key" ]; then
-            forward_set_env_var "FORWARD_API_KEY" "$forward_key"
-            log_info "Set FORWARD_API_KEY"
-        fi
-
-        read -r -sp "Forward API secret or password: " forward_secret
-        echo ""
-        if [ -n "$forward_secret" ]; then
-            forward_set_env_var "FORWARD_API_SECRET" "$forward_secret"
-            log_info "Set FORWARD_API_SECRET=***"
-        fi
-
-        read -r -p "Default Forward network ID (optional): " forward_network
-        forward_set_env_var "FORWARD_DEFAULT_NETWORK_ID" "$forward_network"
-
-        read -r -p "Default Forward snapshot ID (optional): " forward_snapshot
-        forward_set_env_var "FORWARD_DEFAULT_SNAPSHOT_ID" "$forward_snapshot"
-
-        read -r -p "Forward collection/admin network ID (optional): " forward_collection_network
-        forward_set_env_var "FORWARD_COLLECTION_NETWORK_ID" "$forward_collection_network"
-
-        read -r -p "Forward instance ID for local cache partitioning (optional): " forward_instance
-        forward_set_env_var "FORWARD_INSTANCE_ID" "$forward_instance"
-
-        read -r -p "Custom CA certificate path (optional): " forward_ca
-        forward_set_env_var "FORWARD_CA_CERT_PATH" "$forward_ca"
-
-        log_info "Forward credentials configured in $RUNTIME_ENV"
-    else
-        log_info "Skipping credential configuration. Set FORWARD_API_* variables in $RUNTIME_ENV later."
-        forward_set_env_placeholder "FORWARD_API_BASE_URL" "https://fwd.example.com"
-        forward_set_env_placeholder "FORWARD_API_KEY" "your-api-key-or-username"
-        forward_set_env_placeholder "FORWARD_API_SECRET" "your-api-secret-or-password"
-        forward_set_env_placeholder "FORWARD_INSTANCE_ID" "default"
-    fi
-
-    if python3 "$NETCLAW_DIR/scripts/mcp-call.py" \
-        "FORWARD_LOCK_DIR=$FORWARD_LOCK_DIR FORWARD_BLOOM_ENABLED=false FORWARD_SEMANTIC_CACHE_ENABLED=false $FORWARD_MCP_BIN" \
-        get_default_settings '{}' >/dev/null; then
-        log_info "forward-mcp responded to get_default_settings"
-    else
-        log_warn "forward-mcp smoke test failed; verify environment and run scripts/forward-enable.sh later"
-    fi
-
-    log_info "Forward integration enabled. Use /forward skill to query."
-else
-    log_info "Skipping Forward integration. Run scripts/forward-enable.sh later to enable."
+# Existing installs: the community forward-mcp server is no longer used.
+if [ -d "$MCP_DIR/forward-mcp" ]; then
+    log_warn "Legacy $MCP_DIR/forward-mcp found; it is unused and can be removed."
 fi
 
 echo ""
@@ -2755,19 +2623,25 @@ for mdfile in SOUL.md AGENTS.md IDENTITY.md USER.md TOOLS.md HEARTBEAT.md; do
     fi
 done
 
-# Symlink testbed into the workspace so the agent can find it
-mkdir -p "$RUNTIME_WORKSPACE/testbed"
-if [ ! -e "$RUNTIME_WORKSPACE/testbed/testbed.yaml" ] && [ ! -L "$RUNTIME_WORKSPACE/testbed/testbed.yaml" ]; then
-    ln -s "$NETCLAW_DIR/testbed/testbed.yaml" "$RUNTIME_WORKSPACE/testbed/testbed.yaml"
-    log_info "Symlinked testbed.yaml into $RUNTIME_WORKSPACE/testbed/"
-else
-    log_info "Preserved operator workspace testbed"
+# Dynamic policy never creates a static placeholder or changes operator inventory.
+local testbed_mode
+testbed_mode="$(python3 "$NETCLAW_DIR/scripts/configure-testbed.py" --env "$RUNTIME_ENV" --show-mode)" || return 1
+if [ "$testbed_mode" != "dynamic" ]; then
+    mkdir -p "$RUNTIME_WORKSPACE/testbed"
+    if [ ! -e "$RUNTIME_WORKSPACE/testbed/testbed.yaml" ] && [ ! -L "$RUNTIME_WORKSPACE/testbed/testbed.yaml" ]; then
+        ln -s "$NETCLAW_DIR/testbed/testbed.yaml" "$RUNTIME_WORKSPACE/testbed/testbed.yaml"
+        log_info "Symlinked testbed.yaml into $RUNTIME_WORKSPACE/testbed/"
+    else
+        log_info "Preserved operator workspace testbed"
+    fi
 fi
 
 # Set ALL environment variables in the runtime .env
 OPENCLAW_ENV="$RUNTIME_ENV"
 # Use common.sh's literal, atomic, private writer throughout deployment.
-_set_env_default "PYATS_TESTBED_PATH"   "$RUNTIME_WORKSPACE/testbed/testbed.yaml"
+if [ "$testbed_mode" != "dynamic" ]; then
+    _set_env_default "PYATS_TESTBED_PATH" "$RUNTIME_WORKSPACE/testbed/testbed.yaml"
+fi
 _set_env_var "PYATS_MCP_SCRIPT"         "$PYATS_SCRIPT"
 _set_env_var "MCP_CALL"                 "$NETCLAW_DIR/scripts/mcp-call.py"
 _set_env_var "NETCLAW_RUNTIME_ROOT"     "$NETCLAW_RUNTIME_ROOT"
@@ -2782,7 +2656,7 @@ _set_env_var "WIKIPEDIA_MCP_SCRIPT"     "$WIKIPEDIA_MCP_DIR/main.py"
 _set_env_var "NVD_MCP_SCRIPT"           "$NVD_MCP_DIR/mcp_nvd/main.py"
 _set_env_var "SUBNET_MCP_SCRIPT"        "$SUBNET_MCP_DIR/servers/subnetcalculator_mcp.py"
 _set_env_var "F5_MCP_SCRIPT"            "$F5_MCP_DIR/F5MCPserver.py"
-_set_env_var "CATC_MCP_SCRIPT"          "$CATC_MCP_DIR/catalyst-center-mcp.py"
+_set_env_var "CATC_MCP_SCRIPT"          "$CATC_MCP_DIR/server.py"
 _set_env_var "PACKET_BUDDY_MCP_SCRIPT"  "$PACKET_BUDDY_MCP_DIR/server.py"
 _set_env_var "NMAP_MCP_SCRIPT"          "$NMAP_MCP_DIR/server.py"
 _set_env_var "PROTOCOL_MCP_SCRIPT"      "$PROTOCOL_MCP_DIR/server.py"
@@ -2933,13 +2807,22 @@ echo ""
 # ── Step 51: Twilio Voice MCP (NetClaw native) ──────────────────
 component_install_twilio() {
 log_step "Installing Twilio MCP Servers (core API + Voice)..."
-echo "  Core: @twilio-alpha/mcp — messaging, phone numbers, account resources (npx, Node.js 18+)"
+echo "  Core: pinned @twilio-alpha/mcp 0.7.0 — private environment credentials"
 echo "  Voice: built-in twilio-voice-mcp — inbound/outbound calls, emergency alerts"
 
-if command -v npx &> /dev/null; then
-    log_info "npx found — Twilio core MCP will auto-install on first use via: npx -y @twilio-alpha/mcp"
-else
-    log_warn "npx not found — Twilio core MCP requires Node.js 18+ with npx"
+if ! command -v node &> /dev/null || ! command -v npm &> /dev/null; then
+    log_warn "Twilio core MCP requires the selected Node.js and npm runtime"
+    return 1
+fi
+TWILIO_CORE_DIR="$NETCLAW_DIR/mcp-servers/twilio-env-mcp"
+if [ ! -f "$TWILIO_CORE_DIR/package-lock.json" ] || ! npm ci --prefix "$TWILIO_CORE_DIR" --ignore-scripts --no-audit --no-fund; then
+    log_warn "Pinned Twilio core MCP dependency installation failed"
+    return 1
+fi
+
+if [ "${NETCLAW_RUNTIME:-openclaw}" = hermes ]; then
+    log_info "Twilio core MCP installed; the existing OpenClaw voice gateway is not registered in Hermes"
+    return 0
 fi
 
 TWILIO_MCP_DIR="$NETCLAW_DIR/mcp-servers/twilio-voice-mcp"
@@ -2947,7 +2830,8 @@ TWILIO_MCP_DIR="$NETCLAW_DIR/mcp-servers/twilio-voice-mcp"
 if [ -f "$TWILIO_MCP_DIR/requirements.txt" ]; then
     log_info "Installing Twilio Voice MCP dependencies (twilio, flask, mcp, pytz)..."
     netclaw_pip_install -r "$TWILIO_MCP_DIR/requirements.txt" || {
-            log_warn "Twilio Voice MCP pip install failed — dependencies may need manual installation"
+            log_warn "Twilio Voice MCP pip install failed"
+            return 1
         }
     log_info "Twilio Voice MCP ready: $TWILIO_MCP_DIR/server.py"
     log_info "Webhook server: $TWILIO_MCP_DIR/webhook_server.py"
@@ -3943,6 +3827,15 @@ fi
 CATC_MCP_CMD_DETECTED="python3 $CATC_MCP_DIR/server.py"
 }
 
+component_install_k8s() {
+    log_step "Installing pinned Kubernetes read-only MCP..."
+    # Reuse the reviewed platform/hash manifest; never fetch @latest or touch a
+    # cluster. Runtime discovery still requires an explicitly selected kubeconfig.
+    python3 "$NETCLAW_DIR/scripts/install-pinned-artifact.py" k8s \
+        --destination "$NETCLAW_DIR/mcp-servers/k8s-mcp/kubernetes-mcp-server" || return 1
+    log_info "Pinned Kubernetes MCP installed. Configure K8S_KUBECONFIG separately."
+}
+
 component_install_zabbix() {
 log_step "Installing Zabbix NMS MCP Server..."
 echo "  Source: mcp-servers/zabbix-mcp (VENDORED third-party, GPL-3.0, pinned 0722f48)"
@@ -4120,6 +4013,7 @@ if [ -f "$ZOOM_RTMS_MCP_DIR/requirements.txt" ]; then
     log_info "Installing Zoom RTMS MCP dependencies..."
     netclaw_pip_install -r "$ZOOM_RTMS_MCP_DIR/requirements.txt" || {
             log_warn "Zoom RTMS MCP pip install failed — dependencies may need manual installation"
+            return 1
         }
     log_info "Zoom RTMS MCP ready: $ZOOM_RTMS_MCP_DIR"
     log_info "Zoom's official RTMS SDK is not bundled — install it separately per Zoom's"
@@ -4127,6 +4021,7 @@ if [ -f "$ZOOM_RTMS_MCP_DIR/requirements.txt" ]; then
     log_info "See docs/ZOOM-MEETING-INTELLIGENCE.md for Zoom Marketplace app setup."
 else
     log_warn "Zoom RTMS MCP requirements.txt not found at $ZOOM_RTMS_MCP_DIR"
+    return 1
 fi
 
 echo ""

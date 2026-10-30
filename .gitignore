@@ -121,6 +121,7 @@ mcp-servers/multivendor-cli-mcp/.venv/
 !mcp-servers/ollama-mcp/
 !mcp-servers/twitter-mcp/
 !mcp-servers/twilio-voice-mcp/
+!mcp-servers/twilio-env-mcp/
 !mcp-servers/atlassian-mcp/
 !mcp-servers/chrome-devtools-mcp/
 # Documented as built-in but never committed (installers expect them) —

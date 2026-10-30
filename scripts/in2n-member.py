@@ -141,6 +141,13 @@ async def _run(idle_exit):
              idle_exit if idle_exit else "never (always-on)")
 
     await svc.start_runtime()
+    health=None
+    if (runtime.home/'.netclaw-setup-owner.json').is_file():
+        # Setup-owned members keep their existing outbound-only transport.
+        # No health listener or model/device call is introduced.
+        sys.path.insert(0,os.path.join(os.path.dirname(os.path.abspath(__file__)),'lib'))
+        from setup_member_health import publish
+        health=asyncio.create_task(publish(svc))
     dialer = asyncio.create_task(_dial_loop(svc, host, int(port), token))
     try:
         if idle_exit:
@@ -150,6 +157,9 @@ async def _run(idle_exit):
     finally:
         dialer.cancel()
         await asyncio.gather(dialer,return_exceptions=True)
+        if health:
+            health.cancel()
+            await asyncio.gather(health,return_exceptions=True)
         await svc.stop_runtime()
         mgr.close()
         lock.close()

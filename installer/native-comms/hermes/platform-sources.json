@@ -1,0 +1,173 @@
+{
+  "schema": 1,
+  "source": "818c13be1dc4fd28987e1e881a9408224afd4535",
+  "plugins": {
+    "a2a": {
+      "plugins/platforms/a2a/__init__.py": "b7fe7e351fced59a0917b77024076cbf12d46133c9d161a4a48b53baa5e83e3d",
+      "plugins/platforms/a2a/adapter.py": "954c9c473dc3ebb312189eef99bc5b2cdf1edba987d95545bd8b672d513897b2",
+      "plugins/platforms/a2a/plugin.yaml": "e629badc3e93a8291098742112ffde0a8d351f5f946129a4f89d81b88b44da71",
+      "plugins/platforms/a2a/protocol.py": "b99692be657157c5a1251cf3d198ee871d8ad6efd65d75c3749303eeb3a54187",
+      "plugins/platforms/a2a/security.py": "ed6e7cf83139339dbd5d0b0bd958432e149f4158265be7dcf54b0df2e946c94f",
+      "plugins/platforms/a2a/tools.py": "4a833e73fcc128145f41ac3edf3bc653924495e0fb2e2d2e90402301d8ecdd7a"
+    },
+    "buzz": {
+      "plugins/platforms/buzz/__init__.py": "1792e361eab0aea87bc38b61e2e200f55b885fcaf0ae1897d332d3bdffa722e6",
+      "plugins/platforms/buzz/adapter.py": "0cf626f9d040336ffd75baf7c0f8273998124cdb507a210955a06f9c32519644",
+      "plugins/platforms/buzz/nostr_auth.py": "32fea3e4756ba3e62c50f16068f19a5c7b327c7393c63553727f47264e12e973",
+      "plugins/platforms/buzz/plugin.yaml": "e539bc196e9aaea05138f0b057ac3976ac970bf0fba07e40c1074e2f9a8bf422"
+    },
+    "dingtalk": {
+      "plugins/platforms/dingtalk/__init__.py": "1792e361eab0aea87bc38b61e2e200f55b885fcaf0ae1897d332d3bdffa722e6",
+      "plugins/platforms/dingtalk/adapter.py": "089cfc14ffa8df4024a026a7ec9a5f00f9575750403a09a8217897b0ea799059",
+      "plugins/platforms/dingtalk/inbound.py": "ca301977e56b3495696f3ec4ec542111a749d17940f97b002e425b20d53eee10",
+      "plugins/platforms/dingtalk/plugin.yaml": "a48510c9180dbe86a2c9aa676d9545e1c0e56b9fafb38e494a9813615e4bf439"
+    },
+    "discord": {
+      "plugins/platforms/discord/__init__.py": "1792e361eab0aea87bc38b61e2e200f55b885fcaf0ae1897d332d3bdffa722e6",
+      "plugins/platforms/discord/adapter.py": "1dad10f492d974e2af4489d18f34e1d16c2f8fd83dc4c28e79c301d29a526aea",
+      "plugins/platforms/discord/adapter_component_auth.py": "77fa332d5a530ba0fcfced8cfd43816653045889d729789a23aca11c48b541f9",
+      "plugins/platforms/discord/adapter_media.py": "f5b39573bf8af70d995a36622d0241c7f04234b844b83f633763d64bda7b59b2",
+      "plugins/platforms/discord/adapter_slash_auth.py": "8e3d07c4dfef66f6b6c480208859310ff517535375d1c7fc61774559951ea47b",
+      "plugins/platforms/discord/adapter_thread_titles.py": "71d8936ffa051eb5f0a2526d25453910c1ac1ca04c37f0180b445318dab4d005",
+      "plugins/platforms/discord/adapter_voice_info.py": "9ac4b0f0ac0c938bd8f0f09ec5183b3199072a49a6aa659bef9bcc734f81eda2",
+      "plugins/platforms/discord/ffmpeg_utils.py": "3a8d39344a0c24ed22d571b8e3dbaff8d8ec338d2ad307714da670106454a626",
+      "plugins/platforms/discord/onboarding.py": "7216a591b5e84f4c0f422883ab83d84ce675d6505a8f6d65f1bb9ea406d06f20",
+      "plugins/platforms/discord/plugin.yaml": "f24c0ead17df4acd6804542bf8e640ef5a57a2b1cd53b70efd4a9b5bc71b478d",
+      "plugins/platforms/discord/recovery.py": "0553eb1f15a4df7ac7bcf361eb149ede5594474d38fb4f78c048cb06a6a38029",
+      "plugins/platforms/discord/voice_mixer.py": "cf83b6d5e8512afb563570ca500844db18c8c1de1511f3e2ed16c0b69235aba8"
+    },
+    "email": {
+      "plugins/platforms/email/__init__.py": "1792e361eab0aea87bc38b61e2e200f55b885fcaf0ae1897d332d3bdffa722e6",
+      "plugins/platforms/email/adapter.py": "eb3f9c9027a73b559ad959ab47d9850886e7bf9c56fe1734fccf819aba7d70b2",
+      "plugins/platforms/email/plugin.yaml": "0d6bb587f7de944378549c0460990fd79e3e2e24c01bfe96cc5fa375ddf61b8b"
+    },
+    "feishu": {
+      "plugins/platforms/feishu/__init__.py": "1792e361eab0aea87bc38b61e2e200f55b885fcaf0ae1897d332d3bdffa722e6",
+      "plugins/platforms/feishu/adapter.py": "2dcbaa98e9801c2ac0e10b4cf7436e778f6d38fe98d5a585e995700f80147afc",
+      "plugins/platforms/feishu/feishu_admission_diagnostics.py": "56aeb9af35f32dcba0773a67a391517b515cb764ed2e269ac2ceca340d9e6ece",
+      "plugins/platforms/feishu/feishu_comment.py": "a96c076a9468d8548629cf93493128308c6ba66208ec27c9a1822ee847f79e4b",
+      "plugins/platforms/feishu/feishu_comment_rules.py": "8708baace4b78f13f33a4a51087d353a1b749d43beddc8fa50f6ff17b37b183e",
+      "plugins/platforms/feishu/feishu_meeting_invite.py": "b255402b6fd58a2e4c5fcb1d03cd969344a1ac207467fef61abe75af506af500",
+      "plugins/platforms/feishu/plugin.yaml": "8ca22e6ee0c4d5be222706b7c6ff8eea9ef6aa1bd527814add6387b98d65fbba"
+    },
+    "google_chat": {
+      "plugins/platforms/google_chat/__init__.py": "1792e361eab0aea87bc38b61e2e200f55b885fcaf0ae1897d332d3bdffa722e6",
+      "plugins/platforms/google_chat/adapter.py": "e36d203bac2c64da9ef7dc2d1b8cc40551ce1702273994de0246b364a9117b2e",
+      "plugins/platforms/google_chat/cards.py": "203ba5e9c05c7f80da1a06f6eb23097dc7631bd5f25a56af43614e08d18a64dc",
+      "plugins/platforms/google_chat/oauth.py": "0de4d454a327182ef646f9cd614a111be61e89009a4d38155b3f513c032fe8f7",
+      "plugins/platforms/google_chat/plugin.yaml": "0a22220def4525ab3c57595a6c906c36e85d8ce658789cead351bff250437e2e",
+      "plugins/platforms/google_chat/setup_files.py": "208366af5bb54abad1b3fa49df184ddb6a29b735af5063af26dd109d2862299c"
+    },
+    "irc": {
+      "plugins/platforms/irc/__init__.py": "1792e361eab0aea87bc38b61e2e200f55b885fcaf0ae1897d332d3bdffa722e6",
+      "plugins/platforms/irc/adapter.py": "bb9fd12efe69c828ff44be292bc9bfbdf69b2fc823aa9e90767098514a77e8b2",
+      "plugins/platforms/irc/plugin.yaml": "7b6562d7c4f80682e4e8707ef147cab12129f32d2b78bc1a3ba1c4f76a314327"
+    },
+    "line": {
+      "plugins/platforms/line/__init__.py": "1792e361eab0aea87bc38b61e2e200f55b885fcaf0ae1897d332d3bdffa722e6",
+      "plugins/platforms/line/adapter.py": "c645146e9be3d49fdb0c8a91e0181f77891c22c9001f93a2b96a0705343bb656",
+      "plugins/platforms/line/plugin.yaml": "df99d02d3dd73adf0343b955828628fbab30567bd835115ecd9feee0f4bf184d"
+    },
+    "matrix": {
+      "plugins/platforms/matrix/__init__.py": "1792e361eab0aea87bc38b61e2e200f55b885fcaf0ae1897d332d3bdffa722e6",
+      "plugins/platforms/matrix/adapter.py": "fa107f76e5dc24591328358daf0bdfdfd1d3546fca848f9d86ef34025f93ad77",
+      "plugins/platforms/matrix/adapter_crypto.py": "eebb00ea0a201c02a160e7cd5679d68c0998b51e8c34a032e6714c89d786ebf2",
+      "plugins/platforms/matrix/plugin.yaml": "5378110b5815934ea640610376ac9c082fbeea441214114a67fe4be3edb4e09b",
+      "plugins/platforms/matrix/voice_mention.py": "ca0d23dd62498d875bc74efcbe9e67a8a535252d09e9e5462209a8d3a894f799"
+    },
+    "mattermost": {
+      "plugins/platforms/mattermost/__init__.py": "1792e361eab0aea87bc38b61e2e200f55b885fcaf0ae1897d332d3bdffa722e6",
+      "plugins/platforms/mattermost/adapter.py": "4f05be68777068d7b454187c7323f2c471aac6412b830f11761b4013eed702c8",
+      "plugins/platforms/mattermost/plugin.yaml": "b59fdf94212172a108cc670683a59a3637db83a1a7f5d8e1d44686e781f62682"
+    },
+    "ntfy": {
+      "plugins/platforms/ntfy/__init__.py": "1792e361eab0aea87bc38b61e2e200f55b885fcaf0ae1897d332d3bdffa722e6",
+      "plugins/platforms/ntfy/adapter.py": "271bed5a4569ec452b22ace97bfdeaeab4be05c5332e56b4a434d52e119cc0b5",
+      "plugins/platforms/ntfy/plugin.yaml": "0c55a5c418a9949f7281a7bec9d5db0dc73dbbb741d11450437ae441524340b1"
+    },
+    "photon": {
+      "plugins/platforms/photon/__init__.py": "777eaa21facd0646c8dcb097f83bcf0883290018b60ace518fec9ef364d6a840",
+      "plugins/platforms/photon/adapter.py": "d49e7fdc9926bbc314b371e190daf6445bcff145c2359c5f0e8d59220037c287",
+      "plugins/platforms/photon/auth.py": "a6ef93cf1e1d8f2b880e7c13f2bcd280a5eb1c253a7770eeaa266c97941bd84f",
+      "plugins/platforms/photon/cli.py": "00292d4535b7fb2dfb4ef0cc1df66478bb1ca4a7e52d2407e12bdfbef189d0b7",
+      "plugins/platforms/photon/plugin.yaml": "e88341a92a54d9619de6570ec1d41c04b77d88ed641f12c1f4b97ef67f68bbce",
+      "plugins/platforms/photon/sidecar/index.mjs": "bf9cae8ff7bdd1c9e00cbcb0a4a3b56f4f9c10bfd0ab14f20a71055a4f049284",
+      "plugins/platforms/photon/sidecar/package-lock.json": "2368d0b886d149c69dfb1fb2201ed7868bd751de2a88467b7848f2649241a313",
+      "plugins/platforms/photon/sidecar/package.json": "46d0f09d403e8d67261e23d5114dda13654179234ff748959923b8806c186cca",
+      "plugins/platforms/photon/sidecar/patch-spectrum-mixed-attachments.mjs": "0d1ed02316cc8ddb3fbcf985c1a5c511361bf03609c7d5ae21d594f5510c68b7",
+      "plugins/platforms/photon/sidecar/send-format.mjs": "827c6c0b3a7fd3b731365ecd17bb52d65b05c9a53e67795922ec2ebb79de58fe",
+      "plugins/platforms/photon/sidecar/stream-staleness.mjs": "fc77b20e29c8b759b1f45ec4b34d115b37859966b277e2583b1ae0fe8c73e141",
+      "plugins/platforms/photon/sidecar_paths.py": "7e7dcfded8f0a2d2feaf4e0fdba3eb6e45d393e68b8028ad0a5ce5d4cd3ec305"
+    },
+    "raft": {
+      "plugins/platforms/raft/__init__.py": "1792e361eab0aea87bc38b61e2e200f55b885fcaf0ae1897d332d3bdffa722e6",
+      "plugins/platforms/raft/adapter.py": "63e570e2bbbca39c2fd1ffcfc41bfccb694265fc17e8d38ef8c44e37c9b98a79",
+      "plugins/platforms/raft/plugin.yaml": "522b5f1d3cea058656e7b6286f668cdb92c06a2c159d83bed46d820c166fd66a"
+    },
+    "simplex": {
+      "plugins/platforms/simplex/__init__.py": "1792e361eab0aea87bc38b61e2e200f55b885fcaf0ae1897d332d3bdffa722e6",
+      "plugins/platforms/simplex/adapter.py": "10292cb768f9ae9207147b44e0ef297e3e4a2ca42ec770ab4f5ab768aecac0dd",
+      "plugins/platforms/simplex/plugin.yaml": "dd9866383ef4c08ae1b47260416e605f40a17f4453834fd9cf88b362d59bdf8a"
+    },
+    "slack": {
+      "plugins/platforms/slack/__init__.py": "1792e361eab0aea87bc38b61e2e200f55b885fcaf0ae1897d332d3bdffa722e6",
+      "plugins/platforms/slack/adapter.py": "c03cc8cd303776fa1a7879fc459d0d6602621efa4ffba8b3033f6847b410c13a",
+      "plugins/platforms/slack/block_kit.py": "bac4b503a871a4364960c489bdeaa4236265497cb1b286b7126878c4dc341096",
+      "plugins/platforms/slack/plugin.yaml": "4c6ce9b5ed9d3869d16d3b02ceeb181967369e1ae6d9c97ebc6466d541c4fcae"
+    },
+    "sms": {
+      "plugins/platforms/sms/__init__.py": "1792e361eab0aea87bc38b61e2e200f55b885fcaf0ae1897d332d3bdffa722e6",
+      "plugins/platforms/sms/adapter.py": "e0558ca770919f8ca1eb1b3566b82b6c2c800b70e2f2443ff29be4c1ad3fa7f9",
+      "plugins/platforms/sms/plugin.yaml": "b43f70f39354bfe13d03005e777896dbdf8a8dcc4c18239bfca3c8e31e119faa"
+    },
+    "teams": {
+      "plugins/platforms/teams/__init__.py": "1792e361eab0aea87bc38b61e2e200f55b885fcaf0ae1897d332d3bdffa722e6",
+      "plugins/platforms/teams/adapter.py": "3d6408c717039fe7767fdebb5ad81a0a0bbe26bf15d1904c580a3fa096d08893",
+      "plugins/platforms/teams/plugin.yaml": "6eceacbeec8aadb37e16229e49a923d06eb9b0f1a5d137bdcb6c25f5ab1f2715",
+      "plugins/platforms/teams/summary_writer.py": "697bc20c1665042b96abe9896f987275f2aa2798c8461d12da794c6d7d6b37db"
+    },
+    "telegram": {
+      "plugins/platforms/telegram/__init__.py": "1792e361eab0aea87bc38b61e2e200f55b885fcaf0ae1897d332d3bdffa722e6",
+      "plugins/platforms/telegram/adapter.py": "167df2c75c3aca374ea5ea0d33ac87560557a99987a23d481dc47d5348d367e0",
+      "plugins/platforms/telegram/inline_picker.py": "611670a521c9c4be9c2d7fb57451bc4f82a8492f10ec7b5514ad1aad6619306b",
+      "plugins/platforms/telegram/plugin.yaml": "4fbcc679a842d890332c822610a1ba0e2ef7db24467e1046be075addc1d3a558",
+      "plugins/platforms/telegram/telegram_context.py": "9fae1f0c84d4895c2ee630c82ac30febfc1ec596503193f3779d6cb4ed5972ea",
+      "plugins/platforms/telegram/telegram_entities.py": "5693326e8ccd0db9918790df008ad02bdafefb6adf249e688efd10178f04aa2b",
+      "plugins/platforms/telegram/telegram_held_inbound.py": "2977add624c00606455f36e4eeacf322dd11a12c248a4022fe0f55c7df76c8b5",
+      "plugins/platforms/telegram/telegram_ids.py": "795669b8780fb64490eb63deed0fa42990731007053d74c91e7c4b33a1975952",
+      "plugins/platforms/telegram/telegram_network.py": "2a151a21f501aa1c82c8e64a9bc405713602a3bae2a3e852c70bf0bcbdb5a9fb",
+      "plugins/platforms/telegram/update_admission.py": "951aaffd712fa75f87dd9043fed0cacdc63f7fb6f9f07c2bf828ff853e8d2fcc"
+    },
+    "wecom": {
+      "plugins/platforms/wecom/__init__.py": "1792e361eab0aea87bc38b61e2e200f55b885fcaf0ae1897d332d3bdffa722e6",
+      "plugins/platforms/wecom/adapter.py": "45f06eaef5e3740bf3ff35dde6175e1fe00fce2e4eabc4b8f0762d94be560480",
+      "plugins/platforms/wecom/callback_adapter.py": "f7759c6b6f6887199b48283a1b27793139929ee36d7b51f518edb307367ff9d0",
+      "plugins/platforms/wecom/media.py": "833fb8e1f38b7a46401607c4f4dff5a2fbf0e1fabe47bc3f6e44f7e86bb6f99b",
+      "plugins/platforms/wecom/plugin.yaml": "4e769b5c97d363dce3c2f88e7f5d9d3bcb7d9075c7295064d178ed7931745bd3",
+      "plugins/platforms/wecom/send_queue.py": "384047786d23157c62c30cd472d0c7c58c602faf4304068d471e893c657e3380",
+      "plugins/platforms/wecom/streaming.py": "cf68d3af0f6c2b4f418b24a7a2d5ec54b06d466717fa09bf430e48ec9e98d0e6",
+      "plugins/platforms/wecom/wecom_crypto.py": "114ef5d18a57339ea2414f85df7b0aa0977fed86c657f55ee787cd672f6b3167"
+    },
+    "whatsapp": {
+      "plugins/platforms/whatsapp/__init__.py": "1792e361eab0aea87bc38b61e2e200f55b885fcaf0ae1897d332d3bdffa722e6",
+      "plugins/platforms/whatsapp/adapter.py": "7721b510e5e78108038d5a5a33edd648ebcb56cbde2948c6e8c3ac416f9c56e1",
+      "plugins/platforms/whatsapp/bridge_ownership.py": "a6d7a53adb6950328d610ba979ccefe4b56a8a9d32a8a63c27c8017d10a5be96",
+      "plugins/platforms/whatsapp/plugin.yaml": "074b8bc74bc7fb037c4847dd31814aea43836911f7c97e17e158783c45bcdd02"
+    }
+  },
+  "whatsappBridge": {
+    "scripts/whatsapp-bridge/allowlist.js": "ac7b015ddbb2bfdfcb652d3c414dc626edcf62691740513916c5252a3487f27e",
+    "scripts/whatsapp-bridge/allowlist.test.mjs": "a5b0ce8f5ec9105b23c0ff21881648c85e6c4ee66c58b59554484d52513b1582",
+    "scripts/whatsapp-bridge/bridge.js": "607a82525c938bd9c97f687239e32cd024d426ef65e0ffd1f8c46dcb382ace9f",
+    "scripts/whatsapp-bridge/bridge.native.test.mjs": "138c9f6f4cd2988b3ec04d69bcf4fe65f559b6b4b7b6146fab5b5d0de089b6d0",
+    "scripts/whatsapp-bridge/bridge.reconnect.test.mjs": "1d050d2fce442a4235ee5bef7ee1689be11164128d35a20426583042a9b34304",
+    "scripts/whatsapp-bridge/bridge_helpers.js": "11177266c889c3a0873f3293b9054f9a42633319ea5166ab7610e35d8c81510c",
+    "scripts/whatsapp-bridge/bridge_helpers.timestamp.test.mjs": "424669ada032c6081fa9029d00af63957c03580824280a3cccd2fbda762d932c",
+    "scripts/whatsapp-bridge/outbound_ids.js": "d022374c0a055eb4b8b60232ee4a6b1c749b78fe828e0b67bcb864e2917d8680",
+    "scripts/whatsapp-bridge/outbound_ids.test.mjs": "af68bbe2343768ad53be7d50eb0a61a763d367bb831fc8922da6ea6a09d32dfb",
+    "scripts/whatsapp-bridge/owner_message_gate.js": "c1388cfa100d662ca04bca72e003e94c5ec56d87288a7a27ccbbaf6bd8b5f8af",
+    "scripts/whatsapp-bridge/owner_message_gate.test.mjs": "b362a3cbd4fe2a508fd98403bd4a85e1ac219fc99b3f81297ae7ad7f9f1d3261",
+    "scripts/whatsapp-bridge/package-lock.json": "33ba354286126402e1f98ab5bdc08aee703cc1e24ffbd37ab7134caecd678ad6",
+    "scripts/whatsapp-bridge/package.json": "9c5eb2f59af8bfba4582ba1c9f50eda11a2e67c771fcf1e9a65dd8a7f2dc6f27"
+  }
+}

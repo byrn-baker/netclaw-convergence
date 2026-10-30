@@ -1,0 +1,8 @@
+{
+  "name": "netclaw-hermes-raft-owned",
+  "private": true,
+  "version": "1.0.0",
+  "dependencies": {
+    "@botiverse/raft": "0.0.26"
+  }
+}

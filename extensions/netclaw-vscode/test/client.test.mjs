@@ -271,6 +271,11 @@ test("concurrent adapter processes cannot submit the same request ID twice", asy
       prompt: "Once",
     }),
   ]);
-  assert.equal(results.filter((r) => r.status === "fulfilled").length, 1);
+  // A contender may arrive after the first durable request record and return
+  // its status successfully. Both schedules must still submit exactly once.
+  assert.ok(results.some((r) => r.status === "fulfilled"));
+  for (const result of results)
+    if (result.status === "rejected")
+      assert.match(String(result.reason), /already reserved/);
   assert.equal(f.requests.filter((r) => r.url === "/api/chat").length, 1);
 });

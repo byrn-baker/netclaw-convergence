@@ -1,0 +1,68 @@
+{
+  "baseline": "89627477fb470cd7c293e33e192c5983819d45d4",
+  "finalTestedImplementation": "cf97be1c286442660c355d50cf0788199a24c2a1",
+  "commits": [
+    "f759cfd44649996dc438bd08ca9d2b481f0707d2 fix: qualify literal systemd environment values and Linux PTY fixture",
+    "ff9ba5d67a19427e7c59f756edf2998d39c92c32 fix: generate literal systemd working directories on WSL",
+    "7080df8d16e72b5c5e03b354dcf487679e3ddefe fix: bind WSL process ownership to kernel start identity",
+    "0b72d890d5d8a663f2870e466d80354c729493ec fix: clear previous run display after reviewing a new install",
+    "30dbf6a99f676abe6e45b844a700128c84c0cdfb fix: require private managed Python for independent installations",
+    "23bc86ac4bce0b68e9fc1bc34f1f7abf9878b742 fix: wake collected systemd members with verified absence and post-start identity",
+    "cf97be1c286442660c355d50cf0788199a24c2a1 fix: parse the typed array returned by systemd unit listing"
+  ],
+  "files": [
+    {
+      "path": "extensions/netclaw-vscode/src/views/setup-wizard.ts",
+      "sha256": "7303fab2df2ef3deab79b4256bf28cb7b146c3fe671189772b4f104abb51b919"
+    },
+    {
+      "path": "extensions/netclaw-vscode/test/claw-process-identity.test.mjs",
+      "sha256": "78e47f44f09e9d313b646dc36806a72b3a04c0c59e32377b99c64f9f0b854cac"
+    },
+    {
+      "path": "extensions/netclaw-vscode/test/claw-systemd.test.mjs",
+      "sha256": "55457e3704e4e3792881b950f16a376900df790d4723be3d26949ec23123775a"
+    },
+    {
+      "path": "scripts/lib/claw-process.mjs",
+      "sha256": "e6958e90e9f25aeadd67f7cd732bcf65efe6c08689ed62d9544fe7e48391850f"
+    },
+    {
+      "path": "scripts/lib/claw-services.mjs",
+      "sha256": "66b77f17381030d9ba480631377027b470c83e4a025ba6b3b3a021eff4ec6e14"
+    },
+    {
+      "path": "scripts/lib/setup_member_start.py",
+      "sha256": "fb4c9044e0ac7db0968304a15b88b6265ed1cac5900a366b9baa8ffb8a82bd9c"
+    },
+    {
+      "path": "scripts/lib/setup_risk.py",
+      "sha256": "575ae34a890697090b501abd6b672ffb8905f440829f80d474052df23fcd005f"
+    },
+    {
+      "path": "scripts/lib/setup_secrets.py",
+      "sha256": "41dc549f5f8bebc4577c9d3f3f3783e639a7f520148d6c0b4b186dd2cd978bb4"
+    },
+    {
+      "path": "scripts/lib/setup_systemd.py",
+      "sha256": "a417c30eab858af00699156bddc6337569db374440d1c312df90cb45a32ff093"
+    },
+    {
+      "path": "tests/test_setup_member_start.py",
+      "sha256": "b54082da27f3f0e40757c68d0f6f299978b35faed78c70ae79c0d8009a620b13"
+    },
+    {
+      "path": "tests/test_setup_native.py",
+      "sha256": "4c42684ec269545d2657d0a885835a3c9ba243a382fdbe20c00a1eb6aea3f7b0"
+    },
+    {
+      "path": "tests/test_setup_secrets.py",
+      "sha256": "ee9fd79f4c026bab27e428f0cc9bf576cfe544904d3a7269aab121caf3c15940"
+    },
+    {
+      "path": "tests/test_setup_systemd.py",
+      "sha256": "0fef3442ddb1793224bb8a1e2932690df711b34e2968123ccef6656b20605d59"
+    }
+  ],
+  "workingSourceMatchesTestedCommit": true
+}

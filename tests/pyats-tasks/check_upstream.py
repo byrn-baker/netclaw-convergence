@@ -15,4 +15,4 @@ with tempfile.TemporaryDirectory(prefix='netclaw-pyats-task-contract-') as tempo
     revision=subprocess.check_output(['git','-C',str(source),'rev-parse','HEAD'],text=True).strip()
     assert revision==setup.REVISION
     print('Testing reviewed pyATS source:',revision,flush=True)
-    subprocess.run([sys.executable,'-m','pytest','test_pyats_mcp_server.py','test_pyats_tasks.py','-q'],cwd=source,check=True)
+    subprocess.run([sys.executable,'-m','pytest','test_pyats_mcp_server.py','test_pyats_tasks.py','test_pyats_testbed_builder.py','-q'],cwd=source,check=True)

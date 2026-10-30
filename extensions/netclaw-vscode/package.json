@@ -1,12 +1,12 @@
 {
   "name": "netclaw",
   "displayName": "NetClaw",
-  "description": "Manage existing NetClaw and Risk installations from Visual Studio Code.",
-  "version": "1.1.0",
+  "description": "Set up and manage independent NetClaw and Risk installations from Visual Studio Code.",
+  "version": "1.4.0",
   "publisher": "NetClaw",
   "license": "Apache-2.0",
   "engines": {
-    "vscode": "^1.102.0"
+    "vscode": "^1.109.0"
   },
   "extensionKind": [
     "workspace"
@@ -64,7 +64,7 @@
     "react-dom": "18.3.1",
     "three": "0.185.1",
     "yaml": "2.9.1",
-    "zod": "4.2.0"
+    "zod": "4.6.7"
   },
   "devDependencies": {
     "@types/node": "24.0.0",
@@ -118,6 +118,11 @@
       ]
     },
     "commands": [
+      {
+        "command": "netclaw.setupClaw",
+        "title": "Set Up a New NetClaw",
+        "category": "NetClaw"
+      },
       {
         "command": "netclaw.addConnection",
         "title": "Add Connection",
@@ -375,12 +380,40 @@
         "command": "netclaw.restartClaw",
         "title": "Restart claw",
         "category": "NetClaw"
+      },
+      {
+        "command": "netclaw.setupAssistant",
+        "title": "Connect assistant for new setup",
+        "category": "NetClaw"
+      },
+      {
+        "command": "netclaw.setupSkill",
+        "title": "Add setup skill to project",
+        "category": "NetClaw"
+      },
+      {
+        "command": "netclaw.setupSpec",
+        "title": "Create deployment Spec Kit workspace",
+        "category": "NetClaw"
+      },
+      {
+        "command": "netclaw.setupSpecReport",
+        "title": "Write deployment Claw Report",
+        "category": "NetClaw"
+      },
+      {
+        "command": "netclaw.setupConnect",
+        "title": "NetClaw: Save Verified Setup Connection"
       }
     ],
     "mcpServerDefinitionProviders": [
       {
         "id": "netclaw.assistant",
         "label": "NetClaw scoped assistant"
+      },
+      {
+        "id": "netclaw.setupAssistant",
+        "label": "NetClaw installation drafts"
       }
     ],
     "menus": {
@@ -421,7 +454,35 @@
             }
           }
         ]
+      },
+      {
+        "id": "netclawSetup",
+        "title": "Set up your NetClaw",
+        "description": "Create a separate claw, review its capabilities, and manage multiple installations.",
+        "steps": [
+          {
+            "id": "start",
+            "title": "Start guided setup",
+            "description": "[Set up a new NetClaw](command:netclaw.setupClaw)\n\nExisting installations are detected and preserved. Windows setup opens an explicitly selected WSL2 distribution.",
+            "media": {
+              "markdown": "resources/setup-walkthrough.md"
+            },
+            "completionEvents": [
+              "onCommand:netclaw.setupClaw"
+            ]
+          }
+        ]
+      }
+    ],
+    "chatSkills": [
+      {
+        "path": "./dist/skills/netclaw-install/SKILL.md"
       }
     ]
+  },
+  "overrides": {
+    "@azure/identity": {
+      "@azure/msal-node": "7.1.0"
+    }
   }
 }

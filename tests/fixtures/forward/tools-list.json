@@ -1,0 +1,164 @@
+{
+  "note": "Captured from a live Forward tools/list on 2026-10-25 (names and argument names only).",
+  "tools": {
+    "generate_nqe_query": {
+      "properties": [
+        "networkId",
+        "prompt",
+        "snapshotId"
+      ],
+      "required": [
+        "networkId",
+        "prompt"
+      ]
+    },
+    "get_cloud_object": {
+      "properties": [
+        "networkId",
+        "objectId",
+        "snapshotId"
+      ],
+      "required": [
+        "networkId",
+        "objectId"
+      ]
+    },
+    "get_device": {
+      "properties": [
+        "deviceName",
+        "networkId",
+        "snapshotId"
+      ],
+      "required": [
+        "deviceName",
+        "networkId"
+      ]
+    },
+    "get_device_vulnerabilities": {
+      "properties": [
+        "deviceName",
+        "networkId",
+        "snapshotId"
+      ],
+      "required": [
+        "deviceName",
+        "networkId"
+      ]
+    },
+    "get_host": {
+      "properties": [
+        "hostSpecifier",
+        "networkId",
+        "snapshotId"
+      ],
+      "required": [
+        "hostSpecifier",
+        "networkId"
+      ]
+    },
+    "get_interface": {
+      "properties": [
+        "deviceName",
+        "interfaceName",
+        "networkId",
+        "snapshotId"
+      ],
+      "required": [
+        "deviceName",
+        "interfaceName",
+        "networkId"
+      ]
+    },
+    "get_network_complexity": {
+      "properties": [
+        "networkId",
+        "snapshotId"
+      ],
+      "required": [
+        "networkId"
+      ]
+    },
+    "get_paths": {
+      "properties": [
+        "dstIp",
+        "dstPort",
+        "fromDevice",
+        "ipProto",
+        "networkId",
+        "snapshotId",
+        "srcIp",
+        "srcPort"
+      ],
+      "required": [
+        "dstIp",
+        "networkId"
+      ]
+    },
+    "get_subnet_locations": {
+      "properties": [
+        "networkId",
+        "snapshotId",
+        "subnetAddress"
+      ],
+      "required": [
+        "networkId",
+        "subnetAddress"
+      ]
+    },
+    "get_vlan": {
+      "properties": [
+        "networkId",
+        "snapshotId",
+        "vlanId"
+      ],
+      "required": [
+        "networkId",
+        "vlanId"
+      ]
+    },
+    "get_vrf": {
+      "properties": [
+        "networkId",
+        "snapshotId",
+        "vrfName"
+      ],
+      "required": [
+        "networkId",
+        "vrfName"
+      ]
+    },
+    "get_vulnerability": {
+      "properties": [
+        "cveId",
+        "networkId",
+        "snapshotId"
+      ],
+      "required": [
+        "cveId",
+        "networkId"
+      ]
+    },
+    "nqe": {
+      "properties": [
+        "networkId",
+        "prompt",
+        "snapshotId"
+      ],
+      "required": [
+        "networkId",
+        "prompt"
+      ]
+    },
+    "search_docs": {
+      "properties": [
+        "networkId",
+        "query",
+        "snapshotId"
+      ],
+      "required": [
+        "networkId",
+        "query"
+      ]
+    }
+  }
+}

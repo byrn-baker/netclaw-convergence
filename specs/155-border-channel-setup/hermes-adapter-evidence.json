@@ -1,0 +1,317 @@
+{
+  "schema": 1,
+  "date": "2026-10-25",
+  "hermesRevision": "818c13be1dc4fd28987e1e881a9408224afd4535",
+  "testSuites": {
+    "nativeSelectedRuntime": {
+      "tests": 7,
+      "passed": 7,
+      "seconds": "66.484"
+    },
+    "forms": {
+      "tests": 5,
+      "passed": 5
+    },
+    "ownedNativeRecovery": {
+      "tests": 9,
+      "passed": 9
+    },
+    "combinedNewChannels": {
+      "tests": 1,
+      "passed": 1,
+      "channels": 5,
+      "seconds": "31.356"
+    }
+  },
+  "packages": {
+    "before": 102,
+    "after": 147,
+    "added": 45,
+    "changedOriginal": 0
+  },
+  "channels": [
+    {
+      "channel": "bluebubbles",
+      "configured": true,
+      "dependencies": true,
+      "evidence": "actual-pinned-Hermes-passive-readback",
+      "authentication": "unverified",
+      "transport": "unverified",
+      "inbound": "unverified",
+      "outbound": "unverified"
+    },
+    {
+      "channel": "buzz",
+      "configured": true,
+      "dependencies": true,
+      "evidence": "actual-native-binary-handoff-using-explicit-C-stub-plus-pinned-Hermes-readback",
+      "authentication": "unverified",
+      "transport": "unverified",
+      "inbound": "unverified",
+      "outbound": "unverified",
+      "limitation": "Actual upstream Buzz binary build and community account not exercised; prepared binary import contract was exercised with explicitly synthetic compiled native executable."
+    },
+    {
+      "channel": "dingtalk",
+      "configured": true,
+      "dependencies": true,
+      "evidence": "actual-pinned-Hermes-passive-readback",
+      "authentication": "unverified",
+      "transport": "unverified",
+      "inbound": "unverified",
+      "outbound": "unverified"
+    },
+    {
+      "channel": "discord",
+      "configured": true,
+      "dependencies": true,
+      "evidence": "actual-pinned-Hermes-passive-readback",
+      "authentication": "unverified",
+      "transport": "unverified",
+      "inbound": "unverified",
+      "outbound": "unverified"
+    },
+    {
+      "channel": "email",
+      "configured": true,
+      "dependencies": true,
+      "evidence": "actual-pinned-Hermes-passive-readback",
+      "authentication": "unverified",
+      "transport": "unverified",
+      "inbound": "unverified",
+      "outbound": "unverified"
+    },
+    {
+      "channel": "feishu",
+      "configured": true,
+      "dependencies": true,
+      "evidence": "actual-pinned-Hermes-passive-readback",
+      "authentication": "unverified",
+      "transport": "unverified",
+      "inbound": "unverified",
+      "outbound": "unverified"
+    },
+    {
+      "channel": "google-chat",
+      "configured": true,
+      "dependencies": true,
+      "evidence": "actual-pinned-Hermes-passive-readback",
+      "authentication": "unverified",
+      "transport": "unverified",
+      "inbound": "unverified",
+      "outbound": "unverified"
+    },
+    {
+      "channel": "homeassistant",
+      "configured": true,
+      "dependencies": true,
+      "evidence": "actual-official-external-plugin-plus-shared-effect-and-pinned-Hermes-readback",
+      "authentication": "unverified",
+      "transport": "unverified",
+      "inbound": "unverified",
+      "outbound": "unverified"
+    },
+    {
+      "channel": "irc",
+      "configured": true,
+      "dependencies": true,
+      "evidence": "actual-pinned-Hermes-passive-readback",
+      "authentication": "unverified",
+      "transport": "unverified",
+      "inbound": "unverified",
+      "outbound": "unverified"
+    },
+    {
+      "channel": "line",
+      "configured": true,
+      "dependencies": true,
+      "evidence": "actual-pinned-Hermes-passive-readback",
+      "authentication": "unverified",
+      "transport": "unverified",
+      "inbound": "unverified",
+      "outbound": "unverified"
+    },
+    {
+      "channel": "matrix",
+      "configured": true,
+      "dependencies": false,
+      "evidence": "actual-pinned-Hermes-passive-readback",
+      "authentication": "unverified",
+      "transport": "unverified",
+      "inbound": "unverified",
+      "outbound": "unverified",
+      "hostRestriction": "wsl2-only; Mac source-pinned local readback passed, native dependency acquisition not qualified on Mac or WSL"
+    },
+    {
+      "channel": "mattermost",
+      "configured": true,
+      "dependencies": true,
+      "evidence": "actual-pinned-Hermes-passive-readback",
+      "authentication": "unverified",
+      "transport": "unverified",
+      "inbound": "unverified",
+      "outbound": "unverified"
+    },
+    {
+      "channel": "ntfy",
+      "configured": true,
+      "dependencies": true,
+      "evidence": "actual-pinned-Hermes-passive-readback",
+      "authentication": "unverified",
+      "transport": "unverified",
+      "inbound": "unverified",
+      "outbound": "unverified"
+    },
+    {
+      "channel": "photon",
+      "configured": true,
+      "dependencies": true,
+      "evidence": "actual-frozen-npm-plus-shared-effect-and-pinned-Hermes-readback",
+      "authentication": "unverified",
+      "transport": "unverified",
+      "inbound": "unverified",
+      "outbound": "unverified"
+    },
+    {
+      "channel": "qqbot",
+      "configured": true,
+      "dependencies": true,
+      "evidence": "actual-pinned-Hermes-passive-readback",
+      "authentication": "unverified",
+      "transport": "unverified",
+      "inbound": "unverified",
+      "outbound": "unverified"
+    },
+    {
+      "channel": "raft",
+      "configured": true,
+      "dependencies": true,
+      "evidence": "actual-frozen-official-CLI-and-version-plus-synthetic-profile-and-shared-effect-readback",
+      "authentication": "unverified",
+      "transport": "unverified",
+      "inbound": "unverified",
+      "outbound": "unverified"
+    },
+    {
+      "channel": "signal",
+      "configured": true,
+      "dependencies": true,
+      "evidence": "actual-pinned-Hermes-passive-readback",
+      "authentication": "unverified",
+      "transport": "unverified",
+      "inbound": "unverified",
+      "outbound": "unverified"
+    },
+    {
+      "channel": "simplex",
+      "configured": true,
+      "dependencies": true,
+      "evidence": "actual-pinned-Hermes-passive-readback",
+      "authentication": "unverified",
+      "transport": "unverified",
+      "inbound": "unverified",
+      "outbound": "unverified"
+    },
+    {
+      "channel": "slack",
+      "configured": true,
+      "dependencies": true,
+      "evidence": "actual-pinned-Hermes-passive-readback",
+      "authentication": "unverified",
+      "transport": "unverified",
+      "inbound": "unverified",
+      "outbound": "unverified"
+    },
+    {
+      "channel": "sms",
+      "configured": true,
+      "dependencies": true,
+      "evidence": "actual-pinned-Hermes-passive-readback",
+      "authentication": "unverified",
+      "transport": "unverified",
+      "inbound": "unverified",
+      "outbound": "unverified"
+    },
+    {
+      "channel": "teams",
+      "configured": true,
+      "dependencies": true,
+      "evidence": "actual-pinned-Hermes-passive-readback",
+      "authentication": "unverified",
+      "transport": "unverified",
+      "inbound": "unverified",
+      "outbound": "unverified"
+    },
+    {
+      "channel": "telegram",
+      "configured": true,
+      "dependencies": true,
+      "evidence": "actual-pinned-Hermes-passive-readback",
+      "authentication": "unverified",
+      "transport": "unverified",
+      "inbound": "unverified",
+      "outbound": "unverified"
+    },
+    {
+      "channel": "wecom",
+      "configured": true,
+      "dependencies": true,
+      "evidence": "actual-pinned-Hermes-passive-readback",
+      "authentication": "unverified",
+      "transport": "unverified",
+      "inbound": "unverified",
+      "outbound": "unverified"
+    },
+    {
+      "channel": "wecom-callback",
+      "configured": true,
+      "dependencies": true,
+      "evidence": "actual-pinned-Hermes-passive-readback",
+      "authentication": "unverified",
+      "transport": "unverified",
+      "inbound": "unverified",
+      "outbound": "unverified"
+    },
+    {
+      "channel": "weixin",
+      "configured": true,
+      "dependencies": true,
+      "evidence": "actual-pinned-Hermes-passive-readback",
+      "authentication": "unverified",
+      "transport": "unverified",
+      "inbound": "unverified",
+      "outbound": "unverified"
+    },
+    {
+      "channel": "whatsapp",
+      "configured": false,
+      "dependencies": true,
+      "evidence": "actual-frozen-npm-plus-unpaired-config-required; synthetic-Node-pairing-and-full-session-recovery-contracts",
+      "authentication": "unverified",
+      "transport": "unverified",
+      "inbound": "unverified",
+      "outbound": "unverified",
+      "limitation": "No real QR/pair/account; configured remains false until explicitly reviewed native pairing completes. Synthetic pairing and recovery are not live pairing proof."
+    },
+    {
+      "channel": "whatsapp-cloud",
+      "configured": true,
+      "dependencies": true,
+      "evidence": "actual-pinned-Hermes-passive-readback",
+      "authentication": "unverified",
+      "transport": "unverified",
+      "inbound": "unverified",
+      "outbound": "unverified"
+    },
+    {
+      "channel": "yuanbao",
+      "configured": true,
+      "dependencies": true,
+      "evidence": "actual-pinned-Hermes-passive-readback",
+      "authentication": "unverified",
+      "transport": "unverified",
+      "inbound": "unverified",
+      "outbound": "unverified"
+    }
+  ]
+}

@@ -1,0 +1,62 @@
+{
+  "editor": "1.109.0",
+  "kind": "isolated source development",
+  "checks": [
+    "Existing NetClaw disclosure visible; separate installation explained.",
+    "All 110 catalog component cards rendered without fetching their links.",
+    "Keyboard search retains typed text and Tab reaches the next native disclosure control.",
+    "200% zoom keeps heading and controls reachable without horizontal document overflow."
+  ],
+  "matrix": [
+    {
+      "theme": "Default Light Modern",
+      "width": 360,
+      "viewport": 360,
+      "scroll": 360,
+      "client": 360
+    },
+    {
+      "theme": "Default Dark Modern",
+      "width": 700,
+      "viewport": 700,
+      "scroll": 700,
+      "client": 700
+    },
+    {
+      "theme": "Default High Contrast",
+      "width": 1200,
+      "viewport": 1200,
+      "scroll": 1200,
+      "client": 1200
+    }
+  ],
+  "zoomGeometry": {
+    "scroll": 576,
+    "client": 576
+  },
+  "shots": [
+    "setup-360.png",
+    "setup-700.png",
+    "setup-1200.png"
+  ],
+  "providerCalls": 0,
+  "installationRuns": 0,
+  "packaged": false,
+  "testIsolation": {
+    "temporaryHome": true,
+    "separateUserData": true,
+    "separateExtensions": true,
+    "macOSKeychain": "mock; --use-mock-keychain"
+  },
+  "observations": [
+    "360px: heading and existing-installation notice wrap; actions remain reachable; vertical scrolling is required.",
+    "700px: full setup navigation and import/save actions remain legible in dark mode.",
+    "1200px: navigation and claw cards share the high-contrast layout with visible focus/border treatment.",
+    "Preview uses a partial fixture draft; it does not qualify a complete installation or actual assistant client."
+  ],
+  "screenshotSha256": {
+    "setup-360.png": "e9ec2ee5995d5f33b554287298e84e14159586cf6d63709346b31659940c5c86",
+    "setup-700.png": "a6ce6642d45dd63c0a740b2192be5377bbb318b090a081b6d3788cfc6cdf89d6",
+    "setup-1200.png": "6249c9a7dd374fe793361a6f52d5339e957608f79933f3f06b5583280d3ec6e3"
+  }
+}

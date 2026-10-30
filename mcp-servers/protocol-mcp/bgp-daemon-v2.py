@@ -48,6 +48,9 @@ LOCAL_AS    = int(os.environ.get("NETCLAW_LOCAL_AS", "65001"))
 BGP_PEERS   = json.loads(os.environ.get("NETCLAW_BGP_PEERS", "[]"))
 API_PORT    = int(os.environ.get("BGP_API_PORT", "8179"))
 BGP_LISTEN_PORT = int(os.environ.get("BGP_LISTEN_PORT", "1179"))
+BGP_LISTEN_HOST = os.environ.get("BGP_LISTEN_HOST", "0.0.0.0")
+if BGP_LISTEN_HOST not in ("0.0.0.0", "127.0.0.1"):
+    raise ValueError("BGP_LISTEN_HOST must be an explicit supported bind address")
 MESH_OPEN   = os.environ.get("NETCLAW_MESH_OPEN", "true").lower() in ("true", "1", "yes")
 # feature 066 edge (phone) WebSocket keepalive — see _start_edge_ws_listener().
 # Overridable for operators whose carrier NAT is more aggressive than the
@@ -753,6 +756,14 @@ async def handle_n2n(method, path, body):
                  # phone and reads as endpoints contradicting each other.
                  **fed.member_liveness(m)}
                 for m in fed.risk.list_members()]}
+
+        if path == "/n2n/members/self-status" and method == "POST":
+            if not isinstance(body,dict) or set(body)!={'member_id'} or not isinstance(body['member_id'],str) or len(body['member_id'])>256:
+                return 400, {"error":"one member_id required"}
+            try:
+                return 200, await fed.member_self_status(body['member_id'])
+            except Exception:
+                return 409, {"error":"member status unavailable"}
 
         if path == "/n2n/members/health" and method == "GET":
             out = []
@@ -1534,7 +1545,7 @@ async def main():
     _speaker = BGPSpeaker(
         local_as=LOCAL_AS,
         router_id=ROUTER_ID,
-        listen_ip="0.0.0.0",
+        listen_ip=BGP_LISTEN_HOST,
         listen_port=BGP_LISTEN_PORT,
         kernel_route_manager=krm,
         mesh_open=MESH_OPEN,

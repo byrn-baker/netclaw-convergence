@@ -1,0 +1,690 @@
+[
+  {
+    "id": "focused-complete",
+    "intent": "A separate testing OpenClaw subnet claw with an explicit Anthropic model, no channels and native key entry.",
+    "plan": {
+      "schema": 1,
+      "source": {
+        "channel": "main",
+        "ref": "main",
+        "commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "treeHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "path": "/private/tmp/netclaw-fixture/source",
+        "dirty": false
+      },
+      "host": {
+        "platform": "macos",
+        "architecture": "arm64",
+        "osVersion": "26.0",
+        "remote": "local",
+        "distribution": "",
+        "fingerprint": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+      },
+      "shape": "focused",
+      "claws": [
+        {
+          "id": "fixture-claw",
+          "displayName": "Example separate claw",
+          "role": "focused",
+          "runtimeHome": "/private/tmp/netclaw-fixture/claw",
+          "workspace": "/private/tmp/netclaw-fixture/claw/workspace",
+          "harness": "openclaw",
+          "harnessChoice": "explicit",
+          "runtimeVersion": "2026.7.1-2",
+          "provider": {
+            "kind": "cloud",
+            "id": "anthropic",
+            "model": "fixture-model",
+            "apiMode": "anthropic",
+            "endpoint": "",
+            "credentialKeys": [
+              "ANTHROPIC_API_KEY"
+            ]
+          },
+          "channels": [],
+          "capabilities": {
+            "profile": "minimal",
+            "components": [
+              "subnet-calc"
+            ],
+            "skills": [
+              "subnet-calculator"
+            ],
+            "trustDomain": "lab"
+          },
+          "settings": {
+            "ANTHROPIC_API_KEY": {
+              "kind": "secret",
+              "key": "ANTHROPIC_API_KEY",
+              "owner": "fixture-claw",
+              "source": "prompt"
+            }
+          },
+          "endpoints": {
+            "gatewayPort": 18791,
+            "hudPort": 3001,
+            "hudUiPort": 3000,
+            "companionPort": 8643,
+            "bgpApiPort": 8179,
+            "bgpPort": 1179,
+            "federationPort": 5001
+          },
+          "service": {
+            "mode": "hot",
+            "name": "netclaw-fixture"
+          }
+        }
+      ],
+      "inventory": [],
+      "identity": [],
+      "posture": {
+        "mode": "testing",
+        "requiredControls": []
+      },
+      "verification": {
+        "tiers": [
+          1,
+          2,
+          3
+        ],
+        "risk": false,
+        "costConsent": false,
+        "networkReadOnly": true,
+        "channelTests": []
+      },
+      "assumptions": [],
+      "unresolved": []
+    },
+    "complete": true,
+    "error": false
+  },
+  {
+    "id": "missing-provider",
+    "intent": "Choose a subnet claw; I have not chosen a model provider.",
+    "plan": {
+      "schema": 1,
+      "source": {
+        "channel": "main",
+        "ref": "main",
+        "commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "treeHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "path": "/private/tmp/netclaw-fixture/source",
+        "dirty": false
+      },
+      "host": {
+        "platform": "macos",
+        "architecture": "arm64",
+        "osVersion": "26.0",
+        "remote": "local",
+        "distribution": "",
+        "fingerprint": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+      },
+      "shape": "focused",
+      "claws": [
+        {
+          "id": "fixture-claw",
+          "displayName": "Example separate claw",
+          "role": "focused",
+          "runtimeHome": "/private/tmp/netclaw-fixture/claw",
+          "workspace": "/private/tmp/netclaw-fixture/claw/workspace",
+          "harness": "openclaw",
+          "harnessChoice": "explicit",
+          "runtimeVersion": "2026.7.1-2",
+          "channels": [],
+          "capabilities": {
+            "profile": "minimal",
+            "components": [
+              "subnet-calc"
+            ],
+            "skills": [
+              "subnet-calculator"
+            ],
+            "trustDomain": "lab"
+          },
+          "settings": {
+            "ANTHROPIC_API_KEY": {
+              "kind": "secret",
+              "key": "ANTHROPIC_API_KEY",
+              "owner": "fixture-claw",
+              "source": "prompt"
+            }
+          },
+          "endpoints": {
+            "gatewayPort": 18791,
+            "hudPort": 3001,
+            "hudUiPort": 3000,
+            "companionPort": 8643,
+            "bgpApiPort": 8179,
+            "bgpPort": 1179,
+            "federationPort": 5001
+          },
+          "service": {
+            "mode": "hot",
+            "name": "netclaw-fixture"
+          }
+        }
+      ],
+      "inventory": [],
+      "identity": [],
+      "posture": {
+        "mode": "testing",
+        "requiredControls": []
+      },
+      "verification": {
+        "tiers": [
+          1,
+          2,
+          3
+        ],
+        "risk": false,
+        "costConsent": false,
+        "networkReadOnly": true,
+        "channelTests": []
+      },
+      "assumptions": [],
+      "unresolved": [
+        "provider-model"
+      ]
+    },
+    "complete": false,
+    "error": false
+  },
+  {
+    "id": "contradictory-harness",
+    "intent": "Use both Hermes and OpenClaw as this one claw.",
+    "plan": {
+      "schema": 1,
+      "source": {
+        "channel": "main",
+        "ref": "main",
+        "commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "treeHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "path": "/private/tmp/netclaw-fixture/source",
+        "dirty": false
+      },
+      "host": {
+        "platform": "macos",
+        "architecture": "arm64",
+        "osVersion": "26.0",
+        "remote": "local",
+        "distribution": "",
+        "fingerprint": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+      },
+      "shape": "focused",
+      "claws": [
+        {
+          "id": "fixture-claw",
+          "displayName": "Example separate claw",
+          "role": "focused",
+          "runtimeHome": "/private/tmp/netclaw-fixture/claw",
+          "workspace": "/private/tmp/netclaw-fixture/claw/workspace",
+          "harnessChoice": "explicit",
+          "runtimeVersion": "2026.7.1-2",
+          "provider": {
+            "kind": "cloud",
+            "id": "anthropic",
+            "model": "fixture-model",
+            "apiMode": "anthropic",
+            "endpoint": "",
+            "credentialKeys": [
+              "ANTHROPIC_API_KEY"
+            ]
+          },
+          "channels": [],
+          "capabilities": {
+            "profile": "minimal",
+            "components": [
+              "subnet-calc"
+            ],
+            "skills": [
+              "subnet-calculator"
+            ],
+            "trustDomain": "lab"
+          },
+          "settings": {
+            "ANTHROPIC_API_KEY": {
+              "kind": "secret",
+              "key": "ANTHROPIC_API_KEY",
+              "owner": "fixture-claw",
+              "source": "prompt"
+            }
+          },
+          "endpoints": {
+            "gatewayPort": 18791,
+            "hudPort": 3001,
+            "hudUiPort": 3000,
+            "companionPort": 8643,
+            "bgpApiPort": 8179,
+            "bgpPort": 1179,
+            "federationPort": 5001
+          },
+          "service": {
+            "mode": "hot",
+            "name": "netclaw-fixture"
+          }
+        }
+      ],
+      "inventory": [],
+      "identity": [],
+      "posture": {
+        "mode": "testing",
+        "requiredControls": []
+      },
+      "verification": {
+        "tiers": [
+          1,
+          2,
+          3
+        ],
+        "risk": false,
+        "costConsent": false,
+        "networkReadOnly": true,
+        "channelTests": []
+      },
+      "assumptions": [
+        "The request names two harnesses for one claw; a decision is required."
+      ],
+      "unresolved": [
+        "harness-choice"
+      ]
+    },
+    "complete": false,
+    "error": false
+  },
+  {
+    "id": "missing-channel",
+    "intent": "All choices are present except whether to connect a conversation channel.",
+    "plan": {
+      "schema": 1,
+      "source": {
+        "channel": "main",
+        "ref": "main",
+        "commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "treeHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "path": "/private/tmp/netclaw-fixture/source",
+        "dirty": false
+      },
+      "host": {
+        "platform": "macos",
+        "architecture": "arm64",
+        "osVersion": "26.0",
+        "remote": "local",
+        "distribution": "",
+        "fingerprint": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+      },
+      "shape": "focused",
+      "claws": [
+        {
+          "id": "fixture-claw",
+          "displayName": "Example separate claw",
+          "role": "focused",
+          "runtimeHome": "/private/tmp/netclaw-fixture/claw",
+          "workspace": "/private/tmp/netclaw-fixture/claw/workspace",
+          "harness": "openclaw",
+          "harnessChoice": "explicit",
+          "runtimeVersion": "2026.7.1-2",
+          "provider": {
+            "kind": "cloud",
+            "id": "anthropic",
+            "model": "fixture-model",
+            "apiMode": "anthropic",
+            "endpoint": "",
+            "credentialKeys": [
+              "ANTHROPIC_API_KEY"
+            ]
+          },
+          "capabilities": {
+            "profile": "minimal",
+            "components": [
+              "subnet-calc"
+            ],
+            "skills": [
+              "subnet-calculator"
+            ],
+            "trustDomain": "lab"
+          },
+          "settings": {
+            "ANTHROPIC_API_KEY": {
+              "kind": "secret",
+              "key": "ANTHROPIC_API_KEY",
+              "owner": "fixture-claw",
+              "source": "prompt"
+            }
+          },
+          "endpoints": {
+            "gatewayPort": 18791,
+            "hudPort": 3001,
+            "hudUiPort": 3000,
+            "companionPort": 8643,
+            "bgpApiPort": 8179,
+            "bgpPort": 1179,
+            "federationPort": 5001
+          },
+          "service": {
+            "mode": "hot",
+            "name": "netclaw-fixture"
+          }
+        }
+      ],
+      "inventory": [],
+      "identity": [],
+      "posture": {
+        "mode": "testing",
+        "requiredControls": []
+      },
+      "verification": {
+        "tiers": [
+          1,
+          2,
+          3
+        ],
+        "risk": false,
+        "costConsent": false,
+        "networkReadOnly": true,
+        "channelTests": []
+      },
+      "assumptions": [],
+      "unresolved": [
+        "conversation-channel"
+      ]
+    },
+    "complete": false,
+    "error": false
+  },
+  {
+    "id": "production-intent",
+    "intent": "Require production controls; do not silently downgrade.",
+    "plan": {
+      "schema": 1,
+      "source": {
+        "channel": "main",
+        "ref": "main",
+        "commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "treeHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "path": "/private/tmp/netclaw-fixture/source",
+        "dirty": false
+      },
+      "host": {
+        "platform": "macos",
+        "architecture": "arm64",
+        "osVersion": "26.0",
+        "remote": "local",
+        "distribution": "",
+        "fingerprint": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+      },
+      "shape": "focused",
+      "claws": [
+        {
+          "id": "fixture-claw",
+          "displayName": "Example separate claw",
+          "role": "focused",
+          "runtimeHome": "/private/tmp/netclaw-fixture/claw",
+          "workspace": "/private/tmp/netclaw-fixture/claw/workspace",
+          "harness": "openclaw",
+          "harnessChoice": "explicit",
+          "runtimeVersion": "2026.7.1-2",
+          "provider": {
+            "kind": "cloud",
+            "id": "anthropic",
+            "model": "fixture-model",
+            "apiMode": "anthropic",
+            "endpoint": "",
+            "credentialKeys": [
+              "ANTHROPIC_API_KEY"
+            ]
+          },
+          "channels": [],
+          "capabilities": {
+            "profile": "minimal",
+            "components": [
+              "subnet-calc"
+            ],
+            "skills": [
+              "subnet-calculator"
+            ],
+            "trustDomain": "lab"
+          },
+          "settings": {
+            "ANTHROPIC_API_KEY": {
+              "kind": "secret",
+              "key": "ANTHROPIC_API_KEY",
+              "owner": "fixture-claw",
+              "source": "prompt"
+            }
+          },
+          "endpoints": {
+            "gatewayPort": 18791,
+            "hudPort": 3001,
+            "hudUiPort": 3000,
+            "companionPort": 8643,
+            "bgpApiPort": 8179,
+            "bgpPort": 1179,
+            "federationPort": 5001
+          },
+          "service": {
+            "mode": "hot",
+            "name": "netclaw-fixture"
+          }
+        }
+      ],
+      "inventory": [],
+      "identity": [],
+      "posture": {
+        "mode": "production",
+        "requiredControls": []
+      },
+      "verification": {
+        "tiers": [
+          1,
+          2,
+          3
+        ],
+        "risk": false,
+        "costConsent": false,
+        "networkReadOnly": true,
+        "channelTests": []
+      },
+      "assumptions": [],
+      "unresolved": []
+    },
+    "complete": true,
+    "error": false
+  },
+  {
+    "id": "literal-secret-refused",
+    "intent": "Do not accept credential values in a draft.",
+    "plan": {
+      "schema": 1,
+      "source": {
+        "channel": "main",
+        "ref": "main",
+        "commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "treeHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "path": "/private/tmp/netclaw-fixture/source",
+        "dirty": false
+      },
+      "host": {
+        "platform": "macos",
+        "architecture": "arm64",
+        "osVersion": "26.0",
+        "remote": "local",
+        "distribution": "",
+        "fingerprint": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+      },
+      "shape": "focused",
+      "claws": [
+        {
+          "id": "fixture-claw",
+          "displayName": "Example separate claw",
+          "role": "focused",
+          "runtimeHome": "/private/tmp/netclaw-fixture/claw",
+          "workspace": "/private/tmp/netclaw-fixture/claw/workspace",
+          "harness": "openclaw",
+          "harnessChoice": "explicit",
+          "runtimeVersion": "2026.7.1-2",
+          "provider": {
+            "kind": "cloud",
+            "id": "anthropic",
+            "model": "fixture-model",
+            "apiMode": "anthropic",
+            "endpoint": "",
+            "credentialKeys": [
+              "ANTHROPIC_API_KEY"
+            ]
+          },
+          "channels": [],
+          "capabilities": {
+            "profile": "minimal",
+            "components": [
+              "subnet-calc"
+            ],
+            "skills": [
+              "subnet-calculator"
+            ],
+            "trustDomain": "lab"
+          },
+          "settings": {
+            "ANTHROPIC_API_KEY": {
+              "kind": "value",
+              "value": "sk-ant-fixture-never-persist-this-credential-123456"
+            }
+          },
+          "endpoints": {
+            "gatewayPort": 18791,
+            "hudPort": 3001,
+            "hudUiPort": 3000,
+            "companionPort": 8643,
+            "bgpApiPort": 8179,
+            "bgpPort": 1179,
+            "federationPort": 5001
+          },
+          "service": {
+            "mode": "hot",
+            "name": "netclaw-fixture"
+          }
+        }
+      ],
+      "inventory": [],
+      "identity": [],
+      "posture": {
+        "mode": "testing",
+        "requiredControls": []
+      },
+      "verification": {
+        "tiers": [
+          1,
+          2,
+          3
+        ],
+        "risk": false,
+        "costConsent": false,
+        "networkReadOnly": true,
+        "channelTests": []
+      },
+      "assumptions": [],
+      "unresolved": []
+    },
+    "complete": false,
+    "error": true
+  },
+  {
+    "id": "approval-refused",
+    "intent": "A chat approval must not become plan authority.",
+    "plan": {
+      "schema": 1,
+      "source": {
+        "channel": "main",
+        "ref": "main",
+        "commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "treeHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "path": "/private/tmp/netclaw-fixture/source",
+        "dirty": false
+      },
+      "host": {
+        "platform": "macos",
+        "architecture": "arm64",
+        "osVersion": "26.0",
+        "remote": "local",
+        "distribution": "",
+        "fingerprint": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+      },
+      "shape": "focused",
+      "claws": [
+        {
+          "id": "fixture-claw",
+          "displayName": "Example separate claw",
+          "role": "focused",
+          "runtimeHome": "/private/tmp/netclaw-fixture/claw",
+          "workspace": "/private/tmp/netclaw-fixture/claw/workspace",
+          "harness": "openclaw",
+          "harnessChoice": "explicit",
+          "runtimeVersion": "2026.7.1-2",
+          "provider": {
+            "kind": "cloud",
+            "id": "anthropic",
+            "model": "fixture-model",
+            "apiMode": "anthropic",
+            "endpoint": "",
+            "credentialKeys": [
+              "ANTHROPIC_API_KEY"
+            ]
+          },
+          "channels": [],
+          "capabilities": {
+            "profile": "minimal",
+            "components": [
+              "subnet-calc"
+            ],
+            "skills": [
+              "subnet-calculator"
+            ],
+            "trustDomain": "lab"
+          },
+          "settings": {
+            "ANTHROPIC_API_KEY": {
+              "kind": "secret",
+              "key": "ANTHROPIC_API_KEY",
+              "owner": "fixture-claw",
+              "source": "prompt"
+            }
+          },
+          "endpoints": {
+            "gatewayPort": 18791,
+            "hudPort": 3001,
+            "hudUiPort": 3000,
+            "companionPort": 8643,
+            "bgpApiPort": 8179,
+            "bgpPort": 1179,
+            "federationPort": 5001
+          },
+          "service": {
+            "mode": "hot",
+            "name": "netclaw-fixture"
+          }
+        }
+      ],
+      "inventory": [],
+      "identity": [],
+      "posture": {
+        "mode": "testing",
+        "requiredControls": []
+      },
+      "verification": {
+        "tiers": [
+          1,
+          2,
+          3
+        ],
+        "risk": false,
+        "costConsent": false,
+        "networkReadOnly": true,
+        "channelTests": []
+      },
+      "assumptions": [],
+      "unresolved": [],
+      "approved": true
+    },
+    "complete": false,
+    "error": true
+  }
+]

@@ -1,0 +1,31 @@
+{
+  "schema": 1,
+  "name": "candidate-netbox",
+  "sources": [
+    {
+      "kind": "netbox",
+      "owner": "fixture-controller",
+      "scope": {
+        "site": "fixture-site"
+      },
+      "capturedAt": "2026-10-30T12:00:00Z",
+      "complete": true,
+      "total": 1,
+      "records": [
+        {
+          "id": "node-2",
+          "name": "fixture-netbox",
+          "primary_ip4": {
+            "address": "192.0.2.2/24"
+          },
+          "platform": {
+            "slug": "iosxe"
+          }
+        }
+      ],
+      "defaults": {
+        "port": 22
+      }
+    }
+  ]
+}

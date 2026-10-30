@@ -15,4 +15,7 @@
 !dist/topology.js
 !dist/topology.js.LEGAL.txt
 !dist/THIRD-PARTY-NOTICES.txt
+!dist/setup/**
+!dist/skills/**
+!dist/preset/**
 !resources/**

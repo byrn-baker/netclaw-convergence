@@ -32,7 +32,9 @@ def test_startup_tls_requires_explicit_disable(monkeypatch,source,target,key,val
 def test_registration_defaults_do_not_disable_tls():
     servers=json.loads((ROOT/'config/openclaw.json').read_text())['mcpServers']
     for name,key in [('redfish-mcp','REDFISH_VERIFY_TLS'),('cml-mcp','CML_VERIFY_SSL')]:
-        assert servers[name]['env'][key]=='${'+key+':-true}'
+        assert servers[name]['env'][key]=='${'+key+'}'
+        defaults=json.loads((ROOT/'config/mcp-env-defaults.json').read_text())['servers']
+        assert defaults[name][key]=='true'
 
 
 @pytest.mark.parametrize('value',['','${VERIFY_SSL}','typo','true','false','0','no'])

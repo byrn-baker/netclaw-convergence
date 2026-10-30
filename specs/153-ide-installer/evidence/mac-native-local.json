@@ -1,0 +1,270 @@
+{
+  "date": "2026-10-18",
+  "scope": "Fresh disposable runtime homes on the existing Apple-silicon Mac; actual production engine/adapters and launchd with synthetic native review. Not a clean OS, wizard, installed assistant client, human usability or live-provider qualification.",
+  "host": {
+    "platform": "macos",
+    "architecture": "arm64",
+    "osVersion": "26.5.2"
+  },
+  "installations": [
+    {
+      "alias": "openclaw-A",
+      "seconds": 59.136,
+      "exit": 0,
+      "sourceTreeHash": "92031fa65cc6fd9c0193059cb5f6e997548d6d56cd4924ae6efee6decdc2ab5d",
+      "report": {
+        "schema": 1,
+        "export": "redacted",
+        "generatedAt": 1792335552,
+        "installations": [
+          {
+            "installation": "claw-1",
+            "harness": "openclaw",
+            "tiers": [
+              {
+                "tier": 1,
+                "state": "verified",
+                "code": "artifact_present"
+              },
+              {
+                "tier": 2,
+                "state": "verified",
+                "code": "discovery_verified"
+              },
+              {
+                "tier": 3,
+                "state": "verified",
+                "code": "identity_verified"
+              },
+              {
+                "tier": 4,
+                "state": "skipped",
+                "code": "not_selected"
+              },
+              {
+                "tier": 5,
+                "state": "skipped",
+                "code": "not_selected"
+              },
+              {
+                "tier": 6,
+                "state": "skipped",
+                "code": "not_selected"
+              }
+            ],
+            "components": [
+              {
+                "id": "subnet-calc",
+                "state": "verified",
+                "code": "discovery_verified"
+              }
+            ],
+            "version": "2026.7.1-2",
+            "provenance": {
+              "checker": "netclaw-setup",
+              "protocol": 1
+            }
+          }
+        ]
+      }
+    },
+    {
+      "alias": "hermes-A",
+      "seconds": 67.962,
+      "exit": 0,
+      "sourceTreeHash": "7b6978bf13c3ec279c0a085e99e344000b6811ca48dd7b64224c8e4d51e81971",
+      "report": {
+        "schema": 1,
+        "export": "redacted",
+        "generatedAt": 1792335552,
+        "installations": [
+          {
+            "installation": "claw-1",
+            "harness": "hermes",
+            "tiers": [
+              {
+                "tier": 1,
+                "state": "verified",
+                "code": "artifact_present"
+              },
+              {
+                "tier": 2,
+                "state": "verified",
+                "code": "discovery_verified"
+              },
+              {
+                "tier": 3,
+                "state": "verified",
+                "code": "identity_verified"
+              },
+              {
+                "tier": 4,
+                "state": "skipped",
+                "code": "not_selected"
+              },
+              {
+                "tier": 5,
+                "state": "skipped",
+                "code": "not_selected"
+              },
+              {
+                "tier": 6,
+                "state": "skipped",
+                "code": "not_selected"
+              }
+            ],
+            "components": [
+              {
+                "id": "subnet-calc",
+                "state": "verified",
+                "code": "discovery_verified"
+              }
+            ],
+            "version": "v0.21.6",
+            "provenance": {
+              "checker": "netclaw-setup",
+              "protocol": 1
+            }
+          }
+        ]
+      }
+    },
+    {
+      "alias": "openclaw-B",
+      "seconds": 52.5,
+      "exit": 0,
+      "sourceTreeHash": "7b6978bf13c3ec279c0a085e99e344000b6811ca48dd7b64224c8e4d51e81971",
+      "report": {
+        "schema": 1,
+        "export": "redacted",
+        "generatedAt": 1792335552,
+        "installations": [
+          {
+            "installation": "claw-1",
+            "harness": "openclaw",
+            "tiers": [
+              {
+                "tier": 1,
+                "state": "verified",
+                "code": "artifact_present"
+              },
+              {
+                "tier": 2,
+                "state": "verified",
+                "code": "discovery_verified"
+              },
+              {
+                "tier": 3,
+                "state": "verified",
+                "code": "identity_verified"
+              },
+              {
+                "tier": 4,
+                "state": "skipped",
+                "code": "not_selected"
+              },
+              {
+                "tier": 5,
+                "state": "skipped",
+                "code": "not_selected"
+              },
+              {
+                "tier": 6,
+                "state": "skipped",
+                "code": "not_selected"
+              }
+            ],
+            "components": [
+              {
+                "id": "subnet-calc",
+                "state": "verified",
+                "code": "discovery_verified"
+              }
+            ],
+            "version": "2026.7.1-2",
+            "provenance": {
+              "checker": "netclaw-setup",
+              "protocol": 1
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "isolation": {
+    "distinctHomes": true,
+    "distinctInstallationIds": true,
+    "distinctServiceNames": true,
+    "distinctPorts": true,
+    "distinctEnvironmentHashes": true,
+    "firstClawFilesUnchanged": true,
+    "firstClawFilesCompared": 4,
+    "firstClawPidsUnchanged": true,
+    "firstClawPidsCompared": 2
+  },
+  "providerCalls": 0,
+  "channelMessages": 0,
+  "deviceCalls": 0,
+  "findingsFixed": [
+    "Unsettled onboarding blocks Apply and Resume before later phases.",
+    "Pinned Hermes uses hermes_yaml, not an installed PyYAML module.",
+    "Bounded actual readiness polling precedes companion discovery after native service startup."
+  ],
+  "timingLimit": "One run per scenario, same existing host; acquisition time included, not separated. This is not the SC-013 median minimal-profile wizard benchmark.",
+  "cleanup": {
+    "firstClawPreservedWhileCleaningOthers": {
+      "filesUnchanged": true,
+      "pidsUnchanged": true
+    },
+    "runs": [
+      {
+        "alias": "openclaw-B",
+        "state": "verified",
+        "removed": 1512,
+        "retained": 1,
+        "alreadyAbsent": 0,
+        "directories": "retained",
+        "audit": "retained"
+      },
+      {
+        "alias": "hermes-A",
+        "state": "verified",
+        "removed": 1513,
+        "retained": 1,
+        "alreadyAbsent": 0,
+        "directories": "retained",
+        "audit": "retained"
+      },
+      {
+        "alias": "hermes-startup-diagnostic",
+        "state": "verified",
+        "removed": 1513,
+        "retained": 1,
+        "alreadyAbsent": 0,
+        "directories": "retained",
+        "audit": "retained"
+      },
+      {
+        "alias": "hermes-loader-diagnostic",
+        "state": "verified",
+        "removed": 1503,
+        "retained": 1,
+        "alreadyAbsent": 0,
+        "directories": "retained",
+        "audit": "retained"
+      },
+      {
+        "alias": "openclaw-A",
+        "state": "verified",
+        "removed": 1512,
+        "retained": 1,
+        "alreadyAbsent": 0,
+        "directories": "retained",
+        "audit": "retained"
+      }
+    ],
+    "allTestEndpointsClosed": true,
+    "allTestServiceLabelsUnloaded": true,
+    "scope": "Only the five exact disposable runs from this acceptance session; first-claw preservation checked before its own cleanup. Audit and unowned dependency directories retained."
+  }
+}

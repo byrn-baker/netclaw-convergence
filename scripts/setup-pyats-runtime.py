@@ -10,7 +10,7 @@ import sys
 import tempfile
 import uuid
 
-REVISION = 'f11b02f06e0561392603cdd147d28f82373b5470'
+REVISION = '4a3c1e3404d5ed7a78cb094bf26d2a49065497d9'
 REPOSITORY = 'https://github.com/automateyournetwork/pyATS_MCP.git'
 MARKER = '.netclaw-pyats-generation'
 
@@ -22,7 +22,7 @@ def exists(path):
 def verify(target):
     subprocess.run([str(target/'bin/python'), '-c',
                     'import pyats, genie, unicon; from mcp.client.client import Client'], check=True)
-    for source in ('pyats_mcp_server.py', 'pyats_tasks.py'):
+    for source in ('pyats_mcp_server.py', 'pyats_tasks.py', 'pyats_testbed_builder.py'):
         if not (target/'upstream'/source).is_file():
             raise ValueError('Managed pyATS source is missing: '+source)
 

@@ -1,0 +1,4 @@
+# SDK pins from Hermes 818c13be1dc4fd28987e1e881a9408224afd4535.
+# Keep the qualified aiohttp 3.14.4 baseline from the parent constraints.
+slack-bolt==1.30.0
+slack-sdk==3.44.1

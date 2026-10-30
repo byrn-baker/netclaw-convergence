@@ -1,0 +1,352 @@
+{
+  "scope": "Actual controlling-terminal exact-hash reviews of synthetic disposable runs; no recursive force cleanup",
+  "attempts": [
+    {
+      "host": "ubuntu2404",
+      "cleanupAttempts": [
+        {
+          "alias": "focused-openclaw",
+          "summary": {
+            "operation": "cleanup",
+            "scope": "actual CLI controlling PTY with synthetic exact-hash native review",
+            "reviewed": true,
+            "exit": 0,
+            "seconds": 6.683,
+            "state": "verified",
+            "providerTurns": 0,
+            "channelMessages": 0,
+            "deviceCalls": 0
+          },
+          "result": {
+            "state": "verified",
+            "removed": 1518,
+            "retained": 1,
+            "alreadyAbsent": 0,
+            "audit": "retained",
+            "directories": "retained"
+          },
+          "itemOutcomes": {
+            "removed": 1518,
+            "retained": 1
+          },
+          "retentionReasons": {
+            "ownership_evidence_retained": 1
+          },
+          "serviceOutcomes": {
+            "stopped_and_removed": 1
+          }
+        },
+        {
+          "alias": "focused-hermes-interrupted",
+          "summary": {
+            "operation": "cleanup",
+            "scope": "actual CLI controlling PTY with synthetic exact-hash native review",
+            "reviewed": true,
+            "exit": 0,
+            "seconds": 5.229,
+            "state": "verified",
+            "providerTurns": 0,
+            "channelMessages": 0,
+            "deviceCalls": 0
+          },
+          "result": {
+            "state": "verified",
+            "removed": 1517,
+            "retained": 1,
+            "alreadyAbsent": 0,
+            "audit": "retained",
+            "directories": "retained"
+          },
+          "itemOutcomes": {
+            "removed": 1517,
+            "retained": 1
+          },
+          "retentionReasons": {
+            "ownership_evidence_retained": 1
+          },
+          "serviceOutcomes": {
+            "stopped_and_removed": 1
+          }
+        }
+      ]
+    },
+    {
+      "host": "ubuntu2604",
+      "cleanupAttempts": [
+        {
+          "alias": "oct18-risk-paused",
+          "summary": {
+            "operation": "cleanup",
+            "scope": "actual CLI controlling PTY with synthetic exact-hash native review",
+            "reviewed": true,
+            "exit": 0,
+            "seconds": 3.172,
+            "state": "verified",
+            "providerTurns": 0,
+            "channelMessages": 0,
+            "deviceCalls": 0,
+            "removed": 3012,
+            "retained": 4
+          },
+          "result": {
+            "state": "verified",
+            "removed": 3012,
+            "retained": 4,
+            "alreadyAbsent": 0,
+            "audit": "retained",
+            "directories": "retained"
+          },
+          "itemOutcomes": {
+            "removed": 3012,
+            "retained": 4
+          },
+          "retentionReasons": {
+            "ownership_evidence_retained": 4
+          },
+          "serviceOutcomes": {}
+        },
+        {
+          "alias": "mixed-risk-ram-lost",
+          "summary": {
+            "operation": "cleanup",
+            "scope": "actual CLI controlling PTY with synthetic exact-hash native review",
+            "reviewed": true,
+            "exit": 0,
+            "seconds": 2.227,
+            "state": "configuration_required",
+            "providerTurns": 0,
+            "channelMessages": 0,
+            "deviceCalls": 0
+          },
+          "result": {
+            "state": "configuration_required",
+            "removed": 0,
+            "retained": 4567,
+            "alreadyAbsent": 0,
+            "audit": "retained",
+            "directories": "retained"
+          },
+          "itemOutcomes": {
+            "retained": 4567
+          },
+          "retentionReasons": {
+            "service_ownership_requires_reconciliation": 4567
+          },
+          "serviceOutcomes": {}
+        },
+        {
+          "alias": "initial-openclaw-refused",
+          "summary": {
+            "operation": "cleanup",
+            "scope": "actual CLI controlling PTY with synthetic exact-hash native review",
+            "reviewed": true,
+            "exit": 0,
+            "seconds": 0.793,
+            "state": "configuration_required",
+            "providerTurns": 0,
+            "channelMessages": 0,
+            "deviceCalls": 0
+          },
+          "result": {
+            "state": "configuration_required",
+            "removed": 0,
+            "retained": 1518,
+            "alreadyAbsent": 0,
+            "audit": "retained",
+            "directories": "retained"
+          },
+          "itemOutcomes": {
+            "retained": 1518
+          },
+          "retentionReasons": {
+            "service_ownership_requires_reconciliation": 1518
+          },
+          "serviceOutcomes": {}
+        },
+        {
+          "alias": "early-hermes-interrupted",
+          "summary": {
+            "operation": "cleanup",
+            "scope": "actual CLI controlling PTY with synthetic exact-hash native review",
+            "reviewed": true,
+            "exit": 0,
+            "seconds": 3.611,
+            "state": "verified",
+            "providerTurns": 0,
+            "channelMessages": 0,
+            "deviceCalls": 0
+          },
+          "result": {
+            "state": "verified",
+            "removed": 850,
+            "retained": 1,
+            "alreadyAbsent": 653,
+            "audit": "retained",
+            "directories": "retained"
+          },
+          "itemOutcomes": {
+            "already_absent": 653,
+            "removed": 850,
+            "retained": 1
+          },
+          "retentionReasons": {
+            "already_absent": 653,
+            "ownership_evidence_retained": 1
+          },
+          "serviceOutcomes": {}
+        },
+        {
+          "alias": "focused-openclaw",
+          "summary": {
+            "operation": "cleanup",
+            "scope": "actual CLI controlling PTY with synthetic exact-hash native review",
+            "reviewed": true,
+            "exit": 0,
+            "seconds": 5.397,
+            "state": "verified",
+            "providerTurns": 0,
+            "channelMessages": 0,
+            "deviceCalls": 0
+          },
+          "result": {
+            "state": "verified",
+            "removed": 1518,
+            "retained": 1,
+            "alreadyAbsent": 0,
+            "audit": "retained",
+            "directories": "retained"
+          },
+          "itemOutcomes": {
+            "removed": 1518,
+            "retained": 1
+          },
+          "retentionReasons": {
+            "ownership_evidence_retained": 1
+          },
+          "serviceOutcomes": {
+            "stopped_and_removed": 1
+          }
+        },
+        {
+          "alias": "diagnostic-run",
+          "summary": {
+            "operation": "cleanup",
+            "scope": "actual CLI controlling PTY with synthetic exact-hash native review",
+            "reviewed": true,
+            "exit": 7,
+            "seconds": 2.055,
+            "state": null,
+            "providerTurns": 0,
+            "channelMessages": 0,
+            "deviceCalls": 0
+          },
+          "result": {
+            "code": "cleanup_loaded_service_changed"
+          },
+          "itemOutcomes": {},
+          "retentionReasons": {},
+          "serviceOutcomes": {}
+        },
+        {
+          "alias": "oct18-hermes-interrupted",
+          "summary": {
+            "operation": "cleanup",
+            "scope": "actual CLI controlling PTY with synthetic exact-hash native review",
+            "reviewed": true,
+            "exit": 0,
+            "seconds": 5.083,
+            "state": "verified",
+            "providerTurns": 0,
+            "channelMessages": 0,
+            "deviceCalls": 0
+          },
+          "result": {
+            "state": "verified",
+            "removed": 1504,
+            "retained": 1,
+            "alreadyAbsent": 0,
+            "audit": "retained",
+            "directories": "retained"
+          },
+          "itemOutcomes": {
+            "removed": 1504,
+            "retained": 1
+          },
+          "retentionReasons": {
+            "ownership_evidence_retained": 1
+          },
+          "serviceOutcomes": {}
+        },
+        {
+          "alias": "focused-hermes-managed",
+          "summary": {
+            "operation": "cleanup",
+            "scope": "actual CLI controlling PTY with synthetic exact-hash native review",
+            "reviewed": true,
+            "exit": 0,
+            "seconds": 4.748,
+            "state": "configuration_required",
+            "providerTurns": 0,
+            "channelMessages": 0,
+            "deviceCalls": 0
+          },
+          "result": {
+            "state": "configuration_required",
+            "removed": 1517,
+            "retained": 2,
+            "alreadyAbsent": 0,
+            "audit": "retained",
+            "directories": "retained"
+          },
+          "itemOutcomes": {
+            "removed": 1517,
+            "retained": 2
+          },
+          "retentionReasons": {
+            "revision_changed": 1,
+            "ownership_evidence_retained": 1
+          },
+          "serviceOutcomes": {
+            "stopped_and_removed": 1
+          }
+        },
+        {
+          "alias": "hermes-system-python-unverified",
+          "summary": {
+            "operation": "cleanup",
+            "scope": "actual CLI controlling PTY with synthetic exact-hash native review",
+            "reviewed": true,
+            "exit": 0,
+            "seconds": 5.55,
+            "state": "verified",
+            "providerTurns": 0,
+            "channelMessages": 0,
+            "deviceCalls": 0
+          },
+          "result": {
+            "state": "verified",
+            "removed": 1516,
+            "retained": 1,
+            "alreadyAbsent": 2,
+            "audit": "retained",
+            "directories": "retained"
+          },
+          "itemOutcomes": {
+            "already_absent": 2,
+            "removed": 1516,
+            "retained": 1
+          },
+          "retentionReasons": {
+            "already_absent": 2,
+            "ownership_evidence_retained": 1
+          },
+          "serviceOutcomes": {
+            "stopped_and_removed": 1
+          }
+        }
+      ]
+    }
+  ],
+  "interpretation": "Exit zero is not equivalent to complete cleanup. configuration_required and retained artifacts remain explicit. Ownership/audit records and dependency directories intentionally remain local. Earlier actual cleanup refusal was re-observed as an absent unit, then freshly reviewed retry verified.",
+  "hostState": "Final fixture shutdown disposition is recorded in DELIVERY metadata; no owner distribution or Windows feature is changed."
+}

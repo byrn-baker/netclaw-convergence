@@ -19,12 +19,15 @@ export function mountHermesChat(app, { runtime, bindings }) {
   app.post('/api/chat/conversations', async (req,res) => {
     try {
       const cookie=cookieFrom(req), acknowledgment=req.body?.acknowledgedUncertainRequestId;
+      const releaseCapacity=req.body?.releaseUncertainCapacity ?? false;
+      if(typeof releaseCapacity!=='boolean' || (releaseCapacity && !acknowledgment))throw Error();
       bindings.read(cookie);
       if (acknowledgment) bindings.ownedRequest(cookie,acknowledgment);
       const thread='chat-'+randomUUID(), task=bindings.task(cookie,thread,'hermes');
       bindings.requireAcknowledgment(cookie,task.id,acknowledgment);
-      await runtime.call('conversation_open',{conversationId:task.id,...(acknowledgment ? {acknowledgedUncertainRequestId:acknowledgment} : {})});
+      await runtime.call('conversation_open',{conversationId:task.id,...(acknowledgment ? {acknowledgedUncertainRequestId:acknowledgment} : {}),...(releaseCapacity ? {releaseUncertainCapacity:true} : {})});
       bindings.ownedChat(cookie,task.id,'hermes');
+      if(acknowledgment)bindings.ownedRequest(cookie,acknowledgment);
       bindings.acknowledge(cookie,acknowledgment);
       res.status(201).json({id:task.id,thread});
     } catch { res.status(409).json({error:'Conversation cannot be opened. Check the owned request status.'}); }
@@ -42,7 +45,11 @@ export function mountHermesChat(app, { runtime, bindings }) {
       const cookie=cookieFrom(req), task=bindings.ownedChat(cookie,req.params.id,'hermes');
       const history=await runtime.call('history',{ conversationId:task.id });
       bindings.ownedChat(cookie,task.id,'hermes');
-      res.json({ id:task.id,thread:bindings.resumeChat(cookie,task.id,'hermes').publicThread,messages:history.messages,chatModel:'',chatEffort:'',truncated:history.hasMore });
+      // Owned durable identity remains recoverable when tab receipts were lost.
+      // Never reconstruct a submitted prompt from transcript text.
+      const unresolved=Object.values(task.requests || {}).findLast(r=>!['completed','failed','cancelled','interrupted'].includes(r.state));
+      res.json({ id:task.id,thread:bindings.resumeChat(cookie,task.id,'hermes').publicThread,messages:history.messages,chatModel:'',chatEffort:'',truncated:history.hasMore,
+        ...(unresolved ? {pendingRequest:{requestId:unresolved.id,state:unresolved.state}} : {}) });
     } catch { res.status(404).json({ error:'Owned Hermes transcript unavailable.' }); }
   });
   const submit = async (req,res) => {
@@ -55,10 +62,10 @@ export function mountHermesChat(app, { runtime, bindings }) {
       if (!Array.isArray(context) || context.length>200 || context.some(m => !['user','assistant'].includes(m?.role) || typeof m.content !== 'string') || JSON.stringify(context).length>1048576) throw Error();
       text=req.body.message || [...context].reverse().find(m => m.role==='user')?.content;
       if (typeof text !== 'string' || !text.trim() || text.length>65536) throw Error();
-      task=bindings.task(cookie,req.body.hudThread,'hermes');
       // Fork seed is immutable and used only for the new conversation's first turn.
       seed=context.map(({role,content})=>({role,content}));
       if (seed.at(-1)?.role==='user') seed.pop();
+      task=bindings.task(cookie,req.body.hudThread,'hermes',seed);
       release=bindings.begin(cookie,task.id);
       const acknowledgment=req.body.acknowledgedUncertainRequestId;
       if (acknowledgment) bindings.ownedRequest(cookie,acknowledgment);
@@ -67,7 +74,10 @@ export function mountHermesChat(app, { runtime, bindings }) {
       bindings.describeChat(cookie,task.id,'hermes',{title:text});
     } catch { release(); return res.status(409).json({ error:'Private conversation unavailable, invalid or busy.' }); }
     try {
-      await runtime.call('conversation_open',{ conversationId:task.id, ...(task.newlyCreated ? {seed} : {}), ...(req.body.acknowledgedUncertainRequestId ? {acknowledgedUncertainRequestId:req.body.acknowledgedUncertainRequestId} : {}) });
+      // Browser binding creation is not proof of bridge initialization. Reuse
+      // the original seed even after a failed/lost open response or restart.
+      // Pre-fix bindings omit it: never invent ancestry from a later turn.
+      await runtime.call('conversation_open',{ conversationId:task.id, ...(task.hermesSeed !== undefined ? {seed:task.hermesSeed} : {}), ...(req.body.acknowledgedUncertainRequestId ? {acknowledgedUncertainRequestId:req.body.acknowledgedUncertainRequestId} : {}) });
       bindings.ownedRequest(cookie,request.id);
       admissionAttempted=true;
       let value=await runtime.call('submit',{ conversationId:task.id,requestId:request.id,clientNonce:request.nonce,text,deadlineMs });

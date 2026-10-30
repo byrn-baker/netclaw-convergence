@@ -44,11 +44,20 @@ This server also runs three background services, independent of any MCP tool cal
 
 ## Transport
 
-**stdio** (JSON-RPC 2.0) via FastMCP, same as every other NetClaw MCP server. The webhook/panel-feed/channel-client services above run as background threads/tasks alongside the stdio loop, started at import time.
+**stdio** (JSON-RPC 2.0) via FastMCP. MCP lifespan starts and owns the webhook,
+panel feed and Border client in this same process and meeting registry. Shutdown
+closes those services and their listeners. Importing the module starts nothing.
+
+Managed IDE setup places the full component on an eligible Focused/member claw;
+an explicit same-plan binding provides a dedicated secret to its Border's loopback
+bridge. Native MCP discovery uses a transient inert snapshot on both runtimes:
+`NETCLAW_MCP_DISCOVERY_ONLY=1` is child-only, never an active saved setting. This
+mode imports no ingress/RTMS modules, starts no listeners and refuses tool calls.
+See [Comms setup](../../docs/COMMS-SETUP.md) for ownership and readiness dimensions.
 
 ## Known Environment Limitations (honest, not hidden)
 
-- **Zoom's official RTMS Python SDK** is not resolvable from a public index in the environment this server was authored in — `rtms_listener.py` imports it defensively and degrades to a clearly-logged no-op (webhook receipt, extractor, panel feed, and MCP tools all still work) if it isn't installed. Install it per Zoom's own distribution instructions for live meeting signals.
+- **Zoom's official RTMS Python SDK** has platform/interpreter constraints recorded in `config/installer-preflight.json`. The installer must acquire the actual selected SDK/runtime before readiness; schema discovery in inert mode does not prove SDK availability or active media ingestion.
 - **Official Zoom Meetings MCP** exact tool name/credential shape is still being confirmed against Zoom's connector setup flow (research.md R6) — `zoom_search_historical_meetings` returns an explicit "not yet configured" note rather than a fabricated result until that's wired.
 - **Layers API "Camera mode"** (the optional camera-overlay avatar) requires Zoom's own Controller-mode entitlement/app review (research.md R8) — implemented in `ui/netclaw-zoom-app/overlay.js` per design, but live verification is an operator step.
 - **Device-write approval correlation** (`InvestigationRequest.write_action_detected`/`approval_ref`): the fields exist for audit correlation, but there is no signal today surfaced back from `run_agent_turn` distinguishing "holding on a pending device-write approval" from "still thinking" — documented in detail in `bgp/federation/zoom_channel.py`'s `_run_investigation`. The approval gate itself is NOT bypassed; this is a visibility gap in the Zoom-facing audit record, not a safety gap.

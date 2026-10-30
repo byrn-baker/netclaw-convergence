@@ -29,20 +29,14 @@
     "mode": "hobby"
   },
   "mcpServers": {
-    "forward-mcp": {
-      "command": "mcp-servers/forward-mcp/forward-mcp",
+    "forward-official-mcp": {
+      "url": "${FORWARD_URL}/api/mcp",
+      "headers": {
+        "Authorization": "Basic ${FORWARD_AUTH_BASE64}"
+      },
       "env": {
-        "FORWARD_API_BASE_URL": "${FORWARD_API_BASE_URL}",
-        "FORWARD_API_KEY": "${FORWARD_API_KEY}",
-        "FORWARD_API_SECRET": "${FORWARD_API_SECRET}",
-        "FORWARD_INSTANCE_ID": "${FORWARD_INSTANCE_ID}",
-        "FORWARD_DEFAULT_NETWORK_ID": "${FORWARD_DEFAULT_NETWORK_ID}",
-        "FORWARD_DEFAULT_QUERY_LIMIT": "10000",
-        "FORWARD_LOCK_DIR": "${FORWARD_LOCK_DIR}",
-        "FORWARD_BLOOM_ENABLED": "true",
-        "FORWARD_BLOOM_INDEX_PATH": "${FORWARD_BLOOM_INDEX_PATH}",
-        "FORWARD_SEMANTIC_CACHE_ENABLED": "true",
-        "FORWARD_SEMANTIC_CACHE_DISK_PATH": "${FORWARD_SEMANTIC_CACHE_DISK_PATH}"
+        "FORWARD_URL": "${FORWARD_URL}",
+        "FORWARD_AUTH_BASE64": "${FORWARD_AUTH_BASE64}"
       }
     },
     "suzieq-mcp": {
@@ -54,10 +48,10 @@
       "env": {
         "SUZIEQ_API_URL": "${SUZIEQ_API_URL}",
         "SUZIEQ_API_KEY": "${SUZIEQ_API_KEY}",
-        "SUZIEQ_VERIFY_SSL": "${SUZIEQ_VERIFY_SSL:-true}",
-        "SUZIEQ_TIMEOUT": "${SUZIEQ_TIMEOUT:-30}",
-        "SUZIEQ_MAX_ROWS": "${SUZIEQ_MAX_ROWS:-200}",
-        "SUZIEQ_MAX_RESPONSE_BYTES": "${SUZIEQ_MAX_RESPONSE_BYTES:-131072}"
+        "SUZIEQ_VERIFY_SSL": "${SUZIEQ_VERIFY_SSL}",
+        "SUZIEQ_TIMEOUT": "${SUZIEQ_TIMEOUT}",
+        "SUZIEQ_MAX_ROWS": "${SUZIEQ_MAX_ROWS}",
+        "SUZIEQ_MAX_RESPONSE_BYTES": "${SUZIEQ_MAX_RESPONSE_BYTES}"
       }
     },
     "zoom-rtms-mcp": {
@@ -71,9 +65,9 @@
         "ZOOM_CLIENT_SECRET": "${ZOOM_CLIENT_SECRET}",
         "ZOOM_ACCOUNT_ID": "${ZOOM_ACCOUNT_ID}",
         "ZOOM_RTMS_WEBHOOK_SECRET": "${ZOOM_RTMS_WEBHOOK_SECRET}",
-        "ZOOM_RTMS_WEBHOOK_PORT": "${ZOOM_RTMS_WEBHOOK_PORT:-8899}",
-        "ZOOM_PANEL_FEED_PORT": "${ZOOM_PANEL_FEED_PORT:-8900}",
-        "N2N_ZOOM_CHANNEL_HOST": "${N2N_ZOOM_CHANNEL_HOST:-127.0.0.1}",
+        "ZOOM_RTMS_WEBHOOK_PORT": "${ZOOM_RTMS_WEBHOOK_PORT}",
+        "ZOOM_PANEL_FEED_PORT": "${ZOOM_PANEL_FEED_PORT}",
+        "N2N_ZOOM_CHANNEL_HOST": "${N2N_ZOOM_CHANNEL_HOST}",
         "N2N_ZOOM_CHANNEL_PORT": "${N2N_ZOOM_CHANNEL_PORT}",
         "N2N_ZOOM_CHANNEL_SECRET": "${N2N_ZOOM_CHANNEL_SECRET}"
       }
@@ -85,9 +79,9 @@
         "mcp-servers/batfish-mcp/batfish_mcp_server.py"
       ],
       "env": {
-        "BATFISH_HOST": "${BATFISH_HOST:-localhost}",
-        "BATFISH_PORT": "${BATFISH_PORT:-9997}",
-        "BATFISH_NETWORK": "${BATFISH_NETWORK:-netclaw}"
+        "BATFISH_HOST": "${BATFISH_HOST}",
+        "BATFISH_PORT": "${BATFISH_PORT}",
+        "BATFISH_NETWORK": "${BATFISH_NETWORK}"
       }
     },
     "gnmi-mcp": {
@@ -101,14 +95,14 @@
         "GNMI_TLS_CA_CERT": "${GNMI_TLS_CA_CERT}",
         "GNMI_TLS_CLIENT_CERT": "${GNMI_TLS_CLIENT_CERT}",
         "GNMI_TLS_CLIENT_KEY": "${GNMI_TLS_CLIENT_KEY}",
-        "GNMI_TLS_SKIP_VERIFY": "${GNMI_TLS_SKIP_VERIFY:-false}",
-        "GNMI_DEFAULT_PORT": "${GNMI_DEFAULT_PORT:-6030}",
-        "GNMI_MAX_RESPONSE_SIZE": "${GNMI_MAX_RESPONSE_SIZE:-1048576}",
-        "GNMI_MAX_SUBSCRIPTIONS": "${GNMI_MAX_SUBSCRIPTIONS:-50}",
+        "GNMI_TLS_SKIP_VERIFY": "${GNMI_TLS_SKIP_VERIFY}",
+        "GNMI_DEFAULT_PORT": "${GNMI_DEFAULT_PORT}",
+        "GNMI_MAX_RESPONSE_SIZE": "${GNMI_MAX_RESPONSE_SIZE}",
+        "GNMI_MAX_SUBSCRIPTIONS": "${GNMI_MAX_SUBSCRIPTIONS}",
         "SERVICENOW_INSTANCE_URL": "${SERVICENOW_INSTANCE_URL}",
         "SERVICENOW_USERNAME": "${SERVICENOW_USERNAME}",
         "SERVICENOW_PASSWORD": "${SERVICENOW_PASSWORD}",
-        "NETCLAW_LAB_MODE": "${NETCLAW_LAB_MODE:-false}"
+        "NETCLAW_LAB_MODE": "${NETCLAW_LAB_MODE}"
       }
     },
     "azure-network-mcp": {
@@ -131,7 +125,7 @@
       ],
       "env": {
         "GITLAB_PERSONAL_ACCESS_TOKEN": "${GITLAB_PERSONAL_ACCESS_TOKEN}",
-        "GITLAB_API_URL": "${GITLAB_API_URL:-https://gitlab.com}"
+        "GITLAB_API_URL": "${GITLAB_API_URL}"
       }
     },
     "chrome-devtools-mcp": {
@@ -184,8 +178,8 @@
         "GNS3_URL": "${GNS3_URL}",
         "GNS3_USER": "${GNS3_USER}",
         "GNS3_PASSWORD": "${GNS3_PASSWORD}",
-        "GNS3_VERIFY_SSL": "${GNS3_VERIFY_SSL:-true}",
-        "GNS3_TOKEN_TTL": "${GNS3_TOKEN_TTL:-3000}"
+        "GNS3_VERIFY_SSL": "${GNS3_VERIFY_SSL}",
+        "GNS3_TOKEN_TTL": "${GNS3_TOKEN_TTL}"
       }
     },
     "prisma-sdwan-mcp": {
@@ -198,7 +192,7 @@
         "PAN_CLIENT_ID": "${PAN_CLIENT_ID}",
         "PAN_CLIENT_SECRET": "${PAN_CLIENT_SECRET}",
         "PAN_TSG_ID": "${PAN_TSG_ID}",
-        "PAN_REGION": "${PAN_REGION:-americas}"
+        "PAN_REGION": "${PAN_REGION}"
       }
     },
     "redfish-mcp": {
@@ -208,11 +202,11 @@
         "mcp-servers/redfish-mcp/server.py"
       ],
       "env": {
-        "REDFISH_URL": "${REDFISH_URL:-}",
-        "REDFISH_USERNAME": "${REDFISH_USERNAME:-}",
-        "REDFISH_PASSWORD": "${REDFISH_PASSWORD:-}",
-        "REDFISH_VERIFY_TLS": "${REDFISH_VERIFY_TLS:-true}",
-        "REDFISH_TIMEOUT": "${REDFISH_TIMEOUT:-15}"
+        "REDFISH_URL": "${REDFISH_URL}",
+        "REDFISH_USERNAME": "${REDFISH_USERNAME}",
+        "REDFISH_PASSWORD": "${REDFISH_PASSWORD}",
+        "REDFISH_VERIFY_TLS": "${REDFISH_VERIFY_TLS}",
+        "REDFISH_TIMEOUT": "${REDFISH_TIMEOUT}"
       }
     },
     "datadog-mcp": {
@@ -220,7 +214,7 @@
       "env": {
         "DD_API_KEY": "${DD_API_KEY}",
         "DD_APP_KEY": "${DD_APP_KEY}",
-        "DD_SITE": "${DD_SITE:-datadoghq.com}"
+        "DD_SITE": "${DD_SITE}"
       }
     },
     "pagerduty-mcp": {
@@ -231,7 +225,7 @@
       ],
       "env": {
         "PAGERDUTY_USER_API_KEY": "${PAGERDUTY_USER_API_KEY}",
-        "PAGERDUTY_API_HOST": "${PAGERDUTY_API_HOST:-https://api.pagerduty.com}"
+        "PAGERDUTY_API_HOST": "${PAGERDUTY_API_HOST}"
       }
     },
     "splunk-mcp": {
@@ -242,7 +236,7 @@
       "env": {
         "SPLUNK_HOST": "${SPLUNK_HOST}",
         "SPLUNK_TOKEN": "${SPLUNK_TOKEN}",
-        "SPLUNK_VERIFY_SSL": "${SPLUNK_VERIFY_SSL:-true}"
+        "SPLUNK_VERIFY_SSL": "${SPLUNK_VERIFY_SSL}"
       }
     },
     "infrahub-mcp": {
@@ -258,7 +252,7 @@
       "env": {
         "TFC_TOKEN": "${TFC_TOKEN}",
         "TFC_ORG": "${TFC_ORG}",
-        "TFC_HOST": "${TFC_HOST:-app.terraform.io}"
+        "TFC_HOST": "${TFC_HOST}"
       }
     },
     "vault-mcp": {
@@ -275,7 +269,7 @@
         "ZSCALER_ZIA_API_KEY": "${ZSCALER_ZIA_API_KEY}",
         "ZSCALER_ZIA_USERNAME": "${ZSCALER_ZIA_USERNAME}",
         "ZSCALER_ZIA_PASSWORD": "${ZSCALER_ZIA_PASSWORD}",
-        "ZSCALER_ZIA_CLOUD": "${ZSCALER_ZIA_CLOUD:-zscaler.net}",
+        "ZSCALER_ZIA_CLOUD": "${ZSCALER_ZIA_CLOUD}",
         "ZSCALER_ZPA_CLIENT_ID": "${ZSCALER_ZPA_CLIENT_ID}",
         "ZSCALER_ZPA_CLIENT_SECRET": "${ZSCALER_ZPA_CLIENT_SECRET}",
         "ZSCALER_ZPA_CUSTOMER_ID": "${ZSCALER_ZPA_CUSTOMER_ID}"
@@ -331,9 +325,9 @@
       "env": {
         "ARUBA_CX_TARGETS": "${ARUBA_CX_TARGETS}",
         "ARUBA_CX_CONFIG": "${ARUBA_CX_CONFIG}",
-        "ARUBA_CX_TIMEOUT": "${ARUBA_CX_TIMEOUT:-30}",
-        "ITSM_ENABLED": "${ITSM_ENABLED:-false}",
-        "ITSM_LAB_MODE": "${ITSM_LAB_MODE:-false}"
+        "ARUBA_CX_TIMEOUT": "${ARUBA_CX_TIMEOUT}",
+        "ITSM_ENABLED": "${ITSM_ENABLED}",
+        "ITSM_LAB_MODE": "${ITSM_LAB_MODE}"
       }
     },
     "devnet-content-search": {
@@ -348,11 +342,11 @@
       "env": {
         "NAUTOBOT_URL": "${NAUTOBOT_URL}",
         "NAUTOBOT_TOKEN": "${NAUTOBOT_TOKEN}",
-        "NAUTOBOT_VERIFY_SSL": "${NAUTOBOT_VERIFY_SSL:-true}",
+        "NAUTOBOT_VERIFY_SSL": "${NAUTOBOT_VERIFY_SSL}",
         "NAUTOBOT_CA_BUNDLE": "${NAUTOBOT_CA_BUNDLE}",
-        "NAUTOBOT_TIMEOUT": "${NAUTOBOT_TIMEOUT:-60}",
-        "ITSM_ENABLED": "${ITSM_ENABLED:-false}",
-        "ITSM_LAB_MODE": "${ITSM_LAB_MODE:-true}"
+        "NAUTOBOT_TIMEOUT": "${NAUTOBOT_TIMEOUT}",
+        "ITSM_ENABLED": "${ITSM_ENABLED}",
+        "ITSM_LAB_MODE": "${ITSM_LAB_MODE}"
       }
     },
     "nautobot-golden-config-mcp": {
@@ -364,13 +358,13 @@
       "env": {
         "NAUTOBOT_URL": "${NAUTOBOT_URL}",
         "NAUTOBOT_TOKEN": "${NAUTOBOT_TOKEN}",
-        "NAUTOBOT_VERIFY_SSL": "${NAUTOBOT_VERIFY_SSL:-true}",
+        "NAUTOBOT_VERIFY_SSL": "${NAUTOBOT_VERIFY_SSL}",
         "NAUTOBOT_CA_BUNDLE": "${NAUTOBOT_CA_BUNDLE}",
-        "NAUTOBOT_TIMEOUT": "${NAUTOBOT_TIMEOUT:-60}",
-        "GOLDEN_CONFIG_POLL_INTERVAL": "${GOLDEN_CONFIG_POLL_INTERVAL:-5}",
-        "GOLDEN_CONFIG_JOB_TIMEOUT": "${GOLDEN_CONFIG_JOB_TIMEOUT:-300}",
-        "ITSM_ENABLED": "${ITSM_ENABLED:-false}",
-        "ITSM_LAB_MODE": "${ITSM_LAB_MODE:-true}"
+        "NAUTOBOT_TIMEOUT": "${NAUTOBOT_TIMEOUT}",
+        "GOLDEN_CONFIG_POLL_INTERVAL": "${GOLDEN_CONFIG_POLL_INTERVAL}",
+        "GOLDEN_CONFIG_JOB_TIMEOUT": "${GOLDEN_CONFIG_JOB_TIMEOUT}",
+        "ITSM_ENABLED": "${ITSM_ENABLED}",
+        "ITSM_LAB_MODE": "${ITSM_LAB_MODE}"
       }
     },
     "nautobot-routing-mcp": {
@@ -382,11 +376,11 @@
       "env": {
         "NAUTOBOT_URL": "${NAUTOBOT_URL}",
         "NAUTOBOT_TOKEN": "${NAUTOBOT_TOKEN}",
-        "NAUTOBOT_VERIFY_SSL": "${NAUTOBOT_VERIFY_SSL:-true}",
+        "NAUTOBOT_VERIFY_SSL": "${NAUTOBOT_VERIFY_SSL}",
         "NAUTOBOT_CA_BUNDLE": "${NAUTOBOT_CA_BUNDLE}",
-        "NAUTOBOT_TIMEOUT": "${NAUTOBOT_TIMEOUT:-60}",
-        "ITSM_ENABLED": "${ITSM_ENABLED:-false}",
-        "ITSM_LAB_MODE": "${ITSM_LAB_MODE:-true}"
+        "NAUTOBOT_TIMEOUT": "${NAUTOBOT_TIMEOUT}",
+        "ITSM_ENABLED": "${ITSM_ENABLED}",
+        "ITSM_LAB_MODE": "${ITSM_LAB_MODE}"
       }
     },
     "chkp-management": {
@@ -396,14 +390,14 @@
       ],
       "env": {
         "MANAGEMENT_HOST": "${CHKP_MGMT_HOST}",
-        "MANAGEMENT_PORT": "${CHKP_MGMT_PORT:-443}",
+        "MANAGEMENT_PORT": "${CHKP_MGMT_PORT}",
         "S1C_URL": "${CHKP_S1C_URL}",
         "CLOUD_INFRA_TOKEN": "${CHKP_S1C_API_KEY}",
         "API_KEY": "${CHKP_MGMT_API_KEY}",
         "USERNAME": "${CHKP_MGMT_USERNAME}",
         "PASSWORD": "${CHKP_MGMT_PASSWORD}",
         "DOMAIN": "${CHKP_MGMT_DOMAIN}",
-        "TELEMETRY_DISABLED": "${CHKP_TELEMETRY_DISABLED:-true}"
+        "TELEMETRY_DISABLED": "${CHKP_TELEMETRY_DISABLED}"
       }
     },
     "chkp-management-logs": {
@@ -413,14 +407,14 @@
       ],
       "env": {
         "MANAGEMENT_HOST": "${CHKP_MGMT_HOST}",
-        "MANAGEMENT_PORT": "${CHKP_MGMT_PORT:-443}",
+        "MANAGEMENT_PORT": "${CHKP_MGMT_PORT}",
         "S1C_URL": "${CHKP_S1C_URL}",
         "CLOUD_INFRA_TOKEN": "${CHKP_S1C_API_KEY}",
         "API_KEY": "${CHKP_MGMT_API_KEY}",
         "USERNAME": "${CHKP_MGMT_USERNAME}",
         "PASSWORD": "${CHKP_MGMT_PASSWORD}",
         "DOMAIN": "${CHKP_MGMT_DOMAIN}",
-        "TELEMETRY_DISABLED": "${CHKP_TELEMETRY_DISABLED:-true}"
+        "TELEMETRY_DISABLED": "${CHKP_TELEMETRY_DISABLED}"
       }
     },
     "chkp-threat-prevention": {
@@ -430,14 +424,14 @@
       ],
       "env": {
         "MANAGEMENT_HOST": "${CHKP_MGMT_HOST}",
-        "MANAGEMENT_PORT": "${CHKP_MGMT_PORT:-443}",
+        "MANAGEMENT_PORT": "${CHKP_MGMT_PORT}",
         "S1C_URL": "${CHKP_S1C_URL}",
         "CLOUD_INFRA_TOKEN": "${CHKP_S1C_API_KEY}",
         "API_KEY": "${CHKP_MGMT_API_KEY}",
         "USERNAME": "${CHKP_MGMT_USERNAME}",
         "PASSWORD": "${CHKP_MGMT_PASSWORD}",
         "DOMAIN": "${CHKP_MGMT_DOMAIN}",
-        "TELEMETRY_DISABLED": "${CHKP_TELEMETRY_DISABLED:-true}"
+        "TELEMETRY_DISABLED": "${CHKP_TELEMETRY_DISABLED}"
       }
     },
     "chkp-https-inspection": {
@@ -447,14 +441,14 @@
       ],
       "env": {
         "MANAGEMENT_HOST": "${CHKP_MGMT_HOST}",
-        "MANAGEMENT_PORT": "${CHKP_MGMT_PORT:-443}",
+        "MANAGEMENT_PORT": "${CHKP_MGMT_PORT}",
         "S1C_URL": "${CHKP_S1C_URL}",
         "CLOUD_INFRA_TOKEN": "${CHKP_S1C_API_KEY}",
         "API_KEY": "${CHKP_MGMT_API_KEY}",
         "USERNAME": "${CHKP_MGMT_USERNAME}",
         "PASSWORD": "${CHKP_MGMT_PASSWORD}",
         "DOMAIN": "${CHKP_MGMT_DOMAIN}",
-        "TELEMETRY_DISABLED": "${CHKP_TELEMETRY_DISABLED:-true}"
+        "TELEMETRY_DISABLED": "${CHKP_TELEMETRY_DISABLED}"
       }
     },
     "chkp-harmony-sase": {
@@ -466,7 +460,7 @@
         "API_KEY": "${CHKP_SASE_API_KEY}",
         "MANAGEMENT_HOST": "${CHKP_SASE_MGMT_HOST}",
         "ORIGIN": "${CHKP_SASE_ORIGIN}",
-        "TELEMETRY_DISABLED": "${CHKP_TELEMETRY_DISABLED:-true}"
+        "TELEMETRY_DISABLED": "${CHKP_TELEMETRY_DISABLED}"
       }
     },
     "chkp-reputation-service": {
@@ -476,7 +470,7 @@
       ],
       "env": {
         "API_KEY": "${CHKP_REPUTATION_API_KEY}",
-        "TELEMETRY_DISABLED": "${CHKP_TELEMETRY_DISABLED:-true}"
+        "TELEMETRY_DISABLED": "${CHKP_TELEMETRY_DISABLED}"
       }
     },
     "chkp-quantum-gw-cli": {
@@ -486,14 +480,14 @@
       ],
       "env": {
         "MANAGEMENT_HOST": "${CHKP_MGMT_HOST}",
-        "MANAGEMENT_PORT": "${CHKP_MGMT_PORT:-443}",
+        "MANAGEMENT_PORT": "${CHKP_MGMT_PORT}",
         "S1C_URL": "${CHKP_S1C_URL}",
         "CLOUD_INFRA_TOKEN": "${CHKP_S1C_API_KEY}",
         "API_KEY": "${CHKP_MGMT_API_KEY}",
         "USERNAME": "${CHKP_MGMT_USERNAME}",
         "PASSWORD": "${CHKP_MGMT_PASSWORD}",
         "DOMAIN": "${CHKP_MGMT_DOMAIN}",
-        "TELEMETRY_DISABLED": "${CHKP_TELEMETRY_DISABLED:-true}"
+        "TELEMETRY_DISABLED": "${CHKP_TELEMETRY_DISABLED}"
       }
     },
     "chkp-gw-connection-analysis": {
@@ -503,14 +497,14 @@
       ],
       "env": {
         "MANAGEMENT_HOST": "${CHKP_MGMT_HOST}",
-        "MANAGEMENT_PORT": "${CHKP_MGMT_PORT:-443}",
+        "MANAGEMENT_PORT": "${CHKP_MGMT_PORT}",
         "S1C_URL": "${CHKP_S1C_URL}",
         "CLOUD_INFRA_TOKEN": "${CHKP_S1C_API_KEY}",
         "API_KEY": "${CHKP_MGMT_API_KEY}",
         "USERNAME": "${CHKP_MGMT_USERNAME}",
         "PASSWORD": "${CHKP_MGMT_PASSWORD}",
         "DOMAIN": "${CHKP_MGMT_DOMAIN}",
-        "TELEMETRY_DISABLED": "${CHKP_TELEMETRY_DISABLED:-true}"
+        "TELEMETRY_DISABLED": "${CHKP_TELEMETRY_DISABLED}"
       }
     },
     "chkp-threat-emulation": {
@@ -520,7 +514,7 @@
       ],
       "env": {
         "API_KEY": "${CHKP_TE_API_KEY}",
-        "TELEMETRY_DISABLED": "${CHKP_TELEMETRY_DISABLED:-true}"
+        "TELEMETRY_DISABLED": "${CHKP_TELEMETRY_DISABLED}"
       }
     },
     "chkp-quantum-gaia": {
@@ -529,8 +523,8 @@
         "mcp-servers/checkpoint-mcp-servers/packages/gaia/dist/index.js"
       ],
       "env": {
-        "VERBOSE": "${CHKP_GAIA_VERBOSE:-false}",
-        "TELEMETRY_DISABLED": "${CHKP_TELEMETRY_DISABLED:-true}"
+        "VERBOSE": "${CHKP_GAIA_VERBOSE}",
+        "TELEMETRY_DISABLED": "${CHKP_TELEMETRY_DISABLED}"
       }
     },
     "chkp-documentation": {
@@ -543,7 +537,7 @@
         "SECRET_KEY": "${CHKP_DOCS_SECRET_KEY}",
         "AUTH_URL": "${CHKP_DOCS_AUTH_URL}",
         "REGION": "${CHKP_DOCS_REGION}",
-        "TELEMETRY_DISABLED": "${CHKP_TELEMETRY_DISABLED:-true}"
+        "TELEMETRY_DISABLED": "${CHKP_TELEMETRY_DISABLED}"
       }
     },
     "chkp-spark-management": {
@@ -556,7 +550,7 @@
         "SECRET_KEY": "${CHKP_SPARK_SECRET_KEY}",
         "INFINITY_PORTAL_URL": "${CHKP_SPARK_INFINITY_PORTAL_URL}",
         "REGION": "${CHKP_SPARK_REGION}",
-        "TELEMETRY_DISABLED": "${CHKP_TELEMETRY_DISABLED:-true}"
+        "TELEMETRY_DISABLED": "${CHKP_TELEMETRY_DISABLED}"
       }
     },
     "chkp-cpinfo-analysis": {
@@ -565,7 +559,7 @@
         "mcp-servers/checkpoint-mcp-servers/packages/cpinfo-analysis/dist/index.js"
       ],
       "env": {
-        "TELEMETRY_DISABLED": "${CHKP_TELEMETRY_DISABLED:-true}"
+        "TELEMETRY_DISABLED": "${CHKP_TELEMETRY_DISABLED}"
       }
     },
     "chkp-argos-erm": {
@@ -577,7 +571,7 @@
         "ARGOS_SERVER_URL": "${CHKP_ARGOS_SERVER_URL}",
         "ARGOS_INTEGRATION_TOKEN": "${CHKP_ARGOS_INTEGRATION_TOKEN}",
         "ARGOS_CUSTOMER_ID": "${CHKP_ARGOS_CUSTOMER_ID}",
-        "TELEMETRY_DISABLED": "${CHKP_TELEMETRY_DISABLED:-true}"
+        "TELEMETRY_DISABLED": "${CHKP_TELEMETRY_DISABLED}"
       }
     },
     "chkp-policy-insights": {
@@ -587,14 +581,14 @@
       ],
       "env": {
         "MANAGEMENT_HOST": "${CHKP_MGMT_HOST}",
-        "MANAGEMENT_PORT": "${CHKP_MGMT_PORT:-443}",
+        "MANAGEMENT_PORT": "${CHKP_MGMT_PORT}",
         "S1C_URL": "${CHKP_S1C_URL}",
         "CLOUD_INFRA_TOKEN": "${CHKP_S1C_API_KEY}",
         "API_KEY": "${CHKP_MGMT_API_KEY}",
         "USERNAME": "${CHKP_MGMT_USERNAME}",
         "PASSWORD": "${CHKP_MGMT_PASSWORD}",
         "DOMAIN": "${CHKP_MGMT_DOMAIN}",
-        "TELEMETRY_DISABLED": "${CHKP_TELEMETRY_DISABLED:-true}"
+        "TELEMETRY_DISABLED": "${CHKP_TELEMETRY_DISABLED}"
       }
     },
     "claroty-mcp": {
@@ -604,12 +598,12 @@
         "mcp-servers/claroty-mcp/claroty_mcp_server.py"
       ],
       "env": {
-        "CLAROTY_API_URL": "${CLAROTY_API_URL:-https://api.medigate.io}",
+        "CLAROTY_API_URL": "${CLAROTY_API_URL}",
         "CLAROTY_API_TOKEN": "${CLAROTY_API_TOKEN}",
-        "CLAROTY_VERIFY_SSL": "${CLAROTY_VERIFY_SSL:-true}",
-        "CLAROTY_TIMEOUT": "${CLAROTY_TIMEOUT:-30}",
-        "CLAROTY_RATE_LIMIT_PER_MIN": "${CLAROTY_RATE_LIMIT_PER_MIN:-2000}",
-        "NETCLAW_LAB_MODE": "${NETCLAW_LAB_MODE:-false}",
+        "CLAROTY_VERIFY_SSL": "${CLAROTY_VERIFY_SSL}",
+        "CLAROTY_TIMEOUT": "${CLAROTY_TIMEOUT}",
+        "CLAROTY_RATE_LIMIT_PER_MIN": "${CLAROTY_RATE_LIMIT_PER_MIN}",
+        "NETCLAW_LAB_MODE": "${NETCLAW_LAB_MODE}",
         "SERVICENOW_INSTANCE_URL": "${SERVICENOW_INSTANCE_URL}",
         "SERVICENOW_USERNAME": "${SERVICENOW_USERNAME}",
         "SERVICENOW_PASSWORD": "${SERVICENOW_PASSWORD}"
@@ -626,20 +620,14 @@
         "TWITTER_API_SECRET": "${TWITTER_API_SECRET}",
         "TWITTER_ACCESS_TOKEN": "${TWITTER_ACCESS_TOKEN}",
         "TWITTER_ACCESS_SECRET": "${TWITTER_ACCESS_SECRET}",
-        "TWITTER_HEARTBEAT_ENABLED": "${TWITTER_HEARTBEAT_ENABLED:-false}",
-        "TWITTER_HEARTBEAT_INTERVAL": "${TWITTER_HEARTBEAT_INTERVAL:-14400}"
+        "TWITTER_HEARTBEAT_ENABLED": "${TWITTER_HEARTBEAT_ENABLED}",
+        "TWITTER_HEARTBEAT_INTERVAL": "${TWITTER_HEARTBEAT_INTERVAL}"
       }
     },
     "twilio-mcp": {
-      "command": "npx",
+      "command": "node",
       "args": [
-        "-y",
-        "@twilio-alpha/mcp",
-        "${TWILIO_ACCOUNT_SID}/${TWILIO_API_KEY_SID}:${TWILIO_API_SECRET}",
-        "--services",
-        "twilio_api_v2010",
-        "--tags",
-        "Api20100401Call,Api20100401Message"
+        "mcp-servers/twilio-env-mcp/server.mjs"
       ],
       "env": {
         "TWILIO_ACCOUNT_SID": "${TWILIO_ACCOUNT_SID}",
@@ -662,9 +650,9 @@
       }
     },
     "unreal-mcp": {
-      "url": "${UE5_MCP_URL:-http://127.0.0.1:8000/mcp}",
+      "url": "${UE5_MCP_URL}",
       "env": {
-        "UE5_MCP_URL": "${UE5_MCP_URL:-http://127.0.0.1:8000/mcp}"
+        "UE5_MCP_URL": "${UE5_MCP_URL}"
       }
     },
     "sketchfab-mcp": {
@@ -688,7 +676,7 @@
         "PFSENSE_VERSION": "${PFSENSE_VERSION}",
         "AUTH_METHOD": "${PFSENSE_AUTH_METHOD}",
         "PFSENSE_API_KEY": "${PFSENSE_API_KEY}",
-        "VERIFY_SSL": "${PFSENSE_VERIFY_SSL:-false}"
+        "VERIFY_SSL": "${PFSENSE_VERIFY_SSL}"
       }
     },
     "unifi-network": {
@@ -701,8 +689,8 @@
       "env": {
         "UNIFI_HOST": "${UNIFI_HOST}",
         "UNIFI_API_KEY": "${UNIFI_API_KEY}",
-        "UNIFI_SITE": "${UNIFI_SITE:-default}",
-        "UNIFI_VERIFY_SSL": "${UNIFI_VERIFY_SSL:-false}"
+        "UNIFI_SITE": "${UNIFI_SITE}",
+        "UNIFI_VERIFY_SSL": "${UNIFI_VERIFY_SSL}"
       }
     },
     "comfyui-mcp": {
@@ -725,7 +713,7 @@
         "n2n-mcp"
       ],
       "env": {
-        "BGP_DAEMON_API": "${BGP_DAEMON_API:-http://127.0.0.1:8179}"
+        "BGP_DAEMON_API": "${BGP_DAEMON_API}"
       }
     },
     "topology-diagram-mcp": {
@@ -762,16 +750,16 @@
         "mcp-servers/rag-mcp/rag_mcp_server.py"
       ],
       "env": {
-        "RAG_DATA_DIR": "${RAG_DATA_DIR:-~/.openclaw/rag}",
-        "RAG_EMBEDDING_MODEL": "${RAG_EMBEDDING_MODEL:-BAAI/bge-small-en-v1.5}",
-        "RAG_RERANKER_MODEL": "${RAG_RERANKER_MODEL:-cross-encoder/ms-marco-MiniLM-L-6-v2}",
-        "RAG_RERANK_ENABLED": "${RAG_RERANK_ENABLED:-true}",
-        "RAG_RELEVANCE_FLOOR": "${RAG_RELEVANCE_FLOOR:-0.3}",
-        "RAG_MAX_DOC_MB": "${RAG_MAX_DOC_MB:-100}",
-        "RAG_MAX_DOC_PAGES": "${RAG_MAX_DOC_PAGES:-1000}",
-        "RAG_CRAWL_MAX_PAGES": "${RAG_CRAWL_MAX_PAGES:-30}",
-        "RAG_SNAPSHOT_WARN_DAYS": "${RAG_SNAPSHOT_WARN_DAYS:-90}",
-        "RAG_MAX_ROUNDS": "${RAG_MAX_ROUNDS:-3}"
+        "RAG_DATA_DIR": "${RAG_DATA_DIR}",
+        "RAG_EMBEDDING_MODEL": "${RAG_EMBEDDING_MODEL}",
+        "RAG_RERANKER_MODEL": "${RAG_RERANKER_MODEL}",
+        "RAG_RERANK_ENABLED": "${RAG_RERANK_ENABLED}",
+        "RAG_RELEVANCE_FLOOR": "${RAG_RELEVANCE_FLOOR}",
+        "RAG_MAX_DOC_MB": "${RAG_MAX_DOC_MB}",
+        "RAG_MAX_DOC_PAGES": "${RAG_MAX_DOC_PAGES}",
+        "RAG_CRAWL_MAX_PAGES": "${RAG_CRAWL_MAX_PAGES}",
+        "RAG_SNAPSHOT_WARN_DAYS": "${RAG_SNAPSHOT_WARN_DAYS}",
+        "RAG_MAX_ROUNDS": "${RAG_MAX_ROUNDS}"
       }
     },
     "cml-mcp": {
@@ -780,7 +768,7 @@
         "CML_URL": "${CML_URL}",
         "CML_USERNAME": "${CML_USERNAME}",
         "CML_PASSWORD": "${CML_PASSWORD}",
-        "CML_VERIFY_SSL": "${CML_VERIFY_SSL:-true}"
+        "CML_VERIFY_SSL": "${CML_VERIFY_SSL}"
       },
       "args": [
         "-m",
@@ -793,9 +781,9 @@
         "NSO_ADDRESS": "${NSO_ADDRESS}",
         "NSO_USERNAME": "${NSO_USERNAME}",
         "NSO_PASSWORD": "${NSO_PASSWORD}",
-        "NSO_SCHEME": "${NSO_SCHEME:-http}",
-        "NSO_PORT": "${NSO_PORT:-8080}",
-        "NSO_TIMEOUT": "${NSO_TIMEOUT:-30}"
+        "NSO_SCHEME": "${NSO_SCHEME}",
+        "NSO_PORT": "${NSO_PORT}",
+        "NSO_TIMEOUT": "${NSO_TIMEOUT}"
       }
     },
     "itential-mcp": {
@@ -807,7 +795,7 @@
         "ITENTIAL_MCP_PLATFORM_HOST": "${ITENTIAL_MCP_PLATFORM_HOST}",
         "ITENTIAL_MCP_PLATFORM_USER": "${ITENTIAL_MCP_PLATFORM_USER}",
         "ITENTIAL_MCP_PLATFORM_PASSWORD": "${ITENTIAL_MCP_PLATFORM_PASSWORD}",
-        "ITENTIAL_MCP_PLATFORM_PORT": "${ITENTIAL_MCP_PLATFORM_PORT:-443}"
+        "ITENTIAL_MCP_PLATFORM_PORT": "${ITENTIAL_MCP_PLATFORM_PORT}"
       }
     },
     "prometheus-mcp": {
@@ -857,7 +845,7 @@
         "stdio"
       ],
       "env": {
-        "JUNOS_TIMEOUT": "${JUNOS_TIMEOUT:-360}"
+        "JUNOS_TIMEOUT": "${JUNOS_TIMEOUT}"
       }
     },
     "arista-cvp-mcp": {
@@ -912,7 +900,7 @@
       "env": {
         "AWS_ACCESS_KEY_ID": "${AWS_ACCESS_KEY_ID}",
         "AWS_SECRET_ACCESS_KEY": "${AWS_SECRET_ACCESS_KEY}",
-        "AWS_REGION": "${AWS_REGION:-us-east-1}"
+        "AWS_REGION": "${AWS_REGION}"
       }
     },
     "aws-cloudwatch-mcp": {
@@ -923,7 +911,7 @@
       "env": {
         "AWS_ACCESS_KEY_ID": "${AWS_ACCESS_KEY_ID}",
         "AWS_SECRET_ACCESS_KEY": "${AWS_SECRET_ACCESS_KEY}",
-        "AWS_REGION": "${AWS_REGION:-us-east-1}"
+        "AWS_REGION": "${AWS_REGION}"
       }
     },
     "aws-iam-mcp": {
@@ -935,7 +923,7 @@
       "env": {
         "AWS_ACCESS_KEY_ID": "${AWS_ACCESS_KEY_ID}",
         "AWS_SECRET_ACCESS_KEY": "${AWS_SECRET_ACCESS_KEY}",
-        "AWS_REGION": "${AWS_REGION:-us-east-1}"
+        "AWS_REGION": "${AWS_REGION}"
       }
     },
     "aws-cloudtrail-mcp": {
@@ -946,7 +934,7 @@
       "env": {
         "AWS_ACCESS_KEY_ID": "${AWS_ACCESS_KEY_ID}",
         "AWS_SECRET_ACCESS_KEY": "${AWS_SECRET_ACCESS_KEY}",
-        "AWS_REGION": "${AWS_REGION:-us-east-1}"
+        "AWS_REGION": "${AWS_REGION}"
       }
     },
     "aws-cost-explorer-mcp": {
@@ -957,7 +945,7 @@
       "env": {
         "AWS_ACCESS_KEY_ID": "${AWS_ACCESS_KEY_ID}",
         "AWS_SECRET_ACCESS_KEY": "${AWS_SECRET_ACCESS_KEY}",
-        "AWS_REGION": "${AWS_REGION:-us-east-1}"
+        "AWS_REGION": "${AWS_REGION}"
       }
     },
     "aws-diagram-mcp": {
@@ -966,7 +954,7 @@
         "awslabs.aws-diagram-mcp-server@latest"
       ],
       "env": {
-        "AWS_REGION": "${AWS_REGION:-us-east-1}"
+        "AWS_REGION": "${AWS_REGION}"
       }
     },
     "gcp-compute-mcp": {
@@ -1004,7 +992,7 @@
       }
     },
     "kubeshark-mcp": {
-      "url": "${KUBESHARK_MCP_URL:-http://localhost:8898/mcp}"
+      "url": "${KUBESHARK_MCP_URL}"
     },
     "uml-mcp": {
       "command": "python3",
@@ -1013,12 +1001,12 @@
         "mcp-servers/uml-mcp/server.py"
       ],
       "env": {
-        "MCP_OUTPUT_DIR": "${MCP_OUTPUT_DIR:-./output}",
-        "PLANTUML_SERVER": "${PLANTUML_SERVER:-http://plantuml-server:8080}",
-        "KROKI_SERVER": "${KROKI_SERVER:-https://kroki.io}",
-        "USE_LOCAL_PLANTUML": "${USE_LOCAL_PLANTUML:-false}",
-        "USE_LOCAL_KROKI": "${USE_LOCAL_KROKI:-false}",
-        "LOG_LEVEL": "${LOG_LEVEL:-INFO}"
+        "MCP_OUTPUT_DIR": "${MCP_OUTPUT_DIR}",
+        "PLANTUML_SERVER": "${PLANTUML_SERVER}",
+        "KROKI_SERVER": "${KROKI_SERVER}",
+        "USE_LOCAL_PLANTUML": "${USE_LOCAL_PLANTUML}",
+        "USE_LOCAL_KROKI": "${USE_LOCAL_KROKI}",
+        "LOG_LEVEL": "${LOG_LEVEL}"
       }
     },
     "protocol-mcp": {
@@ -1028,19 +1016,30 @@
         "mcp-servers/protocol-mcp/server.py"
       ],
       "env": {
-        "NETCLAW_ROUTER_ID": "${NETCLAW_ROUTER_ID:-4.4.4.4}",
-        "NETCLAW_LOCAL_AS": "${NETCLAW_LOCAL_AS:-65001}",
-        "NETCLAW_BGP_PEERS": "${NETCLAW_BGP_PEERS:-[]}",
-        "NETCLAW_OSPF_AREAS": "${NETCLAW_OSPF_AREAS:-[]}",
-        "NETCLAW_GRE_TUNNELS": "${NETCLAW_GRE_TUNNELS:-[]}",
-        "NETCLAW_LAB_MODE": "${NETCLAW_LAB_MODE:-false}",
-        "BGP_DAEMON_API": "${BGP_DAEMON_API:-http://127.0.0.1:8179}"
+        "NETCLAW_ROUTER_ID": "${NETCLAW_ROUTER_ID}",
+        "NETCLAW_LOCAL_AS": "${NETCLAW_LOCAL_AS}",
+        "NETCLAW_BGP_PEERS": "${NETCLAW_BGP_PEERS}",
+        "NETCLAW_OSPF_AREAS": "${NETCLAW_OSPF_AREAS}",
+        "NETCLAW_GRE_TUNNELS": "${NETCLAW_GRE_TUNNELS}",
+        "NETCLAW_LAB_MODE": "${NETCLAW_LAB_MODE}",
+        "BGP_DAEMON_API": "${BGP_DAEMON_API}"
+      }
+    },
+    "ollama-mcp": {
+      "command": "python3",
+      "args": [
+        "-u",
+        "mcp-servers/ollama-mcp/server.py"
+      ],
+      "env": {
+        "OLLAMA_BASE_URL": "${OLLAMA_BASE_URL}",
+        "OLLAMA_TIMEOUT": "${OLLAMA_TIMEOUT}"
       }
     },
     "fwrule-mcp": {
       "command": "fwrule-mcp",
       "env": {
-        "FWRULE_LOG_LEVEL": "${FWRULE_LOG_LEVEL:-WARNING}"
+        "FWRULE_LOG_LEVEL": "${FWRULE_LOG_LEVEL}"
       }
     },
     "aap-ansible-mcp": {
@@ -1079,8 +1078,8 @@
         "mcp-servers/AAP-Enterprise-MCP-Server/redhat_docs.py"
       ],
       "env": {
-        "REDHAT_USERNAME": "${REDHAT_USERNAME:-}",
-        "REDHAT_PASSWORD": "${REDHAT_PASSWORD:-}"
+        "REDHAT_USERNAME": "${REDHAT_USERNAME}",
+        "REDHAT_PASSWORD": "${REDHAT_PASSWORD}"
       }
     },
     "auvik-mcp": {
@@ -1092,11 +1091,11 @@
       "env": {
         "AUVIK_USERNAME": "${AUVIK_USERNAME}",
         "AUVIK_API_KEY": "${AUVIK_API_KEY}",
-        "AUVIK_BASE_URL": "${AUVIK_BASE_URL:-https://auvikapi.us1.my.auvik.com}",
-        "AUVIK_VERIFY_SSL": "${AUVIK_VERIFY_SSL:-true}",
-        "AUVIK_TIMEOUT": "${AUVIK_TIMEOUT:-30}",
-        "AUVIK_RATE_LIMIT": "${AUVIK_RATE_LIMIT:-600}",
-        "AUVIK_MAX_PAGES": "${AUVIK_MAX_PAGES:-50}"
+        "AUVIK_BASE_URL": "${AUVIK_BASE_URL}",
+        "AUVIK_VERIFY_SSL": "${AUVIK_VERIFY_SSL}",
+        "AUVIK_TIMEOUT": "${AUVIK_TIMEOUT}",
+        "AUVIK_RATE_LIMIT": "${AUVIK_RATE_LIMIT}",
+        "AUVIK_MAX_PAGES": "${AUVIK_MAX_PAGES}"
       }
     },
     "halo-mcp": {
@@ -1107,14 +1106,14 @@
       ],
       "env": {
         "HALO_BASE_URL": "${HALO_BASE_URL}",
-        "HALO_TENANT": "${HALO_TENANT:-}",
+        "HALO_TENANT": "${HALO_TENANT}",
         "HALO_CLIENT_ID": "${HALO_CLIENT_ID}",
         "HALO_CLIENT_SECRET": "${HALO_CLIENT_SECRET}",
-        "HALO_SCOPE": "${HALO_SCOPE:-all}",
-        "HALO_VERIFY_SSL": "${HALO_VERIFY_SSL:-true}",
-        "HALO_TIMEOUT": "${HALO_TIMEOUT:-30}",
-        "HALO_PAGE_SIZE": "${HALO_PAGE_SIZE:-50}",
-        "HALO_MAX_PAGES": "${HALO_MAX_PAGES:-20}"
+        "HALO_SCOPE": "${HALO_SCOPE}",
+        "HALO_VERIFY_SSL": "${HALO_VERIFY_SSL}",
+        "HALO_TIMEOUT": "${HALO_TIMEOUT}",
+        "HALO_PAGE_SIZE": "${HALO_PAGE_SIZE}",
+        "HALO_MAX_PAGES": "${HALO_MAX_PAGES}"
       }
     },
     "memory-mcp": {
@@ -1124,7 +1123,7 @@
         "mcp-servers/memory-mcp/memory_mcp_server.py"
       ],
       "env": {
-        "MEMORY_DATA_DIR": "${MEMORY_DATA_DIR:-~/.openclaw/memory}"
+        "MEMORY_DATA_DIR": "${MEMORY_DATA_DIR}"
       }
     },
     "gait-mcp": {
@@ -1144,7 +1143,7 @@
         "SERVICENOW_INSTANCE_URL": "${SERVICENOW_INSTANCE_URL}",
         "SERVICENOW_USERNAME": "${SERVICENOW_USERNAME}",
         "SERVICENOW_PASSWORD": "${SERVICENOW_PASSWORD}",
-        "MULTIVENDOR_SSH_STRICT": "${MULTIVENDOR_SSH_STRICT:-true}",
+        "MULTIVENDOR_SSH_STRICT": "${MULTIVENDOR_SSH_STRICT}",
         "MULTIVENDOR_KNOWN_HOSTS": "${MULTIVENDOR_KNOWN_HOSTS}"
       }
     },
@@ -1165,7 +1164,7 @@
       }
     },
     "topolograph-mcp": {
-      "url": "${TOPOLOGRAPH_MCP_URL:-https://topolograph.com/mcp}",
+      "url": "${TOPOLOGRAPH_MCP_URL}",
       "headers": {
         "Authorization": "Bearer ${TOPOLOGRAPH_API_TOKEN}"
       },
@@ -1214,9 +1213,9 @@
         "ANTA_USERNAME": "${ANTA_USERNAME}",
         "ANTA_PASSWORD": "${ANTA_PASSWORD}",
         "ANTA_ENABLE_PASSWORD": "${ANTA_ENABLE_PASSWORD}",
-        "ANTA_VERIFY_TLS": "${ANTA_VERIFY_TLS:-true}",
+        "ANTA_VERIFY_TLS": "${ANTA_VERIFY_TLS}",
         "ANTA_CA_BUNDLE": "${ANTA_CA_BUNDLE}",
-        "ANTA_TIMEOUT": "${ANTA_TIMEOUT:-30}"
+        "ANTA_TIMEOUT": "${ANTA_TIMEOUT}"
       }
     },
     "elasticsearch-mcp": {
@@ -1244,7 +1243,7 @@
         "ES_API_KEY": "${ES_API_KEY}",
         "ES_USERNAME": "${ES_USERNAME}",
         "ES_PASSWORD": "${ES_PASSWORD}",
-        "ES_SSL_SKIP_VERIFY": "${ES_SSL_SKIP_VERIFY:-false}"
+        "ES_SSL_SKIP_VERIFY": "${ES_SSL_SKIP_VERIFY}"
       }
     },
     "document-mcp": {
@@ -1304,8 +1303,8 @@
         "mcp-servers/nsm-mcp/server.py"
       ],
       "env": {
-        "NSM_HOME": "${NSM_HOME:-~/.openclaw/nsm}",
-        "NSM_TIMEOUT": "${NSM_TIMEOUT:-600}"
+        "NSM_HOME": "${NSM_HOME}",
+        "NSM_TIMEOUT": "${NSM_TIMEOUT}"
       }
     },
     "analysis-mcp": {
@@ -1315,9 +1314,9 @@
         "mcp-servers/analysis-mcp/server.py"
       ],
       "env": {
-        "ANALYSIS_QUERY_TIMEOUT": "${ANALYSIS_QUERY_TIMEOUT:-30}",
-        "ANALYSIS_MAX_RESULT_ROWS": "${ANALYSIS_MAX_RESULT_ROWS:-500}",
-        "ANALYSIS_EXTRA_ROOTS": "${ANALYSIS_EXTRA_ROOTS:-}"
+        "ANALYSIS_QUERY_TIMEOUT": "${ANALYSIS_QUERY_TIMEOUT}",
+        "ANALYSIS_MAX_RESULT_ROWS": "${ANALYSIS_MAX_RESULT_ROWS}",
+        "ANALYSIS_EXTRA_ROOTS": "${ANALYSIS_EXTRA_ROOTS}"
       }
     },
     "jev-mcp": {
@@ -1327,19 +1326,19 @@
         "mcp-servers/jev-mcp/server.py"
       ],
       "env": {
-        "JEV_ENABLED": "${JEV_ENABLED:-false}",
-        "TYPESAFE_API_KEY": "${TYPESAFE_API_KEY:-}",
-        "JEV_API_KEY": "${JEV_API_KEY:-}",
-        "JEV_BASE_URL": "${JEV_BASE_URL:-https://api.typesafe.ai}",
-        "JEV_MODEL": "${JEV_MODEL:-jev-1.13.0}",
-        "JEV_DAILY_LIMIT_USD": "${JEV_DAILY_LIMIT_USD:-5}",
-        "JEV_CASE_LIMIT_USD": "${JEV_CASE_LIMIT_USD:-0.25}",
-        "JEV_INPUT_PRICE_PER_MILLION": "${JEV_INPUT_PRICE_PER_MILLION:-}",
-        "JEV_DATA_DIR": "${JEV_DATA_DIR:-~/.openclaw/jev}",
-        "JEV_TIMEOUT_SECONDS": "${JEV_TIMEOUT_SECONDS:-5}",
-        "JEV_TASK_ID": "${JEV_TASK_ID:-}",
-        "JEV_COMPATIBLE_API_KEY": "${JEV_COMPATIBLE_API_KEY:-}",
-        "JEV_COMPATIBLE_KEY_ENDPOINT": "${JEV_COMPATIBLE_KEY_ENDPOINT:-}"
+        "JEV_ENABLED": "${JEV_ENABLED}",
+        "TYPESAFE_API_KEY": "${TYPESAFE_API_KEY}",
+        "JEV_API_KEY": "${JEV_API_KEY}",
+        "JEV_BASE_URL": "${JEV_BASE_URL}",
+        "JEV_MODEL": "${JEV_MODEL}",
+        "JEV_DAILY_LIMIT_USD": "${JEV_DAILY_LIMIT_USD}",
+        "JEV_CASE_LIMIT_USD": "${JEV_CASE_LIMIT_USD}",
+        "JEV_INPUT_PRICE_PER_MILLION": "${JEV_INPUT_PRICE_PER_MILLION}",
+        "JEV_DATA_DIR": "${JEV_DATA_DIR}",
+        "JEV_TIMEOUT_SECONDS": "${JEV_TIMEOUT_SECONDS}",
+        "JEV_TASK_ID": "${JEV_TASK_ID}",
+        "JEV_COMPATIBLE_API_KEY": "${JEV_COMPATIBLE_API_KEY}",
+        "JEV_COMPATIBLE_KEY_ENDPOINT": "${JEV_COMPATIBLE_KEY_ENDPOINT}"
       }
     },
     "equinix-mcp": {
@@ -1349,12 +1348,12 @@
         "scripts/equinix-stdio.py"
       ],
       "env": {
-        "EQUINIX_ENABLED": "${EQUINIX_ENABLED:-false}",
-        "EQUINIX_ALLOW_WRITES": "${EQUINIX_ALLOW_WRITES:-false}",
-        "EQUINIX_AUTH_DIR": "${EQUINIX_AUTH_DIR:-}",
-        "EQUINIX_SERVICENOW_URL": "${EQUINIX_SERVICENOW_URL:-}",
-        "EQUINIX_SERVICENOW_USERNAME": "${EQUINIX_SERVICENOW_USERNAME:-}",
-        "EQUINIX_SERVICENOW_PASSWORD": "${EQUINIX_SERVICENOW_PASSWORD:-}"
+        "EQUINIX_ENABLED": "${EQUINIX_ENABLED}",
+        "EQUINIX_ALLOW_WRITES": "${EQUINIX_ALLOW_WRITES}",
+        "EQUINIX_AUTH_DIR": "${EQUINIX_AUTH_DIR}",
+        "EQUINIX_SERVICENOW_URL": "${EQUINIX_SERVICENOW_URL}",
+        "EQUINIX_SERVICENOW_USERNAME": "${EQUINIX_SERVICENOW_USERNAME}",
+        "EQUINIX_SERVICENOW_PASSWORD": "${EQUINIX_SERVICENOW_PASSWORD}"
       }
     },
     "pyats-mcp": {

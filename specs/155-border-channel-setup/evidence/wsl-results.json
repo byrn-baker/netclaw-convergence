@@ -1,0 +1,564 @@
+{
+  "schema": 1,
+  "date": "2026-10-25",
+  "sourceCommit": "c3aa0951519a0be79db085f7092043ee1c97d830",
+  "branch": "155-comms-wsl-qualification-20261025",
+  "complete": false,
+  "scope": "Installer qualification with fixture credentials only; no operational acceptance",
+  "host": {
+    "os": "Ubuntu 26.04 LTS",
+    "kernel": "6.18.54.1-microsoft-standard-WSL2",
+    "architecture": "x86_64",
+    "systemPython": "3.14.4",
+    "privateNode": "24.19.0",
+    "privateUv": "0.9.5",
+    "hermesPython": "3.14.0",
+    "zoomPython": "3.13.3",
+    "voicePython": "3.12.10",
+    "certificateTestCryptography": "46.0.5"
+  },
+  "checks": [
+    {
+      "name": "catalog-comms",
+      "exitCode": 0,
+      "seconds": 0.097,
+      "privateLogSha256": "2c2f82f24b613f8dfa665b806f46dd0c4477f3b3a1e68db997fb94d75f48930b"
+    },
+    {
+      "name": "catalog-metadata",
+      "exitCode": 0,
+      "seconds": 0.175,
+      "privateLogSha256": "9cf1c47215c514e6aa32125736ef934710b161dc8fbb064b5181ef77165d4dd4"
+    },
+    {
+      "name": "catalog-coverage",
+      "exitCode": 0,
+      "seconds": 0.065,
+      "privateLogSha256": "a2a9d1df6229c984606ed0538897f22db4a702057bcd7f379e56025879756f47"
+    },
+    {
+      "name": "python-baseline",
+      "exitCode": 1,
+      "seconds": 94.927,
+      "privateLogSha256": "d32c79018bbb6351c4dd6a28261a9954ba26b7bac3202391736338d6b2e8bc82",
+      "total": 268,
+      "passed": 234,
+      "failed": 2,
+      "failureReports": 0,
+      "errorReports": 2,
+      "skipped": 32,
+      "skipReasons": [
+        {
+          "test": "test_actual_pinned_sdk_results_decode_without_old_wire_field_names (test_setup_canary.CanaryTests.test_actual_pinned_sdk_results_decode_without_old_wire_field_names)",
+          "reason": "opt-in isolated MCP 2.3 interpreter"
+        },
+        {
+          "test": "test_actual_qualified_helper_uses_private_pipe_and_refuses_file_output (test_setup_certificates.CertificateTests.test_actual_qualified_helper_uses_private_pipe_and_refuses_file_output)",
+          "reason": "optional isolated cryptography 46.0.5 interpreter"
+        },
+        {
+          "test": "test_fresh_actual_twilio_and_zoom_installers_for_both_runtimes (test_setup_comms_acquisition.CommsAcquisitionTests.test_fresh_actual_twilio_and_zoom_installers_for_both_runtimes)",
+          "reason": "explicit isolated acquisition pass required"
+        },
+        {
+          "test": "test_actual_typed_readback_is_configuration_not_connection (test_setup_comms_hermes.SelectedHermesTests.test_actual_typed_readback_is_configuration_not_connection)",
+          "reason": "isolated pinned Hermes runtime required"
+        },
+        {
+          "test": "test_all_bundled_channel_plugins_are_inspected_without_installing_or_starting (test_setup_comms_hermes.SelectedHermesTests.test_all_bundled_channel_plugins_are_inspected_without_installing_or_starting)",
+          "reason": "isolated pinned Hermes runtime required"
+        },
+        {
+          "test": "test_disabled_malformed_and_arbitrary_channels_refuse (test_setup_comms_hermes.SelectedHermesTests.test_disabled_malformed_and_arbitrary_channels_refuse)",
+          "reason": "isolated pinned Hermes runtime required"
+        },
+        {
+          "test": "test_expanded_forms_have_actual_selected_native_readback (test_setup_comms_hermes.SelectedHermesTests.test_expanded_forms_have_actual_selected_native_readback)",
+          "reason": "isolated pinned Hermes runtime required"
+        },
+        {
+          "test": "test_official_external_homeassistant_reads_only_selected_plugin (test_setup_comms_hermes.SelectedHermesTests.test_official_external_homeassistant_reads_only_selected_plugin)",
+          "reason": "isolated pinned Hermes runtime required"
+        },
+        {
+          "test": "test_typed_teams_and_sms_readback_requires_restricted_callback_configuration (test_setup_comms_hermes.SelectedHermesTests.test_typed_teams_and_sms_readback_requires_restricted_callback_configuration)",
+          "reason": "isolated pinned Hermes runtime required"
+        },
+        {
+          "test": "test_whatsapp_cloud_readback_does_not_pair_or_bind_a_listener (test_setup_comms_hermes.SelectedHermesTests.test_whatsapp_cloud_readback_does_not_pair_or_bind_a_listener)",
+          "reason": "isolated pinned Hermes runtime required"
+        },
+        {
+          "test": "test_native_driver_matches_synthetic_events_and_saves_all_auth_files_without_leaking (test_setup_comms_hermes_native.HermesNativeContracts.test_native_driver_matches_synthetic_events_and_saves_all_auth_files_without_leaking)",
+          "reason": "isolated supported Node required"
+        },
+        {
+          "test": "test_four_configuration_effects_and_unpaired_whatsapp_preserve_other_state (test_setup_comms_hermes_owned.HermesOwnedEffects.test_four_configuration_effects_and_unpaired_whatsapp_preserve_other_state)",
+          "reason": "explicit native acquisition fixture required"
+        },
+        {
+          "test": "test_both_native_registries_probe_inert_zoom_and_private_twilio (test_setup_comms_native.NativeCommsTests.test_both_native_registries_probe_inert_zoom_and_private_twilio)",
+          "reason": "qualified native runtimes required"
+        },
+        {
+          "test": "test_actual_pinned_native_schemas_accept_every_form_without_network (test_setup_comms_openclaw_config.OpenClawTypedConfigTests.test_actual_pinned_native_schemas_accept_every_form_without_network)",
+          "reason": "isolated pinned OpenClaw source and Node required"
+        },
+        {
+          "test": "test_exact_wecom_account_and_ordinary_sender_access_without_network (test_setup_comms_openclaw_external.OpenClawExternalRestrictionTests.test_exact_wecom_account_and_ordinary_sender_access_without_network)",
+          "reason": "isolated pinned acquired WeCom plugin required"
+        },
+        {
+          "test": "test_pinned_yuanbao_does_not_enforce_ordinary_sender_allowlist (test_setup_comms_openclaw_external.OpenClawExternalRestrictionTests.test_pinned_yuanbao_does_not_enforce_ordinary_sender_allowlist)",
+          "reason": "isolated exact published package and OpenClaw core required"
+        },
+        {
+          "test": "test_sdk_event_contract_blocks_operations_and_closes_on_mismatch_timeout_and_success (test_setup_comms_openclaw_pairing.WhatsAppPairingTests.test_sdk_event_contract_blocks_operations_and_closes_on_mismatch_timeout_and_success)",
+          "reason": "isolated supported Node required"
+        },
+        {
+          "test": "test_actual_pinned_login_modules_with_fake_http_and_passive_zalo_sdk (test_setup_comms_openclaw_personal.PersonalPairingTests.test_actual_pinned_login_modules_with_fake_http_and_passive_zalo_sdk)",
+          "reason": "isolated acquired personal-channel plugins required"
+        },
+        {
+          "test": "test_native_pair_only_contracts_accept_matching_owner_and_reject_mismatch_or_decline (test_setup_comms_openclaw_personal.PersonalPairingTests.test_native_pair_only_contracts_accept_matching_owner_and_reject_mismatch_or_decline)",
+          "reason": "isolated Node required"
+        },
+        {
+          "test": "test_actual_native_lock_and_birth_observer_with_controlled_status_and_no_gateway (test_setup_comms_runtime.NativeStatusContracts.test_actual_native_lock_and_birth_observer_with_controlled_status_and_no_gateway)",
+          "reason": "isolated pinned Hermes Python required"
+        },
+        {
+          "test": "test_actual_stdio_discovery_keeps_secrets_out_of_argv_and_never_connects (test_setup_comms_tools.TwilioLauncherTests.test_actual_stdio_discovery_keeps_secrets_out_of_argv_and_never_connects)",
+          "reason": "isolated supported Node runtime required"
+        },
+        {
+          "test": "test_missing_credentials_and_argument_injection_are_closed_and_redacted (test_setup_comms_tools.TwilioLauncherTests.test_missing_credentials_and_argument_injection_are_closed_and_redacted)",
+          "reason": "isolated supported Node runtime required"
+        },
+        {
+          "test": "test_actual_selected_standalone_sender_uses_one_exact_request_without_listener (test_setup_comms_twilio.HermesSmsNativeContract.test_actual_selected_standalone_sender_uses_one_exact_request_without_listener)",
+          "reason": "isolated pinned Hermes environment required"
+        },
+        {
+          "test": "test_real_sdk_signatures_scope_replay_and_delivery_are_independent (test_setup_comms_twilio.TwilioReceiptTests.test_real_sdk_signatures_scope_replay_and_delivery_are_independent)",
+          "reason": "isolated Twilio SDK environment required"
+        },
+        {
+          "test": "test_owner_binding_fallback_and_context_isolation (test_setup_comms_voice.ManagedVoiceTests.test_owner_binding_fallback_and_context_isolation)",
+          "reason": "isolated voice dependencies required"
+        },
+        {
+          "test": "test_actual_local_ingress_lifetime_without_meetings_or_external_connections (test_setup_comms_zoom.ZoomDiscoveryTests.test_actual_local_ingress_lifetime_without_meetings_or_external_connections)",
+          "reason": "isolated Zoom environment required"
+        },
+        {
+          "test": "test_actual_mcp_discovery_and_refusal_with_no_network_authority (test_setup_comms_zoom.ZoomDiscoveryTests.test_actual_mcp_discovery_and_refusal_with_no_network_authority)",
+          "reason": "isolated Zoom dependency environment required"
+        },
+        {
+          "test": "test_actual_mcp_lifetime_owns_one_registry_and_stops_its_background_services (test_setup_comms_zoom.ZoomDiscoveryTests.test_actual_mcp_lifetime_owns_one_registry_and_stops_its_background_services)",
+          "reason": "isolated Zoom environment required"
+        },
+        {
+          "test": "test_actual_pinned_hermes_loader_validates_selected_config (test_setup_harness.HarnessTests.test_actual_pinned_hermes_loader_validates_selected_config)",
+          "reason": "opt-in isolated pinned Hermes interpreter"
+        },
+        {
+          "test": "test_actual_collected_member_wakes_once_and_repeated_wake_preserves_pid (test_setup_member_start.MemberStartTests.test_actual_collected_member_wakes_once_and_repeated_wake_preserves_pid)",
+          "reason": "opt-in disposable WSL user manager"
+        },
+        {
+          "test": "test_actual_pinned_cli_three_clients_combined_and_override_refusal (test_setup_preset.PresetTests.test_actual_pinned_cli_three_clients_combined_and_override_refusal)",
+          "reason": "Pinned CLI fixture explicitly required"
+        },
+        {
+          "test": "test_actual_descriptor_preserves_special_paths_and_typed_argv (test_setup_systemd.SystemdTests.test_actual_descriptor_preserves_special_paths_and_typed_argv)",
+          "reason": "opt-in disposable WSL user manager"
+        }
+      ],
+      "failures": [
+        "test_schema_and_semantic_ambiguity_rejected (test_setup_comms_catalog.CommsCatalogTests.test_schema_and_semantic_ambiguity_rejected)",
+        "test_published_schemas_match_reference_validator (test_setup_plan.StrictJSONTests.test_published_schemas_match_reference_validator)"
+      ]
+    },
+    {
+      "name": "extension-ci",
+      "exitCode": 0,
+      "seconds": 6.907,
+      "privateLogSha256": "ddb003708f00027bd7abceccb10b2e64f7a2116b6331b20fce7b83dc08e98469"
+    },
+    {
+      "name": "extension-check",
+      "exitCode": 0,
+      "seconds": 2.308,
+      "privateLogSha256": "a9139d2dd7cdfae69b1cea31d12158678acb63e2925c8860b73a9c057a7fd307"
+    },
+    {
+      "name": "extension-build",
+      "exitCode": 0,
+      "seconds": 0.517,
+      "privateLogSha256": "cbed3c874bee341849ab74cccb91d10760edaf181ce467bd5cde01da73dadb55"
+    },
+    {
+      "name": "extension-tests",
+      "exitCode": 1,
+      "seconds": 13.828,
+      "privateLogSha256": "c09eb865792649096d089665c5814760b04d085c488f869afb9d1d89a8c5ab47",
+      "total": 122,
+      "passed": 99,
+      "failed": 21,
+      "skipped": 2,
+      "failures": [
+        "test/button-recovery.test.mjs",
+        "OpenClaw HUD and helper preserve native tilde workspace resolution with a separate state directory",
+        "openclaw: real HUD discovery requires owned session and reveals no content or credentials",
+        "hermes: real HUD discovery requires owned session and reveals no content or credentials",
+        "openclaw: actual managed HUD launcher owns and stops API, Vite and companion",
+        "hermes: actual managed HUD launcher owns and stops API, Vite and companion",
+        "test/claw-lifecycle.test.mjs",
+        "test/claw-native.test.mjs",
+        "test/claw-systemd.test.mjs",
+        "test/claw-view.test.mjs",
+        "test/claw-workflow.test.mjs",
+        "actual HUD strict document/config routes bind installation, preserve secrets and round-trip review/restore",
+        "test/experience.test.mjs",
+        "test/hermes.test.mjs",
+        "test/rag-view.test.mjs",
+        "replacement client works with real source HUD (existing contracts): ownership, chat, reads, writes, preservation",
+        "test/security-view.test.mjs",
+        "test/setup-connections.test.mjs",
+        "test/setup-inventory.test.mjs",
+        "test/stdio.test.mjs",
+        "test/testbed-view.test.mjs"
+      ],
+      "skipReasons": [
+        {
+          "test": "installed native OpenClaw resolves a synthetic custom agent workspace",
+          "reason": "explicit optional/platform fixture skip"
+        },
+        {
+          "test": "actual unchanged RAG upload and cited retrieval with local cached embeddings",
+          "reason": "explicit optional/platform fixture skip"
+        }
+      ]
+    },
+    {
+      "name": "extension-tests-with-hud",
+      "exitCode": 1,
+      "seconds": 29.124,
+      "privateLogSha256": "4dad2748002ea5730f38f8b6d5c345c8c1d6c989a81ec3ee914837bec8f3bba2",
+      "total": 146,
+      "passed": 136,
+      "failed": 7,
+      "skipped": 3,
+      "failures": [
+        "openclaw: actual owned full lifecycle and offline recovery isolate neighbor",
+        "hermes: actual owned full lifecycle and offline recovery isolate neighbor",
+        "changed scope rejects reviewed lifecycle without stopping anything",
+        "an interrupted owner leaves an explicit orphan that a fresh reviewed Stop can clean up",
+        "combined review requires exactly verified saved revision; Save alone never restarts",
+        "concurrent adapter processes cannot submit the same request ID twice",
+        "all four harness switching pairs isolate reviewed saves and actual owned process restarts"
+      ],
+      "skipReasons": [
+        {
+          "test": "installed native OpenClaw resolves a synthetic custom agent workspace",
+          "reason": "explicit optional/platform fixture skip"
+        },
+        {
+          "test": "macOS exact isolated launchd gateway: full stop suppresses KeepAlive and Start restores it",
+          "reason": "explicit optional/platform fixture skip"
+        },
+        {
+          "test": "actual unchanged RAG upload and cited retrieval with local cached embeddings",
+          "reason": "explicit optional/platform fixture skip"
+        }
+      ]
+    },
+    {
+      "name": "comms-acquisition",
+      "exitCode": 1,
+      "seconds": 61.193,
+      "privateLogSha256": "b6daaef846988f93494ba5aa27baf503604ec2d7f0298b667a1a4579fb36598d",
+      "total": 3,
+      "passed": 2,
+      "failed": 1,
+      "failureReports": 2,
+      "errorReports": 0,
+      "skipped": 0,
+      "skipReasons": [],
+      "failures": [
+        "test_fresh_actual_twilio_and_zoom_installers_for_both_runtimes (test_setup_comms_acquisition.CommsAcquisitionTests.test_fresh_actual_twilio_and_zoom_installers_for_both_runtimes) (harness='openclaw')",
+        "test_fresh_actual_twilio_and_zoom_installers_for_both_runtimes (test_setup_comms_acquisition.CommsAcquisitionTests.test_fresh_actual_twilio_and_zoom_installers_for_both_runtimes) (harness='hermes')"
+      ]
+    },
+    {
+      "name": "comms-acquisition-host",
+      "exitCode": 0,
+      "seconds": 68.682,
+      "privateLogSha256": "da3db8c9b4c4765d7c1eaf607e0ad2744ab8faf192e0a3ffc0514673613be437",
+      "total": 3,
+      "passed": 3,
+      "failed": 0,
+      "failureReports": 0,
+      "errorReports": 0,
+      "skipped": 0,
+      "skipReasons": [],
+      "failures": []
+    },
+    {
+      "name": "native-comms",
+      "exitCode": 0,
+      "seconds": 25.161,
+      "privateLogSha256": "f04755da66facc55e613166740b7f380d5ebd8c08b3d1ddeacb0288d8df133cd",
+      "total": 1,
+      "passed": 1,
+      "failed": 0,
+      "failureReports": 0,
+      "errorReports": 0,
+      "skipped": 0,
+      "skipReasons": [],
+      "failures": []
+    },
+    {
+      "name": "python-qualified",
+      "exitCode": 1,
+      "seconds": 303.096,
+      "privateLogSha256": "fca3eaee64afa1248406585cbc3932ac2e52b7e50d8eced2b7dcc3962cfc8393",
+      "total": 265,
+      "passed": 258,
+      "failed": 1,
+      "failureReports": 0,
+      "errorReports": 1,
+      "skipped": 6,
+      "skipReasons": [
+        {
+          "test": "test_exact_wecom_account_and_ordinary_sender_access_without_network (test_setup_comms_openclaw_external.OpenClawExternalRestrictionTests.test_exact_wecom_account_and_ordinary_sender_access_without_network)",
+          "reason": "isolated pinned acquired WeCom plugin required"
+        },
+        {
+          "test": "test_pinned_yuanbao_does_not_enforce_ordinary_sender_allowlist (test_setup_comms_openclaw_external.OpenClawExternalRestrictionTests.test_pinned_yuanbao_does_not_enforce_ordinary_sender_allowlist)",
+          "reason": "isolated exact published package and OpenClaw core required"
+        },
+        {
+          "test": "test_actual_pinned_login_modules_with_fake_http_and_passive_zalo_sdk (test_setup_comms_openclaw_personal.PersonalPairingTests.test_actual_pinned_login_modules_with_fake_http_and_passive_zalo_sdk)",
+          "reason": "isolated acquired personal-channel plugins required"
+        },
+        {
+          "test": "test_actual_collected_member_wakes_once_and_repeated_wake_preserves_pid (test_setup_member_start.MemberStartTests.test_actual_collected_member_wakes_once_and_repeated_wake_preserves_pid)",
+          "reason": "opt-in disposable WSL user manager"
+        },
+        {
+          "test": "test_actual_pinned_cli_three_clients_combined_and_override_refusal (test_setup_preset.PresetTests.test_actual_pinned_cli_three_clients_combined_and_override_refusal)",
+          "reason": "Pinned CLI fixture explicitly required"
+        },
+        {
+          "test": "test_actual_descriptor_preserves_special_paths_and_typed_argv (test_setup_systemd.SystemdTests.test_actual_descriptor_preserves_special_paths_and_typed_argv)",
+          "reason": "opt-in disposable WSL user manager"
+        }
+      ],
+      "failures": [
+        "test_setup_certificates (unittest.loader._FailedTest.test_setup_certificates)"
+      ]
+    },
+    {
+      "name": "python-qualified-final",
+      "exitCode": 1,
+      "seconds": 219.041,
+      "privateLogSha256": "04588b166129e5ad25072c3554ec00c087a7d3b9f1ba3e2df9f2573ab957db4d",
+      "total": 268,
+      "passed": 260,
+      "failed": 1,
+      "failureReports": 1,
+      "errorReports": 0,
+      "skipped": 7,
+      "skipReasons": [
+        {
+          "test": "test_fresh_actual_twilio_and_zoom_installers_for_both_runtimes (test_setup_comms_acquisition.CommsAcquisitionTests.test_fresh_actual_twilio_and_zoom_installers_for_both_runtimes)",
+          "reason": "explicit isolated acquisition pass required"
+        },
+        {
+          "test": "test_exact_wecom_account_and_ordinary_sender_access_without_network (test_setup_comms_openclaw_external.OpenClawExternalRestrictionTests.test_exact_wecom_account_and_ordinary_sender_access_without_network)",
+          "reason": "isolated pinned acquired WeCom plugin required"
+        },
+        {
+          "test": "test_pinned_yuanbao_does_not_enforce_ordinary_sender_allowlist (test_setup_comms_openclaw_external.OpenClawExternalRestrictionTests.test_pinned_yuanbao_does_not_enforce_ordinary_sender_allowlist)",
+          "reason": "isolated exact published package and OpenClaw core required"
+        },
+        {
+          "test": "test_actual_pinned_login_modules_with_fake_http_and_passive_zalo_sdk (test_setup_comms_openclaw_personal.PersonalPairingTests.test_actual_pinned_login_modules_with_fake_http_and_passive_zalo_sdk)",
+          "reason": "isolated acquired personal-channel plugins required"
+        },
+        {
+          "test": "test_actual_collected_member_wakes_once_and_repeated_wake_preserves_pid (test_setup_member_start.MemberStartTests.test_actual_collected_member_wakes_once_and_repeated_wake_preserves_pid)",
+          "reason": "opt-in disposable WSL user manager"
+        },
+        {
+          "test": "test_actual_pinned_cli_three_clients_combined_and_override_refusal (test_setup_preset.PresetTests.test_actual_pinned_cli_three_clients_combined_and_override_refusal)",
+          "reason": "Pinned CLI fixture explicitly required"
+        },
+        {
+          "test": "test_actual_descriptor_preserves_special_paths_and_typed_argv (test_setup_systemd.SystemdTests.test_actual_descriptor_preserves_special_paths_and_typed_argv)",
+          "reason": "opt-in disposable WSL user manager"
+        }
+      ],
+      "failures": [
+        "test_actual_qualified_helper_uses_private_pipe_and_refuses_file_output (test_setup_certificates.CertificateTests.test_actual_qualified_helper_uses_private_pipe_and_refuses_file_output)"
+      ]
+    },
+    {
+      "name": "certificate-qualified",
+      "exitCode": 0,
+      "seconds": 1.838,
+      "privateLogSha256": "3f606d2f74a0c1036f3d3e8ee860b137df2cd731430d8c9338671e97fdded71a",
+      "total": 4,
+      "passed": 4,
+      "failed": 0,
+      "failureReports": 0,
+      "errorReports": 0,
+      "skipped": 0,
+      "skipReasons": [],
+      "failures": []
+    },
+    {
+      "name": "hermes-matrix",
+      "exitCode": 0,
+      "seconds": 1.087,
+      "privateLogSha256": "445e0a0d1fbae52fbff3f6e6738e2c44c6524f82b39be566bc5d5508f76b9db1"
+    },
+    {
+      "name": "hermes-sdk-acquire",
+      "exitCode": 0,
+      "seconds": 18.037,
+      "privateLogSha256": "84f1980d628d7aa228a6d5705d367f9722c7b5ff431bde044e32f6b8fefcb9bf"
+    },
+    {
+      "name": "extension-final",
+      "exitCode": 1,
+      "seconds": 20.096,
+      "privateLogSha256": "3624559f8ea2ef810a7c3ade8309dbe1013e030621200c2ffc9f79788e8e2836",
+      "total": 146,
+      "passed": 137,
+      "failed": 6,
+      "skipped": 3,
+      "failures": [
+        "openclaw: actual owned full lifecycle and offline recovery isolate neighbor",
+        "hermes: actual owned full lifecycle and offline recovery isolate neighbor",
+        "changed scope rejects reviewed lifecycle without stopping anything",
+        "an interrupted owner leaves an explicit orphan that a fresh reviewed Stop can clean up",
+        "combined review requires exactly verified saved revision; Save alone never restarts",
+        "all four harness switching pairs isolate reviewed saves and actual owned process restarts"
+      ],
+      "skipReasons": [
+        {
+          "test": "installed native OpenClaw resolves a synthetic custom agent workspace",
+          "reason": "explicit optional/platform fixture skip"
+        },
+        {
+          "test": "macOS exact isolated launchd gateway: full stop suppresses KeepAlive and Start restores it",
+          "reason": "explicit optional/platform fixture skip"
+        },
+        {
+          "test": "actual unchanged RAG upload and cited retrieval with local cached embeddings",
+          "reason": "explicit optional/platform fixture skip"
+        }
+      ]
+    },
+    {
+      "name": "python-qualified-clean",
+      "exitCode": 0,
+      "seconds": 204.779,
+      "privateLogSha256": "bf7c4b67fa47a37913e5d4edf8c245b3a32576c679dd9158f967d9d576c3c69d",
+      "total": 268,
+      "passed": 261,
+      "failed": 0,
+      "failureReports": 0,
+      "errorReports": 0,
+      "skipped": 7,
+      "skipReasons": [
+        {
+          "test": "test_fresh_actual_twilio_and_zoom_installers_for_both_runtimes (test_setup_comms_acquisition.CommsAcquisitionTests.test_fresh_actual_twilio_and_zoom_installers_for_both_runtimes)",
+          "reason": "explicit isolated acquisition pass required"
+        },
+        {
+          "test": "test_exact_wecom_account_and_ordinary_sender_access_without_network (test_setup_comms_openclaw_external.OpenClawExternalRestrictionTests.test_exact_wecom_account_and_ordinary_sender_access_without_network)",
+          "reason": "isolated pinned acquired WeCom plugin required"
+        },
+        {
+          "test": "test_pinned_yuanbao_does_not_enforce_ordinary_sender_allowlist (test_setup_comms_openclaw_external.OpenClawExternalRestrictionTests.test_pinned_yuanbao_does_not_enforce_ordinary_sender_allowlist)",
+          "reason": "isolated exact published package and OpenClaw core required"
+        },
+        {
+          "test": "test_actual_pinned_login_modules_with_fake_http_and_passive_zalo_sdk (test_setup_comms_openclaw_personal.PersonalPairingTests.test_actual_pinned_login_modules_with_fake_http_and_passive_zalo_sdk)",
+          "reason": "isolated acquired personal-channel plugins required"
+        },
+        {
+          "test": "test_actual_collected_member_wakes_once_and_repeated_wake_preserves_pid (test_setup_member_start.MemberStartTests.test_actual_collected_member_wakes_once_and_repeated_wake_preserves_pid)",
+          "reason": "opt-in disposable WSL user manager"
+        },
+        {
+          "test": "test_actual_pinned_cli_three_clients_combined_and_override_refusal (test_setup_preset.PresetTests.test_actual_pinned_cli_three_clients_combined_and_override_refusal)",
+          "reason": "Pinned CLI fixture explicitly required"
+        },
+        {
+          "test": "test_actual_descriptor_preserves_special_paths_and_typed_argv (test_setup_systemd.SystemdTests.test_actual_descriptor_preserves_special_paths_and_typed_argv)",
+          "reason": "opt-in disposable WSL user manager"
+        }
+      ],
+      "failures": []
+    }
+  ],
+  "engineRunnerLimitations": {
+    "openclawExitCode": 1,
+    "hermesStableExitCode": 1,
+    "detail": "Both actual journals reached the expected configuration_required service refusal. The private runner then incorrectly asserted that final read-only verification must remain pending; it actually ran and returned unverified. A separate read-only assertion pass verified the eleven settled effects, refusal, modes and absence of service artifacts without changing or replaying either journal. Earlier invalid source-channel/workspace fixture drafts were rejected before runtime effects. The initial Hermes acquisition failed because old uv selected Python 3.14.0a6; a new home with private uv 0.9.5 succeeded."
+  },
+  "actualRuntimeChecks": {
+    "engines": {
+      "openclaw": "eleven effects verified; Slack/Discord configured; services configuration_required; final read-only verification unverified",
+      "hermes": "eleven effects verified; Slack/Discord configured; services configuration_required; final read-only verification unverified"
+    },
+    "componentAcquisition": "Both runtimes x Twilio/Zoom, four actual installs in fresh homes; ownership and durable receipt checks passed. Initial macOS fixture selected wrong Zoom lock; corrected to observed WSL host.",
+    "nativeDiscovery": "Both runtimes x Twilio core/Zoom; real native registries, owned interpreter shims, placeholder credentials, socket denial. Configuration/environment bytes preserved.",
+    "hermesSdkAcquisition": {
+      "before": 93,
+      "after": 155,
+      "changedExisting": 0,
+      "matrix": "actual dependency import and selected readback passed"
+    },
+    "cleanup": "Five actual Linux process lease/timeout/flood/supervisor-loss cases passed; neighboring fixture process preserved."
+  },
+  "syntheticEvidence": [
+    "Buzz is a compiled fixture, not an acquired upstream binary.",
+    "Pairing receipts are synthetic. No personal account was paired.",
+    "Connected status/lifecycle observations use controlled process fixtures, not provider transport.",
+    "Callbacks, Twilio signatures and voice routing use fake accounts and bounded local fixtures.",
+    "No live delivery test was requested or executed."
+  ],
+  "editor": {
+    "status": "blocked",
+    "linuxDesktop": "VS Code 1.109.0 actually launched in private storage; currentHost requires a genuine WSL remote window, so the local Linux preview did not open the Comms wizard and timed out. No host guard was bypassed.",
+    "windowsRemote": "Private Windows 1.109.0 archive acquired. Multiple isolated launch methods did not establish a WSL extension host; direct development launch exited 255 without a useful diagnosis. No observer ready/report artifact or private server installation resulted.",
+    "qualified": false,
+    "unobserved": [
+      "both-runtime Comms visual selection",
+      "Twilio/Zoom/WhatsApp visual search",
+      "Border/member visual restrictions",
+      "keyboard/theme/zoom acceptance",
+      "redacted report in the WSL editor"
+    ],
+    "ordinaryEditorChanged": false
+  },
+  "remainingGates": [
+    "Six extension lifecycle tests fail because the private environment has no accessible user service manager; no shared-manager authority was added.",
+    "Actual isolated Windows-to-WSL editor acceptance is open.",
+    "Three native OpenClaw external/personal-package checks skipped for missing separately acquired package fixtures.",
+    "Disposable-systemd and pinned Specify optional fixtures remain unrun.",
+    "Positive full installer/service acceptance beyond the expected empty-access refusals remains open.",
+    "Provider authentication/transport/inbound/outbound and real account linking remain unverified/excluded.",
+    "Final Mac reconciliation and T047/T048/T050 remain open.",
+    "Named wsl-cml/wsl-viz identity hashes could not be established in the observed roots."
+  ],
+  "prohibitedOperationsPerformed": false
+}

@@ -1,0 +1,8 @@
+{
+  "date": "2026-10-18",
+  "scope": "Active Spec153 root Markdown and evidence JSON (excluding GAIT/private logs/inputs), six guides, two READMEs and final setup/extension test logs; clean Mac screenshot visually inspected",
+  "files": 39,
+  "seededCanaries": 14,
+  "matches": 0,
+  "limitation": "Seeded canary/private-path regression scan, not a detector of arbitrary credentials. Source overlay separately excludes owner context, runtime homes, journals and dependencies."
+}

@@ -1,0 +1,2929 @@
+[
+  {
+    "id": "hermes-google-chat",
+    "inventory": "channel",
+    "harness": "hermes",
+    "channelId": "google-chat",
+    "nativeId": "google_chat",
+    "name": "Google Chat",
+    "aliases": [
+      "Google Chat"
+    ],
+    "kind": "conversation-channel",
+    "roles": [
+      "focused",
+      "border"
+    ],
+    "hosts": [
+      "macos",
+      "wsl2"
+    ],
+    "documentation": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/google_chat",
+    "checkedAt": "2026-10-25",
+    "baseline": {
+      "version": "0.21.6",
+      "commit": "818c13be1dc4fd28987e1e881a9408224afd4535",
+      "evidence": "https://github.com/NousResearch/hermes-agent/tree/818c13be1dc4fd28987e1e881a9408224afd4535",
+      "support": "present"
+    },
+    "component": null,
+    "setup": {
+      "disposition": "typed",
+      "method": "typed",
+      "adapter": "typed-hermes-platform-v1",
+      "reason": "Private selected-account form, explicit restrictive access, pinned dependency acquisition and selected native readback. External companion/provider prerequisites remain unverified until separately observed.",
+      "settings": [
+        {
+          "key": "GOOGLE_CHAT_PROJECT_ID",
+          "label": "GCP project ID",
+          "help": "Selected account only. Empty access lists deny everyone; configuration does not authenticate the account.",
+          "classification": "private",
+          "valueType": "string",
+          "required": "always",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/google-chat",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        },
+        {
+          "key": "GOOGLE_CHAT_SUBSCRIPTION_NAME",
+          "label": "Pub/Sub subscription (projects/\u2026/subscriptions/\u2026)",
+          "help": "Selected account only. Empty access lists deny everyone; configuration does not authenticate the account.",
+          "classification": "private",
+          "valueType": "string",
+          "required": "always",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/google-chat",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        },
+        {
+          "key": "GOOGLE_CHAT_SERVICE_ACCOUNT_JSON",
+          "label": "Service account JSON (single-line inline JSON)",
+          "help": "Secure native entry; never saved to the plan.",
+          "classification": "secret",
+          "valueType": "string",
+          "required": "always",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/google-chat",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        },
+        {
+          "key": "GOOGLE_CHAT_ALLOWED_USERS",
+          "label": "Allowed sender IDs (blank denies all)",
+          "help": "Selected account only. Empty access lists deny everyone; configuration does not authenticate the account.",
+          "classification": "private",
+          "valueType": "string",
+          "required": "optional",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/google-chat",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        }
+      ],
+      "access": [
+        "GOOGLE_CHAT_ALLOWED_USERS"
+      ],
+      "dependencies": [
+        {
+          "id": "hermes-google-chat-sdk",
+          "version": "0.21.6",
+          "source": "https://github.com/NousResearch/hermes-agent/blob/818c13be1dc4fd28987e1e881a9408224afd4535/pyproject.toml",
+          "integrity": "sha256-bc3366b1a455cceaed144cfa35dafdc170d327a513f507357de9bcd680dca6ac"
+        }
+      ],
+      "startupEffects": [
+        "provider-authentication",
+        "pubsub-message-subscription",
+        "inbound-agent-dispatch"
+      ],
+      "readback": "hermes-selected-readback-v1"
+    },
+    "qualification": "unverified"
+  },
+  {
+    "id": "hermes-email",
+    "inventory": "channel",
+    "harness": "hermes",
+    "channelId": "email",
+    "nativeId": "email",
+    "name": "Email",
+    "aliases": [
+      "Email"
+    ],
+    "kind": "conversation-channel",
+    "roles": [
+      "focused",
+      "border"
+    ],
+    "hosts": [
+      "macos",
+      "wsl2"
+    ],
+    "documentation": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/email",
+    "checkedAt": "2026-10-25",
+    "baseline": {
+      "version": "0.21.6",
+      "commit": "818c13be1dc4fd28987e1e881a9408224afd4535",
+      "evidence": "https://github.com/NousResearch/hermes-agent/tree/818c13be1dc4fd28987e1e881a9408224afd4535",
+      "support": "present"
+    },
+    "component": null,
+    "setup": {
+      "disposition": "typed",
+      "method": "typed",
+      "adapter": "typed-hermes-platform-v1",
+      "reason": "Private selected-account form, explicit restrictive access, pinned dependency acquisition and selected native readback. External companion/provider prerequisites remain unverified until separately observed.",
+      "settings": [
+        {
+          "key": "EMAIL_ADDRESS",
+          "label": "Dedicated mailbox address",
+          "help": "Selected account only. Empty access lists deny everyone; configuration does not authenticate the account.",
+          "classification": "private",
+          "valueType": "string",
+          "required": "always",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/email",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        },
+        {
+          "key": "EMAIL_PASSWORD",
+          "label": "Mailbox app password",
+          "help": "Secure native entry; never saved to the plan.",
+          "classification": "secret",
+          "valueType": "string",
+          "required": "always",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/email",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        },
+        {
+          "key": "EMAIL_IMAP_HOST",
+          "label": "IMAP hostname",
+          "help": "Selected account only. Empty access lists deny everyone; configuration does not authenticate the account.",
+          "classification": "private",
+          "valueType": "string",
+          "required": "always",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/email",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        },
+        {
+          "key": "EMAIL_IMAP_PORT",
+          "label": "IMAP TLS port",
+          "help": "Selected account only. Empty access lists deny everyone; configuration does not authenticate the account.",
+          "classification": "public",
+          "valueType": "integer",
+          "required": "always",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/email",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        },
+        {
+          "key": "EMAIL_SMTP_HOST",
+          "label": "SMTP hostname",
+          "help": "Selected account only. Empty access lists deny everyone; configuration does not authenticate the account.",
+          "classification": "private",
+          "valueType": "string",
+          "required": "always",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/email",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        },
+        {
+          "key": "EMAIL_SMTP_PORT",
+          "label": "SMTP TLS port",
+          "help": "Selected account only. Empty access lists deny everyone; configuration does not authenticate the account.",
+          "classification": "public",
+          "valueType": "integer",
+          "required": "always",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/email",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        },
+        {
+          "key": "EMAIL_AUTHSERV_ID",
+          "label": "Trusted authentication-results server ID",
+          "help": "Selected account only. Empty access lists deny everyone; configuration does not authenticate the account.",
+          "classification": "private",
+          "valueType": "string",
+          "required": "always",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/email",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        },
+        {
+          "key": "EMAIL_ALLOWED_USERS",
+          "label": "Allowed sender IDs (blank denies all)",
+          "help": "Selected account only. Empty access lists deny everyone; configuration does not authenticate the account.",
+          "classification": "private",
+          "valueType": "string",
+          "required": "optional",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/email",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        }
+      ],
+      "access": [
+        "EMAIL_ALLOWED_USERS"
+      ],
+      "dependencies": [],
+      "startupEffects": [
+        "imap-and-smtp-authentication",
+        "mailbox-polling",
+        "inbound-agent-dispatch"
+      ],
+      "readback": "hermes-selected-readback-v1"
+    },
+    "qualification": "unverified"
+  },
+  {
+    "id": "hermes-mattermost",
+    "inventory": "channel",
+    "harness": "hermes",
+    "channelId": "mattermost",
+    "nativeId": "mattermost",
+    "name": "Mattermost",
+    "aliases": [
+      "Mattermost"
+    ],
+    "kind": "conversation-channel",
+    "roles": [
+      "focused",
+      "border"
+    ],
+    "hosts": [
+      "macos",
+      "wsl2"
+    ],
+    "documentation": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/mattermost",
+    "checkedAt": "2026-10-25",
+    "baseline": {
+      "version": "0.21.6",
+      "commit": "818c13be1dc4fd28987e1e881a9408224afd4535",
+      "evidence": "https://github.com/NousResearch/hermes-agent/tree/818c13be1dc4fd28987e1e881a9408224afd4535",
+      "support": "present"
+    },
+    "component": null,
+    "setup": {
+      "disposition": "typed",
+      "method": "typed",
+      "adapter": "typed-hermes-platform-v1",
+      "reason": "Private selected-account form, explicit restrictive access, pinned dependency acquisition and selected native readback. External companion/provider prerequisites remain unverified until separately observed.",
+      "settings": [
+        {
+          "key": "MATTERMOST_URL",
+          "label": "Mattermost HTTPS server URL",
+          "help": "Selected account only. Empty access lists deny everyone; configuration does not authenticate the account.",
+          "classification": "private",
+          "valueType": "string",
+          "required": "always",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/mattermost",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        },
+        {
+          "key": "MATTERMOST_TOKEN",
+          "label": "Bot token",
+          "help": "Secure native entry; never saved to the plan.",
+          "classification": "secret",
+          "valueType": "string",
+          "required": "always",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/mattermost",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        },
+        {
+          "key": "MATTERMOST_ALLOWED_CHANNELS",
+          "label": "Allowed channel IDs",
+          "help": "Selected account only. Empty access lists deny everyone; configuration does not authenticate the account.",
+          "classification": "private",
+          "valueType": "string",
+          "required": "optional",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/mattermost",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        },
+        {
+          "key": "MATTERMOST_ALLOWED_USERS",
+          "label": "Allowed sender IDs (blank denies all)",
+          "help": "Selected account only. Empty access lists deny everyone; configuration does not authenticate the account.",
+          "classification": "private",
+          "valueType": "string",
+          "required": "optional",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/mattermost",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        }
+      ],
+      "access": [
+        "MATTERMOST_ALLOWED_USERS"
+      ],
+      "dependencies": [],
+      "startupEffects": [
+        "provider-authentication",
+        "websocket-message-subscription",
+        "inbound-agent-dispatch"
+      ],
+      "readback": "hermes-selected-readback-v1"
+    },
+    "qualification": "unverified"
+  },
+  {
+    "id": "hermes-matrix",
+    "inventory": "channel",
+    "harness": "hermes",
+    "channelId": "matrix",
+    "nativeId": "matrix",
+    "name": "Matrix",
+    "aliases": [
+      "Matrix"
+    ],
+    "kind": "conversation-channel",
+    "roles": [
+      "focused",
+      "border"
+    ],
+    "hosts": [
+      "wsl2"
+    ],
+    "documentation": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/matrix",
+    "checkedAt": "2026-10-25",
+    "baseline": {
+      "version": "0.21.6",
+      "commit": "818c13be1dc4fd28987e1e881a9408224afd4535",
+      "evidence": "https://github.com/NousResearch/hermes-agent/tree/818c13be1dc4fd28987e1e881a9408224afd4535",
+      "support": "present"
+    },
+    "component": null,
+    "setup": {
+      "disposition": "typed",
+      "method": "typed",
+      "adapter": "typed-hermes-platform-v1",
+      "reason": "Pinned Hermes Matrix extra is Linux-only (python-olm); WSL2 typed access-token setup. macOS remains host-restricted by the upstream source baseline.",
+      "settings": [
+        {
+          "key": "MATRIX_HOMESERVER",
+          "label": "Matrix HTTPS homeserver URL",
+          "help": "Selected account only. Empty access lists deny everyone; configuration does not authenticate the account.",
+          "classification": "private",
+          "valueType": "string",
+          "required": "always",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/matrix",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        },
+        {
+          "key": "MATRIX_USER_ID",
+          "label": "Bot user ID (@bot:server)",
+          "help": "Selected account only. Empty access lists deny everyone; configuration does not authenticate the account.",
+          "classification": "private",
+          "valueType": "string",
+          "required": "always",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/matrix",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        },
+        {
+          "key": "MATRIX_ACCESS_TOKEN",
+          "label": "Bot access token",
+          "help": "Secure native entry; never saved to the plan.",
+          "classification": "secret",
+          "valueType": "string",
+          "required": "always",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/matrix",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        },
+        {
+          "key": "MATRIX_ALLOWED_ROOMS",
+          "label": "Allowed room IDs",
+          "help": "Selected account only. Empty access lists deny everyone; configuration does not authenticate the account.",
+          "classification": "private",
+          "valueType": "string",
+          "required": "optional",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/matrix",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        },
+        {
+          "key": "MATRIX_ALLOWED_USERS",
+          "label": "Allowed sender IDs (blank denies all)",
+          "help": "Selected account only. Empty access lists deny everyone; configuration does not authenticate the account.",
+          "classification": "private",
+          "valueType": "string",
+          "required": "optional",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/matrix",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        }
+      ],
+      "access": [
+        "MATRIX_ALLOWED_USERS"
+      ],
+      "dependencies": [
+        {
+          "id": "hermes-matrix-sdk",
+          "version": "0.21.6",
+          "source": "https://github.com/NousResearch/hermes-agent/blob/818c13be1dc4fd28987e1e881a9408224afd4535/pyproject.toml",
+          "integrity": "sha256-08250e8dd9a86c179066619797ffb17ec8ecb74bbe64515b92353a362f8f344a"
+        },
+        {
+          "id": "hermes-source-build-tools",
+          "version": "84.2.1/0.48.0",
+          "source": "https://pypi.org/project/setuptools/84.2.1/",
+          "integrity": "sha256-fed8171f5c952cc25514b46eeb9faa5c05d89b0cf4ddbf0e0cf0dbabba1b4046"
+        }
+      ],
+      "startupEffects": [
+        "provider-authentication",
+        "matrix-room-sync",
+        "room-invitation-handling",
+        "inbound-agent-dispatch"
+      ],
+      "readback": "hermes-selected-readback-v1"
+    },
+    "qualification": "unverified"
+  },
+  {
+    "id": "hermes-dingtalk",
+    "inventory": "channel",
+    "harness": "hermes",
+    "channelId": "dingtalk",
+    "nativeId": "dingtalk",
+    "name": "DingTalk",
+    "aliases": [
+      "DingTalk"
+    ],
+    "kind": "conversation-channel",
+    "roles": [
+      "focused",
+      "border"
+    ],
+    "hosts": [
+      "macos",
+      "wsl2"
+    ],
+    "documentation": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/dingtalk",
+    "checkedAt": "2026-10-25",
+    "baseline": {
+      "version": "0.21.6",
+      "commit": "818c13be1dc4fd28987e1e881a9408224afd4535",
+      "evidence": "https://github.com/NousResearch/hermes-agent/tree/818c13be1dc4fd28987e1e881a9408224afd4535",
+      "support": "present"
+    },
+    "component": null,
+    "setup": {
+      "disposition": "typed",
+      "method": "typed",
+      "adapter": "typed-hermes-platform-v1",
+      "reason": "Private selected-account form, explicit restrictive access, pinned dependency acquisition and selected native readback. External companion/provider prerequisites remain unverified until separately observed.",
+      "settings": [
+        {
+          "key": "DINGTALK_CLIENT_ID",
+          "label": "Application client ID",
+          "help": "Selected account only. Empty access lists deny everyone; configuration does not authenticate the account.",
+          "classification": "private",
+          "valueType": "string",
+          "required": "always",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/dingtalk",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        },
+        {
+          "key": "DINGTALK_CLIENT_SECRET",
+          "label": "Application client secret",
+          "help": "Secure native entry; never saved to the plan.",
+          "classification": "secret",
+          "valueType": "string",
+          "required": "always",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/dingtalk",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        },
+        {
+          "key": "DINGTALK_ALLOWED_CHATS",
+          "label": "Allowed chat IDs",
+          "help": "Selected account only. Empty access lists deny everyone; configuration does not authenticate the account.",
+          "classification": "private",
+          "valueType": "string",
+          "required": "optional",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/dingtalk",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        },
+        {
+          "key": "DINGTALK_ALLOWED_USERS",
+          "label": "Allowed sender IDs (blank denies all)",
+          "help": "Selected account only. Empty access lists deny everyone; configuration does not authenticate the account.",
+          "classification": "private",
+          "valueType": "string",
+          "required": "optional",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/dingtalk",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        }
+      ],
+      "access": [
+        "DINGTALK_ALLOWED_USERS"
+      ],
+      "dependencies": [
+        {
+          "id": "hermes-dingtalk-sdk",
+          "version": "0.21.6",
+          "source": "https://github.com/NousResearch/hermes-agent/blob/818c13be1dc4fd28987e1e881a9408224afd4535/pyproject.toml",
+          "integrity": "sha256-dab8a0616bf67ee86d562a4b87555abc49b388b1ec93b878699317c66ae79a4c"
+        },
+        {
+          "id": "hermes-source-build-tools",
+          "version": "84.2.1/0.48.0",
+          "source": "https://pypi.org/project/setuptools/84.2.1/",
+          "integrity": "sha256-fed8171f5c952cc25514b46eeb9faa5c05d89b0cf4ddbf0e0cf0dbabba1b4046"
+        }
+      ],
+      "startupEffects": [
+        "provider-authentication",
+        "provider-stream-subscription",
+        "inbound-agent-dispatch"
+      ],
+      "readback": "hermes-selected-readback-v1"
+    },
+    "qualification": "unverified"
+  },
+  {
+    "id": "hermes-feishu",
+    "inventory": "channel",
+    "harness": "hermes",
+    "channelId": "feishu",
+    "nativeId": "feishu",
+    "name": "Feishu / Lark",
+    "aliases": [
+      "Feishu / Lark"
+    ],
+    "kind": "conversation-channel",
+    "roles": [
+      "focused",
+      "border"
+    ],
+    "hosts": [
+      "macos",
+      "wsl2"
+    ],
+    "documentation": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/feishu",
+    "checkedAt": "2026-10-25",
+    "baseline": {
+      "version": "0.21.6",
+      "commit": "818c13be1dc4fd28987e1e881a9408224afd4535",
+      "evidence": "https://github.com/NousResearch/hermes-agent/tree/818c13be1dc4fd28987e1e881a9408224afd4535",
+      "support": "present"
+    },
+    "component": null,
+    "setup": {
+      "disposition": "typed",
+      "method": "typed",
+      "adapter": "typed-hermes-platform-v1",
+      "reason": "Private selected-account form, explicit restrictive access, pinned dependency acquisition and selected native readback. External companion/provider prerequisites remain unverified until separately observed.",
+      "settings": [
+        {
+          "key": "FEISHU_APP_ID",
+          "label": "Application ID",
+          "help": "Selected account only. Empty access lists deny everyone; configuration does not authenticate the account.",
+          "classification": "private",
+          "valueType": "string",
+          "required": "always",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/feishu",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        },
+        {
+          "key": "FEISHU_APP_SECRET",
+          "label": "Application secret",
+          "help": "Secure native entry; never saved to the plan.",
+          "classification": "secret",
+          "valueType": "string",
+          "required": "always",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/feishu",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        },
+        {
+          "key": "FEISHU_DOMAIN",
+          "label": "Service domain: feishu or lark",
+          "help": "Selected account only. Empty access lists deny everyone; configuration does not authenticate the account.",
+          "classification": "private",
+          "valueType": "string",
+          "required": "always",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/feishu",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        },
+        {
+          "key": "FEISHU_ALLOWED_USERS",
+          "label": "Allowed sender IDs (blank denies all)",
+          "help": "Selected account only. Empty access lists deny everyone; configuration does not authenticate the account.",
+          "classification": "private",
+          "valueType": "string",
+          "required": "optional",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/feishu",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        }
+      ],
+      "access": [
+        "FEISHU_ALLOWED_USERS"
+      ],
+      "dependencies": [
+        {
+          "id": "hermes-feishu-sdk",
+          "version": "0.21.6",
+          "source": "https://github.com/NousResearch/hermes-agent/blob/818c13be1dc4fd28987e1e881a9408224afd4535/pyproject.toml",
+          "integrity": "sha256-2d7334790f19580c15301d1b0179acfd11201b5a3683a9cc1ec1207df1f59a87"
+        }
+      ],
+      "startupEffects": [
+        "provider-authentication",
+        "websocket-message-subscription",
+        "inbound-agent-dispatch"
+      ],
+      "readback": "hermes-selected-readback-v1"
+    },
+    "qualification": "unverified"
+  },
+  {
+    "id": "hermes-wecom",
+    "inventory": "channel",
+    "harness": "hermes",
+    "channelId": "wecom",
+    "nativeId": "wecom",
+    "name": "WeCom (Enterprise WeChat)",
+    "aliases": [
+      "WeCom (Enterprise WeChat)"
+    ],
+    "kind": "conversation-channel",
+    "roles": [
+      "focused",
+      "border"
+    ],
+    "hosts": [
+      "macos",
+      "wsl2"
+    ],
+    "documentation": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/wecom",
+    "checkedAt": "2026-10-25",
+    "baseline": {
+      "version": "0.21.6",
+      "commit": "818c13be1dc4fd28987e1e881a9408224afd4535",
+      "evidence": "https://github.com/NousResearch/hermes-agent/tree/818c13be1dc4fd28987e1e881a9408224afd4535",
+      "support": "present"
+    },
+    "component": null,
+    "setup": {
+      "disposition": "typed",
+      "method": "typed",
+      "adapter": "typed-hermes-platform-v1",
+      "reason": "Private selected-account form, explicit restrictive access, pinned dependency acquisition and selected native readback. External companion/provider prerequisites remain unverified until separately observed.",
+      "settings": [
+        {
+          "key": "WECOM_BOT_ID",
+          "label": "Smart Robot bot ID",
+          "help": "Selected account only. Empty access lists deny everyone; configuration does not authenticate the account.",
+          "classification": "private",
+          "valueType": "string",
+          "required": "always",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/wecom",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        },
+        {
+          "key": "WECOM_SECRET",
+          "label": "Smart Robot secret",
+          "help": "Secure native entry; never saved to the plan.",
+          "classification": "secret",
+          "valueType": "string",
+          "required": "always",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/wecom",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        },
+        {
+          "key": "WECOM_ALLOWED_USERS",
+          "label": "Allowed sender IDs (blank denies all)",
+          "help": "Selected account only. Empty access lists deny everyone; configuration does not authenticate the account.",
+          "classification": "private",
+          "valueType": "string",
+          "required": "optional",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/wecom",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        }
+      ],
+      "access": [
+        "WECOM_ALLOWED_USERS"
+      ],
+      "dependencies": [],
+      "startupEffects": [
+        "provider-authentication",
+        "websocket-message-subscription",
+        "inbound-agent-dispatch"
+      ],
+      "readback": "hermes-selected-readback-v1"
+    },
+    "qualification": "unverified"
+  },
+  {
+    "id": "hermes-wecom-callback",
+    "inventory": "channel",
+    "harness": "hermes",
+    "channelId": "wecom-callback",
+    "nativeId": "wecom_callback",
+    "name": "WeCom Callback (Self-Built App)",
+    "aliases": [
+      "WeCom Callback (Self-Built App)"
+    ],
+    "kind": "conversation-channel",
+    "roles": [
+      "focused",
+      "border"
+    ],
+    "hosts": [
+      "macos",
+      "wsl2"
+    ],
+    "documentation": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/wecom-callback",
+    "checkedAt": "2026-10-25",
+    "baseline": {
+      "version": "0.21.6",
+      "commit": "818c13be1dc4fd28987e1e881a9408224afd4535",
+      "evidence": "https://github.com/NousResearch/hermes-agent/tree/818c13be1dc4fd28987e1e881a9408224afd4535",
+      "support": "present"
+    },
+    "component": null,
+    "setup": {
+      "disposition": "typed",
+      "method": "typed",
+      "adapter": "typed-hermes-platform-v1",
+      "reason": "Private selected-account form, explicit restrictive access, pinned dependency acquisition and selected native readback. External companion/provider prerequisites remain unverified until separately observed.",
+      "settings": [
+        {
+          "key": "WECOM_CALLBACK_CORP_ID",
+          "label": "Corporation ID",
+          "help": "Selected account only. Empty access lists deny everyone; configuration does not authenticate the account.",
+          "classification": "private",
+          "valueType": "string",
+          "required": "always",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/wecom-callback",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        },
+        {
+          "key": "WECOM_CALLBACK_CORP_SECRET",
+          "label": "Application secret",
+          "help": "Secure native entry; never saved to the plan.",
+          "classification": "secret",
+          "valueType": "string",
+          "required": "always",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/wecom-callback",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        },
+        {
+          "key": "WECOM_CALLBACK_AGENT_ID",
+          "label": "Application agent ID",
+          "help": "Selected account only. Empty access lists deny everyone; configuration does not authenticate the account.",
+          "classification": "private",
+          "valueType": "string",
+          "required": "always",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/wecom-callback",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        },
+        {
+          "key": "WECOM_CALLBACK_TOKEN",
+          "label": "Callback verification token",
+          "help": "Secure native entry; never saved to the plan.",
+          "classification": "secret",
+          "valueType": "string",
+          "required": "always",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/wecom-callback",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        },
+        {
+          "key": "WECOM_CALLBACK_ENCODING_AES_KEY",
+          "label": "Callback encoding AES key",
+          "help": "Secure native entry; never saved to the plan.",
+          "classification": "secret",
+          "valueType": "string",
+          "required": "always",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/wecom-callback",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        },
+        {
+          "key": "WECOM_CALLBACK_PORT",
+          "label": "Loopback callback port",
+          "help": "Selected account only. Empty access lists deny everyone; configuration does not authenticate the account.",
+          "classification": "public",
+          "valueType": "integer",
+          "required": "always",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/wecom-callback",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        },
+        {
+          "key": "NETCLAW_WECOM_CALLBACK_PUBLIC_URL",
+          "label": "Prepared HTTPS URL ending /wecom/callback",
+          "help": "Selected account only. Empty access lists deny everyone; configuration does not authenticate the account.",
+          "classification": "private",
+          "valueType": "string",
+          "required": "always",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/wecom-callback",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        },
+        {
+          "key": "WECOM_CALLBACK_ALLOWED_USERS",
+          "label": "Allowed sender IDs (blank denies all)",
+          "help": "Selected account only. Empty access lists deny everyone; configuration does not authenticate the account.",
+          "classification": "private",
+          "valueType": "string",
+          "required": "optional",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/wecom-callback",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        }
+      ],
+      "access": [
+        "WECOM_CALLBACK_ALLOWED_USERS"
+      ],
+      "dependencies": [
+        {
+          "id": "hermes-wecom-callback-sdk",
+          "version": "0.21.6",
+          "source": "https://github.com/NousResearch/hermes-agent/blob/818c13be1dc4fd28987e1e881a9408224afd4535/pyproject.toml",
+          "integrity": "sha256-47437b88cacbd7c4c1876f6d3c4c9629a962cb59360b487d7c6de2495870ba8f"
+        }
+      ],
+      "startupEffects": [
+        "local-webhook-listener",
+        "provider-token-acquisition",
+        "inbound-agent-dispatch"
+      ],
+      "readback": "hermes-selected-readback-v1"
+    },
+    "qualification": "unverified"
+  },
+  {
+    "id": "hermes-signal",
+    "inventory": "channel",
+    "harness": "hermes",
+    "channelId": "signal",
+    "nativeId": "signal",
+    "name": "Signal",
+    "aliases": [
+      "Signal"
+    ],
+    "kind": "conversation-channel",
+    "roles": [
+      "focused",
+      "border"
+    ],
+    "hosts": [
+      "macos",
+      "wsl2"
+    ],
+    "documentation": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/signal",
+    "checkedAt": "2026-10-25",
+    "baseline": {
+      "version": "0.21.6",
+      "commit": "818c13be1dc4fd28987e1e881a9408224afd4535",
+      "evidence": "https://github.com/NousResearch/hermes-agent/tree/818c13be1dc4fd28987e1e881a9408224afd4535",
+      "support": "present"
+    },
+    "component": null,
+    "setup": {
+      "disposition": "typed",
+      "method": "typed",
+      "adapter": "typed-hermes-platform-v1",
+      "reason": "Private selected-account form, explicit restrictive access, pinned dependency acquisition and selected native readback. External companion/provider prerequisites remain unverified until separately observed.",
+      "settings": [
+        {
+          "key": "SIGNAL_HTTP_URL",
+          "label": "Prepared signal-cli HTTP loopback URL",
+          "help": "Selected account only. Empty access lists deny everyone; configuration does not authenticate the account.",
+          "classification": "private",
+          "valueType": "string",
+          "required": "always",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/signal",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        },
+        {
+          "key": "SIGNAL_ACCOUNT",
+          "label": "Registered Signal number (+E.164)",
+          "help": "Selected account only. Empty access lists deny everyone; configuration does not authenticate the account.",
+          "classification": "private",
+          "valueType": "string",
+          "required": "always",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/signal",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        },
+        {
+          "key": "SIGNAL_ALLOWED_USERS",
+          "label": "Allowed sender IDs (blank denies all)",
+          "help": "Selected account only. Empty access lists deny everyone; configuration does not authenticate the account.",
+          "classification": "private",
+          "valueType": "string",
+          "required": "optional",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/signal",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        }
+      ],
+      "access": [
+        "SIGNAL_ALLOWED_USERS"
+      ],
+      "dependencies": [],
+      "startupEffects": [
+        "local-signal-daemon-connection",
+        "signal-event-stream-subscription",
+        "inbound-agent-dispatch"
+      ],
+      "readback": "hermes-selected-readback-v1"
+    },
+    "qualification": "unverified"
+  },
+  {
+    "id": "hermes-weixin",
+    "inventory": "channel",
+    "harness": "hermes",
+    "channelId": "weixin",
+    "nativeId": "weixin",
+    "name": "Weixin (WeChat)",
+    "aliases": [
+      "Weixin (WeChat)"
+    ],
+    "kind": "conversation-channel",
+    "roles": [
+      "focused",
+      "border"
+    ],
+    "hosts": [
+      "macos",
+      "wsl2"
+    ],
+    "documentation": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/weixin",
+    "checkedAt": "2026-10-25",
+    "baseline": {
+      "version": "0.21.6",
+      "commit": "818c13be1dc4fd28987e1e881a9408224afd4535",
+      "evidence": "https://github.com/NousResearch/hermes-agent/tree/818c13be1dc4fd28987e1e881a9408224afd4535",
+      "support": "present"
+    },
+    "component": null,
+    "setup": {
+      "disposition": "typed",
+      "method": "typed",
+      "adapter": "typed-hermes-platform-v1",
+      "reason": "Private selected-account form, explicit restrictive access, pinned dependency acquisition and selected native readback. External companion/provider prerequisites remain unverified until separately observed.",
+      "settings": [
+        {
+          "key": "WEIXIN_ACCOUNT_ID",
+          "label": "iLink account ID",
+          "help": "Selected account only. Empty access lists deny everyone; configuration does not authenticate the account.",
+          "classification": "private",
+          "valueType": "string",
+          "required": "always",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/weixin",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        },
+        {
+          "key": "WEIXIN_TOKEN",
+          "label": "Existing iLink account token",
+          "help": "Secure native entry; never saved to the plan.",
+          "classification": "secret",
+          "valueType": "string",
+          "required": "always",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/weixin",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        },
+        {
+          "key": "WEIXIN_ALLOWED_USERS",
+          "label": "Allowed sender IDs (blank denies all)",
+          "help": "Selected account only. Empty access lists deny everyone; configuration does not authenticate the account.",
+          "classification": "private",
+          "valueType": "string",
+          "required": "optional",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/weixin",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        }
+      ],
+      "access": [
+        "WEIXIN_ALLOWED_USERS"
+      ],
+      "dependencies": [],
+      "startupEffects": [
+        "provider-connection",
+        "provider-message-polling",
+        "inbound-agent-dispatch"
+      ],
+      "readback": "hermes-selected-readback-v1"
+    },
+    "qualification": "unverified"
+  },
+  {
+    "id": "hermes-bluebubbles",
+    "inventory": "channel",
+    "harness": "hermes",
+    "channelId": "bluebubbles",
+    "nativeId": "bluebubbles",
+    "name": "BlueBubbles (iMessage)",
+    "aliases": [
+      "BlueBubbles (iMessage)"
+    ],
+    "kind": "conversation-channel",
+    "roles": [
+      "focused",
+      "border"
+    ],
+    "hosts": [
+      "macos"
+    ],
+    "documentation": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/bluebubbles",
+    "checkedAt": "2026-10-25",
+    "baseline": {
+      "version": "0.21.6",
+      "commit": "818c13be1dc4fd28987e1e881a9408224afd4535",
+      "evidence": "https://github.com/NousResearch/hermes-agent/tree/818c13be1dc4fd28987e1e881a9408224afd4535",
+      "support": "present"
+    },
+    "component": null,
+    "setup": {
+      "disposition": "typed",
+      "method": "typed",
+      "adapter": "typed-hermes-platform-v1",
+      "reason": "Private selected-account form, explicit restrictive access, pinned dependency acquisition and selected native readback. External companion/provider prerequisites remain unverified until separately observed.",
+      "settings": [
+        {
+          "key": "BLUEBUBBLES_SERVER_URL",
+          "label": "Prepared BlueBubbles server URL",
+          "help": "Selected account only. Empty access lists deny everyone; configuration does not authenticate the account.",
+          "classification": "private",
+          "valueType": "string",
+          "required": "always",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/bluebubbles",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        },
+        {
+          "key": "BLUEBUBBLES_PASSWORD",
+          "label": "BlueBubbles password",
+          "help": "Secure native entry; never saved to the plan.",
+          "classification": "secret",
+          "valueType": "string",
+          "required": "always",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/bluebubbles",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        },
+        {
+          "key": "BLUEBUBBLES_WEBHOOK_PORT",
+          "label": "Loopback webhook port",
+          "help": "Selected account only. Empty access lists deny everyone; configuration does not authenticate the account.",
+          "classification": "public",
+          "valueType": "integer",
+          "required": "always",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/bluebubbles",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        },
+        {
+          "key": "BLUEBUBBLES_ALLOWED_USERS",
+          "label": "Allowed sender IDs (blank denies all)",
+          "help": "Selected account only. Empty access lists deny everyone; configuration does not authenticate the account.",
+          "classification": "private",
+          "valueType": "string",
+          "required": "optional",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/bluebubbles",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        }
+      ],
+      "access": [
+        "BLUEBUBBLES_ALLOWED_USERS"
+      ],
+      "dependencies": [],
+      "startupEffects": [
+        "bluebubbles-server-connection",
+        "local-webhook-listener",
+        "provider-webhook-registration",
+        "inbound-agent-dispatch"
+      ],
+      "readback": "hermes-selected-readback-v1"
+    },
+    "qualification": "unverified"
+  },
+  {
+    "id": "hermes-qqbot",
+    "inventory": "channel",
+    "harness": "hermes",
+    "channelId": "qqbot",
+    "nativeId": "qqbot",
+    "name": "QQ Bot",
+    "aliases": [
+      "QQ Bot"
+    ],
+    "kind": "conversation-channel",
+    "roles": [
+      "focused",
+      "border"
+    ],
+    "hosts": [
+      "macos",
+      "wsl2"
+    ],
+    "documentation": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/qqbot",
+    "checkedAt": "2026-10-25",
+    "baseline": {
+      "version": "0.21.6",
+      "commit": "818c13be1dc4fd28987e1e881a9408224afd4535",
+      "evidence": "https://github.com/NousResearch/hermes-agent/tree/818c13be1dc4fd28987e1e881a9408224afd4535",
+      "support": "present"
+    },
+    "component": null,
+    "setup": {
+      "disposition": "typed",
+      "method": "typed",
+      "adapter": "typed-hermes-platform-v1",
+      "reason": "Private selected-account form, explicit restrictive access, pinned dependency acquisition and selected native readback. External companion/provider prerequisites remain unverified until separately observed.",
+      "settings": [
+        {
+          "key": "QQ_APP_ID",
+          "label": "QQ bot application ID",
+          "help": "Selected account only. Empty access lists deny everyone; configuration does not authenticate the account.",
+          "classification": "private",
+          "valueType": "string",
+          "required": "always",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/qqbot",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        },
+        {
+          "key": "QQ_CLIENT_SECRET",
+          "label": "QQ bot client secret",
+          "help": "Secure native entry; never saved to the plan.",
+          "classification": "secret",
+          "valueType": "string",
+          "required": "always",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/qqbot",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        },
+        {
+          "key": "QQ_ALLOWED_USERS",
+          "label": "Allowed sender IDs (blank denies all)",
+          "help": "Selected account only. Empty access lists deny everyone; configuration does not authenticate the account.",
+          "classification": "private",
+          "valueType": "string",
+          "required": "optional",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/qqbot",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        }
+      ],
+      "access": [
+        "QQ_ALLOWED_USERS"
+      ],
+      "dependencies": [],
+      "startupEffects": [
+        "provider-authentication",
+        "websocket-message-subscription",
+        "inbound-agent-dispatch"
+      ],
+      "readback": "hermes-selected-readback-v1"
+    },
+    "qualification": "unverified"
+  },
+  {
+    "id": "hermes-yuanbao",
+    "inventory": "channel",
+    "harness": "hermes",
+    "channelId": "yuanbao",
+    "nativeId": "yuanbao",
+    "name": "Yuanbao",
+    "aliases": [
+      "Yuanbao"
+    ],
+    "kind": "conversation-channel",
+    "roles": [
+      "focused",
+      "border"
+    ],
+    "hosts": [
+      "macos",
+      "wsl2"
+    ],
+    "documentation": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/yuanbao",
+    "checkedAt": "2026-10-25",
+    "baseline": {
+      "version": "0.21.6",
+      "commit": "818c13be1dc4fd28987e1e881a9408224afd4535",
+      "evidence": "https://github.com/NousResearch/hermes-agent/tree/818c13be1dc4fd28987e1e881a9408224afd4535",
+      "support": "present"
+    },
+    "component": null,
+    "setup": {
+      "disposition": "typed",
+      "method": "typed",
+      "adapter": "typed-hermes-platform-v1",
+      "reason": "Private selected-account form, explicit restrictive access, pinned dependency acquisition and selected native readback. External companion/provider prerequisites remain unverified until separately observed.",
+      "settings": [
+        {
+          "key": "YUANBAO_APP_ID",
+          "label": "Yuanbao application ID",
+          "help": "Selected account only. Empty access lists deny everyone; configuration does not authenticate the account.",
+          "classification": "private",
+          "valueType": "string",
+          "required": "always",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/yuanbao",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        },
+        {
+          "key": "YUANBAO_APP_SECRET",
+          "label": "Yuanbao application secret",
+          "help": "Secure native entry; never saved to the plan.",
+          "classification": "secret",
+          "valueType": "string",
+          "required": "always",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/yuanbao",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        },
+        {
+          "key": "YUANBAO_ALLOWED_USERS",
+          "label": "Allowed sender IDs (blank denies all)",
+          "help": "Selected account only. Empty access lists deny everyone; configuration does not authenticate the account.",
+          "classification": "private",
+          "valueType": "string",
+          "required": "optional",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/yuanbao",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        }
+      ],
+      "access": [
+        "YUANBAO_ALLOWED_USERS"
+      ],
+      "dependencies": [],
+      "startupEffects": [
+        "provider-token-acquisition",
+        "provider-authentication",
+        "websocket-message-subscription",
+        "inbound-agent-dispatch"
+      ],
+      "readback": "hermes-selected-readback-v1"
+    },
+    "qualification": "unverified"
+  },
+  {
+    "id": "hermes-line",
+    "inventory": "channel",
+    "harness": "hermes",
+    "channelId": "line",
+    "nativeId": "line",
+    "name": "LINE",
+    "aliases": [
+      "LINE"
+    ],
+    "kind": "conversation-channel",
+    "roles": [
+      "focused",
+      "border"
+    ],
+    "hosts": [
+      "macos",
+      "wsl2"
+    ],
+    "documentation": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/line",
+    "checkedAt": "2026-10-25",
+    "baseline": {
+      "version": "0.21.6",
+      "commit": "818c13be1dc4fd28987e1e881a9408224afd4535",
+      "evidence": "https://github.com/NousResearch/hermes-agent/tree/818c13be1dc4fd28987e1e881a9408224afd4535",
+      "support": "present"
+    },
+    "component": null,
+    "setup": {
+      "disposition": "typed",
+      "method": "typed",
+      "adapter": "typed-hermes-platform-v1",
+      "reason": "Private selected-account form, explicit restrictive access, pinned dependency acquisition and selected native readback. External companion/provider prerequisites remain unverified until separately observed.",
+      "settings": [
+        {
+          "key": "LINE_CHANNEL_ACCESS_TOKEN",
+          "label": "Channel access token",
+          "help": "Secure native entry; never saved to the plan.",
+          "classification": "secret",
+          "valueType": "string",
+          "required": "always",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/line",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        },
+        {
+          "key": "LINE_CHANNEL_SECRET",
+          "label": "Channel secret",
+          "help": "Secure native entry; never saved to the plan.",
+          "classification": "secret",
+          "valueType": "string",
+          "required": "always",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/line",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        },
+        {
+          "key": "LINE_PORT",
+          "label": "Loopback webhook port",
+          "help": "Selected account only. Empty access lists deny everyone; configuration does not authenticate the account.",
+          "classification": "public",
+          "valueType": "integer",
+          "required": "always",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/line",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        },
+        {
+          "key": "LINE_PUBLIC_URL",
+          "label": "Prepared HTTPS base URL (webhook is /line/webhook)",
+          "help": "Selected account only. Empty access lists deny everyone; configuration does not authenticate the account.",
+          "classification": "private",
+          "valueType": "string",
+          "required": "always",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/line",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        },
+        {
+          "key": "LINE_ALLOWED_USERS",
+          "label": "Allowed sender IDs (blank denies all)",
+          "help": "Selected account only. Empty access lists deny everyone; configuration does not authenticate the account.",
+          "classification": "private",
+          "valueType": "string",
+          "required": "optional",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/line",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        }
+      ],
+      "access": [
+        "LINE_ALLOWED_USERS"
+      ],
+      "dependencies": [],
+      "startupEffects": [
+        "provider-identity-check",
+        "local-webhook-listener",
+        "local-media-download-endpoint",
+        "inbound-agent-dispatch"
+      ],
+      "readback": "hermes-selected-readback-v1"
+    },
+    "qualification": "unverified"
+  },
+  {
+    "id": "hermes-ntfy",
+    "inventory": "channel",
+    "harness": "hermes",
+    "channelId": "ntfy",
+    "nativeId": "ntfy",
+    "name": "ntfy",
+    "aliases": [
+      "ntfy"
+    ],
+    "kind": "conversation-channel",
+    "roles": [
+      "focused",
+      "border"
+    ],
+    "hosts": [
+      "macos",
+      "wsl2"
+    ],
+    "documentation": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/ntfy",
+    "checkedAt": "2026-10-25",
+    "baseline": {
+      "version": "0.21.6",
+      "commit": "818c13be1dc4fd28987e1e881a9408224afd4535",
+      "evidence": "https://github.com/NousResearch/hermes-agent/tree/818c13be1dc4fd28987e1e881a9408224afd4535",
+      "support": "present"
+    },
+    "component": null,
+    "setup": {
+      "disposition": "typed",
+      "method": "typed",
+      "adapter": "typed-hermes-platform-v1",
+      "reason": "Private selected-account form, explicit restrictive access, pinned dependency acquisition and selected native readback. External companion/provider prerequisites remain unverified until separately observed.",
+      "settings": [
+        {
+          "key": "NTFY_SERVER_URL",
+          "label": "ntfy HTTPS server URL",
+          "help": "Selected account only. Empty access lists deny everyone; configuration does not authenticate the account.",
+          "classification": "private",
+          "valueType": "string",
+          "required": "always",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/ntfy",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        },
+        {
+          "key": "NTFY_TOPIC",
+          "label": "Dedicated input topic",
+          "help": "Selected account only. Empty access lists deny everyone; configuration does not authenticate the account.",
+          "classification": "private",
+          "valueType": "string",
+          "required": "always",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/ntfy",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        },
+        {
+          "key": "NTFY_PUBLISH_TOPIC",
+          "label": "Separate output topic",
+          "help": "Selected account only. Empty access lists deny everyone; configuration does not authenticate the account.",
+          "classification": "private",
+          "valueType": "string",
+          "required": "always",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/ntfy",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        },
+        {
+          "key": "NTFY_TOKEN",
+          "label": "Dedicated topic access token",
+          "help": "Secure native entry; never saved to the plan.",
+          "classification": "secret",
+          "valueType": "string",
+          "required": "always",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/ntfy",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        },
+        {
+          "key": "NTFY_ALLOWED_USERS",
+          "label": "Allowed sender IDs (blank denies all)",
+          "help": "Selected account only. Empty access lists deny everyone; configuration does not authenticate the account.",
+          "classification": "private",
+          "valueType": "string",
+          "required": "optional",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/ntfy",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        }
+      ],
+      "access": [
+        "NTFY_ALLOWED_USERS"
+      ],
+      "dependencies": [],
+      "startupEffects": [
+        "provider-connection",
+        "topic-http-stream-subscription",
+        "inbound-agent-dispatch"
+      ],
+      "readback": "hermes-selected-readback-v1"
+    },
+    "qualification": "unverified"
+  },
+  {
+    "id": "hermes-simplex",
+    "inventory": "channel",
+    "harness": "hermes",
+    "channelId": "simplex",
+    "nativeId": "simplex",
+    "name": "SimpleX Chat",
+    "aliases": [
+      "SimpleX Chat"
+    ],
+    "kind": "conversation-channel",
+    "roles": [
+      "focused",
+      "border"
+    ],
+    "hosts": [
+      "macos",
+      "wsl2"
+    ],
+    "documentation": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/simplex",
+    "checkedAt": "2026-10-25",
+    "baseline": {
+      "version": "0.21.6",
+      "commit": "818c13be1dc4fd28987e1e881a9408224afd4535",
+      "evidence": "https://github.com/NousResearch/hermes-agent/tree/818c13be1dc4fd28987e1e881a9408224afd4535",
+      "support": "present"
+    },
+    "component": null,
+    "setup": {
+      "disposition": "typed",
+      "method": "typed",
+      "adapter": "typed-hermes-platform-v1",
+      "reason": "Private selected-account form, explicit restrictive access, pinned dependency acquisition and selected native readback. External companion/provider prerequisites remain unverified until separately observed.",
+      "settings": [
+        {
+          "key": "SIMPLEX_WS_URL",
+          "label": "Prepared SimpleX loopback WebSocket URL",
+          "help": "Selected account only. Empty access lists deny everyone; configuration does not authenticate the account.",
+          "classification": "private",
+          "valueType": "string",
+          "required": "always",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/simplex",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        },
+        {
+          "key": "SIMPLEX_ALLOWED_USERS",
+          "label": "Allowed sender IDs (blank denies all)",
+          "help": "Selected account only. Empty access lists deny everyone; configuration does not authenticate the account.",
+          "classification": "private",
+          "valueType": "string",
+          "required": "optional",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/simplex",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        }
+      ],
+      "access": [
+        "SIMPLEX_ALLOWED_USERS"
+      ],
+      "dependencies": [],
+      "startupEffects": [
+        "local-simplex-daemon-connection",
+        "websocket-message-subscription",
+        "inbound-agent-dispatch"
+      ],
+      "readback": "hermes-selected-readback-v1"
+    },
+    "qualification": "unverified"
+  },
+  {
+    "id": "hermes-irc",
+    "inventory": "channel",
+    "harness": "hermes",
+    "channelId": "irc",
+    "nativeId": "irc",
+    "name": "IRC",
+    "aliases": [
+      "IRC"
+    ],
+    "kind": "conversation-channel",
+    "roles": [
+      "focused",
+      "border"
+    ],
+    "hosts": [
+      "macos",
+      "wsl2"
+    ],
+    "documentation": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/irc",
+    "checkedAt": "2026-10-25",
+    "baseline": {
+      "version": "0.21.6",
+      "commit": "818c13be1dc4fd28987e1e881a9408224afd4535",
+      "evidence": "https://github.com/NousResearch/hermes-agent/tree/818c13be1dc4fd28987e1e881a9408224afd4535",
+      "support": "present"
+    },
+    "component": null,
+    "setup": {
+      "disposition": "typed",
+      "method": "typed",
+      "adapter": "typed-hermes-platform-v1",
+      "reason": "Private selected-account form, explicit restrictive access, pinned dependency acquisition and selected native readback. External companion/provider prerequisites remain unverified until separately observed.",
+      "settings": [
+        {
+          "key": "IRC_SERVER",
+          "label": "IRC TLS server hostname",
+          "help": "Selected account only. Empty access lists deny everyone; configuration does not authenticate the account.",
+          "classification": "private",
+          "valueType": "string",
+          "required": "always",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/irc",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        },
+        {
+          "key": "IRC_PORT",
+          "label": "IRC TLS port",
+          "help": "Selected account only. Empty access lists deny everyone; configuration does not authenticate the account.",
+          "classification": "public",
+          "valueType": "integer",
+          "required": "always",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/irc",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        },
+        {
+          "key": "IRC_NICKNAME",
+          "label": "Bot nickname",
+          "help": "Selected account only. Empty access lists deny everyone; configuration does not authenticate the account.",
+          "classification": "private",
+          "valueType": "string",
+          "required": "always",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/irc",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        },
+        {
+          "key": "IRC_CHANNEL",
+          "label": "Explicit channels (#name, comma-separated)",
+          "help": "Selected account only. Empty access lists deny everyone; configuration does not authenticate the account.",
+          "classification": "private",
+          "valueType": "string",
+          "required": "always",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/irc",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        },
+        {
+          "key": "IRC_SERVER_PASSWORD",
+          "label": "Server password",
+          "help": "Secure native entry; never saved to the plan.",
+          "classification": "secret",
+          "valueType": "string",
+          "required": "optional",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/irc",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        },
+        {
+          "key": "IRC_NICKSERV_PASSWORD",
+          "label": "NickServ password",
+          "help": "Secure native entry; never saved to the plan.",
+          "classification": "secret",
+          "valueType": "string",
+          "required": "optional",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/irc",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        },
+        {
+          "key": "IRC_ALLOWED_USERS",
+          "label": "Allowed sender IDs (blank denies all)",
+          "help": "Selected account only. Empty access lists deny everyone; configuration does not authenticate the account.",
+          "classification": "private",
+          "valueType": "string",
+          "required": "optional",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/irc",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        }
+      ],
+      "access": [
+        "IRC_ALLOWED_USERS"
+      ],
+      "dependencies": [],
+      "startupEffects": [
+        "irc-server-connection",
+        "irc-nickname-registration",
+        "irc-channel-join",
+        "inbound-agent-dispatch"
+      ],
+      "readback": "hermes-selected-readback-v1"
+    },
+    "qualification": "unverified"
+  },
+  {
+    "id": "hermes-whatsapp",
+    "inventory": "channel",
+    "harness": "hermes",
+    "channelId": "whatsapp",
+    "nativeId": "whatsapp",
+    "name": "WhatsApp",
+    "aliases": [
+      "WhatsApp"
+    ],
+    "kind": "conversation-channel",
+    "roles": [
+      "focused",
+      "border"
+    ],
+    "hosts": [
+      "macos",
+      "wsl2"
+    ],
+    "documentation": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/whatsapp",
+    "checkedAt": "2026-10-25",
+    "baseline": {
+      "version": "0.21.6",
+      "commit": "818c13be1dc4fd28987e1e881a9408224afd4535",
+      "evidence": "https://github.com/NousResearch/hermes-agent/tree/818c13be1dc4fd28987e1e881a9408224afd4535",
+      "support": "present"
+    },
+    "component": null,
+    "setup": {
+      "disposition": "native",
+      "method": "native",
+      "adapter": "native-hermes-whatsapp-v1",
+      "reason": "Owned hash-bound Node bridge, private account scope and native readback. WhatsApp uses a bounded one-attempt native QR view; linking is never silently replayed.",
+      "settings": [
+        {
+          "key": "NETCLAW_WHATSAPP_BRIDGE_PORT",
+          "label": "Owned loopback bridge port",
+          "help": "Selected account only. Empty access lists deny everyone; configuration does not authenticate the account.",
+          "classification": "public",
+          "valueType": "integer",
+          "required": "always",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/whatsapp",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        },
+        {
+          "key": "WHATSAPP_ALLOWED_USERS",
+          "label": "Allowed sender IDs (blank denies all)",
+          "help": "Selected account only. Empty access lists deny everyone; configuration does not authenticate the account.",
+          "classification": "private",
+          "valueType": "string",
+          "required": "optional",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/whatsapp",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        }
+      ],
+      "access": [
+        "WHATSAPP_ALLOWED_USERS"
+      ],
+      "dependencies": [
+        {
+          "id": "hermes-whatsapp-node",
+          "version": "7.0.0-rc13",
+          "source": "https://github.com/NousResearch/hermes-agent/blob/818c13be1dc4fd28987e1e881a9408224afd4535/scripts/whatsapp-bridge/package-lock.json",
+          "integrity": "sha256-33ba354286126402e1f98ab5bdc08aee703cc1e24ffbd37ab7134caecd678ad6"
+        }
+      ],
+      "startupEffects": [
+        "native-qr-account-link",
+        "owned-node-bridge-process",
+        "local-bridge-listener",
+        "provider-account-connection",
+        "inbound-agent-dispatch"
+      ],
+      "readback": "hermes-selected-readback-v1"
+    },
+    "qualification": "unverified"
+  },
+  {
+    "id": "hermes-photon",
+    "inventory": "channel",
+    "harness": "hermes",
+    "channelId": "photon",
+    "nativeId": "photon",
+    "name": "Photon iMessage",
+    "aliases": [
+      "Photon iMessage"
+    ],
+    "kind": "conversation-channel",
+    "roles": [
+      "focused",
+      "border"
+    ],
+    "hosts": [
+      "macos"
+    ],
+    "documentation": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/photon",
+    "checkedAt": "2026-10-25",
+    "baseline": {
+      "version": "0.21.6",
+      "commit": "818c13be1dc4fd28987e1e881a9408224afd4535",
+      "evidence": "https://github.com/NousResearch/hermes-agent/tree/818c13be1dc4fd28987e1e881a9408224afd4535",
+      "support": "present"
+    },
+    "component": null,
+    "setup": {
+      "disposition": "typed",
+      "method": "typed",
+      "adapter": "typed-hermes-platform-v1",
+      "reason": "Owned frozen Photon sidecar, dedicated local token and loopback port. Dependency/configuration inspection starts no sidecar or account connection.",
+      "settings": [
+        {
+          "key": "PHOTON_PROJECT_ID",
+          "label": "Photon project ID",
+          "help": "Selected account only. Empty access lists deny everyone; configuration does not authenticate the account.",
+          "classification": "private",
+          "valueType": "string",
+          "required": "always",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/photon",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        },
+        {
+          "key": "PHOTON_PROJECT_SECRET",
+          "label": "Photon project secret",
+          "help": "Secure native entry; never saved to the plan.",
+          "classification": "secret",
+          "valueType": "string",
+          "required": "always",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/photon",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        },
+        {
+          "key": "PHOTON_SIDECAR_PORT",
+          "label": "Owned loopback sidecar port",
+          "help": "Selected account only. Empty access lists deny everyone; configuration does not authenticate the account.",
+          "classification": "public",
+          "valueType": "integer",
+          "required": "always",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/photon",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        },
+        {
+          "key": "PHOTON_SIDECAR_TOKEN",
+          "label": "Dedicated local sidecar token (32 or more characters)",
+          "help": "Secure native entry; never saved to the plan.",
+          "classification": "secret",
+          "valueType": "string",
+          "required": "always",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/photon",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        },
+        {
+          "key": "PHOTON_ALLOWED_USERS",
+          "label": "Allowed sender IDs (blank denies all)",
+          "help": "Selected account only. Empty access lists deny everyone; configuration does not authenticate the account.",
+          "classification": "private",
+          "valueType": "string",
+          "required": "optional",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/photon",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        }
+      ],
+      "access": [
+        "PHOTON_ALLOWED_USERS"
+      ],
+      "dependencies": [
+        {
+          "id": "hermes-photon-node",
+          "version": "12.7.0",
+          "source": "https://github.com/NousResearch/hermes-agent/blob/818c13be1dc4fd28987e1e881a9408224afd4535/plugins/platforms/photon/sidecar/package-lock.json",
+          "integrity": "sha256-2368d0b886d149c69dfb1fb2201ed7868bd751de2a88467b7848f2649241a313"
+        }
+      ],
+      "startupEffects": [
+        "owned-node-sidecar-process",
+        "local-sidecar-listener",
+        "provider-authentication",
+        "provider-grpc-subscription",
+        "inbound-agent-dispatch"
+      ],
+      "readback": "hermes-selected-readback-v1"
+    },
+    "qualification": "unverified"
+  },
+  {
+    "id": "hermes-homeassistant",
+    "inventory": "channel",
+    "harness": "hermes",
+    "channelId": "homeassistant",
+    "nativeId": "homeassistant",
+    "name": "Home Assistant",
+    "aliases": [
+      "Home Assistant"
+    ],
+    "kind": "event-tool-integration",
+    "roles": [
+      "focused"
+    ],
+    "hosts": [
+      "macos",
+      "wsl2"
+    ],
+    "documentation": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/homeassistant",
+    "checkedAt": "2026-10-25",
+    "baseline": {
+      "version": "0.21.6",
+      "commit": "818c13be1dc4fd28987e1e881a9408224afd4535",
+      "evidence": "https://github.com/NousResearch/hermes-agent/blob/818c13be1dc4fd28987e1e881a9408224afd4535/website/docs/user-guide/messaging/homeassistant.md",
+      "support": "present"
+    },
+    "component": null,
+    "setup": {
+      "disposition": "typed",
+      "method": "typed",
+      "adapter": "typed-hermes-platform-v1",
+      "reason": "Official external plugin is source-bound and copied into the selected home; explicit entities only. Includes four native device tools; Focused-only. No device activity during setup.",
+      "settings": [
+        {
+          "key": "HASS_URL",
+          "label": "Home Assistant HTTPS URL",
+          "help": "Selected account only. Empty access lists deny everyone; configuration does not authenticate the account.",
+          "classification": "private",
+          "valueType": "string",
+          "required": "always",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/homeassistant",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        },
+        {
+          "key": "HASS_TOKEN",
+          "label": "Dedicated long-lived access token",
+          "help": "Secure native entry; never saved to the plan.",
+          "classification": "secret",
+          "valueType": "string",
+          "required": "always",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/homeassistant",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        },
+        {
+          "key": "NETCLAW_HASS_ENTITIES",
+          "label": "Explicit watched entity IDs (comma-separated; blank disables inbound events)",
+          "help": "Selected account only. Empty access lists deny everyone; configuration does not authenticate the account.",
+          "classification": "private",
+          "valueType": "string",
+          "required": "optional",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/homeassistant",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        }
+      ],
+      "access": [
+        "NETCLAW_HASS_ENTITIES"
+      ],
+      "dependencies": [
+        {
+          "id": "hermes-homeassistant-native",
+          "version": "2.0.1",
+          "source": "https://github.com/NousResearch/hermes-homeassistant/tree/ba30cb0cf86c52bdb5cde98974bc062e97966529",
+          "integrity": "sha256-22ecd143fb7aa3109b15677cc776312d01e3c9042a2e7d500d33e27b3e3b2ba9"
+        }
+      ],
+      "startupEffects": [
+        "provider-connection",
+        "homeassistant-state-subscription",
+        "device-read-and-control-tool-registration",
+        "inbound-agent-dispatch"
+      ],
+      "readback": "hermes-selected-readback-v1"
+    },
+    "qualification": "unverified"
+  },
+  {
+    "id": "hermes-raft",
+    "inventory": "channel",
+    "harness": "hermes",
+    "channelId": "raft",
+    "nativeId": "raft",
+    "name": "Raft",
+    "aliases": [
+      "Raft"
+    ],
+    "kind": "conversation-channel",
+    "roles": [
+      "focused",
+      "border"
+    ],
+    "hosts": [
+      "macos",
+      "wsl2"
+    ],
+    "documentation": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/raft",
+    "checkedAt": "2026-10-25",
+    "baseline": {
+      "version": "0.21.6",
+      "commit": "818c13be1dc4fd28987e1e881a9408224afd4535",
+      "evidence": "https://github.com/NousResearch/hermes-agent/tree/818c13be1dc4fd28987e1e881a9408224afd4535",
+      "support": "present"
+    },
+    "component": null,
+    "setup": {
+      "disposition": "typed",
+      "method": "typed",
+      "adapter": "typed-hermes-platform-v1",
+      "reason": "Frozen official CLI plus one prepared External Agent credential imported into owned profile storage; native version and exact local profile readback. Account authentication is separate.",
+      "settings": [
+        {
+          "key": "RAFT_PROFILE",
+          "label": "Dedicated External Agent profile slug",
+          "help": "Selected account only. Empty access lists deny everyone; configuration does not authenticate the account.",
+          "classification": "private",
+          "valueType": "string",
+          "required": "always",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/raft",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        },
+        {
+          "key": "NETCLAW_RAFT_CREDENTIAL_JSON",
+          "label": "Prepared single External Agent credential.json (single-line JSON)",
+          "help": "Secure native entry; never saved to the plan.",
+          "classification": "secret",
+          "valueType": "string",
+          "required": "always",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/raft",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        },
+        {
+          "key": "RAFT_ALLOWED_USERS",
+          "label": "Allowed sender IDs (blank denies all)",
+          "help": "Selected account only. Empty access lists deny everyone; configuration does not authenticate the account.",
+          "classification": "private",
+          "valueType": "string",
+          "required": "optional",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/raft",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        }
+      ],
+      "access": [
+        "RAFT_ALLOWED_USERS"
+      ],
+      "dependencies": [
+        {
+          "id": "hermes-raft-native",
+          "version": "0.0.26",
+          "source": "https://www.npmjs.com/package/@botiverse/raft/v/0.0.26",
+          "integrity": "sha256-15f9faf66de512a3fa0960595656febf34685abc0c8fe73bcc2904ee2ce8a9c7"
+        }
+      ],
+      "startupEffects": [
+        "local-webhook-listener",
+        "external-raft-cli-bridge",
+        "provider-wake-subscription",
+        "inbound-agent-dispatch"
+      ],
+      "readback": "hermes-selected-readback-v1"
+    },
+    "qualification": "unverified"
+  },
+  {
+    "id": "hermes-buzz",
+    "inventory": "channel",
+    "harness": "hermes",
+    "channelId": "buzz",
+    "nativeId": "buzz",
+    "name": "Buzz",
+    "aliases": [
+      "Buzz"
+    ],
+    "kind": "conversation-channel",
+    "roles": [
+      "focused",
+      "border"
+    ],
+    "hosts": [
+      "macos",
+      "wsl2"
+    ],
+    "documentation": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/buzz",
+    "checkedAt": "2026-10-25",
+    "baseline": {
+      "version": "0.21.6",
+      "commit": "818c13be1dc4fd28987e1e881a9408224afd4535",
+      "evidence": "https://github.com/NousResearch/hermes-agent/tree/818c13be1dc4fd28987e1e881a9408224afd4535",
+      "support": "present"
+    },
+    "component": null,
+    "setup": {
+      "disposition": "typed",
+      "method": "typed",
+      "adapter": "typed-hermes-platform-v1",
+      "reason": "Import an explicitly reviewed prepared upstream native binary by SHA-256; require exact version, dedicated key and explicit channel UUIDs. Local setup does not prove community membership.",
+      "settings": [
+        {
+          "key": "BUZZ_RELAY_URL",
+          "label": "Buzz community HTTPS relay URL",
+          "help": "Selected account only. Empty access lists deny everyone; configuration does not authenticate the account.",
+          "classification": "private",
+          "valueType": "string",
+          "required": "always",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/buzz",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        },
+        {
+          "key": "BUZZ_PRIVATE_KEY",
+          "label": "Dedicated Nostr private key (64-character hex)",
+          "help": "Secure native entry; never saved to the plan.",
+          "classification": "secret",
+          "valueType": "string",
+          "required": "always",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/buzz",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        },
+        {
+          "key": "BUZZ_CHANNELS",
+          "label": "Explicit channel UUIDs (comma-separated)",
+          "help": "Selected account only. Empty access lists deny everyone; configuration does not authenticate the account.",
+          "classification": "private",
+          "valueType": "string",
+          "required": "always",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/buzz",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        },
+        {
+          "key": "NETCLAW_BUZZ_BINARY",
+          "label": "Prepared buzz CLI binary absolute path",
+          "help": "Selected account only. Empty access lists deny everyone; configuration does not authenticate the account.",
+          "classification": "private",
+          "valueType": "string",
+          "required": "always",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/buzz",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        },
+        {
+          "key": "NETCLAW_BUZZ_BINARY_SHA256",
+          "label": "Prepared binary SHA-256 (review before importing)",
+          "help": "Selected account only. Empty access lists deny everyone; configuration does not authenticate the account.",
+          "classification": "private",
+          "valueType": "string",
+          "required": "always",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/buzz",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        },
+        {
+          "key": "BUZZ_ALLOWED_USERS",
+          "label": "Allowed sender IDs (blank denies all)",
+          "help": "Selected account only. Empty access lists deny everyone; configuration does not authenticate the account.",
+          "classification": "private",
+          "valueType": "string",
+          "required": "optional",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://hermes-agent.nousresearch.com/docs/user-guide/messaging/buzz",
+              "checkedAt": "2026-10-25",
+              "note": "Fields audited against Hermes 818c13be1dc4fd28987e1e881a9408224afd4535; no operational invocation."
+            }
+          ]
+        }
+      ],
+      "access": [
+        "BUZZ_ALLOWED_USERS"
+      ],
+      "dependencies": [],
+      "startupEffects": [
+        "external-buzz-cli-process",
+        "provider-authentication",
+        "provider-profile-and-channel-reads",
+        "provider-message-cursor-seeding",
+        "websocket-message-subscription",
+        "inbound-agent-dispatch"
+      ],
+      "readback": "hermes-selected-readback-v1"
+    },
+    "qualification": "unverified"
+  }
+]

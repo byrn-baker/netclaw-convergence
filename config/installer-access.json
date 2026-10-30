@@ -12,7 +12,10 @@
         "PYATS_TESTBED_PATH"
       ],
       "expected_tools": [
-        "pyats_list_devices"
+        "pyats_list_devices",
+        "netclaw_testbed_compose",
+        "pyats_testbed_validate",
+        "pyats_testbed_activate"
       ]
     },
     "netbox": {

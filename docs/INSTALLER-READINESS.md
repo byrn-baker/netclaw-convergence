@@ -26,8 +26,7 @@ export NETCLAW_PY="$(brew --prefix python@3.12)/bin/python3.12"
 ```
 
 `uv` supplies managed pyATS/GAIT environments; no specific uv release is pinned.
-Forward additionally requires Go 1.25+, CGO and a working C compiler/Apple Command
-Line Tools. `--all` includes Linux-only components; inspect preflight on macOS and
+`--all` includes Linux-only components; inspect preflight on macOS and
 select compatible components. The prerequisite report lists all known blockers.
 
 For npm 11.16+ the installer uses the narrow `--allow-scripts=openclaw` option;
@@ -118,3 +117,45 @@ The original reports did not include six named macOS failures or a reproducible 
 spawn trace. Those remain evidence gaps. Use a harmless authorized read against your
 actual target after discovery; neither synthetic fixtures nor CI certify every
 external service or package/OS combination.
+
+## Optional environment defaults and older OpenClaw versions
+
+The canonical `config/openclaw.json` is a source template. Generate selected
+registrations through the installer or `scripts/install-mcp-config.py`; do not
+copy it directly into an existing runtime. `config/mcp-env-defaults.json` records
+optional defaults by integration, also documented in `.env.example`. This keeps
+registrations compatible with the qualified OpenClaw 2026.7.1-2 pin, which does
+not expand shell-style defaults. Newer upstream versions have different support.
+
+Missing or empty optional settings receive literal defaults. Nonempty overrides
+remain native references, and missing optional secrets stay empty. Required
+credentials remain configuration-required. No shell expression is evaluated.
+After adding a previously absent override to the selected home's private `.env`,
+regenerate that component's registration before a separately requested restart;
+a previously materialized literal does not dynamically read the new variable.
+
+The legacy registration merge repairs exact known old fallback expressions and
+retains custom values, unrelated servers, private backups and revision checks.
+Unknown custom fallback expressions require manual reconciliation. Nautobot's
+historical implicit lab default is corrected to `false`, matching explicit
+opt-in policy and `.env.example`; an explicit operator value still wins.
+Setup preparation and source tests do not migrate or restart existing homes.
+Readiness continues to inspect actual installed values rather than silently
+supplying source defaults to hide an uncorrected registration.
+
+## Static or dynamic pyATS inventory (Spec160)
+
+Select pyATS, then choose **Testbed mode & sources** in the VS Code setup wizard
+or static/dynamic in the terminal plan. Existing-runtime `scripts/setup.sh --testbed-only`
+configures the selected home. Dynamic mode stores selected sources privately and
+creates no dummy YAML; setup performs no inventory fetch or device operation.
+Source service credentials and device login references remain separate.
+
+The managed MCP requires scoped, complete, fresh records, then actual schema and
+credential validation before explicit activation. Inventory belongs to one MCP
+process; separate one-shot calls do not share it. Use a persistent client or the
+bounded session helper. The HUD static editor and collector grants are separate.
+Readiness reports source access, candidate, activation and execution independently.
+See [Dynamic testbeds](DYNAMIC-TESTBEDS.md) for all source contracts, unavailable
+reader gaps, restart behavior and feasible qualification. Existing runtimes require
+an explicit reviewed component upgrade; source selection alone does not install it.

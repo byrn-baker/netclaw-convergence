@@ -62,3 +62,58 @@ Actual tool dispatch/result records carry the owning request identity independen
 OpenClaw retains the historical repository `.env` fallback. To move that dependency explicitly, use `python3 scripts/import-env.py --help` and its literal import mode; selected-home values win. Back up selected configuration and browser work before changing installation roots. Rollback keeps original browser keys/IndexedDB and `.v1-backup` bindings; never copy another installation's identity file or downgrade a v2 binding in place.
 
 See [private server contract](../mcp-servers/hermes-hud-mcp/README.md), [validation](../specs/148-hermes-hud-integration/validation.md), and [WSL handoff](../specs/148-hermes-hud-integration/validation-handoff.md).
+
+### Canvas setup retries
+
+A new Canvas branch retains its original ancestor prefix in the private browser
+binding before Hermes preparation. A known setup failure submits no agent work;
+retrying the same branch reuses that prefix across HUD restarts and cannot replace
+it with later context. Unknown admitted outcomes still require observation and
+must not be replayed. Context expires with the binding and is bounded in UTF-8 bytes.
+
+Bindings created before this fix have no retained prefix. They remain usable,
+but original ancestry cannot be reconstructed from later messages. After a
+known pre-admission failure on such a binding, create a new branch from the
+intended ancestor point. Do not replay an uncertain admitted operation.
+
+### Recovering a Standard Chat reply
+
+Check status uses the original saved submission, not the editable composer. An
+unsent edited or cleared draft remains unchanged; the untouched restored original
+is cleared once its answer is recovered. Both displayed messages retain the request
+identity so repeated status checks do not append duplicate turns. The pending
+receipt and draft remain scoped to this installation's browser storage.
+
+If native history has no request identities, recovery requires the exact original
+position and complete prior-message fingerprint. Changed/truncated history or a
+legacy pending record without original submission evidence produces guidance to
+open owned history, leaving transcript and draft unchanged. It never guesses the
+question from current text. Completed Standard Chat receipts survive refresh until
+the next reconciled submission; Canvas/classic keep their existing cleanup behavior.
+
+### Recovering admission capacity after a lost response
+
+Four unresolved admissions without native run IDs can fill the HUD's admission
+limit. Ordinary acknowledgment, restarting, checking status and requesting stop
+do not release these slots or prove that the operations stopped.
+
+In Chat (also shared by local Avatar), open the affected conversation from
+**Previous chats**, then **Check status**. For an eligible unknown admission,
+**Release slot and start new chat** offers a separate confirmation. Review the
+conversation and tool evidence before accepting: the earlier operation may still
+run alongside new work. This releases only its HUD admission reservation; it does
+not cancel, undo, mark successful or replay the operation. Native runtime limits
+still apply. A known native run must use normal status/stop reconciliation.
+
+The private ledger records the release once, retains unknown outcome, original
+nonce and evidence, and keeps the original conversation blocked for new work.
+Restart and repeated confirmation do not grant additional slots. Failed new-chat
+setup can leave an already recorded release; retry does not replay the old work.
+Opening owned history recovers unresolved request identity even after tab storage
+loss, without inventing its original question. Missing bridge admissions cannot
+release a slot they never held. Federation reservations are excluded.
+
+Upgrade the HUD and private bridge source together for this optional argument;
+older bridges refuse it safely. The ledger adds its private audit table on open;
+no deletion, reset or manual database edit is needed. Source fixtures cover the
+accounting and UI workflow; this does not broaden live provider/platform support.

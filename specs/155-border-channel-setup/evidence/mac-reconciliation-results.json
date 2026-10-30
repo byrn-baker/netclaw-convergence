@@ -1,0 +1,85 @@
+{
+  "schema": 1,
+  "date": "2026-10-25",
+  "scope": "Mac installer-only source reconciliation; provider operations excluded",
+  "sourceCommit": "04645395530a060b35404ec3a27bc516ae9ba076",
+  "branch": "155-comms-mac-reconciliation-20261025",
+  "host": {
+    "platform": "Darwin",
+    "release": "25.5.0",
+    "architecture": "arm64",
+    "node": "24.19.0"
+  },
+  "checks": {
+    "catalog": {
+      "passed": true,
+      "entries": 77
+    },
+    "metadata": {
+      "passed": true,
+      "components": 110,
+      "skills": 237
+    },
+    "catalogCoverage": {
+      "passed": true,
+      "unexplainedGaps": 0
+    },
+    "extensionDependencies": {
+      "method": "npm ci --ignore-scripts from committed extension and HUD package-lock.json",
+      "passed": true
+    },
+    "extensionTypecheck": {
+      "passed": true
+    },
+    "extensionBuild": {
+      "passed": true
+    },
+    "extensionTests": {
+      "total": 146,
+      "passed": 143,
+      "failed": 0,
+      "skipped": 3,
+      "durationSeconds": 37.239869,
+      "skipReasons": [
+        "Optional installed native OpenClaw custom agent workspace fixture",
+        "Linux-only owned-service timezone change case on macOS",
+        "Optional actual RAG upload/retrieval fixture"
+      ],
+      "privateLogSha256": "926611dbf91de3f7e889ac7ee758162b8c2f375703204af59fc23875d32a7900"
+    }
+  },
+  "wslCorrectionsReview": {
+    "observedAcquisitionHost": "accepted",
+    "concurrentAdapterDurableStatus": "accepted; exactly one synthetic submission still required",
+    "matrixSdk": "Mac assertion corrected to catalog-supported observed host; WSL actual SDK remains required",
+    "beforeFix": {
+      "actualHermesTests": 1,
+      "failed": 1
+    },
+    "afterFix": {
+      "actualHermesTests": 7,
+      "passed": 7,
+      "skipped": 0
+    },
+    "syntheticHostAssertion": "Missing Matrix SDK fails on wsl2; this is not WSL execution"
+  },
+  "complete": false,
+  "prohibitedOperationsPerformed": false,
+  "macInstallerAcceptanceComplete": true,
+  "evidence": {
+    "runtime": "mac-runtime-results.json",
+    "editor": "mac-editor-results.json",
+    "preservation": "mac-preservation.json"
+  },
+  "remainingRequiredGates": [
+    "T048: actual WSL remote editor",
+    "T048: six failed WSL service-manager checks and isolated positive service acceptance",
+    "Remaining WSL package/systemd/Specify fixtures as recorded in wsl-results.json"
+  ],
+  "scopeLimits": [
+    "Actual engines use controlled native-review authority, not an actual editor installation approval.",
+    "Positive service ownership fixtures use synthetic manager/native inspector responses and inert real child processes.",
+    "Actual redacted reports opened in editor; product report/export controls remain unexecuted because the product reads OS-account shared setup state.",
+    "Mac results do not close WSL gates or establish provider readiness."
+  ]
+}

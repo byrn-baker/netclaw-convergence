@@ -7,6 +7,7 @@ export function validateChat(value) {
   const messages = value.messages.map(message => {
     if (!['user', 'assistant'].includes(message?.role) || typeof message.content !== 'string') throw Error('Invalid message');
     return { role: message.role, content: message.content,
+      ...(id(message.requestId) ? {requestId:message.requestId} : {}),
       assessmentRefs: (Array.isArray(message.assessmentRefs) ? message.assessmentRefs : [])
         .filter(ref => id(ref?.taskRef) && id(ref?.assessmentId)).map(({ taskRef, assessmentId }) => ({ taskRef, assessmentId })) };
   });
