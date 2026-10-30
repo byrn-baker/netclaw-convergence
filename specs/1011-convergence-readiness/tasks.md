@@ -8,4 +8,6 @@
 - [x] T006 Qualify available Mac/WSL hosts or record exact external prerequisite.
 - [x] T007 Independently review, validate and publish readiness work/proposal revision.
 
+- [x] T008 Reconcile reviewed installer source digest after the bootstrap correction; verify setup-installer contracts without weakening effect auditing.
+
 External qualification gates: actual macOS host unavailable; Windows/WSL2 awaits an accessible dedicated VM. Recording these prerequisites is not a platform pass.

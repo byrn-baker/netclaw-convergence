@@ -98,5 +98,32 @@ maintained main rather than the already-merged onboarding review branch.
 - HUD unit suite: 392 tests PASS; API flow/reliability regressions: 11 tests PASS.
 - Verified `git cat-file -e HEAD:mcp-servers/convergence-case-mcp/requirements.txt`
   after the implementation commit; the required manifest is in the published tree.
-- All local work is complete for this maintenance slice. Hosted CI for the new PR
-  is tracked separately; local passes are not a claim that its pending jobs passed.
+- Hosted CI is tracked separately; local passes are not a claim that pending jobs passed.
+
+## T008 attempt 1 — reviewed installer digest
+
+Hosted setup-installer contracts failed with `component_effects_changed` after the
+bootstrap correction changed the reviewed installer source. This is introduced
+metadata drift, not an inherited failure. Acceptance: inspect the complete installer
+diff, preserve all component function/fragment hashes and adapter classifications,
+update only the source digest, and pass the full setup-installer suite. No generator
+exists for this reviewed manifest. The changed code only creates the already-owned
+new runtime root privately before its existing subdirectories; no component install
+function or deployment boundary changes.
+
+Local runs also hit `unsafe_parent`: the development checkout and `.local/state`
+ancestors were created group-writable. Changing the test process umask alone cannot
+change existing directory permissions. A separate clone under a mode-0700 `/tmp`
+parent, created with umask 022 and the reviewed manifest overlaid, isolated this
+host condition without modifying operator paths or relaxing security checks. The
+separate core-deploy regression explicitly retains umask 002.
+
+- `PATH=<isolated setup-installer venv>/bin:$PATH bash tests/setup-installer/run-tests.sh`
+  in that private clone: PASS, 274 tests in 83.900 seconds, 32 existing opt-in skips.
+- Independent verifier: PASS; all 122 component hashes and one fragment hash match,
+  only the full source digest changed, and effect-audit enforcement is unchanged.
+- Spec artifacts, release metadata and whitespace checks PASS.
+- Prior hosted head `df68e00a`: 39 checks PASS, only setup-installer failed on the
+  stale digest. Final corrected-head hosted results are recorded in fork PR #4.
+
+T008 outcome: COMPLETE. Final merge still requires review of corrected-head CI.
