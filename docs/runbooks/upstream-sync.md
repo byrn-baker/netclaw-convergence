@@ -85,6 +85,26 @@ The checks above use synthetic/local fixtures. They do not qualify every
 dynamic inventory provider or upgrade a native OpenClaw/Hermes installation.
 Upstream's own platform qualification limits still apply.
 
+## Live verification
+
+The live checkout fast-forwarded to merge commit `df368e68`; its parents are
+fork baseline `2c1270e9` and upstream `b18d51c0`. The HUD build was published
+atomically with previous hashed assets retained, and only `netclaw-hud` was
+restarted. Gateway and Vite preview services remained active.
+
+Live browser verification shows Convergence inventory (304 ports), active IDS,
+and recovery from a browser-only degraded response on the next automatic
+refresh while the Security navigation button retains focus. The runtime API
+reports OpenClaw ready; this readiness check does not submit a model turn.
+Native `~/.openclaw/openclaw.json` and `.env` SHA-256 values match the pre-update
+snapshot. All eight Argo applications are Synced/Healthy; no chart, storage,
+sensor deployment or live pyATS testbed was changed.
+
+Tracked checkout files and their directories had group/world write bits removed
+so upstream's protected setup-source validation works in the live checkout too.
+Executable bits and runtime file permissions were preserved. The host mesh
+file limitation described above remains separate.
+
 ## Next upstream update
 
 1. Start from a clean fork checkout; fetch `upstream` and its tags. Record both

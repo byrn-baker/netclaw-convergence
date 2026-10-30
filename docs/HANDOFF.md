@@ -3,6 +3,12 @@
 What a new session needs to know before touching `ui/netclaw-visual/` or
 `ui/convergence-api/`. Written 2026-07-29.
 
+> **2026-10-30 upstream sync:** source 1.14.0 (`b18d51c0`) is merged and the
+> HUD is deployed. See [verification, compatibility decisions and future sync
+> procedure](runbooks/upstream-sync.md). The historical architecture notes below
+> still explain the fork hooks; current K3s deployment details are in the
+> Convergence runbooks.
+
 ---
 
 ## 1. The one rule
