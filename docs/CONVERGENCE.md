@@ -9,6 +9,7 @@ You do not need model credentials or network-device access to try the core stack
 
 | Path | Choose this when | Guide |
 |---|---|---|
+| **Home-lab flow demo — Linux Docker** | You want retained traffic evidence without special network equipment, followed by optional local-interface monitoring | [Start on a home network](convergence/home-lab.md) |
 | **K3s + Helm — recommended** | You want a persistent installation with VictoriaMetrics, VictoriaLogs, Loki, an OpenTelemetry collector and repeatable upgrades | [Install on K3s](convergence/k3s.md) |
 | **Docker Compose — local trial** | You want to try the API, case diary, Prometheus and a health dashboard on one computer | [Try with Docker](convergence/docker.md) |
 | Existing installation | You already have data, credentials or shared Grafana | [Operate, upgrade and reuse](convergence/operations.md) |
@@ -16,7 +17,10 @@ You do not need model credentials or network-device access to try the core stack
 Both fresh paths generate private credentials, support your own site name and
 keep access local or cluster-internal by default. K3s includes an optional private
 Grafana; an existing shared Grafana can be connected without replacing its other
-dashboards. Docker is a smaller trial, not the full Victoria/IDS installation.
+dashboards. Docker is a smaller trial, not the full Victoria/IDS installation. Its optional
+flow path adds retained traffic evidence without requiring Cisco equipment,
+Proxmox or Kubernetes. Demonstration data and local-interface observations are
+explicitly labeled; neither establishes whole-network coverage.
 
 **Start here:** obtain a checkout containing `workspace/skills/convergence-setup/`,
 then follow one guide. Convergence is currently a fork add-on; its upstream
@@ -41,6 +45,9 @@ verify it. Example requests:
 > Set up Convergence on my K3s cluster. Use context `lab`, namespace
 > `convergence`, site `office`, and storage class `local-path`. Use a separate
 > Grafana for now. Inspect existing resources before installing.
+
+> Help me try Convergence with the Linux Docker flow demonstration. I have no
+> managed switch or hypervisor. Keep example traffic separate from my actual network.
 
 > Help me try Convergence locally with Docker and a health dashboard. Choose
 > unused ports and keep the services accessible only from this computer.

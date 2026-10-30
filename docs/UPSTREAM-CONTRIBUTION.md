@@ -1,9 +1,9 @@
 # Convergence upstream contribution
 
-[Proposal #309](https://github.com/automateyournetwork/netclaw/pull/309) is ready for
-maintainer **scope review**. It contains five Spec Kit documents and no runtime
-implementation. The requested decision is whether one optional read-only
-flow-evidence integration belongs in NetClaw.
+[Proposal #309](https://github.com/automateyournetwork/netclaw/pull/309) was merged
+upstream on 30 October 2026 at `4d791a36`. It accepts the scope of one optional
+read-only flow-evidence integration. The five specification documents ship no
+runtime implementation; the clean upstream connector remains the next contribution.
 
 ## First milestone
 
@@ -35,7 +35,9 @@ original standalone Convergence repository does not contain that API. Before an
 upstream connector ships, its guide must identify a public reproducible service
 build/revision and retained-flow setup. See [provenance](convergence/provenance.md).
 The fork's [K3s and Docker guides](CONVERGENCE.md) remain the installation entry point;
-the smaller Docker trial does not itself collect network flows.
+the core Docker trial collects no flows by default. Its opt-in
+[home-lab paths](convergence/home-lab.md) add an isolated demonstration or explicitly
+selected Linux host-interface exporter without special network hardware.
 
 ## Evidence and remaining gates
 
@@ -49,7 +51,11 @@ spec artifacts are explicitly reconstructed, not presented as original planning.
 The [qualification matrix](convergence/verification.md) distinguishes actual checks
 from untested host/runtime combinations.
 
-Remaining gates are maintainer scope agreement, a coordinated implementation spec,
+[Spec 1012](../specs/1012-convergence-home-onboarding/spec.md) adds accessible Linux
+onboarding and source coverage labels. Demo and host modes remain distinct; neither
+requires Cisco equipment, Proxmox or Kubernetes.
+
+Remaining gates are a coordinated implementation spec,
 a clean upstream port and its own acceptance. Linux Docker/K3s tests are feasibility
 evidence, not upstream compatibility proof. macOS Docker Desktop and Windows/WSL2
 still need actual host execution; WSL2 awaits an accessible dedicated test VM.

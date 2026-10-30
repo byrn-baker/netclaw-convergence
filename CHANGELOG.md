@@ -2,6 +2,10 @@
 
 NetClaw source releases use `1.x.y`. Feature specs increment the minor version and reset the patch; fixes, documentation and maintenance increment the patch. Every release records its numbered specs. Component and mobile distribution versions are independent.
 
+## [1.16.0] - 2026-10-30
+
+Spec [1012-convergence-home-onboarding](specs/1012-convergence-home-onboarding/spec.md). See [release notes](docs/releases/1.16.0.md).
+
 ## [1.15.1] - 2026-10-30
 
 Spec [1011-convergence-readiness](specs/1011-convergence-readiness/spec.md). See [release notes](docs/releases/1.15.1.md).

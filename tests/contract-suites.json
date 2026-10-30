@@ -851,6 +851,30 @@
         "prepend_path": true
       },
       "timeout_seconds": 300
+    },
+    "convergence-home": {
+      "kind": "shell",
+      "command": [
+        "bash",
+        "tests/convergence-home/run-tests.sh"
+      ],
+      "environment": {
+        "path": ".contract-test-envs/convergence-home",
+        "requirements": [
+          "mcp-servers/convergence-case-mcp/requirements.txt"
+        ],
+        "packages": [],
+        "required_imports": [
+          "fastmcp",
+          "httpx"
+        ],
+        "prepend_path": true
+      },
+      "ci": {
+        "include": false,
+        "reason": "Executed by .github/workflows/convergence-onboarding.yml on native Linux x86_64 and ARM64 with local Docker and Node dependencies; creates only disposable test projects and captures only a filtered loopback fixture."
+      },
+      "timeout_seconds": 600
     }
   }
 }

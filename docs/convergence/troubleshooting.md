@@ -19,6 +19,7 @@ Keep logs private: configuration and request errors can contain sensitive data.
 | Database unavailable | PostgreSQL readiness, API logs, capacity and matching credentials | Diagnose the existing database; keep data and backups intact |
 | API healthy but Grafana query empty | Wait a scrape interval; query API `probe_success` | Check vmagent/Prometheus targets, site labels and service DNS |
 | Grafana login fails after editing Secret | Existing Grafana database | Initial admin environment variables do not reset a password already stored in Grafana; use its password recovery procedure |
+| Flow demo or local-host setup has no records | Selected demo/host bundle, site, explicit interface, exporter expiry and collector/shipper health | Follow the [home-lab checks](home-lab.md); installing the core alone does not collect traffic |
 | Network/IDS views blank | Was that source configured? Freshness, sensor capture and delivery | Verify the source separately; core health never proves network coverage |
 | HUD disconnected but stack checks pass | HUD's active env, URL from HUD host, token and runtime | `127.0.0.1` refers to the HUD host; repair its route and restart only the affected service |
 | K3s port-forward stops | Forward process, target pod restart, local port | Restart the forward; use supervised/private access for permanent operation |

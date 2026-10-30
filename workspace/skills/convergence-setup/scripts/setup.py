@@ -74,6 +74,13 @@ def preflight(repo):
             'next': 'Select deployment host, existing-stack reuse, site, ports and telemetry before preparation.'}
 
 
+def flow_support():
+    spec = importlib.util.spec_from_file_location('convergence_flow_support', Path(__file__).with_name('flow_support.py'))
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
 def validate_options(options):
     if not re.fullmatch(r'[a-z0-9][a-z0-9_-]{0,39}', options['site']):
         raise ValueError('Site must be a short lowercase identifier')
@@ -84,6 +91,8 @@ def validate_options(options):
         ports.append(options.get('grafana_port', 3300))
     if any(not 1024 <= p <= 65535 for p in ports) or len(set(ports)) != len(ports):
         raise ValueError('Choose distinct unprivileged ports between 1024 and 65535')
+    if options.get('flows'):
+        flow_support().validate(options)
     if options['edge_url']:
         url = urlsplit(options['edge_url'])
         if (url.scheme not in ('http', 'https') or not url.hostname or url.username or url.password
@@ -112,6 +121,8 @@ def prepare(repo, bundle, options):
     options = dict(options)
     if not options.get('grafana'):
         options.pop('grafana', None); options.pop('grafana_port', None)
+    if not options.get('flows'):
+        options.pop('flows', None); options.pop('flow_port', None)
     identity = {'repo': str(repo), **options}
     if bundle.exists():
         marker = bundle/'deployment.json'
@@ -124,6 +135,9 @@ def prepare(repo, bundle, options):
                  'prometheus.yml', 'alertmanager.yml', 'receiver-token', 'investigation-policy.yaml')
         if options.get('grafana'):
             files += ('grafana-datasources.yml', 'grafana-dashboards.yml', 'grafana-health.json', 'access.txt')
+        if options.get('flows'):
+            flow_support().ownership(bundle, manifest)
+            files += ('flow-otel.json',)
         if any(not (bundle/file).is_file() or (bundle/file).is_symlink() for file in files):
             raise ValueError('Existing deployment is incomplete; restore missing files without rotating credentials')
         return {'status': 'preserved', 'bundle': str(bundle), 'commands': manifest['commands']}
@@ -198,11 +212,17 @@ def prepare(repo, bundle, options):
             'grafana-dashboards.yml': {'apiVersion': 1, 'providers': [{'name': 'Convergence',
                 'type': 'file', 'options': {'path': '/var/lib/grafana/provisioned'}}]},
             'grafana-health.json': installation_dashboard(site)}
+    flow_files = {}
+    flow_identity = secrets.token_hex(16) if options.get('flows') else None
+    if options.get('flows'):
+        flow_files = flow_support().configure(repo, bundle, options, env, overlay, flow_identity)
     commands = ['python3', str(repo/'workspace/skills/convergence-setup/scripts/setup.py'), '--repo', str(repo),
                 'run', '--bundle', str(bundle), '--action']
     manifest = {'schema_version': 1, 'options': identity,
                 'commands': {'validate': commands+['validate'], 'start_core': commands+['start']},
                 'scope': 'core services; telemetry, HUD, receiver and investigator require their own verification'}
+    if flow_identity:
+        manifest['flow_identity'] = flow_identity
     bundle.mkdir(parents=True, mode=0o700)
     writer.write_private(bundle/'.gitignore', '*\n')
     for file, values in [('compose.env', env), ('receiver.env', receiver), ('hud.env', hud)]:
@@ -211,7 +231,7 @@ def prepare(repo, bundle, options):
                         ('compose.override.json', overlay),
                         ('investigation-policy.yaml', {'version': 1, 'default_tier': 'T0', 'allow_t1': [], 'allow_t2': []})]:
         writer.write_private(bundle/file, json.dumps(value, indent=2)+'\n')
-    for file, value in grafana_files.items():
+    for file, value in {**grafana_files, **flow_files}.items():
         writer.write_private(bundle/file, json.dumps(value, indent=2)+'\n')
         (bundle/file).chmod(0o644)
     if options.get('grafana'):
@@ -249,21 +269,29 @@ def compose_environment(repo):
     return {k: v for k, v in os.environ.items() if k not in variables and not k.startswith('COMPOSE_')}
 
 
+def require_local_docker():
+    context = os.environ.get('DOCKER_CONTEXT') or output(['docker','context','show'])
+    endpoint = (None if os.environ.get('DOCKER_CONTEXT') else os.environ.get('DOCKER_HOST')) or output(
+        ['docker','context','inspect',context or 'default','--format','{{.Endpoints.docker.Host}}'])
+    if not endpoint or not endpoint.startswith(('unix://','npipe://')):
+        raise ValueError('Use a local Docker Engine/Desktop context; remote daemons cannot mount this local bundle')
+
+
 def run_compose(repo, bundle, action):
     bundle = private_path(bundle)
     manifest = json.loads((bundle/'deployment.json').read_text())
     options = manifest['options']; validate_options(options)
     if manifest.get('schema_version')!=1 or options['repo']!=str(repo):
         raise ValueError('Bundle belongs to another checkout or unsupported format')
-    context = os.environ.get('DOCKER_CONTEXT') or output(['docker','context','show'])
-    endpoint = (None if os.environ.get('DOCKER_CONTEXT') else os.environ.get('DOCKER_HOST')) or output(
-        ['docker','context','inspect',context or 'default','--format','{{.Endpoints.docker.Host}}'])
-    if not endpoint or not endpoint.startswith(('unix://','npipe://')):
-        raise ValueError('Use a local Docker Engine/Desktop context; remote daemons cannot mount this local bundle')
+    require_local_docker()
+    if options.get('flows'):
+        flow_support().require_linux(output)
+        flow_support().guard_project(bundle, manifest, compose_environment(repo), check_ports=action=='start')
     base = ['docker','compose','-p',options['project'],'--env-file',str(bundle/'compose.env'),
             '-f',str(repo/'deploy/convergence/docker-compose.yml'),'-f',str(bundle/'compose.override.json')]
     actions = {'validate':['config','--quiet'], 'start':['up','-d','--build','--wait','--wait-timeout','120',
-        'postgres','prometheus','alertmanager','blackbox','convergence-api']+(['grafana'] if options.get('grafana') else []),
+        'postgres','prometheus','alertmanager','blackbox','convergence-api']+(['grafana'] if options.get('grafana') else [])
+        +(['flow-archive','flow-collector','flow-shipper'] if options.get('flows') else []),
         'stop':['stop'], 'status':['ps']}
     result = subprocess.run(base+actions[action], env=compose_environment(repo), stdin=subprocess.DEVNULL)
     if result.returncode:
@@ -332,6 +360,8 @@ def main():
     prep.add_argument('--edge-url', default='')
     for name, port in [('api', 3080), ('prometheus', 9090), ('alertmanager', 9093), ('blackbox', 9115), ('receiver', 8099)]:
         prep.add_argument('--'+name+'-port', type=int, default=port)
+    prep.add_argument('--flows', choices=('demo','host'), help='Opt-in Linux flow demo or explicit host-interface collection')
+    prep.add_argument('--flow-port', type=int, default=2055, help='Loopback UDP receiver port for optional flows')
     prep.add_argument('--grafana', action='store_true', help='Add a private installation health dashboard')
     prep.add_argument('--grafana-port', type=int, default=3300)
     execute = commands.add_parser('run', help='Operate the selected bundle with isolated Compose settings')

@@ -6,11 +6,13 @@ on:
       - 'workspace/skills/convergence-setup/**'
       - 'deploy/helm/**'
       - 'deploy/convergence/docker-compose.yml'
+      - 'deploy/convergence/flows/**'
       - 'ui/convergence-api/**'
       - 'scripts/write-env.py'
       - 'tests/unit/test_convergence_setup*'
+      - 'tests/convergence-home/**'
       - 'docs/convergence/**'
-      - 'ui/netclaw-visual/integration/convergence-flow.mjs'
+      - 'ui/netclaw-visual/integration/convergence-*.mjs'
       - 'ui/netclaw-visual/modules/convergence/**'
       - 'ui/netclaw-visual/package*.json'
       - '.github/workflows/convergence-onboarding.yml'
@@ -69,6 +71,11 @@ jobs:
           npm --prefix ui/convergence-api ci --no-audit --no-fund
           npm --prefix ui/netclaw-visual ci --no-audit --no-fund
           npm --prefix ui/netclaw-visual run test:convergence-flow
+          node ui/netclaw-visual/test/convergence-explorer.mjs
+      - name: Equipment-free demo and Linux host flow acceptance
+        run: |
+          "$RUNNER_TEMP/convergence-venv/bin/pip" install -r mcp-servers/convergence-case-mcp/requirements.txt
+          "$RUNNER_TEMP/convergence-venv/bin/python" tests/convergence-home/run-tests.py --evidence-dir "$RUNNER_TEMP/convergence-home-evidence"
       - name: Stop only the test project
         if: always()
         run: |

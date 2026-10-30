@@ -5,6 +5,11 @@ Alertmanager, blackbox exporter and Grafana. No router credentials, IDS sensor,
 NetClaw runtime or model subscription are needed. Allow several minutes for the
 first image download and build.
 
+To see retained traffic evidence without network equipment, use the optional
+[Linux home-lab flow demonstration](home-lab.md). It adds the flow archive, collector
+and shipper, and labels its generated observations as synthetic. The core-only
+commands below deliberately leave network feeds unconfigured.
+
 ## Before you begin
 
 Use Linux containers and a **local** Docker daemon:
