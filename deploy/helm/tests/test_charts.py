@@ -150,3 +150,21 @@ def test_complete_registrar_flow_is_idempotent_and_preserves_shared_grafana(monk
     sources=yaml.safe_load(fake.maps['grafana-datasources']['data']['datasources.yml'])['datasources']
     assert len(sources)==3 and sources[0]==original
     assert fake.maps['grafana-dashboards']['data']['original.json']=='{"uid":"original"}'
+
+
+def test_argocd_profile_uses_pullable_images_and_has_no_shared_namespace_writes():
+    objects=render('convergence','convergence','netclaw-convergence',
+                   '-f',str(CHART/'profiles/convergence-home-live.yaml'),
+                   '-f',str(CHART/'profiles/convergence-home-argocd.yaml'))
+    assert not any(d['kind'] in ('Secret','PersistentVolumeClaim') for d in objects)
+    assert not any(d['metadata'].get('namespace','netclaw-convergence') != 'netclaw-convergence' for d in objects)
+    assert all(d['metadata'].get('annotations',{}).get('helm.sh/hook') in (None,'test') for d in objects)
+    assert not any('grafana-registrar' in d['metadata']['name'] for d in objects)
+    assert any(d['metadata']['name']=='convergence-grafana-bundle' for d in objects)
+    for component in ('api','ids'):
+        pod=next(d['spec']['template']['spec'] for d in objects if d['kind']=='Deployment' and d['metadata']['name']=='convergence-'+component)
+        assert pod['imagePullSecrets']==[{'name':'ghcr-pull'}]
+        assert pod['containers'][0]['image'].startswith('ghcr.io/byrn-baker/')
+        assert '@sha256:' in pod['containers'][0]['image']
+    cron=next(d for d in objects if d['kind']=='CronJob')
+    assert cron['spec']['jobTemplate']['spec']['template']['spec']['imagePullSecrets']==[{'name':'ghcr-pull'}]

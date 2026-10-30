@@ -1,3 +1,6 @@
+{{- if not (has (.Values.sharedGrafana.registrationMode | default "helm") (list "helm" "external")) }}
+{{- fail "sharedGrafana.registrationMode must be helm or external" }}
+{{- end }}
 {{- if .Values.sharedGrafana.enabled }}
 {{- $uid := include "victoria-stack.uid" . }}
 {{- $project := printf "%s/%s" .Release.Namespace .Release.Name }}
@@ -25,6 +28,7 @@ data:
   {{ $filename }}: |
     {{- $dashboard | toJson | nindent 4 }}
   {{- end }}
+{{- if eq (.Values.sharedGrafana.registrationMode | default "helm") "helm" }}
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -118,4 +122,5 @@ spec:
           resources: {requests: {cpu: 20m, memory: 64Mi}, limits: {cpu: 200m, memory: 256Mi}}
           volumeMounts: [{name: scripts, mountPath: /scripts, readOnly: true}]
       volumes: [{name: scripts, configMap: {name: '{{ .Release.Name }}-grafana-registrar'}}]
+{{- end }}
 {{- end }}

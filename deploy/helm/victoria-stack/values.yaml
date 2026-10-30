@@ -68,6 +68,8 @@ collector:
     limits: {cpu: '1', memory: 512Mi}
 sharedGrafana:
   enabled: false
+  # external emits the bundle only; shared provisioning has its own GitOps owner.
+  registrationMode: helm
   namespace: observability
   deployment: grafana
   datasourceConfigMap: grafana-datasources

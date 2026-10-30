@@ -1,5 +1,6 @@
 victoria: {}
 nodeSelector: {}
+imagePullSecrets: []
 existingSecret: ''
 queryAccess:
   enabled: false

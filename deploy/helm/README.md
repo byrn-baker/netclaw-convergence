@@ -32,6 +32,26 @@ flowchart LR
   G --> L
 ```
 
+## Home GitOps ownership
+
+The home release is being adopted by Argo CD using the live profile followed by
+`profiles/convergence-home-argocd.yaml`. After adoption, change these files through
+Git; do not run `helm upgrade`, `helm rollback`, or `helm uninstall` against the
+home release. The retained Helm history is recovery evidence, not an active
+reconciler. Argo starts with manual synchronization and no pruning.
+
+The Argo overlay pins privately published API/IDS images by digest and references
+an externally provisioned `ghcr-pull` Secret. Application credentials, TLS keys,
+and existing PVCs also remain outside Git. Upstream dependency archives are
+vendored so Argo can build the local umbrella chart from a clean checkout.
+
+`sharedGrafana.registrationMode: external` emits a Grafana bundle without the
+registrar hook or cross-namespace RBAC. Shared Grafana configuration is owned by
+the observability GitOps application. For new stacks sharing that Grafana, use
+external mode and merge the rendered bundle into the observability configuration
+in Git before syncing it. The default Helm registration mode is for Grafana
+instances that are not already managed by GitOps.
+
 ## Included services
 
 | Reusable `victoria-stack` | Additional `convergence` services |

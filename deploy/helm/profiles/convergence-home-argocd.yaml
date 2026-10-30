@@ -1,0 +1,14 @@
+# Overlay on convergence-home-live.yaml for the Argo-owned release.
+imagePullSecrets:
+- name: ghcr-pull
+api:
+  image:
+    repository: ghcr.io/byrn-baker/netclaw-convergence-api
+    tag: 6aced782@sha256:7a4410eb682433007e2e1e26c40318c11833906743351e19e1fe3e2f4267b51c
+ids:
+  image:
+    repository: ghcr.io/byrn-baker/netclaw-ids-ingest
+    tag: 20261030-prune2@sha256:3599e07f79d9bddff274d8c8a459abc679ecb4086668e850e551e34aeab4d13b
+victoria:
+  sharedGrafana:
+    registrationMode: external

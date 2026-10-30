@@ -31,6 +31,9 @@ spec:
         checksum/config: {{ include (print $.Template.BasePath "/config.yaml") . | sha256sum }}
     spec:
       automountServiceAccountToken: false
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets: {{ toYaml . | nindent 8 }}
+      {{- end }}
       {{- with (.Values.api.nodeSelector | default .Values.nodeSelector) }}
       nodeSelector: {{ toYaml . | nindent 8 }}
       {{- end }}
