@@ -42,6 +42,10 @@ install a background process or imply authority to merge or deploy.
 - FR-007: Runtime setup stays in `convergence-setup`; this workflow introduces no
   MCP server, runtime skill, model provider, dependency or deployment change.
 
+- FR-008: Review-only requests inspect, check and report within permitted scope.
+  They do not implement fixes or change task completion. They write review
+  evidence only when a written review artifact is authorized.
+
 ## Success criteria
 
 A fresh coding session can select the workflow, delegate a scoped task, use the

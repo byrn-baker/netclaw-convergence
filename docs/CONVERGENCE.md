@@ -99,6 +99,7 @@ installation dashboard deliberately shows core health only.
 - [Alert investigation controls](CONVERGENCE-ALERT-SAFETY.md)
 - [Optional JEV reviews](runbooks/convergence-jev.md)
 - [Upstream contribution scope](UPSTREAM-CONTRIBUTION.md)
+- [Develop with sub-agents and bounded iteration](convergence/development.md)
 - [Original project, attribution and licensing](convergence/provenance.md)
 - [Spec Kit specification and acceptance evidence](../specs/1009-convergence-onboarding/spec.md)
 
