@@ -65,6 +65,25 @@ async def mcp_check(bundle, mode):
         assert evidence['start'] == summary['start'] and evidence['end'] == summary['end']
 
 
+def reject_foreign_bundle(bundle, options):
+    """A second private bundle must never adopt this running project's resources."""
+    other = bundle.parent/'conflicting-bundle'
+    changed = {**options,'flows':'host' if options['flows']=='demo' else 'demo','site':'different'}
+    setup.prepare(ROOT, other, changed)
+    actions = [lambda:setup.run_compose(ROOT,other,'start')]
+    if changed['flows']=='demo':
+        actions.append(lambda:flows.demo(ROOT,other))
+    else:
+        actions.append(lambda:flows.collector_ready(ROOT,other,changed))
+    for action in actions:
+        try:
+            action()
+        except ValueError as error:
+            assert 'another bundle' in str(error), str(error)
+        else:
+            raise AssertionError('A foreign bundle was allowed to reuse the test project')
+
+
 def qualify(mode, evidence_dir):
     project = 'convergence-home-test-' + uuid.uuid4().hex[:12]
     with tempfile.TemporaryDirectory(prefix='convergence home ') as parent:
@@ -85,6 +104,7 @@ def qualify(mode, evidence_dir):
         try:
             setup.run_compose(ROOT, bundle, 'validate')
             setup.run_compose(ROOT, bundle, 'start')
+            reject_foreign_bundle(bundle, options)
             if mode == 'demo':
                 result = flows.demo(ROOT, bundle)
                 assert result['passed'], result

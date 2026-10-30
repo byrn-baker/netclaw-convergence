@@ -63,3 +63,10 @@ The public qualification guide reports actual initial fixture resource snapshots
 with exclusions. Final owned-bundle acceptance and hosted results are pending;
 this publication is a review draft until those gates pass. No release tag, live
 service deployment or physical capture is performed.
+
+T004 attempt3: fresh owned demo and host bundles both PASS through export,
+collection, retained API/MCP/HUD evidence, and stop/start persistence. The final
+cycle additionally runs the cross-bundle collision case against actual Docker
+resources before sending fixture traffic; its repeat and hosted checks are tracked
+in fork PR #5. T006 independent re-review PASS: no remaining blockers. Publication
+is the fork review PR; merge requires all final-head hosted checks.
