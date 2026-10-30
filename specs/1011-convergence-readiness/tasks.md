@@ -1,0 +1,9 @@
+# Tasks: contribution readiness
+
+- [x] T001 Record baseline, numbered scope, plan and ownership.
+- [ ] T002 Compare upstream capabilities and revise proposal 161 for one first integration.
+- [ ] T003 Reproduce and repair inherited spec-artifact failures with honest historical records.
+- [ ] T004 Reproduce and repair dependency/fixture/unit-runner CI failures.
+- [ ] T005 Exercise observation-to-evidence integration and record actual coverage.
+- [ ] T006 Qualify available Mac/WSL hosts or record exact external prerequisite.
+- [ ] T007 Independently review, validate and publish readiness work/proposal revision.
