@@ -1,3 +1,8 @@
+---
+name: golden-config-bootstrap
+description: "Guide setup of Nautobot Golden Config, compliance features and intended configuration templates. Use when bootstrapping Golden Config."
+---
+
 # SKILL: Golden Config Bootstrap
 
 ## Purpose

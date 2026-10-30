@@ -19,7 +19,7 @@
 
 ## US4 — Upstream proposal
 - [x] T010 [US4] Prepare a clean upstream scope/spec draft with contribution inventory and explicit release gates.
-- [ ] T011 [US4] Run artifact/security/link/installation checks and open the authorized draft PR for maintainer feedback.
+- [x] T011 [US4] Run artifact/security/link/installation checks and open the authorized draft PR for maintainer feedback.
 - [x] T012 [US4] Record actual platform qualification and remaining upstream implementation/acceptance gates.
 
 Dependencies: T002 precedes T003/T004, then T005. T006 precedes T007. Documentation

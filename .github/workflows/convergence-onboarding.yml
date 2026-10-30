@@ -88,6 +88,7 @@ jobs:
           echo "$RUNNER_TEMP/convergence-tools" >> "$GITHUB_PATH"
       - name: Chart contracts
         run: |
+          helm repo add victoria-metrics https://victoriametrics.github.io/helm-charts/
           helm dependency build deploy/helm/victoria-stack
           helm dependency build deploy/helm/convergence
           python3 -m venv "$RUNNER_TEMP/convergence-venv"

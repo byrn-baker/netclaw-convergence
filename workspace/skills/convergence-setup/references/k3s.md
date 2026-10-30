@@ -16,7 +16,8 @@ The guide includes image delivery alternatives, storage explanations and access.
    node, use k3d image import for k3d, or push to an authorized registry. Verify CPU
    architecture and pull credentials. A host Docker image is not automatically in
    the cluster's containerd store.
-4. Build both Helm dependency layers. Prepare the private bundle using
+4. Register the Victoria chart repository as shown in the guide, then build both
+   Helm dependency layers. Prepare the private bundle using
    `scripts/k3s.py --repo "$repo" prepare` with every required target option.
    Standalone Grafana is enabled for a fresh release; use `--no-grafana` when
    reusing shared Grafana. Review non-secret values and resource requests.

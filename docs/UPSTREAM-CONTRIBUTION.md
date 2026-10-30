@@ -60,3 +60,5 @@ firewall activity is useful evidence; it does not establish IDS capability.
 ## Portable onboarding follow-up, 30 October 2026
 
 [Spec 1009](../specs/1009-convergence-onboarding/spec.md) improves the fork installation paths and documentation. See the [qualification matrix](convergence/verification.md) for actual Docker/K3s, persistence, recovery and browser evidence. The clean upstream proposal uses spec 161 and does not include the fork history or implementation. Maintainer scope agreement and a focused port remain required. The author confirmed the API predecessor was his own code; the API now carries its declared MIT notice and attribution. Chart/dashboard provenance and platform qualification must still be reviewed for each implementation slice.
+
+The [upstream design draft is #309](https://github.com/automateyournetwork/netclaw/pull/309); the [fork onboarding implementation is #2](https://github.com/byrn-baker/netclaw-convergence/pull/2). Both remain drafts.

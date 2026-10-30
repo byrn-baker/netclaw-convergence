@@ -15,6 +15,7 @@ project unless that is intentional. The Convergence fresh-install helper enables
 a private Grafana explicitly and supports `--no-grafana`.
 
 ```bash
+helm repo add victoria-metrics https://victoriametrics.github.io/helm-charts/
 helm dependency build deploy/helm/victoria-stack
 helm dependency build deploy/helm/convergence
 ```

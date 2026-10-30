@@ -99,6 +99,7 @@ not a replacement for a backup policy.
 Run from the checkout root, retaining the variables from above:
 
 ```bash
+helm repo add victoria-metrics https://victoriametrics.github.io/helm-charts/
 helm dependency build deploy/helm/victoria-stack
 helm dependency build deploy/helm/convergence
 python3 workspace/skills/convergence-setup/scripts/k3s.py prepare \

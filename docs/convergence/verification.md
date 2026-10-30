@@ -28,6 +28,9 @@ site. No existing production cluster, sensor, gateway or runtime was changed.
 - **Docker fresh install passed** with alternate ports/site, a private bundle path
   containing spaces and deliberately conflicting exported `PGPASSWORD`, `API_KEYS`
   and `COMPOSE_PROFILES`. Only the six selected trial services started.
+- A second core-only Docker project also passed from a clean detached checkout whose
+  path contained spaces, with a separate site/network/volumes while the first
+  project remained running.
 - **K3s fresh install passed** using a source-built image, non-default namespace,
   release and site, all eight PVCs on local-path, and no existing Grafana.
 - Both paths passed authenticated case access, unauthenticated/wrong-site rejection,
