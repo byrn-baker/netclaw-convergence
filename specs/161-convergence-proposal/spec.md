@@ -1,7 +1,7 @@
 # Feature Specification: Read-only Convergence flow evidence in NetClaw
 
 **Feature Branch:** `161-convergence-proposal` · **Created:** 2026-10-30
-**Status:** Proposed scope for maintainer review; this PR contains no implementation.
+**Status:** Scope accepted and proposal PR #309 merged upstream on 2026-10-30 at `4d791a36`. This specification contains no implementation. The accessible-onboarding amendment is follow-up planning for the implementation PR.
 
 ## Recommendation and decision requested
 
@@ -16,6 +16,21 @@ with the ownership and acceptance criteria below, belong in NetClaw?
 The broader Convergence roadmap is context, not part of this scope request. A later
 implementation PR must qualify this integration against upstream; the existing fork
 is not proposed for wholesale merge.
+
+## Accessible first installation
+
+The approved first implementation must be demonstrable on one Linux computer with
+Docker, without Cisco equipment, Proxmox, Kubernetes, router changes or a model
+subscription. The separately maintained Convergence service supplies an isolated,
+clearly labeled traffic demonstration and a qualified Linux software-exporter path.
+NetClaw uses the same two tools for these sources; no collector is imported upstream.
+
+Distinguish synthetic demonstration, traffic observed on a selected host interface,
+and router/sensor observation. Host visibility is not whole-home coverage; flow
+metadata does not qualify packet IDS. Optional sources not configured are distinct
+from configured sources that fail. The integration must preserve source coverage
+through the summary, evidence and display. Initial qualification remains Linux;
+macOS/Windows follow later, and no unexecuted platform is labeled supported.
 
 ## Problem and distinct value
 
@@ -125,6 +140,11 @@ one synthetic retained flow observation and its same-window records, then upgrad
 and disable it without altering the external stack. Negative access and unavailable-
 source cases pass automated tests; real browser interaction proves the stated
 behavior. Historical fork installation tests are feasibility evidence only.
+
+The implementation acceptance includes the equipment-free demonstration and one
+real Linux software-exporter-to-retained-evidence run, plus measured resource use
+for the tested small deployment. External setup instructions select a source by
+available capabilities rather than assuming an enterprise switch or hypervisor.
 
 ## Explicit exclusions
 
