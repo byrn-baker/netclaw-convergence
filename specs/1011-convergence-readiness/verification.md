@@ -94,3 +94,9 @@ maintained main rather than the already-merged onboarding review branch.
 - Proposal review found two semantic ambiguities, both resolved and re-reviewed:
   address records can run in either direction, and receipt age is not collector
   health. Upstream PR #309 is now ready for scope review at `f9fc1ffe`.
+
+- HUD unit suite: 392 tests PASS; API flow/reliability regressions: 11 tests PASS.
+- Verified `git cat-file -e HEAD:mcp-servers/convergence-case-mcp/requirements.txt`
+  after the implementation commit; the required manifest is in the published tree.
+- All local work is complete for this maintenance slice. Hosted CI for the new PR
+  is tracked separately; local passes are not a claim that its pending jobs passed.

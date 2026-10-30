@@ -6,6 +6,6 @@
 - [x] T004 Reproduce and repair dependency/fixture/unit-runner CI failures.
 - [x] T005 Exercise observation-to-evidence integration and record actual coverage.
 - [x] T006 Qualify available Mac/WSL hosts or record exact external prerequisite.
-- [ ] T007 Independently review, validate and publish readiness work/proposal revision.
+- [x] T007 Independently review, validate and publish readiness work/proposal revision.
 
 External qualification gates: actual macOS host unavailable; Windows/WSL2 awaits an accessible dedicated VM. Recording these prerequisites is not a platform pass.
