@@ -3,6 +3,7 @@ import json
 import os
 from pathlib import Path
 import subprocess
+import sys
 import pytest
 import yaml
 
@@ -66,7 +67,7 @@ def test_chart_rejects_missing_application_credentials():
 
 
 def test_live_profile_moves_storage_and_collection_without_embedding_secrets():
-    subprocess.run(['python3',str(CHART/'scripts/build-live-profile.py'),'--check'],check=True,capture_output=True)
+    subprocess.run([sys.executable,str(CHART/'scripts/build-live-profile.py'),'--check'],check=True,capture_output=True)
     objects=render('convergence','convergence','netclaw-convergence','-f',str(CHART/'profiles/convergence-home-live.yaml'))
     assert not any(d['kind']=='Secret' for d in objects)
     config=next(d for d in objects if d['kind']=='ConfigMap' and d['metadata']['name']=='convergence-victoria-config')
@@ -119,7 +120,7 @@ def test_dashboard_copies_use_project_uids_without_mutating_existing_boards():
 
 
 def test_canonical_assets_have_not_drifted():
-    subprocess.run(['python3',str(CHART/'scripts/sync-assets.py'),'--check'],check=True,capture_output=True)
+    subprocess.run([sys.executable,str(CHART/'scripts/sync-assets.py'),'--check'],check=True,capture_output=True)
 
 
 def test_complete_registrar_flow_is_idempotent_and_preserves_shared_grafana(monkeypatch):

@@ -72,3 +72,5 @@ focused catalog/testbed tests pass. Historical spec findings remain unwaived.
 Review links: [fork implementation #2](https://github.com/byrn-baker/netclaw-convergence/pull/2)
 and [upstream scope proposal #309](https://github.com/automateyournetwork/netclaw/pull/309).
 Neither PR is a live deployment or a full upstream implementation release.
+
+The isolated hosted chart tests also caught subprocesses using system `python3` instead of the test virtualenv, losing PyYAML. Updated those existing test helper calls to `sys.executable`; end-user setup remains stdlib-only.
