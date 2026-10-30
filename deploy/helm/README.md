@@ -52,6 +52,22 @@ external mode and merge the rendered bundle into the observability configuration
 in Git before syncing it. The default Helm registration mode is for Grafana
 instances that are not already managed by GitOps.
 
+To merge a rendered release into the shared home Grafana configuration:
+
+```sh
+python3 deploy/helm/scripts/merge-grafana-gitops.py \
+  --rendered /tmp/project-rendered.yaml --namespace victoria-my-purpose --release my-purpose \
+  --datasources /home/ubuntu/k3s-observability-stack/gitops/home/observability/configmap-grafana-datasources.yaml \
+  --dashboards /home/ubuntu/k3s-observability-stack/gitops/home/observability/configmap-grafana-dashboards.yaml \
+  --deployment /home/ubuntu/k3s-observability-stack/gitops/home/observability/deployment-grafana.yaml
+```
+
+This changes local files only. Review and commit them to the cluster repository.
+It preserves existing defaults and project UIDs, rejects collisions, and changes
+a provisioning checksum only when needed so Argo restarts Grafana to reload data
+sources. Render new shared home stacks with
+`--set sharedGrafana.registrationMode=external`.
+
 ## Included services
 
 | Reusable `victoria-stack` | Additional `convergence` services |

@@ -168,3 +168,19 @@ def test_argocd_profile_uses_pullable_images_and_has_no_shared_namespace_writes(
         assert '@sha256:' in pod['containers'][0]['image']
     cron=next(d for d in objects if d['kind']=='CronJob')
     assert cron['spec']['jobTemplate']['spec']['template']['spec']['imagePullSecrets']==[{'name':'ghcr-pull'}]
+
+
+def test_offline_grafana_merge_preserves_existing_projects_and_is_idempotent():
+    spec=importlib.util.spec_from_file_location('gitops_merge',CHART/'scripts/merge-grafana-gitops.py')
+    module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+    objects=render('victoria-stack','alpha','project-a','--set','sharedGrafana.enabled=true','--set','sharedGrafana.registrationMode=external')
+    existing={'uid':'existing','name':'Existing','isDefault':True,'url':'http://existing'}
+    sources={'data':{'datasources.yml':yaml.safe_dump({'apiVersion':1,'datasources':[existing]})}}
+    boards={'data':{'existing.json':'{"uid":"existing"}'}}
+    module.merge(objects,'project-a','alpha',sources,boards)
+    before=json.dumps([sources,boards],sort_keys=True)
+    module.merge(objects,'project-a','alpha',sources,boards)
+    assert json.dumps([sources,boards],sort_keys=True)==before
+    assert yaml.safe_load(sources['data']['datasources.yml'])['datasources'][0]==existing
+    assert boards['data']['existing.json']=='{"uid":"existing"}'
+    with pytest.raises(ValueError):module.merge(objects,'wrong-namespace','alpha',sources,boards)
