@@ -10,6 +10,8 @@ logs:
     persistentVolume: {storageClassName: longhorn, size: 30Gi}
 sharedGrafana:
   enabled: true
+  # Shared home Grafana is owned by the observability Argo application.
+  registrationMode: external
   namespace: observability
   deployment: grafana
   datasourceConfigMap: grafana-datasources

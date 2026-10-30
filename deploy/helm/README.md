@@ -98,12 +98,21 @@ helm upgrade --install my-purpose deploy/helm/victoria-stack \
   --namespace victoria-my-purpose --create-namespace \
   -f deploy/helm/profiles/example-project.yaml --wait --timeout 10m
 helm test my-purpose --namespace victoria-my-purpose --logs
+helm template my-purpose deploy/helm/victoria-stack -n victoria-my-purpose \
+  -f deploy/helm/profiles/example-project.yaml > /tmp/project-rendered.yaml
 ```
 
-This creates a fresh stack and adds `victoria-my-purpose/my-purpose / Metrics`
-and `/ Logs` to the existing Grafana. Change retention, sizes and scrape jobs in
-that purpose's values file. The same chart can be installed again under a
-different release/namespace; it has no Convergence dependency or home IPs.
+This creates a fresh stack and renders its Grafana bundle. Run the offline merge
+command above and commit the shared observability changes to register
+`victoria-my-purpose/my-purpose / Metrics` and `/ Logs` in the existing Grafana.
+The example uses external registration because home Grafana is Argo-owned.
+Change retention, sizes and scrape jobs in that purpose's values file. The chart
+can be installed again under a different release/namespace without Convergence.
+
+For ongoing Argo ownership, add a separate AppProject and Application using this
+chart path, release name, namespace and purpose's values file. Start with manual
+sync, review the diff and storage, then enable self-healing with pruning disabled.
+Once adopted, make subsequent changes through Git rather than Helm CLI upgrades.
 
 Internal endpoints for a release named `my-purpose`:
 
