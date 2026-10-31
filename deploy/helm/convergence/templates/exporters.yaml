@@ -25,6 +25,10 @@ spec:
   template:
     metadata:
       labels: {app.kubernetes.io/instance: {{ $root.Release.Name }}, app.kubernetes.io/component: {{ $component }}}
+      {{- if eq $component "blackbox" }}
+      annotations:
+        checksum/config: {{ toJson $cfg.config | sha256sum }}
+      {{- end }}
     spec:
       automountServiceAccountToken: false
       {{- with $root.Values.nodeSelector }}

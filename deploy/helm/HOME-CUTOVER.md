@@ -166,3 +166,17 @@ limits. A rejected attempt reports `speedtest_up=0`; current throughput can be a
 Historical successful samples remain in metrics storage. Preserving old values in
 the live Pushgateway requires corresponding stale-result handling in consumers and
 is not part of this scheduling repair. Do not retry rapidly or bypass provider limits.
+
+## Probe configuration reloads
+
+The blackbox exporter reads its modules at startup. Updating the mounted ConfigMap
+alone does not reload the running process. The chart hashes only the blackbox
+configuration into its pod template so Argo rolls that exporter when modules change.
+A successful exporter scrape (`up=1`) is separate from a successful target probe
+(`probe_success=1`). The pfSense device tile follows the target probe.
+
+On 2026-10-31 the mounted configuration included the existing private-certificate
+probe policy, but the process still held its original defaults and rejected the
+firewall certificate's missing IP SAN. Reloading the already-declared configuration
+restored HTTP200 and probe success. Firewall configuration and certificate were not
+changed. The configuration hash prevents that stale-process mismatch on later syncs.
