@@ -13,7 +13,7 @@ metadata:
   name: {{ .Release.Name }}-speedtest
   labels: {{ include "convergence.labels" . | nindent 4 }}
 spec:
-  replicas: 1
+  replicas: {{ .Values.speedtest.replicas }}
   strategy: {type: Recreate}
   selector:
     matchLabels: {app.kubernetes.io/instance: {{ .Release.Name }}, app.kubernetes.io/component: speedtest}

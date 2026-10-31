@@ -57,6 +57,7 @@ pushgateway:
   image: prom/pushgateway:v1.10.0
 speedtest:
   enabled: false
+  replicas: 1
   image: python:3.12-slim
   site: home
   intervalSeconds: 3600

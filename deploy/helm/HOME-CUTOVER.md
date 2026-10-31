@@ -11,7 +11,8 @@ it federates Docker metrics and suppresses alert delivery and must not replace l
 |---|---|
 | Metrics, VictoriaLogs, Loki, PostgreSQL cases | K3s, `netclaw-convergence` |
 | IDS ingest database, delivery checkpoints, IPinfo update | K3s, `convergence-ids` and `convergence-ip-context` |
-| SNMP, probes, UniFi, speed tests, rules and Alertmanager | K3s, Argo-managed project chart |
+| SNMP, probes, UniFi, rules and Alertmanager | K3s, Argo-managed project chart |
+| WAN speed test | One hourly `observability/speedtest` CronJob; both metrics stacks scrape its shared Pushgateway |
 | GoFlow2 capture | Existing `observability` namespace |
 | Flow log forwarding | Project DaemonSet; retains original host-file checkpoints |
 | Shared Grafana | Existing `observability/grafana` |
@@ -150,3 +151,18 @@ volumes and the archived IDS state directory. Measured recovery was
 43.6 GiB free (69% used). Only the two project forwarding
 containers remain. Cold archives and their checksums are retained on the backup
 PVC; the temporary SSH/migration service is removed after final verification.
+
+## WAN speed-test ownership
+
+The home deployment runs one auto-nearest Ookla test per hour through the existing
+`observability/speedtest` CronJob. Its GitOps server list contains only auto-nearest.
+Convergence scrapes that series from `pushgateway.observability.svc.cluster.local:9091`,
+retaining its server/provider labels. Its own speed-test Deployment stays managed at
+zero replicas because Argo pruning is disabled. Other project installations retain
+the opt-in standalone runner with one replica.
+
+The former two runners attempted four tests per hour and received provider rate
+limits. A rejected attempt reports `speedtest_up=0`; current throughput can be absent.
+Historical successful samples remain in metrics storage. Preserving old values in
+the live Pushgateway requires corresponding stale-result handling in consumers and
+is not part of this scheduling repair. Do not retry rapidly or bypass provider limits.

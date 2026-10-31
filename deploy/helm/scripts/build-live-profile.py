@@ -27,7 +27,9 @@ profile['ids'] = {'enabled': True, 'existingSecret': 'convergence-ids-secrets',
     'service': {'type': 'NodePort', 'nodePort': 30445}}
 profile['unifi'] = {'enabled': True, 'controllerUrl': 'https://192.168.100.10:11443'}
 profile['blackbox'] = {'config': load('deploy/convergence/blackbox/blackbox.yml')}
-profile['speedtest'] = {'enabled': True}
+# One hourly WAN test is owned by observability; both stacks consume its results.
+# Keep the managed Deployment at zero because Argo pruning is disabled.
+profile['speedtest'] = {'enabled': True, 'replicas': 0}
 spec = importlib.util.spec_from_file_location('flow_renderer', root/'deploy/convergence/flows/render-collector.py')
 flow_renderer = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(flow_renderer)
@@ -69,7 +71,13 @@ for job in load('deploy/convergence/prometheus/prometheus.yml')['scrape_configs'
                 ('otel-collector:8888','{{ .Release.Name }}-collector:8888'),
                 ('promtail:9080','192.168.3.252:9080')]:
         text = text.replace(a,b)
-    scrapes.append(json.loads(text))
+    scrape = json.loads(text)
+    if job['job_name'] == 'pushgateway':
+        scrape['static_configs'] = [{'targets': ['pushgateway.observability.svc.cluster.local:9091'],
+                                     'labels': {'site': 'home'}}]
+        scrape['metric_relabel_configs'] = [{'source_labels': ['__name__', 'server'],
+            'regex': 'speedtest_.*;auto-nearest', 'action': 'keep'}]
+    scrapes.append(scrape)
 victoria['agent']['extraScrapeConfigs'] = scrapes
 am = load('deploy/convergence/alertmanager/alertmanager.yml')
 am['receivers'][0]['webhook_configs'][0]['url'] = 'http://192.168.3.252:8099/webhook'

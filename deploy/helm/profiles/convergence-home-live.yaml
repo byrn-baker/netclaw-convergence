@@ -677,9 +677,15 @@ victoria:
       honor_labels: true
       static_configs:
       - targets:
-        - '{{ .Release.Name }}-pushgateway:9091'
+        - pushgateway.observability.svc.cluster.local:9091
         labels:
           site: home
+      metric_relabel_configs:
+      - source_labels:
+        - __name__
+        - server
+        regex: speedtest_.*;auto-nearest
+        action: keep
     - job_name: netclaw-openclaw
       scrape_interval: 30s
       metrics_path: /metrics
@@ -1199,6 +1205,7 @@ blackbox:
           preferred_ip_protocol: ip4
 speedtest:
   enabled: true
+  replicas: 0
 flowLogs:
   enabled: true
   config:
