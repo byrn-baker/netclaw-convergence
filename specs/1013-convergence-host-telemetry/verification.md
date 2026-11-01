@@ -90,3 +90,20 @@ to preserve unrelated deployed route behavior/dependencies. HUD baseline regular
 tracked files were compared before staging the build; unrelated worktrees remain
 intact. This scoped operator-view follow-up remains within the draft telemetry
 capability and makes no platform release or trusted-detection claim.
+
+Post-deployment operator-view acceptance: PASS. Argo applied the immutable API
+overlay; the existing IDS image was unchanged. A short-lived, site-scoped viewer
+test received 200 for its authorized site, 403 for another site and 401 without
+authentication. The actual Security response carried only the display allowlist;
+operator credentials and private tenant/allocation/mapping bindings were absent.
+The existing HUD proxy returned the same enrolled VM status.
+
+Real Chromium verification of the default HUD opened Convergence -> Security,
+observed the enrolled VM reporting, displayed observation/contact times, zero
+queue/drop counts and finite expiry, exercised Refresh, and recorded no page
+errors. The standalone and installed-dashboard variants passed synthetic DOM
+coverage. Source files and the built HUD were staged with baseline hashes and
+retained rollback artifacts; unrelated source work was not reset. Live identities,
+screenshots, credentials and operational backups remain private with the operator.
+This completes T005-T007 for heartbeat visibility; trusted detection and customer
+rollout remain separate work.

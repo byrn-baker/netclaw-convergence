@@ -15,6 +15,13 @@ site and read time for review; it never sends a chat request automatically.
 Proxies to [convergence-api](../../../convergence-api/); the browser never talks
 to it directly, so its URL and token stay server-side.
 
+The Security view includes VM heartbeat health from the API's site-scoped
+`hostTelemetry` projection. It shows observation freshness, queue/drop health and
+enrollment expiry above the case explorer in both HUD modes. Guest-reported
+visibility is separate from IDS capture and host safety; missing, stale, expired
+or unavailable data is explicit. No tenant/allocation binding or status credential
+is passed to the browser.
+
 ## Enabling
 
 ```
@@ -45,6 +52,7 @@ HUD's lazy workspace shows configuration guidance when opened.
 | `server.js` | `/api/home/status` + the `/api/home/*` proxy |
 | `ui.js` | creates the tab button and container, mounts the view |
 | `HomeView.js` | the view — overview, wifi, devices, diary, triage, models subviews |
+| `HostHeartbeat.js` | display-only VM heartbeat card for the operator Security view |
 | `tab-router.js` | `COMMAND` \| `CONVERGENCE` switching |
 | `home.css` | module-owned stylesheet |
 | `DashboardView.jsx` | inline React lifecycle adapter, telemetry status and Canvas handoff |

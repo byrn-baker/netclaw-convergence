@@ -6,7 +6,7 @@
 - [x] T004 Independent verification and findings disposition.
 - [x] T005 Operator-only site-scoped host status in the Convergence Security API.
 - [x] T006 Heartbeat visibility in existing Convergence operator views.
-- [ ] T007 Independent privacy/rendering review, appropriate tests and live view verification.
+- [x] T007 Independent privacy/rendering review, appropriate tests and live view verification.
 
 The code-only milestone is complete. Separate follow-up: live inventory/bridge/
 firewall verification, trusted collection, disposable-VM deployment, resource and
