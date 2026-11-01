@@ -8,6 +8,8 @@ import threading
 import time
 from datetime import datetime, timezone
 
+import host_events
+
 
 def stamp(value):
     try:
@@ -128,6 +130,7 @@ class Store:
           CREATE INDEX IF NOT EXISTS eve_delivery_pending ON eve(sensor,received_ns)
             WHERE log_done=0 OR case_done=0 OR archive_done=0;
         ''')
+        host_events.initialize(self)
         self.db.commit()
 
     def enable_archive(self):
@@ -214,6 +217,12 @@ class Store:
                         (ts, packets, drops, delta, last_packet, errors, error_delta, packet_delta, canonical(counts), sensor['id']))
             return len(rows)
 
+    def accept_host(self, agent, payload, now=None):
+        return host_events.accept(self, agent, payload, now)
+
+    def host_status(self, configured, site, now=None):
+        return host_events.status(self, configured, site, now)
+
     def pending(self, target, limit=128):
         column = {'log': 'log_done', 'case': 'case_done', 'archive': 'archive_done'}[target]
         with self.lock:
@@ -259,7 +268,7 @@ class Store:
                     (SELECT value FROM metadata WHERE key='archive_backfill_end'))"""
             # Force a rowid range scan. The delivery indexes otherwise make
             # SQLite revisit millions of acknowledged, retained alerts.
-            self.db.execute("DELETE FROM eve NOT INDEXED WHERE rowid>? AND rowid<=? AND log_done=1 AND case_done=1"+archive_guard+" AND received_ns < ? AND (kind!='alert' OR received_ns < ?)",
+            self.db.execute("DELETE FROM eve NOT INDEXED WHERE rowid>? AND rowid<=? AND log_done=1 AND case_done=1"+archive_guard+" AND received_ns < ? AND ((kind!='alert' AND case_payload IS NULL) OR received_ns < ?)",
                             (cursor, end, int((now-86400)*1e9), int((now-30*86400)*1e9)))
             more = len(rows) == limit
             self.db.execute("INSERT OR REPLACE INTO metadata VALUES('prune_cursor',?)", (end if more else 0,))

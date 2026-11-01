@@ -146,6 +146,10 @@ Changes retain their review boundaries: Testbed saves do not connect devices, sa
 **`convergence-setup`** skill. From a fresh checkout, tell your coding agent:
 “Read `workspace/skills/convergence-setup/SKILL.md` and set up Convergence for my
 home network.” Start with [Convergence installation](docs/CONVERGENCE.md).
+
+The [rental VM telemetry prototype](docs/convergence/rental-vm-telemetry.md) adds
+synthetic-tested host ingestion and a lightweight heartbeat agent. It is not yet
+a deployed customer monitoring or automated containment system.
 K3s/Helm is the recommended persistent path; a smaller Docker trial provides a
 local starting point. Both include generated credentials and verification.
 

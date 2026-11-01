@@ -10,6 +10,7 @@
   "receiver_url": "http://127.0.0.1:8099/webhook",
   "receiver_token": "REPLACE_WITH_EXISTING_RECEIVER_TOKEN",
   "status_token_sha256": "REPLACE_WITH_SHA256_OF_A_SEPARATE_STATUS_TOKEN",
+  "host_agents": [],
   "sensors": [
     {
       "id": "site-ids-01",

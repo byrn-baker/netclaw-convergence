@@ -1,0 +1,65 @@
+# Verification
+
+Run host-prototype-20261101: start 2026-11-01T03:52:14.331230+00:00; deadline 2026-11-01T04:37:14.331230+00:00.
+Checkout /home/ubuntu/netclaw-convergence-host, branch1013-convergence-host-telemetry,
+base52ac80f0. New run scoped to user-provided code-only prototype.
+T001 attempt1/3; T002 attempt1/3; T003 pending; T004 pending.
+Before: host endpoint/agent absent; existing deployment and spec167 work untouched.
+Acceptance in spec.md/contract.md; fixture-only tests, no live/provider calls.
+
+Baseline existing IDS tests: 41 passed, 1 dependency failure (renderer test imports
+PyYAML, not in runtime requirements). Added PyYAML6.0.3 to the isolated test-suite
+dependencies, not production service dependencies. No assertions changed.
+T003 attempt1/3: documentation and contract-suite registration started.
+
+T001 attempt1: 95 tests passed (53 new, 42 existing); 1 dependency deprecation
+warning. T002 attempt1: 15 tests passed, Python compilation and systemd-analyze
+verify passed. No deployment or platform/resource qualification inferred.
+T003 TLS fixture PASS: real loopback HTTPS agent -> FastAPI/Uvicorn; unknown CA
+refused, spool retained, trusted CA accepted, duplicate retried without second row,
+synthetic host observation delivered to mocked log/archive/case ACK endpoints.
+T001 attempt2/3 (coordinator review): reject overlapping active VM allocations and
+reserve inbox capacity against guest saturation. Acceptance added before changes.
+Historical credential-hash ownership is included in T001 attempt2.
+T002 attempt2/3 (coordinator review): use a static non-root service account in the
+example to avoid DynamicUser StateDirectory symlinks conflicting with strict
+spool path checks; align persisted health counters with the wire integer bound.
+
+T001 attempt2: 112 ingest tests passed (70 new/42 existing). T002 attempt2:
+18 tests passed; compilation and unit syntax verification passed.
+T003 attempt1: owned contract runner PASS (11.87s), spec artifacts/reconciliation/
+catalog metadata PASS. Bootstrap venv was preserved privately before the runner
+created its own environment; initial --prepare refused the manually created venv
+as unowned rather than replacing it. No runtime or test checks bypassed.
+T004 attempt1/3: independent suite PASS but review FAIL. HIGH: legacy alert receiver
+normalizes valid server-bound sites such as Lab.One/House to home. MEDIUM: host
+auth samples receipt time before streaming body; expiry during upload still admits
+the request. Fixture reproduction returned 200/inserted1 after enrollment expiry.
+T001 attempt3/3 planned for receipt-time recheck after body completion; T003
+attempt2/3 planned for exact host-site preservation through case processing.
+
+T001 attempt3: completion-time auth recheck and streaming acceptance/expiry/
+revocation regressions; 115 ingest tests PASS. T003 attempt2: exact host site
+preserved through initial case processing, missing site fails closed, legacy
+Suricata alias behavior retained; 34 receiver tests PASS. Original independent
+site reproduction now records case_site=Lab.One/source_site=Lab.One.
+T004 attempt2/3: independent re-verification requested against stable fixed source.
+
+Final independent verification: PASS. Original expiry reproduction returns401 with
+zero stored rows; original site reproduction preserves Lab.One -> Lab.One. Missing
+host site fails closed; legacy Suricata aliases unchanged. Contract suite:134
+ingestion/agent/loopback-TLS tests +34 alert-receiver tests =168 passed. Spec
+artifacts and whitespace checks PASS. Dependency/framework deprecation warnings
+remain; assertions and legacy checks were not weakened.
+
+Executed final suite: `python3 scripts/run-contract-tests.py --suite convergence-host --json`.
+Private evidence: ~/.local/state/convergence-host-1013/review/final-contracts.json,
+final-expiry-probe.json and final-site-probe.json. Spec artifacts:167 directories,
+4 pre-existing exceptions. Catalog metadata:122 components/251 skills PASS;
+reconciliation catalog/dependencies/docs/meraki-ids/packages/portability PASS.
+
+Outcome: COMPLETE for the code-only milestone. T0013/3, T0022/3, T0032/3, T0042/3.
+No VM/cluster changes, customer enrollment, live external delivery, provider calls,
+capture policy or containment. No resource/platform or trusted-capture claims.
+Only ephemeral localhost TLS and mocked downstream endpoints exercised. No release
+version bump: this is a draft capability with live qualification still outstanding.

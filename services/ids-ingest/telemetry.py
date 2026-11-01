@@ -7,6 +7,15 @@ from datetime import datetime, timezone
 
 def archive_record(row):
     event = json.loads(row['payload'])
+    if row['kind'].startswith('host_'):
+        identity = event['identity']
+        return {'job': 'host-events', 'site': row['site'], 'sensor': row['sensor'],
+                'event_type': row['kind'], 'event_id': row['id'],
+                'tenant_id': identity['tenant_id'], 'allocation_id': identity['allocation_id'],
+                'vm_id': identity['vm_id'], 'mapping_version': identity['mapping_version'],
+                'evidence_trust': 'guest_reported', 'host_event': row['payload'],
+                '_time': datetime.fromtimestamp(row['observed'], timezone.utc).isoformat(),
+                '_msg': f"Guest-reported {event['event']['event_type']}"}
     # Keep the complete EVE JSON as a string: stats and arbitrary protocol fields
     # cannot exceed VictoriaLogs' flattened field limit. Index useful dimensions
     # separately; trusted sensor/site always come from the authenticated inbox.

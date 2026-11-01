@@ -10,6 +10,7 @@ import math
 import os
 from pathlib import Path
 import shutil
+import sqlite3
 import time
 
 from fastapi import FastAPI, Request
@@ -17,6 +18,7 @@ from fastapi.responses import JSONResponse, PlainTextResponse
 import httpx
 
 from store import Store
+import host_events
 from telemetry import archive_body, render_metrics
 from ip_context import IPContext
 
@@ -30,6 +32,10 @@ def create_app(config, store, client_factory=httpx.AsyncClient):
     hashes = [s['token_sha256'] for s in sensors] + [config['status_token_sha256']]
     if len(set(hashes)) != len(hashes) or any(len(h) != 64 for h in hashes):
         raise ValueError('Unique SHA-256 token hashes required')
+
+    agents = host_events.validate_agents(config.get('host_agents', []), hashes, [s['id'] for s in sensors])
+    host_events.configure_limits(store, config)
+    host_events.bind_enrollments(store, agents, hashes)
 
     if config.get('victorialogs_url'):
         store.enable_archive()
@@ -48,12 +54,13 @@ def create_app(config, store, client_factory=httpx.AsyncClient):
                     if target == 'log':
                         streams = {}
                         for row in rows:
-                            key = (row['site'], row['sensor'], row['kind'])
+                            key = (row['site'], row['sensor'], row['kind'],
+                                   'host-events' if row['kind'].startswith('host_') else 'ids-eve')
                             record = json.loads(row['payload'])
                             if row.get('ip_context'):
                                 record['netclaw_ip_context'] = json.loads(row['ip_context'])
                             streams.setdefault(key, []).append([str(row['received_ns']), json.dumps(record)])
-                        payload = {'streams': [{'stream': {'job': 'ids-eve', 'site': key[0],
+                        payload = {'streams': [{'stream': {'job': key[3], 'site': key[0],
                             'sensor': key[1], 'event_type': key[2]}, 'values': values}
                             for key, values in streams.items()]}
                         response = await client.post(config['loki_url'].rstrip('/')+'/loki/api/v1/push', json=payload)
@@ -71,17 +78,21 @@ def create_app(config, store, client_factory=httpx.AsyncClient):
                             raise RuntimeError('VictoriaLogs did not acknowledge complete batch')
                         store.acknowledge(target, [r['id'] for r in rows])
                     else:
-                        payload = {'version': '4', 'status': 'firing', 'receiver': 'suricata',
-                            'alerts': [alert for row in rows for alert in json.loads(row['case_payload'])['alerts']]}
-                        response = await client.post(config['receiver_url'],
-                            headers={'Authorization': 'Bearer '+config['receiver_token']}, json=payload)
-                        response.raise_for_status()
-                        ack = response.json()
-                        if ack.get('status') != 'accepted' or ack.get('alerts_received') != len(payload['alerts']):
-                            raise RuntimeError('Case receiver did not acknowledge the complete batch')
-                        # Partial receiver admission is safe to replay: its
-                        # fingerprint/start/status job keys are durable dedup.
-                        store.acknowledge(target, [row['id'] for row in rows])
+                        groups = {}
+                        for row in rows:
+                            receiver = json.loads(row['case_payload'])['receiver']
+                            groups.setdefault(receiver, []).append(row)
+                        for receiver, group in groups.items():
+                            payload = {'version': '4', 'status': 'firing', 'receiver': receiver,
+                                'alerts': [alert for row in group for alert in json.loads(row['case_payload'])['alerts']]}
+                            response = await client.post(config['receiver_url'],
+                                headers={'Authorization': 'Bearer '+config['receiver_token']}, json=payload)
+                            response.raise_for_status()
+                            ack = response.json()
+                            if ack.get('status') != 'accepted' or ack.get('alerts_received') != len(payload['alerts']):
+                                raise RuntimeError('Case receiver did not acknowledge the complete batch')
+                            # Partial admission is replayable via stable incident keys.
+                            store.acknowledge(target, [row['id'] for row in group])
                     backoff = 1
                     await asyncio.sleep(0.05)
                 except Exception as exc:
@@ -132,6 +143,51 @@ def create_app(config, store, client_factory=httpx.AsyncClient):
         if store.enricher:
             data['ipEnrichment'] = store.enricher.status()
         return data
+
+    @app.get('/v1/host-status')
+    async def host_status(request: Request, site: str):
+        if not hmac.compare_digest(token_hash(request), config['status_token_sha256']):
+            return JSONResponse({'error': 'Unauthorized'}, status_code=401)
+        return store.host_status(agents, site)
+
+    @app.post('/v1/host-events')
+    async def ingest_host(request: Request):
+        now = time.time()
+        supplied = token_hash(request)
+        agent = next((a for a in agents if hmac.compare_digest(supplied, a['token_sha256'])
+                      and host_events.enrollment_active(a, now)), None)
+        if agent is None:
+            return JSONResponse({'error': 'Unauthorized'}, status_code=401)
+        body = bytearray()
+        async for chunk in request.stream():
+            if len(body) + len(chunk) > host_events.BATCH_BYTES:
+                return JSONResponse({'error': 'Host batch exceeds 256 KiB'}, status_code=413)
+            body.extend(chunk)
+        # Authentication at stream start is not admission: a slow upload may
+        # outlive its allocation. Receipt time is when the complete body arrives.
+        now = time.time()
+        if not host_events.enrollment_active(agent, now):
+            return JSONResponse({'error': 'Unauthorized'}, status_code=401)
+        try:
+            payload = json.loads(body, object_pairs_hook=host_events.strict_object,
+                                 parse_constant=lambda _: (_ for _ in ()).throw(ValueError('Invalid number')))
+            host_events.validate_batch(payload, agent, now)
+            if shutil.disk_usage(config['state_dir']).free < 512*1024*1024:
+                raise OverflowError('Receiver disk reserve reached')
+            accepted = store.accept_host(agent, payload, now)
+        except host_events.EventConflict as exc:
+            return JSONResponse({'error': str(exc)}, status_code=409)
+        except (ValueError, TypeError, AttributeError, KeyError, RecursionError):
+            return JSONResponse({'error': 'Invalid host event batch'}, status_code=400)
+        except OverflowError:
+            return JSONResponse({'error': 'Backpressure; retain and retry batch'}, status_code=503)
+        except sqlite3.OperationalError as exc:
+            code = getattr(exc, 'sqlite_errorcode', 0) & 0xff
+            if code not in (sqlite3.SQLITE_FULL, sqlite3.SQLITE_BUSY, sqlite3.SQLITE_LOCKED,
+                            sqlite3.SQLITE_IOERR, sqlite3.SQLITE_READONLY):
+                raise
+            return JSONResponse({'error': 'Storage unavailable; retain and retry batch'}, status_code=503)
+        return {'status': 'accepted', 'received': len(payload['events']), 'inserted': accepted}
 
     @app.post('/v1/eve')
     async def ingest(request: Request):

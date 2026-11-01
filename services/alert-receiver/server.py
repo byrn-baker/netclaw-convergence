@@ -1279,6 +1279,22 @@ def normalize_guardian_site(site: Optional[str]) -> str:
     return raw.casefold() if raw.casefold() != "unknown" else GUARDIAN_DEFAULT_SITE
 
 
+def guardian_site_for_alert(alert: "Alert", inventory_site: Optional[str]) -> str:
+    """Host enrollment sites are authoritative IDs, not inventory display names.
+
+    The authenticated ingest service supplies these labels. Applying legacy
+    home-pilot aliases would silently send evidence to a different site's diary.
+    An unknown site should fail at the case API rather than acquire a fallback.
+    """
+    if (alert.labels.alertname == "HostBoundaryObservation" and
+            _label_get(alert.labels, "source") == "host-agent"):
+        site = _label_get(alert.labels, "site")
+        if not site:
+            raise ValueError("Host observation is missing its enrollment site")
+        return site
+    return normalize_guardian_site(inventory_site)
+
+
 def _guardian_headers() -> dict:
     return {
         "Authorization": f"Bearer {NETWORK_GUARDIAN_TOKEN}",
@@ -1295,7 +1311,7 @@ async def post_guardian_event(alert: Alert, device_info: dict, status: str = "in
     if not NETWORK_GUARDIAN_URL or not NETWORK_GUARDIAN_TOKEN:
         return None
 
-    site = normalize_guardian_site(device_info.get("site"))
+    site = guardian_site_for_alert(alert, device_info.get("site"))
     severity_map = {"critical": "alert", "warning": "watch", "info": "info"}
     severity = severity_map.get(alert.labels.severity, "info")
 
@@ -1454,7 +1470,7 @@ async def complete_guardian_event_resolved(
 def categorize_alert(alert_name: str) -> str:
     """Map alert name to a category for the Guardian dashboard."""
     name = (alert_name or "").lower()
-    if name.startswith('suricata'):
+    if name.startswith('suricata') or name == 'hostboundaryobservation':
         return "security"
     if any(k in name for k in ("internet", "wan", "latency", "loss", "edge")):
         return "wan"
@@ -2163,7 +2179,7 @@ async def process_alert(alert: Alert):
         )
 
     if not instance:
-        site = normalize_guardian_site(_label_get(alert.labels, "site"))
+        site = guardian_site_for_alert(alert, _label_get(alert.labels, "site"))
         device_info = {"name": f"site:{site}", "ip": "", "platform": "site",
                        "role": "site", "site": site, "source": "alert-labels"}
         instance = f"site:{site}"
