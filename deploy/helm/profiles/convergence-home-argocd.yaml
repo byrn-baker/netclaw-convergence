@@ -8,7 +8,7 @@ api:
 ids:
   image:
     repository: ghcr.io/byrn-baker/netclaw-ids-ingest
-    tag: 20261030-prune2@sha256:3599e07f79d9bddff274d8c8a459abc679ecb4086668e850e551e34aeab4d13b
+    tag: host-1013-876d96b@sha256:f57ce0891a5dfd6a82ec73e66bd61971961d34eea8e9a60f5fa05c748ab992b9
 victoria:
   sharedGrafana:
     registrationMode: external
