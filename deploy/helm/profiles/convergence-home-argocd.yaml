@@ -4,7 +4,7 @@ imagePullSecrets:
 api:
   image:
     repository: ghcr.io/byrn-baker/netclaw-convergence-api
-    tag: 6aced782@sha256:7a4410eb682433007e2e1e26c40318c11833906743351e19e1fe3e2f4267b51c
+    tag: host-status-1013-2996888e@sha256:1ae8b1f923528e4624b228ed9d2f0a937a49a8d432319648ecd8b72a708df208
 ids:
   image:
     repository: ghcr.io/byrn-baker/netclaw-ids-ingest
