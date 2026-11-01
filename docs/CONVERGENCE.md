@@ -6,8 +6,9 @@ sources you want to observe, then optionally add bounded agent investigations.
 You do not need model credentials or network-device access to try the core stack.
 
 For rental lab VMs, see the [host telemetry prototype](convergence/rental-vm-telemetry.md).
-It provides a code-only heartbeat and ingestion trial; customer deployment and
-trusted hypervisor boundary collection are separate qualification steps.
+It provides heartbeat ingestion and operator Security-view visibility for approved
+trials; customer rollout and trusted hypervisor boundary collection are separate
+qualification steps.
 
 ## Choose your installation
 

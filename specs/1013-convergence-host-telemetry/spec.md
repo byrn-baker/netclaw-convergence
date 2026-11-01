@@ -55,3 +55,29 @@ new firewall/mirror policy, tenant UI, automated containment or model/provider c
 32 MiB RAM/spool, 1% average vCPU and 30s heartbeat are design targets to measure,
 not qualification claims. Deployment and live coverage require a separately scoped
 milestone. Prototype completion does not trigger a full release/platform claim.
+
+## Authorized operator-view follow-up
+
+The owner requested existing Convergence Security views show enrolled VM heartbeat
+health after the separately approved heartbeat pilot. This scoped follow-up
+consumes the existing operator-only host-status endpoint; it is not a tenant
+dashboard, a connection collector, or a security verdict.
+
+- Add `hostTelemetry` to the existing authenticated `/api/security` response,
+  using its authorized `req.site` and existing server-held IDS status credential.
+- Return only display fields: VM/enrollment reference, heartbeat state/reason,
+  observation/contact times, health counters, pending events, expiry and the
+  `guest_reported` trust label. Exclude tenant/allocation/mapping identifiers,
+  tokens, token hashes, and operator credentials from browser responses.
+- Reject malformed or cross-site upstream records; fail to an explicit
+  unavailable state. An old receiver without host-status must not break IDS,
+  firewall observations or the Security view.
+- Both the Convergence HUD Security view and installed API dashboard show VM
+  heartbeat health, freshness, queue/drop health and expiry. Distinguish empty,
+  unavailable, unknown, reporting, stale, degraded, inactive/expired and revoked
+  states without treating missing data as zero or host safety.
+- Escape displayed values and preserve existing site authorization and refresh
+  behavior. Keep the operator token server-side and TLS verification enabled.
+- Verify site isolation, failure independence, malformed data, representative
+  health states, HTML escaping and the actual browser display using synthetic
+  fixtures; verify the live pilot read-only after an approved managed rollout.

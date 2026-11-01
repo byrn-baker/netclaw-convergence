@@ -31,7 +31,16 @@ decisions need observations outside the guest and reliable attribution.
 The operator-only host-status API is separate from the existing IDS status API.
 This prototype does not add a tenant dashboard or tenant-facing query service.
 The existing shared Grafana can query host logs after deployment and datasource
-configuration; a rental-VM dashboard is not included yet.
+configuration; a dedicated tenant-facing rental-VM dashboard is not included.
+
+The authorized operator-view follow-up exposes VM heartbeat health in the existing
+Convergence Security view and installed API dashboard. The Convergence API uses its
+existing status credential and authorized site, returning only display fields.
+Operators see the reported state, heartbeat observation time, receiver contact,
+queue/drop counters and expiry. Tenant/allocation/mapping bindings and credentials
+remain server-side. Missing or stale telemetry indicates lost visibility, and a
+reporting guest is not proof of a safe host. This view adds no collector,
+investigation or containment action.
 
 ## Try the code without deploying anything
 

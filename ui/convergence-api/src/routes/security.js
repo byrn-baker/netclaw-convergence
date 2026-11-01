@@ -3,6 +3,7 @@ const express = require('express');
 const router = express.Router();
 const { LOKI_URL, promqlLabelValue } = require('../lib/config');
 const { idsStatus } = require('../lib/idsStatus');
+const { hostStatus } = require('../lib/hostStatus');
 const {query, DbUnavailableError} = require('../db');
 const {securityHistory} = require('../lib/securityHistory');
 
@@ -27,7 +28,10 @@ async function metric(query) {
 const scalar = rows => rows.length ? Number(rows[0].value[1]) : 0;
 
 router.get('/', async (req, res) => {
-  const ids = idsStatus(req.site);
+  const ids = Promise.resolve().then(() => idsStatus(req.site)).catch(() => ({
+    status: 'unavailable', reason: 'IDS sensor status service unavailable; detection coverage is unknown', sensors: [], alertsLast24h: null,
+  }));
+  const hosts = hostStatus(req.site);
   const site = promqlLabelValue(req.site);
   const source = `{job="device-syslog",site="${site}"} | json | attributes_appname="filterlog"`;
   const blocked = `${source} | attributes_action="block"`;
@@ -46,10 +50,11 @@ router.get('/', async (req, res) => {
       topSources: top.map(r => ({ip: r.metric.attributes_src_ip, count: Number(r.value[1]), classification: 'unclassified'})).sort((a, b) => b.count - a.count),
       // Firewall drops alone are not evidence that an intrusion was detected.
       intrusionDetection: await ids,
+      hostTelemetry: await hosts,
     });
   } catch (err) {
     res.json({site: req.site, status: 'unavailable', unavailable: true, reason: err.message,
-      blockedConnections: {last24h: null, lastHour: null}, topSources: [], intrusionDetection: await ids});
+      blockedConnections: {last24h: null, lastHour: null}, topSources: [], intrusionDetection: await ids, hostTelemetry: await hosts});
   }
 });
 module.exports = router;

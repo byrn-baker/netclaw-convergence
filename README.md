@@ -150,6 +150,8 @@ home network.” Start with [Convergence installation](docs/CONVERGENCE.md).
 The [rental VM telemetry prototype](docs/convergence/rental-vm-telemetry.md) adds
 synthetic-tested host ingestion and a lightweight heartbeat agent. It is not yet
 a deployed customer monitoring or automated containment system.
+The operator Security view can show enrolled VM heartbeat health, queue/drop
+counters and expiry while keeping guest reports separate from trusted capture.
 K3s/Helm is the recommended persistent path; a smaller Docker trial provides a
 local starting point. Both include generated credentials and verification.
 

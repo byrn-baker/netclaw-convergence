@@ -11,9 +11,11 @@ on:
       - 'scripts/write-env.py'
       - 'tests/unit/test_convergence_setup*'
       - 'tests/convergence-home/**'
+      - 'tests/convergence-host-status/**'
       - 'docs/convergence/**'
       - 'ui/netclaw-visual/integration/convergence-*.mjs'
       - 'ui/netclaw-visual/modules/convergence/**'
+      - 'ui/netclaw-visual/test/convergence-host-heartbeat.mjs'
       - 'ui/netclaw-visual/package*.json'
       - '.github/workflows/convergence-onboarding.yml'
   workflow_dispatch:
@@ -72,6 +74,7 @@ jobs:
           npm --prefix ui/netclaw-visual ci --no-audit --no-fund
           npm --prefix ui/netclaw-visual run test:convergence-flow
           node ui/netclaw-visual/test/convergence-explorer.mjs
+          bash tests/convergence-host-status/run-tests.sh
       - name: Equipment-free demo and Linux host flow acceptance
         run: |
           "$RUNNER_TEMP/convergence-venv/bin/pip" install -r mcp-servers/convergence-case-mcp/requirements.txt

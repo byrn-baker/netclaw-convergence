@@ -63,3 +63,30 @@ No VM/cluster changes, customer enrollment, live external delivery, provider cal
 capture policy or containment. No resource/platform or trusted-capture claims.
 Only ephemeral localhost TLS and mocked downstream endpoints exercised. No release
 version bump: this is a draft capability with live qualification still outstanding.
+
+Operator-view follow-up authorized by the owner after a separately approved
+heartbeat pilot. Scope: consume the existing host-status endpoint in the existing
+operator Security view. Specification/plan/tasks amended before implementation;
+private pilot identity and deployment evidence remain outside this public tree.
+No slash-command runtime is available and the referenced `.claude/commands`
+files are absent, so the checked-in Spec Kit lifecycle is followed manually.
+T005-T006 implemented. API projects display-only data under authorized req.site;
+cross-site/malformed records fail closed, including zero timestamps. No browser
+credential or tenant/allocation/mapping binding is exposed. UI covers reporting,
+unknown/stale/degraded/inactive/revoked, empty/unavailable, missing health fields,
+HTML escaping, forced-refresh failure independence and delayed old-site responses.
+
+Independent review found and resolved forced device failure retaining old Reporting
+and zero-timestamp/Unknown freshness contradictions. Registered synthetic contract
+suite `convergence-host-status`: 37 tests PASS. Full HUD tests: 392 PASS; Vite build
+PASS with the existing large-chunk warning. All API tests: 33 PASS and one optional
+PostgreSQL integration SKIP (no database test URL). Spec artifacts, catalog coverage
+and catalog/dependency/docs/Meraki/package/portability reconciliation PASS.
+
+T007 live browser/deployment verification remains pending at this source commit;
+private baseline and pilot evidence stays outside the public repository. The API
+release will overlay only the five feature files onto its current immutable image
+to preserve unrelated deployed route behavior/dependencies. HUD baseline regular
+tracked files were compared before staging the build; unrelated worktrees remain
+intact. This scoped operator-view follow-up remains within the draft telemetry
+capability and makes no platform release or trusted-detection claim.

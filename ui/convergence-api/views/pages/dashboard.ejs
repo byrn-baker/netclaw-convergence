@@ -122,6 +122,12 @@
       </div>
     </div>
 
+    <section class="bg-guardian-card border border-guardian-border rounded-lg p-5" aria-labelledby="host-heartbeat-title">
+      <h2 id="host-heartbeat-title" class="text-sm font-medium mb-4">VM heartbeat health</h2>
+      <p class="text-xs text-slate-400 mb-4">Guest-reported visibility only (guest_reported). Stale or expired heartbeats mean lost visibility, not proof of compromise. Reporting does not establish host safety.</p>
+      <div id="host-heartbeat" class="overflow-x-auto text-sm"><p>Loading VM heartbeat observations…</p></div>
+    </section>
+
     <!-- Security + Equipment + Events Row -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
       <!-- Security Summary -->
@@ -186,6 +192,7 @@
   </main>
 
   <script src="/js/charts.js"></script>
+  <script src="/js/host-heartbeat.js"></script>
   <script src="/js/app.js"></script>
 </body>
 </html>

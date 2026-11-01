@@ -244,15 +244,16 @@ function getStep(range) {
 // --- Security Summary ---
 
 function updateSecurity() {
-  API.fetch('/security').then(function(data) {
+  return API.fetch('/security').then(function(data) {
+    renderHostHeartbeat(data && data.hostTelemetry);
     if (!data) return;
     var el24h = document.getElementById('blocked-24h');
     var el1h = document.getElementById('blocked-1h');
     var statusEl = document.getElementById('security-status');
     var sourcesEl = document.getElementById('top-sources');
 
-    if (el24h) el24h.textContent = data.blockedConnections.last24h !== null ? data.blockedConnections.last24h.toLocaleString() : '—';
-    if (el1h) el1h.textContent = data.blockedConnections.lastHour !== null ? data.blockedConnections.lastHour.toLocaleString() : '—';
+    if (el24h) el24h.textContent = data.blockedConnections && data.blockedConnections.last24h != null ? data.blockedConnections.last24h.toLocaleString() : '—';
+    if (el1h) el1h.textContent = data.blockedConnections && data.blockedConnections.lastHour != null ? data.blockedConnections.lastHour.toLocaleString() : '—';
     if (statusEl) statusEl.textContent = data.status === 'active' ? 'Firewall active' : 'Security data unavailable';
 
     if (sourcesEl && data.topSources && data.topSources.length > 0) {

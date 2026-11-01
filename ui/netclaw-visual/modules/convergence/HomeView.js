@@ -11,6 +11,7 @@ import {diaryHTML, groupDiary, caseHandoff, MAX_SELECTION} from './DiaryExplorer
 import {flowHTML, flowHandoff} from './FlowExplorer.js';
 import {securityExplorerHTML, securityModel} from './SecurityExplorer.js';
 import {securityCasesPath} from './SecurityHistory.js';
+import {hostHeartbeatHTML} from './HostHeartbeat.js';
 
 const SUBVIEWS = [
   { id: 'overview', label: 'Overview' },
@@ -787,6 +788,7 @@ export class HomeView {
       this.cache.status = status;
 
       if (!status.configured) {
+        this.cache.security = {hostTelemetry: {status: 'unavailable', agents: []}};
         this.lastError = {
           kind: 'config',
           message: 'Convergence API not configured. Set CONVERGENCE_API_URL + CONVERGENCE_API_TOKEN (aliases: HOME_API_* / NETWORK_GUARDIAN_*) in ~/.openclaw/.env',
@@ -800,21 +802,19 @@ export class HomeView {
       await this.discoverSites();
 
       // Health + wifi always — top-right Command Deck metrics (Health / WAN / Wi‑Fi / Alerts)
-      this.cache.health = await this.fetch(`/health?site=${this.site}`);
+      this.cache.health = await this.fetch(`/health?site=${this.site}`).catch(err => {
+        if (this.subview !== 'security') throw err;
+        return {unavailable: true, reason: err.message};
+      });
       if (this.cache.health?.unavailable) this.sourceErrors.overview = this.cache.health.reason || 'Monitoring data incomplete';
       this.cache.wifi = await this.fetch(`/wifi?site=${this.site}`).catch(err => { this.sourceErrors.wifi = err.message; return this.cache.wifi || null; });
 
-      if (this.subview === 'devices' || force) {
-        this.cache.devices = await this.fetch(`/devices?site=${this.site}`);
-        // Which of these are reachable by the HUD SSH terminal. Two local
-        // endpoints (not convergence-api): the pyATS testbed inventory, and
-        // whether the terminal is enabled at all. Failures are non-fatal — the
-        // Console action just doesn't render.
-        this.cache.terminal = await loadTerminalTargets().catch(() => null);
-      }
       if (this.subview === 'security' || force) {
-        this.cache.security = await this.fetch(`/security?site=${this.site}`);
         const caseSite=this.site, caseRange=this.securityRange || '24h';
+        const security = await this.fetch(`/security?site=${encodeURIComponent(caseSite)}`).catch(() => ({hostTelemetry: {status: 'unavailable', agents: []}}));
+        // A delayed read belongs only to the site that requested it.
+        if (caseSite !== this.site) return;
+        this.cache.security = security;
         const scope=JSON.stringify([this.securityHistoryWindow,this.securityHistoryCountry]);
         const [cases,history]=await Promise.all([
           this.fetch(securityCasesPath(caseSite,caseRange,this.securityHistoryWindow,this.securityHistoryCountry,Boolean(this.options?.embedded))).catch(()=>({unavailable:true})),
@@ -825,6 +825,14 @@ export class HomeView {
           this.cache.securityHistory = history;
           if (!cases?.unavailable) this.readTimes.securityCases = this.readTimes.events;
         }
+      }
+      if (this.subview === 'devices' || force) {
+        this.cache.devices = await this.fetch(`/devices?site=${this.site}`);
+        // Which of these are reachable by the HUD SSH terminal. Two local
+        // endpoints (not convergence-api): the pyATS testbed inventory, and
+        // whether the terminal is enabled at all. Failures are non-fatal — the
+        // Console action just doesn't render.
+        this.cache.terminal = await loadTerminalTargets().catch(() => null);
       }
       if (this.subview === 'isp' || force) {
         this.cache.wanCases = await this.fetch(`/events?site=${this.site}&type=wan&limit=50`);
@@ -950,7 +958,7 @@ export class HomeView {
     if (!data) return '<p class="home-muted">Loading security observations…</p>';
     const ids = data.intrusionDetection || {};
     const embedded=Boolean(this.options?.embedded);
-    return `${embedded?securityExplorerHTML(this.cache.securityCases,data,this.securityState())+'<details class="security-sensor-details"><summary>Sensor health, firewall counts &amp; coverage details</summary>':''}<div class="home-section">
+    return `${hostHeartbeatHTML(data.hostTelemetry)}${embedded?securityExplorerHTML(this.cache.securityCases,data,this.securityState())+'<details class="security-sensor-details"><summary>Sensor health, firewall counts &amp; coverage details</summary>':''}<div class="home-section">
       <h3>Security visibility</h3>
       <p>Firewall telemetry: <strong>${esc(data.status)}</strong> · observation window ${esc(data.observedWindow || 'unknown')}</p>
       ${data.reason ? `<p class="home-muted">${esc(data.reason)}</p>` : ''}

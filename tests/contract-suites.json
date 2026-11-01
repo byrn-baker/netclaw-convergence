@@ -876,6 +876,22 @@
       },
       "timeout_seconds": 600
     },
+    "convergence-host-status": {
+      "kind": "shell",
+      "command": ["bash", "tests/convergence-host-status/run-tests.sh"],
+      "environment": {
+        "path": null,
+        "requirements": [],
+        "packages": [],
+        "required_imports": [],
+        "prepend_path": false
+      },
+      "ci": {
+        "include": false,
+        "reason": "Executed by .github/workflows/convergence-onboarding.yml with Node 24 and API/HUD npm dependencies on native Linux x86_64 and ARM64; synthetic authenticated API and DOM fixtures only, no live credentials."
+      },
+      "timeout_seconds": 180
+    },
     "convergence-host": {
       "kind": "shell",
       "command": [
