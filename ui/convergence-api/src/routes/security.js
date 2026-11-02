@@ -8,6 +8,13 @@ const { hypervisorStatus } = require('../lib/hypervisorStatus');
 const {query, DbUnavailableError} = require('../db');
 const {securityHistory} = require('../lib/securityHistory');
 
+router.get('/vms', async (req, res) => {
+  const [assessment, hosts] = await Promise.all([
+    require('../lib/vmSecurity').vmSecurity(req.site), hostStatus(req.site),
+  ]);
+  res.json({...assessment, hostTelemetry: hosts});
+});
+
 router.get('/history', async (req, res) => {
   try {
     res.json(await securityHistory(req.site, req.query, query));

@@ -11,14 +11,14 @@ import {diaryHTML, groupDiary, caseHandoff, MAX_SELECTION} from './DiaryExplorer
 import {flowHTML, flowHandoff} from './FlowExplorer.js';
 import {securityExplorerHTML, securityModel} from './SecurityExplorer.js';
 import {securityCasesPath} from './SecurityHistory.js';
-import {hostHeartbeatHTML} from './HostHeartbeat.js';
-import {proxmoxObserverHTML} from './ProxmoxObserver.js';
+import {vmSecurityHTML} from './VMSecurity.js';
 
 const SUBVIEWS = [
   { id: 'overview', label: 'Overview' },
   { id: 'wifi', label: 'Wi‑Fi' },
   { id: 'devices', label: 'Devices' },
   { id: 'security', label: 'Security' },
+  { id: 'vm-security', label: 'VM Security' },
   { id: 'diary', label: 'Diary' },
   { id: 'flows', label: 'Traffic' },
   { id: 'isp', label: 'Internet reports' },
@@ -190,6 +190,7 @@ export class HomeView {
     this.triageFlash = null; // { kind, message }
     this.jevPending = new Set();
     this.jevErrors = new Map();
+    this.vmSecuritySearch = ''; this.vmSecurityFilter = 'all'; this.vmSecurityPage = 0; this.vmSecuritySelected = null;
     this.securityFilter = 'all';
     this.securityRange = '24h'; this.securityGroup = 'signature'; this.securitySearch = '';
     this.securityVlan = ''; this.securityNetwork = ''; this.securityCountry = ''; this.securitySelectedId = null;
@@ -213,7 +214,8 @@ export class HomeView {
     this.requests.add(controller);
     try {
       const data = await homeFetch(path, { ...options, signal: controller.signal });
-      if ((!options.method || options.method === 'GET') && !data?.unavailable) {
+      // VM observations set their read time only after the requesting site is checked.
+      if ((!options.method || options.method === 'GET') && !data?.unavailable && !path.startsWith('/security/vms?')) {
         const key = path.startsWith('/events/escalated') ? 'escalated' : path.slice(1).split(/[/?]/)[0];
         this.readTimes[key] = new Date().toISOString();
       }
@@ -344,6 +346,7 @@ export class HomeView {
     };
     this.element.addEventListener('change', onChange);
     this.element.addEventListener('change', ev => {
+      if (ev.target.matches('[data-vm-filter]')) { this.vmSecurityFilter = ev.target.value; this.vmSecurityPage = 0; this.renderSubview(); }
       if (ev.target.matches('[data-security-range]')) {
         this.securityRange = ev.target.value; this.securitySelectedId = null;
         this.securityHistoryWindow = null; this.securityHistoryCountry = '';
@@ -366,7 +369,10 @@ export class HomeView {
       this.saveIncidentDraft(ev.target);
     });
     this.element.addEventListener('input', ev => {
-      if (ev.target.matches('[data-security-search]')) {
+      if (ev.target.matches('[data-vm-search]')) {
+        const cursor = ev.target.selectionStart; this.vmSecuritySearch = ev.target.value; this.vmSecurityPage = 0; this.renderSubview();
+        const input = this.element.querySelector('[data-vm-search]'); input?.focus(); input?.setSelectionRange(cursor,cursor);
+      } else if (ev.target.matches('[data-security-search]')) {
         const cursor = ev.target.selectionStart;
         this.securitySearch = ev.target.value; this.renderSubview();
         const input = this.element.querySelector('[data-security-search]');
@@ -385,6 +391,10 @@ export class HomeView {
       this.handleIncidentAction('security', form.dataset.securityCase, {kind: form.elements.kind.value, reason: form.elements.reason.value});
     });
     this.element.addEventListener('click', ev => {
+      const finding = ev.target.closest('[data-vm-finding]');
+      if (finding) { this.vmSecuritySelected = finding.dataset.vmFinding; this.renderSubview(); this.element.querySelector('#vm-finding-title')?.focus(); return; }
+      const page = ev.target.closest('[data-vm-page]');
+      if (page && !page.disabled) { this.vmSecurityPage = Number(page.dataset.vmPage); this.renderSubview(); return; }
       const interval=ev.target.closest('[data-security-history-start]');
       if(interval){
         const start=interval.dataset.securityHistoryStart,end=interval.dataset.securityHistoryEnd;
@@ -762,6 +772,7 @@ export class HomeView {
     writeStoredSite(siteId);
     // Site-scoped caches are now stale; keep only the site list.
     this.cache = {};
+    this.vmSecuritySearch = ''; this.vmSecurityFilter = 'all'; this.vmSecurityPage = 0; this.vmSecuritySelected = null;
     this.securitySelectedId = null; this.securityFilter = 'all'; this.securitySearch = '';
     this.securityVlan = ''; this.securityNetwork = ''; this.securityCountry = '';
     this.securityHistoryWindow = null; this.securityHistoryCountry = '';
@@ -804,12 +815,28 @@ export class HomeView {
 
       // Health + wifi always — top-right Command Deck metrics (Health / WAN / Wi‑Fi / Alerts)
       this.cache.health = await this.fetch(`/health?site=${this.site}`).catch(err => {
-        if (this.subview !== 'security') throw err;
+        if (!['security','vm-security'].includes(this.subview)) throw err;
         return {unavailable: true, reason: err.message};
       });
       if (this.cache.health?.unavailable) this.sourceErrors.overview = this.cache.health.reason || 'Monitoring data incomplete';
       this.cache.wifi = await this.fetch(`/wifi?site=${this.site}`).catch(err => { this.sourceErrors.wifi = err.message; return this.cache.wifi || null; });
 
+      if (this.subview === 'vm-security' || force) {
+        const vmSite = this.site;
+        try {
+          const observations = await this.fetch(`/security/vms?site=${encodeURIComponent(vmSite)}`);
+          if (vmSite !== this.site) return;
+          this.cache.vmSecurity = observations;
+          if (observations?.unavailable || observations?.status === 'unavailable') {
+            this.sourceErrors['vm-security'] = observations.reason || 'VM security observations unavailable';
+          } else {
+            this.readTimes.vmSecurity = new Date().toISOString();
+          }
+        } catch (error) {
+          if (vmSite !== this.site) return;
+          this.sourceErrors['vm-security'] = error.message || 'VM security observations unavailable';
+        }
+      }
       if (this.subview === 'security' || force) {
         const caseSite=this.site, caseRange=this.securityRange || '24h';
         const security = await this.fetch(`/security?site=${encodeURIComponent(caseSite)}`).catch(() => ({hostTelemetry: {status: 'unavailable', agents: []}}));
@@ -945,6 +972,7 @@ export class HomeView {
       wifi: () => this.htmlWifi(),
       devices: () => this.htmlDevices(),
       security: () => this.htmlSecurity(),
+      'vm-security': () => vmSecurityHTML(this.cache.vmSecurity, {site:this.site, search:this.vmSecuritySearch, filter:this.vmSecurityFilter, page:this.vmSecurityPage, selected:this.vmSecuritySelected, loading:this.loading, error:this.sourceErrors['vm-security'] || this.lastError?.message}),
       isp: () => ispReportsHTML(this.cache.wanCases, this.cache.ispCatalog, this.ispProviders.get(this.site), this.ispReports, this.incidentPending, this.incidentErrors, this.site),
       diary: () => this.htmlDiary(),
       flows: () => flowHTML(this.cache.flows, {range:this.flowRange, exporter:this.flowExporter, canInvestigate:Boolean(this.options?.investigate)}),
@@ -959,7 +987,7 @@ export class HomeView {
     if (!data) return '<p class="home-muted">Loading security observations…</p>';
     const ids = data.intrusionDetection || {};
     const embedded=Boolean(this.options?.embedded);
-    return `${hostHeartbeatHTML(data.hostTelemetry)}${proxmoxObserverHTML(data.hypervisorTelemetry)}${embedded?securityExplorerHTML(this.cache.securityCases,data,this.securityState())+'<details class="security-sensor-details"><summary>Sensor health, firewall counts &amp; coverage details</summary>':''}<div class="home-section">
+    return `${embedded?securityExplorerHTML(this.cache.securityCases,data,this.securityState())+'<details class="security-sensor-details"><summary>Sensor health, firewall counts &amp; coverage details</summary>':''}<div class="home-section">
       <h3>Security visibility</h3>
       <p>Firewall telemetry: <strong>${esc(data.status)}</strong> · observation window ${esc(data.observedWindow || 'unknown')}</p>
       ${data.reason ? `<p class="home-muted">${esc(data.reason)}</p>` : ''}

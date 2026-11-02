@@ -1,3 +1,4 @@
+@import "./vm-security.css";
 /* New HUD skin. Scoped to this inline workspace; classic HUD keeps home.css. */
 .convergence-workspace { min-width: 0; }
 .convergence-workspace[hidden] { display: none; }

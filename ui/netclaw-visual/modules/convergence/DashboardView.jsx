@@ -15,8 +15,8 @@ export default function DashboardView({ preview, active, refreshKey, onStatus, i
       embedded: true,
       investigate,
       onUpdate(current) {
-        const key = { overview: 'health', diary: 'events', triage: 'escalated', isp: 'wanCases', flows: 'flows' }[current.subview] || current.subview;
-        const unavailable = current.lastError || current.sourceErrors[current.subview] || current.cache[key]?.unavailable || current.cache[key]?.error
+        const key = { 'vm-security': 'vmSecurity', overview: 'health', diary: 'events', triage: 'escalated', isp: 'wanCases', flows: 'flows' }[current.subview] || current.subview;
+        const unavailable = current.lastError || current.sourceErrors[current.subview] || current.cache[key]?.unavailable || current.cache[key]?.status === 'unavailable' || current.cache[key]?.error
           || (current.subview === 'security' && current.cache.securityCases?.unavailable);
         const label = unavailable ? 'Convergence unavailable' : current.loading ? 'Refreshing Convergence' : current.lastSuccess ? 'Convergence available' : 'Connecting to Convergence';
         setSnapshot({ label, read: current.readTimes[key], site: current.site, stale: Boolean(unavailable), canInspect: key !== 'models' && Boolean(current.cache[key]) });
@@ -50,9 +50,9 @@ export default function DashboardView({ preview, active, refreshKey, onStatus, i
   const inspect = () => {
     const view = controller.current;
     if (!view) return;
-    const key = { overview: 'health', wifi: 'wifi', devices: 'devices', security: 'security', diary: 'events', triage: 'escalated', isp: 'wanCases', flows: 'flows' }[view.subview];
+    const key = { 'vm-security': 'vmSecurity', overview: 'health', wifi: 'wifi', devices: 'devices', security: 'security', diary: 'events', triage: 'escalated', isp: 'wanCases', flows: 'flows' }[view.subview];
     if (!key) return;
-    investigate(`Convergence · ${view.site} · ${view.subview}`, { site: view.site, section: view.subview, data: view.cache[key], readError: view.lastError?.message }, `/api/home/${{ events: 'events', escalated: 'events/escalated', wanCases: 'events?type=wan' }[key] || key}`, view.readTimes[key]);
+    investigate(`Convergence · ${view.site} · ${view.subview}`, { site: view.site, section: view.subview, data: view.cache[key], readError: view.lastError?.message }, `/api/home/${{ vmSecurity: 'security/vms', events: 'events', escalated: 'events/escalated', wanCases: 'events?type=wan' }[key] || key}`, view.readTimes[key]);
   };
 
   return <section className="convergence-workspace" hidden={!active} aria-label="Convergence network operations">
