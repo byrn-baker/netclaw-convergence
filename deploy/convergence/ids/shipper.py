@@ -20,7 +20,7 @@ from urllib.parse import urlsplit
 def heartbeat(root):
     try:
         running = subprocess.check_output(['docker', 'inspect', '--format',
-            '{{.State.Running}}', 'netclaw-suricata'], timeout=5, text=True,
+            '{{.State.Running}}', os.getenv('IDS_CAPTURE_CONTAINER', 'netclaw-suricata')], timeout=5, text=True,
             stderr=subprocess.DEVNULL).strip() == 'true'
     except (subprocess.SubprocessError, OSError):
         running = False
