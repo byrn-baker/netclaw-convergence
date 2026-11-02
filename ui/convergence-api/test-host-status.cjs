@@ -98,6 +98,7 @@ test('security retains host status independently of firewall and IDS failures',a
     const handlers={},router={get:(path,handler)=>handlers[path]=handler};
     const host={status:'configured',agents:[{id:'vm'}]};let requestedSite;
     const dependencies={express:{Router:()=>router},'../lib/config':{LOKI_URL:'http://logs',promqlLabelValue:s=>s},
+      '../lib/hypervisorStatus':{hypervisorStatus:async()=>({status:'not_configured',sources:[]})},
       '../lib/hostStatus':{hostStatus:async site=>{requestedSite=site;return host;}},
       '../lib/idsStatus':{idsStatus:async()=>{if(idsFail)throw Error('IDS offline');return {status:'configured'};}},
       '../db':{},'../lib/securityHistory':{}};

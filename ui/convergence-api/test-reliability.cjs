@@ -2,7 +2,7 @@ const {test}=require('node:test');
 const assert=require('node:assert/strict');
 const fs=require('node:fs'),vm=require('node:vm');
 function routes(file, dependencies, globals={}){
- dependencies={'../db':{query:()=>assert.fail('unexpected database query'),DbUnavailableError:class extends Error{}},'../lib/hostStatus':{hostStatus:async()=>({status:'not_configured',agents:[]})},...dependencies};
+ dependencies={'../lib/hypervisorStatus':{hypervisorStatus:async()=>({status:'not_configured',sources:[]})},'../db':{query:()=>assert.fail('unexpected database query'),DbUnavailableError:class extends Error{}},'../lib/hostStatus':{hostStatus:async()=>({status:'not_configured',agents:[]})},...dependencies};
  const handlers={},middleware=[];
  const router={use:h=>middleware.push(h)};
  for(const m of ['get','post','patch'])router[m]=(p,h)=>{handlers[m+' '+p]=h};

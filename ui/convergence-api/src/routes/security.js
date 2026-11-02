@@ -4,6 +4,7 @@ const router = express.Router();
 const { LOKI_URL, promqlLabelValue } = require('../lib/config');
 const { idsStatus } = require('../lib/idsStatus');
 const { hostStatus } = require('../lib/hostStatus');
+const { hypervisorStatus } = require('../lib/hypervisorStatus');
 const {query, DbUnavailableError} = require('../db');
 const {securityHistory} = require('../lib/securityHistory');
 
@@ -32,6 +33,7 @@ router.get('/', async (req, res) => {
     status: 'unavailable', reason: 'IDS sensor status service unavailable; detection coverage is unknown', sensors: [], alertsLast24h: null,
   }));
   const hosts = hostStatus(req.site);
+  const hypervisors = hypervisorStatus(req.site);
   const site = promqlLabelValue(req.site);
   const source = `{job="device-syslog",site="${site}"} | json | attributes_appname="filterlog"`;
   const blocked = `${source} | attributes_action="block"`;
@@ -51,10 +53,11 @@ router.get('/', async (req, res) => {
       // Firewall drops alone are not evidence that an intrusion was detected.
       intrusionDetection: await ids,
       hostTelemetry: await hosts,
+      hypervisorTelemetry: await hypervisors,
     });
   } catch (err) {
     res.json({site: req.site, status: 'unavailable', unavailable: true, reason: err.message,
-      blockedConnections: {last24h: null, lastHour: null}, topSources: [], intrusionDetection: await ids, hostTelemetry: await hosts});
+      blockedConnections: {last24h: null, lastHour: null}, topSources: [], intrusionDetection: await ids, hostTelemetry: await hosts, hypervisorTelemetry: await hypervisors});
   }
 });
 module.exports = router;
