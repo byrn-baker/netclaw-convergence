@@ -85,9 +85,14 @@ def parse_config(data, vm_id):
 
 
 def inventory(config_dir=Path("/etc/pve/qemu-server"), sys_dir=Path("/sys/class/net"),
-              run_dir=Path("/run/qemu-server"), proc_dir=Path("/proc")):
+              run_dir=Path("/run/qemu-server"), proc_dir=Path("/proc"), vm_id_range=None):
     vms, bindings, errors = [], {}, []
     paths = sorted(config_dir.glob("*.conf"))
+    if vm_id_range is not None:
+        minimum, maximum = vm_id_range
+        # Select by filename before counting or opening any configuration.
+        paths = [path for path in paths if re.fullmatch(r"[1-9][0-9]*", path.stem)
+                 and minimum <= int(path.stem) <= maximum]
     if not config_dir.is_dir() or len(paths) > MAX_VMS:
         return [], {}, ["Inventory unavailable or exceeds 256 VM limit."]
     total_nics = 0
@@ -395,7 +400,7 @@ def run(args):
     try:
         while not stop:
             if time.monotonic() >= deadline:
-                vms, new_bindings, errors = inventory()
+                vms, new_bindings, errors = inventory(vm_id_range=args.vm_id_range)
                 if args.capture_vm:
                     new_bindings = {i: b for i, b in new_bindings.items() if b[0] in args.capture_vm}
                 connections = window.reconcile(new_bindings)
@@ -434,7 +439,9 @@ def run(args):
                                            "packet_capture_ok": capture_ok and not any("inventory" in e.lower() for e in errors),
                                            "sampled": True, "capture_drops": drops,
                                            "events_discarded": window.discarded, "limitations": LIMITATIONS +
-                                           (["Capture restricted to explicitly selected VM IDs; inventory includes all QEMU VMs."]
+                                           ([f"Inventory and capture restricted to VM IDs {args.vm_id_range[0]}:{args.vm_id_range[1]} inclusive; no coverage outside this range."]
+                                            if args.vm_id_range else []) +
+                                           (["Capture further restricted to explicitly selected VM IDs within inventory scope."]
                                             if args.capture_vm else []) + errors},
                             "vms": vms, "connections": connections}
                 write_snapshot(args.output, snapshot)
@@ -482,11 +489,22 @@ def run(args):
         selector.close()
 
 
+def parse_vm_id_range(value):
+    if not re.fullmatch(r"[1-9][0-9]{0,8}:[1-9][0-9]{0,8}", value):
+        raise argparse.ArgumentTypeError("VM ID range must be MIN:MAX with positive integers up to 999999999")
+    minimum, maximum = map(int, value.split(":"))
+    if minimum > maximum:
+        raise argparse.ArgumentTypeError("VM ID range minimum must not exceed maximum")
+    return minimum, maximum
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--node", required=True)
+    parser.add_argument("--vm-id-range", type=parse_vm_id_range,
+                        help="Limit inventory and capture to inclusive MIN:MAX VM IDs (for example 6000:6999)")
     parser.add_argument("--capture-vm", type=int, action="append", default=[],
-                        help="Limit capture to this VM ID (repeatable); inventory still includes all VMs")
+                        help="Limit capture to this VM ID (repeatable) within the inventory scope")
     parser.add_argument("--output", type=Path, default=Path("/var/lib/netclaw-proxmox-observer/snapshot.json"))
     args = parser.parse_args()
     if not re.fullmatch(r"[A-Za-z0-9_.-]{1,64}", args.node):

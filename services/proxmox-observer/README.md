@@ -1,6 +1,6 @@
 # Proxmox passive QEMU observer
 
-`collector.py` is a Python 3 standard-library service for a Linux Proxmox node. It inventories every QEMU configuration, including stopped VMs, and observes configured live TAP interfaces. It does not inventory LXC containers. The output follows [CONTRACT.md](CONTRACT.md).
+`collector.py` is a Python 3 standard-library service for a Linux Proxmox node. By default it inventories every QEMU configuration, including stopped VMs, and observes configured live TAP interfaces. An explicit VM ID range restricts both inventory and capture. It does not inventory LXC containers. The output follows [CONTRACT.md](CONTRACT.md).
 
 The collector exports UUID, VM ID, configured NIC MAC/bridge/VLAN, interface counters and sampled connection metadata. It does not export VM names, guest credentials, application bytes or PCAP files. The only persistent data is the current root-only JSON snapshot. Inventory reads `/etc/pve/qemu-server/*.conf`, `/run/qemu-server/*.pid`, process `comm`, and `/sys/class/net/tapVMIDiN` counters. Historical Proxmox config snapshot sections are ignored.
 
@@ -40,3 +40,11 @@ systemd-analyze verify services/proxmox-observer/netclaw-proxmox-observer.servic
 ```
 
 Tests exercise a separate classic-BPF interpreter against IPv4 options, IPv6, SYN/ACK direction, sampling ratios, rejected fragments/extensions/VLAN, exact header truncation, config privacy, running/stopped inventory, lifecycle mismatches, bounded flow loss and atomic output permissions. Live kernel attach, real TAP direction, service resource use and receiver ingestion require coordinator verification on the target node.
+
+## Restrict collection to customer VM IDs
+
+Use `--vm-id-range 6000:6999` to collect only VM IDs 6000 through 6999, inclusive. The range selects configuration filenames before opening files or applying VM/NIC capacity limits. Out-of-range VM configurations, counters and packet metadata are excluded. New VMs in the selected range are discovered automatically. This is a collection restriction, not a dashboard filter.
+
+Install `netclaw-proxmox-observer-6xxx.conf` as `/etc/systemd/system/netclaw-proxmox-observer.service.d/scope.conf`, run `systemctl daemon-reload`, and restart the observer. Preserve any existing overrides and reconcile conflicting ExecStart settings before installation. The override retains the service resource/capability limits. Validate a fresh snapshot and downstream view before declaring the change complete.
+
+Without the option, the prior all-QEMU behavior is retained. `--capture-vm` further restricts packet capture within the selected inventory range. Published limitations identify the configured range. Existing historical observations are not deleted; security analysis requires current inventory and collector-session identity, so prior out-of-scope records do not become current findings. To restore the previous scope, restore the prior service override and restart; no guest or forwarding configuration changes are involved.
