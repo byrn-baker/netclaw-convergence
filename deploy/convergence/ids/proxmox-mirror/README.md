@@ -2,7 +2,7 @@
 
 This is a second raw Ethernet Suricata instance. It does not receive GRE and
 does not change the original ERSPAN container, configuration, services or feeds.
-The host mirror must deliver to a new isolated NIC in VM113, with no host bridge
+The host mirror must deliver to a new isolated NIC in the IDS VM, with no host bridge
 or guest IP addresses, DHCP, IPv6 autoconfiguration or default route on that NIC.
 Configure this isolation before preparing capture; the MAC guard fails closed
 when the selected guest interface has an IP address or the wrong MAC.
@@ -28,15 +28,13 @@ Alert payloads/packets, file extraction and pcap outputs are disabled by replaci
 the complete output list with the established EVE metadata types. EVE logs,
 durable SQLite cursor state and health files use the separate root.
 
-The initial 2 CPU / 3 GiB limits are configurable in `sensor.env`. The original
-engine already uses about 3.6 GiB in an 8 GiB guest; **passing `-T` is insufficient
-to establish safe concurrent operation**. Start a monitored pilot only with
-adequate headroom, verify the new engine remains comfortably below 2.5 GiB,
-and stop it if original capture, host available memory or packet loss deteriorates.
-The Docker hard limit cannot itself protect against every guest memory-pressure
-scenario. Do not enlarge the cap without reviewing guest capacity. Restart is
-`on-failure`, with exit 137 (SIGKILL/OOM) excluded from automatic restart. An OOM
-requires operator intervention rather than reducing rule coverage automatically.
+CPU and memory limits are configurable in `sensor.env`. Passing `-T` alone
+does not establish safe concurrent operation. Measure available capacity and
+both engines during a monitored pilot. Stop the additional capture if existing
+capture health, available memory or packet loss deteriorates. Keep deployment
+measurements in private operational records. Do not reduce rule coverage
+automatically to fit insufficient capacity. Exit 137 (SIGKILL/OOM) is excluded
+from automatic capture restart and requires operator intervention.
 
 After review, explicitly start `netclaw-ids-proxmox-capture.service` and
 `netclaw-ids-proxmox-shipper.service`. Enable them for boot only after the pilot.
@@ -46,7 +44,7 @@ sensor heartbeat. `IDS_CAPTURE_CONTAINER` scopes heartbeat to the new container;
 the default in the shared shipper remains the original container.
 
 VLAN tracking is disabled only in the new engine because host TAP requests are
-untagged while physical uplink replies carry VLAN301. Live-device tracking is
+untagged while physical uplink replies carry the configured customer VLAN. Live-device tracking is
 also disabled for matching across this capture path. Keep the host selector narrow
 and ensure unrelated overlapping VLAN traffic is not delivered to the mirror.
 Use a known bidirectional flow to verify request/reply reassembly before relying

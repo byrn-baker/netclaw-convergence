@@ -1,13 +1,13 @@
 # Proxmox native TC mirror
 
-Python standard-library controller for this node's VM 6000–6999 `net0` interfaces,
-VLAN 301 on `vmbr0`, and IDS VM113 UUID
-`d12a8407-ffaf-4031-b64f-3c3439ed1c91`. Default scope is pilot VM6095.
-The required capture target is `tap113i1`, net1 MAC `BC:24:11:60:30:01`, on
-an existing, isolated `vmbr3999`. The controller never creates bridges or NICs.
+Python standard-library controller for a bounded set of customer VM interfaces.
+Review the deployment-specific identity and interface bindings in the controller
+before use. Keep actual inventory, addresses, hardware identifiers and runtime
+evidence in private deployment records. The controller never creates bridges or NICs.
 
 Guest egress is cloned at source TAP ingress before firewall/policing. External
-returns are cloned only at `eno1` ingress when destination MAC and VLAN 301 match
+returns are cloned only at physical uplink ingress when destination MAC and
+the configured customer VLAN match
 a running selected VM. There are no destination TAP egress mirrors and no
 physical-transmit mirrors. A local selected-VM-to-selected-VM frame therefore
 has one copy, from its source TAP. External broadcasts/multicasts, host-local
@@ -25,26 +25,27 @@ the existing policer. A pre-existing filter at pref10 or earlier causes refusal.
 
 Deployment prerequisites:
 
-- Dedicated capture bridge has only `tap113i1`, no host IPv4/IPv6 addresses and
+- Dedicated capture bridge has only the configured capture TAP, no host IPv4/IPv6 addresses and
   no uplink. Guest capture NIC has no IP and is not used for management/routing.
-- Guest capture NIC is promiscuous, MTU 9500, and serviced by a separate
+- Guest capture NIC is promiscuous, has a matching MTU, and is serviced by a separate
   Suricata instance with `vlan.use-for-tracking: false` and a distinct sensor ID.
-  TAP egress clones are untagged while uplink return clones can carry VLAN 301.
-- Proxmox source configs use only net0, bridge vmbr0, tag301, direct TAP or the
+  TAP egress clones are untagged while uplink return clones can carry the configured customer VLAN.
+- Proxmox source configs use only net0, the configured customer bridge and VLAN, direct TAP or the
   standard fwbr/fwln/fwpr topology. Unknown selected-running topology fails closed.
 - `tc` supports JSON, matchall, flower, mirred, gact, and action cookies.
 
+Replace the example MAC and pilot placeholder with private deployment values.
 Read-only plan (default; no state files created):
 
 ```sh
-python3 controller.py --target-mac BC:24:11:60:30:01 --capture-vm 6095
+python3 controller.py --target-mac 02:00:00:00:00:01 --capture-vm "$PILOT_VM_ID"
 ```
 
 Explicit pilot apply and removal:
 
 ```sh
-python3 controller.py --apply --once --target-mac BC:24:11:60:30:01 --capture-vm 6095
-python3 controller.py --apply --cleanup --target-mac BC:24:11:60:30:01
+python3 controller.py --apply --once --target-mac 02:00:00:00:00:01 --capture-vm "$PILOT_VM_ID"
+python3 controller.py --apply --cleanup --target-mac 02:00:00:00:00:01
 ```
 
 `--apply --once` intentionally leaves rules for inspection and is not lifecycle
@@ -53,8 +54,8 @@ supervision. Production must use the daemon. Install the files under
 0600 `/etc/netclaw/proxmox-mirror.env` containing:
 
 ```ini
-TARGET_MAC=BC:24:11:60:30:01
-MIRROR_SCOPE=--capture-vm 6095
+TARGET_MAC=02:00:00:00:00:01
+MIRROR_SCOPE="--capture-vm <PILOT_VM_ID>"
 ```
 
 After validating the pilot, changing `MIRROR_SCOPE=--all-6xxx` and restarting the
@@ -98,10 +99,10 @@ packets reaching an existing policer, preserved HTB/ingress configuration,
 MAC/VLAN selection, target deletion/recreation and precise filter cleanup.
 It does not validate the Proxmox node's NIC driver or hardware VLAN stripping.
 
-Before expanding beyond VM6095, record `tc -j -s qdisc/filter` for pilot TAP and
-eno1 before/after; verify target ingress sees guest outbound and external return
+Before expanding beyond the pilot VM, record `tc -j -s qdisc/filter` for pilot TAP and
+the physical uplink before/after; verify target ingress sees guest outbound and external return
 packets, one local-flow copy per direction, and no nonselected destination MACs.
-Confirm physical RX VLAN offload still yields a flower match for VLAN 301.
+Confirm physical RX VLAN offload still yields a flower match for the configured customer VLAN.
 Check existing policer counters continue advancing and rate caps/firewall
 behavior remain intact. Compare IDS alerts, flow pairing, packet loss and CPU.
 Restart the pilot and IDS VM and verify cleanup/rebind, then stop the service
