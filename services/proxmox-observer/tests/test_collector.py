@@ -1,10 +1,14 @@
+import contextlib
 import importlib.util
+import io
 import json
 from pathlib import Path
 import socket
 import struct
 import tempfile
 import unittest
+from unittest import mock
+from types import SimpleNamespace
 
 spec = importlib.util.spec_from_file_location("collector", Path(__file__).parents[1] / "collector.py")
 c = importlib.util.module_from_spec(spec)
@@ -179,6 +183,102 @@ class StateTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 c.write_snapshot(path, {"too_big": "x" * c.MAX_SNAPSHOT})
             self.assertEqual(json.loads(path.read_bytes()), {"sequence": 2})
+
+
+class ScopeTests(unittest.TestCase):
+    def make_inventory(self, root, vm_ids):
+        conf, sys, run, proc = [root / name for name in ("conf", "sys", "run", "proc")]
+        for path in (conf, sys, run, proc):
+            path.mkdir(exist_ok=True)
+        for vm_id in vm_ids:
+            (conf / f"{vm_id}.conf").write_text("net0: virtio=AA:BB:CC:DD:EE:FF,bridge=vmbr0\n")
+            (run / f"{vm_id}.pid").write_text(str(vm_id))
+            (proc / str(vm_id)).mkdir(exist_ok=True)
+            (proc / str(vm_id) / "comm").write_text("kvm\n")
+            interface = sys / f"tap{vm_id}i0"
+            (interface / "statistics").mkdir(parents=True, exist_ok=True)
+            (interface / "ifindex").write_text(str(vm_id))
+            for field in ("rx_bytes", "tx_bytes", "rx_packets", "tx_packets"):
+                (interface / "statistics" / field).write_text("50")
+        return conf, sys, run, proc
+
+    def test_range_boundaries_before_reads_and_count_and_future_discovery(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            paths = self.make_inventory(root, [5999, 6000, 6999, 7000])
+            conf = paths[0]
+            # More than MAX_VMS malformed out-of-scope configs must have no effect.
+            for vm_id in range(1, c.MAX_VMS + 2):
+                (conf / f"{vm_id}.conf").write_bytes(b"\xff")
+            (conf / "5999.conf").write_bytes(b"x" * (c.MAX_CONFIG + 1))
+            (conf / "nonnumeric.conf").write_bytes(b"\xff")
+            original_read = c.read_limited
+            opened_configs = []
+            def tracked_read(path, maximum=c.MAX_CONFIG):
+                if path.parent == conf:
+                    opened_configs.append(int(path.stem))
+                return original_read(path, maximum)
+            with mock.patch.object(c, "read_limited", side_effect=tracked_read):
+                vms, bindings, errors = c.inventory(*paths, vm_id_range=(6000, 6999))
+            self.assertEqual(opened_configs, [6000, 6999])
+            self.assertEqual([vm["vm_id"] for vm in vms], [6000, 6999])
+            self.assertEqual(set(bindings), {6000, 6999})
+            self.assertEqual(errors, [])
+            code = c.capture_filter(bindings)
+            for vm_id in (5999, 6000, 6999, 7000):
+                self.assertEqual(bool(execute_filter(code, packet(), index=vm_id)), 6000 <= vm_id <= 6999)
+            self.make_inventory(root, [6001])
+            self.assertEqual(set(c.inventory(*paths, vm_id_range=(6000, 6999))[1]), {6000, 6001, 6999})
+            self.assertTrue(c.inventory(*paths)[2])  # Default retains all-node VM bound.
+            for vm_id in range(6100, 6100 + c.MAX_VMS):
+                (conf / f"{vm_id}.conf").touch()
+            self.assertEqual(c.inventory(*paths, vm_id_range=(6000, 6999))[1], {})
+            self.assertTrue(c.inventory(*paths, vm_id_range=(6000, 6999))[2])
+
+    def test_cli_range_validation_and_default(self):
+        for value in ("0:6999", "6000:0", "6999:6000", "-1:6999", "6000", "6:7:8",
+                      "6000:1000000000", "a:6999", "6000:6999.0", " 6000:6999"):
+            with self.subTest(value=value), mock.patch("sys.argv", ["collector", "--node", "test", "--vm-id-range=" + value]), \
+                    contextlib.redirect_stderr(io.StringIO()), mock.patch.object(c, "run") as run:
+                with self.assertRaises(SystemExit) as raised:
+                    c.main()
+                self.assertEqual(raised.exception.code, 2)
+                run.assert_not_called()
+        for value, expected in ((None, None), ("6000:6999", (6000, 6999)), ("1:999999999", (1, 999999999)),
+                                ("6000:6000", (6000, 6000))):
+            argv = ["collector", "--node", "test"] + (["--vm-id-range", value] if value else [])
+            with mock.patch("sys.argv", argv), mock.patch.object(c, "run") as run:
+                c.main()
+                self.assertEqual(run.call_args.args[0].vm_id_range, expected)
+
+    def test_run_range_capture_intersection_and_scope_label(self):
+        class SnapshotWritten(Exception):
+            pass
+        with tempfile.TemporaryDirectory() as directory:
+            paths = self.make_inventory(Path(directory), [5999, 6000, 6999, 7000])
+            original_inventory = c.inventory
+            for capture_ids, expected in (([], {6000, 6999}), ([5999, 6000, 7000], {6000})):
+                args = SimpleNamespace(node="test", vm_id_range=(6000, 6999), capture_vm=capture_ids,
+                                       output=Path(directory) / "snapshot.json")
+                with mock.patch.object(c, "inventory", side_effect=lambda **kw: original_inventory(*paths, **kw)), \
+                        mock.patch.object(c, "open_capture", side_effect=OSError("mock capture unavailable")) as capture, \
+                        mock.patch.object(c, "write_snapshot", side_effect=SnapshotWritten) as write, \
+                        mock.patch.object(c.signal, "signal"):
+                    with self.assertRaises(SnapshotWritten):
+                        c.run(args)
+                self.assertEqual(set(capture.call_args.args[0]), expected)
+                snapshot = write.call_args.args[1]
+                self.assertEqual([vm["vm_id"] for vm in snapshot["vms"]], [6000, 6999])
+                self.assertTrue(any("6000:6999 inclusive; no coverage outside" in text
+                                    for text in snapshot["collection"]["limitations"]))
+            # A formerly observed out-of-scope binding is invalidated before publication.
+            window = c.Window()
+            for vm_id in (5999, 6000):
+                binding = (vm_id, None, f"tap{vm_id}i0", vm_id, "hash", vm_id)
+                window.add(binding, c.parse_packet(packet()), 100, 1)
+            current = {6000: (6000, None, "tap6000i0", 6000, "hash", 6000)}
+            self.assertEqual([flow["vm_id"] for flow in window.reconcile(current)], [6000])
+            self.assertEqual(window.discarded, 1)
 
 
 if __name__ == "__main__":
