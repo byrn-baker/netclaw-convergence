@@ -19,6 +19,7 @@ import httpx
 
 from store import Store
 import host_events
+import hypervisor_events
 from telemetry import archive_body, render_metrics
 from ip_context import IPContext
 
@@ -34,8 +35,14 @@ def create_app(config, store, client_factory=httpx.AsyncClient):
         raise ValueError('Unique SHA-256 token hashes required')
 
     agents = host_events.validate_agents(config.get('host_agents', []), hashes, [s['id'] for s in sensors])
+    hypervisors = hypervisor_events.validate_sources(config.get('hypervisors', []),
+        hashes + [a['token_sha256'] for a in agents], [s['id'] for s in sensors] + [a['id'] for a in agents])
+    hypervisor_events.validate_historical_roles(Path(config['state_dir'])/'hypervisor.sqlite',
+        hashes + [a['token_sha256'] for a in agents])
     host_events.configure_limits(store, config)
-    host_events.bind_enrollments(store, agents, hashes)
+    host_events.bind_enrollments(store, agents, hashes + [s['token_sha256'] for s in hypervisors])
+    hypervisor_store = hypervisor_events.HypervisorStore(Path(config['state_dir'])/'hypervisor.sqlite',
+        hypervisors, hashes + [a['token_sha256'] for a in agents])
 
     if config.get('victorialogs_url'):
         store.enable_archive()
@@ -106,6 +113,7 @@ def create_app(config, store, client_factory=httpx.AsyncClient):
     async def prune():
         while True:
             more = store.prune()
+            hypervisor_store.prune()
             await asyncio.sleep(0.2 if more else 3600)
 
     @asynccontextmanager
@@ -117,12 +125,16 @@ def create_app(config, store, client_factory=httpx.AsyncClient):
         for task in tasks:
             task.cancel()
         await asyncio.gather(*tasks, return_exceptions=True)
+        hypervisor_store.db.close()
 
     app = FastAPI(lifespan=lifespan, docs_url=None, redoc_url=None, openapi_url=None)
 
     def token_hash(request):
         header = request.headers.get('authorization', '')
         return hashlib.sha256(header[7:].encode()).hexdigest() if header.startswith('Bearer ') else ''
+
+    app.state.hypervisor_store = hypervisor_store
+    hypervisor_events.install_routes(app, config, hypervisors, hypervisor_store, token_hash)
 
     @app.get('/healthz')
     async def health():

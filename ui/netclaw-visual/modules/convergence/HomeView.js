@@ -12,6 +12,7 @@ import {flowHTML, flowHandoff} from './FlowExplorer.js';
 import {securityExplorerHTML, securityModel} from './SecurityExplorer.js';
 import {securityCasesPath} from './SecurityHistory.js';
 import {hostHeartbeatHTML} from './HostHeartbeat.js';
+import {proxmoxObserverHTML} from './ProxmoxObserver.js';
 
 const SUBVIEWS = [
   { id: 'overview', label: 'Overview' },
@@ -958,7 +959,7 @@ export class HomeView {
     if (!data) return '<p class="home-muted">Loading security observations…</p>';
     const ids = data.intrusionDetection || {};
     const embedded=Boolean(this.options?.embedded);
-    return `${hostHeartbeatHTML(data.hostTelemetry)}${embedded?securityExplorerHTML(this.cache.securityCases,data,this.securityState())+'<details class="security-sensor-details"><summary>Sensor health, firewall counts &amp; coverage details</summary>':''}<div class="home-section">
+    return `${hostHeartbeatHTML(data.hostTelemetry)}${proxmoxObserverHTML(data.hypervisorTelemetry)}${embedded?securityExplorerHTML(this.cache.securityCases,data,this.securityState())+'<details class="security-sensor-details"><summary>Sensor health, firewall counts &amp; coverage details</summary>':''}<div class="home-section">
       <h3>Security visibility</h3>
       <p>Firewall telemetry: <strong>${esc(data.status)}</strong> · observation window ${esc(data.observedWindow || 'unknown')}</p>
       ${data.reason ? `<p class="home-muted">${esc(data.reason)}</p>` : ''}
