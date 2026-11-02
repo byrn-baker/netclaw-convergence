@@ -174,6 +174,22 @@ def test_heartbeat_cache_refreshes_health_after_short_ttl(monkeypatch, tmp_path)
     assert len(observed) == 2
 
 
+@pytest.mark.parametrize('container', [None, 'netclaw-suricata-proxmox'])
+def test_heartbeat_inspects_only_configured_capture_container(monkeypatch, tmp_path, container):
+    if container is None:
+        monkeypatch.delenv('IDS_CAPTURE_CONTAINER', raising=False)
+    else:
+        monkeypatch.setenv('IDS_CAPTURE_CONTAINER', container)
+    observed = []
+    def inspect(command, **kwargs):
+        observed.append(command)
+        return 'true\n'
+    monkeypatch.setattr(shipper.subprocess, 'check_output', inspect)
+    assert shipper.heartbeat(tmp_path)['capture_running'] is True
+    assert observed == [['docker', 'inspect', '--format', '{{.State.Running}}',
+                         container or 'netclaw-suricata']]
+
+
 @pytest.fixture
 def tls_receiver(tmp_path):
     """Real HTTP/1.1 over verified TLS, including server-side disconnects."""
