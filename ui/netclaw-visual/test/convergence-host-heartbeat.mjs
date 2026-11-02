@@ -2,17 +2,20 @@ import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {JSDOM} from 'jsdom';
 import {hostHeartbeatHTML} from '../modules/convergence/HostHeartbeat.js';
+import {vmSecurityHTML} from '../modules/convergence/VMSecurity.js';
 import {HomeView} from '../modules/convergence/HomeView.js';
 const agent = {id:'enrollment-example',vm_id:'vm-example',status:'reporting',reason:'heartbeat_received',heartbeat_observed:1800000000,last_contact:1800000030,
   heartbeat:{collection_ok:true,queue_events:0,queue_bytes:0,dropped_events:2},pending_events:1,pending_limit:64,valid_until:'2028-01-01T00:00:00Z',evidence_trust:'guest_reported'};
 const doc = html => new JSDOM(html).window.document;
 
-test('VM heartbeat card is outside sensor details in both actual Security view modes, independent of cases and IDS',()=>{
+test('VM heartbeat moves from Security to collapsed VM collection diagnostics',()=>{
   for (const embedded of [false,true]) {
     const context={cache:{security:{status:'unavailable',intrusionDetection:{status:'unavailable'},hostTelemetry:{status:'configured',agents:[agent]}},securityCases:{unavailable:true}},options:{embedded},securityState:()=>({}),securityDrafts:new Map(),incidentPending:new Set(),incidentErrors:new Map()};
     const d=doc(HomeView.prototype.htmlSecurity.call(context));
-    const card=d.querySelector('[aria-labelledby="host-heartbeat-title"]');
-    assert.ok(card);assert.equal(card.closest('details'),null);
+    assert.equal(d.querySelector('[aria-labelledby="host-heartbeat-title"]'),null);
+    const vmDoc=doc(vmSecurityHTML({site:'home',sources:[],hostTelemetry:context.cache.security.hostTelemetry},{site:'home'}));
+    const card=vmDoc.querySelector('[aria-labelledby="host-heartbeat-title"]');
+    assert.ok(card);assert.ok(card.closest('details'));assert.equal(card.closest('details').open,false);
     assert.match(card.textContent,/vm-example/);assert.match(card.textContent,/Reporting/);
     assert.match(card.textContent,/guest_reported/);assert.match(card.textContent,/not proof of compromise/);
     assert.equal(card.querySelectorAll('th[scope="col"]').length,8);

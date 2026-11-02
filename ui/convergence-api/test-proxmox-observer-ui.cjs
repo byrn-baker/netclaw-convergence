@@ -27,13 +27,16 @@ test('all dynamic text including limited connection details is escaped',()=>{
   const value=data(),s=value.sources[0];s.id=hostile;s.node=hostile;s.snapshot.collection.limitations=[hostile];s.snapshot.vms[0].vm_uuid=hostile;s.snapshot.vms[0].nics=[{...nic,name:hostile,tap:hostile,capture_state:hostile}];s.snapshot.connections=[{vm_id:hostile,tap:hostile,protocol:hostile,src_ip:hostile,dst_ip:hostile,src_port:hostile,dst_port:hostile,packet_count:1,observed_at:now/1000,payload:'private-secret'}];
   const d=dom(value);assert.equal(d.window.document.querySelector('img,script'),null);assert.ok(d.window.document.body.textContent.includes(hostile));assert.doesNotMatch(d.window.document.body.textContent,/private-secret/);assert.ok(d.window.document.querySelector('details'));d.window.close();
 });
-test('HomeView keeps guest heartbeat and observer outside sensor details in both Security modes',async()=>{
+test('Security no longer renders VM observer tables; VM Security owns collapsed heartbeat diagnostics',async()=>{
   const {HomeView}=await import('../netclaw-visual/modules/convergence/HomeView.js');
+  const {vmSecurityHTML}=await import('../netclaw-visual/modules/convergence/VMSecurity.js');
   for(const embedded of [false,true]) {
     const context={cache:{security:{status:'unavailable',hostTelemetry:{status:'not_configured'},hypervisorTelemetry:data()},securityCases:{unavailable:true}},options:{embedded},securityState:()=>({}),securityDrafts:new Map(),incidentPending:new Set(),incidentErrors:new Map()};
     const d=new JSDOM(HomeView.prototype.htmlSecurity.call(context));
-    const card=d.window.document.querySelector('[aria-labelledby="proxmox-observer-title"]');
-    assert.ok(card);assert.equal(card.closest('details'),null);assert.match(card.textContent,/VMs discovered: 3/);
-    assert.ok(d.window.document.querySelector('[aria-labelledby="host-heartbeat-title"]'));d.window.close();
+    assert.equal(d.window.document.querySelector('[aria-labelledby="proxmox-observer-title"]'),null);
+    assert.equal(d.window.document.querySelector('[aria-labelledby="host-heartbeat-title"]'),null);d.window.close();
+    const vmDoc=new JSDOM(vmSecurityHTML({site:'home',sources:[],hostTelemetry:{status:'not_configured'}},{site:'home'}));
+    const card=vmDoc.window.document.querySelector('[aria-labelledby="host-heartbeat-title"]');
+    assert.ok(card.closest('details'));assert.equal(card.closest('details').open,false);vmDoc.window.close();
   }
 });

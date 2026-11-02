@@ -15,6 +15,8 @@ import uuid
 from fastapi import Request
 from fastapi.responses import JSONResponse
 
+import vm_security
+
 SNAPSHOT_BYTES = 512 * 1024
 HISTORY_LIMIT = 10000
 TTL = 86400
@@ -254,6 +256,19 @@ class HypervisorStore:
           CREATE INDEX IF NOT EXISTS event_source ON events(source,id);
           CREATE INDEX IF NOT EXISTS event_age ON events(observed);
         ''')
+        # Legacy rows lack session provenance and are never used for security findings.
+        columns = {r['name'] for r in self.db.execute('PRAGMA table_info(events)')}
+        for column, kind in (('boot', 'TEXT'), ('started', 'REAL'), ('identity_sequence', 'INTEGER')):
+            if column not in columns:
+                self.db.execute(f'ALTER TABLE events ADD COLUMN {column} {kind}')
+        self.db.executescript('''
+          CREATE TABLE IF NOT EXISTS security_identities(source TEXT NOT NULL, tap TEXT NOT NULL,
+            vm_id INTEGER NOT NULL, vm_uuid TEXT, ifindex INTEGER, boot TEXT NOT NULL,
+            started REAL NOT NULL, since REAL NOT NULL, generation INTEGER NOT NULL, PRIMARY KEY(source,tap));
+          CREATE TABLE IF NOT EXISTS security_samples(source TEXT NOT NULL, observed REAL NOT NULL,
+            boot TEXT NOT NULL, started REAL NOT NULL, capture_drops INTEGER NOT NULL,
+            events_discarded INTEGER NOT NULL, PRIMARY KEY(source,observed));
+        ''')
         try:
             with self.db:
                 for digest in other_hashes:
@@ -278,6 +293,7 @@ class HypervisorStore:
     def _prune(self, now):
         self.db.execute('DELETE FROM events WHERE observed<?', (now - TTL,))
         self.db.execute('DELETE FROM receipts WHERE received<?', (now - TTL,))
+        self.db.execute('DELETE FROM security_samples WHERE observed<?', (now - vm_security.WINDOW_SECONDS,))
         # Retain only small replay watermarks after snapshot expiry.
         self.db.execute('UPDATE latest SET snapshot=NULL WHERE observed<? AND snapshot IS NOT NULL', (now - TTL,))
 
@@ -321,9 +337,35 @@ class HypervisorStore:
                 digest=excluded.digest,last_contact=excluded.last_contact,snapshot=excluded.snapshot''',
                 (source['id'], payload['boot_id'], payload['collector_started_at'], payload['sequence'],
                  payload['observed_at'], digest, now, encoded))
+            previous = {r['tap']: dict(r) for r in self.db.execute(
+                'SELECT * FROM security_identities WHERE source=?', (source['id'],))}
+            self.db.execute('DELETE FROM security_identities WHERE source=?', (source['id'],))
+            generations = {}
+            for vm in payload['vms']:
+                for nic in vm['nics']:
+                    if not nic['present'] or vm['vm_uuid'] is None:
+                        continue
+                    prior = previous.get(nic['tap'])
+                    same = bool(prior and (prior['vm_id'], prior['vm_uuid'], prior['ifindex'], prior['boot'], prior['started']) ==
+                        (vm['vm_id'], vm['vm_uuid'], nic['ifindex'], payload['boot_id'], payload['collector_started_at']))
+                    # New sessions start at collector start. Replacements within a session
+                    # start at their first inventory observation, conservatively losing early metadata.
+                    session_new = not old or old['boot'] != payload['boot_id'] or old['started'] != payload['collector_started_at']
+                    since = prior['since'] if same else (payload['collector_started_at'] if session_new else payload['observed_at'])
+                    generation = prior['generation'] if same else payload['sequence']
+                    generations[nic['tap']] = generation
+                    self.db.execute('INSERT INTO security_identities VALUES(?,?,?,?,?,?,?,?,?)',
+                        (source['id'], nic['tap'], vm['vm_id'], vm['vm_uuid'], nic['ifindex'], payload['boot_id'], payload['collector_started_at'], since, generation))
+            self.db.execute('INSERT OR REPLACE INTO security_samples VALUES(?,?,?,?,?,?)',
+                (source['id'], payload['observed_at'], payload['boot_id'], payload['collector_started_at'],
+                 payload['collection']['capture_drops'], payload['collection']['events_discarded']))
+            self.db.execute('''DELETE FROM security_samples WHERE source=? AND rowid NOT IN
+                (SELECT rowid FROM security_samples WHERE source=? ORDER BY observed DESC LIMIT ?)''',
+                (source['id'], source['id'], HISTORY_LIMIT))
             # Rows are snapshot observations, not distinct conversations or attack counts.
-            self.db.executemany('INSERT INTO events(source,observed,payload) VALUES(?,?,?)',
-                [(source['id'], event['observed_at'], canonical(event)) for event in payload['connections']])
+            self.db.executemany('INSERT INTO events(source,observed,payload,boot,started,identity_sequence) VALUES(?,?,?,?,?,?)',
+                [(source['id'], event['observed_at'], canonical(event), payload['boot_id'], payload['collector_started_at'], generations.get(event['tap']))
+                 for event in payload['connections']])
             self.db.execute('''DELETE FROM events WHERE source=? AND id NOT IN
                 (SELECT id FROM events WHERE source=? ORDER BY id DESC LIMIT ?)''', (source['id'], source['id'], HISTORY_LIMIT))
             self.db.execute('''DELETE FROM receipts WHERE source=? AND rowid NOT IN
@@ -345,10 +387,41 @@ class HypervisorStore:
         return {'status': 'configured' if result else 'not_configured', 'sources': result}
 
 
+    def security_status(self, sources, site, policies=(), now=None):
+        now = time.time() if now is None else now
+        result = []
+        with self.lock:
+            for source in sources:
+                if source['site'] != site:
+                    continue
+                row = self.db.execute('SELECT * FROM latest WHERE source=?', (source['id'],)).fetchone()
+                snapshot = json.loads(row['snapshot']) if row and row['snapshot'] and row['observed'] >= now - TTL else None
+                history = self.db.execute('SELECT * FROM events WHERE source=? AND observed>=? AND observed<=? ORDER BY id DESC LIMIT ?',
+                    (source['id'], now - vm_security.WINDOW_SECONDS, now, HISTORY_LIMIT)).fetchall()
+                identities = {(r['vm_id'], r['vm_uuid'], r['tap'], r['ifindex']): {'since': r['since'], 'generation': r['generation']} for r in self.db.execute(
+                    'SELECT * FROM security_identities WHERE source=?', (source['id'],))}
+                samples = [dict(r) for r in self.db.execute('SELECT * FROM security_samples WHERE source=? AND observed>=? ORDER BY observed DESC LIMIT ?',
+                    (source['id'], now - vm_security.WINDOW_SECONDS, HISTORY_LIMIT))]
+                policy = next((p for p in policies if (p['source_id'], p['node']) == (source['id'], source['node'])), None)
+                result.append(vm_security.analyze_source(source, snapshot, row['last_contact'] if row else None,
+                    row['observed'] if row else None,
+                    [{'event': json.loads(r['payload']), 'boot': r['boot'], 'started': r['started'], 'identity_sequence': r['identity_sequence']} for r in history],
+                    identities, samples, now, policy, history_limited=len(history) >= HISTORY_LIMIT))
+        return {'status': 'configured' if result else 'not_configured', 'generated_at': now,
+                'window_seconds': vm_security.WINDOW_SECONDS, 'sources': result}
+
+
 def install_routes(app, config, sources, persistence, token_hash):
     capacity = config.get('hypervisor_ingress_capacity', 8)
     integer(capacity, 1, 64)
     inflight = 0
+    security_policies = vm_security.validate_config(config.get('vm_security', {}), sources)
+
+    @app.get('/v1/vm-security')
+    async def security_status(request: Request, site: str):
+        if not hmac.compare_digest(token_hash(request), config['status_token_sha256']):
+            return JSONResponse({'error': 'Unauthorized'}, status_code=401)
+        return persistence.security_status(sources, site, security_policies)
 
     @app.get('/v1/hypervisor-status')
     async def status(request: Request, site: str):
