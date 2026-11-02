@@ -4,11 +4,11 @@ imagePullSecrets:
 api:
   image:
     repository: ghcr.io/byrn-baker/netclaw-convergence-api
-    tag: proxmox-b5046316@sha256:43fa49a548747972c1c5a454b012bdf12a4896f5e19f73ac058494f449a16493
+    tag: vm-security-0b88454e@sha256:8e86f00f156ce1876ffb729e759f1e01664a91a9c7a22b3d8b325f24de099582
 ids:
   image:
     repository: ghcr.io/byrn-baker/netclaw-ids-ingest
-    tag: proxmox-b5046316@sha256:5e1225d87472801b334f94f1d49f38be0f43ed5740bd83975985defd4b06f6c1
+    tag: vm-security-0b88454e@sha256:e4bacb752139f516ffbabd8512b692e8faa54fa6c3a637acb50564301131c176
 victoria:
   sharedGrafana:
     registrationMode: external
