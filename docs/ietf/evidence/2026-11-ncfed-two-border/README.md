@@ -61,7 +61,7 @@ redacted or were never logged.
 | 4g | `BUDGET_EXHAUSTED (-32004)` | **PASS** | 20:54:37 | `t4-limits.txt` |
 | 5 | Revocation: sever, refused redial, recovery only after re-consent | **PASS** | 20:54:59 – 20:55:34 | `t5-revocation.txt` |
 | 6a | Delegation default-deny (skill task) | **PASS** | 20:55:47 | `t6-delegation.txt` |
-| 6b | Delegated task end to end | **PARTIAL** in the run: protocol path works, but production's agent gateway refused execution. **PASS** on re-run after the gateway fix (§10); the skill itself was not loaded on production | 20:56:15 – 20:58:47; re-run 21:20:35 – 21:21:30 | `t6-delegation-positive.txt`, `t6-rerun-after-gateway-fix.txt` |
+| 6b | Delegated task end to end | **PARTIAL** in the run: protocol path works, but production's agent gateway refused execution. **PASS** at the NCFED layer on re-run after the gateway fix (§10), though the skill was not loaded on production. **PASS end to end** on the second re-run after the skill limit raise (§11): the skill ran and returned the correct answer | 20:56:15 – 20:58:47; re-runs 21:20:35 – 21:21:30 and 22:03:35 – 22:04:21 | `t6-delegation-positive.txt`, `t6-rerun-after-gateway-fix.txt`, `t6-rerun-after-skill-limits.txt` |
 
 ## 3. Tests, commands and redacted outputs
 
@@ -213,7 +213,7 @@ This gateway fault was fixed after the run, and 6b was re-run; see [§10](#10-fo
 | `-32007 SEVERED` | Observed, but used for "peer_unreachable", not only for a sever | T5 |
 | `-32010 NOT_FEDERATED` | Confirmed for admission failures | T3 |
 | Sever is local and needs no peer cooperation; redials refused until re-consent | Confirmed | T5 |
-| Async task delegation (submit → status/result polling) | Confirmed end to end on re-run, including the production agent turn (§10); the skill output was an OpenClaw skill-load error unrelated to NCFED | T6b |
+| Async task delegation (submit → status/result polling) | Confirmed end to end: the protocol path and agent turn on the first re-run (§10), and the granted skill executing with a correct result on the second re-run (§11) | T6b |
 | Task-owner binding (a third identity cannot poll another's task) | Not testable (needs a third federated identity) | — |
 | `-32008 GUARDRAIL_BLOCKED` | Not testable (both Borders in `hobby` security mode; DefenseClaw inspection off) | — |
 
@@ -261,7 +261,12 @@ on production (0600, SQLite backup API, `integrity_check` ok, sha256 `f0554c15�
 | 4 | 21:17:42 | `openclaw-gateway.service` restarted (PID 676625 → 833981) | done |
 | 5 | 21:20:35 | Grant 62: skill `subnet-calculator` to `as65010-…`, `requires_approval` (6b re-run) | **Revoked** 21:21:30 |
 | — | 21:20:45 | Approved production approval id 2 (re-run task) | consumed; task `completed` |
-| — | 20:44 / 20:49 | `/tmp/ncfed_wire_probe.py`, `/tmp/ncfed_api.sh` copied to production | present (removed at teardown) |
+| 6 | 21:58:58 | `bgp/federation/gateway_ws.py` patched in the production working tree (token re-resolve and source logging); backup `gateway_ws.py.bak-reresolve-20261122T215858Z` (§11) | **Active** |
+| 7 | 21:59:03 | `netclaw-mesh.service` restarted to load the patch (PID 504509 → 852849) | done |
+| 8 | 22:01:00 | `~/.openclaw/openclaw.json` `skills.limits` raised to the spec-188 policy; backup `openclaw.json.bak-skilllimits-20261122T220100Z` (§11) | **Active** (hot-reloaded; gateway PID 833981 unchanged) |
+| 9 | 22:03:35 | Grant 63: skill `subnet-calculator` to `as65010-…`, `requires_approval` (second 6b re-run) | **Revoked** 22:04:21 |
+| — | 22:03:44 | Approved production approval id 3 (second re-run task) | consumed; task `completed` |
+| — | 20:44 / 20:49 | `/tmp/ncfed_wire_probe.py`, `/tmp/ncfed_api.sh` copied to production | `/tmp/ncfed_api.sh` removed from both hosts 22:05 (§11); the probe script is removed at teardown |
 
 Automatic side effects on production: audit/GAIT entries for every probe and invoke; `federation_peer`/
 `consent_record`/`invocation_grant` rows for as65010; inventory cache for as65010.
@@ -286,7 +291,7 @@ The HUD, mobile enrollment, BGP config and Stage 8 checks were not touched. John
 # 1. production — sever the test peer (local kill switch; revokes consent rows 7/8, purges its inventory)
 ssh ubuntu@198.51.100.10 'curl -s -X POST -H "Content-Type: application/json" \
   -d "{\"peer\":\"as65010-10.255.250.1\"}" http://127.0.0.1:8179/n2n/kill'
-# 2. production — confirm no active grants for as65010 (grants 61 and 62 are already revoked)
+# 2. production — confirm no active grants for as65010 (grants 61, 62 and 63 are already revoked)
 ssh ubuntu@198.51.100.10 'curl -s http://127.0.0.1:8179/n2n/grants' | grep -c as65010   # expect 0 (the list omits revoked grants)
 # 3. production — remove helper files
 ssh ubuntu@198.51.100.10 'rm -f /tmp/ncfed_wire_probe.py /tmp/ncfed_api.sh'
@@ -360,7 +365,7 @@ Rollback: `cp -p ~/.openclaw/.env.bak-gwtoken-20261122T211728Z ~/.openclaw/.env`
   - Production's workspace holds 249 skills, but OpenClaw loads at most 200 per source
     (`DEFAULT_MAX_SKILLS_LOADED_PER_SOURCE`). It keeps the first 200 by sorted directory name.
   - So `subnet-calculator` and about 49 other skills (mostly S–Z) are never loaded.
-  - Proposed fix, not applied: raise `skills.limits.maxSkillsLoadedPerSource`.
+  - Fix: raise `skills.limits.maxSkillsLoadedPerSource` (applied later; see §11).
 - **PRODUCTION CHANGE 5 reverted** (21:21:30Z): `DELETE /n2n/grants/62`. The same submit then got `-32001`, and
   no approvals were left pending.
 
@@ -368,3 +373,91 @@ Rollback: `cp -p ~/.openclaw/.env.bak-gwtoken-20261122T211728Z ~/.openclaw/.env`
 - On `AUTH_TOKEN_MISMATCH`, drop the cached client so the token is resolved again.
 - Log the token source and its fingerprint at startup.
 - Today this fault surfaces only as a single failed task with a generic handshake error.
+- Implemented and deployed; see §11.
+
+## 11. Follow-up: gateway_ws patch, skill limit raise and second 6b re-run
+
+Done later the same day (21:58–22:05Z), at the operator's request. Raw output:
+`raw/t6-rerun-after-skill-limits.txt`. Tokens are identified only by sha256 prefix.
+
+**gateway_ws.py hardening** (production changes 6 and 7):
+- Source change: commit `a4cc75d4` on branch `fix/gateway-ws-token-reresolve`, with
+  `tests/test_gateway_ws_token_reresolve.py` (6 tests, passing).
+- The daemon now logs where its gateway token came from (`env:OPENCLAW_GATEWAY_TOKEN`, `config:<path>` or
+  `secretref-env:<VAR>@<path>`) and the token's fingerprint. It never logs the value.
+- On an auth rejection (`AUTH_TOKEN_MISMATCH` and similar), the cached client is marked stale. The next call resolves
+  the token again, so a corrected config takes effect without a daemon restart. If the token comes from the process
+  environment and is unchanged, the log says that a restart is needed.
+- Production: the patched file was copied into the working tree of `~/netclaw-production-candidate` (no commit on the
+  server). The original was backed up to `gateway_ws.py.bak-reresolve-20261122T215858Z` beside it.
+  `netclaw-mesh.service` was restarted at 21:59:03Z (PID 504509 → 852849).
+- Verified in the daemon log: `gateway ws token resolved: source=config:~/.openclaw/openclaw.json fp=cf699848aa`,
+  then `gateway ws connected`.
+- Rollback: copy the backup over `gateway_ws.py`, then restart `netclaw-mesh.service`.
+
+**Skill load limit raise** (production change 8):
+- `skills.limits` in `~/.openclaw/openclaw.json` was set from the repository policy `config/skill-limits.json`
+  (spec 188), using `scripts/lib/skill_limits.raise_limits`: `maxSkillsLoadedPerSource` 400,
+  `maxCandidatesPerRoot` 400, `maxSkillsInPrompt` 400, `maxSkillsPromptChars` 122000. No other keys changed.
+- The gateway hot-reloaded the config; it was not restarted (PID 833981 throughout).
+- `subnet-calculator` is now `ready`. The ready skill count went from 187 of 298 to 227 of 347.
+- Rollback: `cp -p ~/.openclaw/openclaw.json.bak-skilllimits-20261122T220100Z ~/.openclaw/openclaw.json`.
+
+**Second 6b re-run** (22:03–22:05Z):
+- **PRODUCTION CHANGE 9** (22:03:35Z): temporary grant 63, the same shape as grants 61 and 62.
+- The test VM submitted task `0551d62e…`. Production queued approval 3, and the operator approved it at 22:03:44Z.
+- The test VM polled `working` ×3, then got `completed` at 22:04:15Z with `usage_available: true` and
+  `tokens_used` 149489.
+- The answer was correct for 192.0.2.77/27: network 192.0.2.64/27, broadcast 192.0.2.95, usable hosts
+  192.0.2.65–192.0.2.94, mask 255.255.255.224.
+- The production agent's trajectory shows `skills_read subnet-calculator`, then a call to
+  `subnet-calculator-mcp__subnet_calculator`. So the delegated task used the granted skill.
+- **Result: 6b is PASS end to end**, both at the NCFED layer and in the delegated agent turn.
+- **PRODUCTION CHANGE 9 reverted** (22:04:21Z): grant 63 revoked. The same submit then got `-32001`, and no
+  approvals were left pending. Helper `/tmp/ncfed_api.sh` was removed from both hosts.
+
+**iN2N members (checked read-only, not changed).** None of the five active member configs
+(`~/.openclaw-byrns-risk-<name>/openclaw.json`, generated 2026-11-14) has the spec-188 limits, except viz, which sets
+only `maxSkillsLoadedPerSource` 300. No member loses a scoped skill today:
+- cml, pyats and secops: all scoped skills sort within the first 200.
+- viz: three scoped skills (`threejs-network-viz`, `ue5-network-viz`, `uml-diagram`) sort past 200. They load only
+  because of the 300 override.
+- guardian-claw: uses its own 7-skill workspace.
+- No member logged a "cannot load scoped skill" warning in the previous 3 days.
+
+## 12. Evidence file index
+
+Every file in this folder, and the test it supports. All times are UTC on 2026-11-22.
+
+| File | Test | Contents |
+|---|---|---|
+| `raw/t1-preconsent.txt` | T1, T2 | Production port 1179 discrimination cross-check (no `0xFF`/BGP probe) and the pre-consent handshake refusal |
+| `raw/t1-preconsent-daemon-dial.txt` | T1 | Test VM operator marks production as domain-verified (direct SQL; no HTTP/CLI surface), then the daemon's pre-consent dial |
+| `raw/t1-postconsent.txt` | T1 | Raw handshake to production after mutual consent: the 13-octet NCFED reply |
+| `raw/prod-change-1-consent.txt` | T1 | Production change 1: `POST /n2n/consent` for the test VM identity only |
+| `raw/t1-t2-production-log.txt` | T1, T2 | Production daemon log for the T1/T2 window |
+| `raw/t2-discriminate-testvm.txt` | T2 | First-octet and magic discrimination against the test VM, with its daemon log |
+| `raw/t2-timeouts-testvm.txt` | T2 | 30 s first-octet and 10 s magic timeout measurements |
+| `raw/t3-pinned-impersonation.txt` | T3a, T3b, T3d | Forged, keyless and bad-signature hellos; changed pinned key refused and logged |
+| `raw/t3-domain-verified-negative.txt` | T3c | Wrong `claw_domain` set on the test VM; TLS SAN mismatch refused on redial |
+| `raw/t3-trust-state-after-federation.txt` | T3 | Production's read-only view of the test peer's trust state after federation |
+| `raw/t4-grants.txt` | T4a–T4c | Default-deny, read grant, and a write-class tool refused under a read grant |
+| `raw/t4-approval.txt` | T4d, T4e | Approve and deny paths; the held call that never returns `-32002` |
+| `raw/t4-limits.txt` | T4f, T4g | `RATE_LIMITED` and `BUDGET_EXHAUSTED` |
+| `raw/t5-revocation.txt` | T5 | Sever on the test VM, refused redial, recovery after re-consent |
+| `raw/t6-delegation.txt` | T6a | Skill task submitted with no grant: refused |
+| `raw/t6-delegation-positive.txt` | T6b | Production change 2 (grant 61): the first delegated task, which failed at production's gateway |
+| `raw/t6-rerun-after-gateway-fix.txt` | T6b (§10) | Grant 62 re-run after the gateway token fix: NCFED path passes; the skill was not loaded |
+| `raw/t6-rerun-after-skill-limits.txt` | T6b (§11) | Grant 63 re-run after the skill limit raise: the skill runs; daemon token-source log; agent trajectory |
+| `tools/ncfed_wire_probe.py` | T1–T3 | Raw-wire probe: `discriminate`, `timeouts`, `handshake --hello none\|keyless\|forged\|badsig [--tls12]` |
+| `tools/ncfed_probe_mcp.py` | T4 | Stdio MCP server registered on the test VM only as `ncfed-probe` (`echo_info`, `touch_marker`, `approval_info`) |
+
+Related source changes, outside this folder:
+
+- `mcp-servers/protocol-mcp/bgp/federation/gateway_ws.py` and
+  `mcp-servers/protocol-mcp/tests/test_gateway_ws_token_reresolve.py`: the gateway token re-resolve fix from §11, on
+  branch `fix/gateway-ws-token-reresolve`.
+- `config/skill-limits.json` and `scripts/lib/skill_limits.py` (spec 188): the skill limit policy applied in §11.
+
+Findings that need follow-up work are tracked as H15–H22 in
+[`../../NCFED-HARDENING-BACKLOG.md`](../../NCFED-HARDENING-BACKLOG.md).
