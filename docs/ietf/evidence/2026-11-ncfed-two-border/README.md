@@ -31,6 +31,11 @@ use through a temporary known_hosts file. This was a VM created minutes earlier 
 Fingerprints are truncated to 16 hex digits throughout. Nonces, private keys, tokens and the public ngrok endpoint are
 redacted or were never logged.
 
+LAN addresses and the production Border's DNS name are replaced with documentation values throughout, including
+the raw files: production `198.51.100.10`, test VM `198.51.100.20`, Proxmox host `198.51.100.2` (RFC 5737), and the
+production TLS name `border.example.com` (RFC 2606). NCFED identities such as `as65099-10.255.255.1` are lab
+router IDs, not host addresses, and are kept.
+
 ### Tools
 
 - `tools/ncfed_wire_probe.py` is a raw-wire probe (stdlib plus `cryptography`). The repository's
