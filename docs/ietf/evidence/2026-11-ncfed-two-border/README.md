@@ -61,7 +61,7 @@ redacted or were never logged.
 | 4g | `BUDGET_EXHAUSTED (-32004)` | **PASS** | 20:54:37 | `t4-limits.txt` |
 | 5 | Revocation: sever, refused redial, recovery only after re-consent | **PASS** | 20:54:59 – 20:55:34 | `t5-revocation.txt` |
 | 6a | Delegation default-deny (skill task) | **PASS** | 20:55:47 | `t6-delegation.txt` |
-| 6b | Delegated task end to end | **PARTIAL**: protocol path works, but production's agent gateway refused execution | 20:56:15 – 20:58:47 | `t6-delegation-positive.txt` |
+| 6b | Delegated task end to end | **PARTIAL** in the run: protocol path works, but production's agent gateway refused execution. **PASS** on re-run after the gateway fix (§10); the skill itself was not loaded on production | 20:56:15 – 20:58:47; re-run 21:20:35 – 21:21:30 | `t6-delegation-positive.txt`, `t6-rerun-after-gateway-fix.txt` |
 
 ## 3. Tests, commands and redacted outputs
 
@@ -183,6 +183,8 @@ result. The skill itself never ran, because **production's federation daemon can
 gateway**. That is a pre-existing production configuration fault, independent of this run, and was not changed here
 (credential change). The reverse direction could not run either: the test VM has no agent gateway.
 
+This gateway fault was fixed after the run, and 6b was re-run; see [§10](#10-follow-up-production-gateway-fix-and-6b-re-run).
+
 ## 4. Claims matrix
 
 | Draft claim (§) | Verdict | Evidence |
@@ -211,7 +213,7 @@ gateway**. That is a pre-existing production configuration fault, independent of
 | `-32007 SEVERED` | Observed, but used for "peer_unreachable", not only for a sever | T5 |
 | `-32010 NOT_FEDERATED` | Confirmed for admission failures | T3 |
 | Sever is local and needs no peer cooperation; redials refused until re-consent | Confirmed | T5 |
-| Async task delegation (submit → status/result polling) | Confirmed at the protocol layer; execution not testable (production gateway fault) | T6b |
+| Async task delegation (submit → status/result polling) | Confirmed end to end on re-run, including the production agent turn (§10); the skill output was an OpenClaw skill-load error unrelated to NCFED | T6b |
 | Task-owner binding (a third identity cannot poll another's task) | Not testable (needs a third federated identity) | — |
 | `-32008 GUARDRAIL_BLOCKED` | Not testable (both Borders in `hobby` security mode; DefenseClaw inspection off) | — |
 
@@ -255,6 +257,10 @@ on production (0600, SQLite backup API, `integrity_check` ok, sha256 `f0554c15�
 | 1 | 20:45:51 | `POST /n2n/consent` for `as65010-10.255.250.1` (the test VM only) → consent rows 7/8 and peer row `as65010-…` | **Active** (peering is intentionally left up) |
 | 2 | 20:56:15 | Grant 61: skill `subnet-calculator` to `as65010-…`, `requires_approval` | **Revoked** 20:58:47 |
 | — | 20:56:24 | Approved production approval id 1 (that task) | consumed; the task failed at the gateway |
+| 3 | 21:17:28 | `~/.openclaw/.env` backed up to `.env.bak-gwtoken-20261122T211728Z`; `OPENCLAW_GATEWAY_TOKEN` aligned to `gateway.auth.token` (§10) | **Active** (the fix) |
+| 4 | 21:17:42 | `openclaw-gateway.service` restarted (PID 676625 → 833981) | done |
+| 5 | 21:20:35 | Grant 62: skill `subnet-calculator` to `as65010-…`, `requires_approval` (6b re-run) | **Revoked** 21:21:30 |
+| — | 21:20:45 | Approved production approval id 2 (re-run task) | consumed; task `completed` |
 | — | 20:44 / 20:49 | `/tmp/ncfed_wire_probe.py`, `/tmp/ncfed_api.sh` copied to production | present (removed at teardown) |
 
 Automatic side effects on production: audit/GAIT entries for every probe and invoke; `federation_peer`/
@@ -280,7 +286,7 @@ The HUD, mobile enrollment, BGP config and Stage 8 checks were not touched. John
 # 1. production — sever the test peer (local kill switch; revokes consent rows 7/8, purges its inventory)
 ssh ubuntu@198.51.100.10 'curl -s -X POST -H "Content-Type: application/json" \
   -d "{\"peer\":\"as65010-10.255.250.1\"}" http://127.0.0.1:8179/n2n/kill'
-# 2. production — confirm no active grants for as65010 (grant 61 is already revoked)
+# 2. production — confirm no active grants for as65010 (grants 61 and 62 are already revoked)
 ssh ubuntu@198.51.100.10 'curl -s http://127.0.0.1:8179/n2n/grants' | grep -c as65010   # expect 0 (the list omits revoked grants)
 # 3. production — remove helper files
 ssh ubuntu@198.51.100.10 'rm -f /tmp/ncfed_wire_probe.py /tmp/ncfed_api.sh'
@@ -288,7 +294,8 @@ ssh ubuntu@198.51.100.10 'rm -f /tmp/ncfed_wire_probe.py /tmp/ncfed_api.sh'
 ssh root@198.51.100.2 'qm stop 127 && qm destroy 127'
 ```
 
-Steps 1–4 leave production functionally identical to before the run. Its `federation.db` keeps a severed
+The §10 gateway token fix (changes 3–4) is a deliberate repair and is not part of this teardown; its own rollback is
+in §10. Steps 1–4 leave production's federation state functionally identical to before the run. Its `federation.db` keeps a severed
 `as65010` peer row plus audit history, in the same way the retired peers remain. For a byte-for-byte revert, restore the backup.
 That needs the daemon stopped, and it discards the audit rows from this run:
 
@@ -307,3 +314,57 @@ systemctl --user start netclaw-mesh.service
 - Approval expiry (900 s) and teardown/hold-down limit actions were not exercised.
 - Grok Build was not used. Every step needed live production access and credential context, which falls outside
   its sanitized-input rule.
+
+## 10. Follow-up: production gateway fix and 6b re-run
+
+Done after the run on the same day (21:05–21:22Z), at the operator's request. Raw output:
+`raw/t6-rerun-after-gateway-fix.txt`. Tokens are identified only by sha256 prefix.
+
+**Root cause of the 6b failure.** Production's daemon authenticates to its local OpenClaw gateway with
+`gateway.auth.token` from `~/.openclaw/openclaw.json` (`cf699848aa…`). That value has been unchanged in every config
+backup since 2026-10-25. But `~/.openclaw/.env` still set `OPENCLAW_GATEWAY_TOKEN` to an older token (`e8d5d2bcb6…`).
+The `.env` file was last written at 2026-11-14 14:07:31Z, ten seconds before the running gateway started.
+
+Evidence:
+- The gateway log rejected the daemon with `reason=token_mismatch`.
+- A single, operator-approved connect-then-close test with the `.env` token was **accepted**.
+- The same mismatch had already hit OpenClaw's own agent clients on 2026-11-14 (03:35–05:37Z) under the previous
+  gateway process. So the fault predates this run.
+
+OpenClaw documents that its managed gateway prefers `gateway.auth.token` and flags an `.env` override like this as a
+conflict (`gateway.env_token_overrides_config`). Yet the running gateway accepted the `.env` token. Why it was used is
+not explained further here.
+
+**Fix applied** (production changes 3 and 4 in the table below):
+1. 21:17:28Z: backed up `~/.openclaw/.env` to `~/.openclaw/.env.bak-gwtoken-20261122T211728Z` (0600).
+2. Set `OPENCLAW_GATEWAY_TOKEN` in `.env` to the `gateway.auth.token` value. One line changed; no keys added or removed.
+3. 21:17:42Z: restarted `openclaw-gateway.service`. The new PID is 833981, and it was ready about 52 s later.
+   - The mesh daemon was not restarted (PID 504509 throughout).
+4. Verified with the daemon's own client (`gateway_ws.get_gateway_ws_client`):
+   - The token `cf699848aa…` was **accepted**. The first two attempts timed out while the gateway was still busy starting.
+   - There were no `token_mismatch` rejections after the restart.
+   - `openclaw health` was OK.
+   - The only processes with a gateway token in their environment held the new value.
+
+Rollback: `cp -p ~/.openclaw/.env.bak-gwtoken-20261122T211728Z ~/.openclaw/.env`, then restart
+`openclaw-gateway.service`.
+
+**6b re-run** (21:20–21:22Z):
+- **PRODUCTION CHANGE 5** (21:20:35Z): temporary grant 62, the same shape as grant 61.
+- The test VM submitted task `fc02d436…`. Production queued approval 2, and the operator approved it at 21:20:45Z.
+- The test VM polled `working` ×4, then got `completed` at 21:21:25Z with `usage_available: true` and `tokens_used` 56953.
+- **Result:** submit, authorize, approve, the production agent turn through the gateway, and async result retrieval
+  now all work end to end. **6b is PASS at the NCFED layer.**
+- The agent's answer, though, was `Error: Skill "subnet-calculator" is not available to this agent.`
+  - That is a separate production OpenClaw fault, not an NCFED one.
+  - Production's workspace holds 249 skills, but OpenClaw loads at most 200 per source
+    (`DEFAULT_MAX_SKILLS_LOADED_PER_SOURCE`). It keeps the first 200 by sorted directory name.
+  - So `subnet-calculator` and about 49 other skills (mostly S–Z) are never loaded.
+  - Proposed fix, not applied: raise `skills.limits.maxSkillsLoadedPerSource`.
+- **PRODUCTION CHANGE 5 reverted** (21:21:30Z): `DELETE /n2n/grants/62`. The same submit then got `-32001`, and
+  no approvals were left pending.
+
+**Suggested daemon hardening** (`bgp/federation/gateway_ws.py`):
+- On `AUTH_TOKEN_MISMATCH`, drop the cached client so the token is resolved again.
+- Log the token source and its fingerprint at startup.
+- Today this fault surfaces only as a single failed task with a generic handshake error.
