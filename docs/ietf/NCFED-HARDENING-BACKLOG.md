@@ -327,7 +327,7 @@ value-per-effort; every item traces to a verified draft state.
   propagation across trust boundaries*, which is **closer to NCFED's contribution** than the original
   session-layer framing. NCFED's fit improves if it lands there.
 
-## Seed from the 2026-11-22 two-Border evidence run (H15–H22)
+## Seed from the 2026-11-22 two-Border evidence run (H15–H23)
 
 Source: [`evidence/2026-11-ncfed-two-border/README.md`](evidence/2026-11-ncfed-two-border/README.md), live tests of
 `-00` between two Borders at implementation `a5e7c3a3`. Section numbers below refer to that README. Its §5 items 8–11
@@ -385,3 +385,14 @@ NOTIFICATION nuance) are documentation-only and are not repeated here.
   backups. viz no longer depends on its partial override of 300 for three scoped skills.
 - **Remaining hardening (optional):** a startup check that fails loudly when a granted or scoped skill is not loaded,
   so a future cap breach is not silent.
+
+### H23. Border leaves a completed member task at `submitted` — *OPEN (likely H13 recurring)*
+- **Reality (§13.2):** production delegated task `1a5ec57f-18d6-4e74-9421-de66259ab806` (skill
+  `threejs-network-viz`) to the `byrns-risk/viz` member at 2026-11-22T23:22:43Z. The member ran it to completion and
+  answered (the tool itself failed, a separate issue), but the Border's `delegated_task` row stayed `submitted`, with
+  progress `None` and `updated_at` unchanged. The Border never pulled the result back.
+- **Unknown:** whether the iN2N channel bounced between submit and completion (the H13 trigger). That was not checked.
+  If it did not bounce, completion delivery fails even on a stable channel, which is worse than H13.
+- **Plan:** first establish the trigger from the member's and the Border's logs around 23:22Z. Then apply H13's fix:
+  the submitter reconciles non-terminal outbound tasks via `n2n/tasks/status` (on re-establish, and periodically for
+  tasks past a deadline). The executor re-announces unacknowledged terminal states.
