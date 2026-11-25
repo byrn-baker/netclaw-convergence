@@ -78,55 +78,8 @@ def test_html_dispatch_strips_boilerplate(tmpdir_path):
     all_text = " ".join(text for s in parsed.sections for _, text, _ in s.blocks)
     assert "Disable unused services" in all_text
     assert "menu" not in all_text and "copyright" not in all_text and "junk" not in all_text
-
-
-OPENAPI_MIN = """{
-  "openapi": "3.0.3",
-  "info": {"title": "UniFi Network API", "version": "10.4.57", "description": "Official Network Integration API."},
-  "servers": [{"url": "https://192.168.1.1/proxy/network/integration/v1"}],
-  "paths": {
-    "/sites": {
-      "get": {
-        "operationId": "listSites",
-        "tags": ["Sites"],
-        "summary": "List sites",
-        "description": "Return all sites visible to the API key.",
-        "responses": {"200": {"description": "OK"}}
-      }
-    },
-    "/sites/{id}/devices": {
-      "get": {
-        "operationId": "listDevices",
-        "tags": ["Devices"],
-        "summary": "List devices",
-        "parameters": [
-          {"name": "id", "in": "path", "required": true, "description": "Site id"}
-        ],
-        "responses": {"200": {"description": "Device list"}}
-      }
-    }
-  },
-  "components": {"schemas": {"Site": {"type": "object"}}}
-}
-"""
-
-
-def test_openapi_json_dispatch(tmpdir_path):
-    parsed = parse_file(_write(tmpdir_path, "openapi.json", OPENAPI_MIN))
-    assert "UniFi Network API" in parsed.title
-    assert "10.4.57" in parsed.title
-    all_text = " ".join(text for s in parsed.sections for _, text, _ in s.blocks)
-    assert "GET /sites" in all_text
-    assert "listSites" in all_text
-    assert "List devices" in all_text
-    assert "Component schemas" in all_text or "Site" in all_text
-
-
-def test_generic_json_pretty_text(tmpdir_path):
-    parsed = parse_file(_write(tmpdir_path, "config.json", '{"hostname": "core-sw", "vlan": 10}'))
-    all_text = " ".join(text for s in parsed.sections for _, text, _ in s.blocks)
-    assert "core-sw" in all_text
-    assert "vlan" in all_text
+    atomics = [text for s in parsed.sections for kind, text, _ in s.blocks if kind == "atomic"]
+    assert any("no ip http server" in a for a in atomics)
 
 
 def test_txt_dispatch(tmpdir_path):
@@ -181,3 +134,44 @@ def test_legacy_format_without_soffice(tmpdir_path, monkeypatch):
         parse_file(p)
     assert exc.value.code == "CONVERTER_UNAVAILABLE"
     assert "libreoffice" in exc.value.message.lower()
+
+
+@pytest.mark.parametrize("version_field,version", [("openapi", "3.1.0"), ("swagger", "2.0")])
+def test_api_description_has_citable_operations(tmp_path, version_field, version):
+    import json
+
+    path = tmp_path / "api.json"
+    path.write_text(json.dumps({
+        version_field: version, "info": {"title": "Switch API", "version": "1"},
+        "paths": {"/ports": {"get": {"operationId": "listPorts",
+                                      "responses": {"200": {"description": "port list"}}},
+                             "post": {"summary": "Create port"}}},
+    }))
+    parsed = parse_file(path)
+    assert parsed.title == "Switch API 1"
+    sections = {s.heading_path[-1]: "".join(b[1] for b in s.blocks) for s in parsed.sections}
+    assert "listPorts" in sections["GET /ports"]
+    assert "port list" in sections["GET /ports"]
+    assert "Create port" in sections["POST /ports"]
+    assert parsed.content_hash == sha256_file(path)
+
+
+def test_generic_json_and_invalid_json(tmp_path):
+    path = _write(tmp_path, "inventory.json", '[{"role":"border"}]')
+    parsed = parse_file(path)
+    assert parsed.title == "inventory"
+    assert "border" in parsed.sections[0].blocks[0][1]
+    for invalid in ("invalid", "NaN"):
+        path.write_text(invalid)
+        with pytest.raises(IngestError, match="PARSE_FAILED"):
+            parse_file(path)
+
+
+def test_long_json_scalar_is_split_across_prose_blocks(tmp_path):
+    import json
+
+    scalar = "description " * 1000 + "end of description"
+    path = _write(tmp_path, "guide.json", json.dumps({"notes": scalar}))
+    blocks = [text for _, text, _ in parse_file(path).sections[0].blocks]
+    assert max(map(len, blocks)) <= 1200
+    assert json.loads("".join(blocks)) == {"notes": scalar}

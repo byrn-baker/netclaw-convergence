@@ -40,6 +40,14 @@ logger = logging.getLogger("n2n.gateway")
 
 AGENT_ID = os.environ.get("N2N_AGENT_ID", "main")
 
+# Appended to every delegated skill request. A requester can only see the
+# reply, so a stand-in made after a tool failed reads as the skill's result.
+SKILL_FAILURE_RULE = (
+    "If a tool or command the skill needs is missing or fails, reply with that "
+    "error and stop. Do not substitute output produced another way, such as a "
+    "file you wrote yourself."
+)
+
 
 def _openclaw_bin() -> str:
     """Absolute path to the ``openclaw`` CLI (resolved fresh on each call — cheap
@@ -199,6 +207,46 @@ def _extract_reply_from_envelopes(objs: list):
     return reply, int(tokens or 0)
 
 
+def _member_agent_args() -> list:
+    """`--agent <id>` for an embedded turn, or nothing when OpenClaw can choose.
+
+    OpenClaw >= 2026.10 refuses `--session-id` session creation when the home
+    configures more than one agent and none is named. Member homes inherit the
+    Border's agent entries, so name `main` when it is one of several agents. A
+    home with zero or one agent keeps the unnamed command (forcing `main` fails
+    when the only agent has another id). N2N_MEMBER_AGENT overrides."""
+    agent = os.environ.get("N2N_MEMBER_AGENT", "").strip()
+    if agent:
+        return ["--agent", agent]
+    state = (os.environ.get("OPENCLAW_STATE_DIR") or os.environ.get("OPENCLAW_HOME")
+             or os.path.expanduser("~/.openclaw"))
+    path = os.environ.get("OPENCLAW_CONFIG_PATH") or os.path.join(state, "openclaw.json")
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            agents = (json.load(f).get("agents") or {})
+        ids = set(agents.get("entries") or {})
+        ids |= {a.get("id") for a in agents.get("list") or [] if isinstance(a, dict)}
+    except (OSError, ValueError, AttributeError, TypeError):
+        return []
+    return ["--agent", "main"] if len(ids) > 1 and "main" in ids else []
+
+
+def _cli_error_detail(output_file) -> str:
+    """The CLI's own `{"ok": false, "error": {"message": ...}}` reason, if any.
+
+    Only the structured message is surfaced (never stderr, which can echo
+    configuration), single-lined and capped so a failed task says *why*."""
+    try:
+        output_file.seek(0)
+        doc = json.loads(output_file.read(64 * 1024).decode(errors="replace"))
+        message = (doc.get("error") or {}).get("message") if isinstance(doc, dict) else None
+    except (ValueError, OSError, AttributeError):
+        return ""
+    if not isinstance(message, str) or not message.strip():
+        return ""
+    return ": " + " ".join(message.split())[:300]
+
+
 def _extract_reply(stdout: str):
     """Parse the `openclaw agent --json` envelope (which is preceded by banner
     noise) and return (reply_text, tokens_used). Still used by the `local=True`
@@ -256,8 +304,28 @@ def _normalize_origin(origin: str | None) -> str | None:
     return origin if origin in _RECOGNIZED_ORIGINS else None
 
 
+def _external_agent_id(untrusted: bool) -> str:
+    """An optional local profile choice; peer input never selects an agent."""
+    if not untrusted or 'N2N_EXTERNAL_AGENT_ID' not in os.environ:
+        return AGENT_ID
+    agent = os.environ['N2N_EXTERNAL_AGENT_ID']
+    try:
+        from .runtime import selected
+        if not re.fullmatch(r'[a-z0-9][a-z0-9_-]{0,63}', agent) or agent == AGENT_ID.lower():
+            raise ValueError()
+        raw = selected().config.read_bytes()
+        if len(raw) > 4 * 1024 * 1024:
+            raise ValueError()
+        agents = json.loads(raw).get('agents', {}).get('list', [])
+        if not isinstance(agents, list) or sum(isinstance(a, dict) and str(a.get('id', '')).strip().lower() == agent for a in agents) != 1 or not any(isinstance(a, dict) and a.get('id') == agent for a in agents):
+            raise ValueError()
+    except (OSError, ValueError, TypeError, AttributeError):
+        raise EnforcementRefused('selected external gateway agent unavailable or invalid') from None
+    return agent
+
+
 def _build_agent_rpc_params(prompt: str, session_key: str, timeout_s: int,
-                             origin: str | None = None) -> dict:
+                             origin: str | None = None, agent_id: str | None = None) -> dict:
     """Build the gateway `agent` RPC params per
     specs/116-border-turn-latency/contracts/gateway-ws-rpc.md.
 
@@ -279,7 +347,7 @@ def _build_agent_rpc_params(prompt: str, session_key: str, timeout_s: int,
     """
     params = {
         "message": prompt,
-        "agentId": AGENT_ID,
+        "agentId": agent_id or AGENT_ID,
         "sessionKey": session_key,
         "deliver": False,
         "timeout": timeout_s,
@@ -376,7 +444,7 @@ async def run_agent_turn(prompt: str, session_key: str = "n2n", timeout_s: int =
         from .negotiate import local_descriptor
         flag = "--" + local_descriptor().get("agent_invoke", "session-id")
         message_args = ["--message-file", message_file] if message_file else ["-m", prompt]
-        cmd = [_openclaw_bin(), "agent", "--local"]
+        cmd = [_openclaw_bin(), "agent", "--local", *_member_agent_args()]
         if model:
             cmd += ["--model", model]
         cmd += [flag, session_key, "--json"] + message_args
@@ -394,16 +462,22 @@ async def run_agent_turn(prompt: str, session_key: str = "n2n", timeout_s: int =
                 *cmd, stdout=output_file, stderr=error_file, env=_agent_env())
             try:
                 await asyncio.wait_for(proc.wait(), timeout=float(timeout_s))
-            except BaseException:
+            except BaseException as e:
                 if proc.returncode is None:
                     try:
                         proc.kill()
                     except ProcessLookupError:
                         pass
                 await proc.wait()
+                if isinstance(e, asyncio.TimeoutError):
+                    # wait_for's own TimeoutError has no message, which would
+                    # leave the task's recorded error empty.
+                    raise asyncio.TimeoutError(
+                        f"agent turn for session '{session_key}' timed out after {timeout_s}s") from e
                 raise
             if proc.returncode != 0:
-                raise RuntimeError(f"Agent process exited {proc.returncode}; task result unavailable")
+                raise RuntimeError(f"Agent process exited {proc.returncode}; task result unavailable"
+                                   + _cli_error_detail(output_file))
             output_file.seek(0)
             out = output_file.read(16 * 1024 * 1024 + 1)
             if len(out) > 16 * 1024 * 1024:
@@ -418,8 +492,15 @@ async def run_agent_turn(prompt: str, session_key: str = "n2n", timeout_s: int =
         with open(message_file, "r", encoding="utf-8") as f:
             effective_prompt = f.read()
 
+    agent_id = _external_agent_id(untrusted)
+    if untrusted and 'N2N_EXTERNAL_AGENT_ID' in os.environ:
+        # OpenClaw routes bare session keys to its default agent, regardless of
+        # agentId. Bind the locally selected profile and preserve context with
+        # an opaque suffix; supplied key syntax cannot select another agent.
+        import hashlib
+        session_key = f'agent:{agent_id}:n2n-{hashlib.sha256(session_key.encode()).hexdigest()}'
     client = await gateway_ws.get_gateway_ws_client()
-    params = _build_agent_rpc_params(effective_prompt, session_key, timeout_s, origin=origin)
+    params = _build_agent_rpc_params(effective_prompt, session_key, timeout_s, origin=origin, agent_id=agent_id)
     normalized_origin = _normalize_origin(origin)
     if normalized_origin:
         # FR-013: retain origin for after-the-fact inspection. gateway.py has
@@ -428,6 +509,10 @@ async def run_agent_turn(prompt: str, session_key: str = "n2n", timeout_s: int =
         # itself controls, so an operator can grep for how a given session_key
         # reached NetClaw.
         logger.info("agent turn origin=%s session_key=%s", normalized_origin, session_key)
+    from .tasks import mark_gateway_dispatch, gateway_provenance
+    provenance = gateway_provenance(params['idempotencyKey'])
+    unwatch = client.watch_run(params['idempotencyKey'], provenance.event) if provenance and hasattr(client, 'watch_run') else lambda: None
+    mark_gateway_dispatch()
     call_future = asyncio.ensure_future(client.call("agent", params, None))
     try:
         remaining = float(timeout_s)
@@ -447,11 +532,12 @@ async def run_agent_turn(prompt: str, session_key: str = "n2n", timeout_s: int =
         if not call_future.done():
             call_future.cancel()
             raise asyncio.TimeoutError(
-                f"agent turn for session '{session_key}' timed out — if the gateway "
-                f"is holding a scope-upgrade approval, approve it and retry")
+                f"agent turn for session '{session_key}' timed out; execution may have occurred. "
+                f"Check the original request status; no automatic retry was made")
         payload = await call_future
         return _extract_reply_from_ws_payload(payload)
     finally:
+        unwatch()
         if not call_future.done():
             call_future.cancel()
         # Consume cancellation/result so no pending RPC survives caller timeout

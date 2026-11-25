@@ -623,6 +623,7 @@ log_info "Installing NetBox dependencies..."
 netclaw_pip_install httpx "fastmcp==4.0.11" "fastmcp-tasks==4.0.11" requests pydantic pydantic-settings 2>/dev/null || \
     { log_error "NetBox dependency installation failed"; return 1; }
 
+python3 "$SCRIPT_DIR/netbox-compat.py" --source "$NETBOX_MCP_DIR" || return 1
 log_info "NetBox MCP ready: python3 -m netbox_mcp_server.server"
 
 echo ""
@@ -771,6 +772,12 @@ echo "  Source: https://github.com/automateyournetwork/GeminiCLI_SubnetCalculato
 
 SUBNET_MCP_DIR="$MCP_DIR/subnet-calculator-mcp"
 clone_or_pull "$SUBNET_MCP_DIR" "https://github.com/automateyournetwork/GeminiCLI_SubnetCalculator_Extension.git"
+
+# R05 summary preparation is explicit. Existing installed/runtime source is never
+# silently rewritten; the helper refuses any unreviewed before/after bytes.
+if [ "${NETCLAW_SUBNET_SUMMARY_PROFILE:-0}" = "1" ]; then
+    python3 "$SCRIPT_DIR/apply-subnet-summary.py" "$SUBNET_MCP_DIR" || return 1
+fi
 
 log_info "Installing Subnet Calculator dependencies..."
 netclaw_pip_install pydantic python-dotenv "fastmcp==4.0.11" "mcp==2.3.0" 2>/dev/null || \
@@ -1076,6 +1083,19 @@ netclaw_pip_install -r "$NETCLAW_DIR/mcp-servers/analysis-mcp/requirements.txt" 
 mkdir -p "$HOME/.openclaw/analysis"
 log_info "Analyst scratch root: $HOME/.openclaw/analysis (place your own exports here)"
 log_info "Reads Zeek/Suricata output from nsm-mcp; run nsm_analyze first to have data"
+
+echo ""
+}
+
+component_install_result_analysis() {
+log_step "Installing Large Result Analysis MCP Server..."
+echo "  NetClaw-authored: mcp-servers/result-analysis-mcp (7 tools, spec 187)"
+echo "  Read-only, declarative analysis of complete results retained server-side; no code execution."
+
+netclaw_pip_install -r "$NETCLAW_DIR/mcp-servers/result-analysis-mcp/requirements.txt" || \
+    log_error "result-analysis-mcp dependencies install FAILED — the server will not start"
+mkdir -p "$HOME/.openclaw/results" && chmod 700 "$HOME/.openclaw/results"
+log_info "Retained-result store: $HOME/.openclaw/results (private, 1h TTL, size-capped)"
 
 echo ""
 }
@@ -1779,7 +1799,7 @@ if [ -d "$PROTOCOL_MCP_DIR" ]; then
     log_info "Installing Protocol MCP dependencies..."
     if [ -f "$PROTOCOL_MCP_DIR/requirements.txt" ]; then
         netclaw_pip_install -r "$PROTOCOL_MCP_DIR/requirements.txt" || {
-            log_warn "Full Protocol MCP install failed — installing core deps..."
+            log_warn "Full Protocol MCP install failed — installing pinned core deps..."
             # Spec 105: websockets/qrcode/httpx/h2 belong in this fallback, not
             # just in requirements.txt. They are the mesh daemon's own runtime
             # deps (NCFED edge listener + enrollment QR + push), so omitting them
@@ -1787,8 +1807,8 @@ if [ -d "$PROTOCOL_MCP_DIR" ]; then
             # bind the mobile edge listener — diagnosed as a role problem.
             #
             # Spec 141: fallback must use the same modern framework pins.
-            netclaw_pip_install scapy networkx 'fastmcp==4.0.11' 'mcp==2.3.0' 'websockets>=12,<17' qrcode httpx h2 || \
-                log_warn "Protocol MCP core deps install failed"
+            netclaw_pip_install scapy networkx 'fastmcp==4.0.11' 'mcp==2.3.0' 'websockets>=12,<17' qrcode httpx h2 'pyOpenSSL==26.4.0' 'cryptography==50.0.2' 'service-identity==26.1.0' || \
+                { log_warn "Protocol MCP dependencies failed; transport is not ready"; return 1; }
         }
     fi
     log_info "Protocol MCP installed (stdio transport via FastMCP)"
@@ -1803,8 +1823,8 @@ echo ""
 # install loop is never blocked by prompts. Install now, configure later.
 component_install_peering() {
 log_step "Protocol Peering selected..."
-echo "  NetClaw can participate in BGP/OSPF as a real routing peer, and mesh"
-echo "  with other NetClaw instances worldwide over BGP via ngrok."
+echo "  Keep BGP/OSPF routing private. Federation uses distinct iN2N/NCFED services."
+echo "  Configure only explicitly reviewed transport endpoints."
 
 log_info "Nothing to install — peering is configured, not installed."
 log_info "Configure it after the install finishes (setup.sh offers it), or anytime with:"
@@ -1817,10 +1837,12 @@ echo ""
 
 # ── N2N Federation (feature 052) ────────────────────────────────
 component_install_n2n() {
+require_standalone_setup_home || return 1
 log_step "Installing N2N Federation..."
 echo "  Peer NetClaws: exchange capability inventories, invoke each other's"
-echo "  allowlisted tools/skills, and chat claw-to-claw — over the existing BGP mesh."
-echo "  New protocol: NCFED (JSON-RPC 2.0, MCP + A2A semantics). Requires the mesh."
+echo "  allowlisted tools/skills, and chat claw-to-claw over NCFED."
+echo "  Members dial their Border over iN2N; external Borders use NCFED/eN2N."
+echo "  Transport reachability does not grant identity or execution authority."
 
 N2N_MCP_DIR="$MCP_DIR/n2n-mcp"
 if [ -d "$N2N_MCP_DIR" ]; then
@@ -1849,7 +1871,7 @@ PROTOCOL_MCP_REQS="$MCP_DIR/protocol-mcp/requirements.txt"
 if [ -f "$PROTOCOL_MCP_REQS" ]; then
     log_info "Ensuring mesh daemon (protocol-mcp) dependencies — N2N runs on it..."
     netclaw_pip_install -r "$PROTOCOL_MCP_REQS" || \
-        netclaw_pip_install websockets qrcode httpx h2 || \
+        netclaw_pip_install 'websockets>=12,<17' qrcode httpx h2 'pyOpenSSL==26.4.0' 'cryptography==50.0.2' 'service-identity==26.1.0' || \
         { log_warn "mesh daemon deps install failed — the NCFED edge listener will not bind"; return 1; }
 fi
 
@@ -2618,6 +2640,48 @@ log_info "Deployed skills to $RUNTIME_SKILLS/ with recovery originals retained"
 # These are bootstrap defaults, never an upgrade payload.
 mkdir -p "$RUNTIME_WORKSPACE"
 for mdfile in SOUL.md AGENTS.md IDENTITY.md USER.md TOOLS.md HEARTBEAT.md; do
+    # Older installs linked these into the checkout. OpenClaw 2026.10+ refuses
+    # symlinked bootstrap files, so the agent silently ran without them: copy
+    # the linked checkout file in place. Other operator links are preserved.
+    if [ -L "$RUNTIME_WORKSPACE/$mdfile" ] && [ -f "$RUNTIME_WORKSPACE/$mdfile" ]; then
+        local link_target netclaw_real
+        link_target="$(python3 -c 'import os,sys;print(os.path.realpath(sys.argv[1]))' "$RUNTIME_WORKSPACE/$mdfile")" || return 1
+        netclaw_real="$(python3 -c 'import os,sys;print(os.path.realpath(sys.argv[1]))' "$NETCLAW_DIR")" || return 1
+        case "$link_target" in
+            "$netclaw_real"/*)
+                python3 - "$RUNTIME_WORKSPACE/$mdfile" "$link_target" <<'PY' || return 1
+import os
+import shutil
+import stat
+import sys
+import tempfile
+
+destination, source = sys.argv[1:]
+before = os.lstat(destination)
+if not stat.S_ISLNK(before.st_mode):
+    raise SystemExit('Bootstrap entry changed before repair; preserved')
+# Never open a predictable staging path: it may be an operator file or symlink.
+fd, temporary = tempfile.mkstemp(prefix='.' + os.path.basename(destination) + '.netclaw-copy-',
+                                 dir=os.path.dirname(destination))
+try:
+    with os.fdopen(fd, 'wb') as output, open(source, 'rb') as original:
+        shutil.copyfileobj(original, output)
+        output.flush()
+        os.fsync(output.fileno())
+    current = os.lstat(destination)
+    if ((current.st_dev, current.st_ino, current.st_mode, current.st_mtime_ns, current.st_ctime_ns) !=
+            (before.st_dev, before.st_ino, before.st_mode, before.st_mtime_ns, before.st_ctime_ns)):
+        raise RuntimeError('Bootstrap entry changed during repair; preserved')
+    os.replace(temporary, destination)
+finally:
+    if os.path.lexists(temporary):
+        os.unlink(temporary)
+PY
+                log_info "Replaced $mdfile symlink (-> $link_target) with a copy; OpenClaw refuses symlinked bootstrap files"
+                continue
+                ;;
+        esac
+    fi
     if [ -e "$RUNTIME_WORKSPACE/$mdfile" ] || [ -L "$RUNTIME_WORKSPACE/$mdfile" ]; then
         log_info "Preserved operator $mdfile"
     elif [ -f "$NETCLAW_DIR/$mdfile" ]; then
@@ -2874,172 +2938,28 @@ echo ""
 # ── DefenseClaw Security Layer (Opt-In) ─────────────────────────
 core_defenseclaw() {
 echo ""
-echo -e "${CYAN}Enterprise Security (DefenseClaw + OpenShell)${NC}"
-echo "  DefenseClaw from Cisco AI Defense + NVIDIA OpenShell provides comprehensive protection:"
-echo "  - OpenShell container sandbox (Docker-based isolation with YAML policies)"
-echo "  - DefenseClaw component scanning (skills, MCPs, plugins)"
-echo "  - CodeGuard static analysis (credentials, eval, shell, SQL injection)"
-echo "  - Runtime guardrails (LLM inspection, tool call inspection)"
-echo "  - Audit logging with SIEM integration (Splunk HEC, OTLP)"
-echo ""
-echo "  Full stack: OpenShell (container isolation) + DefenseClaw (runtime security)"
+echo -e "${CYAN}Enterprise Security (DefenseClaw)${NC}"
+echo "  DefenseClaw from Cisco AI Defense adds:"
+echo "  - LLM guardrail proxy: OpenClaw model traffic inspected through an OpenClaw plugin"
+echo "  - Component scanning (skills, MCPs, plugins) and tool-call inspection"
+echo "  - Audit logging with optional SIEM export"
+echo "  Installed from a pinned, checksum-verified release by scripts/defenseclaw-enable.sh,"
+echo "  which checks its own prerequisites. OpenShell is opt-in (INSTALL_OPENSHELL=1)."
 echo ""
 
-read -rp "Enable DefenseClaw + OpenShell (recommended)? [y/N] " ENABLE_DEFENSECLAW
+read -rp "Enable DefenseClaw (recommended)? [y/N] " ENABLE_DEFENSECLAW
 ENABLE_DEFENSECLAW="${ENABLE_DEFENSECLAW:-n}"
 
 if [[ "$ENABLE_DEFENSECLAW" =~ ^[Yy] ]]; then
     log_step "Installing DefenseClaw security layer..."
-
-    # Check prerequisites
-    PREREQ_FAIL=0
-
-    # Check Docker
-    if ! command -v docker &> /dev/null; then
-        log_error "Docker is required for DefenseClaw."
-        log_error "Install Docker: https://docs.docker.com/get-docker/"
-        PREREQ_FAIL=1
-    elif ! docker info &> /dev/null 2>&1; then
-        log_error "Docker daemon is not running."
-        PREREQ_FAIL=1
+    # Delegate to the reviewed enable script (spec 167): pinned DefenseClaw release,
+    # checksum-verified installer, non-interactive init/guardrail, opt-in OpenShell.
+    log_info "Installing DefenseClaw via scripts/defenseclaw-enable.sh (pinned, verified)..."
+    if bash "$NETCLAW_DIR/scripts/defenseclaw-enable.sh"; then
+        log_info "DefenseClaw enabled. Full guide: docs/DEFENSECLAW.md"
     else
-        log_info "Docker found and running."
-    fi
-
-    # Check Python 3.10+
-    if command -v python3 &> /dev/null; then
-        PYTHON_VERSION=$(python3 -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")')
-        PYTHON_MAJOR=$(echo "$PYTHON_VERSION" | cut -d. -f1)
-        PYTHON_MINOR=$(echo "$PYTHON_VERSION" | cut -d. -f2)
-        if [ "$PYTHON_MAJOR" -ge 3 ] && [ "$PYTHON_MINOR" -ge 10 ]; then
-            log_info "Python $PYTHON_VERSION found."
-        else
-            log_error "Python 3.10+ required. Found: $PYTHON_VERSION"
-            PREREQ_FAIL=1
-        fi
-    else
-        log_error "Python 3 is required."
-        PREREQ_FAIL=1
-    fi
-
-    # Check Go 1.25+
-    if command -v go &> /dev/null; then
-        GO_VERSION=$(go version | grep -oE 'go[0-9]+\.[0-9]+' | sed 's/go//')
-        GO_MAJOR=$(echo "$GO_VERSION" | cut -d. -f1)
-        GO_MINOR=$(echo "$GO_VERSION" | cut -d. -f2)
-        if [ "$GO_MAJOR" -ge 1 ] && [ "$GO_MINOR" -ge 25 ]; then
-            log_info "Go $GO_VERSION found."
-        else
-            log_warn "Go 1.25+ recommended. Found: $GO_VERSION"
-        fi
-    else
-        log_warn "Go not found. DefenseClaw gateway may not build."
-    fi
-
-    # Check Node.js 20+
-    if command -v node &> /dev/null; then
-        NODE_VER=$(node --version | sed 's/v//' | cut -d. -f1)
-        if [ "$NODE_VER" -ge 20 ]; then
-            log_info "Node.js v$NODE_VER found."
-        else
-            log_warn "Node.js 20+ recommended. Found: v$NODE_VER"
-        fi
-    else
-        log_warn "Node.js not found. DefenseClaw plugin may not build."
-    fi
-
-    if [ "$PREREQ_FAIL" -eq 1 ]; then
-        log_error "Prerequisites not met. Skipping DefenseClaw setup."
-        log_warn "Fix prerequisites and run: ./scripts/defenseclaw-enable.sh"
-    else
-        # Install DefenseClaw
-        log_info "Installing DefenseClaw..."
-        if curl -LsSf https://raw.githubusercontent.com/cisco-ai-defense/defenseclaw/main/scripts/install.sh | bash; then
-            log_info "DefenseClaw installed successfully."
-
-            # Initialize with guardrails
-            log_info "Initializing guardrails (observe mode)..."
-            if command -v defenseclaw &> /dev/null; then
-                defenseclaw init --enable-guardrail 2>/dev/null || log_warn "Guardrail init failed - run manually: defenseclaw init --enable-guardrail"
-            else
-                log_warn "defenseclaw CLI not in PATH. Add ~/.local/bin to PATH and run: defenseclaw init --enable-guardrail"
-            fi
-
-            # Update openclaw.json with security.mode = defenseclaw
-            # security.mode belongs in the DefenseClaw config, not the gateway config:
-            # the gateway schema rejects a security.mode key and refuses the whole
-            # file. bgp/federation/controls.py reads this same path.
-            OPENCLAW_CONFIG="$HOME/.openclaw/config/openclaw.json"
-            if [ -f "$OPENCLAW_CONFIG" ]; then
-                python3 -c "
-import json
-import os
-config_path = os.path.expanduser('$OPENCLAW_CONFIG')
-try:
-    with open(config_path) as f:
-        config = json.load(f)
-except:
-    config = {}
-if 'security' not in config:
-    config['security'] = {}
-config['security']['mode'] = 'defenseclaw'
-# Remove old netshell config if present
-config.pop('netshell', None)
-with open(config_path, 'w') as f:
-    json.dump(config, f, indent=2)
-print('DefenseClaw enabled in openclaw.json')
-" 2>/dev/null || log_warn "Could not update openclaw.json"
-            fi
-
-            # Install NVIDIA OpenShell
-            log_info "Installing NVIDIA OpenShell sandbox..."
-            if curl -LsSf https://raw.githubusercontent.com/NVIDIA/OpenShell/main/install.sh | sh; then
-                log_info "OpenShell installed successfully."
-
-                # Verify OpenShell
-                if command -v openshell &> /dev/null; then
-                    OPENSHELL_VERSION=$(openshell --version 2>/dev/null || echo "unknown")
-                    log_info "OpenShell version: $OPENSHELL_VERSION"
-
-                    # Start OpenShell gateway (Docker-based)
-                    log_info "Initializing OpenShell gateway..."
-                    openshell gateway start 2>/dev/null || log_warn "OpenShell gateway start failed - start manually: openshell gateway start"
-                else
-                    log_warn "openshell CLI not in PATH. Add ~/.local/bin to PATH"
-                fi
-            else
-                log_warn "OpenShell installation failed. Install manually:"
-                log_warn "  curl -LsSf https://raw.githubusercontent.com/NVIDIA/OpenShell/main/install.sh | sh"
-            fi
-
-            log_info "DefenseClaw + OpenShell enabled. NetClaw will run with enterprise security."
-            echo ""
-            echo "  ┌─────────────────────────────────────────────────────────────┐"
-            echo "  │  ENTERPRISE SECURITY STACK                                   │"
-            echo "  ├─────────────────────────────────────────────────────────────┤"
-            echo "  │  OpenShell:    ~/.local/bin/openshell                       │"
-            echo "  │  DefenseClaw:  ~/.defenseclaw/                              │"
-            echo "  │  Audit DB:     ~/.defenseclaw/audit.db                      │"
-            echo "  └─────────────────────────────────────────────────────────────┘"
-            echo ""
-            echo "  Key commands:"
-            echo "    openshell --version                    # Check OpenShell"
-            echo "    openshell gateway status               # Gateway status"
-            echo "    openshell sandbox create netclaw       # Create sandbox"
-            echo "    defenseclaw --version                  # Check DefenseClaw"
-            echo "    defenseclaw skill scan <name>          # Scan a skill"
-            echo "    defenseclaw setup guardrail --mode action  # Enable blocking"
-            echo ""
-            echo "  Run NetClaw in sandbox:"
-            echo "    openshell sandbox create netclaw"
-            echo "    openshell run netclaw -- claw"
-            echo ""
-            echo "  Full guide: docs/DEFENSECLAW.md"
-            echo "  Disable:    ./scripts/defenseclaw-disable.sh"
-        else
-            log_error "DefenseClaw installation failed."
-            log_warn "Try manual install: curl -LsSf https://raw.githubusercontent.com/cisco-ai-defense/defenseclaw/main/scripts/install.sh | bash"
-        fi
+        log_error "DefenseClaw enable did not complete; review the output above."
+        log_warn "Rerun when ready: ./scripts/defenseclaw-enable.sh"
     fi
 else
     log_info "Skipping DefenseClaw setup."
@@ -3095,6 +3015,22 @@ if [ -f "$GNS3_MCP_DIR/requirements.txt" ]; then
 else
     log_warn "GNS3 MCP requirements.txt not found at $GNS3_MCP_DIR"
 fi
+
+echo ""
+}
+
+# ── Cisco IQ remote MCP (spec 191, issue #346) ─
+component_install_cisco_iq() {
+log_step "Preparing Cisco IQ (official remote MCP)..."
+echo "  Source: Cisco IQ remote MCP, Streamable HTTP (regions: emea, us, apjc)"
+echo "  Read-only by NetClaw policy; key must be owned by a user principal"
+
+# Nothing to clone or pip install. The registration needs an explicit region and a
+# credential, so it is written by the administrator script, never pre-seeded or guessed.
+log_info "Remote HTTP MCP — no local install. Enable it with:"
+echo "    printf '%s' \"\$CISCO_IQ_KEY\" | scripts/cisco-iq-enable.sh enable --region <emea|us|apjc> --key-stdin"
+echo "    scripts/cisco-iq-enable.sh diagnose    # also: rotate, update, disable, policy-check"
+echo "  Guide: docs/CISCO-IQ.md"
 
 echo ""
 }
@@ -3763,6 +3699,16 @@ fi
 echo ""
 }
 
+component_install_greynoise_community() {
+    log_step "Installing GreyNoise Community MCP..."
+    netclaw_pip_install -r "$NETCLAW_DIR/mcp-servers/greynoise-community-mcp/requirements.txt"
+}
+
+component_install_threatintel() {
+    log_step "Installing the community threat intelligence MCP..."
+    python3 "$NETCLAW_DIR/scripts/setup-threatintel.py" "$MCP_DIR"
+}
+
 # ── Globalping remote MCP (spec 079 / roadmap R8) ───────────────
 component_install_bgp_intel() {
 log_step "Installing BGP & Registry Intelligence MCP Server..."
@@ -4030,6 +3976,35 @@ fi
 echo ""
 }
 
+# Spec162: only NetClaw guard dependencies; never install/accept the Terminal.
+component_install_genie_worlds() {
+    log_step "Installing optional Genie network worlds..."
+    local genie_source="$NETCLAW_DIR/scripts/genie-worlds"
+    local genie_runtime_root="${NETCLAW_RUNTIME_ROOT:-$RUNTIME_HOME/python-runtimes}"
+    [ -f "$genie_source/package-lock.json" ] || return 1
+    node "$genie_source/check-runtime.mjs" || return 1
+    netclaw_component_venv "$genie_runtime_root/genie-worlds-component" || return 1
+    NETCLAW_VENV="$NETCLAW_COMPONENT_VENV" netclaw_pip_install -r "$NETCLAW_DIR/config/python-components/genie-worlds.txt" || return 1
+    npm ci --prefix "$genie_source" --omit=dev --ignore-scripts --no-audit --no-fund || return 1
+    _set_env_default NETCLAW_GENIE_STATE_DIR "$RUNTIME_HOME/genie-worlds" || return 1
+    _set_env_default NETCLAW_GENIE_CONTROL_FILE "$RUNTIME_HOME/genie-worlds/mcp-control.json" || return 1
+    log_info "Six Genie controls installed. Start the local backend separately; setup creates no Google session."
+    log_info "Google credentials and paid projection review belong to the backend, not the member. See docs/GENIE-WORLDS.md."
+}
+
+component_install_netconverter() {
+    log_step "Installing the optional NetConverter guard..."
+    local nc_guard_dir="$NETCLAW_DIR/mcp-servers/netconverter-mcp"
+    [ -f "$nc_guard_dir/server.py" ] || return 1
+    local nc_runtime_root="${NETCLAW_RUNTIME_ROOT:-$RUNTIME_HOME/python-runtimes}"
+    netclaw_component_venv "$nc_runtime_root/netconverter-component-bounds" || return 1
+    NETCLAW_VENV="$NETCLAW_COMPONENT_VENV" netclaw_pip_install -r "$NETCLAW_DIR/config/python-components/netconverter.txt" || return 1
+    _set_env_default NETCONVERTER_MODE hosted-readonly || return 1
+    _set_env_default NETCONVERTER_DATA_DIR "$RUNTIME_HOME/netconverter" || return 1
+    _set_env_default NETCONVERTER_INSTALLATION_ID "$(python3 -c 'import uuid; print(uuid.uuid4().hex)')" || return 1
+    log_info "Guard installed. Configure the selected account in setup; local submission requires an operator-installed licensed Terminal."
+}
+
 # ── Jev Science Officer (spec 125) ─────────────────────────────
 component_install_jev() {
     log_step "Installing optional Jev Science Officer..."
@@ -4073,4 +4048,11 @@ component_install_hermes_hud() {
     (cd "$NETCLAW_DIR/ui/netclaw-visual" && npm ci) || return 1
     node "$NETCLAW_DIR/scripts/hud-launch.mjs" select hermes "$RUNTIME_HOME" || return 1
     log_info "Hermes HUD installed. Start it with: netclaw hud"
+}
+
+# Spec162: optional external retained-flow reader, isolated by pip-helper.
+component_install_convergence_read() {
+    log_step "Installing Convergence read-only connector..."
+    netclaw_pip_install -r "$NETCLAW_DIR/mcp-servers/convergence-read-mcp/requirements.txt" || return 1
+    log_info "Disabled by default. Configure a site-scoped viewer key using docs/CONVERGENCE.md."
 }

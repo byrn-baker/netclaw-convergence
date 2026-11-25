@@ -6,7 +6,7 @@ Provides operator-facing tools for claw-to-claw federation:
   Status:     n2n_status
   Consent:    n2n_consent, n2n_kill
   Capability: n2n_peer_capabilities, n2n_compare_capabilities, n2n_set_visibility
-  Grants:     n2n_grant, n2n_revoke_grant, n2n_list_grants
+  Grants:     n2n_grant, n2n_revoke_grant, n2n_list_grants, n2n_classify, n2n_import_annotations, n2n_list_classifications
   Invoke:     n2n_invoke
   Chat:       n2n_chat
   Approvals:  n2n_approvals, n2n_approve, n2n_deny
@@ -17,8 +17,10 @@ Provides operator-facing tools for claw-to-claw federation:
 All calls proxy to the local bgp-daemon-v2 HTTP API (default http://127.0.0.1:8179).
 """
 
+import asyncio
 import json
 import os
+import time
 from typing import Optional
 
 import httpx
@@ -28,10 +30,63 @@ BGP_DAEMON_API = os.environ.get("BGP_DAEMON_API", "http://127.0.0.1:8179")
 
 mcp = FastMCP("n2n-mcp")
 
+# Stored terminal states in bgp/federation/tasks.py. `submitted` and `working`
+# are still open. `unknown` is a missing-task response, not a stored state.
+_TERMINAL_TASK_STATES = frozenset({
+    "completed", "failed", "cancelled", "outcome_unknown", "interrupted",
+})
+_TASK_WAIT_HINT = "still working — call n2n_task_wait again with the same task_id"
+_TASK_NOT_FOUND_HINT = (
+    "task not found (missing, purged, or not yours) — waiting again will not help"
+)
+_TASK_ERROR_HINT = (
+    "could not read the task status — call n2n_task_wait again with the same task_id"
+)
+
+
+def _task_payload_state(payload):
+    """Read state from the payload's state field only. Do not infer it from other text."""
+    if not isinstance(payload, dict):
+        return None
+    state = payload.get("state")
+    return state if isinstance(state, str) else None
+
+
+def _task_not_found(payload, task_id):
+    """Payload for a task the daemon or peer cannot report on.
+
+    That is an HTTP 404 from the daemon (`{"error": "unknown task"}`) or a
+    peer's `state: unknown`. The original fields are kept; `not_found` and a
+    hint are added, and `still_running` is not.
+    """
+    body = dict(payload) if isinstance(payload, dict) else {}
+    body.setdefault("task_id", task_id)
+    body["not_found"] = True
+    body["hint"] = _TASK_NOT_FOUND_HINT
+    return body
+
+
+def _task_read_error(payload, task_id, status, message):
+    """A status read that failed but may succeed later: state error, no not_found."""
+    body = {"task_id": task_id, "state": "error", "http_status": status}
+    detail = payload.get("error") if isinstance(payload, dict) else None
+    body["error"] = detail if isinstance(detail, str) and detail else message
+    if payload is not None:
+        body["response"] = payload
+    body["hint"] = _TASK_ERROR_HINT
+    return body
+
+
+def _clamp_task_wait(timeout_seconds, poll_interval_seconds):
+    """Keep one wait slice under typical MCP client timeouts (~60s)."""
+    timeout = 45 if timeout_seconds is None else int(timeout_seconds)
+    interval = 5.0 if poll_interval_seconds is None else float(poll_interval_seconds)
+    return max(10, min(timeout, 50)), max(2.0, min(interval, 15.0))
+
 
 def _gcf_dumps(data) -> str:
     """Serialize response (JSON fallback; GCF/TOON when available)."""
-    if os.environ.get('NETCLAW_FEDERATION_SCOPED')=='1':return json.dumps(data)
+    if os.environ.get('NETCLAW_FEDERATION_SCOPED')=='1' or os.environ.get('NETCLAW_FEDERATION_JSON')=='1':return json.dumps(data)
     try:
         import sys
         sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "src"))
@@ -64,6 +119,31 @@ async def _get(path: str, params: Optional[dict] = None) -> dict:
     async with httpx.AsyncClient(base_url=BGP_DAEMON_API, timeout=30) as c:
         r = await c.get(path, params=params)
         return r.json()
+
+
+async def _get_with_status(path: str):
+    """GET for n2n_task_wait: (HTTP status, JSON body or None).
+
+    Unlike _get, the status code is kept so a 404 is not confused with a 5xx.
+    The scoped broker answers 200 with the effect's result or raises on its own
+    refusals (403/409); those come back as their status here.
+    """
+    if os.environ.get('NETCLAW_FEDERATION_SCOPED') == '1':
+        try:
+            return 200, await _scoped('GET', path, None)
+        except httpx.HTTPStatusError as exc:
+            try:
+                body = exc.response.json()
+            except ValueError:
+                body = None
+            return exc.response.status_code, body
+    async with httpx.AsyncClient(base_url=BGP_DAEMON_API, timeout=30) as c:
+        r = await c.get(path)
+        try:
+            body = r.json()
+        except ValueError:
+            body = None
+        return r.status_code, body
 
 
 async def _post(path: str, body: Optional[dict] = None) -> dict:
@@ -280,7 +360,8 @@ async def n2n_set_visibility(item_type: str, item_name: str, visibility: str,
 
 @mcp.tool()
 async def n2n_grant(peer: str, target_type: str, target_name: str,
-                    requires_approval: bool = False, timeout_s: Optional[int] = None) -> str:
+                    requires_approval: bool = False, timeout_s: Optional[int] = None,
+                    access_class: Optional[str] = None) -> str:
     """Allowlist a tool, skill, or knowledge collection for a peer to invoke.
 
     Args:
@@ -296,13 +377,62 @@ async def n2n_grant(peer: str, target_type: str, target_name: str,
             default-deny either way)
         requires_approval: If True, each invocation requires explicit approval
         timeout_s: Optional grant expiry in seconds
+        access_class: 'read' (only targets classified read are callable) or
+            'read_write' (any granted target; the default, same as grants made
+            before this option existed). Unclassified tools/skills are NOT read;
+            classify them with n2n_classify. knowledge targets are always read.
     """
     body = {"peer": peer, "target_type": target_type, "target_name": target_name,
             "requires_approval": requires_approval}
+    if access_class:
+        body["access_class"] = access_class
     if timeout_s:
         body["timeout_s"] = timeout_s
     data = await _post("/n2n/grants", body)
     return _gcf_dumps(data)
+
+
+@mcp.tool()
+async def n2n_classify(target_type: str, target_name: str, access: Optional[str] = None) -> str:
+    """Operator override of a tool's or skill's access class for read-only grants.
+
+    Args:
+        target_type: 'tool' or 'skill'
+        target_name: 'server/tool' or skill name
+        access: 'read' or 'write'; omit to clear the override (an imported
+            annotation, if any, then applies; otherwise unclassified, which a
+            read-only grant refuses)
+    """
+    body = {"target_type": target_type, "target_name": target_name}
+    if access:
+        body["access"] = access
+    else:
+        body["clear"] = True
+    return _gcf_dumps(await _post("/n2n/classifications", body))
+
+
+@mcp.tool()
+async def n2n_import_annotations(server: str, tools_json: str) -> str:
+    """Import MCP tool annotations for one local server (operator action).
+
+    Args:
+        server: MCP server id, e.g. 'cml-mcp'
+        tools_json: JSON list from an MCP tools/list result, e.g.
+            '[{"name":"list_labs","annotations":{"readOnlyHint":true}}]'.
+            readOnlyHint true -> read, false -> write, absent -> not stored.
+            An operator override from n2n_classify always wins.
+    """
+    try:
+        tools = json.loads(tools_json)
+    except ValueError as e:
+        return _gcf_dumps({"error": f"tools_json is not valid JSON: {e}"})
+    return _gcf_dumps(await _post("/n2n/classifications", {"server": server, "tools": tools}))
+
+
+@mcp.tool()
+async def n2n_list_classifications() -> str:
+    """List tool/skill access classifications (operator overrides and imported annotations)."""
+    return _gcf_dumps(await _get("/n2n/classifications"))
 
 
 @mcp.tool()
@@ -334,11 +464,15 @@ async def n2n_list_grants(peer: Optional[str] = None) -> str:
 
 @mcp.tool()
 async def n2n_invoke(peer: str, target_type: str, target_name: str,
-                     arguments: Optional[str] = None, input_text: Optional[str] = None) -> str:
+                     arguments: Optional[str] = None, input_text: Optional[str] = None,
+                     request_id: Optional[str] = None) -> str:
     """Invoke a remote tool or skill on a federated peer's claw.
 
     Results are marked as remote-untrusted data. The peer must have granted
-    access to the target.
+    access to the target. If the peer's grant requires approval, a tool call
+    returns error -32002 (APPROVAL_PENDING) with data.request_id; once the
+    peer's operator approves, call again with that request_id and the SAME
+    arguments. -32003 means the approval was denied or expired.
 
     Args:
         peer: Peer identity string
@@ -346,8 +480,11 @@ async def n2n_invoke(peer: str, target_type: str, target_name: str,
         target_name: Tool or skill name to invoke
         arguments: JSON string of tool arguments (for target_type='tool')
         input_text: Natural language input (for target_type='skill')
+        request_id: Retry a tool call previously answered -32002 (tool only)
     """
     body = {"peer": peer, "target_type": target_type, "target_name": target_name}
+    if request_id:
+        body["request_id"] = request_id
     if arguments:
         body["arguments"] = json.loads(arguments) if isinstance(arguments, str) else arguments
     if input_text:
@@ -452,7 +589,12 @@ async def n2n_audit(peer: Optional[str] = None, limit: int = 20) -> str:
 async def n2n_config(peer: str, chat_enabled: Optional[bool] = None,
                      daily_requests: Optional[int] = None,
                      daily_tokens: Optional[int] = None,
-                     rate_per_min: Optional[int] = None) -> str:
+                     rate_per_min: Optional[int] = None,
+                     limit_action: Optional[str] = None,
+                     warn_threshold: Optional[float] = None,
+                     restart_timer_s: Optional[int] = None,
+                     reset_limits: bool = False,
+                     clear_hold_down: bool = False) -> str:
     """Configure per-peer federation settings.
 
     Args:
@@ -461,6 +603,12 @@ async def n2n_config(peer: str, chat_enabled: Optional[bool] = None,
         daily_requests: Daily request budget for this peer
         daily_tokens: Daily token budget for this peer
         rate_per_min: Requests per minute rate limit
+        limit_action: What to do when a limit is exceeded: refuse (default, keep channel),
+            warn (allow, audit only) or teardown (refuse, close channel, hold-down timer)
+        warn_threshold: Fraction (0,1] of the daily limit that raises one warning per day
+        restart_timer_s: Hold-down seconds before a torn-down peer may reconnect
+        reset_limits: Reset today's counters, rate window, warnings and hold-down
+        clear_hold_down: End a teardown hold-down early
     """
     body = {"peer": peer}
     if chat_enabled is not None:
@@ -471,6 +619,14 @@ async def n2n_config(peer: str, chat_enabled: Optional[bool] = None,
         body["daily_tokens"] = daily_tokens
     if rate_per_min is not None:
         body["rate_per_min"] = rate_per_min
+    for key, val in (("limit_action", limit_action), ("warn_threshold", warn_threshold),
+                     ("restart_timer_s", restart_timer_s)):
+        if val is not None:
+            body[key] = val
+    if reset_limits:
+        body["reset_limits"] = True
+    if clear_hold_down:
+        body["clear_hold_down"] = True
     data = await _post("/n2n/config", body)
     return _gcf_dumps(data)
 
@@ -484,8 +640,9 @@ async def n2n_delegate(peer: str, target_name: str, input_text: str = "",
 
     Use this (not chat) for multi-minute work like "recreate my CML lab" — it
     submits the task and returns a task_id immediately; the peer runs it in the
-    background. Poll with n2n_task_status / fetch with n2n_task_result. This
-    survives ngrok resets that would drop a synchronous call.
+    background. Call n2n_task_wait until the state is terminal, then fetch with
+    n2n_task_result. n2n_task_status is one short read. This survives ngrok
+    resets that would drop a synchronous call.
 
     Args:
         peer: peer identity (e.g. 'as65007-7.7.7.7')
@@ -511,66 +668,62 @@ async def n2n_task_wait(
     timeout_seconds: int = 45,
     poll_interval_seconds: float = 5.0,
 ) -> str:
-    """Block until a delegated task reaches a terminal state (or this slice ends).
+    """Wait until a delegated task is terminal, or this call's slice ends.
 
-    Prefer this on Border alert-triage after n2n_route instead of abandoning after
-    one n2n_task_status=working.
+    Use this after n2n_route or n2n_delegate. One n2n_task_status result of
+    working is not a reason to give up. Each slice is clamped to 10–50 seconds
+    (MCP clients often time out near 60s) and the poll interval to 2–15 seconds.
 
-    MCP clients often time out tool calls ~60s, so each wait slice is capped at
-    50s. If state is still working/submitted, call n2n_task_wait AGAIN with the
-    same task_id (repeat until completed/failed or wall-clock ~3 minutes).
+    Terminal states are completed, failed, cancelled, outcome_unknown, and
+    interrupted. The state is taken only from the payload's state field.
+
+    A task that cannot be found returns at once with not_found true and no
+    still_running: an HTTP 404 from the daemon ({"error": "unknown task"}) or
+    a peer's state "unknown". Do not call n2n_task_wait again for it.
+
+    Any other failed read returns at once with state "error", http_status, and
+    no not_found: a non-2xx status (5xx, scoped refusal), a body without a
+    string state, or a transport error. Those may clear, so the caller can call
+    n2n_task_wait again.
+
+    When the slice ends first, the last payload adds still_running true and a
+    hint to call n2n_task_wait again with the same task_id. Fetch the output
+    with n2n_task_result once the state is terminal.
 
     Args:
-        task_id: From n2n_route / n2n_delegate
-        timeout_seconds: Max wait for THIS call (default 45, clamp 10–50)
-        poll_interval_seconds: Sleep between status checks (default 5, clamp 2–15)
+        task_id: from n2n_route or n2n_delegate
+        timeout_seconds: max wait for this call (default 45, clamped to 10–50)
+        poll_interval_seconds: pause between GET /n2n/tasks/{task_id} (default 5, clamped to 2–15)
     """
-    import asyncio
-    import time
-
-    # Stay under typical MCP tool client timeouts (~60s)
-    timeout = max(10, min(int(timeout_seconds or 45), 50))
-    interval = max(2.0, min(float(poll_interval_seconds or 5.0), 15.0))
+    timeout, interval = _clamp_task_wait(timeout_seconds, poll_interval_seconds)
     deadline = time.monotonic() + timeout
-    last: dict = {}
-    terminal = {"completed", "failed", "cancelled", "canceled", "error"}
-
     while True:
         try:
-            last = await _get(f"/n2n/tasks/{task_id}")
-        except Exception as e:
-            last = {"task_id": task_id, "state": "error", "error": str(e)}
-            break
-        if not isinstance(last, dict):
-            last = {"task_id": task_id, "raw": last}
-        state = last.get("state") or last.get("status") or ""
-        result_blob = last.get("result")
-        if not state and isinstance(result_blob, dict):
-            state = result_blob.get("state") or result_blob.get("status") or ""
-        state = str(state).lower()
-        # also parse GCF plain text result blob
-        if not state and isinstance(result_blob, str):
-            low = result_blob.lower()
-            for token in ("completed", "failed", "working", "submitted"):
-                if token in low:
-                    state = token
-                    break
-        if state in terminal:
-            break
+            status, payload = await _get_with_status(f"/n2n/tasks/{task_id}")
+        except Exception as exc:
+            return _gcf_dumps({"task_id": task_id, "state": "error", "error": str(exc)})
+        state = _task_payload_state(payload)
+        if status == 404 or state == "unknown":
+            return _gcf_dumps(_task_not_found(payload, task_id))
+        if not 200 <= status < 300:
+            return _gcf_dumps(_task_read_error(payload, task_id, status, f"HTTP {status}"))
+        if state in _TERMINAL_TASK_STATES:
+            return _gcf_dumps(payload)
+        if state is None:
+            return _gcf_dumps(_task_read_error(
+                payload, task_id, status, "task status response has no string state"
+            ))
         remaining = deadline - time.monotonic()
         if remaining <= 0:
-            last = {
-                **last,
-                "task_id": task_id,
-                "state": state or "working",
-                "still_running": True,
-                "wait_slice_seconds": timeout,
-                "hint": "still working — call n2n_task_wait again with the same task_id",
-            }
-            break
+            if isinstance(payload, dict):
+                body = dict(payload)
+            else:
+                body = {"task_id": task_id}
+            body["still_running"] = True
+            body["hint"] = _TASK_WAIT_HINT
+            body.setdefault("task_id", task_id)
+            return _gcf_dumps(body)
         await asyncio.sleep(min(interval, remaining))
-
-    return _gcf_dumps(last)
 
 
 @mcp.tool()
@@ -717,7 +870,8 @@ async def n2n_set_edge_gate(peer: str, edge_gate: str) -> str:
 
 
 @mcp.tool()
-async def n2n_trust(peer: str, tools: str = "", chat: bool = True) -> str:
+async def n2n_trust(peer: str, tools: str = "", chat: bool = True,
+                    access_class: Optional[str] = None) -> str:
     """One-step trust: enable chat and grant a set of tools/skills to a peer in a
     single call (instead of separate consent + grant + config steps).
 
@@ -725,8 +879,11 @@ async def n2n_trust(peer: str, tools: str = "", chat: bool = True) -> str:
         peer: peer identity
         tools: comma-separated tool/skill names to grant (e.g. 'cml-lab-lifecycle,cml-mcp/list_labs')
         chat: enable claw-to-claw chat with this peer (default True)
+        access_class: optional 'read' or 'read_write' applied to every granted name
     """
     body = {"peer": peer, "chat": chat}
+    if access_class:
+        body["access_class"] = access_class
     if tools:
         body["tools"] = [t.strip() for t in tools.split(",") if t.strip()]
     return _gcf_dumps(await _post("/n2n/trust", body))
@@ -820,8 +977,9 @@ async def n2n_member_remove(member_id: str) -> str:
 @mcp.tool()
 async def n2n_route(request_text: str, target_hint: Optional[str] = None) -> str:
     """Ask the Border to route a task-shaped request to the member that owns the
-    capability, and delegate it (async). Returns a task_id — poll with
-    n2n_task_status / n2n_task_result. Reports plainly if no member can do it.
+    capability, and delegate it (async). Returns a task_id. Call n2n_task_wait
+    until the state is terminal, then n2n_task_result. Reports plainly if no
+    member can do it.
 
     Args:
         request_text: the operator's request

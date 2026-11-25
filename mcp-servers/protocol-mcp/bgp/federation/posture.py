@@ -22,9 +22,24 @@ logger = logging.getLogger("n2n.posture")
 _CONTROL_KIND = {"sandbox": "containment", "model-guard": "containment", "audit": "audit"}
 
 
-async def _probe_controls() -> list:
+def _on_demand_members(service) -> list:
+    """Spawnable on-demand members the Border would cold-start (spec 165): routable,
+    local launch_cmd, on_demand, not owned by a durable service unit."""
+    from .router import _ROUTABLE_STATES
+    try:
+        return [m["member_id"] for m in service.risk.list_members()
+                if m.get("state") in _ROUTABLE_STATES and m.get("launch_cmd")
+                and m.get("on_demand") and m.get("managed_by") != "service"]
+    except Exception:   # no service / risk (tests, non-Border callers)
+        return []
+
+
+async def _probe_controls(service=None) -> list:
     """Probe all three controls; return the list of control dicts (data-model §2)."""
-    sandbox_ok, sandbox_detail = await controls.sandbox_available()
+    if protected_control_only(service):
+        return _protected_controls(service)
+    sandbox_ok, sandbox_detail = await controls.sandbox_available(
+        on_demand_members=_on_demand_members(service))
     guard_ok, guard_detail = await controls.defenseclaw_available()
     audit_ok, audit_detail = controls.gait_recording()
     now = time.time()
@@ -38,13 +53,78 @@ async def _probe_controls() -> list:
     ]
 
 
+def protected_control_only(service) -> bool:
+    """Select the explicit protected Border path; this alone is not a pass."""
+    return bool(service is not None and getattr(service, 'protected_enabled', False)
+                and getattr(service, 'risk', None) and service.risk.is_border())
+
+
+def _protected_controls(service) -> list:
+    """Verify local authority/absence of execution, never probe a dummy guard.
+
+    This is process/role posture, not a claim of externally verified VM/IAM or
+    firewall confinement. The cloud qualification records those separately.
+    """
+    from .protected_contract import decode
+    from .protected_owner import private_file
+    from .protected_service import validate_profile
+    from .protected_access import OpenLabAccess, lab_principal
+    import ipaddress
+    now = time.time()
+    boundary, owner_ok, transport_ok, audit_ok = False, False, False, False
+    lab = False
+    try:
+        op = service.protected_operations
+        current = validate_profile(decode(private_file(service.runtime.state / 'protected-profile.json')),
+                                   role='border', identity=op.identity)
+        boundary = bool(op.role == 'border' and op.executor is None and current == op.config
+                        and service.execution_broker is None and service.hermes_runtime is None
+                        and not any(m.get('launch_cmd') for m in service.risk.list_members()))
+        lab = current.get('access') == {'mode': 'open-lab'}
+        if lab:
+            owner_ok = (isinstance(op.owner, OpenLabAccess)
+                        and op.owner.principal == lab_principal(op.identity['installation_id']))
+        else:
+            with op.owner.locked() as connection:
+                op.owner._meta(connection)
+                owner_ok = True
+        owner_ok = owner_ok and bool(op.bridge and op.bridge.server and op.bridge.server.is_serving())
+        registry = service.transport_registry()
+        entries = registry.load()['entries']
+        transport_ok = bool(service.cert_enforce and len(entries) == 2
+                            and {e['service'] for e in entries} == {'in2n', 'en2n'}
+                            and all(e['direction'] == 'listen' for e in entries)
+                            and all(ipaddress.ip_address(e['bind_host']).is_loopback
+                                    for e in entries if e['service'] == 'en2n'))
+        status = service.endpoint_status()
+        transport_ok = transport_ok and len(status['services']) == 2 and all(
+            e.get('listener_ready') is True for e in status['services'])
+        from . import gait
+        audit_ok, _ = gait.ensure_repo(service.manager.base_dir / 'gait')
+    except Exception:
+        # A changed/missing profile, owner, listener or audit remains degraded.
+        pass
+    rows = [
+        ('sandbox', 'containment', boundary, 'not applicable: verified no local executor', 'not-applicable'),
+        ('model-guard', 'containment', boundary, 'not applicable: verified no local inference', 'not-applicable'),
+        ('lab-attribution' if lab else 'owner-authority', 'containment', owner_ok,
+         'explicit unauthenticated lab attribution and private bridge' if lab else 'configured owner and private bridge', 'required'),
+        ('strict-transport', 'containment', transport_ok, 'strict iN2N and dormant external listener', 'required'),
+        ('audit', 'audit', audit_ok, 'selected installation GAIT', 'required'),
+    ]
+    return [{'name': name, 'kind': kind, 'available': bool(ok),
+             'applicability': applicability if ok else 'required',
+             'detail': detail if ok else 'protected control unavailable', 'probed_at': now}
+            for name, kind, ok, detail, applicability in rows]
+
+
 async def compute_posture(service=None) -> dict:
-    """Return the current RiskPosture (data-model §1). `service` is accepted for
-    signature stability / future use (e.g. per-risk overrides) but posture is
-    derived from N2N_RISK_MODE + the control probes."""
+    """Return the current RiskPosture (data-model §1), derived from N2N_RISK_MODE +
+    the control probes. `service` (optional) supplies the channel-security block and
+    the on-demand members the sandbox probe must account for (spec 165)."""
     production = controls.is_production()
     strict = controls.strict_all()
-    ctrls = await _probe_controls()
+    ctrls = await _probe_controls(service)
     missing = [c["name"] for c in ctrls if not c["available"]]
 
     if not production:
@@ -64,7 +144,8 @@ async def compute_posture(service=None) -> dict:
         "controls": ctrls,
         "missing": missing,
         "strict_all": strict,
-        "model": _local_model(),
+        "model": ({'primary': None, 'guarded': False, 'execution': 'control-only'}
+                  if protected_control_only(service) else _local_model()),
         "channel_security": _channel_security(service),
         "computed_at": time.time(),
         "summary": summary,
@@ -134,7 +215,8 @@ def _channel_security(service) -> dict:
                 "pq_mode": getattr(service, "pq_mode", "opportunistic"),
                 "pq_available": getattr(service, "pq_available", False),
                 "ech_available": _tls.ech_available(),
-                "channels_kex": channels_kex}
+                "channels_kex": channels_kex,
+                "endpoint_registry": service.endpoint_status() if hasattr(service, 'endpoint_status') else None}
     except Exception:
         return {}
 

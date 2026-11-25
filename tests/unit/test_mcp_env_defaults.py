@@ -26,7 +26,8 @@ def test_every_optional_default_and_override_resolves_without_shell_evaluation()
     from mcp_environment import defaults_for, native_entry
     servers = json.loads((ROOT / 'config/openclaw.json').read_text())['mcpServers']
     catalog = json.loads((ROOT / 'config/mcp-env-defaults.json').read_text())['servers']
-    assert len(catalog) == 66  # 64 upstream registrations plus pfSense and UniFi
+    assert len(catalog) == 69  # 67 upstream registrations plus fork pfSense and UniFi
+    assert {"greynoise-community-mcp", "threatintel-mcp"} <= catalog.keys()
     for name, defaults in catalog.items():
         entry = servers[name]
         assert defaults_for(name) == defaults
@@ -161,13 +162,22 @@ console.log(JSON.stringify({passed:cases.length}));'''
     assert json.loads(result.stdout) == {'passed': len(source)}
 
 
-def test_provider_prices_do_not_weaken_mcp_template_validation():
+def test_provider_prices_outside_mcp_registrations():
     import pytest
     from mcp_environment import load_mcp_template
-    from setup_schema import Invalid
-    source = (ROOT / 'config/openclaw.json').read_bytes()
-    assert load_mcp_template(source) == json.loads(source)['mcpServers']
+    from setup_schema import Invalid, loads
+
+    source = json.loads((ROOT / 'config/openclaw.json').read_text())
+    source['models'] = {'providers': {'example': {'models': [{'cost': {'input': 0.25}}]}}}
+    raw = json.dumps(source).encode()
+    assert load_mcp_template(raw) == source['mcpServers']
     with pytest.raises(Invalid, match='integer_required'):
-        load_mcp_template('{"models":{"price":0.5},"mcpServers":{"x":{"timeout":0.5}}}')
+        loads(raw)  # Claw Plan records retain their strict numeric grammar.
+    with pytest.raises(Invalid, match='integer_required'):
+        load_mcp_template('{"models":{"cost":0.25},"mcpServers":{"x":{"timeout":1.5}}}')
     with pytest.raises(Invalid, match='duplicate_key'):
         load_mcp_template('{"mcpServers":{},"mcpServers":{}}')
+    with pytest.raises(Invalid, match='object_field_required'):
+        load_mcp_template('{"mcpServers":[]}')
+    with pytest.raises(Invalid, match='size_limit'):
+        load_mcp_template(raw, len(raw) - 1)

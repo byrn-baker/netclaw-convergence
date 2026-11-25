@@ -1,8 +1,16 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { entities, age, freshness, observation, selectedContext, relations } from './model.js';
+import { entities, age, freshness, observation, protectedWorkspace, selectedContext, relations } from './model.js';
 import { previewSources } from './fixtures.js';
 const now = Date.parse('2026-09-28T12:00:00Z');
+test('protected workspace uses selected role and configuration instead of legacy gateway health', () => {
+  const runtime = { role: 'border', label: 'Protected Border', readiness: { ready: true, executionVerified: false },
+    capabilities: { protectedProfile: true, protectedOperations: true } };
+  assert.deepEqual(protectedWorkspace(runtime), { name: 'Protected Border', role: 'Border', status: 'Approval workspace configured' });
+  assert.equal(protectedWorkspace({ ...runtime, readiness: { ready: false } }).status, 'Approval workspace unavailable');
+  assert.equal(protectedWorkspace({ ...runtime, role: 'unknown' }).role, 'Protected role unverified');
+  assert.equal(protectedWorkspace({ capabilities: { protectedProfile: false } }), null);
+});
 test('mixed deployment separates members, edges, peers and non-executing advisors', () => {
   const rows = entities(previewSources(new Date(now).toISOString()).n2n.payload);
   assert.equal(rows.filter(r => r.kind === 'member').length,3);
@@ -42,4 +50,12 @@ test('production summary requires fresh complete control evidence; LAB bypass re
   for(const p of [{...posture,controls:[]},{...posture,computed_at:1},{...posture,controls:[{name:'sandbox',available:true}]}])assert.equal(securitySummary({},p,true).enforced,false);
   assert.equal(securitySummary({},posture,false).enforced,false);
   assert.match(securitySummary({}, {...posture,mode:'unknown'},true).label,/unknown/);
+});
+
+test('connection observation is explicit and never invents a heartbeat for offline members', () => {
+  const now = '2026-11-01T21:00:00Z';
+  const rows = entities({ generatedAt: now, members: [{ member_id: 'risk/mac', live: true }, { member_id: 'risk/offline', live: false }], peers: [{ identity: 'live-peer', channel_state: 'up', last_seen: 0 }, { identity: 'old-peer', state: 'severed', channel_state: 'unknown' }] });
+  assert.equal(rows[0].seen, now); assert.equal(rows[0].seenKind, 'connection');
+  assert.equal(rows[1].seen, null); assert.equal(rows[1].seenKind, 'unknown');
+  assert.equal(rows[2].seen, now); assert.equal(rows[3].status, 'severed');
 });

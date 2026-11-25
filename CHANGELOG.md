@@ -2,17 +2,177 @@
 
 NetClaw source releases use `1.x.y`. Feature specs increment the minor version and reset the patch; fixes, documentation and maintenance increment the patch. Every release records its numbered specs. Component and mobile distribution versions are independent.
 
-## [1.16.0] - 2026-10-30
+## [1.26.0] - 2026-11-23
 
-Spec [1012-convergence-home-onboarding](specs/1012-convergence-home-onboarding/spec.md). See [release notes](docs/releases/1.16.0.md).
+Spec [200-genie-network-worlds](specs/200-genie-network-worlds/spec.md). See [release notes](docs/releases/1.26.0.md).
 
-## [1.15.1] - 2026-10-30
+## [1.25.0] - 2026-11-19
 
-Spec [1011-convergence-readiness](specs/1011-convergence-readiness/spec.md). See [release notes](docs/releases/1.15.1.md).
+Spec [198-percepxion-oob-skill-refresh](specs/198-percepxion-oob-skill-refresh/spec.md). See [release notes](docs/releases/1.25.0.md).
 
-## [1.15.0] - 2026-10-30
+- `percepxion-oob`: a short `SKILL.md` with setup, workflows and source-of-truth detail in `references/`; corrected tool parameters; W9 finds a device's console path from NetBox or Nautobot, and W10 runs the console coverage gate before a change.
 
-Spec [1010-convergence-development](specs/1010-convergence-development/spec.md). See [release notes](docs/releases/1.15.0.md).
+## [1.24.0] - 2026-11-12
+
+Spec [195-production-integrations](specs/195-production-integrations/spec.md). See [release notes](docs/releases/1.24.0.md).
+
+## [1.23.0] - 2026-11-12
+
+Spec [194-rag-structured-ingestion](specs/194-rag-structured-ingestion/spec.md). See [release notes](docs/releases/1.23.0.md).
+
+## [1.22.1] - 2026-11-12
+
+Spec [192-skill-guardrails](specs/192-skill-guardrails/spec.md). See [release notes](docs/releases/1.22.1.md).
+
+- Skill guardrails: when to propose `n2n_kill` (`n2n-federation`), only the operator sets `NETCLAW_LAB_MODE` (`protocol-participation`), and a three-condition test before an emergency change bypasses CR approval (`pyats-config-mgmt`).
+
+## [1.22.0] - 2026-11-11
+
+Spec [186-member-spec-providers](specs/186-member-spec-providers/spec.md). See [release notes](docs/releases/1.22.0.md).
+
+- Member specs may name any provider the Border configures (`<provider>/<model>`, key references only) or a Claude/ChatGPT subscription login (`"auth": "subscription"`); staged members run on the federation runtime instead of the system `python3`.
+
+## [1.21.0] - 2026-11-10
+
+- Members get the MCP servers their skills call (35 of 42 profiles), and an env slice with exactly the variables those servers reference; never ServiceNow/comms secrets, never the Border's `.env` or home.
+- Member specs: `in2n-member-home.py --spec`, `netclaw risk add spec`, `in2n-migrate.py --spec` provision a member from a JSON spec (servers, skills, tool allowlist) with its own workspace, stores and allowlisted config; dangerous built-ins and Border-only servers refused.
+
+Specs [183-member-mcp-mappings](specs/183-member-mcp-mappings/spec.md) and [184-member-spec](specs/184-member-spec/spec.md). See [release notes](docs/releases/1.21.0.md).
+
+## [1.20.0] - 2026-11-08
+
+- `n2n_task_wait`: wait for a delegated task (50 s slices, `still_running`/`not_found`/retryable `error`); the `n2n-federation` skill uses it when available.
+- `rag_search(collection="investigations" | "all")` searches past investigation snapshots, with date filters before a newest-first cap and searched/skipped counts.
+
+Spec [181-convergence-investigation-tools](specs/181-convergence-investigation-tools/spec.md). See [release notes](docs/releases/1.20.0.md).
+
+## [1.19.1] - 2026-11-08
+
+- The Border renews its hub credential under the same risk CA and key: on the rotation schedule when `N2N_CERT_MODE` is on, and in every mode within 7 days of expiry when a member asks for attestation. Before, members rejected a Border running past the certificate's 90 days.
+
+Spec [180-hub-credential-renewal](specs/180-hub-credential-renewal/spec.md). See [release notes](docs/releases/1.19.1.md).
+
+## [1.19.0] - 2026-11-08
+
+Spec [179-convergence-setup](specs/179-convergence-setup/spec.md). See [release notes](docs/releases/1.19.0.md).
+
+- New `convergence-setup` skill: installs Convergence from a pinned convergence-platform release as a Docker trial, on an existing K3s cluster (Helm or Argo CD), or on a new K3s cluster on Proxmox VE, after showing the plan and getting approval.
+- `convergence_vm_security` and a HUD VM Security section: advisory VM findings with coverage, from the scope accepted in proposal 176; a labelled synthetic source lets you try it without a hypervisor.
+- Convergence docs, catalog and integration test pin convergence-platform `v0.1.5` instead of the fork commit.
+
+## [1.18.7] - 2026-11-06
+
+Spec [177-defenseclaw-sidecar-identity](specs/177-defenseclaw-sidecar-identity/spec.md). See [release notes](docs/releases/1.18.7.md).
+
+- `defenseclaw-sidecar.service` starts the gateway with `defenseclaw-gateway start`, so the DefenseClaw CLI (`skill enable`/`disable`, audit recording of scans, `defenseclaw-gateway status`) reaches the gateway NetClaw supervises. systemd still restarts it after a crash. Regenerate and restart the unit to update an existing Risk host.
+
+## [1.18.6] - 2026-11-05
+
+- Generate a single-use Mobile enrollment QR directly from the HUD Mobile panel or the VS Code Mobile & edge view. The ordinary onboarding path no longer requires discovering and running the CLI token command.
+- Preserve device identity through interrupted enrollment and reconnect; show expiry, consumption and explicit replacement in the issuing interface.
+- Verified actual HUD/editor QR images on an iPhone simulator, including a signed successful read and restart recovery without repeated execution.
+- Coordinated component versions: VS Code 1.6.1 and Mobile 1.0.4 (7), with independent distribution status recorded in the release evidence. Owner-requested patch release for this scoped usability update.
+
+Spec [175-cloud-mobile-enrollment](specs/175-cloud-mobile-enrollment/spec.md). See [release notes](docs/releases/1.18.6.md).
+
+## [1.18.5] - 2026-11-04
+
+The Border stops routing skills a member cannot load (spec 174):
+
+- After connecting, each member asks its own OpenClaw which scoped skills it will not load (missing settings, disabled, not installed, or past OpenClaw's skill limit) and reports them. The Border routes those skills only to members that can load them, leaves them out of the risk's advertised skills, and logs the reason. On an operator Risk, the pyats member could load 1 of its 18 scoped skills, all of them routable.
+
+Spec [174-member-skill-status](specs/174-member-skill-status/spec.md). See [release notes](docs/releases/1.18.5.md).
+
+## [1.18.4] - 2026-11-03
+
+Delegated skills report tool failures (spec 171):
+
+- Every delegated skill request, from the Border to a member and from a federated peer, now tells the agent that if a tool or command the skill needs is missing or fails, it replies with that error and stops, rather than substituting output it produced another way. A member whose mind-map server failed had returned a hand-written placeholder file, which the Border recorded as a completed task.
+
+Spec [171-skill-failure-reporting](specs/171-skill-failure-reporting/spec.md). See [release notes](docs/releases/1.18.4.md).
+
+## [1.18.3] - 2026-11-02
+
+Domain-verified certificates renew again (spec 170):
+
+- ACME issuance and renewal give lego the DNS provider's credentials (for example `CLOUDFLARE_DNS_API_TOKEN`) from `~/.openclaw/.env` or `mesh.systemd.env`. Since 2026-09-27 the mesh launchers pass only `NETCLAW_`/`N2N_`/`BGP_` settings to the daemon, so lego never saw them and every renewal failed. Only the variables `lego dnshelp` lists for the configured provider are passed, and only to lego.
+- Renewal skips lego's random pre-renewal sleep (up to about 8 minutes), which outlasted the 180-second run timeout and held operator rotation requests.
+
+Spec [170-acme-renewal-credentials](specs/170-acme-renewal-credentials/spec.md). See [release notes](docs/releases/1.18.3.md).
+
+## [1.18.2] - 2026-11-02
+
+A member turn that runs out of time now says so (spec 169):
+
+- An embedded member turn that exceeds its time budget fails with "agent turn for session '<session>' timed out after <n>s" instead of an empty error, so the Border's task status shows the timeout.
+- Any delegated task that fails with a message-less exception records the exception's type name rather than an empty error.
+
+Spec [169-task-timeout-error](specs/169-task-timeout-error/spec.md). See [release notes](docs/releases/1.18.2.md).
+
+## [1.18.1] - 2026-11-01
+
+Fixes for existing Risks on OpenClaw 2026.10, found while moving a multi-agent Risk to system member units and OpenClaw 2026.10.9 (spec 168):
+
+- Embedded member turns pass `--agent main` when the member home has several agents including `main` (or `--agent $N2N_MEMBER_AGENT`). OpenClaw 2026.10 and later refuse an unnamed `--session-id` turn when the home has several agents, and member homes copy the Border's agent entries, so every delegated task failed on a multi-agent Border. Homes with one agent keep the unnamed command.
+- A failed embedded turn records the CLI's own error message (single line, capped; never stderr) instead of only "Agent process exited 1".
+- Re-running the installer replaces workspace `AGENTS.md`/`USER.md`/`TOOLS.md` (and the other bootstrap files) that are symlinks into the NetClaw checkout with copies. OpenClaw 2026.10 refuses symlinked bootstrap files, so older installs ran without NetClaw's agent instructions and the operator's profile.
+
+Spec [168-openclaw-2026-10-compat](specs/168-openclaw-2026-10-compat/spec.md). See [release notes](docs/releases/1.18.1.md).
+
+## [1.18.0] - 2026-11-01
+
+Spec [162-netconverterai](specs/162-netconverterai/spec.md): guarded NetConverter conversion, exact-file hosted approval, private pyATS candidate application, installer modes and a dedicated Risk member. Actual approved synthetic conversions, modeled Batfish checks, protected IOS-XE rehearsal and native Border/member discovery are recorded with their limits. Includes the minor fixes found during live qualification and preserves upstream Convergence and production-mode work through 1.17.1. See [release notes](docs/releases/1.18.0.md).
+
+## [1.17.1] - 2026-11-01
+
+Production-mode fixes found by live qualification (spec 167):
+
+- Recognise DefenseClaw 1.x's OpenClaw plugin route (plugin enabled, allowed and loaded; proxy reachable) as model-guarded, alongside the `defenseclaw/<model>` provider route. Unknown provider domains stay blocked fail-closed by the proxy.
+- Member homes carry only the DefenseClaw plugin entries and the Border's `security.mode`, so production members run guarded instead of refusing or bypassing the guard.
+- Member list and health report `starts_on_route` for down on-demand members, so a Border routes to them instead of reporting them unavailable.
+- `gateway_ws` resolves env SecretRef gateway tokens and refuses unsupported SecretRef sources instead of sending an object as the token.
+- `defenseclaw-enable.sh`, `install.sh` and `netclaw-secure-start.sh` install a pinned, checksum-verified DefenseClaw release instead of piping unpinned installers; OpenShell is opt-in and must match a reviewed checksum. Docs cover non-interactive setup, provider registration and the DefenseClaw SecretRef gateway-token limitation.
+
+Spec [167-production-mode-qualification](specs/167-production-mode-qualification/spec.md). See [release notes](docs/releases/1.17.1.md).
+
+## [1.17.0] - 2026-10-31
+
+- Cold-start on-demand iN2N members as confined system instances on OpenClaw 2026.10.9 and later: `in2n-services.py coldstart install` adds a hardened `netclaw-coldmember@.service` template and a polkit rule that lets only the installing operator start or stop only those instances, without sudo at run time. Posture and production cold-start use it when installed and authorized.
+
+Spec [166-coldstart-system-members](specs/166-coldstart-system-members/spec.md). See [release notes](docs/releases/1.17.0.md).
+
+## [1.16.0] - 2026-10-31
+
+- Keep hardened iN2N members working on OpenClaw 2026.10.9 and later: always-on members can run as system units (`in2n-services.py generate|enable --system`, sudo -n only) with full confinement, and the Risk posture reports confinement unavailable instead of claiming a configuration that cannot run OpenClaw members.
+- Add an opt-in `scripts/border-harden.py` that places an OpenClaw Border in the Docker sandbox and turns off Skill Workshop learning, dry-run by default.
+- Hand Convergence observations from the HUD to the Border through Canvas with a bounded evidence envelope; add an optional `convergence` Risk member profile and stronger evidence guidance (capability search, latest-100 bound, record-only semantics, provenance).
+- Name routable specialty capabilities when a Risk route has no capable member.
+
+Specs [164-convergence-border](specs/164-convergence-border/spec.md) and [165-convergence-confinement](specs/165-convergence-confinement/spec.md). See [release notes](docs/releases/1.16.0.md).
+
+## [1.15.0] - 2026-10-31
+
+- Add an optional, disabled-by-default Convergence reader and HUD for retained flow summaries and same-window evidence.
+- Include isolated Linux installation, viewer-scoped access, coverage labels and disposable demo/host integration checks.
+
+Spec [162-convergence-read](specs/162-convergence-read/spec.md). See [release notes](docs/releases/1.15.0.md).
+
+## Convergence fork releases
+
+These fork-only releases predate the 2026-11-25 upstream sync. Their numbers collide with upstream releases, so their notes live under `docs/releases/convergence/`. The fork now follows upstream's version line.
+
+### [1.16.0] - 2026-10-30
+
+Spec [1012-convergence-home-onboarding](specs/1012-convergence-home-onboarding/spec.md). See [release notes](docs/releases/convergence/1.16.0.md).
+
+### [1.15.1] - 2026-10-30
+
+Spec [1011-convergence-readiness](specs/1011-convergence-readiness/spec.md). See [release notes](docs/releases/convergence/1.15.1.md).
+
+### [1.15.0] - 2026-10-30
+
+Spec [1010-convergence-development](specs/1010-convergence-development/spec.md). See [release notes](docs/releases/convergence/1.15.0.md).
+
 
 ## [1.14.0] - 2026-10-30
 
@@ -163,3 +323,81 @@ First official versioned source release, including the function-first HUD (spec1
 - Restored the protected HUD inventory statement required by documentation reconciliation.
 
 See [full release notes and validation boundaries](docs/releases/1.0.0.md).
+
+## NetConverter unpublished development history
+
+These branch-local milestones predate reconciliation with upstream 1.17.1; they are not additional published releases. Their final source release is 1.18.0.
+
+## [NetConverter pre-release 1.15.5] - 2026-11-01 (source milestone; unpublished)
+
+Minor fix from Spec162's real Risk qualification: bind each Border/member MCP to
+its reviewed local federation API before native registration freezes environment
+aliases. Previously the installer could verify tool discovery while the tools
+still addressed default port 8179. A regression reproduces the stale endpoint and
+checks both native and companion registrations against each selected port.
+Focused-claw endpoint settings retain their existing behavior.
+
+The first Risk install completed, but its actual delegation trial failed and the
+agent attempted an unrequested configuration repair. That attempt is retained as
+failed evidence. A fresh clean run then passed all 26 effects, required verification,
+rendered HUD and real native Border/member authenticated discovery. All 44 scoped
+Spec162 tasks and three additional live loops are complete, with simulated review
+inputs explicitly distinguished from human approval.
+See [Spec162 verification](specs/162-netconverterai/verification.md).
+
+## [NetConverter pre-release 1.15.4] - 2026-11-01 (source milestone; unpublished)
+
+Minor fix for Spec162 Risk composition: add the missing dedicated OpenClaw
+NetConverter member profile to the shared VS Code/terminal setup catalog. The
+Border remains a router with no NetConverter component or account credential;
+the member owns its guarded MCP, skill and private integration state. A regression
+reproduced the previously rejected member plan and verifies Border isolation.
+
+The owner requested an automated disposable Border-plus-one-member installation
+test with simulated review input. Actual runtime/federation/guard evidence is
+tracked separately from human native review. See [verification](specs/162-netconverterai/verification.md).
+Extension code remains 1.5.0; profiles are read from the selected source catalog.
+
+## [NetConverter pre-release 1.15.3] - 2026-11-01 (source milestone; unpublished)
+
+Minor fixes discovered during real Spec162 native runtime and appliance qualification:
+
+- Include the two public reference snapshots imported by the installed HUD, fixing its first-load module failure.
+- Resolve the native gateway's environment SecretRef for authenticated HUD and Terminal Intent requests; unresolved explicit references fail closed.
+- Add an explicitly started, authenticated, installation-bound foreground pyATS session for clients that close STDIO between turns. Keep the original tool identities, live inventory binding, private task store and one-use apply controls. Process exit requires fresh composition and review.
+- Bind migration baseline receipts to the real captured private artifact and reject reference-note substitution before API APPLY and again in the configuration consumer. The live agent exposed this gap; the original baseline remained retained.
+- Record actual CML capacity juggling, IOS-XE target/peer boot and private baseline collection, including retained failed bootstrap/legacy SSH attempts and independently verified target host-key rotation.
+
+Spec [162-netconverterai](specs/162-netconverterai/spec.md). See [milestone notes](docs/releases/1.15.3.md) and current [qualification evidence](specs/162-netconverterai/verification.md). Extension source remains **1.5.0**; no extension code changed in this patch.
+
+## [NetConverter pre-release 1.15.2] - 2026-10-31 (source milestone; unpublished)
+
+Minor fixes discovered in the owner-approved real Spec162 rehearsal installation:
+
+- Install the NetConverter guard's Python environment under the selected runtime root so native dependency observation accepts it without weakening source ownership or symlink checks.
+- Make the native pyATS installer and observer use the same qualified revision and required source files as the staged runtime installer. This removes a stale pin that installed a server without dynamic-testbed support.
+- Verify an actual OpenClaw/Claude turn, agent-driven NetConverter authentication/capability discovery, native MCP discovery and the repaired dynamic pyATS runtime. Keep the original partial installation report and separate maintenance evidence.
+- Record remaining CML connectivity, image, protected application and live behavior gaps; no 100% acceptance or deployment claim.
+
+Spec [162-netconverterai](specs/162-netconverterai/spec.md), including a correction to the Spec160 native installation path. See [milestone notes](docs/releases/1.15.2.md). Extension source remains **1.5.0**; no extension code changed in this patch.
+
+## [NetConverter pre-release 1.15.1] - 2026-10-31 (source milestone; unpublished)
+
+Minor fixes discovered using the real Spec162 account:
+
+- Recognize successful hosted account envelopes and reject explicit failed envelopes.
+- Preserve nested review verdicts, manual-work counts, partial/truncated evidence and absent reports without exposing private prose.
+- Correct text/XML capability guidance and record two separately approved real synthetic routing conversions, including verified downloads and unresolved review items.
+- Restore isolated Batfish startup compatibility for its pinned pybatfish client with `setuptools<81`.
+- Add three live qualification loops; retain the native UI and actual appliance/application/forwarding gates. Source checks do not establish 100% live acceptance.
+
+Spec [162-netconverterai](specs/162-netconverterai/spec.md). See [milestone notes](docs/releases/1.15.1.md). Extension source remains **1.5.0**; no extension code changed in this patch.
+
+## [NetConverter pre-release 1.15.0] - 2026-10-30 (source milestone; unpublished)
+
+- Add optional NetConverter hosted-readonly/local-Terminal setup, account-bound discovery and native exact-file submission approval.
+- Keep source, conversion reports and candidate application private; extend the existing Local/Lab API and pyATS identities with one-use artifact binding and unknown-outcome recovery.
+- Add a migration skill, virtual-target rehearsal procedure, evidence templates and staged community article; correct Batfish partial-parse/query-failure interpretation.
+- Record five review/fix/test iterations. Live NetConverter account/client discovery, vendor-target acceptance and native UI/platform qualifications remain open; controlled tests do not complete those gates.
+
+Spec [162-netconverterai](specs/162-netconverterai/spec.md). See [milestone notes](specs/162-netconverterai/source-milestone-1.15.0.md). Coordinated extension source: **1.5.0**, unpublished.

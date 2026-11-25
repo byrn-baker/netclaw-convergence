@@ -9,6 +9,15 @@ metadata:
 
 # Protocol Participation — BGP + OSPF + GRE
 
+Maintainer R08/Spec179 distinction: BGP routing and NCFED transport reachability
+are not protected execution authority. A cluster-required home has separate
+signed node identities and quorum fencing; no routing action, alternate endpoint
+or ordinary setup command can make a stale leader authoritative. Preserve its
+HA marker, original operation references and uncertain send state. Private
+cluster lifecycle belongs to the exact operator workflow; this skill acquires
+no etcd credentials or additional write permission. Source and actual REAL/native
+evidence remain separate; see `specs/179-border-ha-authority/coherence.md`.
+
 ## MCP Server
 
 | Property | Value |
@@ -259,9 +268,8 @@ NETCLAW_LAB_MODE=true
 3. **ALWAYS** verify peer state (`bgp_get_peers`) before advertising — only to Established peers
 4. **ALWAYS** record protocol changes in GAIT (`gait-session-tracking`)
 5. **GRE tunnels require sudo** — the install wizard handles initial setup; runtime queries via `gre_tunnel_status` do not require elevated privileges
-6. **Lab mode** — `NETCLAW_LAB_MODE=true` removes the ServiceNow CR requirement for route injection/withdrawal.
-
-**Structural rule**: Do NOT set this variable yourself. It is set exclusively by the operator in the `.env` file. If `NETCLAW_LAB_MODE` is not already `true` in the current environment, treat all route mutations as production and require a CR. Do not suggest setting it to the operator unless they explicitly ask about lab-mode operation.
+6. **Lab mode** (`NETCLAW_LAB_MODE=true`) relaxes the CR requirement for the FRR testbed — never set this in production
+7. **Only the operator sets lab mode**, in `.env`. Never set or export `NETCLAW_LAB_MODE` yourself. When it is not already `true` in the environment, treat every route mutation as production and require a CR. Do not suggest enabling it unless the operator asks about lab-mode operation
 
 ## Guardrails
 

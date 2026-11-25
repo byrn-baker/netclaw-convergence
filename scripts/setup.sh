@@ -33,6 +33,7 @@ source "$SCRIPT_DIR/lib/tui.sh"
 # Credentials land in the selected runtime's .env (~/.openclaw or ~/.hermes).
 OPENCLAW_DIR="$RUNTIME_HOME"
 OPENCLAW_ENV="$RUNTIME_ENV"
+require_standalone_setup_home || exit 1
 
 # ───────────────────────────────────────────
 # Helpers
@@ -178,6 +179,24 @@ while true; do
     esac
 done
 [ "${1:-}" = "--testbed-only" ] && exit 0
+
+if want "netconverter" "Configure NetConverter for this runtime?"; then
+    python3 "$SCRIPT_DIR/configure-netconverter.py" --env "$OPENCLAW_ENV" --home "$RUNTIME_HOME" --interactive
+fi
+
+if want "genie-worlds" "Configure the local Genie worlds backend binding?"; then
+    echo "  This connects six controls to an owner-run local backend. It does not generate a world."
+    echo "  Keep the Google key in the backend's private credential file, not in a Risk member."
+    genie_control="${NETCLAW_GENIE_CONTROL_FILE:-$RUNTIME_HOME/genie-worlds/mcp-control.json}"
+    prompt genie_control "Absolute backend control-file path" "$genie_control"
+    if [[ "$genie_control" = /* && "$genie_control" != *$'\n'* && "$genie_control" != *$'\r'* ]]; then
+        set_env NETCLAW_GENIE_CONTROL_FILE "$genie_control"
+        _set_env_default NETCLAW_GENIE_STATE_DIR "$RUNTIME_HOME/genie-worlds"
+        ok "Binding saved. Start and review the backend separately; see docs/GENIE-WORLDS.md."
+    else
+        skip "Invalid path; Genie binding unchanged"
+    fi
+fi
 
 # ═══════════════════════════════════════════
 # Step 2: Network Platforms
@@ -828,8 +847,8 @@ echo ""
 # ───────────────────────────────────────────
 
 echo -e "${BOLD}Protocol Peering (BGP/OSPF) & NetClaw Mesh${NC}"
-echo "  Participate in BGP/OSPF as a real routing peer, and mesh with other"
-echo "  NetClaw instances worldwide over BGP via ngrok."
+echo "  Configure private BGP/OSPF routing and existing NetClaw peering."
+echo "  Keep routing listeners private; transport setup requires explicit review."
 echo ""
 if want "peering protocol" "Configure protocol peering now?"; then
     bash "$SCRIPT_DIR/peering-setup.sh"

@@ -1,5 +1,11 @@
 // FORK-LOCAL: resolve model references from the selected runtime environment.
 import { readModelConfig } from './src/fork-local/model-config.js';
+import { mountMobileEnrollment, createLocalEnrollmentClient } from './src/hud-server/mobile-enrollment.js';
+import { resolveRemoteHudBackend, remoteHudBackendBoundary } from './src/hud-server/remote-hud.js';
+import { peerChatBody } from './src/hud-server/cloud-federation.js';
+import { OpenLabBindings } from './src/hud-server/open-lab-bindings.js';
+import { convergenceEnabled, createConvergenceReader, mountConvergence } from './src/hud-server/convergence.js';
+import { mountProtectedOperations, protectedHudConfig, protectedLegacyBoundary, selectedEnvironmentFiles } from './src/hud-server/protected-operations.js';
 import { managementDiscovery } from './src/hud-server/management.js';
 import { ENV_MAP } from './env-map.js';
 import { mountMcpConfiguration } from './mcp-configuration.js';
@@ -26,6 +32,7 @@ import { mountDocumentation } from './src/hud-server/documentation.js';
 import { readUsage, runtimeInventory } from './src/hud-server/tokenomics.js';
 import { configurationInventory } from './src/hud-server/configuration.js';
 import { ragSearchHandler } from './src/hud-server/rag-search.js';
+import { createRagQueue } from './src/hud-server/rag-queue.js';
 import { assessmentAudit } from './src/hud-server/audit.js';
 import { Bindings, cookieFrom, newMessageRef, readTranscript, assessmentProofs, attachInfluences, displayBorderText } from './src/hud-server/bindings.js';
 import { mountAssessmentRoutes } from './src/hud-server/assessment-routes.js';
@@ -59,6 +66,7 @@ import { registerGenieRoutes } from './genie-parser.js';
 import { registerIntentExecutionRoutes } from './terminal-intent-execution.js';
 import { createTranscriptActivityReader } from './terminal-intent-live.js';
 import { createLocalChangePolicy } from './terminal-change-policy.js';
+import { gatewayBearerToken } from './src/hud-server/gateway-auth.js';
 import {
   applySshAlgorithmPolicy,
   keyExchangeFailureDetails,
@@ -76,7 +84,11 @@ import {
   normalizeTerminalEnrichmentObjects,
 } from './terminal-enrichment.js';
 
-const installation = Object.freeze(resolveRuntime({ initialize: true }));
+const workspaceBinding = process.env.NETCLAW_OPEN_LAB_WORKSPACE_CONFIG ? resolveRemoteHudBackend(process.env.NETCLAW_OPEN_LAB_WORKSPACE_CONFIG) : null;
+const installation = workspaceBinding?.installation || Object.freeze(resolveRuntime({ initialize: true }));
+const openLabWorkspace = workspaceBinding?.workspace || null;
+const conversationHome = openLabWorkspace?.conversationHome || installation.home;
+if (openLabWorkspace && installation.configPath !== openLabWorkspace.conversationConfig) throw Error('conversation_config_mismatch');
 // Bind subprocess defaults before any selected-runtime helper executes.
 process.env.NETCLAW_RUNTIME=installation.kind;
 process.env.NETCLAW_RUNTIME_ROOT=path.join(installation.home,'python-runtimes');
@@ -106,6 +118,15 @@ const ports = hudPorts();
 const chatDeadlines = chatTimeouts();
 const allowedLocalRequest = createLocalAccess(ports);
 app.use(localAccessMiddleware(allowedLocalRequest));
+if (openLabWorkspace) app.use(remoteHudBackendBoundary(openLabWorkspace, installation));
+const protectedEnvironment = { ...parseEnvData(readText(installation.envPath) || ''), ...process.env };
+const protectedProfile = !openLabWorkspace && protectedEnvironment.N2N_PROTECTED_OPERATIONS === '1';
+const protectedOperations = mountProtectedOperations(app, { installation, config: openLabWorkspace ? { enabled: false } : protectedHudConfig(protectedEnvironment) });
+const mobileEnrollment = mountMobileEnrollment(app, { installation,
+  client: createLocalEnrollmentClient(installation, () => federationEndpoint({...parseEnvFile(),...process.env})),
+  config: { enabled: !openLabWorkspace && !protectedProfile, reason: protectedProfile ? 'owner_issuance_unqualified' : 'enrollment_unavailable',
+    origins: [ports.api, ports.ui].flatMap(port => ['127.0.0.1','localhost','[::1]'].flatMap(host => ['http:','https:'].map(scheme => `${scheme}//${host}:${port}`))) } });
+app.use(protectedLegacyBoundary(protectedProfile));
 const TERMINAL_ENRICHMENT_FILE = path.join(installation.home, 'netclaw-terminal-enrichment.json');
 function loadTerminalAliases() {
   try { return JSON.parse(fs.readFileSync(TERMINAL_ENRICHMENT_FILE, 'utf8')).aliases || {}; } catch { return {}; }
@@ -123,9 +144,10 @@ app.use((req,res,next)=>{
   next();
 });
 mountDocumentation(app, ROOT);
-if (installation.kind === 'openclaw') mountLogs(app, os.homedir(), { runtimeHome: installation.home });
-const hudBindings = new Bindings(path.join(installation.home, 'hud-bindings'), Date.now, installation);
+if (installation.kind === 'openclaw') mountLogs(app, os.homedir(), { runtimeHome: conversationHome });
+const hudBindings = new (openLabWorkspace ? OpenLabBindings : Bindings)(path.join(installation.home, 'hud-bindings'), Date.now, installation);
 app.use((req,_res,next) => {
+  if (openLabWorkspace) return next();
   const cookies=(req.headers.cookie || '').split(';').map(v=>v.trim());
   const selected=cookies.find(v=>v.startsWith(hudBindings.cookieName+'='));
   const legacy=installation.kind==='openclaw'?cookies.find(v=>v.startsWith('nc_hud=')):null;
@@ -134,15 +156,34 @@ app.use((req,_res,next) => {
 });
 const hermesRuntime = installation.kind === 'hermes' ? createHermesRuntime(installation, ROOT) : null;
 app.get('/api/runtime', async (_req, res) => {
+  if (openLabWorkspace) return res.set('Cache-Control', 'no-store').json({ installationId: installation.installationId, kind: installation.kind, remoteHudBackend: { schema: 1, features: openLabWorkspace.features, ...(openLabWorkspace.mode ? { mode: openLabWorkspace.mode } : {}) } });
+  if (protectedProfile) {
+    let role = 'unknown';
+    try {
+      const profile = JSON.parse(readText(path.join(installation.home, 'netclaw-federation/protected-profile.json')));
+      if (profile.identity?.installation_id === installation.installationId && ['border', 'member'].includes(profile.role)) role = profile.role;
+    } catch { /* An unbound or missing profile is not a verified role. */ }
+    return res.set('Cache-Control', 'no-store').json({ kind: installation.kind,
+    installationId: installation.installationId, role,
+    label: role === 'border' ? 'Protected Border' : role === 'member' ? 'Protected Member' : 'Protected NetClaw',
+    readiness: { ready: protectedOperations.enabled, executionVerified: false },
+    capabilities: { protectedProfile: true, protectedOperations: protectedOperations.enabled,
+      convergence: false, attachments: false, modelSelection: false, effort: false,
+      federation: true, hostedAvatar: false, writes: false } });
+  }
   let readiness = { ready: false, code: 'runtime_stopped' };
   if (hermesRuntime) { try { readiness = await hermesRuntime.call('status'); } catch(error) {readiness.code=error.code || 'runtime_unavailable';} }
   else readiness = { ready: fs.existsSync(installation.configPath), executionVerified: false };
-  res.set('Cache-Control', 'no-store').json({ kind: installation.kind, installationId: installation.installationId, label: installation.kind === 'hermes' ? 'Hermes' : 'OpenClaw', readiness, capabilities: { attachments: !hermesRuntime, modelSelection: !hermesRuntime, effort: !hermesRuntime, federation: !hermesRuntime || (await federationReadiness(installation,BGP_API)).ready, hostedAvatar: !hermesRuntime, writes: !hermesRuntime } });
+  res.set('Cache-Control', 'no-store').json({ kind: installation.kind, installationId: installation.installationId, label: installation.kind === 'hermes' ? 'Hermes' : 'OpenClaw', readiness, capabilities: { mobileEnrollment: {schema:1}, protectedOperations: protectedOperations.enabled, convergence: convergenceEnabled({ ...parseEnvFile(), ...process.env }), attachments: !hermesRuntime, modelSelection: !hermesRuntime, effort: !hermesRuntime, federation: !hermesRuntime || (await federationReadiness(installation,BGP_API)).ready, hostedAvatar: !hermesRuntime, writes: !hermesRuntime } });
 });
 app.get('/api/hud/management', async (req, res) => {
   try { hudBindings.read(cookieFrom(req)); } catch { return res.status(401).json({error:'An owned HUD session is required.'}); }
   try { return res.set('Cache-Control','no-store').json(await managementDiscovery(installation,ROOT,process.env.HUD_AGENT_ID)); }
   catch { return res.status(409).json({error:'Native management discovery is unavailable. Verify this installation’s source checkout and native runtime executable.'}); }
+});
+if (openLabWorkspace) app.use(['/api/n2n', '/api/bgp'], async (_req, res, next) => {
+  const state = await federationReadiness(installation, BGP_API);
+  return state.ready ? next() : res.status(503).json({ available: false, ...state, error: 'The current Border federation is unavailable or its installation binding changed.' });
 });
 if (hermesRuntime) {
   mountHermesChat(app, { runtime: hermesRuntime, bindings: hudBindings });
@@ -162,6 +203,7 @@ if (hermesRuntime) {
 }
 app.use(['/api/sessions','/api/session'], (_req,res) => res.status(404).json({error:'Use owned conversation history and request events.'}));
 mountLocalPal(app, { bindings: hudBindings });
+mountConvergence(app, { bindings: hudBindings, allowedRequest: allowedLocalRequest, getEnv: () => ({ ...parseEnvFile(), ...process.env }), read: createConvergenceReader(ROOT, () => ({ ...parseEnvFile(), ...process.env })) });
 mountAssessmentRoutes(app, { bindings: hudBindings, audit: assessmentAudit(ROOT), readAssessment: createJevReader(ROOT, () => ({ ...parseEnvFile(), ...process.env }), installation.home) });
 registerGenieRoutes(app, { getEnv: () => ({ ...parseEnvFile(), ...process.env }) });
 registerObservabilityRoutes(app, { getEnv: () => ({ ...parseEnvFile(), ...process.env }) });
@@ -219,7 +261,7 @@ let forkLastChatUsage = null;
 const server = http.createServer(app);
 const wss = new WebSocketServer({
   server, path: '/ws', maxPayload: 64 * 1024,
-  verifyClient: ({ req }, done) => done(allowedLocalRequest(req), 403, 'Forbidden'),
+  verifyClient: ({ req }, done) => done(!openLabWorkspace && !protectedProfile && allowedLocalRequest(req), 403, 'Forbidden'),
 });
 
 const SKILLS_DIR = installation.kind === 'hermes' || fs.existsSync(installation.skillsPath) ? installation.skillsPath : path.join(ROOT, 'workspace/skills');
@@ -232,6 +274,8 @@ const SOUL_FILE = path.join(ROOT, 'SOUL.md');
 const INTEGRATION_CATALOG = [
   {id:'hermes-hud',name:'Hermes HUD',category:'Runtime',prefixes:['hermes-hud-'],color:'#ffb454',transport:'private stdio',toolEstimate:8,description:'Private HUD conversation bridge. Registration, qualification and observed execution are separate states.'},
   { id: 'pyats', name: 'pyATS', category: 'Device Automation', prefixes: ['pyats-'], color: '#4cc9f0', transport: 'stdio', toolEstimate: 35, description: 'Static or reviewed dynamic testbeds, CLI checks and controlled changes. Dynamic MCP activation is separate from HUD static inventory.' },
+  { id: 'genie-worlds', name: 'Genie Network Worlds', category: 'Visualization', prefixes: ['genie-worlds-mcp', 'netclaw-genie-worlds'], color: '#58ded6', transport: 'stdio', toolEstimate: 6, description: 'Cisco Genie facts and Google Genie 4 illustrations. Six bounded controls; local backend viewer and recording. Configuration is not paid approval or Risk-member qualification.' },
+  { id: 'netconverter', name: 'NetConverter', category: 'Platform Services', prefixes: ['netconverter'], color: '#70d6b1', transport: 'stdio', toolEstimate: 8, description: 'Optional guarded migration workflow. Account capability, exact-file upload approval and tested target acceptance are verified separately.' },
   { id: 'aci', name: 'Cisco ACI', category: 'Fabric Control', prefixes: ['aci-'], color: '#ff5d73', transport: 'stdio', toolEstimate: 20, description: 'APIC-backed policy audit and guarded ACI change delivery.' },
   { id: 'ise', name: 'Cisco ISE', category: 'Security', prefixes: ['ise-'], color: '#f94144', transport: 'stdio', toolEstimate: 16, description: 'Identity, posture, and incident-response workflows for endpoints.' },
   { id: 'f5', name: 'F5 BIG-IP', category: 'Load Balancing', prefixes: ['f5-', 'pyats-f5-'], color: '#ff8c42', transport: 'stdio', toolEstimate: 110, description: 'Virtual server, pool, platform, and config-management operations.' },
@@ -275,6 +319,7 @@ const INTEGRATION_CATALOG = [
   { id: 'catc', name: 'Catalyst Center (read-only)', category: 'Device Automation', prefixes: ['catc_'], color: '#00bceb', transport: 'stdio', toolEstimate: 10, description: 'All 514 read-only Catalyst Center operations behind 8 grouped dispatchers plus find/describe — 1,821-token manifest where inlining every tool would cost 64,420. Adopts Cisco official catalogue (Apache-2.0), not its runtime. An empty inventory is a statement about the controller, never about the network.' },
   { id: 'document', name: 'Document Generation', category: 'Platform Services', prefixes: ['docx_', 'xlsx_', 'pptx_', 'pdf_', 'list_documents'], color: '#4c956c', transport: 'stdio', toolEstimate: 6, description: 'Change-record .docx, audit .xlsx, exec .pptx and PDF form filling from real NetClaw data. No credentials, writes files only. Per-element provenance at a chokepoint — a missing value renders as NOT AVAILABLE, never as a blank.' },
   { id: 'globalping', name: 'Globalping', category: 'Observability', prefixes: ['globalping-'], color: '#00b4d8', transport: 'http', toolEstimate: 12, description: 'Outside-in measurement from ~4,800 probes across ~1,390 ASNs — ping, traceroute, DNS, MTR and HTTP toward a public target. The only vantage point NetClaw has outside its own administrative domain. Public endpoints only; "no probes matched" is not "the service is down".' },
+  { id: 'convergence-read', name: 'Convergence', category: 'Observability', prefixes: ['convergence-observations', 'convergence-setup'], color: '#2e7d32', transport: 'stdio', toolEstimate: 3, description: 'Optional retained flow rankings, same-window evidence and advisory VM Security findings from a separately operated Convergence service; read-only and site scoped.' },
   { id: 'topolograph', name: 'Topolograph', category: 'Observability', prefixes: ['topolograph-'], color: '#2e7d32', transport: 'http', toolEstimate: 27, description: 'OSPF/IS-IS link-state and BGP topology analysis over a stored Topolograph snapshot — shortest/backup path, per-area nodes/edges with role flags, MPLS-TE/CSPF feasibility, topology-change event timeline, edge/node failure simulation, plus BGP speakers/sessions/route search, VRF/VPN inventory, and BGP-to-IGP graph binding. Sees the topology as a graph, not one device\'s routing table. Remote HTTP against the operator\'s own instance, read-only.' },
   { id: 'suzieq', name: 'SuzieQ', category: 'Observability', prefixes: ['suzieq-'], color: '#a8dadc', transport: 'stdio', toolEstimate: 5, description: 'Network state queries, assertions, summaries, and path tracing.' },
   { id: 'aws', name: 'AWS', category: 'Cloud', prefixes: ['aws-'], color: '#f77f00', transport: 'http', toolEstimate: 55, description: 'Networking, monitoring, security, cost, and diagram generation in AWS.' },
@@ -324,7 +369,7 @@ const INTEGRATION_CATALOG = [
 
 
 // ── Env file locations (OpenClaw .env is the real source of truth) ──
-const OPENCLAW_HOME = installation.home;
+const OPENCLAW_HOME = conversationHome;
 const OPENCLAW_ENV = path.join(OPENCLAW_HOME, '.env');
 const OPENCLAW_CONFIG = installation.configPath;
 const ROOT_ENV = path.join(ROOT, '.env');
@@ -333,7 +378,7 @@ if (!hermesRuntime) mountPal(app, { root: ROOT, home: OPENCLAW_HOME, bindings: h
   getEnv: () => ({ ...parseEnvFile(), ...process.env }) });
 
 // Ordered list — first file wins per key, but we merge all
-const ENV_FILES = installation.kind === 'hermes' ? [OPENCLAW_ENV] : [OPENCLAW_ENV, ROOT_ENV];
+const ENV_FILES = selectedEnvironmentFiles(installation, ROOT_ENV, protectedProfile || Boolean(openLabWorkspace));
 
 function parseOneEnvFile(filePath) {
   return parseEnvData(readText(filePath) || '');
@@ -748,7 +793,7 @@ let usageCache = null, usageReadAt = 0;
 app.get('/api/hud/tokenomics', (_req, res) => {
   res.setHeader('Cache-Control', 'no-store');
   if (!usageCache || Date.now() - usageReadAt > 30000) {
-    usageCache = readUsage(path.join(installation.home, 'agents', getGatewayConfig().agentId, 'sessions'));
+    usageCache = readUsage(path.join(conversationHome, 'agents', getGatewayConfig().agentId, 'sessions'));
     usageReadAt = Date.now();
   }
   res.json(usageCache);
@@ -955,6 +1000,7 @@ async function fetchN2NState() {
     } catch { /* edge push audit optional (pre-066 daemon) */ }
 
     return { available: true, identity: status.identity, peers, approvals,
+      endpointRegistry: status.endpoint_registry || null,
              risk, members, advisors, posture, gait, replicationJobs, edgeNodes, recentPushes,
              generatedAt: new Date().toISOString() };
   } catch {
@@ -970,17 +1016,18 @@ app.get('/api/n2n', async (req, res) => {
 
 // Proxy a claw-to-claw chat message from the HUD to the daemon (FR-025)
 app.post('/api/n2n/chat', async (req, res) => {
-  const { peer, text, session_id } = req.body || {};
-  if (!peer || !text) return res.status(400).json({ error: 'expected { peer, text }' });
+  let body;
+  try { body = peerChatBody(req.body); }
+  catch { return res.status(400).json({ error: 'Expected a peer identity, bounded text and optional session_id.' }); }
   try {
     const r = await fetch(`${BGP_API}/n2n/chat/send`, {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ peer, text, session_id }),
-      signal: AbortSignal.timeout(300000),
+      body: JSON.stringify(body),
+      signal: AbortSignal.timeout(310000),
     });
-    res.json(await r.json());
+    res.status(r.status).json(await r.json());
   } catch (e) {
-    res.status(502).json({ error: `daemon unreachable: ${e.message}` });
+    res.status(502).json({ error: 'Peer reply unavailable. Work may have run; no automatic retry was made.' });
   }
 });
 
@@ -1369,7 +1416,7 @@ app.put('/api/budget/config', (req, res) => {
  */
 function estimateActiveSessionCost() {
   try {
-    const sessionsDir = path.join(installation.home, 'agents', getGatewayConfig().agentId, 'sessions');
+    const sessionsDir = path.join(conversationHome, 'agents', getGatewayConfig().agentId, 'sessions');
     const sessionsJson = path.join(sessionsDir, 'sessions.json');
     if (!fs.existsSync(sessionsJson)) return 0;
 
@@ -1554,24 +1601,10 @@ function textFromChatContent(content) {
 function getGatewayConfig() {
   try {
     const config = readModelConfig(OPENCLAW_CONFIG);
-    // FORK PATCH (upstream bug candidate): openclaw.json may store the token as
-    // a "${OPENCLAW_GATEWAY_TOKEN}" reference rather than a literal. Passing that
-    // string through verbatim yields a 401 from /v1/*, which the HUD then reports
-    // as "gateway offline". Resolve it against process.env and the .env files.
-    const rawToken = config?.gateway?.auth?.token || '';
-    const token = rawToken.replace(/\$\{([^}]+)\}/g, (_, name) => {
-      if (process.env[name]) return process.env[name];
-      for (const f of ENV_FILES) {
-        const v = parseOneEnvFile(f)[name];
-        if (v) return v;
-      }
-      return '';
-    });
-
     return {
       agentId: gatewayAgentId(config),
       port: config?.gateway?.port || 18789,
-      token,
+      token: gatewayBearerToken(config, { ...process.env, ...parseOneEnvFile(OPENCLAW_ENV) }),
       chatCompletionsEnabled:
         config?.gateway?.http?.endpoints?.chatCompletions?.enabled === true,
     };
@@ -1662,7 +1695,7 @@ app.post('/api/chat/usage', async (req, res) => {
     const selectedModel = resolveChatModel(config, req.body?.chatModel ?? '', await chatRuntime.catalog(config, OPENCLAW_CONFIG));
     let key = null;
     const cookie = cookieFrom(req);
-    if (cookie && req.body?.hudThread) {
+    if ((cookie || openLabWorkspace) && req.body?.hudThread) {
       try { key = hudBindings.lookupTask(cookie, req.body.hudThread, agentId)?.gatewayKey || null; }
       catch { return res.status(403).json({ error: 'Chat session unavailable.' }); }
     }
@@ -1835,7 +1868,7 @@ app.get('/api/chat/history', (req, res) => {
 });
 
 // ── Session transcript tool call extraction (Section H) ─────────
-const SESSIONS_DIR = path.join(installation.home, 'agents', getGatewayConfig().agentId, 'sessions');
+const SESSIONS_DIR = path.join(conversationHome, 'agents', getGatewayConfig().agentId, 'sessions');
 
 function resolveActivations(message, graph) {
   const lower = message.toLowerCase();
@@ -1978,10 +2011,10 @@ const RAG_DATA_DIR = process.env.RAG_DATA_DIR
   : path.join(installation.home, 'rag');
 const RAG_INTAKE_DIR = path.join(RAG_DATA_DIR, 'intake');
 const RAG_MAX_DOC_MB = Number(process.env.RAG_MAX_DOC_MB || '100');
-const RAG_SUPPORTED_EXT = ['.pdf', '.md', '.markdown', '.html', '.htm', '.txt',
+const RAG_SUPPORTED_EXT = ['.pdf', '.md', '.markdown', '.html', '.htm', '.txt', '.json',
   '.docx', '.xlsx', '.pptx', '.vsdx', '.doc', '.xls', '.ppt', '.vsd'];
 
-function callRagTool(tool, args = {}, timeoutSec = 300) {
+const callRagTool = createRagQueue(function callRagTool(tool, args = {}, timeoutSec = 300) {
   return new Promise((resolve, reject) => {
     execFile(
       'python3',
@@ -2006,7 +2039,7 @@ function callRagTool(tool, args = {}, timeoutSec = 300) {
       }
     );
   });
-}
+});
 
 // Progress poller: while any ingest is non-terminal, poll rag_list and
 // broadcast per-document status transitions over /ws (FR-062).

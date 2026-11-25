@@ -2,7 +2,7 @@
 """rag-mcp — NetClaw Agentic RAG Knowledge Base MCP server (Feature 062).
 
 Fully offline, free, local document knowledge base:
-- Ingestion: PDF/MD/HTML/TXT native; DOCX/XLSX/PPTX/VSDX via Python parsers;
+- Ingestion: PDF/MD/HTML/TXT/JSON native; DOCX/XLSX/PPTX/VSDX via Python parsers;
   legacy DOC/XLS/PPT/VSD via LibreOffice-headless conversion fallback.
 - Retrieval: hybrid dense (ChromaDB) + BM25 with reciprocal rank fusion and
   a local cross-encoder reranker; every result carries citation metadata.
@@ -305,7 +305,7 @@ def _do_ingest(
 # ---------------------------------------------------------------------
 # Tools: ingestion (FR-001–FR-009)
 # ---------------------------------------------------------------------
-@mcp.tool(output_schema=None)
+@mcp.tool()
 def rag_ingest(
     file_path: str,
     doc_type: str = "other",
@@ -313,7 +313,7 @@ def rag_ingest(
     version: Optional[str] = None,
     source: Optional[str] = None,
 ) -> Dict[str, Any]:
-    """Ingest a document file (PDF/MD/HTML/TXT/DOCX/XLSX/PPTX/VSDX, plus legacy
+    """Ingest a document file (PDF/MD/HTML/TXT/JSON/DOCX/XLSX/PPTX/VSDX, plus legacy
     DOC/XLS/PPT/VSD via LibreOffice) into the knowledge base. doc_type is one of
     vendor|standard|customer|install-guide|other."""
     return _do_ingest(file_path, doc_type, title, version, source)
@@ -346,7 +346,7 @@ def _do_ingest_base64(
         )
 
 
-@mcp.tool(output_schema=None)
+@mcp.tool()
 def rag_ingest_base64(
     filename: str,
     content_base64: str,
@@ -367,7 +367,7 @@ from ingestion.url_fetcher import (
     discover_links,
     fetch,
     filename_for_url,
-    page_title,
+    preview_html,
     scope_token,
     verify_scope_token,
 )
@@ -375,9 +375,10 @@ from ingestion.url_fetcher import (
 
 def _ingest_fetched(url: str, content: bytes, content_type: str, doc_type: str, title: Optional[str]) -> Dict[str, Any]:
     fname = filename_for_url(url, content_type)
-    intake_path = config.INTAKE_DIR / fname
-    intake_path.write_bytes(content)
-    return _do_ingest(str(intake_path), doc_type, title, source=url)
+    with tempfile.TemporaryDirectory(prefix="url-", dir=config.INTAKE_DIR) as staging:
+        intake_path = Path(staging) / fname
+        intake_path.write_bytes(content)
+        return _do_ingest(str(intake_path), doc_type, title, source=url)
 
 
 def _do_ingest_url(
@@ -387,7 +388,7 @@ def _do_ingest_url(
     scope_token_value: Optional[str] = None,
     doc_type: str = "other",
     title: Optional[str] = None,
-    verify_ssl: Optional[bool] = None,
+    verify_ssl: bool = True,
 ) -> Dict[str, Any]:
     try:
         content, content_type = fetch(url, max_bytes=config.MAX_DOC_MB * 1024 * 1024, verify_ssl=verify_ssl)
@@ -412,27 +413,16 @@ def _do_ingest_url(
                 }
             )
         html = content.decode("utf-8", errors="replace")
-        links = discover_links(html, url, config.CRAWL_MAX_PAGES)
+        links = preview_html(html, url, config.CRAWL_MAX_PAGES)
         linked_urls = [p["url"] for p in links["linked_pages"]]
-        from ingestion.url_fetcher import assess_html_quality
-
-        quality = assess_html_quality(html, linked_count=len(linked_urls))
-        payload = {
-            "url": url,
-            "title": page_title(html, url),
-            "content_type": content_type,
-            "linked_pages": links["linked_pages"],
-            "truncated": links["truncated"],
-            "scope_token": scope_token(url, linked_urls),
-            "text_chars": quality["text_chars"],
-            "thin": quality["thin"],
-            "spa_shell": quality["spa_shell"],
-        }
-        if quality.get("warning"):
-            payload["warning"] = quality["warning"]
-            payload["message"] = quality["warning"]
-        return success_response(payload)
-
+        return success_response(
+            {
+                "url": url,
+                **links,
+                "content_type": content_type,
+                "scope_token": scope_token(url, linked_urls),
+            }
+        )
 
     if mode != "ingest":
         return error_response("PARSE_FAILED", f"Unknown mode '{mode}' — use preview|ingest.")
@@ -473,7 +463,7 @@ def _do_ingest_url(
     return success_response({"pages": results, "ingested": ok, "failed": len(results) - ok}, audit=audit)
 
 
-@mcp.tool(output_schema=None)
+@mcp.tool()
 def rag_ingest_url(
     url: str,
     mode: str = "preview",
@@ -481,17 +471,14 @@ def rag_ingest_url(
     scope_token: Optional[str] = None,
     doc_type: str = "other",
     title: Optional[str] = None,
-    verify_ssl: Optional[bool] = None,
+    verify_ssl: bool = True,
 ) -> Dict[str, Any]:
     """Two-phase URL ingestion. mode='preview' returns the page title, same-domain
     depth-1 linked pages, and a scope_token — no ingestion. After the user confirms
-    scope, call mode='ingest' (echoing scope_token when include_linked=true).
-
-    verify_ssl: set false for self-signed local gear (UniFi/pfSense). Default auto:
-    skips verification for private IP / localhost hosts."""
-    return _do_ingest_url(
-        url, mode, include_linked, scope_token, doc_type, title, verify_ssl=verify_ssl
-    )
+    scope, call mode='ingest' (echoing scope_token when include_linked=true). TLS verification defaults to true.
+    For an explicitly trusted self-signed endpoint, verify_ssl=false disables
+    verification for this call and refuses redirects."""
+    return _do_ingest_url(url, mode, include_linked, scope_token, doc_type, title, verify_ssl)
 
 
 # ---------------------------------------------------------------------
@@ -562,35 +549,79 @@ def _passes_date_filters(meta: Dict[str, Any], filters: Optional[Dict[str, Any]]
     return True
 
 
-def _investigation_collections() -> list:
-    """Snapshot collections used for Guardian investigation reuse (Stage 7)."""
-    cols = []
-    for row in registry.list_documents():
-        if row.get("kind") == "snapshot" and row.get("collection") and row.get("ingest_status") == "ready":
-            cols.append(row["collection"])
-    # de-dupe preserve order
-    seen = set()
-    out = []
-    for c in cols:
-        if c not in seen:
-            seen.add(c)
-            out.append(c)
-    return out
+_SNAPSHOT_ALIASES = frozenset({"investigations", "snapshots", "cases"})
+_ALL_ALIASES = frozenset({"all", "*"})
+_NO_SNAPSHOTS = "No investigation snapshots are indexed."
+_NO_SNAPSHOTS_IN_RANGE = "No investigation snapshots were ingested in the requested date range."
 
 
-def _resolve_search_collections(collection: str) -> list:
-    """Expand special collection aliases for Stage 7 multi-corpus search.
+def _collection_alias(collection: Any) -> Optional[str]:
+    """Return snapshots, all, or None. None means search that collection name literally."""
+    if not isinstance(collection, str):
+        return None
+    token = collection.strip()
+    if token in _SNAPSHOT_ALIASES:
+        return "snapshots"
+    if token in _ALL_ALIASES:
+        return "all"
+    return None
 
-    - documents (default): vendor/docs corpus only
-    - investigations / snapshots: all snapshot_* investigation collections
-    - all / *: documents + investigations
+
+def _ready_snapshot_collections(
+    rows: list, filters: Optional[Dict[str, Any]] = None
+) -> list:
+    """Ready investigation snapshots, in registry order, each collection once.
+
+    ingested_after / ingested_before are applied to the registry row's
+    ingest_ts here, before any cap, so older matching snapshots are reachable.
+    Chunks carry the same ingest_ts, so the chunk post-filter agrees.
     """
-    c = (collection or "documents").strip().lower()
-    if c in ("investigations", "snapshots", "cases"):
-        return _investigation_collections() or []
-    if c in ("all", "*", "any"):
-        return [config.DOCUMENTS_COLLECTION] + _investigation_collections()
-    return [collection]
+    names = []
+    seen = set()
+    for row in rows:
+        if row.get("kind") != "snapshot" or row.get("ingest_status") != "ready":
+            continue
+        if not _passes_date_filters(row, filters):
+            continue
+        name = row.get("collection")
+        if not name or name in seen:
+            continue
+        seen.add(name)
+        names.append(name)
+    return names
+
+
+def _empty_corpus(
+    query: str,
+    collection: str,
+    filters: Optional[Dict[str, Any]],
+    k: int,
+    round: Optional[int],
+    sub_query_id: Optional[str],
+    message: str,
+) -> Dict[str, Any]:
+    registry.log_retrieval(query, collection, filters, k, [], [], 0, 0, round, sub_query_id)
+    return success_response(
+        {
+            "results": [],
+            "corpus_empty": True,
+            "collection": collection,
+            "latency_ms": 0,
+            "message": message,
+        }
+    )
+
+
+def _candidate_matches(candidate: Dict[str, Any], filters: Optional[Dict[str, Any]]) -> bool:
+    if not _passes_date_filters(candidate["metadata"], filters):
+        return False
+    if not filters:
+        return True
+    return all(
+        candidate["metadata"].get(key) == filters[key]
+        for key in ("doc_type", "document_id", "title")
+        if filters.get(key)
+    )
 
 
 def _do_search(
@@ -601,60 +632,45 @@ def _do_search(
     round: Optional[int] = None,
     sub_query_id: Optional[str] = None,
 ) -> Dict[str, Any]:
-    start = time.monotonic()
-    collections = _resolve_search_collections(collection)
-    if not collections:
-        return success_response(
-            {
-                "results": [],
-                "corpus_empty": True,
-                "collection": collection,
-                "collections_searched": [],
-                "latency_ms": 0,
-                "message": (
-                    f"No collections to search for alias '{collection}' "
-                    "(no investigation snapshots indexed yet)."
-                ),
-            }
-        )
+    kind = _collection_alias(collection)
+    if kind is None:
+        return _search_one(query, k, collection, filters, round, sub_query_id)
+    return _search_aliased(query, k, collection, filters, round, sub_query_id, kind)
 
+
+def _search_one(
+    query: str,
+    k: int = 5,
+    collection: str = "documents",
+    filters: Optional[Dict[str, Any]] = None,
+    round: Optional[int] = None,
+    sub_query_id: Optional[str] = None,
+) -> Dict[str, Any]:
+    start = time.monotonic()
     try:
-        nonempty = [c for c in collections if chroma.count(c) > 0]
+        corpus_count = chroma.count(collection)
     except Exception:
         return error_response("STORAGE_UNAVAILABLE", "Cannot read the collection index; corpus contents are unknown.")
     try:
-        if not nonempty:
+        if corpus_count == 0:
             registry.log_retrieval(query, collection, filters, k, [], [], 0, 0, round, sub_query_id)
             return success_response(
                 {
                     "results": [],
                     "corpus_empty": True,
                     "collection": collection,
-                    "collections_searched": collections,
                     "latency_ms": 0,
-                    "message": f"Collection(s) empty — nothing indexed yet: {collections}",
+                    "message": f"Collection '{collection}' is empty — nothing indexed yet.",
                 }
             )
         query_embedding = embedder.embed_query(query)
     except ModelsNotCachedError as exc:
         return error_response("MODELS_NOT_CACHED", str(exc))
 
-    # Hybrid per collection, then fuse by score for multi-corpus Stage 7 search
-    candidates = []
-    for coll in nonempty:
-        try:
-            hits = hybrid_retrieve(
-                chroma, bm25, coll, query, query_embedding, where=_chroma_where(filters)
-            )
-            for h in hits:
-                h = dict(h)
-                meta = dict(h.get("metadata") or {})
-                meta.setdefault("collection", coll)
-                h["metadata"] = meta
-                candidates.append(h)
-        except Exception as exc:
-            log.warning("search skip collection %s: %s", coll, exc)
-
+    # Hybrid: dense + BM25 legs fused by RRF (FR-021)
+    candidates = hybrid_retrieve(
+        chroma, bm25, collection, query, query_embedding, where=_chroma_where(filters)
+    )
     # Date-range + (BM25-leg) metadata post-filters
     candidates = [
         c
@@ -693,8 +709,200 @@ def _do_search(
             "results": results,
             "corpus_empty": False,
             "collection": collection,
-            "collections_searched": nonempty,
             "latency_ms": latency_ms,
+        }
+    )
+
+
+_STORAGE_UNAVAILABLE = "Cannot read the collection index; corpus contents are unknown."
+
+
+def _alias_log_name(collection: str, searched: list) -> str:
+    """Retrieval-log collection for an alias: the alias plus what was searched."""
+    return f"{collection.strip()} -> {','.join(searched)}"
+
+
+def _search_aliased(
+    query: str,
+    k: int,
+    collection: str,
+    filters: Optional[Dict[str, Any]],
+    round: Optional[int],
+    sub_query_id: Optional[str],
+    kind: str,
+) -> Dict[str, Any]:
+    """Search the newest ready snapshots, or documents plus those snapshots.
+
+    At most config.INVESTIGATION_MAX_COLLECTIONS snapshot collections are
+    searched, newest first (registry order is ingest_ts DESC). A missing or
+    unreadable snapshot collection is skipped, but when every snapshot
+    collection is unreadable the result is STORAGE_UNAVAILABLE, not an empty
+    corpus. The document corpus always fails closed on `all` / `*`.
+
+    The ingested_* date filters select snapshot collections from the registry
+    before the cap, so the cap counts only snapshots in the requested range.
+    The response reports collections_searched and collections_skipped (left
+    out by the cap) as counts.
+
+    Merge order: with the cross-encoder on, by its score; one search then
+    reranks up to cap x 2k candidates (500 at the defaults with k=5) on CPU.
+    In passthrough the score is the dense cosine, which is 0.0 for BM25-only
+    hits, so hits are merged on the fused (RRF) score instead. RRF is
+    rank-based and every collection uses the same k=60 and depth, so the
+    merge interleaves collections by rank, not by how strong each match is:
+    a collection's top hit scores 2/61 when both legs rank it first, whether
+    that collection matches the query well or barely at all.
+    """
+    start = time.monotonic()
+    rows = registry.list_documents()
+    snapshots = _ready_snapshot_collections(rows, filters)
+    cap = config.INVESTIGATION_MAX_COLLECTIONS
+    skipped = max(0, len(snapshots) - cap)
+    if skipped:
+        log.warning(
+            "alias %s: searching the newest %d of %d snapshot collections",
+            collection, cap, len(snapshots),
+        )
+        snapshots = snapshots[:cap]
+    if kind == "snapshots":
+        names = snapshots
+        if not names:
+            dated = bool(filters) and bool(
+                filters.get("ingested_after") or filters.get("ingested_before")
+            )
+            message = (
+                _NO_SNAPSHOTS_IN_RANGE
+                if dated and _ready_snapshot_collections(rows)
+                else _NO_SNAPSHOTS
+            )
+            return _empty_corpus(
+                query, collection, filters, k, round, sub_query_id, message
+            )
+    else:
+        names = []
+        seen = set()
+        for name in (config.DOCUMENTS_COLLECTION, *snapshots):
+            if name and name not in seen:
+                seen.add(name)
+                names.append(name)
+
+    def fatal(name: str) -> bool:
+        return kind == "all" and name == config.DOCUMENTS_COLLECTION
+
+    readable = []
+    unreadable = 0
+    for name in names:
+        try:
+            count = chroma.count(name)
+        except Exception:
+            if fatal(name):
+                return error_response("STORAGE_UNAVAILABLE", _STORAGE_UNAVAILABLE)
+            log.warning("skipping unreadable snapshot collection %s", name)
+            unreadable += 1
+            continue
+        if count > 0:
+            readable.append(name)
+
+    if kind == "snapshots" and unreadable == len(names):
+        return error_response("STORAGE_UNAVAILABLE", _STORAGE_UNAVAILABLE)
+
+    if not readable:
+        message = (
+            _NO_SNAPSHOTS
+            if kind == "snapshots"
+            else f"Collection '{collection}' is empty — nothing indexed yet."
+        )
+        return _empty_corpus(query, collection, filters, k, round, sub_query_id, message)
+
+    try:
+        query_embedding = embedder.embed_query(query)
+    except ModelsNotCachedError as exc:
+        return error_response("MODELS_NOT_CACHED", str(exc))
+
+    # Each collection keeps its own fused order; at most 2k survive per
+    # collection so a wide fan-out does not flood the reranker.
+    per_collection = max(1, k) * 2
+    candidates = []
+    searched = []
+    for name in readable:
+        try:
+            hits = hybrid_retrieve(
+                chroma, bm25, name, query, query_embedding, where=_chroma_where(filters)
+            )
+        except Exception:
+            if fatal(name):
+                return error_response("STORAGE_UNAVAILABLE", _STORAGE_UNAVAILABLE)
+            log.warning("skipping unreadable snapshot collection %s", name)
+            continue
+        searched.append(name)
+        kept = 0
+        for hit in hits:
+            if kept >= per_collection:
+                break
+            copied = dict(hit)
+            copied["metadata"] = dict(copied.get("metadata") or {})
+            if not _candidate_matches(copied, filters):
+                continue
+            copied["_searched_collection"] = name
+            candidates.append(copied)
+            kept += 1
+
+    if kind == "snapshots" and not searched:
+        return error_response("STORAGE_UNAVAILABLE", _STORAGE_UNAVAILABLE)
+
+    if reranker.uses_model():
+        scored = reranker.rerank(
+            query, candidates, max(k, len(candidates)), config.RELEVANCE_FLOOR
+        )
+        scored.sort(key=lambda c: (-c["score"], str(c.get("chunk_id"))))
+    else:
+        # RRF uses the same k and leg depth in every collection, so fused
+        # scores interleave collections by rank. Passthrough keeps this order.
+        candidates.sort(
+            key=lambda c: (
+                -float(c.get("rrf_score") or 0.0),
+                -float(c.get("dense_score") or 0.0),
+                str(c.get("chunk_id")),
+            )
+        )
+        scored = reranker.rerank(query, candidates, k, config.RELEVANCE_FLOOR)
+    top = scored[:k]
+
+    results = []
+    for c in top:
+        hit = {
+            "chunk_id": c["chunk_id"],
+            "text": c["text"],
+            "metadata": c["metadata"],
+            "score": c["score"],
+        }
+        result = _result_from_hit(hit, c["low_confidence"])
+        source = c.get("_searched_collection")
+        if source and "collection" not in result:
+            result["collection"] = source
+        results.append(result)
+
+    latency_ms = int((time.monotonic() - start) * 1000)
+    registry.log_retrieval(
+        query,
+        _alias_log_name(collection, searched),
+        filters,
+        k,
+        [r["chunk_id"] for r in results],
+        [r["score"] for r in results],
+        latency_ms,
+        sum(1 for r in results if r["low_confidence"]),
+        round,
+        sub_query_id,
+    )
+    return success_response(
+        {
+            "results": results,
+            "corpus_empty": False,
+            "collection": collection,
+            "latency_ms": latency_ms,
+            "collections_searched": len(searched),
+            "collections_skipped": skipped,
         }
     )
 
@@ -711,11 +919,21 @@ def rag_search(
     """Search the knowledge base. Returns top-k chunks with citation metadata.
 
     collection:
-      - documents (default): vendor/docs corpus
-      - investigations | snapshots | cases: Guardian investigation snapshots only
-      - all | *: documents + all investigation snapshots (Stage 7 reuse)
+      documents (default), or any other name — that collection only.
+      investigations, snapshots, or cases — the newest ready investigation
+      snapshots (at most RAG_INVESTIGATION_MAX_COLLECTIONS, default 50, after
+      the date filters), merged by rerank score, or by per-collection rank
+      when reranking is off. Each hit includes its source collection, and the
+      response counts collections_searched and collections_skipped (over the cap).
+      all or * — the document corpus plus those snapshots.
+    When no investigation snapshots are indexed, the snapshot aliases return an
+    empty corpus and say so. A missing or unreadable snapshot collection is
+    skipped; if none can be read the result is STORAGE_UNAVAILABLE.
 
     Filters: doc_type, document_id, title, ingested_after, ingested_before.
+    The date filters compare ingest_ts (when content was indexed), also for
+    snapshots, not a snapshot's capture_ts. On the aliases they also pick
+    which snapshot collections count toward the cap.
     Results below the relevance floor are flagged low_confidence, never dropped."""
     return _do_search(query, k, collection, filters, round, sub_query_id)
 
@@ -805,7 +1023,7 @@ def _do_list(kind: str = "all") -> Dict[str, Any]:
     return success_response({"documents": documents, "snapshots": snapshots, "replicas": replicas})
 
 
-@mcp.tool(output_schema=None)
+@mcp.tool()
 def rag_list(kind: str = "all") -> Dict[str, Any]:
     """List indexed documents, snapshots, and replicas (separately) with full
     metadata. Replicas (feature 065) are collections copied in from a
@@ -839,7 +1057,7 @@ def _do_stats() -> Dict[str, Any]:
     )
 
 
-@mcp.tool(output_schema=None)
+@mcp.tool()
 def rag_stats() -> Dict[str, Any]:
     """Corpus totals (docs, chunks, disk usage, models, collections) plus rolling
     retrieval telemetry (query count, mean latency, re-retrieval and low-confidence rates)."""
@@ -867,7 +1085,7 @@ def _do_update_metadata(
     return success_response(_doc_public(updated), audit=audit)
 
 
-@mcp.tool(output_schema=None)
+@mcp.tool()
 def rag_update_metadata(
     document_id: str,
     doc_type: Optional[str] = None,
@@ -905,7 +1123,7 @@ def _do_delete(document_id: str, confirmed: bool = False) -> Dict[str, Any]:
     return success_response({"deleted": True, "chunks_removed": removed, "title": row["title"]}, audit=audit)
 
 
-@mcp.tool(output_schema=None)
+@mcp.tool()
 def rag_delete(document_id: str, confirmed: bool = False) -> Dict[str, Any]:
     """Delete a document or snapshot: removes chunks from dense AND keyword
     indexes plus the retained original. Requires confirmed=true after the user
@@ -934,7 +1152,7 @@ def _do_reindex(document_id: str, confirmed: bool = False) -> Dict[str, Any]:
     return result
 
 
-@mcp.tool(output_schema=None)
+@mcp.tool()
 def rag_reindex(document_id: str, confirmed: bool = False) -> Dict[str, Any]:
     """Re-chunk and re-embed a document from its retained original (use after
     chunking/embedding config changes). Requires confirmed=true after the user
@@ -1040,7 +1258,7 @@ def _do_snapshot(
     )
 
 
-@mcp.tool(output_schema=None)
+@mcp.tool()
 def rag_snapshot(
     label: str,
     content: str,
@@ -1058,16 +1276,6 @@ def rag_snapshot(
 
 
 def main() -> None:
-    try:
-        import sys as _sys
-        from pathlib import Path as _Path
-        _src = _Path(__file__).resolve().parents[2] / "src"
-        if _src.is_dir() and str(_src) not in _sys.path:
-            _sys.path.insert(0, str(_src))
-        from netclaw_tokens.mcp_gcf import install_gcf_on_fastmcp
-        install_gcf_on_fastmcp(mcp, label="rag-mcp")
-    except Exception as e:
-        log.warning("GCF install skipped: %s", e)
     log.info(
         f"rag-mcp ready (embedding={config.EMBEDDING_MODEL}, "
         f"reranker={config.RERANKER_MODEL}, rerank_enabled={config.RERANK_ENABLED})"

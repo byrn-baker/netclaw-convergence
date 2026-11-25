@@ -4,7 +4,7 @@ Use the repository's [convergence-development coding skill](../../.agents/skills
 when advancing Convergence features, fixes, documentation or upstream acceptance.
 It follows NetClaw's numbered `specs/` workflow and delegates bounded research,
 implementation and independent verification. Installation and operations use the
-separate [convergence-setup skill](../../workspace/skills/convergence-setup/SKILL.md).
+separate [convergence-stack-setup skill](../../workspace/skills/convergence-stack-setup/SKILL.md).
 
 ## Start a coding session
 

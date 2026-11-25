@@ -15,6 +15,7 @@ drop/reconnect and a daemon restart (FR-004); a retention sweep discards old row
 """
 
 import asyncio
+from contextvars import ContextVar
 import json
 import logging
 import time
@@ -22,6 +23,22 @@ import uuid
 from typing import Awaitable, Callable, Optional
 
 logger = logging.getLogger("n2n.tasks")
+_current_worker = ContextVar('n2n_current_worker', default=None)
+
+
+def mark_gateway_dispatch():
+    """Called immediately before a native gateway RPC, never from peer text."""
+    current = _current_worker.get()
+    if current:
+        manager, task_id = current
+        manager.mark_dispatch(task_id)
+
+
+def gateway_provenance(run_id):
+    current = _current_worker.get()
+    if current:
+        from .external_provenance import ExternalProvenance
+        return ExternalProvenance(*current, run_id)
 
 
 def _now() -> str:
@@ -34,6 +51,15 @@ class TaskManager:
         self.audit = audit
         self.retention_s = retention_s
         self._workers: dict = {}          # task_id -> asyncio.Task (in-process only)
+        self.manager._conn.execute('CREATE TABLE IF NOT EXISTS external_task_source (parent TEXT NOT NULL, run TEXT NOT NULL, tool_call TEXT NOT NULL, evidence TEXT NOT NULL, PRIMARY KEY(parent,run,tool_call))')
+        self.manager._conn.commit()
+
+    def record_external_source(self, parent, run, call, evidence):
+        self.manager._conn.execute('INSERT OR IGNORE INTO external_task_source VALUES (?,?,?,?)', (parent, run, call, json.dumps(evidence)))
+        self.manager._conn.commit()
+
+    def external_sources(self, task):
+        return [json.loads(row[0]) for row in self.manager._conn.execute('SELECT evidence FROM external_task_source WHERE parent=? ORDER BY rowid LIMIT 16', (task,))]
 
     # ---- creation / execution (inbound: we run it for a peer) ----------
 
@@ -92,6 +118,7 @@ class TaskManager:
         if not row or row['state']!='submitted':return None
         async def _run():
             self._set(task_id, state="working")
+            context = _current_worker.set((self, task_id))
             try:
                 def progress(detail: str):
                     self._set(task_id, progress=detail)
@@ -105,14 +132,16 @@ class TaskManager:
                 raise
             except Exception as e:
                 from .execution import OutcomeUnknown
+                error = str(e) or type(e).__name__
                 try:
-                    ref = self.audit.store_result(task_id, {"error": str(e)})
+                    ref = self.audit.store_result(task_id, {"error": error})
                 except Exception:
                     ref = None
                     logger.warning("Task %s error payload could not be persisted", task_id)
                 self._set(task_id, state="outcome_unknown" if isinstance(e,OutcomeUnknown) or self.dispatched(task_id) else "failed", result_ref=ref, completed_at=_now())
-                logger.warning("Task %s failed: %s", task_id, e)
+                logger.warning("Task %s failed: %s", task_id, error)
             finally:
+                _current_worker.reset(context)
                 self._workers.pop(task_id, None)
         t = asyncio.create_task(_run())
         self._workers[task_id] = t
@@ -181,7 +210,7 @@ class TaskManager:
         if not row:
             return {"task_id": task_id, "state": "unknown"}
         return {"task_id": task_id, "state": row["state"], "progress": row["progress"],
-                "target": row["target_name"], 'cancel_requested':bool(row['cancel_requested']), 'harness':row['runtime_kind']}
+                "target": row["target_name"], 'cancel_requested':bool(row['cancel_requested']), 'harness':row['runtime_kind'], 'external_sources':self.external_sources(task_id)}
 
     def result(self, task_id: str, owner: Optional[str] = None) -> dict:
         if owner is not None and not self._owns(task_id, owner):
@@ -192,6 +221,7 @@ class TaskManager:
         if not row:
             return {"task_id": task_id, "state": "unknown"}
         out = {"task_id": task_id, "state": row["state"], "tokens_used": row["tokens_used"] if row['usage_available'] else None, 'usage_available':bool(row['usage_available'])}
+        out['external_sources'] = self.external_sources(task_id)
         if row['state']=='outcome_unknown':out.update(may_have_executed=True,error='Execution outcome is unknown. Check status; do not resubmit.')
         elif row['state']=='interrupted':out.update(may_have_executed=False,error='Request interrupted before execution.')
         if row["result_ref"]:
@@ -225,12 +255,27 @@ class TaskManager:
              "submitted", now, now, retain))
         self.manager._conn.commit()
 
-    def outbound_intent(self,peer,method,body,request=None):
+    def outbound_intent(self,peer,method,body,request=None,*,approval_retry=False):
         """Persist before transport dispatch; old peers need not support dedupe."""
         from .execution import digest
         request=request or body.get('request_id') or str(uuid.uuid4())
         self.manager._conn.execute('CREATE TABLE IF NOT EXISTS outbound_intent (request TEXT PRIMARY KEY,peer TEXT NOT NULL,method TEXT NOT NULL,body_digest TEXT NOT NULL,state TEXT NOT NULL,remote_task TEXT,created TEXT NOT NULL)')
-        self.manager._conn.execute('INSERT INTO outbound_intent VALUES (?,?,?,?,?,NULL,?)',(request,peer,method,digest(body),'dispatching',_now()))
+        values=(request,peer,method,digest(body),'dispatching',_now())
+        if approval_retry:
+            # Only an explicit APPROVAL_PENDING reply proves dispatch did not
+            # execute. Atomically reclaim that exact request; never reopen a
+            # completed, unknown, refused or concurrently dispatching operation.
+            row=self.manager._conn.execute('''INSERT INTO outbound_intent VALUES (?,?,?,?,?,NULL,?)
+                ON CONFLICT(request) DO UPDATE SET state='dispatching'
+                WHERE outbound_intent.peer=excluded.peer
+                  AND outbound_intent.method=excluded.method
+                  AND outbound_intent.body_digest=excluded.body_digest
+                  AND outbound_intent.state='approval_pending' ''', values)
+            if row.rowcount!=1:
+                self.manager._conn.rollback()
+                raise ValueError('outbound_request_not_retryable')
+        else:
+            self.manager._conn.execute('INSERT INTO outbound_intent VALUES (?,?,?,?,?,NULL,?)',values)
         self.manager._conn.commit()
         return request
 
@@ -257,5 +302,7 @@ class TaskManager:
     def sweep(self) -> int:
         cur = self.manager._conn.execute(
             "DELETE FROM delegated_task WHERE retention_until < ? AND state IN ('completed','failed','cancelled','interrupted')", (_now(),))
+        self.manager._conn.execute(
+            'DELETE FROM external_task_source WHERE parent NOT IN (SELECT task_id FROM delegated_task)')
         self.manager._conn.commit()
         return cur.rowcount

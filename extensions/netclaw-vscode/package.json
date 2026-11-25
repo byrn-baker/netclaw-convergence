@@ -2,7 +2,7 @@
   "name": "netclaw",
   "displayName": "NetClaw",
   "description": "Set up and manage independent NetClaw and Risk installations from Visual Studio Code.",
-  "version": "1.4.0",
+  "version": "1.6.2",
   "publisher": "NetClaw",
   "license": "Apache-2.0",
   "engines": {
@@ -124,6 +124,11 @@
         "category": "NetClaw"
       },
       {
+        "command": "netclaw.deployGcp",
+        "title": "Deploy a Border or Member to GCP (no authentication; keep URLs private)",
+        "category": "NetClaw"
+      },
+      {
         "command": "netclaw.addConnection",
         "title": "Add Connection",
         "category": "NetClaw"
@@ -134,19 +139,31 @@
         "category": "NetClaw"
       },
       {
+        "command": "netclaw.showNodePosture",
+        "title": "Show Node Posture",
+        "category": "NetClaw",
+        "enablement": "isWorkspaceTrusted"
+      },
+      {
         "command": "netclaw.disconnect",
         "title": "Disconnect",
         "category": "NetClaw"
       },
       {
+        "command": "netclaw.replaceCloudEndpoint",
+        "title": "NetClaw: Replace Cloud Border Endpoint"
+      },
+      {
         "command": "netclaw.renameConnection",
         "title": "Rename Connection",
-        "category": "NetClaw"
+        "category": "NetClaw",
+        "icon": "$(edit)"
       },
       {
         "command": "netclaw.removeConnection",
         "title": "Remove Connection",
-        "category": "NetClaw"
+        "category": "NetClaw",
+        "icon": "$(trash)"
       },
       {
         "command": "netclaw.openOverview",
@@ -404,6 +421,30 @@
       {
         "command": "netclaw.setupConnect",
         "title": "NetClaw: Save Verified Setup Connection"
+      },
+      {
+        "command": "netclaw.ownerSignIn",
+        "title": "Sign in to Cloud Border",
+        "category": "NetClaw",
+        "enablement": "isWorkspaceTrusted && !netclaw.cloudOpenLab"
+      },
+      {
+        "command": "netclaw.ownerSignOut",
+        "title": "Sign out of Cloud Border",
+        "category": "NetClaw",
+        "enablement": "isWorkspaceTrusted && !netclaw.cloudOpenLab"
+      },
+      {
+        "command": "netclaw.ownerPrepare",
+        "title": "Prepare Cloud Read",
+        "category": "NetClaw",
+        "enablement": "isWorkspaceTrusted"
+      },
+      {
+        "command": "netclaw.ownerRecover",
+        "title": "Recover Cloud Operation",
+        "category": "NetClaw",
+        "enablement": "isWorkspaceTrusted"
       }
     ],
     "mcpServerDefinitionProviders": [
@@ -421,6 +462,14 @@
         {
           "command": "netclaw.openDomain",
           "when": "false"
+        },
+        {
+          "command": "netclaw.ownerSignIn",
+          "when": "!netclaw.cloudOpenLab"
+        },
+        {
+          "command": "netclaw.ownerSignOut",
+          "when": "!netclaw.cloudOpenLab"
         }
       ],
       "editor/context": [
@@ -428,6 +477,28 @@
           "command": "netclaw.addSelectedContext",
           "when": "editorHasSelection && isWorkspaceTrusted",
           "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "netclaw.renameConnection",
+          "when": "view == netclaw.connections && viewItem == netclaw.connection",
+          "group": "inline@1"
+        },
+        {
+          "command": "netclaw.removeConnection",
+          "when": "view == netclaw.connections && viewItem == netclaw.connection",
+          "group": "inline@2"
+        },
+        {
+          "command": "netclaw.renameConnection",
+          "when": "view == netclaw.connections && viewItem == netclaw.connection",
+          "group": "navigation@1"
+        },
+        {
+          "command": "netclaw.removeConnection",
+          "when": "view == netclaw.connections && viewItem == netclaw.connection",
+          "group": "navigation@2"
         }
       ]
     },

@@ -14,6 +14,12 @@ member claw that owns the capability and returns the result. It is the internal
 counterpart to **eN2N** (external federation between *different* operators over
 the NCFED mesh — see [N2N-PEERING-NETCLAWS.md](../N2N-PEERING-NETCLAWS.md)).
 
+## Genie worlds member
+
+The Border owns and routes the optional `genie-worlds` OpenClaw member. Its isolated home is an execution boundary within that Risk. The profile exposes six bounded Google-world controls and the `netclaw-genie-worlds` skill. Configure its private `NETCLAW_GENIE_CONTROL_FILE` reference to the owner-run local backend. It receives no Google key, CML/pyATS credentials or raw snapshot. Setup and discovery do not authorize generation. The backend requires an exact projection review and finite budget, retains unknown outcomes and records terminal evidence independently of the Border/member lifetime.
+
+Actual standalone Google recordings and a Border-routed Sonnet/skill/MCP/Google lifecycle are verified on Mac, including navigation, stop and an original-provider terminal receipt. The retained member uses a credential-free evidence-only backend. This testing posture does not qualify production confinement or other live platforms. Use the reviewed member specification and [Genie setup guide](GENIE-WORLDS.md).
+
 ## Why
 
 One monolithic NetClaw carrying 190+ skills is expensive (huge context per turn)
@@ -110,7 +116,181 @@ Granularity is per vendor/tool: `cml`, `containerlab`, `pyats`, `ipfabric`,
 like visualization (`viz`) stay grouped. DefenseClaw + OpenShell are the
 production-mode security layer.
 
+## Member spec (a member without patching NetClaw)
+
+A profile member's servers come from `MCP_SERVERS`, its skills from the profile
+matcher, and it gets every tool of every kept server. A **member spec** declares all
+three in one JSON file, for example a read-only alert investigator:
+
+```json
+{"version": 1, "name": "alert-investigator",
+ "description": "Read-only investigator for alert cases",
+ "servers": ["prometheus-mcp", "grafana-mcp", "pfsense-mcp", "pyats-mcp"],
+ "skills": ["pyats-health-check"],
+ "tools": {"allow": ["session_status", "read", "prometheus-mcp__*", "pfsense-mcp__get_*",
+                     "pfsense-mcp__list_*", "pyats-mcp__pyats_list_devices"]},
+ "model": null}
+```
+
+```bash
+python3 scripts/in2n-profiles.py spec alert-investigator.json      # validate, print the result
+netclaw risk add spec alert-investigator.json                       # register + enrollment token
+#   prints the exact staging command (--staging, --border-endpoint, --hot "" = on-demand)
+python3 scripts/in2n-migrate.py --risk my-risk --spec alert-investigator.json --specs-only
+#   stages members/alert-investigator/.env and prints the exact in2n-member-home.py --spec command
+python3 scripts/in2n-member-home.py --runtime openclaw --risk my-risk \
+    --spec alert-investigator.json --member-env <staging>/members/alert-investigator/.env
+```
+
+Validation is strict and reports every problem at once:
+
+- Keys: `version` (must be `1`), `name`, `servers` and `tools` are required;
+  `description`, `skills`, `model` and `auth` are optional; any other key is an error.
+- `name`: `[A-Za-z0-9][A-Za-z0-9_.-]{0,63}`, not any profile id, `convergence`, `custom` or `spec`.
+  It is the member name; `in2n-member-home.py --member`, if given, must equal it.
+- `servers`: each must be in the Border template's `mcp.servers` (the selected runtime
+  config, or `--border-config`). The member also keeps registered base servers `memory-mcp` and `gait-mcp`.
+  A server name OpenClaw would rename for tool names (not `[A-Za-z][A-Za-z0-9_-]`, or
+  over 30 characters) is refused, because no allowlist entry could name its tools.
+- `tools.allow` (non-empty, the only key of `tools`): each entry is an OpenClaw
+  built-in tool id (`read`, `session_status`, …; groups, `*` and `bundle-mcp`
+  are refused) or `<server>__<tool>`, where `<server>` is one of the member's servers
+  (or `memory-mcp`/`gait-mcp`) and `<tool>` may use `*`. A pattern for any other server is an
+  error. OpenClaw names an MCP tool `<server>__<tool>` and matches allowlists
+  case-insensitively with `*` as its only wildcard.
+- `skills`: a skill that is not installed (in NetClaw's `workspace/skills` or the Border's)
+  is a warning, not an error. The member's
+  scope follows `scope custom`: the installed ones, or all listed if none is installed.
+- `model` (spec 186): one of
+  - `null` (the default member tier) or an Anthropic model id, optionally `anthropic/<id>`:
+    NetClaw's Anthropic provider with `${ANTHROPIC_API_KEY}`;
+  - `<provider>/<model>` for a provider in the Border's `models.providers`, for example
+    `ollama-cloud/minimax-m3` (the model id may itself contain `/`). The member's provider entry
+    is **built** from the Border's: `api` (a plain adapter name), `baseUrl` (http(s), no
+    credentials, query or fragment, or one `${NAME}`), `apiKey` (one `${NAME}` or a default env
+    SecretRef; file, exec and vault SecretRefs and literals are refused), `authHeader`,
+    `headers` (every value only `${NAME}` references, optionally after an auth scheme, so a
+    literal header such as `Content-Type` is refused), `timeoutSeconds`, and the chosen model's
+    inference fields. Any other field, `localService`, an unlisted model, or a reference to a
+    variable members never receive (comms secrets, the Border's store locations) is refused by
+    name. A referenced `baseUrl` is written as its literal URL from the member's own `.env`, so
+    the production model guard sees its host. The member's slice carries the variables the
+    entry references (`OLLAMA_API_KEY`), not `ANTHROPIC_API_KEY`;
+  - with `"auth": "subscription"`, `anthropic/<id>` or `openai/<id>`: the member signs in with
+    its own Claude or ChatGPT login and registers no provider entry or key.
+    `in2n-member-home.py` prints the exact command to run once, before its first task:
+    `OPENCLAW_STATE_DIR=<home> OPENCLAW_CONFIG_PATH=<home>/openclaw.json openclaw models auth login --provider openai`.
+    OpenClaw keeps the login in the member home's state database only.
+- `auth`: `"api-key"` (default) or `"subscription"` (see `model`).
+- `in2n-member-home.py --model` is refused for a spec member: the model comes from the spec,
+  so the staged `N2N_MEMBER_MODEL` always matches the configured one.
+
+In production posture the DefenseClaw plugin route refuses models on loopback or private
+providers (`controls.guarded_model_route`), so a member on a LAN model server runs only in
+testing posture. Staged members run on the federation runtime the mesh daemon uses
+(`python-runtimes/records/n2n`), not the system `python3`.
+
+A spec member's `openclaw.json` is **built, not copied** from the Border's: only `mcp`
+(its servers), `channels: {}`, `tools`, `skills`, `models` (one provider as `model`
+describes: the Anthropic provider with `apiKey: "${ANTHROPIC_API_KEY}"`, resolved from the
+member's `.env`, which the spec slice gives `ANTHROPIC_API_KEY`; or the copied Border entry; or
+none for a subscription), `agents` (`defaults` with its workspace, model, skills and a
+reduced sandbox; one agent, `main`), `memory.search.enabled: false`, `hooks` and `cron`
+disabled, and `plugins` only when the Border has the DefenseClaw guard plugin (that plugin
+alone, as for the Convergence member). The Border's `gateway`, `env.vars`, other providers
+and their keys, other plugins, memory-search remote keys and extra paths, and sandbox binds,
+docker env, ssh and browser settings never reach it. A non-docker sandbox backend is refused.
+Its `memory-mcp` stores in `<member home>/memory` and its `gait-mcp` runs with `cwd`, `HOME`
+and sticky root under `<member home>/gait`; the Border's `MEMORY_DATA_DIR`, `GAIT_DIR`,
+`GAIT_ROOT` and `GAIT_MCP_STICKY_FILE` are not in its slice. `GAIT_VENV` and `GAIT_MCP_SCRIPT`
+(the GAIT executable and script, not stores) still come from the Border, like `PYATS_VENV`.
+
+Other kept servers keep **their own data stores**: a spec member that keeps `rag-mcp` searches
+the Border's knowledge base (`RAG_DATA_DIR`), as an investigator should; the same holds for
+any server whose store path is in its entry or env. The member's tool allowlist decides what
+it may do with that store (for example `rag-mcp__rag_search` but not `rag-mcp__rag_ingest`),
+so list only the servers whose data the member should reach.
+
+A kept server entry must reference its secrets as `${NAME}`. If the Border template holds a
+**literal** secret in a kept server entry or in the DefenseClaw plugin configuration (a
+secret-looking `env` or `headers` key with a literal value, a URL with credentials, or a
+`--token`/`--api-key`-style argument followed by a literal), provisioning stops before
+writing anything and names the server and key (never the value); move the value into the
+`.env` and reference it.
+
+A spec member gets its **own workspace** (`<member home>/workspace`, a directory, not
+the Border's workspace symlink) holding copies of its installed skills plus the
+file-backed base-floor skills `memory`, `gait-session-tracking` and
+`humanrail-escalation`. The copy walks each skill with `os.fwalk` without following
+symlinks (a directory swapped for a symlink during the copy is not entered) and copies
+only single-link regular files, so no Border file outside the skill is reachable through
+it; anything the agent writes to its workspace stays in the member home. Every
+agent entry (and `agents.defaults`) points at this workspace and gets the same
+per-agent `skills` allowlist; tools policies and `agentDir` copied from the Border's
+agent entries are removed. `skills.load.extraDirs` is dropped, `skills.entries` keeps
+only the member's skills, and `skills.workshop.autonomous.mode` is forced to `off`
+(OpenClaw 2026.10.9 defaults it to `auto`, which writes learned skills). Profile
+members keep today's behaviour: their workspace is a symlink to the Border's.
+
+The base floor's other entries (`n2n-member-runtime`, `self-status`,
+`member_heartbeat`, `member_report_audit`) are served by the member daemon, not by
+OpenClaw skills, so they need no SKILL.md and no agent tool.
+
+The member's top-level `tools` replaces the Border's: `allow` = `tools.allow` plus,
+each only when absent, `read` (OpenClaw tells the agent to read a skill's SKILL.md)
+and `memory-mcp__*` / `gait-mcp__*` (the only tools the `memory` and
+`gait-session-tracking` skills call; added only when the Border registers the
+server). `humanrail-escalation` is guidance only: its dispatch needs `exec` or a
+HumanRail MCP server, neither of which is added implicitly. `fs.workspaceOnly`,
+`elevated` off and `toolSearch` off match the Convergence member's policy.
+`tools.sandbox` is kept with its tool list replaced by `{"allow": <the same
+allowlist>}`, so a hardened Border's `alsoAllow: ["bundle-mcp"]` neither widens nor
+breaks the member: OpenClaw's sandbox resolver admits exactly the allowlist (MCP
+tools included) and applies its default sandbox deny list.
+
+**Built-in tools**: only `read` (confined to the member's workspace by
+`tools.fs.workspaceOnly`) and `session_status` are safe. Every other OpenClaw built-in,
+including `web_fetch`, `web_search`, the media generators, `memory_get`/`memory_search` and
+`ls`, is treated as dangerous and refused unless the operator opts in with
+`--allow-dangerous-tools` (`in2n-profiles.py spec`, `in2n-migrate.py`,
+`in2n-member-home.py` and `netclaw risk add spec` all accept it; the migrate and
+`risk add` printouts carry it forward only for a spec that needs it). With the opt-in a warning is printed and the choice is recorded in the
+member home's private `netclaw-member-spec.json`.
+
+**Border-only servers** are refused in a spec: the federation and control plane
+(`protocol-mcp`, `n2n-mcp`), HUD-private components (`installer-access.json`
+`access: hud-private`, e.g. `hermes-hud-mcp`), `netconverter-mcp`, the comms
+components (`twilio-*`, `zoom-rtms-mcp`) and `convergence-read-mcp` (the Convergence
+member is provisioned with `--member convergence`). Their settings are never part of
+`COMPONENT_ENV_KEYS`, and their `${VAR}` references never enter any member's derived
+slice, profile members included.
+
+Profile members are unchanged by member specs: their `openclaw.json` is still a copy of
+the Border's minus comms channels and plugins (gateway auth, hooks, cron, `env.vars`, other
+providers, memory search settings and sandbox binds included), with a literal Anthropic key,
+and their `memory-mcp`/`gait-mcp` use the Border's stores. This predates member specs and is
+a known follow-up.
+
+A member's `.env` slice is every variable its kept servers reference as `${NAME}`,
+plus, for a server started through `scripts/component-launch.py`, the settings its
+component reads from the env file: the installer catalog's
+`config/components/catalog.json` `components[].settings` keys and
+`config/installer-access.json`'s `required_env`/`script_env`/`command_env` (for
+`pyats-mcp`: `PYATS_TESTBED_PATH`, the `NETCLAW_USERNAME`/`NETCLAW_PASSWORD`/
+`NETCLAW_ENABLE_PASSWORD` device logins, the testbed mode settings). The same
+never-derived shared credentials apply (ServiceNow, comms). A spec member adds the
+base-member keys and no profile prefixes; a profile member adds its profile prefixes.
+Every spec-183 protection applies unchanged: `--member-env` is required for
+component-launched servers, the Border's `.env` and home are refused, and runtime
+paths are rewritten to the member's own.
+
 ## Operating a risk
+
+The optional OpenClaw `convergence` profile supplies retained flow evidence through
+`convergence-observations`; the Border owns correlation with other authorized sources.
+It requires an enabled, complete reader configuration and member-local environment
+paths. See [Convergence](CONVERGENCE.md). This source integration does not qualify
+live cross-source interpretation or extend Hermes's subnet-only protected federation.
 
 On the Border (MCP tools, or `netclaw risk …` / the `netclaw` TUI):
 
@@ -120,6 +300,7 @@ On the Border (MCP tools, or `netclaw risk …` / the `netclaw` TUI):
 | List members (scope, state, live) | `n2n_member_list` · `netclaw risk members` |
 | Member health / quarantine alerts | `n2n_member_health` · `netclaw risk health` |
 | Provision a member (+ token) | `n2n_member_add` · `netclaw risk add <profile> <name>` |
+| Provision a member from a member spec | `netclaw risk add spec <member-spec.json>` |
 | Issue an enrollment token | `n2n_enroll_token` · `netclaw risk token` |
 | Route a request to a member | `n2n_route` · `netclaw risk route "<request>"` |
 | Remove a member (unpin) | `n2n_member_remove` · `netclaw risk remove <id>` |
@@ -139,8 +320,8 @@ honest posture that the Border **never** overstates.
 
 | Layer | Kind | How it's wired | Effect if unavailable |
 |-------|------|----------------|-----------------------|
-| **Member sandbox — host-level kernel confinement** | containment | Each member runs as a **`systemd --user` unit hardened** with `NoNewPrivileges`, `ProtectSystem=strict` (read-only system), `InaccessiblePaths=~/.openclaw/.env` (the operator's master secrets are invisible to the member), `PrivateTmp`, and — on a native-Linux manager — syscall/namespace/address-family restrictions. On-demand members are cold-started inside a transient hardened `systemd-run` unit. *(OpenShell containers were evaluated and rejected for live-infra members: they are empty, network-egress-denied sandboxes — a member that must reach real devices/APIs can't run in one. Host confinement keeps the member's real tools/network while confining it.)* | delegation **refused** (no unconfined run) |
-| **Model-guard — DefenseClaw LLM guardrail proxy** | containment | `defenseclaw setup guardrail` stands up a Go proxy (`:4000`) and patches OpenClaw to route the model through it; **every prompt/response is inspected**. Availability = `defenseclaw` present **and the proxy reachable** (started via `defenseclaw-gateway start`). Members' skill/MCP sets are also **component-scanned** (`defenseclaw skill scan`) before they run. | delegation **refused** (no unguarded run) |
+| **Member sandbox — host-level kernel confinement** | containment | Each member runs as a **`systemd --user` unit hardened** with `NoNewPrivileges`, `ProtectSystem=strict` (read-only system), `InaccessiblePaths=~/.openclaw/.env` (the operator's master secrets are invisible to the member), `PrivateTmp`, and — on a native-Linux manager — syscall/namespace/address-family restrictions. On-demand members are cold-started inside a transient hardened `systemd-run` unit (or, where OpenClaw cannot run in user units, an instance of the confined system template `netclaw-coldmember@.service`, spec 166). *(OpenShell containers were evaluated and rejected for live-infra members: they are empty, network-egress-denied sandboxes — a member that must reach real devices/APIs can't run in one. Host confinement keeps the member's real tools/network while confining it.)* | delegation **refused** (no unconfined run) |
+| **Model-guard — DefenseClaw LLM guardrail proxy** | containment | The `defenseclaw-gateway` sidecar runs a guardrail proxy on loopback `:4000`; **every prompt/response routed through it is inspected**. Two routes into the proxy are recognised: the **plugin route** (DefenseClaw 1.x: `defenseclaw setup guardrail --connector openclaw` installs an OpenClaw plugin under `~/.openclaw/extensions/defenseclaw` that sends each model call to the proxy; recognised when `plugins.entries.defenseclaw.enabled` is true, plugins are not globally disabled, `plugins.allow` (if set) includes it, `plugins.deny` does not, and `plugins.load.paths` lists the existing `defenseclaw` extension directory) and the **provider route** (every selected model — primary, override, fallbacks — is `defenseclaw/<model>` and the `defenseclaw` provider's `baseUrl` is the loopback guard port). Availability = `security.mode` `defenseclaw`, the `defenseclaw` CLI present, one of those routes in the effective OpenClaw config (a member's home config must carry it too; the Convergence member-home builder copies only the DefenseClaw plugin configuration), **and the proxy reachable**. The proxy blocks provider domains it does not know **fail-closed** (OpenClaw gets a 403); providers outside DefenseClaw's built-in registry, such as Ollama Cloud (`ollama.com`), need registering with `defenseclaw setup provider add` ([DEFENSECLAW.md](DEFENSECLAW.md#providers-defenseclaw-does-not-know)). Members' skill/MCP sets are also **component-scanned** (`defenseclaw skill scan`) before they run. | delegation **refused** (no unguarded run) |
 | **Audit — GAIT immutable git trail** | audit | Every delegation/enrollment/removal/quarantine is committed to a git repo at `~/.openclaw/n2n/gait/` (append-only, never rewritten), cross-referenced to the SQLite audit row. Emitted on **both** the Border and the member side. | delegation **runs but flagged `audit-degraded`** |
 | **Least-privilege secrets** | containment (by construction) | Each member's `.env` is a scoped slice — only its integration's secrets. Combined with the sandbox hiding the master `.env`, a compromised member has no path to another member's keys. | — |
 | **Durable runtime** | resilience | Mesh daemon + always-on members are `systemd --user` services (`Restart=always`, survive churn + reboot), generated repeatably by `scripts/in2n-services.py`. | — |
@@ -153,11 +334,19 @@ blocks on *any* gap (including audit). Per-control policy: a **containment** gap
 
 > **Operational note:** the DefenseClaw guardrail sidecar (the model-guard proxy)
 > runs as a **durable `systemd --user` service** (`defenseclaw-sidecar.service`,
-> `Restart=always`), generated + enabled by `scripts/in2n-services.py` alongside the
+> `Restart=always`, started with `defenseclaw-gateway start` so the DefenseClaw CLI can
+> reach it), generated + enabled by `scripts/in2n-services.py` alongside the
 > mesh daemon and members — so model-guard survives a reboot with no manual step.
-> One-time prerequisite: `defenseclaw setup guardrail` (patches OpenClaw to route
-> model I/O through the proxy). If the proxy is ever down, posture honestly reports
-> `production — DEGRADED (model-guard missing)` and containment fail-closes.
+> One-time prerequisite: `./scripts/defenseclaw-enable.sh` (pinned, checksum-verified
+> DefenseClaw release; `defenseclaw init` and `setup guardrail --connector openclaw`,
+> which installs the OpenClaw plugin), `defenseclaw setup provider add` for any model
+> provider domain DefenseClaw does not know, then `openclaw gateway restart` to load the plugin. If the proxy is
+> ever down or the route is removed, posture honestly reports
+> `production — DEGRADED (model-guard missing)` and containment fail-closes. DefenseClaw
+> 1.0.x `init` cannot read a SecretRef `gateway.auth.token`; see
+> [DEFENSECLAW.md](DEFENSECLAW.md#known-limitation-secretref-gateway-token).
+> Spec 167 qualified production mode with DefenseClaw 1.0.4 in observe mode; action mode,
+> other providers/models, Hermes and macOS/WSL are not qualified.
 
 ```bash
 # ask the Border its posture (MCP), or:
@@ -184,6 +373,121 @@ The generator emits, and `enable` starts, all durable units: `netclaw-mesh.servi
 On a non-systemd host the generator degrades gracefully and posture reports the
 durable-runtime aspect accordingly. Full detail:
 [specs/057-in2n-production-enforcement](../specs/057-in2n-production-enforcement/).
+
+**System-scope members (`--system`, spec 165).** OpenClaw 2026.10.9 and later
+refuses to run an embedded member (`openclaw agent --local`) when it cannot stat
+`/proc/self/ns/pid` (`GatewayLockNamespaceError`). On some hosts (systemd 255,
+for example) a `systemd --user` unit with mount-namespace hardening (`PrivateTmp`,
+`ProtectSystem`, `InaccessiblePaths`) gets EACCES there, so every confined OpenClaw
+member fails. The Border probes this with a throwaway user unit carrying
+`PrivateTmp=yes` and `ProtectSystem=strict`. When the probe fails, posture reports
+the sandbox control unavailable and names this remediation. `--system` moves the
+always-on member units into the system manager (`/etc/systemd/system`, `User=`/
+`Group=` of the operator, the full hardening set) where the stat works. The mesh
+daemon and DefenseClaw sidecar stay user scope. Hermes Risks, older OpenClaw
+releases and hosts where the probe passes need nothing.
+
+Migrate one Risk in this order, as the operator user (never as root):
+
+```bash
+python3 scripts/in2n-services.py disable <member>          # remove each user-scope member unit (reverts to cold)
+python3 scripts/in2n-services.py generate --system          # stage + `sudo -n install` the system units
+python3 scripts/in2n-services.py enable --system            # `sudo -n systemctl enable --now`, then bind
+python3 scripts/in2n-services.py status --system
+python3 scripts/in2n-services.py disable --system <member>  # tear a system member down
+```
+
+`--system` uses only `sudo -n` and never prompts. If sudo needs a password, it
+prints the exact remaining commands (including which units were and were not
+installed) and exits non-zero; run `sudo -v` and retry, or run those commands as an
+administrator. `disable` without `--system` refuses a member that has a system unit.
+
+**On-demand members on those hosts (`coldstart`, spec 166).** On-demand members
+are normally cold-started inside a transient `systemd-run --user` unit, which
+cannot run OpenClaw on a host where the probe fails. Install, once, a confined
+system template for them:
+
+```bash
+python3 scripts/in2n-services.py coldstart install   # template unit + polkit rule, via `sudo -n install`
+python3 scripts/in2n-services.py coldstart status    # template present? authorization probe
+python3 scripts/in2n-services.py coldstart remove    # `sudo -n rm -f` both, daemon-reload
+```
+
+`install` writes `/etc/systemd/system/netclaw-coldmember@.service` and
+`/etc/polkit-1/rules.d/60-netclaw-coldmember-<user>.rules`. The template runs as
+`User=`/`Group=` of the operator with the same full hardening as `--system` member
+units and `Restart=no`; its `ExecStart` is `scripts/in2n-coldstart.py %i`, which
+looks the instance name up in the Risk registry and execs only the launch command
+of a registered, local, routable on-demand member that no durable unit owns (no
+shell; any other name exits without running anything). The polkit rule lets only
+the installing user, only the `org.freedesktop.systemd1.manage-units` action,
+start or stop only units named `netclaw-coldmember@<instance>.service`; every other
+unit, verb (enable, restart, reload, mask) and user falls through to the system's
+normal policy. With the template installed the instance runs as the operator, more
+confined than the Border itself. The rule depends on the template: systemd 257 and
+later also authorize transient units (`systemd-run --system --unit=...`) by the
+requested name, and only an existing unit file for that name stops a same-named
+transient unit with arbitrary properties such as `User=root`. The rule therefore
+checks that the template exists on every request, `install` writes the rule only
+after the template and daemon-reload succeed, and `remove` deletes the rule first.
+Do not delete the template by hand while the rule is installed; use `coldstart
+remove`. The instance `probe` is reserved: it exits 0
+without opening the registry, and starting it (no sudo, no password prompt) is how
+`coldstart status` and the Border verify the authorization — the rules directory is
+not readable by the operator. Same `sudo -n` handling as `--system`; never run it as
+root. `remove` leaves running instances until their members idle-exit (`sudo
+systemctl stop 'netclaw-coldmember@*.service'` stops them at once).
+
+With the template installed and authorized, posture accepts on-demand OpenClaw
+members as confined and production cold-start runs `systemctl start --no-block
+netclaw-coldmember@<member-slug>.service`. Without it, nothing changes from spec 165:
+the Border refuses such a cold start at once, and posture reports the sandbox
+control unavailable while spawnable on-demand members exist, naming `coldstart
+install`, always-on (`on_demand=false`) system units, or a host where the probe
+passes as remedies. Hermes Risks, hosts where the probe passes and testing mode
+(unconfined cold start) never use the template.
+
+### Border hardening (optional, spec 165)
+
+Production mode confines **members**; the **Border** is an ordinary OpenClaw gateway
+and is not confined by feature 057. In spec 164 T005 a standalone Border with host
+exec/read reached Convergence secrets, while OpenClaw's Docker sandbox contained the
+same attempt. `scripts/border-harden.py` opts a Border into that containment. It
+changes settings only through the OpenClaw CLI (`openclaw config set --batch-file`),
+never by editing `openclaw.json`:
+
+| Setting | Value |
+|---------|-------|
+| `agents.defaults.sandbox.mode` / `backend` / `scope` / `workspaceAccess` | `all` / `docker` / `session` / `none` |
+| `agents.defaults.sandbox.docker.network` | `none` (other `docker` keys, such as `image`, are kept) |
+| `tools.elevated.enabled` | `false` (other `elevated` keys are kept) |
+| `tools.sandbox.tools.alsoAllow` | existing entries + `bundle-mcp`, so MCP tools pass the sandbox gate (merged into `allow` instead when that list is set, because OpenClaw rejects both in one scope) |
+| `skills.workshop.autonomous.mode` | `off` — Skill Workshop no longer persists learned procedures (spec 164 saw it save a bypass) or makes extra provider calls |
+
+Each change is a leaf assignment, so sibling settings are not rewritten. Only those
+paths are read (through redacted `openclaw config get --json`) or printed.
+
+**Trade-off — not a default.** With no network and no workspace access, every Border
+session runs in the sandbox: skills that run host scripts, read host files or need
+host network fail or behave differently. Use it on Borders that delegate that work to
+members over MCP.
+
+```bash
+python3 scripts/border-harden.py            # dry run (default): planned changes + OpenClaw's dry-run, writes nothing
+python3 scripts/border-harden.py --apply    # OpenClaw dry-run, write, then `openclaw config validate`
+openclaw sandbox explain --agent main       # verify the effective policy afterwards
+```
+
+Preflight requires `openclaw` on PATH, `docker info` working for the current user and
+the configured sandbox image (default `openclaw-sandbox:bookworm-slim`) present. When
+the image is missing, the helper prints OpenClaw's documented `docker build` and
+refuses `--apply` unless `--skip-image-check` is given. If Docker reports permission
+denied, add the user to the `docker` group, then log in again or run
+`sudo systemctl restart user@$(id -u)`. A user manager that started before the group
+change keeps the old groups. The helper never builds images, restarts services or runs
+sudo. Exit codes: `0` success, `1` OpenClaw rejected the change, `2` preflight failure.
+OpenClaw reports whether the gateway hot-reloads; existing sandbox runtimes keep old
+settings until `openclaw sandbox recreate --all`.
 
 ## A2A capability cards (what a peer/member learns)
 
@@ -286,7 +590,10 @@ python3 scripts/in2n-migrate.py --risk my-risk --border-endpoint 127.0.0.1:11790
 See `.env.example` (`N2N_ROLE`, `N2N_RISK_NAME`, `N2N_ENABLED_STACKS`,
 `N2N_IN2N_PORT`, `N2N_BORDER_ENDPOINT`, `N2N_QUARANTINE_THRESHOLD`, and the member
 vars `N2N_MEMBER_ID` / `N2N_MEMBER_MODEL` / `N2N_MEMBER_SCOPE` /
-`N2N_ENROLLMENT_TOKEN` / `N2N_IDLE_EXIT_S`). Production enforcement (feature 057):
+`N2N_ENROLLMENT_TOKEN` / `N2N_IDLE_EXIT_S` / `N2N_MEMBER_AGENT`). OpenClaw 2026.10 and
+later refuse an unnamed `--session-id` turn when the home configures more than one agent,
+and member homes copy the Border's agent entries, so a member's embedded turn names
+agent `main` when it is one of several; set `N2N_MEMBER_AGENT` to choose another. Production enforcement (feature 057):
 `N2N_RISK_MODE` (`testing` | `production`), `N2N_STRICT_ALL` (block on any missing
 control), `N2N_GAIT_DIR` (immutable GAIT git trail location).
 
@@ -328,3 +635,14 @@ Decomposing a real monolith into a risk surfaced details worth writing down:
 - Spec: `specs/056-in2n-internal-federation/` (the risk) ·
   `specs/057-in2n-production-enforcement/` (production enforcement + durable runtime) ·
   `specs/059-ncfed-internet-draft/` (the NCFED I-D)
+
+## Sandboxed Borders (R09A, spec 185)
+
+Each Border of an HA risk can run in an OpenShell sandbox with the DefenseClaw guard in the same sandbox. Authority is unchanged:
+it remains etcd-based, so cutting only the Border-to-Border peer port (7443) did not move leadership, while cutting a Border
+from the etcd quorum made it report `no_quorum` within seconds and the other Border took authority; the isolated Border
+rejoined as a follower. A two-Border cluster needs the third (witness) etcd voter: one Border plus the witness is a majority,
+one Border alone is not. Posture (`GET /api/hud/posture`, VS Code "NetClaw: Show Node Posture") lists each component inside
+or outside the sandbox and the guard state. Evidence and gaps: `specs/185-openshell-defenseclaw-gcp/verification.md`.
+
+The same sandboxed Border and a three-region HA group were also built on **Azure** (R10, spec 198): see [NetClaw in Azure](NETCLAW-IN-AZURE.md), the evidence in `specs/198-azure-multicloud-ha/verification.md`, and the [multi-cloud mesh](NETCLAW-MULTICLOUD-MESH.md) for how an Azure group and a GCP group relate.

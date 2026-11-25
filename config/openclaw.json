@@ -29,6 +29,38 @@
     "mode": "hobby"
   },
   "mcpServers": {
+    "greynoise-community-mcp": {
+      "command": "python3",
+      "args": [
+        "-u",
+        "scripts/component-launch.py",
+        "greynoise-community",
+        "--server",
+        "greynoise-community-mcp"
+      ],
+      "transport": "stdio",
+      "env": {
+        "GREYNOISE_API_KEY": "${GREYNOISE_API_KEY}",
+        "GREYNOISE_TIMEOUT": "${GREYNOISE_TIMEOUT}"
+      }
+    },
+    "threatintel-mcp": {
+      "command": "python3",
+      "args": [
+        "-u",
+        "scripts/component-launch.py",
+        "threatintel",
+        "--server",
+        "threatintel-mcp"
+      ],
+      "transport": "stdio",
+      "env": {
+        "GREYNOISE_API_KEY": "${GREYNOISE_API_KEY}",
+        "ABUSEIPDB_API_KEY": "${ABUSEIPDB_API_KEY}",
+        "OTX_API_KEY": "${OTX_API_KEY}",
+        "ABUSECH_AUTH_KEY": "${ABUSECH_AUTH_KEY}"
+      }
+    },
     "forward-official-mcp": {
       "url": "${FORWARD_URL}/api/mcp",
       "headers": {
@@ -1307,6 +1339,13 @@
         "NSM_TIMEOUT": "${NSM_TIMEOUT}"
       }
     },
+    "result-analysis-mcp": {
+      "command": "python3",
+      "args": [
+        "-u",
+        "mcp-servers/result-analysis-mcp/server.py"
+      ]
+    },
     "analysis-mcp": {
       "command": "python3",
       "args": [
@@ -1497,6 +1536,51 @@
         "--server",
         "tts-mcp"
       ],
+      "transport": "stdio"
+    },
+    "netconverter-mcp": {
+      "command": "python3",
+      "args": [
+        "-u",
+        "scripts/component-launch.py",
+        "netconverter",
+        "--server",
+        "netconverter-mcp"
+      ],
+      "env": {},
+      "transport": "stdio"
+    },
+    "convergence-read-mcp": {
+      "command": "python3",
+      "args": [
+        "-u",
+        "scripts/component-launch.py",
+        "convergence-read",
+        "--server",
+        "convergence-read-mcp"
+      ],
+      "env": {
+        "CONVERGENCE_ENABLED": "${CONVERGENCE_ENABLED}",
+        "CONVERGENCE_API_URL": "${CONVERGENCE_API_URL}",
+        "CONVERGENCE_API_TOKEN": "${CONVERGENCE_API_TOKEN}",
+        "CONVERGENCE_SITE": "${CONVERGENCE_SITE}",
+        "CONVERGENCE_EXPORTERS": "${CONVERGENCE_EXPORTERS}",
+        "CONVERGENCE_ALLOW_LOOPBACK_HTTP": "${CONVERGENCE_ALLOW_LOOPBACK_HTTP}"
+      },
+      "transport": "stdio"
+    },
+    "genie-worlds-mcp": {
+      "command": "python3",
+      "args": [
+        "-u",
+        "scripts/component-launch.py",
+        "genie-worlds",
+        "--server",
+        "genie-worlds-mcp"
+      ],
+      "env": {
+        "NETCLAW_GENIE_CONTROL_FILE": "${NETCLAW_GENIE_CONTROL_FILE}"
+      },
       "transport": "stdio"
     }
   },

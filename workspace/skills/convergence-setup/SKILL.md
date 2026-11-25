@@ -1,131 +1,96 @@
 ---
 name: convergence-setup
-description: Set up NetClaw Convergence on a user's network from a fresh checkout, or complete an existing installation. Discover host and network prerequisites, configure recommended K3s/Helm services or a local Docker trial, connect telemetry and the HUD, and verify Guardian and optional passive IDS/JEV integrations. Use for Convergence installation or onboarding; use alert-triage for individual incidents.
+description: Set up Convergence, the separately operated network observability service, on the user's own infrastructure. Asks only for what it cannot discover, shows the plan before changing anything, then builds a local Docker trial, installs into an existing K3s cluster (Helm or Argo CD), or builds a new K3s cluster on Proxmox VE first. Verifies each layer and connects NetClaw's read-only Convergence view. Use for installing or extending Convergence; use convergence-observations to read its data.
+version: 1.0.0
 license: Apache-2.0
+tags: [convergence, setup, docker, k3s, argocd, proxmox]
+compatibility: "Linux hosts. Uses the network: Docker and Kubernetes APIs, the Proxmox VE API, SSH to new nodes, and GitHub/Helm/container registries for pinned downloads."
 metadata:
-  version: "1.2.0"
   openclaw:
     requires:
-      bins: [python3]
+      bins: [git, python3]
 ---
 
 # Convergence setup
 
-Deliver a verified installation for **this user's network**. Determine what is
-already present, finish the requested layers, and state which layers remain
-unverified. The core stack running is one milestone; it does not establish IDS
-coverage or a working investigator.
+Convergence is a separate project: [byrn-baker/convergence-platform](https://github.com/byrn-baker/convergence-platform).
+It owns the services, charts, cluster tooling and setup helpers. This skill installs a
+**pinned release** of it and follows that release's own procedures, so the commands
+always match the code they run. NetClaw never imports or operates the service itself.
 
-## Locate and discover
+**Tested release: `v0.1.5`.** Use it unless the user asks for another; say so if they do.
 
-Resolve the NetClaw checkout from the current directory, the selected runtime's
-`NETCLAW_DIR`, or the user's stated path. Verify `deploy/convergence/` and
-`scripts/install.sh` exist. If the checkout is absent, obtain the user's intended
-repository/revision and clone it into their chosen location. The skill also works
-before installation: read this file directly from `workspace/skills/convergence-setup/`.
-Run the bundled helper from its actual location, passing the checkout explicitly:
+## 1. Get the release
+
+Ask where to keep it (default `~/convergence`). Never clone into the NetClaw checkout.
 
 ```bash
-python3 /path/to/convergence-setup/scripts/setup.py --repo /path/to/netclaw preflight
+git clone --branch v0.1.5 https://github.com/byrn-baker/convergence-platform.git ~/convergence
 ```
 
-The helper uses only the Python standard library. It reports host resources,
-Docker context/availability, listeners and configuration-file presence, without
-reading existing secrets or changing services. Read `scripts/runtime-selection.py`
-and run it from the checkout to identify the selected runtime before wiring HUD
-environment or services. Check host/service/container state using available tools;
-unavailable SSH, sudo or Kubernetes access is a specific prerequisite, not proof
-that the installation is broken.
+An existing checkout is fine if `git describe --tags` names the release. Every helper
+below runs from that checkout and takes it as `--repo`. The procedures are in its
+`docs/convergence/setup/`: read the one for the chosen path before acting.
 
-Discover or ask only for unresolved choices:
+## 2. Discover, then ask only what is left
 
-- Deployment host and OS; Docker, existing K3s, or reuse of existing observability.
-- Site identity, router/firewall, wireless system, managed switches, VLANs/subnets,
-  and which devices and traffic the user wants monitored.
-- HUD access: local, selected LAN/subnets, or an existing authenticated proxy.
-- Optional IDS capture, Victoria retention, IP context, JEV, and investigations.
-  These integrations can be added after the core works.
+Inspect first; ask only for what you could not find. Never ask for secrets in chat:
+ask the user to put them in a private file (mode 600) and tell you the path.
 
-Keep the user's existing choices. Inspect existing Compose labels, env files and
-overlays or Kubernetes resources before selecting a deployment path. Existing
-monitoring is a reuse/migration case; never treat it as an empty host. Ask for
-missing credentials through a private local file or secret store, not chat.
+- **Where it runs.** Docker on one Linux host (a trial), an existing K3s cluster, or a
+  **new K3s cluster on Proxmox VE**. For K3s: Helm directly, or Argo CD from the user's
+  Git repository.
+- **Existing state.** Running Convergence or monitoring containers, Helm releases,
+  Kubernetes contexts. Existing monitoring is a reuse or migration case, not an empty
+  host.
+- **Site.** A short site name, and what should be observed: router or firewall flows,
+  a host interface, or the labelled demonstrations only.
+- **Access.** How the user reaches dashboards and the API: this machine only, a LAN,
+  or an existing authenticated proxy.
+- **Alerts.** Alerts become cases through the alert receiver on this host. Ask whether
+  NetClaw should also investigate admitted cases automatically. It is off by default;
+  the release's procedure adds a restricted agent and opens alert rules one at a time.
 
-## Prepare and install the requested layers
+For a new cluster, the release's `docs/convergence/setup/cluster.md` lists the
+Proxmox questions (node, template, storage, bridge/VLAN, VMID range and name prefix,
+addresses and the API VIP, SSH key) and which ones discovery answers. If a Proxmox MCP
+is available ([mcp-proxmox](https://github.com/gilby125/mcp-proxmox) with
+`PROXMOX_ALLOW_ELEVATED=false`), use it for read-only discovery. Provisioning uses the
+release's `deploy/cluster/proxmox.py`, which only changes VMs inside the declared range
+and prefix. Recommend a Proxmox API token limited to a pool for these VMs.
 
-Use `docs/CONVERGENCE.md` as the installation entry point. Recommend K3s for a
-persistent Victoria stack and Docker for a smaller local trial. Core containers
-do not require a model login, a NetClaw runtime installation or network-device
-credentials. Qualify the actual OS/architecture; do not infer universal support
-from image manifests or a successful Linux test.
+## 3. Show the plan, then act
 
+Before any change, state: hosts and VMs to create, addresses, ports, what is reused,
+what is installed, and how to undo it. Wait for the user's approval. Then follow the
+release's procedure for the chosen path:
 
-State the concrete target: hosts, ports, services being added/reused, network
-coverage, and any expected interruption. Proceed with work already authorized by
-the setup request. Obtain missing scope or approval only for additional actions
-such as a shared switch mirror change, replacing a running service, or public
-exposure. Prepare the exact diff and rollback before that decision.
+| Path | Procedure in the release |
+|---|---|
+| Docker trial | `docs/convergence/setup/docker.md` |
+| Existing K3s (Helm or Argo CD) | `docs/convergence/setup/k3s.md` |
+| New K3s cluster on Proxmox VE (+ Argo CD) | `docs/convergence/setup/cluster.md`, then `k3s.md` |
+| Alert receiver and NetClaw investigations (optional) | `docs/convergence/setup/netclaw.md` |
+| Optional telemetry, IDS, flows, JEV | `docs/convergence/setup/integrations.md`, only the selected sections |
 
-Choose source coverage separately from deployment. For a home user, a laptop trial,
-or a lab without managed switches or a hypervisor, read
-[Home and lab onboarding](../../../docs/convergence/home-lab.md). Offer an isolated
-labeled demo first, an explicitly selected Linux host interface second, and router
-exports or mirrored packet sensors only when those capabilities exist. Cisco,
-Proxmox and Kubernetes are optional infrastructure, not entry requirements. Keep
-demo and live-host modes in separate bundles/sites. Preparation never starts capture.
+Read-only steps (`check`, `plan`, `preflight`, `verify`) can run freely. Steps that
+create VMs, install K3s or Argo CD, change a cluster, a hypervisor or a switch need the
+approval above; ask again for anything outside the approved plan. Preserve existing
+credentials, data volumes and model settings. Keep demonstration data in its own site
+or bundle.
 
-Read the applicable branch:
+If shell execution is not available, write the spec files and the exact commands in
+order, label which ones change infrastructure, and let the user run them.
 
-- **Local Docker trial or an existing host deployment:** [Docker and host setup](references/docker.md).
-- **Recommended K3s/Helm or reuse of an existing monitoring stack:** [K3s and reuse](references/k3s.md).
-- **Passive IDS, Victoria storage, firewall flows/top talkers, source/destination context or JEV:**
-  [Optional integrations](references/integrations.md), reading only selected sections.
+## 4. Verify and hand over
 
-Use the checked-in installer, generated configuration and runbooks. Resolve paths
-relative to the checkout and the actual deployment account. Named hosts, VLANs,
-IP addresses and resource sizes in a runbook's **deployed example** describe one
-installation, not defaults to copy. Optional credentials/services are not
-prerequisites for the core; optional features stay unconfigured until selected.
+Follow the release's `docs/convergence/setup/acceptance.md`. Run `setup/verify.py`
+for the installation, with `--canary` once the user agrees to labelled test records.
+A running container is not a verified layer. To show NetClaw's view, configure the
+`convergence-read` component with a **viewer** key for the site (NetClaw's
+`docs/CONVERGENCE.md` explains it) and open the Convergence view.
 
-Preserve working credentials, data volumes, local skills, model authentication and
-runtime selection. Parse dotenv as data with `scripts/write-env.py` or the existing
-dotenv reader; do not source it as shell code or print resolved Compose secrets.
-Use complete Compose file/env/profile sets for every update. Apply Kubernetes
-changes to the selected context and namespace with persistent storage and images
-available on every scheduling node. Keep sensor capture outside an ordinary pod
-unless its actual packet-access path has been verified.
-
-## Verify and hand over
-
-Read [Acceptance checks](references/acceptance.md). Finish each requested layer
-with observations, not only generated files or running processes:
-
-1. Run `scripts/verify.py --repo "$repo" --bundle "$bundle"` from this skill.
-   Core API/database, scoped authentication, metrics and Grafana datasource queries
-   must pass. Its HTTP checks are read-only; K3s uses temporary local port-forwards.
-   Use `--canary` explicitly for labeled case persistence and K3s OTLP log tests.
-   Repeat verification after a restart; preserve the canary record for that check.
-2. For a selected flow demo or host source, run `scripts/flows.py check --bundle
-   "$bundle"` and inspect matching evidence with the same window. Confirm the HUD
-   labels synthetic versus host-only coverage. An empty configured source has no
-   retained records; an unconfigured source is not a failed core service. Qualify
-   actual Linux interfaces and platforms separately from generated demonstration.
-   Selected devices produce fresh, correctly labeled telemetry. Missing telemetry
-   remains unknown; a successful API liveness probe is not a network-health test.
-3. HUD works from the user's intended subnet/browser, without a Grafana port
-   collision. Test the configured chat model through its real authentication path.
-4. A marked canary reaches the correct case database; clearance is distinct from
-   investigation completion. Validate Guardian separately when requested.
-5. Optional integrations pass their own checks, including actual IDS capture
-   evidence for the requested VLANs and visible JEV assessment provenance.
-
-Leave automatic IDS investigations in observation mode until the user chooses a
-bounded policy after tuning. Guardian's autonomous role remains scoped to its
-read tools and case interface; infrastructure installation belongs to this
-operator-led workflow, not an alert-triggered investigator.
-
-Provide service URLs, generated file locations, exact deployment command/overlay
-set, enabled capabilities, verification results, outstanding prerequisites and
-rollback/restart instructions. Save a setup handover in the user's chosen local
-operations documentation without credentials; this is installation documentation,
-not agent memory. Never claim "ready" for a selected layer that was not verified.
+Report: the release used, what was created (VMs, namespaces, bundles), URLs, enabled
+layers, verification results, layers left unverified, and how to stop or remove each
+one. Save a handover without credentials where the user keeps operations notes. Never
+call a layer ready that was not verified.

@@ -1,5 +1,31 @@
 # Changelog
 
+## Unreleased (not published; no version bump, release gate applies)
+
+- **Manage connections from the side bar.** Each saved connection row under **Connections** now shows inline **Rename** (pencil) and **Remove** (trash) icons and the same two actions on right-click. **Remove connection** asks for confirmation first, and states that it only forgets the saved connection and its local workspace binding in this editor; it never stops or changes the NetClaw, the Border or the cloud resources behind it. The palette commands accept the clicked row and still ask which connection when run from the palette. The cloud-Border connection list also gains a Remove entry.
+- Documents Azure (spec 198) and the multi-cloud mesh next to GCP: one connection per Border, compare the cluster anchor fingerprint before trusting it.
+
+## 1.6.1 — Mobile QR enrollment
+
+- Open **Mobile & edge → Generate QR code** for the selected compatible installation, then scan in NetClaw Mobile. The editor uses the shared enrollment service without opening a terminal.
+- Show QR expiry, consumed state and explicit replacement; clear transient QR material on connection changes. Retain only non-secret recovery references.
+- Requires the matching enrollment backend in source 1.18.6 and Mobile 1.0.4 for the new binding/recovery flow. Existing installations are not upgraded by installing the extension.
+- Actual macOS VS Code and iPhone simulator qualification covers local and retained pilot enrollment, same-key reconnect and no-repeat signed-read recovery. Physical camera/Secure Enclave, Windows/Linux editors and Android hardware are not qualified by this evidence. [Spec175 evidence](../../specs/175-cloud-mobile-enrollment/verification.md).
+
+## 1.6.0 — Cloud Border workspace
+
+- Connect to an existing compatible Cloud Border through **Add Connection → Cloud Border → Name → URL**. Discover and pin its installation identity over verified HTTPS; selecting the active profile keeps the connection and menus stable.
+- Use the normal Overview, Chat, Canvas, RAG and advertised observation panels through the selected Border. Local filesystem, runtime lifecycle, configuration and assistant registration remain local-only.
+- Use no-login access only when the Border explicitly advertises the development `open-lab` mode. This does not add users, SSO or RBAC, or authorize general cloud deployment.
+- Review exact protected member operations natively, preserve unresolved references, and recover signed results and durable acknowledgements without repeating approved work.
+- Requires VS Code 1.109+ and the matching R04a backend advertising `remoteHud` schema 1; source 1.18.5 alone does not establish that capability. Actual macOS/OpenClaw qualification covers the installed workspace, Chat, cited RAG/Canvas and protected NetBox read/recovery; the synthetic upload used a production-client fallback after native picker automation failed. Windows/Linux cloud editors and Mobile QR enrollment are not qualified; QR continuation is R04b. See [R04a verification](../../specs/174-cloud-client-integration/verification.md) for frozen source bindings and recovery evidence limits. Existing runtimes are not upgraded by this extension update.
+
+## 1.5.0 — optional NetConverter setup
+
+- Choose hosted-readonly or local-Terminal mode in the native setup picker, with preserved cancellation and independent per-claw settings.
+- Reject API-key literals in non-secret plan fields; installation, account capability and per-file approval remain separate states.
+- Use matching source 1.18.0. Spec162 records real account/client discovery, approved synthetic conversions, protected IOS-XE rehearsal and native Border/member delegation. The final Mac Risk installer used simulated review inputs; Windows/WSL, Hermes member and Junos appliance acceptance remain unqualified.
+
 ## 1.4.0 — dynamic pyATS testbeds
 
 - Choose Static or Dynamic per claw, then select from 14 source routes in native installer prompts. Cancel, reload and neighboring member choices remain independent.

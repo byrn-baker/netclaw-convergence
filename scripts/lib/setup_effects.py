@@ -1,5 +1,4 @@
 """Fixed adapters for the engine. No plan-supplied executable or shell input."""
-from mcp_environment import load_mcp_template
 import hashlib
 import os
 from pathlib import Path
@@ -11,6 +10,7 @@ from setup_deploy import Deployment, EffectAudit
 from setup_harness import Harness
 from setup_plan import PlanValidator
 from setup_process import run
+from mcp_environment import load_mcp_template
 from setup_schema import canonical, loads
 from setup_secrets import child_environment, write_environment, read_owned_environment
 from setup_state import Conflict, directory, guarded_read, revision, artifact_revision

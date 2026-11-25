@@ -159,6 +159,34 @@
         "git"
       ],
       "reason": "Bridge Python 3.12; separate companion installs Python 3.14. HUD requires Node 24.19+."
+    },
+    "netconverter": {
+      "python_min": [
+        3,
+        12
+      ],
+      "python_max_exclusive": [
+        3,
+        13
+      ],
+      "reason": "Isolated NetClaw guard; licensed Terminal interpreter is operator-managed."
+    },
+    "convergence-read": {
+      "python_min": [
+        3,
+        12
+      ]
+    },
+    "genie-worlds": {
+      "python_min": [
+        3,
+        12
+      ],
+      "python_max_exclusive": [
+        3,
+        13
+      ],
+      "reason": "Isolated MCP2.3.0 control SDK; Node backend has its separate supported-runtime check."
     }
   },
   "command_remedies": {

@@ -2,6 +2,10 @@
 
 SOUL-SKILLS.md defines tool procedures. This file defines environment-specific configuration: endpoints, credentials, channels, and operational context.
 
+## Threat intelligence
+
+Use the optional GreyNoise Community and threat intelligence MCP components for external IP and indicator reputation. [Configuration and provider keys](docs/THREAT-INTELLIGENCE.md)
+
 ## Network Devices
 
 Devices are defined in `testbed/testbed.yaml`. Update that file with your SSH-accessible Cisco devices.
@@ -15,6 +19,61 @@ Devices are defined in `testbed/testbed.yaml`. Update that file with your SSH-ac
 ```
 
 ## Platform Credentials
+
+Strict remote federation uses the selected installation's private
+`N2N_ENDPOINT_REGISTRY`; members select `N2N_BORDER_REGISTRY_ID`. Only a Border
+using optional ngrok loads `NGROK_AUTHTOKEN`, which is transport-only. Account API keys used for
+inventory are separate operator credentials and are not inherited by the agent.
+See [ngrok transport operations](specs/168-ngrok-transport-contract/deferred-docs/NGROK-TRANSPORT.md). Reserved addresses,
+account limits, DNS ownership and certificate issuance must be verified for each
+operator; repository examples confer no entitlement or access.
+The installed ngrok3.36.1 config checker rejected `tcp://` upstream origins;
+the renderer uses bare loopback host:port under reserved TCP endpoints. Validate
+the rendered config with the actual installed agent before activation.
+Spec168 account check on2026-11-01 at19:04:54 UTC succeeded using root `.env`
+`NGROK_API_KEY`: complete inventory found zero reserved TCP addresses and one
+existing ephemeral endpoint, unchanged. The owner confirmed the Free plan,
+which does not support reserved TCP addresses. The owner subsequently selected
+direct cloud TCP, so no paid ngrok plan is needed for this pilot. Optional ngrok
+live qualification still needs suitable entitlement; API access alone does not
+qualify transport. See [deployment choices](specs/168-ngrok-transport-contract/deferred-docs/DEPLOYMENT-TOPOLOGIES.md).
+See the [live runbook](specs/168-ngrok-transport-contract/live-runbook.md).
+Root `NGROK` is the separate agent authtoken (HTTP400/ERR_NGROK_206 when earlier
+tested as an API key). An earlier `NGROK_*` name scan missed this exact spelling;
+never infer credential absence from an assumed naming prefix. The credentials
+list omits token values, so it did not establish that the two credentials belong
+to the same account. No agent authentication or tunnel activation was performed.
+Fresh local/GCP pilot preparation is in Spec168 `fresh-pilot.md`.
+
+Spec168 current GCP pilot (2026-11-01): project netclaw-506315, Montréal VM
+netclaw-r01-20261101, private10.168.0.2/public34.95.60.45. Twelve managed resources;
+actual IP relocation/recovery and unchanged on-prem enrollment key verified.
+Public full HUD: https://r01-gcp-montreal.lobsternet.automateyournetwork.com/
+GoDaddy A/TTL600 and Let's Encrypt HTTPS live; Caddy renews from private persistent
+state. Owner fully delegated R01 activation/DNS/HTTPS/relocation, then explicitly
+requested full Chat/Canvas/RAG and own Anthropic Sonnet. Isolated pinned OpenClaw
+supports Sonnet4.6;5.5 rejected its thinking format, preserved as a failed attempt.
+On-prem member is a fresh Mac subnet-calculator, not the owner's pyATS claw.
+External transport probe usesAS64519 (cloudAS64520); oldAS64521 is retired.
+Browser Chat and actual member tool correlation, RAG indexing/cited retrieval and
+Canvas answer all passed. R01 is40/40; details in Spec168 resume/verification.
+HUD RAG helper calls are serialized; independent clients still require coordination.
+All private state/process ownership/evidence: ~/.local/share/netclaw/spec168-direct-cloud-pivot-20261101/.
+IAP remains for private administration. Users/SSO/RBAC remain R15–R17; stop afterR01.
+
+
+
+Optional NetConverter settings belong to the selected installation: mode,
+account reference, separate API key, private workspace and operator-installed
+licensed executable. See [NetConverter operations](docs/NETCONVERTER.md).
+Never infer account entitlement from signup, or a target image from a lab
+template. Native relay reachability can differ from Python socket reachability;
+verify the actual selected transport before declaring a device unavailable.
+Keep private addressing and raw device observations in local session memory.
+
+The managed pyATS launcher selects `<claw>/netclaw-changes` for the API/consumer
+artifact boundary. It keeps upstream logs private and publishes process-bound
+inventory receipts when listing devices. These receipts authorize no writes.
 
 Credentials belong to the **selected installation's** private `.env`. The historical default is `~/.openclaw/.env`; a separate setup-owned OpenClaw or Hermes home has its own file. Verify the selected home and installation identity first. Never borrow another claw's credentials or put values in skill files, plans, reports or this document. [Separate-claw setup](docs/GETTING-STARTED-VSCODE.md) includes Spec155 Comms in source 1.13.0 / extension 1.3.0. Publishing these artifacts does not install or change any existing local runtime.
 
@@ -57,6 +116,10 @@ configuration, authentication, transport and message delivery retain separate re
 - Topolograph MCP     → TOPOLOGRAPH_API_TOKEN (bearer), TOPOLOGRAPH_MCP_URL (optional, overrides the default hosted endpoint); remote HTTP, read-only, 401 without the token
 - Zoom RTMS MCP       → ZOOM_CLIENT_ID, ZOOM_CLIENT_SECRET, ZOOM_ACCOUNT_ID, ZOOM_RTMS_WEBHOOK_SECRET, N2N_ZOOM_CHANNEL_PORT, N2N_ZOOM_CHANNEL_SECRET (see docs/ZOOM-MEETING-INTELLIGENCE.md, spec 118)
 ```
+
+## Convergence evidence
+
+Optional `convergence-read-mcp`: `convergence_flow_summary`, `convergence_flow_evidence` and `convergence_vm_security` (advisory VM findings with coverage; review only, never a verdict). Fixed site/exporters, private viewer key and explicit enablement; see [connection guide](docs/CONVERGENCE.md). The OpenClaw `convergence` member supplies evidence to the Border for authorized correlation. No collection, case mutation or automated investigation.
 
 ## Detailed Per-Integration Notes
 
@@ -862,8 +925,9 @@ reports discovery · `devnet-catalyst-search` reads docs, this queries an applia
 
 **Spec 104.** Two external, actively co-developed Lantronix repos, not vendored, not registered in
 `config/openclaw.json`, external/on-demand install (dedicated venv per server, see
-`component_install_percepxion`/`component_install_slc` in `scripts/lib/install-steps.sh`). 37 tools each.
-Full install steps, environment variables, and workflows in `workspace/skills/percepxion-oob/SKILL.md`.
+`component_install_percepxion`/`component_install_slc` in `scripts/lib/install-steps.sh`). 38 tools
+(Percepxion) and 37 tools (SLC). Routing rules in `workspace/skills/percepxion-oob/SKILL.md`; install,
+registration and environment variables in its `references/setup.md` (spec 198).
 
 | Server | Repository | Answers |
 |---|---|---|
@@ -875,23 +939,26 @@ Full install steps, environment variables, and workflows in `workspace/skills/pe
 They're not redundant — the highest-value content is the routing rule between them. Percepxion has no
 single-device sync path; slc-mcp-server has no fleet concept. A device reachable only through Percepxion's
 cloud path has no direct-network alternative via slc-mcp-server, and vice versa for a device with no cloud
-enrollment. The skill's "Key Terms" and "CLI Command Routing" sections encode this as tool-routing rules.
+enrollment. The skill's "Two kinds of device" and "Which server answers" sections encode this as
+tool-routing rules.
 
 ### Behaviour worth knowing
 
-- **`get_job_group` never returns CLI command output text** — only job status and metadata. A live root-cause
-  finding (pre-v1.1.0) traced actual output retrieval to a second, undocumented REST call
-  (`POST /v1/telemetry/result/search`), absent from Percepxion's own OpenAPI spec. Shipped as
-  `get_cli_command_output` in `percepxion-mcp-server` v1.1.0.
+- **`get_job_group` never returns CLI command output text**, only job status and metadata. Once the job
+  completes, `get_cli_command_output(job_group_id, device_id)` returns the device's output.
 - **Percepxion's `organization_id` requirement is role-dependent.** Required for Project Admin sessions on
   job/telemetry/content/Smart-Group/audit calls; optional (auto-scoped) for Tenant Admin/Tenant User.
-  Omitting it as a Project Admin previously surfaced as an opaque `400 ACCESS_DENIED: "Invalid access to
-  tenant."`; v1.1.0+ raises a clear error naming the missing parameter instead.
+  Omitting it as a Project Admin raises an error naming the missing parameter.
 - **"OOB device" and "managed device" are not the same identity space.** The OOB device is the Lantronix
   console server; the managed device is the router/switch/firewall cabled to its serial port. Confusing the
   two sends a command to the wrong hardware, not a soft error.
-- Both servers pin `fastmcp>=3.1.0,<4.0`, the same conflict shape as `zabbix-mcp` (five NetClaw servers pin
-  `fastmcp<3`), hence the dedicated venv rather than the shared installer interpreter.
+- Upstream, both servers pin `fastmcp<4`. The installer checks out the reviewed revision recorded in
+  `config/fastmcp-external-patches.json`, patches it to the fleet FastMCP pins (spec 141) and installs it in
+  a dedicated venv rather than the shared installer interpreter.
+- **NetBox and Nautobot hold the console cabling.** With the Lantronix NetBox plugin or Nautobot SSoT app
+  (or `lantronix.oob`'s NetBox playbook) keeping them current, the skill finds a device's console path from
+  the source of truth and runs the console coverage gate before a change (W9 and W10 in
+  `references/source-of-truth.md`). It reads both; the plugins write.
 
 ### Boundaries
 
@@ -1083,3 +1150,645 @@ Separate MCP_CALL invocations cannot share dynamic state. HUD static inventory,
 Terminal Intent and collector grants remain separate. See `docs/DYNAMIC-TESTBEDS.md`
 and `specs/160-dynamic-pyats-testbeds/verification.md`. No owner device/source service
 was contacted during synthetic qualification.
+
+
+### Spec162 observed local lab and analysis — 2026-10-31
+
+- Local CML192.168.2.125 authenticated asdeveloper;2.10.0+build13. Scoped certificate trust only; observedcertSHA25616e8c018cfd9e301406617d11ddabbafa221d397366f2170038709e34b61fcf9,CN/SANcml-controller. Privatecredential/tokenfilesoutsideGit; donotprint.
+-12installedimagesincludeIOLXE17.18.02; noJunos.45nodedefinitionsarenot45images. ActivePersonalEVALobservedexpiry2027-01-22.8x86CPU4.10GBRAMtotal2.02GBfree atread;checkagainbeforeboot. ExistingorphanreporteddoNOTadopt/delete.
+- Nativecurl/opensslreachLAN;PythonLANsocketErrno65doesnotprovehostdown. ExistingR1/R2SW1/SW2untouched.
+- Run-ownedBatfishv2container netclaw-spec162-batfish-v2-20261031,loopback19997→9996,4CPUs4GiB. Firstnetclaw-spec162-batfish-20261031stoppedretained. ActualcurrentimageAPI9996;legacyexample9997wrongforit. Pinnedpybatfishrequiressetuptools<81. Threeprivateanalysis snapshots source/junos/reverse in network spec162-live-20261031.
+
+
+## Spec162 rehearsal runtime update — 2026-10-31 (historical)
+The owner-approved isolated minimal claw now runs OpenClaw 2026.7.1-2 and Claude
+Sonnet 4.6. Its provider key was deliberately replaced from the repository
+environment on owner instruction. Native discovery verifies NetConverter (8
+tools), dynamic pyATS (35), Batfish (8) and GAIT (23); actual model tool execution
+also succeeds. The original setup report remains partial, with separate private
+repair receipts. CML HTTPS and MCP startup currently time out. Dynamic inventory
+is inactive; image/bootstrap and live configuration acceptance remain unproven.
+The staged pyATS replacement retains the prior runtime, and bound source remains
+unchanged. Source 1.15.2 fixes runtime placement and the stale native pyATS pin.
+
+### CML recheck — 2026-11-01 (earlier observation, superseded below)
+
+Native HTTPS API reads work again with the existing private session. Fresh
+inventory: two labs, six running nodes, 12 installed images, no Junos image and
+about 1.95 GB free RAM. A temporary TLS adapter preserving upstream verification
+and restricting writes enabled discovery of 51 CML tools. Fresh authentication
+with the rehearsal's saved credentials fails with HTTP 403, confirmed directly
+without the adapter. Discovery is not authenticated tool access. Credentials and
+live registration remain unchanged; no lab or device was modified.
+
+### Spec162 actual acceptance — 2026-11-01 (current)
+
+Later authenticated CML access supersedes the earlier failure above. The enforced
+license limit is five nodes. Owner-approved stop/start juggling completed twice;
+R1/R2 returned to BOOTED with private configurations matching original baselines
+except display timestamp/size metadata. Owned rehearsal nodes are stopped and
+retained, and their Local/Lab write authorization is disabled. Exact identities,
+management topology and private evidence locations are recorded in daily memory.
+
+The real protected IOS-XE round-trip repeat passed OSPF FULL, reciprocal metric-11
+routes, bidirectional 5/5 positive and 0/3 negative pings, with management preserved.
+No Junos image or Junos appliance acceptance is established. The owner-requested
+Mac Risk pass now completes native installation acceptance: simulated review input,
+actual adapters/services/HUD and real Border/member authenticated discovery. The
+original partial journal and failed Risk trial are retained, never rewritten.
+
+Operational lessons: this IOL bootstrap rejects passwords over 25 characters;
+legacy IOSv SSH negotiation can differ from current IOL. The owned target generates
+a new RSA key on boot. Compare it with the exact-node authenticated CML console
+public key before reconciling known_hosts; never disable host checks. OpenClaw
+2026.7.1-2 closes STDIO between turns, so reviewed dynamic-inventory application
+uses an explicitly started authenticated foreground pyATS session. See
+`docs/DYNAMIC-TESTBEDS.md` and Spec162 verification for the supported boundaries.
+
+Spec162 Risk lessons: native registration freezes environment aliases before Risk
+materialization. Bind each selected local API port before registration (1.15.5).
+Tool discovery alone does not establish working routing. NetConverter discover=false
+skips upstream checks in a cold process; false flags mean unverified, not bad credentials.
+Use typed capability arrays/counts instead of a model's manual arithmetic. The live
+reference observed 75 operation paths, not the narrative's 70. See Spec162 verification.
+
+### R02 local lab recheck — 2026-11-02
+
+After the owner restored CML, authenticated inventory confirmed the original
+four lab nodes booted. Exact-node console reads verified R1's management state
+and public SSH key against the endpoint. Fresh protected qualification uses a
+private, pinned known_hosts file and disables ambient SSH/global host trust.
+Actual pyATS loading and generated Unicon SSH arguments were checked offline;
+no R02 show-version execution is implied. Original inventories are unchanged.
+Private evidence: `~/.local/share/netclaw/roadmap-r02-r05-20261102/r1-host-verification/`
+and `live-qualification/`. CML account credentials must never substitute for
+separate device credentials. Native `unicon.Unicon` resolves to its exported
+class in `unicon.adapters.topology`; compare object identity, not module strings.
+
+Later R02 acceptance on the same day independently captured and parsed R1's
+`show version` through both protected OpenClaw and Hermes members: IOS-XE
+17.18.2, one captured execution per successful operation. CML is at
+192.168.2.125; saved device addresses are R1 .201, R2 .202, SW1 .211 and SW2 .212.
+Only R1 was selected for R02 execution. The owner restored CML a second time
+after an SSH timeout; exact-node interface/key verification matched the prior
+pin. The earlier timed-out operation remains unknown and was never replayed.
+Both original inventory hashes remain unchanged. Current acceptance evidence is
+under `live-qualification/run-20261102T155125-625aeb/`; see Spec171 verification
+for separate native, synthetic, restart and platform qualification claims.
+
+Exact-command lesson: Unicon25.2 IOS-XE probes operating mode even with empty
+init lists and MIT. The protected adapter now pins the qualified IOS-XE/IOL
+dependency tree and uses its internal skip-discovery marker, disables learning
+and reconnect, and requires initial enable state. Final full native transcripts
+contain only the approved command. Do not generalize this policy to other
+plugins or claim execute-call counts alone prove total device-command scope.
+
+### R03 lab and source preparation — 2026-11-02
+
+Fresh authenticated CML metadata and read-only device output corrected the saved
+switch management addresses. Keep the exact addresses and raw transcripts in
+`~/.local/share/netclaw/roadmap-r03-20261102/cml-readonly/`; original inventories
+remain unchanged. R1 has authenticated console-to-SSH RSA proof. R2/SW1/SW2 use
+preexisting owner known_hosts pins, strict SSH and authenticated CML exact-node
+metadata; their historical pin establishment is unknown, not a console proof.
+All three SSH sessions landed directly in the expected enable prompt and their
+interface/key diagnostics passed. No configuration or lifecycle change occurred.
+These diagnostics do not qualify the future four protected show-version reads.
+
+Python sockets returned EHOSTUNREACH while native nc/curl/SSH and Node could reach
+the same lab. Cause is unverified; do not infer a stopped CML host from that probe.
+Fresh exact-node console-key API attempts for three nodes opened but yielded no
+frames; retained failures must not be called successful. No terminal-server SSH
+trust pin was present, so no untrusted controller SSH fallback was used.
+
+R03 source is integrated and its combined protected/posture suite passes464 tests.
+LinuxAMD64 public dependencies are verified offline, not deployed. Private review
+packets retain exact resource hashes and unresolved actual billing/egress gates.
+R01 is still running and unchanged; its proposed cost-control stop is not delegated.
+No new R03 cloud resource, DNS record or protected provider operation exists yet.
+
+
+### R03 actual qualification and retirement — 2026-11-03
+
+This supersedes the November2 preparation status above. The fresh GCP Montréal
+control-only Border and Mac OpenClaw/Sonnet member completed all four protected
+show-version reads, signed results/ACKs and same-key recovery. Exactly four device
+commands and eight provider calls; original inventories and R01 remain unchanged.
+R1/R2/SW1/SW2 returned parsed IOS17.18.2. Scope and host-key provenance limits are
+in specs/172-gcp-hybrid-border/verification.md.
+
+The temporary R03 deployment is retired: all13 cloud resources, its DNS A record
+and temporary OS Login key are absent; both local workers and12 owned containers/
+4 networks are removed. Do not connect to or recreate the old R03 hostname/IP,
+replay spent plans/enrollment, or restore old first-create state. Current private
+identity/SQLite/audit preservation is under
+`~/.local/share/netclaw/roadmap-r03-20261102/activation-20261103/final-preservation/`.
+It contains secrets and is not an activation payload. R01 remains running under
+its separate pilot authorization; R03 cleanup did not retire R01 or its costs.
+
+
+### R04 NetBox member qualification — 2026-11-03
+
+Actual cloud member qualification uses the existing NetBox skills and managed
+original MCP source14ec2fe7, with singular `device`/`prefix` object types and v2
+Bearer authentication for the owner-supplied public demo. Device1 and prefix1
+were observed; no application version was established and no private CML inventory
+was uploaded. The subnet MCP independently calculated192.0.2.0/26. Runtime scope:
+Ubuntu24.04 AMD64/Python3.12, OpenClaw2026.7.1-2, DefenseClaw1.0.4,
+Sonnet4.6, FastMCP4.0.11/MCP2.3.0. Source81b35fc9 fixes the native UDS relay's
+fixed HTTP authority to localhost:80, as required by the actual SDK rebinding check.
+
+Operational lessons: image checks must use the actual nonroot UID10001/default
+entrypoint. A private build-context umask made a relay script root-only0600;
+explicit COPY --chmod=0444 fixed packaging. Both original unknown attempts retain
+their own approval/source/profile pins and zero provider/MCP calls; never replay
+or relabel them successful. Three later approved workloads passed with exactly
+three MCP calls, six guarded provider/native inference calls and signed results/ACKs.
+
+Private archive exclusions must include exact known guard/shims/.token projections
+as well as integration environment/capability files. Guard identity/correlation
+keys are distinct private authority material, intentionally preserved and still
+scanned for integration values. SQLite read-only integrity checks can touch/create
+WAL/SHM metadata; validate private copies of DB+WAL+SHM and verify original inventory
+unchanged. Do not use immutable SQLite mode to silently ignore committed WAL data.
+Private R04 evidence is under ~/.local/share/netclaw/roadmap-r04-20261103/ and must
+never be treated as a replayable activation payload. Final lifecycle status is in
+specs/173-gcp-cloud-member/verification.md.
+
+R04 retirement is complete: all24 owned cloud resources, DNS and temporary key
+are removed, with zero owned residues in actual final inventories. The R01 pilot
+remains running; its checked resources/state/DNS/HTTPS/budgets are preserved.
+Do not use the retired R04 addresses or replay its spent plans and credentials.
+OS Login import may identify a key by email while describe canonicalizes the same
+account to a numeric path; verify both exact identities and every other key field
+before removing only the owned fingerprint. R01 state also contains data, budget,
+secret/IAM and account entries; validate its exact type set instead of assuming
+all resources are Compute. Preserve explicit before-metadata coverage limits.
+
+### R04a client qualification lessons — 2026-11-03
+
+Protected owner GET status reads the Border ledger; use the explicit same-operation
+reconcile action to fetch a ready member receipt and deliver ACK. Once acknowledged,
+actual editor/native process restart recovers the same result with GETs only.
+Never interpret a status wait as permission to prepare or approve again.
+
+VS Code1.109.0 is required by the current extension; the installed1.108.0 was left
+unchanged and a private supported editor was used. Complete immutable reviews need
+a scrollable document followed by a compact native decision; the original large
+modal overflowed the actual editor viewport before approval.
+
+The native Mobile harness imports the production screen/client into a separate
+bundle. `flutter test` removed its Documents report on exit; use the checked-in
+host driver/reportData export and private0600 destination. Inject the one-use
+private configuration after the actual app connects, not before installation.
+The paired physical iPhone remained locked; iOS26.5 simulator execution does not
+qualify physical hardware. Actual successful evidence and source hashes are under
+~/.local/share/netclaw/roadmap-r04a-20261103/; final status is in Spec174 verification.
+
+
+### R04a retained owner pilot — November 4 correction
+
+The owner's regular VS Code is now1.109.0; the old1.108.0 app and user data are
+privately backed up. The corrected private NetClaw1.5.0 VSIX6180d9f8 is installed.
+Use Add Connection → Local / Cloud → Cloud → Name → URL; the current cloud pilot
+needs no login/ticket/session/installation-ID prompt. HTTPS discovery pins the
+installation automatically. Selecting the active profile opens its view without
+clearing/reconnecting. Actual final native verification is recorded in Spec174;
+do not infer it from installation alone. Native AX cannot operate the editor
+behind macOS loginwindow; ask the owner to unlock normally, never for a password.
+
+Retained URL: https://r01-gcp-montreal.lobsternet.automateyournetwork.com
+Border installation:b164621c-a94e-4c28-a087-d9c9dabcce21, dedicated UID10010/native
+systemd source7f7df355 on existing Montréal VM7647370903424740100. Explicit private
+open-lab access, no user sessions; origin/Host/installation/read-scope checks and
+private member mutual TLS remain. Public owner/session404, catalog200withoutcookie.
+Existing Caddy unmatchedHost is200empty; protected backend wrongHost403.
+
+Fresh Mac member:c1b06ef1-bfab-40ed-87b9-3da65870ee0a, dedicated LaunchAgent
+com.netclaw.r04a-owner-member, outbound federation/no TCP listener. Existing
+NetBox skill/MCP and Sonnet4.6 support only device1/prefix1 read profiles. Keep
+Mac awake/loggedin/online and Docker running. No OSreboot/login/Dockerautostart or
+cross-client concurrency qualification. VM/member retain December1stop; disk/IP
+charges can remain. Original R01 home/archive remains; legacyapps disabled.
+Never replay oldpilot IaC or spent enrollment/approvals over retained authority.
+
+Known faileddevice1operation5004c921-82d8-414d-ac70-a13b5b2a340b made1provider,
+1MCP and1NetBoxGET403. Its original artifacts/attempt are retained. Narrow native
+401/403 recovery requires full matching evidence/stoppedworkers and signs FAILED
+without rerunning an effect; genuine unknown stays blocked. Ownerreplacementkey
+is private and supersedes unuseddiagnosticfallback. Never print eithercredential.
+
+Darwin cross-parent rename of0555 source directory can failEACCES even when parent
+is writable. Exact private fixture proved temporary owner-write on that directory
+allows move; restore0555. Use a reviewed completion-only claim after exact partial
+state, never rerun original apply or restore a historical database over authority.
+
+Existing Mobile QR requires cloud HUD issuer, trustedWSS and protectedoperation
+integration, proposedR04b. The existing scanner/devicekey is preserved. No userauth
+belongs in this correction; QR device enrollment is distinct from laterSSO/RBAC.
+See specs/174-cloud-client-integration/owner-delivery.md and verification.md.
+
+
+### R04b native enrollment qualification — 2026-11-05
+
+The retained Montréal owner pilot now advertises mobile enrollment over trusted
+HTTPS443 and exact WSS `/mobile/ws`. The protected edge listener is confined to
+127.0.0.1:13007 behind the existing Caddy service. Installation remains
+`b164621c-a94e-4c28-a087-d9c9dabcce21`; existing December1 lifetime and authority
+remain. Exact deployment and preservation evidence is in
+`specs/175-cloud-mobile-enrollment/deployment.md` and verification.md. Do not replay
+the spent update claims or restore archived authority databases.
+
+Actual HUD and native VS Code1.145.0 local/cloud QR paths passed with the owned
+iOS26.5 iPhone17 Pro simulator. Simulator QR decoding uses a test-only native CPU
+decoder and Keychain P256; physical camera/SecureEnclave are not qualified. The
+private Spec175 VSIX is installed as1.6.0, with existing settings/profiles and
+other extensions preserved. Its exact installed artifact was exercised in an
+owned editor with a clone of the existing cloud profile. The original normal
+window was not controlled because macOS accessibility is unavailable; no
+permissions were changed. Owner entrypoint: select GCP Border · Montréal, open
+Mobile & edge, choose Generate QR code. No Marketplace publication occurred.
+
+The Nov4 owner-staged NetBox demo credential now returns403 on the exact prefix1
+read. It is byte-identical to the baseline; demo documentation says nightly reset
+at04:00UTC. Reset invalidation is consistent with the timing, not proven from the
+bounded403 receipt alone. The failed native operation and signed result/ACK are
+retained; never replay it. A current authorized read-only token is needed for a
+separate successful data-read check. Do not create or widen an external token
+under the existing read-only workload scope. R05 remains stopped.
+
+
+### R04b acceptance and scoped release authorization — 2026-11-05
+
+The owner supplied a replacement private read-only credential and then explicitly
+requested packaging, commit/PR/merge, a source patch release, VS Code publication,
+changed Mobile app release, release notes, a safe QR screenshot, a short maintainer
+note, a draft in sibling modern_website, and return to main. This accepts the
+completed R04b scope and supersedes prior publication/version holds for Mobile QR
+enrollment only. Source1.18.6, extension1.6.1 and Mobile1.0.4+7 are selected; actual
+publication outcomes belong in Spec175 release-verification.md. Website deployment
+and external announcements are not requested. Broader cloud rollout remains held.
+
+The separately reviewed new native operation9902abf3 succeeded with a signed
+NetBox prefix10.112.0.0/15 result and durable ACK. Cold launch and actual background/
+resume preserved the same key/reference/result with no repeated effects: exactly
+2 provider calls,2 inferences,1 native MCP call,1 HTTP request and1 attempt. The
+three historical operations, including the earlier403, remain unchanged. Private
+success-verification-20261105 evidence is separate from the failed-operation trail.
+
+Root independently reviewed cleanup packet2bb60849 after a verified411-file
+export; only the new operation's3stopped containers and1empty internal network
+were removed. Baseline101containers/50networks, all4operation rows and source
+evidence are preserved. The owned simulator is shut down with profiles retained.
+The usable pilot/member keep their existing December1scope. Full stop before R05
+remains explicit; neither release nor acceptance starts another spec.
+
+
+### R05 source inspection lessons — 2026-11-05
+
+The local ignored `mcp-servers/subnet-calculator-mcp` clone at
+`5178da6f83ebd894fa7331a62e1087ec9550751b` exposes only IPv4, despite the skill
+listing IPv6. Its preview comprehension scans the whole network, `list(network)`
+materializes it repeatedly, neighbor arithmetic can overflow, and `/31,/32`
+host accounting uses N−2. Do not broaden protected inputs or infer IPv6 readiness
+from skill prose. Spec176 T006 requires corrected source/patch provenance and
+actual native MCP tests. Existing narrow R04 history is preserved; no source or
+runtime in that ignored clone was changed during planning.
+
+Thermidor's final working Spec004 solution lives in sibling `thermidor/`:
+Ollama0.40.11/Qwen3:0.6b Q4_K_M, calculator-v4, trusted reasoning_effort=none,
+compact single-text MCP output, swap-disabled1536MiB agent/2048MiB model,
+local2CPU60s/30s-retention and cloud1CPU120s/120s-retention,180s tasks. Its durable
+provider latch is runner-wide: new operation IDs cannot evade unknown state.
+Reference bytes/tests and historical limits are in Spec176 research/manifest.
+
+GAIT works through `/Users/john.capobianco/gait_mcp/venv/bin/python` with
+`scripts/gait-stdio.py`; the default Python missing gait does not prove GAIT is
+unavailable. Create then explicitly checkout the session branch. Startup pyATS
+HTTP runtime and MemPalace source remained unavailable in this source-only session.
+
+### R05 local qualification preparation (2026-11-05)
+
+NetClaw Spec176 uses existing iN2N and fresh Ollama members, no Tailscale or
+Thermidor runtime. Host UID observed503. Docker29.9.2 internal bridges do not
+publish requested host ports; use the qualified private guard path. Official
+Ollama0.40.11 CPU extraction needs glibc2.38; the final reference's pinned Trixie
+base starts successfully, while Bookworm failed before inference. Actual model
+operations/client/cloud acceptance remain open in Spec176 verification.
+
+
+### R05 actual member findings (2026-11-05)
+
+Intended ARM64 IPv4 and AMD64 IPv6 NetClaw/Ollama members completed a combined
+browser request over existing strict iN2N, with two model calls and one native
+MCP each, signed results and durable ACKs. Exact native calculator facts are
+authoritative:192.0.2.0/26 has64total/62usable; the small model's64usable prose
+is retained explicitly unverified. Both actual model cgroups enforce2GiB/no swap;
+noOOM and eventual unload observed. The Mac's existing host loopback Ollama
+PID1460 is unrelated to the isolated R05 Docker model and remains untouched.
+
+The private R05 host guard's connection-state allowance must run after conntrack:
+output priority-150, forward-300 unchanged. The initial private-300output hook
+blocked IAP replies after baseline activation; a reviewed native reproduction
+and exact repair restored it. Historical R04 source uses a different quota
+policy without that allowance; do not blindly change or replay retired payloads.
+R05 cloud member maximum retention ends2026-11-07T19:41:25Z; full disk/IP cleanup
+is separate from the independent VM STOP. Current evidence and remaining client/
+recovery qualification are in specs/176-ollama-members/verification.md.
+
+Actual Mobile approval expiry can leave a signed failed operation alongside an
+uncertain provider reservation. Preserve both: a failed result does not release
+the runner fence. Recovery must verify the original owned processes stopped,
+reattest the restarted model and durably rebind its changed profile using the
+existing latch/history. Docker may regenerate internal DNS NAT ports on restart;
+retain the full before/after rulesets and verify the unchanged NetClaw table.
+The private recovery writer also showed that os.open's requested file mode is
+masked by umask077: restoring source readability requires the exact original
+mode, while member-private metadata remains0600. Do not replay completed recovery
+steps after a later helper failure. Spec176 verification retains each outcome.
+
+R05 actual qualification and final disposable cleanup are complete as of
+2026-11-06; the owner accepted the scope and authorized source integration. Both intended NetClaw/Ollama members
+retain their approved window. The cloud protected profile after verified recovery
+is5129e410a4b41845a9451c4c7cb2a019228f586d5db00977bda05a1edecd5f16,
+with runtime revision8b3723c6d0df9397d84004c40f3086c1711f543832949ea1a9db1721a16f7798.
+The current cleanup execution manifest is5b6a39412c4d02f8ab9ad3923af9768eef34eddc62cd281820a13f41b7d201ec.
+Actual Docker missing-name inspection emits lowercase `no such object`; absence
+matching must normalize case while still refusing daemon, authorization and timeout
+errors. The exact one-line correction and negative fixtures are privately sealed.
+Earlier profile/source/PID/current-handoff snapshots are historical; use the final
+private current-state pointers and Spec176 verification. Native browser/editor/
+simulator recovery sent no new decisions and preserved original unknown outcomes.
+Final34-container/11-network removal preserved both models and canonical peers;
+initial cloud strict-inspection refusal remains without an established cause,
+and only7 untouched IDs/4 networks were continued after6 confirmed removals.
+
+
+### R06 source preparation — 2026-11-06
+
+Fresh ordinary cloud Border support is explicit and separate from protected
+execution profiles. eN2N uses three independent organizations, with local C
+initiating both cloud links and A initiating B; bidirectional RPC covers all six
+pairs/directions without a public local listener. Actual GCP qualification is
+pending the concrete Spec177 packet review; no R06 resources/DNS/providers started.
+Native external agent IDs must be lowercase and session keys use
+`agent:external:n2n-<digest>`; bare keys resolve to main. Native MCP IDs retain
+hyphens (`n2n-mcp__n2n_invoke`). Tool attribution requires authenticated native
+run/toolCallId events joined to local outbound receipts, never model text.
+Existing budget variable is `N2N_RATE_PER_MIN`, not `N2N_RATE_PER_MINUTE`.
+Linux host guard output priority -150 is required when matching conntrack;
+R05's earlier -300 issue must not recur. Current R06 source and private package
+hashes,24/35tasks and exact review are in specs/177-external-en2n-federation/.
+
+### R06 actual qualification lessons — 2026-11-06
+
+Ordinary cloud eN2N is qualified on fresh OpenClaw2026.7.1-2/Sonnet4.6 LinuxAMD64
+Borders and local Mac C, all six directions. Actual identities, endpoints, strict
+pins, source closures and private evidence are in Spec177 verification/resume.
+R06 retention endsNov8, with exact cleanup scheduled before independentSTOP.
+Do not treat these temporary addresses or old activation payloads as reusable.
+
+Cloud HUD uses the native CLI for settings/catalog/history even when gatewayHTTP
+works. R06 needs its pinned openclaw launcher and1024MiBworkspace cgroup with
+256MiBNodeheap for overlapping CLI probes. A384MiB cap actuallyOOMed. Root-only
+metadata/DNS/NTP access is needed for OSLogin/networkd under the host guard;
+application UIDs remain denied. The recovery preserved all original key authority.
+
+Hiding a skill advertisement does not revoke its independent execution grant.
+Test revocation through the grant API; never call a still-authorized skill a
+security bypass. Native monetary usage was0with nonzero tokens; conservatively
+account actual token fields and never infer free use. R06 all-token bound was
+USD3.47652for38provider responses, below the delegatedUSD10dispatch stop.
+
+Mobile cold loads can overlap Home/Chat/reconnect. Marking loaded before diskI/O
+finishes lets another awaited caller observe empty history; share the in-flight
+Future and retry a failed load. The original file/turn stayed intact in the actual
+reproduction. Native test app containers can move on installation: resolve the
+current simulator Documents path when capturing visual handshakes. Bundle the
+same production assets; dismiss only the owned app's notification prompt normally.
+Never repair a display assertion by resending a completed/uncertain request.
+
+Private export should archive authoritative homes/configuration and consistent
+SQLite backups; immutable installation staging packages already have separate
+verified closures. Including staging tarballs exceeded the bounded export time.
+The final R06 snapshot verified765home files plus current state and evidence;
+future teardown still requires a new quiescent export and actual residue checks.
+
+R06 final history qualification: actual cold native CLI listing hit20.25s while
+model discovery took24.20s. Cloud host renderer opts into bounded60s history reads;
+composed saved-history proxy deadline130s. Final HUD520passes, cloud22passes.
+Original browser result recovered with zero provider replay; transcript hashes
+remain unchanged (38responses). Four-request proxy admission can return429 during
+initial dashboard polling; existing Refresh chats recovers the read. Preserve
+these witnesses and exact v4 amendments in Spec177/history-recovery.
+
+R06 source CI must not depend on an ignored installed subnet MCP clone. The
+reviewed upstream source/license fixture in tests/fixtures/subnet-calculator-177
+is hash-checked by the existing installer migration in a temporary tree before
+actual native MCP execution. This preserves offline reproducibility and keeps
+owner installations untouched; source fixtures remain separate from live proof.
+
+### R07 recovery investigation — 2026-11-06
+
+Actual isolated strict-TLS reproductions on mergedR06 found authorization checked
+before awaited handler/call but not before returned result; EdgeChannel had no
+shared current-authority predicate. Removal API closed channels before durable
+revocation, allowing a reconnect race. Spec178 repairs are in progress; do not
+claim these are deployed to retained homes. Client endpoint-origin reference
+namespaces and memory-only HUD single-operation send markers also need explicit
+recovery handling. Read specs/178-recovery-gate/verification.md for final scope.
+
+R07 read-only startup inspected4runningGCPVMs/4readydisks/5addresses/5networks;
+R05/R06retirementcheck modes pass and jobsloaded/runs0. No R07cloudresources.
+Root n2n test environment lackedOpenSSL; agent used existing qualifiedR05testvenv
+read-only instead of altering owner runtime. Private evidence/worktrees live in
+~/.local/share/netclaw/roadmap-r07-20261106/.
+
+R07 evidence hygiene lesson: pytest default temporary-directory retention pruned
+the first failed native-drill raw tree before export. Its originalXML remains;
+do not reconstruct or imply rawSQLite exists. Export each important failed or
+successful native drill before starting later pytest runs. Two later91-file
+successful archives are independently hash/SQLite verified. Browser Chrome may
+retry a POST before response headers even when the app calls fetch once; keep
+app-dispatch, wire-request and native-effect counts separate.
+
+R07 final source qualification: integrated32f87526 repairs current authority
+before/after await and outbound frames, durable revoke-before-close, client sent
+markers, identity-checked endpoint recovery and Mobile late-dial/CAS/TLS readiness
+errors. These source fixes are not deployed to retained cloud homes. Final broad
+Python uses the complete R04a local-member/venv read-only (R05testvenv lacks
+ChromaDB). Clean source passes all6reconciliation surfaces; root ignored installed
+HumanRail unbounded MCP pin remains an owner-installation limitation.
+
+R07 evidence review: manifests can be relative to an export subdirectory, distinct
+from the original live home. Resolve their declared root explicitly; do not guess
+by first-existing path. Compare exported consistent SQLite snapshots using
+mode=ro&immutable=1; do not restore them or inspect an empty scaffold as authority.
+
+Native Code1.145 can open ~/.vscode-shared/sharedStorage/state.vscdb even with
+separate user/extensions directories. R07 observed a matching mtime without a
+prehash, so content change is unknown. Preserve it; do not restore/delete based
+on assumptions. Code1.109 passed with exact isolated fixture CA and private profile.
+Mobile rejected TLS can fail both web_socket_channel.ready and stream; observe
+the ready Future immediately while preserving stream failure ownership.
+
+### R08 private HA source workflow — 2026-11-07
+
+Spec179 uses signed cluster manifests, separate node identities and an explicit
+private profile2/launch-schema3. The `ha-required.json` marker is durable downgrade
+protection. Ordinary installer/setup, plan resume, Risk enrollment and transport
+import refuse marked or ambiguous protected homes before changing their state.
+Private `scripts/ha-cluster.py` status/export/lifecycle/recovery are distinct from
+standalone `risk` setup; reachability does not establish quorum authority.
+
+The source rehearsal helper is `labs/ha/real_runtime.py`; it requires the matching
+fixture gate and immutable source packet. Its one cumulative budget includes HUD,
+Code and Mobile:10 approvals/20 inferences/10 native effects, serial180s/60s limits.
+Original signed result, successor ACK, native artifacts and actual referenced
+GAIT commits are exported before successful settlement. Unknowns stay held.
+This note records source behavior, not completed REAL or native acceptance.
+See specs/179-border-ha-authority/coherence.md and qualification-matrix.md.
+
+## Cisco IQ remote MCP (`cisco-iq-mcp`, spec 191)
+
+Official Cisco IQ server over Streamable HTTP. The region is an explicit administrator choice and is never inferred:
+EMEA `https://eu-central-1.iq.cisco.com/mcp`, US `https://us-west-2.iq.cisco.com/mcp`, APJC `https://ap-southeast-2.iq.cisco.com/mcp`.
+Auth is one `Authorization: Bearer ${CISCO_IQ_API_KEY}` header (key in the private `.env`, owned by a user principal;
+service-account keys get no tools; keys expire and inherit owner permissions). Registered at enable time, not in `config/openclaw.json`.
+Admin: `scripts/cisco-iq-enable.sh enable|update|rotate|disable|status|diagnose|policy-check`. Read-only deny-by-default policy:
+`config/cisco-iq-policy.json`. Tool names are discovered at runtime, not assumed. Contract taken from issue #346; the official
+guide could not be fetched by automation. See `docs/CISCO-IQ.md`.
+
+## Azure R10 VM creation findings (2026-11-14)
+
+Spec198 Azure is Enabled/PayAsYouGo with Compute/Network/Storage registered.
+Original B2s/Bv2 choices have SKU restrictions and/or zero family quota; Microsoft's
+sys.blockwesteurope policy denies West Europe to this new subscription. Query
+Resource SKUs including restrictions plus regional AND exact family quotas.
+Do not use list-sizes as deployability evidence. R10 preflight defects were fixed.
+
+Actual Canada Central VM creation succeeded for D2als_v7/Debian12, then for
+D2as_v7/Ubuntu24.04 (2vCPU/8GiB). Full Ubuntu24.04/40GiB StandardSSD validation
+passed in Canada Central, East US2 and Sweden Central; observed compute USD/h
+0.101,0.0908,0.097 respectively. Kernel7.0.0-1017-azure/Landlock ABI8 and host
+OpenShell bootstrap passed. Full HUD/VSCode/guarded calls/HA remain unqualified.
+Use Ubuntu/Docker>=28 for OpenShell; do not reuse the Debian bootstrap as full-stack.
+
+Owner requested stop, teardown and other-agent handoff on2026-11-14. No resume or
+new cloud creation until instructed. See specs/198-azure-multicloud-ha/handoff.md
+for exact evidence, source gaps, cleanup and the six-Border target (3Azure+3GCP).
+
+## Local readiness observation — 2026-11-22
+
+CML192.168.2.125 authenticated with existing credentials and saved certificate:
+2.10.0+build.13,ready=true. Main lab R1/R2/SW2 BOOTED;SW1 STOPPED. Actual native
+pyATS/Genie show-version reads passed on all three booted network nodes,
+IOS17.18.2;R1/R2 management interfaces were up/up. This is bounded readiness,
+not a routing/topology/traffic certification. No configuration or node lifecycle
+changes. Current CML configuration places SW1/SW2 at .203/.204; repository
+testbed still lists .211/.212 and its defaults.arguments layout fails validation.
+
+Default pyATS HTTP runtime missing and Docker stopped. Successful isolated
+checks explicitly selected the existing
+`~/.local/share/netclaw/roadmap-r02-r05-20261102/pyats-runtime`, private testbeds
+and preexisting strict SSH pins. Unicon also issued a read-only operating-mode
+show query despite empty initialization lists; do not call these exact-command
+protected-operation proofs. Bounded subnet MCP passed192.0.2.0/24→256/254using
+existing R10 artifact and n2n interpreter. Old unpatched subnet source is not
+compatible with MCP2's removed FastMCP import. Connector/internal error and
+MemPalace/module missing remain visible. No owner installation repaired/rebound.
+Private evidence:`~/.local/share/netclaw/genie-feasibility-20261122/`.
+
+Follow-up on2026-11-22: John started Docker and SW1. Fresh checks confirmed
+Docker29.9.2, the existing loopback pyats/netbox/equinix/gateway containers up,
+all four CML network nodes BOOTED, and actual SW1 pyATS show-version parsed as
+IOS17.18.2 with the existing strict SSH pin. This supersedes the stopped-state
+observations only. Default native runtime/testbed repair and persistent member
+readiness are still separate from these successful scoped tool checks.
+
+### Spec200 planning access — 2026-11-22
+
+CML certificate-verified system_information and selected native pyats_list_devices
+passed at16:28:52Z; inventory is not current device-health evidence. Earlier same-day
+four-device parsed show-version evidence is retained under Spec200 verification.
+Use selected isolated Python3.12/pyATS25.2; default Node25.3.0 is not the supported
+viewer/NetClaw runtime. Docker29.9.2 responds. No neighbor topology is established.
+Installed pyATS show wrapper executes again on parse failure; retries=1 does not
+remove this fallback. Qualify bounded capture/offline parsing within existing
+read policy before exact-command-count claims. Google API worker/MCP/skill are
+planned only; complete()/cancel() return does not establish provider termination.
+See specs/200-genie-network-worlds/plan.md and verification.md. No private upload,
+generation,installation,device mutation or owner-runtime repair in this session.
+
+### Spec200 implementation checkpoint — 2026-11-22
+
+Owner proceeded to implementation,provided a private Google key and requested one
+cheap sample plus real CDP/LLDP/interfaces/counters in exact and creative local
+views.14/30 tasks complete;24 JS/browser and3 Python tests pass. Google model
+metadata HTTP200;no world generated yet. Exact one-attempt20s/US$15 contingency
+packet awaits owner answer. Private fact graph stays local;synthetic-only Google.
+Native collector,actual generated world and NetClaw MCP/skill remain unqualified.
+Read specs/200-genie-network-worlds/resume.md;no key value or private data here.
+
+
+### Spec200 corrected access evidence — 2026-11-22
+
+Native curl/nc and selected pyATS MCP reach CML/R1/R2/SW1/SW2 while Python direct
+sockets report errno65. Do not infer a host outage from that runtime-specific
+error. Certificate-verified CML ready=true and fresh 16 baseline/status requests
+plus 24 logical collection requests succeeded. CDP/LLDP already enabled globally;
+management Ethernet0/0 excluded on all four. Data Ethernet0/1–0/3 remain shut.
+LLDP has zero neighbors, CDP raw-only; no configuration applied. Corrected product
+requires actual Google Genie4 worlds through Gemini API; local renderer retired.
+See Spec200 direction-correction.md and discovery-change.md.
+
+
+### Spec200 routed CML lab — 2026-11-22 latest state
+
+The owner's explicit OSPF/iBGP/router-on-stick/VLAN/STP request superseded the
+six-port approval question. All four devices now have the reviewed routed lab
+configuration, with management interfaces/exclusions and existing management
+routing preserved. Actual reciprocal CDP/LLDP corroborate the three data links;
+OSPF FULL, two iBGP VLAN prefixes per peer, VLAN trunks/access and STP checks pass.
+All eight five-packet probes passed, including remote reachability to PC1. PC2–PC4
+were not running and remain unqualified. Four native saves and actual startup
+readbacks passed; pre-existing inline/NVRAM certificate representation is recorded
+explicitly. Private exact state and evidence: `.spec200-local/routed-lab*`.
+See specs/200-genie-network-worlds/routed-lab-qualification.md. Historical failed
+syntax/verified rollback and audit statuses are retained; no blind replay.
+Installed IOL-L2 requires `spanning-tree portfast trunk` / `spanning-tree portfast`
+instead of the rejected `spanning-tree portfast edge trunk` spelling. Original
+Rapid-PVST was already configured. Temporary owned Local/Lab write policy is
+disabled; ordinary collector remains read-only. Direct native collection does not
+qualify product capture-once behavior. No private data went to Google.
+
+
+### Spec200 Google production checkpoint — 2026-11-23
+Five actual120-second real-snapshot Genie4 recordings and local static playback are complete. See specs/200-genie-network-worlds/production-recordings.md. Google temporarily rate-limited original-session reconciliation; a later original-ID receipt resolved it, without replacement creation. Terminal receipts do not settle billing: all six full reservations remain held at US$85.552128. Existing Risk-member deployment is still unqualified. Raw snapshots and credentials remain local.
+
+
+### Genie Network Worlds integration — Spec200
+Optional `genie-worlds` catalog component, six stdio controls and `netclaw-genie-worlds` skill. Cisco pyATS evidence stays authoritative; Google Genie4 media is illustrative. Terminal and VS Code setup bind a selected local backend; the Risk member receives only its private control capability. Setup does not create worlds, approve export or transfer Google credentials. Five actual recordings are retained; exact fidelity, billing reconciliation and native Risk-member execution remain separately reported. See docs/GENIE-WORLDS.md.
+
+
+### Spec198 stable-network admission diagnosis — 2026-11-24
+
+The r10l frozen source ALREADY includes nearest-authenticated-Border selection;
+its signed admission window was4500ms. Controlled real-TLS reproduction with the
+recorded320ms quorum-call cost measures15calls/4.88s through a follower,9calls/2.94s
+through a leader. A transport-only timeout increase does not fix signed expiry.
+The proposed fresh9s manifest plus manifest-derived RPC wait passes controlled
+6.08s admission and rejects a9s timeout without effects; live qualification is
+still pending. Preserve all original unknowns/fences. See Spec198 resume-20261124.
+
+Ledger remains USD13.9276 including the full USD5 reserve; Azure actual cost is
+CAD6.8606, GCP actual reconciliation remains open. A fresh6h seven-host envelope
+is USD23.0076 cumulative and requires renewed approval at the USD15 pause. The
+old global approval bit must not be mistaken for that approval. No cloud assets
+were created during diagnosis. Never use broad protected-role pkill: retained
+Spec200/other owner services are outside the run. Run labels, correct firewall
+names, non-replayable watchdog setup and serialized ledger writes were repaired.
+
+### Spec198 Linux member relay qualification — 2026-11-24
+
+Fresh Linux OpenClaw member preparations must validate the executor's lazy MCP imports and immutable dependency closure. The inherited Mac Docker Desktop TCP host alias is unavailable on the qualified GCP Linux host; a fresh identity using the same immutable relay image over a Unix socket and a short private state path completed the real NetBox read. Never mutate a spent member contract or replay its unknown/refused operation. Three-region admission was qualified with a freshly signed9000ms window and manifest-derived RPC wait; nearest authenticated attachment selection does not remove quorum latency. See `specs/198-azure-multicloud-ha/closure-20261124.md`.

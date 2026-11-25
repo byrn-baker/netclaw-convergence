@@ -9,7 +9,7 @@ import sys
 import pytest
 
 ROOT = Path(__file__).resolve().parents[2]
-SKILL = ROOT/'workspace/skills/convergence-setup'
+SKILL = ROOT/'workspace/skills/convergence-stack-setup'
 spec = importlib.util.spec_from_file_location('convergence_setup', SKILL/'scripts/setup.py')
 setup = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(setup)
@@ -168,7 +168,7 @@ def test_preflight_reports_ports_without_reading_secrets_or_starting_services(re
 
 
 def test_deployed_skill_keeps_helper_and_references_without_other_skills(tmp_path):
-    destination=tmp_path/'runtime/skills/convergence-setup'
+    destination=tmp_path/'runtime/skills/convergence-stack-setup'
     result=subprocess.run([sys.executable,str(ROOT/'scripts/deploy-skills.py'),
         '--source',str(SKILL),'--destination',str(destination),'--backups',str(tmp_path/'backups')],
         capture_output=True,text=True)

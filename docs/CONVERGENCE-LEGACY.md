@@ -1,6 +1,6 @@
 # Historical Convergence deployment notes
 
-This is an archived engineering reference, not an installation guide. Commands, host addresses and status claims below describe earlier deployments. For new installations use [Convergence](CONVERGENCE.md). Do not copy teardown or migration commands without a reviewed backup and cutover plan.
+This is an archived engineering reference, not an installation guide. Commands, host addresses and status claims below describe earlier deployments. For new installations use [Convergence](convergence/README.md). Do not copy teardown or migration commands without a reviewed backup and cutover plan.
 
 # NetClaw Convergence
 
@@ -8,7 +8,7 @@ This is an archived engineering reference, not an installation guide. Commands, 
 tab, metrics stack, device adapters, investigation diary, and the
 Alertmanager → alert-receiver → guardian-claw loop.
 
-**New installation:** use the bundled [`convergence-setup` skill](../workspace/skills/convergence-setup/SKILL.md)
+**New installation:** use the bundled [`convergence-stack-setup` skill](../workspace/skills/convergence-stack-setup/SKILL.md)
 and [fresh-install guide](runbooks/convergence-setup.md). They start from your
 machine and network, with private generated credentials and separate checks for
 core services, actual telemetry, the HUD and investigations.
