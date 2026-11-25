@@ -232,6 +232,38 @@ so upstream's protected setup-source validation works in the live checkout too.
 Executable bits and runtime file permissions were preserved. The host mesh
 file limitation described above remains separate.
 
+## Daily sync job
+
+`.github/workflows/upstream-sync.yml` runs `.github/scripts/upstream-sync.sh` every
+day at 09:23 UTC; it can also be run by hand from the Actions tab. It keeps one pull
+request, `sync/upstream` → `main`, and never merges into `main` itself.
+
+| Upstream state | What the job does |
+|---|---|
+| Already in `main` | Nothing. An open sync PR is closed. |
+| Clean merge | The branch becomes the merge commit. The PR lists the commits and the fast offline checks: catalog, metadata, coverage, counts, spec artifacts, effects manifest, MCP reconciliation and conflict markers. A failing check makes the PR a draft. |
+| Conflicts | The branch is upstream's `main`, so GitHub shows the conflicts. The draft PR lists the files and the commands to resolve them locally. |
+| Someone pushed resolution commits to `sync/upstream` | The job never resets the branch. It merges new upstream commits on top when that is clean, and otherwise comments on the PR. |
+
+- **Resolving conflicts:** follow the steps below on `sync/upstream`, then push.
+- **Before merging the PR:** run the affected contract suites. The PR's checks are
+  only the fast offline set.
+- **Token:** without a `UPSTREAM_SYNC_TOKEN` secret, the job uses `GITHUB_TOKEN`,
+  which has two limits:
+  - it cannot push upstream changes to `.github/workflows/` (the job logs this case);
+  - PRs it opens do not trigger the fork's other CI.
+
+  A fine-grained token for this repository with Contents, Pull requests and
+  Workflows set to read and write removes both limits.
+- **Local dry run:**
+
+  ```sh
+  GITHUB_REPOSITORY=byrn-baker/netclaw-convergence DRY_RUN=1 bash .github/scripts/upstream-sync.sh
+  ```
+
+  Run it in a scratch clone. It checks out a work branch, pushes nothing and calls
+  no GitHub API.
+
 ## Next upstream update
 
 1. Start from a clean fork checkout; fetch `upstream` and its tags. Record both
