@@ -75,10 +75,10 @@ class ChatManager:
             raise RpcError(ERR_SEVERED, "chat not enabled")
         session_id = params.get("session_id")
         self._require_session(session_id, peer, "received")
-        if not self.authz._check_rate(peer):
-            raise RpcError(ERR_RATE_LIMITED, "chat rate limit exceeded")
-        if not self.authz.reserve_request(peer):
-            raise RpcError(ERR_BUDGET_EXHAUSTED, "daily budget exhausted")
+        admitted = self.authz.admit_chat(peer)
+        if not admitted.allowed:
+            raise RpcError({"rate_limited": ERR_RATE_LIMITED, "severed": ERR_SEVERED}.get(
+                admitted.code, ERR_BUDGET_EXHAUSTED), admitted.reason)
         session_id = params.get("session_id")
         text = params.get("text", "")
         self._append(session_id, f"[{peer}] {text}")
@@ -130,11 +130,12 @@ class ChatManager:
                               timeout=int(os.environ.get("N2N_CHAT_IDLE_TIMEOUT_S", "300")))
         self._append(session_id, f"[{ident}] {reply.get('text','')}")
         self._touch(session_id)
+        request_id = str(uuid.uuid4())
         self.audit.record(direction="outbound", peer_identity=ident, target_type="chat",
-                          target_name=session_id, request_id=session_id, decision="requested",
+                          target_name=session_id, request_id=request_id, decision="requested",
                           outcome="success")
         return {"session_id": session_id, "source": ident, "trust": "remote-untrusted",
-                "text": reply.get("text", "")}
+                "request_id": request_id, "text": reply.get("text", "")}
 
     # ---- transcript helpers -------------------------------------------
 

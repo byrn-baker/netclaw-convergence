@@ -92,6 +92,8 @@ mcp-servers/*
 !mcp-servers/README.md
 # Built-in MCP servers (tracked in repo)
 !mcp-servers/netclaw-dot-mcp/
+!mcp-servers/genie-worlds-mcp/
+mcp-servers/genie-worlds-mcp/.venv/
 !mcp-servers/tavus-pal-mcp/
 mcp-servers/tavus-pal-mcp/.venv/
 !mcp-servers/n2n-mcp/
@@ -106,6 +108,7 @@ mcp-servers/tavus-pal-mcp/.venv/
 !mcp-servers/ipfix-mcp/
 !mcp-servers/multivendor-cli-mcp/
 !mcp-servers/cisco-psirt-mcp/
+!mcp-servers/greynoise-community-mcp/
 # ...but never track its dedicated virtualenv (spec 076 FR-030a)
 mcp-servers/multivendor-cli-mcp/.venv/
 !mcp-servers/gns3-mcp-server/
@@ -137,6 +140,7 @@ mcp-servers/multivendor-cli-mcp/.venv/
 !mcp-servers/catc-mcp/
 !mcp-servers/nsm-mcp/
 !mcp-servers/analysis-mcp/
+!mcp-servers/result-analysis-mcp/
 !mcp-servers/redfish-mcp/
 # Re-ignore the downloaded upstream binary: 75 MB, fetched at install and
 # verified against CHECKSUMS. The negation above would otherwise commit it (spec 084).
@@ -157,6 +161,8 @@ mcp-servers/anta-mcp/.venv/
 !mcp-servers/worldlabs-marble-mcp/
 !mcp-servers/jev-mcp/
 mcp-servers/jev-mcp/.venv/
+!mcp-servers/netconverter-mcp/
+mcp-servers/netconverter-mcp/.venv/
 # Spec 122: World Labs Marble fantastical topology viz, NetClaw-authored, not vendored.
 
 # Traces
@@ -234,3 +240,16 @@ mcp-servers/hermes-hud-mcp/__pycache__/
 
 # Durable alert receiver queue (local runtime state)
 services/alert-receiver/state/
+
+# Spec162 first-party connector; generated environments remain private/ignored.
+!mcp-servers/convergence-read-mcp/
+mcp-servers/convergence-read-mcp/.venv/
+mcp-servers/convergence-read-mcp/__pycache__/
+
+# Private cloud review inputs/state (roadmap work remains unreleased)
+**/.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+*.tfvars.json
+*.tfplan

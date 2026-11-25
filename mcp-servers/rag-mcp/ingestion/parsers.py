@@ -1,6 +1,6 @@
 """Two-tier document parsing for rag-mcp (FR-002, FR-008a).
 
-Native tier: PDF (pymupdf), Markdown, HTML (BeautifulSoup), TXT.
+Native tier: PDF (pymupdf), Markdown, HTML (BeautifulSoup), TXT, JSON/OpenAPI.
 Office tier: DOCX/XLSX/PPTX/VSDX via Python parsers; legacy DOC/XLS/PPT/VSD
 via `soffice --headless --convert-to pdf` fallback (graceful failure with an
 actionable message when LibreOffice is absent).
@@ -14,6 +14,7 @@ Blocks are (kind, text, page) tuples where kind is 'text' | 'atomic'
 """
 
 import hashlib
+import json
 import re
 import shutil
 import subprocess
@@ -500,143 +501,58 @@ def _convert_legacy(path: Path, max_pages: int) -> ParsedDocument:
         )
 
 
-# ---------------------------------------------------------------------
-# JSON / OpenAPI
-# ---------------------------------------------------------------------
-def _brief_request_body(rb: object) -> str:
-    if not isinstance(rb, dict):
-        return "present"
-    content = rb.get("content") or {}
-    if not isinstance(content, dict):
-        return rb.get("description") or "present"
-    parts = []
-    for ctype, body in content.items():
-        if not isinstance(body, dict):
-            parts.append(str(ctype))
-            continue
-        schema = body.get("schema") or {}
-        ref = ""
-        if isinstance(schema, dict):
-            ref = schema.get("$ref") or (schema.get("items") or {}).get("$ref") or schema.get("type") or ""
-        parts.append(f"{ctype} {ref}".strip())
-    return "; ".join(parts) if parts else (rb.get("description") or "present")
-
-
-def _parse_openapi(data: dict, fallback_title: str) -> ParsedDocument:
-    """Turn OpenAPI 3 / Swagger 2 JSON into heading-scoped sections for RAG."""
-    info = data.get("info") if isinstance(data.get("info"), dict) else {}
-    title = (info.get("title") or fallback_title or "OpenAPI").strip()
-    version = (info.get("version") or "").strip()
-    if version and version not in title:
-        title = f"{title} {version}".strip()
-
-    sections: List[Section] = []
-
-    overview: List[str] = []
-    if info.get("description"):
-        overview.append(str(info["description"]).strip())
-    servers = data.get("servers") or []
-    if isinstance(servers, list) and servers:
-        lines = ["Servers:"]
-        for s in servers:
-            if isinstance(s, dict) and s.get("url"):
-                desc = s.get("description") or ""
-                lines.append(f"- {s['url']}" + (f" — {desc}" if desc else ""))
-        overview.append("\n".join(lines))
-    tags = data.get("tags") or []
-    if isinstance(tags, list) and tags:
-        lines = ["Tags:"]
-        for t in tags:
-            if isinstance(t, dict) and t.get("name"):
-                lines.append(f"- {t['name']}: {(t.get('description') or '').strip()}")
-        overview.append("\n".join(lines))
-    if overview:
-        sections.append(
-            Section(heading_path=["Overview"], blocks=[("text", "\n\n".join(overview), None)])
-        )
-
-    http_methods = {"get", "post", "put", "patch", "delete", "head", "options", "trace"}
-    paths = data.get("paths") or {}
-    if isinstance(paths, dict):
-        for path, methods in sorted(paths.items(), key=lambda kv: str(kv[0])):
-            if not isinstance(methods, dict):
-                continue
-            for method, op in sorted(methods.items(), key=lambda kv: str(kv[0])):
-                m = str(method).lower()
-                if m not in http_methods or not isinstance(op, dict):
-                    continue
-                op_id = op.get("operationId") or f"{m.upper()} {path}"
-                summary = (op.get("summary") or "").strip()
-                desc = (op.get("description") or "").strip()
-                tag_list = [str(t) for t in (op.get("tags") or []) if t]
-                body_lines = [
-                    f"{m.upper()} {path}",
-                    f"Operation ID: {op_id}",
-                ]
-                if tag_list:
-                    body_lines.append("Tags: " + ", ".join(tag_list))
-                if summary:
-                    body_lines.append(summary)
-                if desc and desc != summary:
-                    body_lines.append(desc)
-                params = op.get("parameters") or []
-                if isinstance(params, list) and params:
-                    body_lines.append("Parameters:")
-                    for p in params:
-                        if not isinstance(p, dict):
-                            continue
-                        req = "required" if p.get("required") else "optional"
-                        body_lines.append(
-                            f"- {p.get('name')} ({p.get('in')}, {req}): "
-                            f"{(p.get('description') or '').strip()}"
-                        )
-                if op.get("requestBody"):
-                    body_lines.append(f"Request body: {_brief_request_body(op.get('requestBody'))}")
-                responses = op.get("responses") or {}
-                if isinstance(responses, dict) and responses:
-                    body_lines.append("Responses:")
-                    for code, resp in responses.items():
-                        if isinstance(resp, dict):
-                            body_lines.append(
-                                f"- {code}: {(resp.get('description') or '').strip()}"
-                            )
-                        else:
-                            body_lines.append(f"- {code}")
-                tag_head = tag_list[0] if tag_list else "API"
-                sections.append(
-                    Section(
-                        heading_path=[tag_head, f"{m.upper()} {path}"],
-                        blocks=[("text", "\n".join(body_lines), None)],
-                    )
-                )
-
-    schemas = (data.get("components") or {}).get("schemas") if isinstance(data.get("components"), dict) else None
-    if isinstance(schemas, dict) and schemas:
-        names = sorted(str(n) for n in schemas.keys())
-        listing = "Component schemas:\n" + "\n".join(f"- {n}" for n in names[:300])
-        if len(names) > 300:
-            listing += f"\n- … +{len(names) - 300} more"
-        sections.append(Section(heading_path=["Schemas"], blocks=[("text", listing, None)]))
-
-    _require_text(sections, title)
-    return ParsedDocument(title=title, sections=sections, page_count=None, content_hash="")
+def _json_section(heading: List[str], value: object) -> Section:
+    # Stream the representation into prose blocks. One block per JSON token
+    # would make even small numeric arrays expensive to embed and store.
+    encoder = json.JSONEncoder(ensure_ascii=False, allow_nan=False, indent=0)
+    pending = ""
+    section = Section(heading_path=heading)
+    for token in encoder.iterencode(value):
+        # Keep even a single long description or string value searchable beyond
+        # the embedding model's truncation point. Preserve every character.
+        for offset in range(0, len(token), 1200):
+            piece = token[offset:offset + 1200]
+            if pending and len(pending) + len(piece) > 1200:
+                section.blocks.append(("text", pending, None))
+                pending = ""
+            pending += piece
+    if pending:
+        section.blocks.append(("text", pending, None))
+    return section
 
 
 def _parse_json(path: Path) -> ParsedDocument:
-    """JSON files: OpenAPI/Swagger → structured API docs; else pretty-printed text."""
-    import json
-
-    raw = path.read_text(encoding="utf-8", errors="replace")
     try:
-        data = json.loads(raw)
-    except json.JSONDecodeError as exc:
+        data = json.loads(path.read_bytes())
+        return _json_document(data, path.stem)
+    except (ValueError, RecursionError) as exc:
         raise IngestError("PARSE_FAILED", f"Invalid JSON in '{path.name}': {exc}") from exc
 
-    if isinstance(data, dict) and ("openapi" in data or "swagger" in data) and "paths" in data:
-        return _parse_openapi(data, path.stem)
 
-    pretty = json.dumps(data, indent=2, ensure_ascii=False)
-    return _parse_txt(pretty, path.stem)
+def _json_document(data: object, fallback_title: str) -> ParsedDocument:
+    if not (isinstance(data, dict) and ("openapi" in data or "swagger" in data)
+            and isinstance(data.get("paths"), dict)):
+        return ParsedDocument(fallback_title, [_json_section([], data)], None, "")
+
+    info = data.get("info")
+    title = fallback_title
+    if isinstance(info, dict) and isinstance(info.get("title"), str):
+        title = " ".join(str(v) for v in (info["title"], info.get("version")) if v) or fallback_title
+    sections = []
+    for name, value in data.items():
+        if name != "paths":
+            sections.append(_json_section([name], value))
+    for endpoint, path_item in data["paths"].items():
+        if not isinstance(path_item, dict):
+            continue
+        for method, operation in path_item.items():
+            if method in {"get", "post", "put", "patch", "delete", "head", "options", "trace"}:
+                heading = f"{method.upper()} {endpoint}"
+            else:
+                # Keep path-wide parameters, references and extensions searchable.
+                heading = f"{endpoint} {method}"
+            sections.append(_json_section([heading], operation))
+    return ParsedDocument(title, sections, None, "")
 
 
 # ---------------------------------------------------------------------
@@ -670,10 +586,10 @@ def parse_file(path: Path, max_mb: int = 100, max_pages: int = 1000) -> ParsedDo
         parsed = _parse_markdown(path.read_text(encoding="utf-8", errors="replace"), path.stem)
     elif ext in (".html", ".htm"):
         parsed = parse_html_text(path.read_text(encoding="utf-8", errors="replace"), path.stem)
-    elif ext == ".txt":
-        parsed = _parse_txt(path.read_text(encoding="utf-8", errors="replace"), path.stem)
     elif ext == ".json":
         parsed = _parse_json(path)
+    elif ext == ".txt":
+        parsed = _parse_txt(path.read_text(encoding="utf-8", errors="replace"), path.stem)
     elif ext == ".docx":
         parsed = _parse_docx(path)
     elif ext == ".xlsx":

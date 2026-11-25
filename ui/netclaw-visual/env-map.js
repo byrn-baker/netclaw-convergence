@@ -915,6 +915,31 @@ export const ENV_MAP = {
       "workspace/skills/worldlabs-topology-viz/"
     ],
     "notes": "Only needed for the generate step (spends real World Labs credits, ~5 minutes per world) — the free preview mode needs no credential at all. Requires a funded World Labs account (platform.worldlabs.ai/billing). generate_world itself refuses to run without an explicit user_confirmed=true argument, in addition to the conversational confirmation the skill also requires."
+  },
+  "convergence-read": {
+    "env": [
+      "CONVERGENCE_ENABLED",
+      "CONVERGENCE_API_URL",
+      "CONVERGENCE_API_TOKEN",
+      "CONVERGENCE_SITE",
+      "CONVERGENCE_EXPORTERS",
+      "CONVERGENCE_ALLOW_LOOPBACK_HTTP"
+    ],
+    "files": [
+      "mcp-servers/convergence-read-mcp/server.py"
+    ],
+    "notes": "Optional read-only retained-flow connector."
+  },
+  "genie-worlds": {
+    "env": [
+      "NETCLAW_GENIE_CONTROL_FILE",
+      "NETCLAW_GENIE_STATE_DIR"
+    ],
+    "files": [
+      "mcp-servers/genie-worlds-mcp/server.py",
+      "scripts/genie-worlds/cli.mjs"
+    ],
+    "notes": "Optional Google-generated walkthrough backend control; no local 3D scene substitution."
   }
 };
 export const COMPONENT_ALIASES = {
@@ -1172,6 +1197,12 @@ export const COMPONENT_ALIASES = {
   ],
   "worldlabs-viz": [
     "worldlabs-marble"
+  ],
+  "convergence-read": [
+    "convergence-read"
+  ],
+  "genie-worlds": [
+    "genie-worlds"
   ]
 };
 export const COMPONENT_SETTINGS = {
@@ -10670,7 +10701,27 @@ export const COMPONENT_SETTINGS = {
       ]
     }
   ],
-  "peering": [],
+  "peering": [
+    {
+      "key": "NGROK_AUTHTOKEN",
+      "label": "Border ngrok agent token",
+      "help": "Optional for a home/NAT Border using ngrok. Direct cloud, private and air-gapped transport require no ngrok token. Never distribute to members or use as identity.",
+      "classification": "secret",
+      "valueType": "string",
+      "required": "optional",
+      "condition": null,
+      "example": "",
+      "sharedWith": [],
+      "input": "user",
+      "provenance": [
+        {
+          "source": "scripts/ngrok-control.py",
+          "checkedAt": "2026-11-01",
+          "note": "Loaded only from selected private environment; inherited values excluded."
+        }
+      ]
+    }
+  ],
   "n2n": [
     {
       "key": "BGP_DAEMON_API",
@@ -10910,6 +10961,44 @@ export const COMPONENT_SETTINGS = {
           "source": "ui/netclaw-visual/env-map.js",
           "checkedAt": "2026-10-17",
           "note": "Existing card field inventory; requirement and classification reconciled into this catalog."
+        }
+      ]
+    },
+    {
+      "key": "N2N_ENDPOINT_REGISTRY",
+      "label": "Endpoint registry",
+      "help": "Owned strict endpoint registry. Schema2 selects direct_tcp for cloud/private/air-gapped reachability or optional ngrok_tcp for a NAT Border; schema1 keeps the original ngrok contract.",
+      "classification": "private",
+      "valueType": "path",
+      "required": "optional",
+      "condition": null,
+      "example": "",
+      "sharedWith": [],
+      "input": "user",
+      "provenance": [
+        {
+          "source": "specs/168-ngrok-transport-contract/deferred-docs/NGROK-TRANSPORT.md",
+          "checkedAt": "2026-11-01",
+          "note": "R01 explicit selected-runtime transport contract; live qualification is separate."
+        }
+      ]
+    },
+    {
+      "key": "N2N_BORDER_REGISTRY_ID",
+      "label": "Border registration",
+      "help": "Member-only endpoint ID for the approved Border; routing and TLS/application identity stay separate.",
+      "classification": "private",
+      "valueType": "string",
+      "required": "optional",
+      "condition": null,
+      "example": "",
+      "sharedWith": [],
+      "input": "user",
+      "provenance": [
+        {
+          "source": "specs/168-ngrok-transport-contract/deferred-docs/NGROK-TRANSPORT.md",
+          "checkedAt": "2026-11-01",
+          "note": "R01 explicit selected-runtime transport contract; live qualification is separate."
         }
       ]
     }
@@ -13891,6 +13980,470 @@ export const COMPONENT_SETTINGS = {
           "source": "ui/netclaw-visual/env-map.js",
           "checkedAt": "2026-10-17",
           "note": "Existing card field inventory; requirement and classification reconciled into this catalog."
+        }
+      ]
+    }
+  ],
+  "netconverter": [
+    {
+      "key": "NETCONVERTER_MODE",
+      "label": "Mode",
+      "help": "Choose hosted-readonly or local-terminal. Setup never submits a file.",
+      "classification": "public",
+      "valueType": "string",
+      "required": "always",
+      "condition": null,
+      "example": "hosted-readonly",
+      "sharedWith": [],
+      "input": "user",
+      "provenance": [
+        {
+          "source": "mcp-servers/netconverter-mcp/server.py",
+          "checkedAt": "2026-10-30",
+          "note": "Guarded integration; live account and target qualification separate."
+        }
+      ]
+    },
+    {
+      "key": "NETCONVERTER_API_KEY",
+      "label": "API key",
+      "help": "Enabled installation-specific API key; configure later while account approval is pending.",
+      "classification": "secret",
+      "valueType": "string",
+      "required": "always",
+      "condition": null,
+      "example": "",
+      "sharedWith": [],
+      "input": "user",
+      "provenance": [
+        {
+          "source": "mcp-servers/netconverter-mcp/server.py",
+          "checkedAt": "2026-10-30",
+          "note": "Guarded integration; live account and target qualification separate."
+        }
+      ]
+    },
+    {
+      "key": "NETCONVERTER_ACCOUNT_REF",
+      "label": "Account reference",
+      "help": "Your local account label; not a verified tenant identity.",
+      "classification": "private",
+      "valueType": "string",
+      "required": "always",
+      "condition": null,
+      "example": "",
+      "sharedWith": [],
+      "input": "user",
+      "provenance": [
+        {
+          "source": "mcp-servers/netconverter-mcp/server.py",
+          "checkedAt": "2026-10-30",
+          "note": "Guarded integration; live account and target qualification separate."
+        }
+      ]
+    },
+    {
+      "key": "NETCONVERTER_WORKSPACE",
+      "label": "Terminal workspace",
+      "help": "Absolute existing private workspace; its upstream privacy policy is preserved.",
+      "classification": "private",
+      "valueType": "path",
+      "required": "conditional",
+      "condition": {
+        "equals": {
+          "key": "NETCONVERTER_MODE",
+          "value": "local-terminal"
+        }
+      },
+      "example": "",
+      "sharedWith": [],
+      "input": "user",
+      "provenance": [
+        {
+          "source": "mcp-servers/netconverter-mcp/server.py",
+          "checkedAt": "2026-10-30",
+          "note": "Guarded integration; live account and target qualification separate."
+        }
+      ]
+    },
+    {
+      "key": "NETCONVERTER_EXECUTABLE",
+      "label": "Licensed Terminal executable",
+      "help": "Absolute operator-installed executable. Installer never accepts the license.",
+      "classification": "private",
+      "valueType": "path",
+      "required": "conditional",
+      "condition": {
+        "equals": {
+          "key": "NETCONVERTER_MODE",
+          "value": "local-terminal"
+        }
+      },
+      "example": "",
+      "sharedWith": [],
+      "input": "user",
+      "provenance": [
+        {
+          "source": "mcp-servers/netconverter-mcp/server.py",
+          "checkedAt": "2026-10-30",
+          "note": "Guarded integration; live account and target qualification separate."
+        }
+      ]
+    },
+    {
+      "key": "NETCONVERTER_DATA_DIR",
+      "label": "Private guard state",
+      "help": "Generated inside this installation.",
+      "classification": "private",
+      "valueType": "path",
+      "required": "always",
+      "condition": null,
+      "example": "",
+      "sharedWith": [],
+      "input": "generated",
+      "provenance": [
+        {
+          "source": "mcp-servers/netconverter-mcp/server.py",
+          "checkedAt": "2026-10-30",
+          "note": "Guarded integration; live account and target qualification separate."
+        }
+      ]
+    },
+    {
+      "key": "NETCONVERTER_INSTALLATION_ID",
+      "label": "Installation binding",
+      "help": "Generated from this installation identity.",
+      "classification": "private",
+      "valueType": "string",
+      "required": "always",
+      "condition": null,
+      "example": "",
+      "sharedWith": [],
+      "input": "generated",
+      "provenance": [
+        {
+          "source": "mcp-servers/netconverter-mcp/server.py",
+          "checkedAt": "2026-10-30",
+          "note": "Guarded integration; live account and target qualification separate."
+        }
+      ]
+    }
+  ],
+  "convergence-read": [
+    {
+      "key": "CONVERGENCE_ENABLED",
+      "label": "Enabled",
+      "help": "Explicitly enable this optional connector; default false.",
+      "classification": "public",
+      "valueType": "boolean",
+      "required": "optional",
+      "condition": null,
+      "example": "",
+      "sharedWith": [],
+      "input": "user",
+      "provenance": [
+        {
+          "source": "mcp-servers/convergence-read-mcp/settings.py",
+          "checkedAt": "2026-10-31",
+          "note": "Fixed server-side connector configuration; required when enabled."
+        }
+      ]
+    },
+    {
+      "key": "CONVERGENCE_API_URL",
+      "label": "Api Url",
+      "help": "Verified HTTPS origin, or explicit literal loopback HTTP for a local trial.",
+      "classification": "private",
+      "valueType": "string",
+      "required": "optional",
+      "condition": null,
+      "example": "",
+      "sharedWith": [],
+      "input": "user",
+      "provenance": [
+        {
+          "source": "mcp-servers/convergence-read-mcp/settings.py",
+          "checkedAt": "2026-10-31",
+          "note": "Fixed server-side connector configuration; required when enabled."
+        }
+      ]
+    },
+    {
+      "key": "CONVERGENCE_API_TOKEN",
+      "label": "Api Token",
+      "help": "Private API viewer credential restricted to this site.",
+      "classification": "secret",
+      "valueType": "string",
+      "required": "optional",
+      "condition": null,
+      "example": "",
+      "sharedWith": [],
+      "input": "user",
+      "provenance": [
+        {
+          "source": "mcp-servers/convergence-read-mcp/settings.py",
+          "checkedAt": "2026-10-31",
+          "note": "Fixed server-side connector configuration; required when enabled."
+        }
+      ]
+    },
+    {
+      "key": "CONVERGENCE_SITE",
+      "label": "Site",
+      "help": "One fixed site identifier.",
+      "classification": "private",
+      "valueType": "string",
+      "required": "optional",
+      "condition": null,
+      "example": "",
+      "sharedWith": [],
+      "input": "user",
+      "provenance": [
+        {
+          "source": "mcp-servers/convergence-read-mcp/settings.py",
+          "checkedAt": "2026-10-31",
+          "note": "Fixed server-side connector configuration; required when enabled."
+        }
+      ]
+    },
+    {
+      "key": "CONVERGENCE_EXPORTERS",
+      "label": "Exporters",
+      "help": "Comma-separated allowed exporter IP addresses.",
+      "classification": "private",
+      "valueType": "string",
+      "required": "optional",
+      "condition": null,
+      "example": "",
+      "sharedWith": [],
+      "input": "user",
+      "provenance": [
+        {
+          "source": "mcp-servers/convergence-read-mcp/settings.py",
+          "checkedAt": "2026-10-31",
+          "note": "Fixed server-side connector configuration; required when enabled."
+        }
+      ]
+    },
+    {
+      "key": "CONVERGENCE_ALLOW_LOOPBACK_HTTP",
+      "label": "Allow Loopback Http",
+      "help": "Explicit local-development HTTP opt-in; default false.",
+      "classification": "public",
+      "valueType": "boolean",
+      "required": "optional",
+      "condition": null,
+      "example": "",
+      "sharedWith": [],
+      "input": "user",
+      "provenance": [
+        {
+          "source": "mcp-servers/convergence-read-mcp/settings.py",
+          "checkedAt": "2026-10-31",
+          "note": "Fixed server-side connector configuration; required when enabled."
+        }
+      ]
+    }
+  ],
+  "result-analysis": [],
+  "cisco-iq": [
+    {
+      "key": "CISCO_IQ_API_KEY",
+      "label": "Cisco IQ Api Key",
+      "help": "Cisco IQ API key owned by a user principal (service-account keys receive no tools). Set via scripts/cisco-iq-enable.sh (stdin or hidden prompt); sent as Authorization: Bearer.",
+      "classification": "secret",
+      "valueType": "string",
+      "required": "always",
+      "condition": null,
+      "example": "",
+      "sharedWith": [],
+      "input": "user",
+      "provenance": [
+        {
+          "source": "scripts/cisco_iq.py",
+          "checkedAt": "2026-11-11",
+          "note": "Variables managed by scripts/cisco-iq-enable.sh."
+        }
+      ]
+    },
+    {
+      "key": "CISCO_IQ_REGION",
+      "label": "Cisco IQ Region",
+      "help": "Explicit account region: emea, us or apjc. Never inferred.",
+      "classification": "public",
+      "valueType": "string",
+      "required": "always",
+      "condition": null,
+      "example": "us",
+      "sharedWith": [],
+      "input": "user",
+      "provenance": [
+        {
+          "source": "scripts/cisco_iq.py",
+          "checkedAt": "2026-11-11",
+          "note": "Variables managed by scripts/cisco-iq-enable.sh."
+        }
+      ]
+    }
+  ],
+  "greynoise-community": [
+    {
+      "key": "GREYNOISE_API_KEY",
+      "label": "GREYNOISE_API_KEY",
+      "help": "Optional GreyNoise Community key for authenticated requests.",
+      "classification": "secret",
+      "valueType": "string",
+      "required": "optional",
+      "condition": null,
+      "example": "",
+      "sharedWith": [
+        "threatintel"
+      ],
+      "input": "user",
+      "provenance": [
+        {
+          "source": "https://docs.greynoise.io/reference/getcommunityip",
+          "checkedAt": "2026-11-12",
+          "note": "Component environment configuration."
+        }
+      ]
+    },
+    {
+      "key": "GREYNOISE_TIMEOUT",
+      "label": "GREYNOISE_TIMEOUT",
+      "help": "Request timeout in seconds (default 10, maximum 60).",
+      "classification": "public",
+      "valueType": "string",
+      "required": "optional",
+      "condition": null,
+      "example": "",
+      "sharedWith": [],
+      "input": "user",
+      "provenance": [
+        {
+          "source": "https://docs.greynoise.io/reference/getcommunityip",
+          "checkedAt": "2026-11-12",
+          "note": "Component environment configuration."
+        }
+      ]
+    }
+  ],
+  "threatintel": [
+    {
+      "key": "GREYNOISE_API_KEY",
+      "label": "GREYNOISE_API_KEY",
+      "help": "Optional GreyNoise key.",
+      "classification": "secret",
+      "valueType": "string",
+      "required": "optional",
+      "condition": null,
+      "example": "",
+      "sharedWith": [
+        "greynoise-community"
+      ],
+      "input": "user",
+      "provenance": [
+        {
+          "source": "https://github.com/aplaceforallmystuff/mcp-threatintel/tree/1f36c2d29877124bd60ac1fe4562b203e3fd3a14",
+          "checkedAt": "2026-11-12",
+          "note": "Component environment configuration."
+        }
+      ]
+    },
+    {
+      "key": "ABUSEIPDB_API_KEY",
+      "label": "ABUSEIPDB_API_KEY",
+      "help": "Enable AbuseIPDB lookups.",
+      "classification": "secret",
+      "valueType": "string",
+      "required": "optional",
+      "condition": null,
+      "example": "",
+      "sharedWith": [],
+      "input": "user",
+      "provenance": [
+        {
+          "source": "https://github.com/aplaceforallmystuff/mcp-threatintel/tree/1f36c2d29877124bd60ac1fe4562b203e3fd3a14",
+          "checkedAt": "2026-11-12",
+          "note": "Component environment configuration."
+        }
+      ]
+    },
+    {
+      "key": "OTX_API_KEY",
+      "label": "OTX_API_KEY",
+      "help": "Enable AlienVault OTX lookups.",
+      "classification": "secret",
+      "valueType": "string",
+      "required": "optional",
+      "condition": null,
+      "example": "",
+      "sharedWith": [],
+      "input": "user",
+      "provenance": [
+        {
+          "source": "https://github.com/aplaceforallmystuff/mcp-threatintel/tree/1f36c2d29877124bd60ac1fe4562b203e3fd3a14",
+          "checkedAt": "2026-11-12",
+          "note": "Component environment configuration."
+        }
+      ]
+    },
+    {
+      "key": "ABUSECH_AUTH_KEY",
+      "label": "ABUSECH_AUTH_KEY",
+      "help": "Enable abuse.ch URLhaus, MalwareBazaar and ThreatFox lookups.",
+      "classification": "secret",
+      "valueType": "string",
+      "required": "optional",
+      "condition": null,
+      "example": "",
+      "sharedWith": [],
+      "input": "user",
+      "provenance": [
+        {
+          "source": "https://github.com/aplaceforallmystuff/mcp-threatintel/tree/1f36c2d29877124bd60ac1fe4562b203e3fd3a14",
+          "checkedAt": "2026-11-12",
+          "note": "Component environment configuration."
+        }
+      ]
+    }
+  ],
+  "genie-worlds": [
+    {
+      "key": "NETCLAW_GENIE_CONTROL_FILE",
+      "label": "Genie backend control file",
+      "help": "Private loopback control capability generated by this installation-owned backend; never a Google API key.",
+      "classification": "private",
+      "valueType": "path",
+      "required": "always",
+      "condition": null,
+      "example": "",
+      "sharedWith": [],
+      "input": "generated",
+      "provenance": [
+        {
+          "source": "scripts/genie-worlds/mcp_server.py",
+          "checkedAt": "2026-11-23",
+          "note": "Six stdio controls; backend-owned Google credentials and explicit paid review."
+        }
+      ]
+    },
+    {
+      "key": "NETCLAW_GENIE_STATE_DIR",
+      "label": "Genie private state directory",
+      "help": "Installation-owned backend evidence and session ledger; no automatic backend start.",
+      "classification": "private",
+      "valueType": "path",
+      "required": "always",
+      "condition": null,
+      "example": "",
+      "sharedWith": [],
+      "input": "generated",
+      "provenance": [
+        {
+          "source": "scripts/genie-worlds/mcp_server.py",
+          "checkedAt": "2026-11-23",
+          "note": "Six stdio controls; backend-owned Google credentials and explicit paid review."
         }
       ]
     }

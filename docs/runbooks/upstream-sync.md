@@ -4,6 +4,134 @@ Convergence extends `automateyournetwork/netclaw`. Merge upstream history into
 this fork; do not replace upstream features with a separate implementation.
 The fork's live OpenClaw configuration is not the repository's installer template.
 
+## 2026-11-25 integration
+
+- Upstream: `8d641c6c` (source **1.26.0**), 503 commits since the previous
+  merge base `4d791a36`.
+- Fork baseline: GitHub `main` `024821c8`; rollback branch
+  `backup/pre-upstream-sync-20261125-024821c8`. The local `main` checkout was 16
+  commits behind GitHub `main`; always sync from GitHub `main`.
+- Owner decision (2026-11-25): keep the fork's Convergence code (option 1).
+- 43 files conflicted. Fork Convergence commits had touched 41 of them.
+
+### Resolution decisions
+
+**Where upstream took over fork work, upstream's version wins.**
+- **What upstream absorbed:**
+  - the RAG JSON/OpenAPI ingest, HTML quality warnings and investigation-snapshot
+    search (spec 194);
+  - the skill guardrails (spec 192);
+  - `n2n_task_wait`;
+  - hub credential renewal (spec 180);
+  - the GreyNoise server (spec 195);
+  - the MCP-template price handling (`load_mcp_template`);
+  - the gateway-token `${...}` resolution.
+- **Silent merge bug.** The auto-merge left two `_parse_json` definitions in
+  `rag-mcp/ingestion/parsers.py`, so upstream's file was taken whole.
+- **Fork differences kept on top of upstream:**
+  - the GCF serialization in `n2n-mcp` and GreyNoise;
+  - the member role pin in the delegated-skill prompt, now followed by
+    upstream's `SKILL_FAILURE_RULE`;
+  - the `network-guardian` and `guardian-claw` member profiles;
+  - the pfSense and UniFi MCP defaults;
+  - the SuzieQ response limits;
+  - the private-runtime `mkdir -m 700`;
+  - the `install-steps.d/` fragment hook.
+
+**Version line.** The fork's own releases 1.15.0, 1.15.1 and 1.16.0 (specs
+1010–1012) collided with upstream's numbers. The fork now follows upstream's
+`VERSION` (1.26.0). The fork's release notes moved to
+`docs/releases/convergence/`, under a "Convergence fork releases" changelog
+section.
+
+**Convergence naming.** Upstream's `docs/CONVERGENCE.md` and `convergence-setup`
+skill describe the convergence-platform connector, so they keep those paths.
+- The fork's in-tree stack guide is now `docs/convergence/README.md`.
+- Its setup skill, with its scripts, references, CI workflow and tests, is now
+  `convergence-stack-setup`.
+- In the HUD, the fork workspace is the **Convergence home** button (view id
+  `convergence-home`), distinct from upstream's **Convergence** item; see
+  `ui/netclaw-visual/FORK-NOTES.md`.
+
+**Catalog and manifests.**
+- **`catalog.json`:** merged entry by entry. Fork components were renumbered after
+  upstream's 7 new ones.
+- **`catalog.sh` and `env-map.js`:** regenerated.
+- **`effects.json`:** rebuilt from upstream's entries plus the fork's Convergence
+  entries. The install-steps source, fragment and `suzieq` function hashes were
+  refreshed after reviewing the installer diff against upstream, which contains only
+  the three fork additions above.
+- **Protected n2n source allowlist:** upstream's three hashes plus the merged
+  file's hash. The old fork hash was dropped.
+- **`tests/contract-suites.json`:** upstream plus the fork-only suites
+  (`convergence-home`, `convergence-host`, `convergence-host-status`).
+- **Inventory counts:** computed by `verify-inventory-counts.py`.
+  - 257 skills: upstream's 243 plus the fork's 14.
+  - 185 MCP integrations: upstream's 183 plus pfSense and UniFi.
+  - 132 registered servers.
+
+**Behaviour change for fork tools.**
+- **`docs-site-to-pdf.py`:** now verifies TLS unless `--insecure` is given, matching
+  upstream's rag-mcp. LAN appliances with self-signed certificates need `--insecure`.
+- **GreyNoise:** looks up public IPv4 addresses only. Its compatibility test now uses
+  a public address.
+
+**Guardian member profile (upstream spec 183).**
+- **Skill bindings:** `alert-triage` and `wifi-diagnosis` are now bound in the
+  catalog to the servers their instructions call:
+  - `alert-triage`: Grafana, GreyNoise, pfSense, Prometheus, pyATS, RAG and UniFi;
+  - `wifi-diagnosis`: UniFi.
+- **Profile servers:** the `network-guardian` profile keeps exactly that set, so it
+  gains `unifi-network`.
+- **Alias removed:** the `guardian-claw` alias key was not a profile.
+  `ensure-guardian-claw.py` enrols through `network-guardian`.
+- **Shared secrets:** `DISCORD_` was removed from the Guardian's environment slice,
+  because members never receive shared channel secrets.
+- **Live effect:** existing member homes are unchanged. Only a regenerated Guardian
+  member gets the new slice.
+
+**Submodules removed.**
+- **`threatintel-mcp`:** upstream installs it from a pinned checkout through
+  `scripts/setup-threatintel.py`.
+- **`nautobot-firewall-mcp`:** nothing referenced it.
+- **`.gitmodules`:** removed. Four of its six entries were already stale.
+- **Why:** upstream's separate-claw deploy refuses submodule directories in its
+  source set.
+
+### Verification (2026-11-25, `umask 077`, isolated contract environments)
+
+- **Static checks** all pass:
+  - catalog generation parity, metadata (129 components, 257 skills), links,
+    coverage and inventory counts;
+  - `EffectAudit.verify`;
+  - all six `reconcile-mcp.py` surfaces;
+  - `verify-spec-artifacts.py` (214 specs).
+- **Ruff F/E9:** the merge introduced no new findings compared with the same files
+  on either parent.
+- **Contract suites:** 38 pass. `setup-installer` and `n2n` pass after the fixes
+  above; `n2n` is about 2,700 tests.
+  - **Need live credentials:** anta, catc, cisco-iq, cisco-psirt, fortinet,
+    globalping, k8s and zabbix.
+  - **Need Docker:** multivendor, nsm and redfish.
+- **Environmental failures (reproduced and explained):**
+  - `unit` `test_jev_core.py::test_existing_nonprivate_directory_not_silently_chmodded`
+    assumes umask 022 and passes under it.
+  - `test_hermes_hud_installer` needs `ui/netclaw-visual/node_modules`, and
+    `setup-installer` refuses the hard-linked binaries `npm ci` creates there. Each
+    passes in its own environment.
+  - `integration` `test_rag_mcp.py` needs `fastmcp-tasks`, which upstream's
+    integration environment does not install. The inputs are identical to upstream's.
+  - `test_threejs_network_viz` needs Chromium's `libatk`, which this host lacks.
+  - `convergence-read-integration` is a held suite that needs
+    `CONVERGENCE_TEST_SERVICE_CHECKOUT`.
+- **Runner workaround:** upstream main's `run-contract-tests.py` refuses every suite,
+  because `tests/azure` has no manifest entry. A temporary, uncommitted `azure`
+  entry was used to run the suites.
+- **HUD:** 558 of 558 tests pass; the production build succeeds.
+- **Host note:** a checkout with group-writable directories (this host's umask 002)
+  fails the protected-source and installer guards, producing 155 `n2n` errors.
+  Remove group write from the worktree before testing.
+
 ## 2026-10-30 integration
 
 - Upstream: `b18d51c091fe4c854f970a9c55c84342eb173018`, source **1.14.0**,
@@ -104,6 +232,38 @@ Tracked checkout files and their directories had group/world write bits removed
 so upstream's protected setup-source validation works in the live checkout too.
 Executable bits and runtime file permissions were preserved. The host mesh
 file limitation described above remains separate.
+
+## Daily sync job
+
+`.github/workflows/upstream-sync.yml` runs `.github/scripts/upstream-sync.sh` every
+day at 09:23 UTC; it can also be run by hand from the Actions tab. It keeps one pull
+request, `sync/upstream` → `main`, and never merges into `main` itself.
+
+| Upstream state | What the job does |
+|---|---|
+| Already in `main` | Nothing. An open sync PR is closed. |
+| Clean merge | The branch becomes the merge commit. The PR lists the commits and the fast offline checks: catalog, metadata, coverage, counts, spec artifacts, effects manifest, MCP reconciliation and conflict markers. A failing check makes the PR a draft. |
+| Conflicts | The branch is upstream's `main`, so GitHub shows the conflicts. The draft PR lists the files and the commands to resolve them locally. |
+| Someone pushed resolution commits to `sync/upstream` | The job never resets the branch. It merges new upstream commits on top when that is clean, and otherwise comments on the PR. |
+
+- **Resolving conflicts:** follow the steps below on `sync/upstream`, then push.
+- **Before merging the PR:** run the affected contract suites. The PR's checks are
+  only the fast offline set.
+- **Token:** without a `UPSTREAM_SYNC_TOKEN` secret, the job uses `GITHUB_TOKEN`,
+  which has two limits:
+  - it cannot push upstream changes to `.github/workflows/` (the job logs this case);
+  - PRs it opens do not trigger the fork's other CI.
+
+  A fine-grained token for this repository with Contents, Pull requests and
+  Workflows set to read and write removes both limits.
+- **Local dry run:**
+
+  ```sh
+  GITHUB_REPOSITORY=byrn-baker/netclaw-convergence DRY_RUN=1 bash .github/scripts/upstream-sync.sh
+  ```
+
+  Run it in a scratch clone. It checks out a work branch, pushes nothing and calls
+  no GitHub API.
 
 ## Next upstream update
 

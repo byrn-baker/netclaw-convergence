@@ -95,7 +95,7 @@ Per Constitution Principle XI:
 
 - `README.md` — description, architecture, **and the counts**
 - `SOUL.md` — capability summary and **the counts**
-- `workspace/skills/<name>/SKILL.md` — if adding a skill
+- `workspace/skills/<name>/SKILL.md` — if adding a skill (and see "Skill load limits" below; `reconcile-mcp.py --surface skill-limits` fails when the shipped skills outgrow the configured limits)
 - `.env.example` — new variables, names and descriptions only, never values
 - `TOOLS.md` — infrastructure reference
 - `mcp-servers/<name>/README.md` — tools, env vars, transport, install
@@ -322,6 +322,40 @@ print('specialty:', [x['name'] for x in json.loads(r[1]) if x.get('tier')=='spec
 ```
 
 State must read `active` and the specialty list must contain your skills.
+
+Scope is not enough: the member's own OpenClaw must also load the skill. Since spec 174, a member checks
+its scoped skills with `openclaw skills check` after connecting and reports the ones it cannot load. The
+Border stops routing those to it and logs each one:
+
+```bash
+journalctl --user -u netclaw-mesh.service | grep "cannot load scoped skill"
+# member <risk>/<member> cannot load scoped skill <skill> (missing_requirements; missing env: X_MCP_SCRIPT); not routing it there
+```
+
+The reason says what to fix: `missing_requirements` (step 2, the member's `.env`), `disabled` (the
+member config's `skills.entries`), `not_installed` (step 3), or `not_loaded` (the skill is in the
+workspace but past OpenClaw's `skills.limits.maxSkillsLoadedPerSource`, 200 by default; since spec 188 NetClaw raises it, see "Skill load limits"). Restart the
+member after fixing it; it reports again when it reconnects.
+
+### Skill load limits (spec 188)
+
+OpenClaw loads at most 200 skills per source and puts at most 150 skills / 18,000 characters of skill
+descriptions in the model prompt. Skills past the load limit are never loaded and fail silently ("not
+found"); eligible skills past the prompt limits are silently left out of the prompt. `config/skill-limits.json`
+is the single source of truth for the values NetClaw configures (`maxSkillsLoadedPerSource`,
+`maxCandidatesPerRoot`, `maxSkillsInPrompt`, `maxSkillsPromptChars`):
+
+- The installer (`install-mcp-config.py`, OpenClaw only; Hermes has no such limits) writes them to
+  `skills.limits` **raise-only**: a higher operator value is kept, a lower or invalid one is raised, no other
+  key is touched. Generated member configs carry the same values.
+- `python3 scripts/check-skill-limits.py` (reconcile surface `skill-limits`, run by CI) fails when the
+  `workspace/skills` count exceeds a configured limit, or the estimated description size exceeds the
+  character budget, and notes at 80% use. When it fails, raise the value in `config/skill-limits.json`,
+  then re-run the installer.
+- Trade-off: a larger prompt budget means every eligible skill is visible to the model but costs more
+  prompt tokens per turn (the budget covers all shipped skills; typical Borders have fewer eligible).
+  Operators who want a smaller prompt should disable skills (`skills.entries.<name>.enabled: false`)
+  rather than lower the limits, which the installer would raise again.
 
 ### Why this is not in the checklist above
 

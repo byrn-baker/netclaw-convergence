@@ -4,7 +4,7 @@ Brian Baker identified [byrn-baker/Convergence](https://github.com/byrn-baker/Co
 as the original standalone project on 30 October 2026. Its [reviewed source](https://github.com/byrn-baker/Convergence/tree/fff81b52fdd9b792e375208abfa8d091adf9949a)
 contains the OpenTelemetry, VictoriaMetrics, Grafana, Loki and Alertmanager stack,
 Nautobot discovery and network/security dashboards. It is a source reference for
-the NetClaw add-on; use the [NetClaw installation guide](../CONVERGENCE.md) for the
+the NetClaw add-on; use the [NetClaw installation guide](README.md) for the
 current packaging and verified setup commands.
 
 The NetClaw API separately identifies `network-guardian-web` as its predecessor

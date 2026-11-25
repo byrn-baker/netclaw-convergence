@@ -2,7 +2,7 @@
 
 **Audience:** operators who want one place to pick LLM models without hand-editing
 `openclaw.json`.  
-**Related:** [ENV-AND-LAYOUT.md](./ENV-AND-LAYOUT.md) · [CONVERGENCE.md](./CONVERGENCE.md) ·
+**Related:** [ENV-AND-LAYOUT.md](./ENV-AND-LAYOUT.md) · [CONVERGENCE.md](convergence/README.md) ·
 [TOKEN-OPTIMIZATION.md](./TOKEN-OPTIMIZATION.md) · [specs/080-convergence/investigation-policy.md](../specs/080-convergence/investigation-policy.md)
 
 ---

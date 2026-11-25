@@ -75,6 +75,42 @@ _speaker = None
 _injected = {}
 
 
+def _limits_summary(fed, ident):
+    """Compact peer-limit state for /n2n/status and the HUD (spec 189); never raises."""
+    try:
+        st = fed.authz.limit_status(ident)
+        pol = st["policy"]
+        return {"action": pol["action"], "requests_used": st["requests_used"],
+                "requests_limit": pol["daily_requests"], "tokens_used": st["tokens_used"],
+                "tokens_limit": pol["daily_tokens"], "warned": st["warned"],
+                "hold_down_remaining_s": st["hold_down_remaining_s"]}
+    except Exception:
+        return None
+
+
+def federation_ready(runtime):
+    if not N2N_ENABLED or _federation is None:
+        return False
+    if runtime.kind == 'hermes' and not getattr(getattr(_federation, 'hermes_runtime', None), 'ready', False):
+        return False
+    ha = getattr(_federation, 'ha_runtime', None)
+    if ha is not None:
+        return bool(ha.node and ha.node.server and ha.node.server.is_serving()
+                    and ha.server and ha.server.is_serving())
+    if os.environ.get('N2N_ENDPOINT_REGISTRY'):
+        # Strict members have their own outbound-only status path. A strict
+        # Border's HTTP readiness must describe actual current listeners, not
+        # merely the existence of a FederationService object.
+        try:
+            listeners = [row for row in _federation.endpoint_status()['services']
+                         if row['direction'] == 'listen']
+            return (len(listeners) == 2 and {row['service'] for row in listeners} == {'in2n', 'en2n'}
+                    and all(row.get('listener_ready') is True for row in listeners))
+        except Exception:
+            return False
+    return True
+
+
 def _format_as_path(route):
     """Extract AS path as a list of integers from a BGPRoute."""
     from bgp.constants import ATTR_AS_PATH
@@ -214,6 +250,22 @@ async def handle_n2n(method, path, body):
     parts = path.strip("/").split("/")  # e.g. ["n2n","peers","as65007-7.7.7.7","inventory"]
 
     try:
+        # A narrow native Mobile issuer, never a public general daemon proxy.
+        if path == '/n2n/mobile/enrollment' or path.startswith('/n2n/mobile/enrollment/'):
+            from bgp.federation.protected_contract import ProtectedError
+            try:
+                if path == '/n2n/mobile/enrollment' and method == 'GET':
+                    return 200, fed.mobile_enrollment.info(body)
+                if path == '/n2n/mobile/enrollment' and method == 'POST':
+                    if fed.protected_enabled:
+                        return 403, {'code': 'protected_bridge_required'}
+                    return 200, fed.mobile_enrollment.issue(body)
+                nonce = path.removeprefix('/n2n/mobile/enrollment/')
+                if method == 'GET' and '/' not in nonce:
+                    return 200, fed.mobile_enrollment.status(dict(body, client_nonce=nonce))
+                return 404, {'code': 'mobile_route_unavailable'}
+            except ProtectedError as exc:
+                return exc.status, {'code': exc.code}
         if method == "GET" and path == "/n2n/status":
             peers = []
             for p in mgr.list_peers():
@@ -224,8 +276,10 @@ async def handle_n2n(method, path, body):
                     "inventory_version": (meta or {}).get("inventory", {}).get("version") if meta else None,
                     "inventory_received_at": (meta or {}).get("received_at") if meta else None,
                     "stale": (meta or {}).get("stale") if meta else None,
+                    "limits": _limits_summary(fed, p["identity"]),   # spec 189 (additive)
                 })
-            return 200, {"enabled": True, "identity": fed.local_identity, "peers": peers}
+            return 200, {"enabled": True, "identity": fed.local_identity, "peers": peers,
+                         "endpoint_registry": fed.endpoint_status()}
 
         if method == "POST" and path == "/n2n/consent":
             peer_as = body.get("as"); router_id = body.get("router_id")
@@ -278,6 +332,7 @@ async def handle_n2n(method, path, body):
             if not peer:
                 return 404, {"error": "unknown peer"}
             peer["budget"] = fed.authz.budget_status(ident)
+            peer["limits"] = fed.authz.limit_status(ident)   # spec 189
             return 200, peer
 
         if len(parts) == 4 and parts[1] == "peers" and parts[3] == "refresh" and method == "POST":
@@ -291,15 +346,39 @@ async def handle_n2n(method, path, body):
             for k in ("peer", "target_type", "target_name"):
                 if not body.get(k):
                     return 400, {"error": f"missing required field '{k}'"}
-            gid = fed.authz.grant(body["peer"], body["target_type"], body["target_name"],
-                                  bool(body.get("requires_approval", False)), body.get("timeout_s"))
+            try:   # spec 190: optional access_class (read | read_write)
+                gid = fed.authz.grant(body["peer"], body["target_type"], body["target_name"],
+                                      bool(body.get("requires_approval", False)), body.get("timeout_s"),
+                                      access_class=body.get("access_class"))
+            except ValueError as e:
+                return 400, {"error": str(e)}
+            stored = next((g["access_class"] for g in fed.authz.list_grants(body["peer"]) if g["id"] == gid),
+                          None)
             # FR-012 / research D12: grant/revoke was never audited before feature
             # 065 (verified during /speckit.analyze) — fixed generically here, for
             # every target_type, not just the new "knowledge_replica" one.
             fed.audit.record(direction="local", peer_identity=body["peer"],
                              target_type=body["target_type"], target_name=body["target_name"],
-                             decision="granted", outcome="success")
-            return 200, {"grant_id": gid}
+                             decision="granted",
+                             outcome="success" if stored in (None, "read_write") else f"success:{stored}")  # spec 190
+            return 200, {"grant_id": gid, "access_class": stored}
+
+        # spec 190: target classification (operator override / annotation import)
+        if path == "/n2n/classifications" and method == "GET":
+            return 200, {"classifications": fed.authz.list_classifications()}
+
+        if path == "/n2n/classifications" and method == "POST":
+            try:
+                if body.get("server"):
+                    return 200, fed.authz.import_annotations(body["server"], body.get("tools"))
+                if not body.get("target_type") or not body.get("target_name"):
+                    return 400, {"error": "missing required field 'target_type' or 'target_name'"}
+                access = None if body.get("clear") else body.get("access")
+                fed.authz.classify(body["target_type"], body["target_name"], access)
+            except ValueError as e:
+                return 400, {"error": str(e)}
+            return 200, {"target_type": body["target_type"], "target_name": body["target_name"],
+                         "class": fed.authz.effective_class(body["target_type"], body["target_name"])}
 
         if len(parts) == 3 and parts[1] == "grants" and method == "DELETE":
             grants_before = {g["id"]: g for g in fed.authz.list_grants()}
@@ -317,7 +396,8 @@ async def handle_n2n(method, path, body):
             ident = body["peer"]; ttype = body.get("target_type", "tool")
             try:
                 if ttype == "tool":
-                    res = await fed.invoker.invoke_remote_tool(ident, body["target_name"], body.get("arguments") or {})
+                    res = await fed.invoker.invoke_remote_tool(ident, body["target_name"], body.get("arguments") or {},
+                                                               request_id=body.get("request_id"))
                 else:
                     # skills go async (submit → task_id); invoke_remote_skill was
                     # renamed to submit_remote_skill in 053. A long skill must
@@ -327,7 +407,10 @@ async def handle_n2n(method, path, body):
                 return 200, res
             except Exception as e:
                 code = getattr(e, "code", None); msg = getattr(e, "message", str(e))
-                return 200, {"error": {"code": code, "message": msg}}
+                err = {"code": code, "message": msg}
+                if getattr(e, "data", None) is not None:
+                    err["data"] = e.data  # H16: -32002 carries the request_id to retry
+                return 200, {"error": err}
 
         if path == "/n2n/knowledge/route" and method == "POST":
             # Feature 064: choose which advertised collection (local or peer)
@@ -348,7 +431,10 @@ async def handle_n2n(method, path, body):
                     k=int(body.get("k", 8)))
             except Exception as e:
                 code = getattr(e, "code", None); msg = getattr(e, "message", str(e))
-                return 200, {"error": {"code": code, "message": msg}}
+                err = {"code": code, "message": msg}
+                if getattr(e, "data", None) is not None:
+                    err["data"] = e.data  # H16: -32002 carries the request_id to retry
+                return 200, {"error": err}
 
         if path == "/n2n/approvals" and method == "GET":
             return 200, {"pending": fed.authz.pending_approvals()}
@@ -368,8 +454,29 @@ async def handle_n2n(method, path, body):
             ident = body["peer"]
             if "chat_enabled" in body:
                 mgr.set_chat_enabled(ident, bool(body["chat_enabled"]))
-            return 200, {"success": True, "peer": ident,
-                         "chat_enabled": bool(mgr.get_peer(ident)["chat_enabled"])}
+            # spec 189: per-peer limit policy (the 052 n2n_config budget/rate overrides)
+            limit_fields = {k: body[k] for k in ("rate_per_min", "daily_requests", "daily_tokens",
+                                                 "limit_action", "warn_threshold", "restart_timer_s")
+                            if k in body}
+            if "limit_action" in limit_fields:
+                limit_fields["action"] = limit_fields.pop("limit_action")
+            limits = None
+            try:
+                if limit_fields:
+                    limits = fed.authz.set_policy(ident, **limit_fields)
+                if body.get("reset_limits"):
+                    fed.authz.reset_limits(ident, actor="n2n_config")
+                if body.get("clear_hold_down"):
+                    fed.authz.clear_hold_down(ident, actor="n2n_config")
+            except ValueError as e:
+                return 400, {"error": str(e)}
+            resp = {"success": True, "peer": ident}
+            row = mgr.get_peer(ident)
+            if row:
+                resp["chat_enabled"] = bool(row["chat_enabled"])
+            if limits is not None or body.get("reset_limits") or body.get("clear_hold_down"):
+                resp["limits"] = fed.authz.limit_status(ident)
+            return 200, resp
 
         # ---- US3: chat ----
         if path in ("/n2n/chat/open", "/n2n/chat/send") and method == "POST":
@@ -411,11 +518,14 @@ async def handle_n2n(method, path, body):
                 else:
                     # tools are fast/stdio — keep the synchronous 052 path
                     res = await fed.invoker.invoke_remote_tool(
-                        body["peer"], body["target_name"], body.get("arguments") or {})
+                        body["peer"], body["target_name"], body.get("arguments") or {},
+                        request_id=body.get("request_id"))
                 return 200, res
             except Exception as e:
-                return 200, {"error": {"code": getattr(e, "code", None),
-                                       "message": getattr(e, "message", str(e))}}
+                err = {"code": getattr(e, "code", None), "message": getattr(e, "message", str(e))}
+                if getattr(e, "data", None) is not None:
+                    err["data"] = e.data
+                return 200, {"error": err}
 
         if path == "/n2n/tasks" and method == "GET":
             return 200, {"tasks": fed.tasks.list_recent()}
@@ -581,9 +691,14 @@ async def handle_n2n(method, path, body):
             if body.get("chat", True):
                 mgr.set_chat_enabled(ident, True)
             granted = []
+            try:   # spec 190: validate once so a bad class changes nothing
+                if body.get("access_class") not in (None, "read", "read_write"):
+                    raise ValueError("access_class must be one of ('read', 'read_write')")
+            except ValueError as e:
+                return 400, {"error": str(e)}
             for tgt in (body.get("tools") or []):
                 ttype = "tool" if "/" in tgt else "skill"
-                fed.authz.grant(ident, ttype, tgt)
+                fed.authz.grant(ident, ttype, tgt, access_class=body.get("access_class"))
                 granted.append(tgt)
             return 200, {"peer": ident, "chat_enabled": True, "granted": granted}
 
@@ -783,6 +898,9 @@ async def handle_n2n(method, path, body):
             member_id = body.get("member_id")
             if not member_id:
                 return 400, {"error": "member_id required"}
+            # Persist removal before the first await. Otherwise a reconnect can
+            # authenticate during close() and leave a new live channel behind.
+            ok = fed.risk.remove_member(member_id)
             # Close whichever channel registry holds it. An edge node's channel
             # lives in edge_channels, NOT member_channels (feature 066) — only
             # popping member_channels meant retiring a *connected* phone left its
@@ -798,7 +916,6 @@ async def handle_n2n(method, path, body):
             # behind: queue rows are keyed by member_id and a re-enrolled device
             # gets a new one, so nothing would ever claim them (FR-017).
             purged = fed.edge_queue.purge_member(member_id)
-            ok = fed.risk.remove_member(member_id)
             return (200 if ok else 404), {"removed": ok, "member_id": member_id,
                                           "queued_purged": purged}
 
@@ -976,26 +1093,61 @@ def _sync_risk_from_env(fed):
 async def _start_in2n(fed):
     """iN2N (feature 056): start per role. A Border listens for member dial-ins;
     a Member dials the Border outbound (no inbound port). Standalone does nothing."""
+    if getattr(fed, 'ha_runtime', None) is not None:
+        # The explicit HA factory already owns the manifest-bound listener or
+        # all node-keyed outbound member attachments. Never add a legacy route.
+        return
     try:
         _sync_risk_from_env(fed)
         risk = fed.risk.get_risk()
         role = risk["role"]
+        from bgp.federation.endpoint_registry import configured
+        registry = configured(runtime=getattr(fed, 'runtime', None))
+        if registry and role == 'border' and not fed.risk.stack_enabled('in2n'):
+            raise ValueError('strict Border requires enabled iN2N stack (in2n or both)')
         if role == "border" and fed.risk.stack_enabled("in2n"):
-            port = int(os.environ.get("N2N_IN2N_PORT", "0") or 0)
+            registration, revision = None, None
+            if registry:
+                document = registry.load()
+                entries = [e for e in document['entries'] if e['service'] == 'in2n' and e['direction'] == 'listen']
+                if len(entries) != 1:
+                    raise ValueError('strict Border requires one iN2N listen registration')
+                registration, revision = entries[0], document['revision']
+            port = registration['bind_port'] if registration else int(os.environ.get("N2N_IN2N_PORT", "0") or 0)
             if not port:
                 logger.info("iN2N Border: set N2N_IN2N_PORT to accept member dial-ins")
                 return
 
             async def on_conn(reader, writer):
                 try:
-                    await fed.accept_internal(reader, writer)
+                    await fed.accept_internal(reader, writer, registration=registration, registry_revision=revision)
                 except Exception as e:
                     logger.warning("iN2N accept failed: %s", e)
 
             from bgp.federation.internal_security import server_context
-            bind = os.environ.get("N2N_IN2N_BIND", "127.0.0.1")
-            server = await asyncio.start_server(on_conn, bind, port, ssl=server_context(bind))
+            bind = registration['bind_host'] if registration else os.environ.get("N2N_IN2N_BIND", "127.0.0.1")
+            if registration:
+                from bgp.federation.exporter_tls import start_server
+                server = await start_server(on_conn, bind, port, cert_file=registration['cert_file'], key_file=registration['key_file'])
+            else:
+                server = await asyncio.start_server(on_conn, bind, port, ssl=server_context(bind))
             fed._in2n_server = server  # keep a ref
+            if registry:
+                external = [e for e in document['entries'] if e['service'] == 'en2n' and e['direction'] == 'listen']
+                if len(external) != 1:
+                    server.close()
+                    raise ValueError('strict Border requires a separate external listener')
+                external_entry = external[0]
+                fed.registered_credential(external_entry)
+                async def on_external(reader, writer):
+                    await fed.accept_public_ncfed(reader, writer, external_entry, revision)
+                try:
+                    fed._public_ncfed_server = await asyncio.start_server(
+                        on_external, external_entry['bind_host'], external_entry['bind_port'])
+                    fed._registered_listeners = {registration['id']: dict(registration), external_entry['id']: dict(external_entry)}
+                except BaseException:
+                    server.close()
+                    raise
             logger.info("iN2N Border listener on %s:%d (risk=%s)", bind, port, risk["risk_name"])
             # feature 057: on entering production, REQUIRE (verify, never mutate)
             # security.mode=defenseclaw so the Border's OWN model turns (via the
@@ -1004,17 +1156,27 @@ async def _start_in2n(fed):
             # host security config.
             from bgp.federation import controls as _controls
             if _controls.is_production():
-                ok, detail = _controls.require_defenseclaw_mode()
-                logger.info("iN2N production: %s", detail)
+                from bgp.federation.posture import protected_control_only
+                if protected_control_only(fed):
+                    logger.info("iN2N production: protected control-only role; local execution disabled, posture checks owner/transport/audit")
+                else:
+                    ok, detail = _controls.require_defenseclaw_mode()
+                    logger.info("iN2N production: %s", detail)
             asyncio.create_task(_in2n_posture_poller(fed))
-        elif role == "member" and risk.get("border_endpoint"):
-            host, _, port = risk["border_endpoint"].rpartition(":")
+        elif role == "member" and (registry or risk.get("border_endpoint")):
+            if registry:
+                entry = registry.entry(os.environ.get('N2N_BORDER_REGISTRY_ID'), direction='dial', service='in2n')
+                host, port = entry['routing_host'], entry['routing_port']
+            else:
+                host, _, port = risk["border_endpoint"].rpartition(":")
             token = os.environ.get("N2N_ENROLLMENT_TOKEN", "")
-            asyncio.create_task(_in2n_member_dialer(fed, host, int(port), token))
+            fed._member_dialer = asyncio.create_task(_in2n_member_dialer(fed, host, int(port), token))
             logger.info("iN2N Member dialer → Border %s (member=%s)",
-                        risk["border_endpoint"], risk.get("self_member_id"))
+                        host, risk.get("self_member_id"))
     except Exception as e:
         logger.error("iN2N start error: %s", e)
+        if os.environ.get('N2N_ENDPOINT_REGISTRY'):
+            raise
 
 
 async def _start_edge(fed):
@@ -1050,11 +1212,30 @@ async def _start_edge(fed):
             return
         import websockets
         from bgp.federation import tls as _tls
-        cert_pem, key_pem = fed.host_credential()
-        ctx = _tls.server_context(cert_pem, key_pem)
+        protected = fed.protected_enabled
+        public_origin = os.environ.get('NETCLAW_MOBILE_ORIGIN', '')
+        if protected:
+            from urllib.parse import urlsplit
+            origin = urlsplit(public_origin)
+            if origin.scheme != 'https' or public_origin != 'https://' + origin.netloc or not origin.hostname or origin.username or origin.password:
+                raise ValueError('protected Mobile origin is required')
+            # TLS terminates at the reviewed exact-path proxy. This socket is
+            # never public and carries no daemon/admin handler.
+            ctx, bind_host = None, '127.0.0.1'
+        else:
+            cert_pem, key_pem = fed.host_credential()
+            bind_host = os.environ.get('N2N_EDGE_WS_HOST', '0.0.0.0')
+            if bind_host not in ('0.0.0.0', '127.0.0.1', '::1'):
+                raise ValueError('unsupported Mobile listener host')
+            ctx = _tls.server_context(cert_pem, key_pem)
 
         async def _on_ws(ws):
             try:
+                if protected:
+                    from bgp.federation.mobile_enrollment import protected_ws_request_allowed
+                    if not protected_ws_request_allowed(ws, public_origin):
+                        await ws.close(code=1008, reason='Mobile ingress refused')
+                        return
                 await fed.accept_edge_ws(ws)
             except Exception as e:
                 logger.warning("Edge WS accept failed: %s", e)
@@ -1082,16 +1263,17 @@ async def _start_edge(fed):
         # Aligned to the protocol constant so transport and protocol agree.
         from bgp.constants import NCFED_MAX_MESSAGE
         server = await websockets.serve(
-            _on_ws, "0.0.0.0", port, ssl=ctx,
+            _on_ws, bind_host, port, ssl=ctx,
             ping_interval=EDGE_WS_PING_INTERVAL,
             ping_timeout=EDGE_WS_PING_TIMEOUT,
-            max_size=NCFED_MAX_MESSAGE,
+            max_size=80 * 1024 if protected else NCFED_MAX_MESSAGE,
         )
         fed._edge_server = server  # keep a ref
-        _status("listening", port=port,
-                domain=os.environ.get("N2N_CLAW_DOMAIN") or None)
-        logger.info("Edge (NetClaw Mobile) WS listener on 0.0.0.0:%d (risk=%s)",
-                   port, fed.risk.get_risk().get("risk_name"))
+        _status("listening", port=port, host=bind_host,
+                domain=origin.hostname if protected else os.environ.get("N2N_CLAW_DOMAIN") or None,
+                **({'path': '/mobile/ws', 'public_origin': public_origin} if protected else {}))
+        logger.info("Edge (NetClaw Mobile) WS listener on %s:%d (risk=%s)",
+                   bind_host, port, fed.risk.get_risk().get("risk_name"))
     except ModuleNotFoundError as e:
         # The single most likely first-install failure, and the one whose
         # surface error is most misleading. `websockets` is declared in
@@ -1147,6 +1329,10 @@ async def _start_cert_lifecycle(fed):
         rot.register(kind, subject, cert_pem, issuer=("ACME" if kind == "acme" else "self"))
     except Exception as e:
         logger.warning("cert lifecycle init: %s", e)
+    try:
+        rot.register_hub()  # Border: renew the hub credential at 2/3 of its life (spec 180)
+    except Exception as e:
+        logger.warning("cert lifecycle hub registration: %s", e)
     interval = int(os.environ.get("N2N_CERT_RENEW_CHECK_S", "3600"))
     while True:
         try:
@@ -1186,9 +1372,9 @@ async def _in2n_member_dialer(fed, host, port, token):
         try:
             ch = fed.border_channel
             if ch is None or getattr(ch, "_closed", True):
-                from bgp.federation.internal_security import client_context
-                await fed.dial_border(host, port, enrollment_token=used_token,
-                                      ssl_context=client_context(host))
+                from bgp.federation.internal_security import dial_options
+                dial_host, dial_port, options = dial_options(fed, host, port)
+                await fed.dial_border(dial_host, dial_port, enrollment_token=used_token, **options)
                 used_token = ""  # spent after a successful enroll
                 backoff = 5
         except Exception as e:
@@ -1274,7 +1460,7 @@ async def handle_http(reader, writer):
             resp_body = {"status": "running", "peers": peers, "injected_routes": list(_injected.keys()),
                 "installation_id":runtime.installation,"harness_type":runtime.kind,"pid":os.getpid(),
                 "n2n_enabled":bool(N2N_ENABLED),
-                "federation_ready":bool(N2N_ENABLED and _federation and (runtime.kind!='hermes' or getattr(getattr(_federation,'hermes_runtime',None),'ready',False)))}
+                "federation_ready":federation_ready(runtime)}
 
         elif method == "GET" and path == "/rib":
             loc_rib_data = {}
@@ -1483,6 +1669,16 @@ async def handle_http(reader, writer):
 
 async def _current_ngrok_endpoint():
     """Return the current ngrok TCP endpoint 'host:port', or None."""
+    from bgp.federation.endpoint_registry import configured
+    if os.environ.get('N2N_ENDPOINT_REGISTRY'):
+        # An invalid explicit registry never falls through to tunnel discovery.
+        registry = configured(runtime=getattr(_federation, 'runtime', None))
+        entries = [e for e in registry.load()['entries'] if e['service'] == 'en2n' and e['direction'] == 'listen']
+        if len(entries) != 1:
+            return None
+        entry = entries[0]
+        host = '[' + entry['routing_host'] + ']' if ':' in entry['routing_host'] else entry['routing_host']
+        return host + ':' + str(entry['routing_port'])
     try:
         import urllib.request
         resp = urllib.request.urlopen("http://127.0.0.1:4040/api/tunnels", timeout=3)
@@ -1520,12 +1716,50 @@ async def _endpoint_watcher():
 
 async def main():
     global _speaker
+    global _federation
+    from bgp.federation.runtime import selected
+    ha_required = (selected().state / 'ha-required.json').exists()
+    selected_transport = bool(os.environ.get('N2N_ENDPOINT_REGISTRY') or ha_required)
+
+    # R01 strict members use the same daemon entry point without ANY listeners.
+    # Private readiness replaces the local HTTP API; no BGP/edge/Zoom bind occurs.
+    if selected_transport and os.environ.get('N2N_ROLE') == 'member':
+        from bgp.federation.service import FederationService
+        from bgp.federation.runtime import write_private
+        _federation = FederationService(local_as=LOCAL_AS, router_id=ROUTER_ID,
+                                        display_name=N2N_DISPLAY_NAME, refresh_s=N2N_REFRESH_S)
+        await _federation.start_runtime()
+        try:
+            await _start_in2n(_federation)
+            while True:
+                channel = _federation.border_channel
+                attachments = list(_federation.border_channels.values()) if _federation.ha_runtime else []
+                write_private(_federation.runtime.state/'member-daemon-status.json', {
+                    'installation_id':_federation.runtime.installation, 'harness_type':_federation.runtime.kind,
+                    'pid':os.getpid(), 'running':True, 'role':'member', 'federation_ready':True,
+                    'authenticated':bool(len(attachments) == len(_federation.ha_runtime.manifest.nodes)
+                                         and all(ch.trusted and not ch._closed for ch in attachments))
+                        if _federation.ha_runtime else bool(channel and channel.trusted and not channel._closed),
+                    'attachments': len(attachments), 'observed_at':time.time()})
+                await asyncio.sleep(2)
+        finally:
+            dialer = getattr(_federation, '_member_dialer', None)
+            if dialer:
+                dialer.cancel(); await asyncio.gather(dialer, return_exceptions=True)
+            if _federation.border_channel: await _federation.border_channel.close()
+            await _federation.stop_runtime()
+            _federation.manager.close()
+        return
 
     logger.info("Starting NetClaw BGP daemon v2 — AS%s router-id %s (mesh_open=%s)", LOCAL_AS, ROUTER_ID, MESH_OPEN)
 
     # Auto-detect ngrok endpoint if not set
     mesh_endpoint = MESH_ENDPOINT
-    if not mesh_endpoint:
+    if ha_required:
+        mesh_endpoint = None
+    elif os.environ.get('N2N_ENDPOINT_REGISTRY'):
+        mesh_endpoint = await _current_ngrok_endpoint()
+    elif not mesh_endpoint:
         try:
             import urllib.request
             resp = urllib.request.urlopen("http://127.0.0.1:4040/api/tunnels", timeout=3)
@@ -1545,7 +1779,7 @@ async def main():
     _speaker = BGPSpeaker(
         local_as=LOCAL_AS,
         router_id=ROUTER_ID,
-        listen_ip=BGP_LISTEN_HOST,
+        listen_ip='127.0.0.1' if selected_transport else BGP_LISTEN_HOST,
         listen_port=BGP_LISTEN_PORT,
         kernel_route_manager=krm,
         mesh_open=MESH_OPEN,
@@ -1588,7 +1822,6 @@ async def main():
 
     # Attach N2N federation service (feature 052) before starting the speaker
     # so the listener's NCFED discrimination branch can hand off channels.
-    global _federation
     if N2N_ENABLED:
         try:
             from bgp.federation.service import FederationService
@@ -1601,7 +1834,7 @@ async def main():
             logger.info("N2N federation ENABLED — identity %s", _federation.local_identity)
         except Exception as e:
             from bgp.federation.runtime import selected
-            if selected().kind=='hermes':raise
+            if selected().kind=='hermes' or selected_transport or os.environ.get('N2N_PROTECTED_OPERATIONS') == '1':raise
             logger.error("N2N federation failed to init (continuing without it): %s", e)
     else:
         logger.info("N2N federation disabled (set N2N_ENABLED=true to enable)")
@@ -1615,10 +1848,13 @@ async def main():
         _federation.start_supervisor()
         # US3: watch the ngrok endpoint and re-announce it to federated peers on
         # change so nobody swaps host:port by hand (FR-010).
-        asyncio.create_task(_endpoint_watcher())
+        if not ha_required: asyncio.create_task(_endpoint_watcher())
         # iN2N (feature 056): start the internal-federation listener (Border) or
         # dialer (Member) per this claw's role. Members dial outbound only.
-        asyncio.create_task(_start_in2n(_federation))
+        if selected_transport:
+            await _start_in2n(_federation)
+        else:
+            asyncio.create_task(_start_in2n(_federation))
         # NCFED Edge Node (feature 066): a Border listens for phone dial-ins
         # over a WebSocket transport if N2N_EDGE_WS_PORT is set.
         asyncio.create_task(_start_edge(_federation))

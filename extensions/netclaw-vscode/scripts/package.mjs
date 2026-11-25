@@ -68,7 +68,7 @@ fs.writeFileSync(
       bytes: bytes.length,
       artifact: path.basename(packagePath),
       qualification:
-        "Extension 1.4.0 / source 1.14.0 dynamic pyATS testbeds (Spec160); VS Code >=1.109. All 30 implementation tasks complete. Actual terminal and Mac VS Code 1.145 Insiders selection/save/reload acceptance passed; stable/minimum-editor visual, Windows/WSL and live source/device qualification remain unverified. Earlier Spec155 WSL qualification remains partial (49/50). See specs/160-dynamic-pyats-testbeds/verification.md and release-verification.md. Source and Marketplace publication authorized on 2026-10-30; packaging itself does not publish or upgrade an installed runtime.",
+        `Extension ${manifest.version} / source ${fs.readFileSync(path.join(root, "VERSION"), "utf8").trim()} Mobile QR enrollment (175-cloud-mobile-enrollment). HUD Mobile and VS Code Mobile & edge expose selected-installation, one-use QR generation and status recovery. Actual macOS VS Code 1.145 and iOS 26.5 simulator evidence covers real interface QR generation, image decoding, production enrollment and retained-key reconnect. Simulator CPU image decoding and Keychain P256 do not qualify a physical camera or hardware Secure Enclave; Windows/Linux editors and broader platform/provider coverage remain unqualified. Native evidence is bound to the tested builds recorded in specs/175-cloud-mobile-enrollment/verification.md; this artifact receives source/build/package and published-payload comparison checks, not a claim that the final merged source was redeployed. Scoped source and extension publication was authorized on 2026-11-05. App Store delivery is verified separately, and the broader roadmap release hold remains in force.`,
     },
     null,
     2,

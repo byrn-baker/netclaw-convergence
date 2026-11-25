@@ -33,15 +33,15 @@ def test_greynoise_lookup_preserves_unknown_and_error_results(mode, monkeypatch)
     async def run():
         async with Client(module.mcp, mode=mode) as client:
             assert 'greynoise_community_lookup' in {t.name for t in await client.list_tools()}
-            result = await client.call_tool('greynoise_community_lookup', {'ip': '192.0.2.8'})
+            result = await client.call_tool('greynoise_community_lookup', {'ip': '66.132.172.181'})
             data = json.loads(result.data) if isinstance(result.data, str) else result.data
             assert data['classification'] == 'unknown'
-            assert data['ip'] == '192.0.2.8'
+            assert data['ip'] == '66.132.172.181'
             empty = await client.call_tool('greynoise_community_lookup', {'ip': ''})
             data = json.loads(empty.data) if isinstance(empty.data, str) else empty.data
-            assert data['error'] == 'no IP provided'
+            assert data['error'] == 'Provide a publicly routable IPv4 address.'
     asyncio.run(run())
-    assert calls == ['https://api.greynoise.io/v3/community/192.0.2.8']
+    assert calls == ['https://api.greynoise.io/v3/community/66.132.172.181']
 
 
 @pytest.mark.parametrize('mode', ['legacy', '2026-07-28'])

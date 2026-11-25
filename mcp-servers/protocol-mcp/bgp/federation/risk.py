@@ -132,13 +132,28 @@ class RiskManager:
         cert_pem, _ = self.ensure_self_identity(self.self_member_id() or self.role())
         return cert_pem
 
+    def protected_enrollment(self):
+        from .protected_owner import private_file
+        from .protected_contract import decode
+        path = self.keys_dir / 'protected' / 'enrollment.json'
+        try:
+            return decode(private_file(path))
+        except FileNotFoundError:
+            return None
+
+    def store_protected_enrollment(self, value):
+        from .protected_owner import write_private
+        write_private(self.keys_dir / 'protected' / 'enrollment.json', value)
+
     def self_sign(self, nonce: bytes, binding: bytes = b"") -> bytes:
         """Sign a peer/Border-issued nonce with this claw's own private key —
         proves possession of the self-signed key whose cert was pinned. `binding`
         is the optional tls-server-end-point channel binding (feature 060): when
         the channel is TLS, the caller passes the SHA-256 of the peer's server
-        certificate so the proof is bound to this session (RFC 5929). Empty on a
-        cleartext channel (and for iN2N, which is unchanged)."""
+        certificate (RFC 5929). Strict iN2N supplies the versioned RFC 9266
+        exporter binding; explicit legacy local IPC supplies an empty binding.
+        A certificate hash is not unique to a TLS connection; fresh nonces remain
+        required for the eN2N proof."""
         self.ensure_self_identity(self.self_member_id() or self.role())
         key_pem = (self.keys_dir / "self.key").read_text()
         return self.sign_challenge(key_pem, nonce + binding)
@@ -185,24 +200,43 @@ class RiskManager:
         p = self.keys_dir / "risk-ca-anchor.pem"
         return p.read_text() if p.exists() else None
 
-    def hub_credential(self):
+    def hub_credential(self, renew: bool = False):
         """The Border's CA-signed hub credential (cert + key), created once.
-        Returns (hub_cert_pem, hub_key_pem)."""
+        Reissued under the same CA and key when ``renew`` is set (the rotation
+        schedule) or within 7 days of expiry. Returns (hub_cert_pem, hub_key_pem)."""
+        import fcntl
         from . import certs
         cad = self.keys_dir / "risk-ca"
         hcrt, hkey = cad / "hub.crt", cad / "hub.key"
-        if hcrt.exists() and hkey.exists():
-            existing = hcrt.read_text()
+        seen = hcrt.read_text() if (hcrt.exists() and hkey.exists()) else None
+        if seen is not None and not renew:
             renew_before = datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(days=7)
-            if certs.cert_not_after(existing) > renew_before:
-                return existing, hkey.read_text()
-            logger.info("Renewing expiring hub credential under the existing risk CA")
+            if certs.cert_not_after(seen) > renew_before:
+                return seen, hkey.read_text()
+        self.ensure_risk_ca()  # creates risk-ca/ as before; idempotent
+        # The daemon, rotation and install scripts can all renew; one at a time.
+        fd = os.open(cad / ".hub.lock", os.O_RDWR | os.O_CREAT | getattr(os, "O_NOFOLLOW", 0), 0o600)
+        try:
+            fcntl.flock(fd, fcntl.LOCK_EX)
+            now = hcrt.read_text() if (hcrt.exists() and hkey.exists()) else None
+            if now is not None and now != seen:
+                return now, hkey.read_text()  # another process renewed while we waited
+            return self._issue_hub_credential(certs, cad)
+        finally:
+            os.close(fd)
+
+    def _issue_hub_credential(self, certs, cad):
+        hcrt, hkey = cad / "hub.crt", cad / "hub.key"
+        # Keep the key: identities that pin the hub key id stay valid.
+        current_key = hkey.read_text() if (hcrt.exists() and hkey.exists()) else None
+        if current_key:
+            logger.info("Renewing hub credential under the existing risk CA and key")
         ca_cert, ca_key = self.ensure_risk_ca()
         risk_name = (self.get_risk() or {}).get("risk_name") or "risk"
         hub_cert, hub_key = certs.issue_cert(ca_cert, ca_key, f"{risk_name}/border",
-                                             san=f"{risk_name}/border")
-        hcrt.write_text(hub_cert)
+                                             san=f"{risk_name}/border", key_pem=current_key)
         certs._write_secret(hkey, hub_key)
+        certs._write_secret(hcrt, hub_cert, mode=0o644)  # atomic: readers never see a partial file
         return hub_cert, hub_key
 
     def attest_hub(self, member_nonce: bytes) -> Optional[dict]:
@@ -389,10 +423,25 @@ class RiskManager:
             (_sha256_hex(raw.encode()),)).fetchone()
 
     def consume_token(self, raw_token: str, member_id: str, cert_pem: str,
+                      scope: Optional[list] = None, runtime_kind: str = 'process',
+                      display_name: Optional[str] = None, transport_binding: str = 'loopback',
+                      node_type: str = 'agent', installation_id: str = None) -> dict:
+        # Serialize token consumption and the new authority generation together.
+        self._conn.execute('BEGIN IMMEDIATE')
+        try:
+            return self._consume_token(raw_token, member_id, cert_pem, scope=scope,
+                runtime_kind=runtime_kind, display_name=display_name,
+                transport_binding=transport_binding, node_type=node_type,
+                installation_id=installation_id)
+        except BaseException:
+            self._conn.rollback()
+            raise
+
+    def _consume_token(self, raw_token: str, member_id: str, cert_pem: str,
                       scope: Optional[list] = None, runtime_kind: str = "process",
                       display_name: Optional[str] = None,
                       transport_binding: str = "loopback",
-                      node_type: str = "agent") -> dict:
+                      node_type: str = "agent", installation_id: str = None) -> dict:
         """Validate a single-use token + pin the member's self-signed key (TOFU).
         Raises ValueError(code) on invalid/spent/expired token or id/key clash."""
         if not self.is_border():
@@ -402,8 +451,20 @@ class RiskManager:
             raise ValueError("IN2N_ERR_ENROLL_TOKEN_INVALID")
         if row["expires_at"] and _now() > row["expires_at"]:
             raise ValueError("IN2N_ERR_ENROLL_TOKEN_INVALID")
+        # Scoped Mobile offers may never enroll an agent or cross installations.
+        offer = self._conn.execute(
+            "SELECT * FROM mobile_enrollment_offer WHERE token_hash=?", (row['token_hash'],)).fetchone()
+        if offer and (node_type != 'edge' or transport_binding != 'edge-ws'
+                      or installation_id != offer['installation_id']
+                      or offer['replaced_ms'] is not None
+                      or not offer['issued_ms'] <= int(time.time() * 1000) < offer['expires_ms']):
+            raise ValueError('IN2N_ERR_ENROLL_TOKEN_INVALID')
         fp = self.fingerprint_of(cert_pem)
         existing = self.get_member(member_id)
+        # A new offer cannot replace a retained authority under the same name.
+        # Lost enrollment uses hello with the existing key, never another enroll.
+        if offer and existing and existing['state'] != STATE_REMOVED:
+            raise ValueError('IN2N_ERR_MEMBER_ID_TAKEN')
         if (existing and existing["state"] not in (STATE_REMOVED, STATE_QUARANTINED,
                                                     STATE_PROVISIONED)
                 and existing["key_fingerprint"] and existing["key_fingerprint"] != fp):
@@ -430,6 +491,17 @@ class RiskManager:
                 "enrolled_at, updated_at, node_type) VALUES (?,?,?,?,?,?,?,?,?,0,?,?,?)",
                 (member_id, display_name, cert_pem, fp, None, scope_json, runtime_kind,
                  transport_binding, STATE_ENROLLED, now, now, node_type))
+        # Each enrollment is a distinct authority, even when it reuses a key.
+        import uuid
+        generation = str(uuid.uuid4())
+        if installation_id is not None:
+            if not isinstance(installation_id, str) or len(installation_id) > 200:
+                raise ValueError('IN2N_ERR_INVALID_INSTALLATION')
+        self._conn.execute("UPDATE member SET enrollment_generation=?, installation_id=? WHERE member_id=?",
+                           (generation, installation_id, member_id))
+        if offer:
+            self._conn.execute('UPDATE mobile_enrollment_offer SET consumed_key_fingerprint=?,consumed_generation=? WHERE token_hash=?',
+                               (fp, generation, row['token_hash']))
         # Spend the token atomically.
         self._conn.execute(
             "UPDATE enrollment_token SET spent_at=?, spent_by_member_id=? WHERE token_hash=?",
@@ -446,7 +518,8 @@ class RiskManager:
         self._conn.commit()
         logger.info("Enrolled member %s — confirm fingerprint out of band: %s", member_id, fp)
         return {"member_id": member_id, "pinned": True, "state": STATE_ENROLLED,
-                "enroll_fingerprint": fp}
+                "enroll_fingerprint": fp, "enrollment_generation": generation,
+                "installation_id": installation_id}
 
     # ---- member registry (FR-008/029) ---------------------------------
 

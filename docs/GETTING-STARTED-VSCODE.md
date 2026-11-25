@@ -31,6 +31,10 @@ Live model turns can incur provider charges. Every channel test separately revie
 
 Production currently remains blocked without qualified installation-bound evidence for every mandatory control. Two legacy native components (`in2n-production`, `computer-use`), compatible Webex onboarding, complete on-demand service qualification and some safe-canary profiles remain open; see the evidence document before attempting a real installation. The scoped certificate adapter creates a private pinned-trust keypair; it does not register an ACME account or prove peer trust. Cleanup separately reviews owned services and files. It stops verified services before removing their journaled definitions and enable links, then removes unchanged run-created files. Uncertain service ownership retains the installation; shared or changed files, directories and audit evidence are retained.
 
+## Optional Genie Network Worlds setup
+
+With source1.26.0, choose **Genie Network Worlds** in the reviewed component catalog for a focused claw or its eligible OpenClaw Risk member. Setup installs the isolated six-tool MCP and Node backend and derives private binding paths inside the selected home. It starts no Google session and does not copy the Google key into the member or editor. Actual navigation uses the local backend viewer. Border-owned member execution is qualified on Mac in testing posture; live WSL generation and production confinement remain unqualified. See [setup, recording and cost boundaries](GENIE-WORLDS.md).
+
 ## Static or dynamic pyATS inventory (Spec160)
 
 Select pyATS, then choose **Testbed mode & sources** in the VS Code setup wizard
@@ -47,3 +51,21 @@ Readiness reports source access, candidate, activation and execution independent
 See [Dynamic testbeds](DYNAMIC-TESTBEDS.md) for all source contracts, unavailable
 reader gaps, restart behavior and feasible qualification. Existing runtimes require
 an explicit reviewed component upgrade; source selection alone does not install it.
+
+## Deploying to GCP
+
+The installer, this wizard flow and the Claw Plan flow can place a Border or Member in your own GCP project
+(`NetClaw: Deploy a Border or Member to GCP`, or `scripts/netclaw-gcp.py`). See [NetClaw in GCP](NETCLAW-IN-GCP.md).
+GCP deployments are **NOT behind any authentication**: keep every URL private; users, SSO and RBAC are a much later
+roadmap phase (R15-R17).
+
+> **Azure (R10, spec 198):** Azure is an operator path, not an interactive deployer. `./scripts/install.sh` offers a read-only Azure preflight and prints the commands; billable steps need your explicit go. See [NetClaw in Azure](NETCLAW-IN-AZURE.md) and the [multi-cloud mesh](NETCLAW-MULTICLOUD-MESH.md). Azure deployments are **NOT behind any authentication**: keep every URL private; users, SSO and RBAC are a much later roadmap phase (R15-R17).
+
+### Connecting to an Azure (or GCP) Border from VS Code
+
+After the operator builds a Border or HA group, each Border has its own HTTPS address. Run **NetClaw: Add Connection → Cloud Border**, enter a
+friendly name and the Border's HTTPS URL, and compare the displayed cluster anchor fingerprint with the operator's record before choosing
+**Trust cluster**. Add one connection per Border to exercise each ingress. Connections are listed under **Connections** in the NetClaw side bar:
+hover a row and use the **pencil** (Rename) or **trash** (Remove) icon, or right-click it. Removing asks for confirmation and only forgets the
+saved connection in this editor; it never stops or deletes the NetClaw or the cloud resources behind it. The palette commands
+**NetClaw: Rename Connection** and **NetClaw: Remove Connection** do the same. Teardown of an Azure run invalidates its URLs; remove their connections.

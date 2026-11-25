@@ -371,6 +371,7 @@ fi
 if [ "$RUNTIME" != "hermes" ]; then
     SELECTED="$(printf '%s\n' $SELECTED | awk '$0 != "hermes-hud"')"
 fi
+require_standalone_setup_home || exit 1
 if ! netclaw_component_preflight; then
     log_error "Preflight blocked this selection. Resolve the reported prerequisites or choose fewer components."
     exit 1
@@ -601,6 +602,8 @@ verify_component() {
         fmc)             verify_dir  "$name" "$FMC_MCP_DIR" ;;
         panorama)        verify_cmd_or_module "$name" palo-alto-mcp palo_alto_mcp "pip3 install iflow-mcp-cdot65-palo-alto-mcp" ;;
         fortinet)        verify_file "$name" "$FORTINET_MCP_DIR/server.py" ;;
+        greynoise-community) verify_file "$name" "$NETCLAW_DIR/mcp-servers/greynoise-community-mcp/server.py" ;;
+        threatintel)     verify_file "$name" "$MCP_DIR/mcp-threatintel/dist/index.js" ;;
         bgp-intel)       verify_file "$name" "$BGP_INTEL_MCP_DIR/server.py" ;;
         checkpoint)      verify_dir  "$name" "$CHECKPOINT_MCP_DIR" ;;
         claroty)         verify_dir  "$name" "$CLAROTY_MCP_DIR" ;;
@@ -718,6 +721,24 @@ echo ""
 # ═══════════════════════════════════════════
 # Launch NetClaw Platform Setup
 # ═══════════════════════════════════════════
+
+# Optional: deploy a Border / Member to GCP (spec 193). Interactive only; never part of a non-interactive install.
+if [ "$CLI_MODE" != "1" ] && tui_is_tty && [ -f "$NETCLAW_DIR/scripts/lib/gcp-menu.sh" ]; then
+    # shellcheck source=lib/gcp-menu.sh
+    source "$NETCLAW_DIR/scripts/lib/gcp-menu.sh"
+    if tui_yesno "Deploy a NetClaw Border or Member to Google Cloud (GCP) now?" "n"; then
+        gcp_deploy_menu || log_warn "GCP deployment did not complete; nothing further was changed."
+    fi
+fi
+
+# Optional: Azure operator path (spec 198). Interactive only; read-only preflight and printed commands, nothing billable is created here.
+if [ "$CLI_MODE" != "1" ] && tui_is_tty && [ -f "$NETCLAW_DIR/scripts/lib/azure-menu.sh" ]; then
+    # shellcheck source=lib/azure-menu.sh
+    source "$NETCLAW_DIR/scripts/lib/azure-menu.sh"
+    if tui_yesno "Plan a NetClaw Border or HA group in Microsoft Azure now (read-only preflight, nothing is created)?" "n"; then
+        azure_deploy_menu || log_warn "Azure planning did not complete; nothing was created."
+    fi
+fi
 
 SETUP_SCRIPT="$NETCLAW_DIR/scripts/setup.sh"
 if [ -f "$SETUP_SCRIPT" ] && tui_is_tty; then

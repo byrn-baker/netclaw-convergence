@@ -44,6 +44,10 @@ on:
       - 'config/python-components/**'
       - 'config/fastmcp-external-patches.json'
       - 'scripts/reconcile-mcp.py'
+      - 'config/skill-limits.json'
+      - 'scripts/check-skill-limits.py'
+      - 'scripts/lib/skill_limits.py'
+      - 'scripts/install-mcp-config.py'
       - 'scripts/run-contract-tests.py'
       - 'specs/**'
       - 'workspace/skills/**'
@@ -148,17 +152,17 @@ jobs:
         uses: astral-sh/setup-uv@v6
 
       - name: Qualified HUD Node for Hermes launcher contracts
-        if: matrix.suite == 'hermes-hud' || matrix.suite == 'unit'
+        if: matrix.suite == 'hermes-hud' || matrix.suite == 'unit' || matrix.suite == 'netconverter'
         uses: actions/setup-node@v4
         with:
           node-version: '24'
 
       - name: Install HUD dependencies for Hermes launcher contracts
-        if: matrix.suite == 'hermes-hud' || matrix.suite == 'unit'
+        if: matrix.suite == 'hermes-hud' || matrix.suite == 'unit' || matrix.suite == 'netconverter'
         run: npm --prefix ui/netclaw-visual ci
 
       - name: Qualified Node for offline installer contracts
-        if: matrix.suite == 'setup-installer'
+        if: matrix.suite == 'setup-installer' || matrix.suite == 'netconverter'
         uses: actions/setup-node@v4
         with:
           node-version: '24.19.0'

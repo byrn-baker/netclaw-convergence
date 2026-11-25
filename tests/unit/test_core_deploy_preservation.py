@@ -4,6 +4,9 @@ import os
 from pathlib import Path
 import subprocess
 import shutil
+import sys
+
+import pytest
 
 ROOT = Path(__file__).resolve().parents[2]
 spec = importlib.util.spec_from_file_location('deploy_env_writer', ROOT / 'scripts/write-env.py')
@@ -11,7 +14,7 @@ writer = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(writer)
 
 
-def deploy(tmp_path, *, umask=None):
+def deploy(tmp_path, *, umask=None, extra_env=None, expect_success=True):
     repo = tmp_path / "checkout & pipe|quote' space"
     repo.mkdir(exist_ok=True)
     (repo / 'workspace/skills/example').mkdir(parents=True, exist_ok=True)
@@ -39,9 +42,12 @@ core_deploy
     if umask is not None:
         script = f'umask {umask:03o}\n' + script
     result = subprocess.run(['bash', '-c', script], cwd=ROOT,
-        env={**os.environ, 'FIXTURE_REPO': str(repo), 'FIXTURE_RUNTIME': str(runtime)},
+        env={**os.environ, 'FIXTURE_REPO': str(repo), 'FIXTURE_RUNTIME': str(runtime), **(extra_env or {})},
         capture_output=True, text=True, timeout=30)
-    assert result.returncode == 0, result.stderr
+    if expect_success:
+        assert result.returncode == 0, result.stderr
+    else:
+        assert result.returncode != 0, 'Injected failure must stop deployment'
     return repo, runtime
 
 
@@ -111,3 +117,106 @@ def test_new_runtime_is_private_even_with_group_writable_umask(tmp_path):
     _, runtime = deploy(tmp_path, umask=0o002)
     assert runtime.stat().st_mode & 0o777 == 0o700
     assert (runtime / '.env').stat().st_mode & 0o777 == 0o600
+def test_upgrade_replaces_legacy_checkout_symlinks_only(tmp_path):
+    repo = tmp_path / "checkout & pipe|quote' space"
+    repo.mkdir()
+    (repo / 'USER.md').write_text('repository default\n')
+    elsewhere = tmp_path / 'operator-tools.md'
+    elsewhere.write_text('operator tools\n')
+    workspace = tmp_path / '.openclaw/workspace'
+    workspace.mkdir(parents=True)
+    (workspace / 'USER.md').symlink_to(repo / 'USER.md')
+    (workspace / 'TOOLS.md').symlink_to(elsewhere)
+    (workspace / 'SOUL.md').write_text('operator notes\n')
+    deploy(tmp_path)
+    user = workspace / 'USER.md'
+    assert not user.is_symlink()
+    assert user.read_text() == 'repository default\n'
+    assert (workspace / 'TOOLS.md').is_symlink()
+    assert (workspace / 'TOOLS.md').read_text() == 'operator tools\n'
+    assert (workspace / 'SOUL.md').read_text() == 'operator notes\n'
+    assert not list(workspace.glob('.*.netclaw-copy'))
+
+
+@pytest.mark.parametrize('occupied', ['symlink', 'file', 'directory'])
+def test_bootstrap_repair_preserves_occupied_staging_paths(tmp_path, occupied):
+    repo = tmp_path / "checkout & pipe|quote' space"
+    repo.mkdir()
+    (repo / 'USER.md').write_text('repository default\n')
+    workspace = tmp_path / '.openclaw/workspace'
+    workspace.mkdir(parents=True)
+    (workspace / 'USER.md').symlink_to(repo / 'USER.md')
+    victim = tmp_path / 'operator-private-file'
+    victim.write_text('operator-owned contents\n')
+    staging = workspace / '.USER.md.netclaw-copy'
+    if occupied == 'symlink':
+        staging.symlink_to(victim)
+    elif occupied == 'file':
+        staging.write_text('operator staging contents\n')
+    else:
+        staging.mkdir()
+    deploy(tmp_path)
+    assert victim.read_text() == 'operator-owned contents\n'
+    assert not (workspace / 'USER.md').is_symlink()
+    assert (workspace / 'USER.md').read_text() == 'repository default\n'
+    assert (workspace / 'USER.md').stat().st_mode & 0o777 == 0o600
+    if occupied == 'symlink':
+        assert staging.is_symlink() and staging.readlink() == victim
+    elif occupied == 'file':
+        assert staging.read_text() == 'operator staging contents\n'
+    else:
+        assert staging.is_dir()
+    assert not list(workspace.glob('.USER.md.netclaw-copy-*'))
+
+
+@pytest.mark.parametrize('failure', ['copy', 'replace', 'changed'])
+def test_failed_bootstrap_repair_preserves_original_and_cleans_owned_temp(tmp_path, failure):
+    repo = tmp_path / "checkout & pipe|quote' space"
+    repo.mkdir()
+    (repo / 'USER.md').write_text('repository default\n')
+    workspace = tmp_path / '.openclaw/workspace'
+    workspace.mkdir(parents=True)
+    user = workspace / 'USER.md'
+    user.symlink_to(repo / 'USER.md')
+    binaries = tmp_path / 'bin'
+    binaries.mkdir()
+    wrapper = binaries / 'python3'
+    # Exercise the actual shell function and embedded Python; inject only the I/O
+    # fault or concurrent operator edit inside its bootstrap-copy subprocess.
+    wrapper.write_text(f'''#!{sys.executable}
+import os, shutil, sys
+if len(sys.argv) > 3 and sys.argv[1] == '-' and sys.argv[2] == os.environ['FIXTURE_BOOTSTRAP']:
+    program = sys.stdin.read()
+    sys.argv = sys.argv[1:]
+    failure = os.environ['FIXTURE_FAILURE']
+    if failure == 'replace':
+        def fail(*args):
+            raise OSError('fixture rename failure')
+        os.replace = fail
+    else:
+        copy = shutil.copyfileobj
+        def fail(source, output):
+            if failure == 'copy':
+                output.write(b'partial')
+                raise OSError('fixture copy failure')
+            copy(source, output)
+            path = os.environ['FIXTURE_BOOTSTRAP']
+            os.unlink(path)
+            with open(path, 'w') as updated:
+                updated.write('concurrent operator notes\\n')
+        shutil.copyfileobj = fail
+    exec(compile(program, '<bootstrap-repair>', 'exec'))
+else:
+    os.execv(sys.executable, [sys.executable, *sys.argv[1:]])
+''')
+    wrapper.chmod(0o700)
+    deploy(tmp_path, extra_env={'PATH': str(binaries) + os.pathsep + os.environ['PATH'],
+                               'FIXTURE_BOOTSTRAP': str(user), 'FIXTURE_FAILURE': failure},
+           expect_success=False)
+    if failure == 'changed':
+        assert not user.is_symlink()
+        assert user.read_text() == 'concurrent operator notes\n'
+    else:
+        assert user.is_symlink() and user.readlink() == repo / 'USER.md'
+    assert (repo / 'USER.md').read_text() == 'repository default\n'
+    assert not list(workspace.glob('.USER.md.netclaw-copy-*'))

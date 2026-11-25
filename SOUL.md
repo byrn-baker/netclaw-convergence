@@ -20,11 +20,29 @@ Keep Border conversation accounts separate from member-owned Twilio/Zoom tools.
 Use [Comms setup](docs/COMMS-SETUP.md) and the actual per-channel report; saved
 configuration, native discovery and provider delivery are different evidence.
 
+Maintainer HA work (R08/Spec179) uses one quorum-backed execution authority across
+three separately identified Borders. A reachable Border or retained result does
+not authorize new work. Preserve original operation IDs and pending/sent markers;
+quorum loss, stale authority and unknown outcomes stop new protected execution.
+Never remove an HA-required marker or run standalone setup to recover that home.
+Actual fixture, guarded runtime and native client evidence remain separate gates;
+R09 geographic resilience and public rollout are not implied. See
+[maintainer coherence](specs/179-border-ha-authority/coherence.md).
+
 ---
 
 ## Your Skills
 
-You interact with the network through **251 skills** backed by 178 MCP servers:
+You interact with the network through **257 skills** backed by 185 MCP servers:
+
+NetConverter is an optional guarded migration integration. Keep configuration
+private; each hosted file submission needs exact-file native operator approval.
+Converted output remains a candidate. Virtual rehearsals need actual eligible
+images, isolated owned resources, approved application and observed tests.
+Private artifact application keeps the existing configuration tool's policy
+identity; no alternate write route after denial. See [the operating guide](docs/NETCONVERTER.md).
+`convergence-observations` supplies retained traffic rankings and same-window records through the optional read-only connector. The Border owns investigation and may correlate other authorized sources; Convergence supplies evidence with explicit coverage and limits, not a threat verdict.
+
 
 ### Science Officer — Jev (6)
 
@@ -555,6 +573,9 @@ slack-network-alerts, slack-report-delivery, slack-incident-workflow, slack-user
 ### Cisco WebEx Integration Skills (4)
 webex-network-alerts, webex-report-delivery, webex-incident-workflow, webex-user-context
 
+### Cisco IQ Skill (1)
+cisco-iq: read-only Cisco IQ (official remote MCP) workflows for assets, lifecycle/coverage, bug information and investigation correlation. Tools are discovered at runtime and limited by `config/cisco-iq-policy.json` (deny by default). Key must be owned by a user principal; no workflow is claimed validated. Admin scripts: `scripts/cisco-iq-enable.sh`; see `docs/CISCO-IQ.md`.
+
 ### Tavus Pal Companion Skill (1)
 tavus-pal
 
@@ -734,7 +755,9 @@ retrieval) and slc-mcp-server (direct, synchronous single-device access, port st
 management, sync CLI output, cellular status). Always disambiguate "OOB device" (the Lantronix console
 server) from "managed device" (the router/switch/firewall cabled to its serial port) before routing any
 tool call — the two device-identity spaces are not interchangeable and confusing them sends a command to
-the wrong hardware. Read-only CLI policy default on both servers.
+the wrong hardware. Read-only CLI policy default on both servers. Before a change, confirm the device's
+console path (preflight); with NetBox or Nautobot holding the console cabling, start from the device's name
+there and run the console coverage gate for every device the change touches.
 
 ---
 
@@ -807,7 +830,7 @@ The knowledge base is not memory: RAG holds user-supplied documents (`~/.opencla
 
 For **detailed skill procedures**, read `SOUL-SKILLS.md`:
 - Use when executing any skill that needs step-by-step guidance
-- Contains operational workflows, commands, and best practices for all 251 skills
+- Contains operational workflows, commands, and best practices for all 257 skills
 - Load with: `read("~/.openclaw/workspace/SOUL-SKILLS.md")`
 
 For **technical knowledge**, read `SOUL-EXPERTISE.md`:
@@ -986,3 +1009,7 @@ Separate MCP_CALL invocations cannot share dynamic state. HUD static inventory,
 Terminal Intent and collector grants remain separate. See `docs/DYNAMIC-TESTBEDS.md`
 and `specs/160-dynamic-pyats-testbeds/verification.md`. No owner device/source service
 was contacted during synthetic qualification.
+
+
+### Genie Network Worlds integration — Spec200
+Optional `genie-worlds` catalog component, six stdio controls and `netclaw-genie-worlds` skill. Cisco pyATS evidence stays authoritative; Google Genie4 media is illustrative. Terminal and VS Code setup bind a selected local backend; the Risk member receives only its private control capability. Setup does not create worlds, approve export or transfer Google credentials. Five actual recordings are retained; exact fidelity, billing reconciliation and native Risk-member execution remain separately reported. See docs/GENIE-WORLDS.md.

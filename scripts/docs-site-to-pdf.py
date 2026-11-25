@@ -100,14 +100,26 @@ def _rag_url_fetcher():
     return uf
 
 
-def resolve_verify(url: str, insecure: bool) -> bool:
-    if insecure:
+def _is_private_or_local_host(url: str) -> bool:
+    """LAN gear (UniFi OS, pfSense) that needs rag-mcp's curl --http2 fetch."""
+    import ipaddress
+    from urllib.parse import urlparse
+
+    host = (urlparse(url).hostname or "").strip().lower()
+    if not host:
         return False
-    # Match rag-mcp home-lab default: private hosts skip verify
-    try:
-        return _rag_url_fetcher().resolve_verify_ssl(url, verify_ssl=None)
-    except Exception:
+    if host in ("localhost", "localhost.localdomain") or host.endswith(".local"):
         return True
+    try:
+        ip = ipaddress.ip_address(host)
+        return bool(ip.is_private or ip.is_loopback or ip.is_link_local or ip.is_reserved)
+    except ValueError:
+        return host.endswith((".lan", ".home", ".internal", ".home.arpa"))
+
+
+def resolve_verify(url: str, insecure: bool) -> bool:
+    """Verify TLS unless --insecure (rag-mcp verifies by default since upstream spec 194)."""
+    return not insecure
 
 
 def fetch_html(
@@ -273,8 +285,8 @@ def crawl(
             prefix = prefix.rsplit("/", 1)[0] + "/" if "/" in prefix.strip("/") else "/"
 
     verify = resolve_verify(start, insecure)
-    # Explicit False when --insecure; None lets rag-mcp auto-skip verify on RFC1918.
-    verify_ssl_arg: Optional[bool] = False if insecure or verify is False else None
+    # rag-mcp's fetch takes an explicit bool; --insecure is the only opt-out.
+    verify_ssl_arg: bool = bool(verify)
     headers = {
         "User-Agent": "NetClaw-docs-site-to-pdf/1.0 (+local RAG ingest; contact: operator)",
         "Accept": "text/html,application/xhtml+xml,application/json;q=0.9,*/*;q=0.8",
@@ -288,12 +300,7 @@ def crawl(
 
     # LAN gear (UniFi OS): use rag-mcp fetch (curl --http2 first). httpx hangs after TLS
     # SETTINGS on many UniFi OS builds even with HTTP/2 enabled.
-    use_rag_fetch = False
-    try:
-        uf = _rag_url_fetcher()
-        use_rag_fetch = uf.is_private_or_local_host(start) or insecure
-    except Exception:
-        use_rag_fetch = insecure
+    use_rag_fetch = _is_private_or_local_host(start) or insecure
 
     def _crawl_loop(client: Optional[httpx.Client]) -> None:
         while q and len(result.pages) < max_pages:

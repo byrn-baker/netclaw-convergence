@@ -26,3 +26,14 @@ Readiness reports source access, candidate, activation and execution independent
 See [Dynamic testbeds](DYNAMIC-TESTBEDS.md) for all source contracts, unavailable
 reader gaps, restart behavior and feasible qualification. Existing runtimes require
 an explicit reviewed component upgrade; source selection alone does not install it.
+
+## Deploying to GCP
+
+The installer, this wizard flow and the Claw Plan flow can place a Border or Member in your own GCP project
+(`NetClaw: Deploy a Border or Member to GCP`, or `scripts/netclaw-gcp.py`). See [NetClaw in GCP](NETCLAW-IN-GCP.md).
+GCP deployments are **NOT behind any authentication**: keep every URL private; users, SSO and RBAC are a much later
+roadmap phase (R15-R17).
+
+An assistant may explain GCP topologies and prepare the `netclaw-gcp.py plan` command, but must show the no-authentication warning first and must never pass `--ack-no-auth`, `--confirm-cost` or `--confirm-list-sha256` on the user's behalf; those are the user's decisions.
+
+> **Azure (R10, spec 198):** Azure is an operator path, not an interactive deployer. `./scripts/install.sh` offers a read-only Azure preflight and prints the commands; billable steps need your explicit go. See [NetClaw in Azure](NETCLAW-IN-AZURE.md) and the [multi-cloud mesh](NETCLAW-MULTICLOUD-MESH.md). Azure deployments are **NOT behind any authentication**: keep every URL private; users, SSO and RBAC are a much later roadmap phase (R15-R17).

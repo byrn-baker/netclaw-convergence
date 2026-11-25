@@ -215,6 +215,10 @@
       "NETCLAW_LAB_MODE": "false",
       "BGP_DAEMON_API": "http://127.0.0.1:8179"
     },
+    "ollama-mcp": {
+      "OLLAMA_BASE_URL": "http://localhost:11434",
+      "OLLAMA_TIMEOUT": "120"
+    },
     "fwrule-mcp": {
       "FWRULE_LOG_LEVEL": "WARNING"
     },
@@ -285,16 +289,30 @@
       "EQUINIX_SERVICENOW_USERNAME": "",
       "EQUINIX_SERVICENOW_PASSWORD": ""
     },
+    "convergence-read-mcp": {
+      "CONVERGENCE_ENABLED": "false",
+      "CONVERGENCE_API_URL": "",
+      "CONVERGENCE_API_TOKEN": "",
+      "CONVERGENCE_SITE": "",
+      "CONVERGENCE_EXPORTERS": "",
+      "CONVERGENCE_ALLOW_LOOPBACK_HTTP": "false"
+    },
+    "greynoise-community-mcp": {
+      "GREYNOISE_API_KEY": "",
+      "GREYNOISE_TIMEOUT": "10"
+    },
+    "threatintel-mcp": {
+      "GREYNOISE_API_KEY": "",
+      "ABUSEIPDB_API_KEY": "",
+      "OTX_API_KEY": "",
+      "ABUSECH_AUTH_KEY": ""
+    },
     "pfsense-mcp": {
       "PFSENSE_VERIFY_SSL": "false"
     },
     "unifi-network": {
       "UNIFI_SITE": "default",
       "UNIFI_VERIFY_SSL": "false"
-    },
-    "ollama-mcp": {
-      "OLLAMA_BASE_URL": "http://localhost:11434",
-      "OLLAMA_TIMEOUT": "120"
     }
   }
 }

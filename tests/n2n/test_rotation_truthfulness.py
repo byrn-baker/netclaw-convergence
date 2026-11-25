@@ -16,7 +16,7 @@ def setup(tmp_path):
 def test_unchanged_certificate_is_not_renewed_or_retired(tmp_path,monkeypatch,kind):
     svc,rot=setup(tmp_path);pem,key=certs.create_self_signed('fixture')
     if kind=='risk-ca':monkeypatch.setattr(svc.risk,'ensure_risk_ca',lambda:(pem,key))
-    elif kind=='hub':monkeypatch.setattr(svc.risk,'hub_credential',lambda:(pem,key))
+    elif kind=='hub':monkeypatch.setattr(svc.risk,'hub_credential',lambda **kw:(pem,key))
     else:
         async def renew(*args):return pem
         monkeypatch.setattr(acme,'renew',renew)
@@ -79,9 +79,10 @@ def test_acme_renewal_requests_existing_pinned_key(tmp_path, monkeypatch):
     monkeypatch.setenv('N2N_ACME_EMAIL', 'fixture@example.test')
     monkeypatch.setenv('N2N_ACME_DNS_PROVIDER', 'fixture')
     calls = []
-    async def run(argv):
+    async def run(argv, **kwargs):
         calls.append(argv)
         return 0, ''
     monkeypatch.setattr(acme, '_run', run)
     asyncio.run(acme.renew('example.test', tmp_path))
-    assert calls[0][calls[0].index('renew') + 1:] == ['--days', '30', '--reuse-key']
+    renew = [c for c in calls if 'renew' in c][0]
+    assert renew[renew.index('renew') + 1:] == ['--days', '30', '--reuse-key', '--no-random-sleep']

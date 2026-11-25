@@ -34,7 +34,7 @@ The compatible API currently lives in this fork's `ui/convergence-api/`. The
 original standalone Convergence repository does not contain that API. Before an
 upstream connector ships, its guide must identify a public reproducible service
 build/revision and retained-flow setup. See [provenance](convergence/provenance.md).
-The fork's [K3s and Docker guides](CONVERGENCE.md) remain the installation entry point;
+The fork's [K3s and Docker guides](convergence/README.md) remain the installation entry point;
 the core Docker trial collects no flows by default. Its opt-in
 [home-lab paths](convergence/home-lab.md) add an isolated demonstration or explicitly
 selected Linux host-interface exporter without special network hardware.

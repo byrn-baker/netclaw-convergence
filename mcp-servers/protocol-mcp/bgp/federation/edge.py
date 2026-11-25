@@ -77,6 +77,15 @@ EDGE_METHODS = (
     # currently-pending approvals for PendingApprovalsIntent — see
     # FederationService._edge_on_approvals_list.
     "n2n/edge/approvals_list",
+    # Spec175: device-scoped protected operations, never general owner/admin RPC.
+    "n2n/edge/operations/catalog",
+    "n2n/edge/operations/prepare",
+    "n2n/edge/operations/status",
+    "n2n/edge/operations/decision",
+    "n2n/edge/operations/reconcile",
+    "n2n/edge/operations/combined_prepare",
+    "n2n/edge/operations/combined_status",
+    "n2n/edge/operations/combined_cancel",
 )
 
 # Methods reachable before the channel has authenticated (the handshake itself).
@@ -84,21 +93,24 @@ _PRE_TRUST_METHODS = ("in2n/enroll", "in2n/hello")
 
 
 class RpcError(Exception):
-    def __init__(self, code: int, message: str):
+    def __init__(self, code: int, message: str, data=None):
         super().__init__(message)
         self.code = code
         self.message = message
+        self.data = data
 
 
 class EdgeChannel:
     """One WebSocket connection to one enrolled NetClaw Mobile device."""
 
-    def __init__(self, ws, *, local_identity: str, handlers: dict = None):
+    def __init__(self, ws, *, local_identity: str, handlers: dict = None, strict_messages=False):
         self.ws = ws
+        self.strict_messages = strict_messages
         self.local_identity = local_identity
         self.member_id: Optional[str] = None
         self.peer_identity = "<unauthenticated-edge>"
         self.trusted = False
+        self.authority_current = None
         self.nonce = b""
         self.display_name: Optional[str] = None
         self.logger = logging.getLogger("n2n.edge[unauthenticated]")
@@ -156,13 +168,35 @@ class EdgeChannel:
             await self.close()
 
     async def _send(self, message: dict):
+        await self._check_current_authority()
+        if self._closed:
+            raise ConnectionError('Channel closed; operation outcome may be unknown')
         await self.ws.send(json.dumps(message, separators=(",", ":")))
+
+    async def _check_current_authority(self):
+        valid = True
+        if self.trusted and self.authority_current:
+            try:
+                import inspect
+                observed = self.authority_current()
+                valid = bool(await observed if inspect.isawaitable(observed) else observed)
+            except Exception:
+                valid = False
+        if not valid:
+            await self.close()
+            raise RpcError(ERR_NOT_TRUSTED, 'current authority refused; earlier work may have executed')
 
     # ---- dispatch ---------------------------------------------------------
 
     async def _dispatch(self, raw):
         try:
-            msg = json.loads(raw)
+            if self.strict_messages:
+                from .protected_contract import decode
+                msg = decode(raw, limit=80 * 1024)
+                if not isinstance(msg, dict):
+                    raise ValueError('invalid_message')
+            else:
+                msg = json.loads(raw)
         except Exception as e:
             self.logger.warning("Bad JSON on edge channel: %s", e)
             return
@@ -177,6 +211,10 @@ class EdgeChannel:
         method = msg.get("method")
         req_id = msg.get("id")
         params = msg.get("params") or {}
+        try:
+            await self._check_current_authority()
+        except RpcError:
+            return
         if not self.trusted and method not in _PRE_TRUST_METHODS:
             if req_id is not None:
                 await self._send(self._err(req_id, ERR_NOT_TRUSTED, "edge node not authenticated"))
@@ -188,22 +226,25 @@ class EdgeChannel:
             return
         try:
             result = await handler(self, params)
+            await self._check_current_authority()
             if req_id is not None:
                 await self._send({"jsonrpc": "2.0", "id": req_id, "result": result or {}})
         except RpcError as e:
-            if req_id is not None:
-                await self._send(self._err(req_id, e.code, e.message))
+            if req_id is not None and not self._closed:
+                await self._send(self._err(req_id, e.code, e.message, e.data))
         except Exception as e:
             self.logger.error("Edge handler %s failed: %s", method, e)
-            if req_id is not None:
+            if req_id is not None and not self._closed:
                 await self._send(self._err(req_id, -32000, str(e)))
 
-    def _err(self, req_id, code, message):
-        return {"jsonrpc": "2.0", "id": req_id, "error": {"code": code, "message": message}}
+    def _err(self, req_id, code, message, data=None):
+        return {"jsonrpc": "2.0", "id": req_id,
+                "error": {"code": code, "message": message, **({'data': data} if data is not None else {})}}
 
     # ---- outbound requests (Border → phone, mirrors delegate_to_member) --
 
     async def call(self, method: str, params: dict, timeout: float = 30.0) -> dict:
+        await self._check_current_authority()
         if self._closed:
             raise ConnectionError("Channel is closed")
         self._next_id += 1
@@ -217,6 +258,7 @@ class EdgeChannel:
 
         try:
             resp = await asyncio.wait_for(exchange(), timeout=timeout)
+            await self._check_current_authority()
             if "error" in resp:
                 raise RpcError(resp["error"]["code"], resp["error"]["message"])
             return resp.get("result", {})
@@ -230,4 +272,5 @@ class EdgeChannel:
                 fut.exception()  # consume a close error if send failed concurrently
 
     async def notify(self, method: str, params: dict):
+        await self._check_current_authority()
         await self._send({"jsonrpc": "2.0", "method": method, "params": params})

@@ -17,6 +17,7 @@ import logging
 import os
 import time
 from pathlib import Path
+from string import Template
 
 from .channel import (
     RpcError, ERR_NOT_ALLOWLISTED, ERR_APPROVAL_PENDING, ERR_APPROVAL_EXPIRED,
@@ -113,6 +114,45 @@ class Invoker:
         decision.approval_id=approval['approval_id']
         return approval
 
+    def _approval_gate(self, peer, target_type, target, request_id, decision, body):
+        """H16: approval for a synchronous call, without holding the call open.
+
+        The first request creates an approval bound to (peer, target, request_id,
+        grant, body) and is answered APPROVAL_PENDING (-32002) at once. The caller
+        retries with the same request_id and body: while the approval is pending
+        it gets -32002 again; once approved the retry is admitted (and _admit
+        consumes the approval, single use); once denied or expired it gets
+        APPROVAL_EXPIRED (-32003). A retry that differs in any bound field is a
+        new request and needs its own approval.
+        """
+        from .execution import digest
+        binding = digest([peer, target_type, target, request_id, decision.grant['id'], body])
+        row = self.manager._conn.execute(
+            "SELECT id, expires_at FROM approval_request WHERE request_binding=? "
+            "AND consumed_at IS NULL ORDER BY id DESC LIMIT 1", (binding,)).fetchone()
+        if row:
+            status = self.authz.approval_status(row["id"])
+            if status == "approved":
+                decision.request_binding = binding
+                decision.approval_id = row["id"]
+                return
+            if status != "pending":
+                self.audit.record(direction="inbound", peer_identity=peer, target_type=target_type,
+                                  target_name=target, request_id=request_id,
+                                  decision="approval_expired", outcome="denied")
+                raise RpcError(ERR_APPROVAL_EXPIRED, "approval not granted")
+            expires_at = row["expires_at"]
+        else:
+            inv_id = self.audit.record(direction="inbound", peer_identity=peer, target_type=target_type,
+                                       target_name=target, request_id=request_id,
+                                       decision="approval_required", outcome="pending")
+            expires_at = self._approval(inv_id, decision, peer, target_type, target,
+                                        request_id, body)["expires_at"]
+            self.service.notify_approval(inv_id, peer, target_type, target)
+        raise RpcError(ERR_APPROVAL_PENDING,
+                       "approval pending; retry with the same request_id and arguments",
+                       {"request_id": request_id, "expires_at": expires_at})
+
     def _admit(self, peer, target_type, target, request_id, original, *, already_trusted=False,request_body=None):
         if original.code=='approval_required':
             from .execution import digest
@@ -130,7 +170,7 @@ class Invoker:
         if not decision.allowed:
             self.audit.record(direction="inbound", peer_identity=peer, target_type=target_type,
                               target_name=target, request_id=request_id,
-                              decision=decision.code, outcome="denied")
+                              decision=(decision.audit_code or decision.code), outcome="denied")
             raise RpcError(_CODE_MAP.get(decision.code, -32000), decision.reason)
 
     # ---- inbound: a peer asks US to run something ----------------------
@@ -163,17 +203,13 @@ class Invoker:
 
         if not decision.allowed and decision.code != "approval_required":
             self.audit.record(direction="inbound", peer_identity=peer, target_type="tool",
-                              target_name=tool, request_id=req_id, decision=decision.code, outcome="denied")
+                              target_name=tool, request_id=req_id, decision=(decision.audit_code or decision.code), outcome="denied")
             raise RpcError(_CODE_MAP.get(decision.code, -32000), decision.reason)
 
         if decision.code == "approval_required":
-            inv_id = self.audit.record(direction="inbound", peer_identity=peer, target_type="tool",
-                                       target_name=tool, request_id=req_id, decision="approval_required",
-                                       outcome="pending")
-            appr = self._approval(inv_id,decision,peer,'tool',tool,req_id,arguments)
-            self.service.notify_approval(inv_id, peer, "tool", tool)
-            if not await self._await_approval(appr["approval_id"]):
-                raise RpcError(ERR_APPROVAL_EXPIRED, "approval not granted")
+            # H16: answer -32002 now instead of holding the call open for the
+            # approval window; the caller retries the identical request.
+            self._approval_gate(peer, "tool", tool, req_id, decision, arguments)
 
         if not await _defenseclaw_inspect(tool, arguments):
             self.audit.record(direction="inbound", peer_identity=peer, target_type="tool",
@@ -216,7 +252,7 @@ class Invoker:
 
         if not decision.allowed and decision.code != "approval_required":
             self.audit.record(direction="inbound", peer_identity=peer, target_type="skill",
-                              target_name=skill, request_id=req_id, decision=decision.code, outcome="denied")
+                              target_name=skill, request_id=req_id, decision=(decision.audit_code or decision.code), outcome="denied")
             raise RpcError(_CODE_MAP.get(decision.code, -32000), decision.reason)
 
         deadline=params.get('deadline')
@@ -365,7 +401,7 @@ class Invoker:
         if not decision.allowed and decision.code != "approval_required":
             self.audit.record(direction="inbound", peer_identity=peer, target_type="knowledge",
                               target_name=collection_id, request_id=req_id,
-                              decision=decision.code, outcome="denied")
+                              decision=(decision.audit_code or decision.code), outcome="denied")
             raise RpcError(_CODE_MAP.get(decision.code, -32000), decision.reason)
         if decision.code == "approval_required":
             inv_id = self.audit.record(direction="inbound", peer_identity=peer,
@@ -460,7 +496,7 @@ class Invoker:
         if not decision.allowed and decision.code != "approval_required":
             self.audit.record(direction="inbound", peer_identity=peer,
                               target_type="knowledge_replica", target_name=collection_id,
-                              request_id=req_id, decision=decision.code, outcome="denied")
+                              request_id=req_id, decision=(decision.audit_code or decision.code), outcome="denied")
             raise RpcError(_CODE_MAP.get(decision.code, -32000), decision.reason)
         if decision.code == "approval_required":
             inv_id = self.audit.record(direction="inbound", peer_identity=peer,
@@ -604,19 +640,63 @@ class Invoker:
             env.update(registration.get('env') or {})
             result=await call_stdio(registration['command'],registration.get('args',[]),env,tool_name,arguments,timeout=self.tool_timeout)
             return {'content':[{'type':'text','text':json.dumps(result)}],'isError':False}
-        cfg = _openclaw_config().get("mcpServers", {}).get(server_id)
-        if not cfg:
-            raise RpcError(-32602, f"unknown MCP server '{server_id}'")
-
-        command = cfg.get("command")
-        args = cfg.get("args", [])
-        env = dict(os.environ)
-        for k, v in (cfg.get("env") or {}).items():
-            env[k] = os.path.expandvars(v) if isinstance(v, str) else str(v)
+        # Inventory and execution must resolve the same selected installation.
+        # A repository/default-home fallback can run a different registration
+        # from the one this Border advertised and its operator approved.
+        try:
+            raw = runtime.config.read_bytes()
+            if len(raw) > 4 * 1024 * 1024:
+                raise ValueError()
+            config = json.loads(raw)
+            modern = (config.get('mcp') or {}).get('servers') or {}
+            legacy = config.get('mcpServers') or {}
+            if not isinstance(modern, dict) or not isinstance(legacy, dict):
+                raise ValueError()
+            if server_id in modern and server_id in legacy and modern[server_id] != legacy[server_id]:
+                raise ValueError()
+            cfg = modern.get(server_id, legacy.get(server_id))
+            if not isinstance(cfg, dict) or cfg.get('transport', 'stdio') != 'stdio':
+                raise ValueError()
+            command, args = cfg.get('command'), cfg.get('args', [])
+            if not isinstance(command, str) or not command or not isinstance(args, list) or not all(isinstance(v, str) for v in args):
+                raise ValueError()
+            env = runtime.environment()
+            overrides = cfg.get('env') or {}
+            env['HOME'] = str(runtime.home)
+            selectors = {'HOME', 'OPENCLAW_HOME', 'OPENCLAW_STATE_DIR', 'OPENCLAW_CONFIG_PATH',
+                         'HERMES_HOME', 'NETCLAW_RUNTIME', 'NETCLAW_INSTALLATION_ID',
+                         'NETCLAW_RUNTIME_ROOT', 'NETCLAW_RUNTIME_ENV', 'N2N_BASE_DIR'}
+            if not isinstance(overrides, dict):
+                raise ValueError()
+            for key, value in overrides.items():
+                if not isinstance(key, str) or not isinstance(value, (str, int, float, bool)):
+                    raise ValueError()
+                expanded = Template(str(value)).substitute(env)
+                if key in selectors and expanded != env.get(key):
+                    raise ValueError()
+                env[key] = expanded
+            cwd = str(runtime.home)
+            # Canonical installed components retain their installer-owned
+            # interpreter/cwd binding rather than relying on a source cwd.
+            import importlib.util
+            spec = importlib.util.spec_from_file_location('_n2n_component_launch', ROOT / 'scripts/component-launch.py')
+            helper = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(helper)
+            match = helper.legacy_component([command, *args], env)
+            tail = args[1:] if args[:1] == ['-u'] else args
+            if (Path(command).name in ('python', 'python3', 'python3.12') and len(tail) == 4
+                    and tail[0] in ('scripts/component-launch.py', str(ROOT / 'scripts/component-launch.py'))
+                    and tail[2] == '--server'):
+                match = (tail[1], tail[3])
+            if match:
+                resolved, env, resolved_cwd = helper.resolve(*match, env=env)
+                command, args, cwd = resolved[0], resolved[1:], resolved_cwd or cwd
+        except (OSError, ValueError, TypeError, KeyError, AttributeError):
+            raise RpcError(-32602, 'selected MCP registration unavailable or invalid') from None
 
         async def run():
             proc = await asyncio.create_subprocess_exec(
-                command, *args, cwd=str(_repo_root()), env=env,
+                command, *args, cwd=cwd, env=env,
                 stdin=asyncio.subprocess.PIPE, stdout=asyncio.subprocess.PIPE,
                 stderr=asyncio.subprocess.DEVNULL)
 
@@ -635,21 +715,36 @@ class Invoker:
                     if msg.get("id") == want_id:
                         return msg
 
-            await send({"jsonrpc": "2.0", "id": 1, "method": "initialize",
-                        "params": {"protocolVersion": "2024-11-05", "capabilities": {},
-                                   "clientInfo": {"name": "n2n", "version": "1.0"}}})
-            await recv_id(1)
-            await send({"jsonrpc": "2.0", "method": "notifications/initialized", "params": {}})
-            await send({"jsonrpc": "2.0", "id": 2, "method": "tools/call",
-                        "params": {"name": tool_name, "arguments": arguments}})
-            resp = await recv_id(2)
             try:
-                proc.terminate()
-            except Exception:
-                pass
-            if "error" in resp:
-                return {"content": [{"type": "text", "text": json.dumps(resp["error"])}], "isError": True}
-            return resp.get("result", {})
+                await send({"jsonrpc": "2.0", "id": 1, "method": "initialize",
+                            "params": {"protocolVersion": "2024-11-05", "capabilities": {},
+                                       "clientInfo": {"name": "n2n", "version": "1.0"}}})
+                initialized = await recv_id(1)
+                if 'error' in initialized or not isinstance(initialized.get('result'), dict):
+                    raise RpcError(-32000, 'selected MCP initialization failed')
+                await send({"jsonrpc": "2.0", "method": "notifications/initialized", "params": {}})
+                await send({"jsonrpc": "2.0", "id": 2, "method": "tools/call",
+                            "params": {"name": tool_name, "arguments": arguments}})
+                resp = await recv_id(2)
+                if "error" in resp:
+                    return {"content": [{"type": "text", "text": json.dumps(resp["error"])}], "isError": True}
+                return resp.get("result", {})
+            finally:
+                # Timeout/cancellation is not proof that tools did not execute.
+                # Reap this owned process without resubmitting the operation.
+                if proc.returncode is None:
+                    try:
+                        proc.terminate()
+                    except ProcessLookupError:
+                        pass
+                try:
+                    await asyncio.wait_for(proc.wait(), timeout=2)
+                except asyncio.TimeoutError:
+                    try:
+                        proc.kill()
+                    except ProcessLookupError:
+                        pass
+                    await proc.wait()
 
         return await asyncio.wait_for(run(), timeout=self.tool_timeout)
 
@@ -667,7 +762,7 @@ class Invoker:
         approval notifications and the task's progress state, and extends the
         wait by the approval window so a human can approve instead of the task
         dying on a blind hard timeout."""
-        from .gateway import run_agent_turn
+        from .gateway import run_agent_turn, SKILL_FAILURE_RULE
 
         def on_stall(waited_s):
             if progress:
@@ -677,7 +772,8 @@ class Invoker:
             return self.authz.approval_window_s
 
         prompt = (f"A federated NetClaw peer has requested you run the '{skill}' skill. "
-                  f"Execute it for the following request and return only the result:\n\n{input_text}")
+                  f"Execute it for the following request and return only the result. "
+                  f"{SKILL_FAILURE_RULE}\n\n{input_text}")
         from .execution import conversation_id
         import uuid
         request=task_id or str(uuid.uuid4())
@@ -743,10 +839,23 @@ class Invoker:
                               target_type=target_type, target_name=target_name,
                               request_id=req_id, decision="requested", outcome=outcome)
 
-        self.service.tasks.outbound_intent(ident,method,params,request=req_id)
+        try:
+            self.service.tasks.outbound_intent(ident,method,params,request=req_id,
+                                               approval_retry=method=='n2n/tools/call')
+        except ValueError:
+            # A refused reuse is an attempted-call outcome, not permission to
+            # overwrite the original durable intent or leave this audit pending.
+            _terminal('denied')
+            raise
         try:
             result = await ch.call(method, params, timeout=timeout)
         except RpcError as e:
+            if e.code == ERR_APPROVAL_PENDING:
+                # H16: not a refusal and not an unknown outcome — nothing ran;
+                # the same request_id may be retried once the peer approves.
+                self.service.tasks.settle_intent(req_id, 'approval_pending')
+                _terminal("approval_pending")
+                raise
             self.service.tasks.settle_intent(req_id,'outcome_unknown' if e.code==ERR_EXECUTION_TIMEOUT else 'refused')
             # A refusal returned by the peer is auditable evidence, not a transient
             # response to discard (FR-036). Its own timeout code maps to `timeout`
@@ -767,10 +876,12 @@ class Invoker:
         self.service.tasks.settle_intent(req_id,'completed')
         return result
 
-    async def invoke_remote_tool(self, ident, tool, arguments):
+    async def invoke_remote_tool(self, ident, tool, arguments, request_id=None):
+        """`request_id` is for retrying a call the peer answered with
+        APPROVAL_PENDING (-32002): reuse its request_id and the same arguments."""
         ch = await self._channel(ident)
         import uuid
-        req_id = str(uuid.uuid4())
+        req_id = request_id or str(uuid.uuid4())
         self.audit.record(direction="outbound", peer_identity=ident, target_type="tool",
                           target_name=tool, request_id=req_id, decision="requested", outcome="pending")
         result = await self._outbound_call(
@@ -778,7 +889,7 @@ class Invoker:
             {"tool": tool, "arguments": arguments, "request_id": req_id},
             ident=ident, target_type="tool", target_name=tool, req_id=req_id,
             timeout=self.tool_timeout + 5)
-        return {"source": ident, "trust": "remote-untrusted", "result": result}
+        return {"source": ident, "trust": "remote-untrusted", "request_id": req_id, "result": result}
 
     async def submit_remote_skill(self, ident, skill, input_text, *, execution_scope=None):
         """Async (053): submit a skill task to a peer, return the task_id
@@ -800,24 +911,34 @@ class Invoker:
                               target_name=skill, request_id=task_id, decision="requested",
                               outcome="submitted")
         self.service.tasks.settle_intent(request,'submitted' if task_id else 'refused',task_id)
-        return {"source": ident, "trust": "remote-untrusted", **resp}
+        return {**resp, "source": ident, "trust": "remote-untrusted", "request_id": request}
 
     async def poll_remote_task(self, ident, task_id, kind="status"):
         """Fetch status or result of an outbound task from the peer (short call).
         On a completed result, cache it locally so it survives a later drop (FR-004)."""
+        row = self.manager._conn.execute(
+            "SELECT 1 FROM delegated_task WHERE task_id=? AND direction='outbound' AND peer_identity=?",
+            (task_id, ident)).fetchone()
+        if not row:
+            return {"task_id": task_id, "state": "unknown", "source": ident, "trust": "remote-untrusted"}
         ch = self.service.channels.get(ident)
-        if not ch:
+        if not ch or getattr(ch, '_closed', False):
             # Channel down: fall back to the last locally-cached status/result.
             tm = self.service.tasks
-            return tm.result(task_id) if kind == "result" else tm.status(task_id)
+            value = tm.result(task_id) if kind == "result" else tm.status(task_id)
+            return {**value, "source": ident, "trust": "remote-untrusted"}
         method = "n2n/tasks/result" if kind == "result" else "n2n/tasks/status"
         resp = await ch.call(method, {"task_id": task_id}, timeout=30.0)
+        if not isinstance(resp, dict) or resp.get('task_id') != task_id:
+            raise RpcError(-32603, 'peer task response does not match requested task')
         # Cache terminal results locally against the outbound row (retrieval after drop)
-        if kind == "result" and resp.get("state") in ("completed", "failed", "cancelled"):
+        if kind == "result" and resp.get("state") in ("completed", "failed", "cancelled", "outcome_unknown", "interrupted"):
             ref = self.audit.store_result(task_id, resp)
-            self.service.tasks._set(task_id, state=resp["state"], result_ref=ref,
+            tokens = resp.get('tokens_used')
+            usage = isinstance(tokens, int) and not isinstance(tokens, bool) and tokens >= 0 and resp.get('usage_available', True)
+            self.service.tasks._set(task_id, state=resp["state"], result_ref=ref, tokens_used=tokens if usage else 0, usage_available=int(bool(usage)),
                                     completed_at=resp.get("completed_at"))
-        return {"source": ident, "trust": "remote-untrusted", **resp}
+        return {**resp, "source": ident, "trust": "remote-untrusted"}
 
     async def cancel_remote_task(self, ident, task_id):
         ch = await self._channel(ident)

@@ -29,7 +29,11 @@ case "$component" in
   nso) function_name=component_install_nso ;;
   itential) function_name=component_install_itential ;;
   meraki) function_name=component_install_meraki ;;
+  cisco-iq) function_name=component_install_cisco_iq ;;
   analysis) function_name=component_install_analysis ;;
+  convergence-read) function_name=component_install_convergence_read ;;
+  result-analysis) function_name=component_install_result_analysis ;;
+  genie-worlds) function_name=component_install_genie_worlds ;;
   redfish) function_name=component_install_redfish ;;
   anta) function_name=component_install_anta ;;
   sdwan) function_name=component_install_sdwan ;;
@@ -61,6 +65,8 @@ case "$component" in
   kubeshark) function_name=component_install_kubeshark ;;
   k8s) function_name=component_install_k8s ;;
   zabbix) function_name=component_install_zabbix ;;
+  greynoise-community) function_name=component_install_greynoise_community ;;
+  threatintel) function_name=component_install_threatintel ;;
   bgp-intel) function_name=component_install_bgp_intel ;;
   globalping) function_name=component_install_globalping ;;
   topolograph) function_name=component_install_topolograph ;;
@@ -98,6 +104,7 @@ case "$component" in
   document) function_name=component_install_document ;;
   ollama) function_name=component_install_ollama ;;
   jev) function_name=component_install_jev ;;
+  netconverter) function_name=component_install_netconverter ;;
   humanrail) function_name=component_install_humanrail ;;
   *) exit 2 ;;
 esac

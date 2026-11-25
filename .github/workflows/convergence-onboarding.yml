@@ -3,7 +3,7 @@ name: Convergence onboarding
 on:
   pull_request:
     paths:
-      - 'workspace/skills/convergence-setup/**'
+      - 'workspace/skills/convergence-stack-setup/**'
       - 'deploy/helm/**'
       - 'deploy/convergence/docker-compose.yml'
       - 'deploy/convergence/flows/**'
@@ -53,18 +53,18 @@ jobs:
           COMPOSE_PROFILES: unifi
         run: |
           bundle="$RUNNER_TEMP/convergence bundle"
-          helper=workspace/skills/convergence-setup/scripts/setup.py
+          helper=workspace/skills/convergence-stack-setup/scripts/setup.py
           python3 "$helper" prepare --output "$bundle" --site ci --project convergence-ci --grafana
           python3 "$helper" run --bundle "$bundle" --action validate
           python3 "$helper" run --bundle "$bundle" --action start
-          python3 workspace/skills/convergence-setup/scripts/verify.py --bundle "$bundle" --canary
+          python3 workspace/skills/convergence-stack-setup/scripts/verify.py --bundle "$bundle" --canary
       - name: Restart and prove persistence
         run: |
           bundle="$RUNNER_TEMP/convergence bundle"
-          helper=workspace/skills/convergence-setup/scripts/setup.py
+          helper=workspace/skills/convergence-stack-setup/scripts/setup.py
           python3 "$helper" run --bundle "$bundle" --action stop
           python3 "$helper" run --bundle "$bundle" --action start
-          python3 workspace/skills/convergence-setup/scripts/verify.py --bundle "$bundle"
+          python3 workspace/skills/convergence-stack-setup/scripts/verify.py --bundle "$bundle"
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
@@ -83,7 +83,7 @@ jobs:
         if: always()
         run: |
           if [ -f "$RUNNER_TEMP/convergence bundle/deployment.json" ]; then
-            python3 workspace/skills/convergence-setup/scripts/setup.py run --bundle "$RUNNER_TEMP/convergence bundle" --action stop
+            python3 workspace/skills/convergence-stack-setup/scripts/setup.py run --bundle "$RUNNER_TEMP/convergence bundle" --action stop
           fi
 
   k3s-release:
@@ -139,17 +139,17 @@ jobs:
           docker build -t netclaw-convergence-api:ci ui/convergence-api
           k3d image import netclaw-convergence-api:ci -c convergence-ci
           bundle="$RUNNER_TEMP/convergence-k3s"
-          python3 workspace/skills/convergence-setup/scripts/k3s.py prepare --output "$bundle" --context k3d-convergence-ci --namespace trial --release trial --site ci --storage-class local-path --image netclaw-convergence-api:ci
-          python3 workspace/skills/convergence-setup/scripts/k3s.py install --bundle "$bundle"
-          python3 workspace/skills/convergence-setup/scripts/verify.py --bundle "$bundle" --canary
+          python3 workspace/skills/convergence-stack-setup/scripts/k3s.py prepare --output "$bundle" --context k3d-convergence-ci --namespace trial --release trial --site ci --storage-class local-path --image netclaw-convergence-api:ci
+          python3 workspace/skills/convergence-stack-setup/scripts/k3s.py install --bundle "$bundle"
+          python3 workspace/skills/convergence-stack-setup/scripts/verify.py --bundle "$bundle" --canary
           helm --kube-context k3d-convergence-ci -n trial test trial --logs
       - name: Repeat upgrade and persistence
         run: |
           bundle="$RUNNER_TEMP/convergence-k3s"
-          python3 workspace/skills/convergence-setup/scripts/k3s.py install --bundle "$bundle"
+          python3 workspace/skills/convergence-stack-setup/scripts/k3s.py install --bundle "$bundle"
           kubectl --context k3d-convergence-ci -n trial rollout restart statefulset/trial-postgres
           kubectl --context k3d-convergence-ci -n trial rollout status statefulset/trial-postgres --timeout=120s
-          python3 workspace/skills/convergence-setup/scripts/verify.py --bundle "$bundle"
+          python3 workspace/skills/convergence-stack-setup/scripts/verify.py --bundle "$bundle"
       - name: Remove only the disposable cluster
         if: always()
         run: |

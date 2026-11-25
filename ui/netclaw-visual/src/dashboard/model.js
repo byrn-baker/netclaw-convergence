@@ -6,7 +6,8 @@ export const VIEWS = [
   ['mobile', 'Mobile devices', '05'], ['science', 'Science Officer', '06'],
   ['network', 'Network', '07'], ['knowledge', 'Knowledge', '08'],
   ['operations', 'Operations', '09'], ['integrations', 'Integrations', '10'],
-  ['settings', 'Settings', '11'], ['rag', 'RAG', '12'], ['configuration', 'Configuration', '13'], ['tokenomics', 'Tokenomics', '14'], ['documentation', 'Documentation', '15'], ['logs', 'Logs', '16'], ['security', 'Security', '17'], ['pal', 'Avatar', '18'],
+  ['settings', 'Settings', '11'], ['rag', 'RAG', '12'], ['configuration', 'Configuration', '13'], ['tokenomics', 'Tokenomics', '14'], ['documentation', 'Documentation', '15'], ['logs', 'Logs', '16'], ['security', 'Security', '17'], ['pal', 'Avatar', '18'], ['convergence', 'Convergence', '19'],
+  ['approved', 'Approved operations', '20'],
 ];
 export const GUIDES = {
   knowledge: [
@@ -24,6 +25,13 @@ export const GUIDES = {
 };
 export const list = value => Array.isArray(value) ? value : [];
 export const text = (value, fallback = 'Not recorded') => typeof value === 'string' && value.trim() ? value : typeof value === 'number' && Number.isFinite(value) ? String(value) : fallback;
+export function protectedWorkspace(runtime) {
+  if (runtime?.capabilities?.protectedProfile !== true) return null;
+  const role = runtime.role === 'border' ? 'Border' : runtime.role === 'member' ? 'Member' : 'Protected role unverified';
+  return { name: text(runtime.label, 'Protected NetClaw'), role,
+    status: runtime.role === 'border' && runtime.capabilities.protectedOperations === true && runtime.readiness?.ready === true
+      ? 'Approval workspace configured' : 'Approval workspace unavailable' };
+}
 export function age(value, now = Date.now()) {
   const time = typeof value === 'number' ? (value < 1e12 ? value * 1000 : value) : Date.parse(value);
   if (!Number.isFinite(time)) return 'Time unknown';
@@ -49,9 +57,12 @@ export function entities(feed = {}) {
     // Never collapse two unknown identities by their display name.
     if (!identity || typeof identity !== 'string') return;
     const key = `${kind}:${identity}`;
-    const status = text(item.status || item.channel_state || item.state, 'Unknown');
+    const status = text(/severed|quarantined|retired/.test(item.state) ? item.state : item.status || item.channel_state || item.state, 'Unknown');
+    const reportedSeen = item.last_seen || item.updated_at || item.last_heartbeat;
+    const observedConnection = item.live === true || ['live','up'].includes(item.channel_state);
+    const seen = reportedSeen || (observedConnection ? feed.generatedAt : null);
     const row = { key, identity, kind, name: text(item.display_name || item.name || item.member_id || item.identity || item.advisor_id),
-      status, freshness: freshness(item.last_seen || item.updated_at || item.last_heartbeat), seen: item.last_seen || item.updated_at || item.last_heartbeat || null,
+      status, freshness: freshness(seen), seen, seenKind: reportedSeen ? 'reported' : observedConnection ? 'connection' : 'unknown',
       capabilities: item.capabilities || item.scope || item.skills || [],
       authority: kind === 'advisor' ? 'Advisory only · cannot execute' : kind === 'peer' ? 'External · permission scoped' : kind === 'edge' ? 'Edge · operator capabilities' : 'Execution member · scoped', raw: item };
     const i = rows.findIndex(r => r.key === key);

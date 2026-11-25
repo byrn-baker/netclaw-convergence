@@ -4,6 +4,12 @@ Set up a **new NetClaw or mixed Risk**, or manage your **existing NetClaw or Ris
 inspect operations, converse with its configured runtime, search RAG knowledge and
 review supported settings without leaving your editor.
 
+**Version 1.6.2:** Documents the optional Genie Network Worlds component in source-backed setup. Existing runtime upgrades and paid generation remain separate. See the [Genie guide](../../docs/GENIE-WORLDS.md).
+
+**Version 1.6.1:** Generate a single-use enrollment QR from **Mobile & edge** for your selected compatible installation, then scan it in NetClaw Mobile. The ordinary enrollment flow no longer needs a CLI token command. Requires the enrollment backend in source **1.18.6**; see the [Mobile enrollment guide](../../docs/MOBILE-ENROLLMENT.md) and [actual qualification](../../specs/175-cloud-mobile-enrollment/verification.md).
+
+**New in 1.5.0:** Optional NetConverter setup selects hosted-readonly or local-Terminal mode with independent private settings and cancellation preservation. Requires source **1.18.0**; account capability and exact-file approval remain separate. See the [NetConverter guide](../../docs/NETCONVERTER.md) and [qualification evidence](../../specs/162-netconverterai/verification.md).
+
 **New in 1.4.0:** Choose **Static or Dynamic testbeds** per claw, with 14 source routes, native source selection, explicit plan review and preserved cancellation/reload. Dynamic setup requires source **1.14.0**. Read the [dynamic testbed guide](../../docs/DYNAMIC-TESTBEDS.md) and [Spec160 verification](../../specs/160-dynamic-pyats-testbeds/verification.md). Setup configures policy; source access, schema validation, activation and device execution are separate steps.
 
 **Patch 1.3.1:** Includes the optional MCP-default catalog/resolver in exact setup source review (Spec 156). Use source 1.13.1 for the coordinated minor fixes; see [release notes](../../docs/releases/1.13.1.md).
@@ -12,22 +18,58 @@ review supported settings without leaving your editor.
 
 NetClaw remains your runtime. Opening the extension changes no runtime. Explicitly reviewed setup actions can install selected isolated MCP runtimes, register canonical OpenClaw MCPs or restart the owned federation service using existing NetClaw helpers.
 
+## Optional Genie Network Worlds setup
+
+With source1.26.0, choose **Genie Network Worlds** in the reviewed component catalog for a focused claw or its eligible OpenClaw Risk member. Setup installs the isolated six-tool MCP and Node backend and derives private binding paths inside the selected home. It starts no Google session and does not copy the Google key into the member or editor. Actual navigation uses the local backend viewer. Border-owned member execution is qualified on Mac in testing posture; live WSL generation and production confinement remain unqualified. See [setup, recording and cost boundaries](../../docs/GENIE-WORLDS.md).
+
 ## Connect
 
-1. Extension 1.4.0 requires VS Code 1.109 or later on macOS or Linux. Extension 1.1.0 retains its 1.102 baseline. On Windows, first open your
+Use VS Code **1.109 or later** and a trusted workspace. Installing the extension
+does not install, upgrade or activate an existing runtime.
+
+### Local installation
+
+1. On Windows, first open your
    intended **WSL distribution** with VS Code Remote WSL and install this extension
    **in WSL**. For another Linux/Mac machine, use your existing Remote SSH workspace.
 2. Start your already-installed NetClaw HUD using its normal supported environment.
    The initial compatibility baseline is NetClaw 1.8.0, including its installation
    identity and owned-conversation APIs. The extension does not upgrade NetClaw.
-3. Open the NetClaw Activity Bar and select **Add existing NetClaw**. Choose a friendly nickname such as **My Mac lab** or **WSL NetClaw**
+3. Run **NetClaw: Add Connection**, choose **Local installation**, then a friendly nickname such as **My Mac lab** or **WSL NetClaw**
    and enter the HUD **API** address, normally `http://127.0.0.1:3001`.
 4. Review the returned installation identity and harness before binding. Loopback
    belongs to the extension host, so WSL and Remote SSH connect on that host.
 
-No automatic connection or runtime changes occur when you open a workspace.
-Connections require Workspace Trust. Public HUD URLs, browser VS Code, native
-Windows runtime hosting and virtual workspaces are unsupported.
+### Existing Cloud Border
+
+Run **NetClaw: Add Connection → Cloud Border**, enter a **Name**, then the
+operator-provided **HTTPS URL**. A root URL with or without its trailing slash is
+accepted. The extension discovers and pins the installation identity; no
+installation-ID or access-mode prompt is needed. A changed identity at a saved
+origin is refused, preserving the original profile and operation references.
+
+The backend must advertise the R04a `remoteHud` schema-1 workspace capability;
+the source version number alone does not establish compatibility.
+An explicitly configured `open-lab` Border connects without sign-in, tickets or
+user sessions. Its advertised capabilities determine the available panels. A full
+workspace Border opens the normal Overview and supports Chat, Canvas, RAG,
+members, peers, skills, runtime, usage, documentation and logs. Protected member
+operations retain exact native review and approval, signed results, durable
+acknowledgements and same-reference recovery. Unknown outcomes stay retained and
+are never automatically replayed.
+
+Use an existing operator-approved lab endpoint (for example an Azure or GCP Border built with
+[NetClaw in Azure](../../docs/NETCLAW-IN-AZURE.md) or [NetClaw in GCP](../../docs/NETCLAW-IN-GCP.md); add one connection per Border and compare the
+displayed cluster anchor fingerprint with the operator's record before trusting it). This client release is not a cloud
+deployment guide and does not implement users, SSO or RBAC. Local workspace files,
+service lifecycle, environment/MCP configuration, security controls and assistant
+registration remain local-only. Browser VS Code, native Windows runtime hosting
+and virtual workspaces remain unsupported. Opening a workspace makes no automatic
+connection or runtime change.
+
+**Managing connections.** In the NetClaw side bar under **Connections**, hover a saved connection and click the pencil (**Rename**) or trash
+(**Remove**) icon, or right-click it. **Remove** asks for confirmation and forgets only the saved connection in this editor; it never stops or
+changes the NetClaw or the cloud resources behind it. **NetClaw: Rename Connection** and **NetClaw: Remove Connection** in the Command Palette do the same.
 
 ## Workspace files and claw controls
 
@@ -240,4 +282,22 @@ Backend integration tests require the HUD dependencies
 `npm run test:editor` launches an isolated desktop extension test. RAG and named
 assistant live checks are explicit opt-ins documented in Spec150 evidence.
 
-`npm run package` requires a clean committed checkout, checks that every runtime bundle and license notice is included, and records source and VSIX digest in `out/package.json`. Install from the [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=NetClaw.netclaw). Version 1.4.0 adds static/dynamic testbed and source selection, retains guided Comms from 1.3.0 and the reviewed separate-claw setup from 1.2.0, retains workspace files and owned lifecycle controls from 1.1.0, and includes the [1.0.1 input/address hotfix](HOTFIX-1.0.1.md). Install the tested artifact and reload the window; an installed version label does not establish which code the current extension host is running. The earlier 0.1.1 WSL-tested VSIX passed native Mac acceptance and was published unchanged; Microsoft completed its validation on October 11, 2026. See [production readiness](../../specs/151-extension-experience/production-readiness.md) for qualification, artifact verification and platform limits. Earlier [Spec151 verification](../../specs/151-extension-experience/verification.md) records the original Mac source checkpoint.
+`npm run package` requires a clean committed checkout, checks that every runtime bundle and license notice is included, and records source and VSIX digest in `out/package.json`. Install from the [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=NetClaw.netclaw). Version 1.6.1 adds Mobile QR enrollment and retains the Cloud Border workspace, optional NetConverter setup, dynamic testbeds, guided Comms, reviewed new-claw setup and existing local controls. After updating, activate the installed code through **Developer: Restart Extension Host** when it is safe to interrupt extension work; an installed version label does not establish which code the current host is running.
+
+R04a live qualification used frozen private 1.5.0 builds in the owner's macOS
+VS Code 1.109 with OpenClaw/Sonnet 4.6. It exercised Name + URL connection, stable
+profile selection, normal panels, Chat, cited RAG/Canvas, a protected NetBox read
+and recovery with unchanged execution counts. Native file-picker automation did
+not complete selection; the approved synthetic upload used the production client,
+followed by native search, context staging and Canvas. Final recovery displayed
+the same signed result and acknowledgement after an extension-host restart; the
+initiating picker click was not captured and the GET path is source-derived,
+not a packet trace. The release artifact receives source/build/package checks;
+the evidence does not claim another live rollout of the final merged source.
+
+Windows/Linux cloud editors, other cloud providers/harnesses and general deployment
+are not qualified by this Mac result. That R04a evidence does not qualify Mobile QR enrollment; separate actual QR and
+native simulator evidence is in [Spec175](../../specs/175-cloud-mobile-enrollment/verification.md). Physical-device qualification remains open. See
+[R04a verification](../../specs/174-cloud-client-integration/verification.md).
+Earlier local feature limits remain in [Spec151 production readiness](../../specs/151-extension-experience/production-readiness.md)
+and the linked setup and lifecycle verification records above.

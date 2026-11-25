@@ -1,8 +1,10 @@
 # netclaw Development Guidelines
 
-Auto-generated from all feature plans. Last updated: 2026-09-26
+Auto-generated from all feature plans. Last updated: 2026-11-14
 
 Spec153 installer (source 1.12.0 / extension 1.2.0): [new setup](docs/GETTING-STARTED-VSCODE.md), [Claw Plan/CLI](docs/CLAW-PLAN.md), [assistant flow](docs/ASSISTANT-INSTALL.md), and [deployment Spec Kit](docs/SPEC-KIT-CLAWS.md) share a private, exact-review engine. Use `installer/assistant-skills/netclaw-install/SKILL.md` for end-user deployment; `.agents/skills/speckit-*` remain repository development tools. Native Windows is a read-only WSL gate; actual installation targets local macOS and supported WSL2 Ubuntu. No real-installation or publication qualification is implied by fixture success. See `specs/153-ide-installer/verification.md`.
+
+Azure and multi-cloud (spec 198, operator path, read-only installer step): [NetClaw in Azure](docs/NETCLAW-IN-AZURE.md) and the [GCP and Azure mesh](docs/NETCLAW-MULTICLOUD-MESH.md); verified closure in `specs/198-azure-multicloud-ha/closure-20261124.md`. Azure deployments are NOT behind any authentication; keep URLs private. The release gate holds: no client build is published without owner approval.
 
 ## Active Technologies
 - N/A (stateless server; subscription state held in-memory during runtime) (003-gnmi-mcp-server)
@@ -154,6 +156,20 @@ Spec153 installer (source 1.12.0 / extension 1.2.0): [new setup](docs/GETTING-ST
 - N/A — no new persistent storage of any kind (spec Clarifications Q1/Q2, FR-013, (122-worldlabs-topology-viz)
 - Python 3.10+ source (contract environments use 3.12), Node.js ES modules, Bash, Dart/Flutter and Swift mobile code. + Existing MCP/FastMCP, httpx, cryptography, ChromaDB; Express/ws/Vite/React/Three.js HUD; per-component dependency isolation. (124-flagship-audit)
 - Existing JSON, SQLite, ChromaDB, filesystem and GAIT; no new operational datastore. (124-flagship-audit)
+- Python 3.10+ (Border source `mcp-servers/protocol-mcp/bgp/federation/ha/*`, contrac + etcd (3 voters, per Spec 179), lego (ACME DNS-01), GoDaddy API (Personal Access (182-multi-region-ha-borders)
+- Existing etcd/SQLite/GAIT stores; per-Border persistent disk. No new datastore. (182-multi-region-ha-borders)
+- Python 3.10+ (Border source, role launcher, tooling; contract env 3.12 inside the image), Node 24 (HUD ingress, workspace backend), Bash, YAML policies, Dockerfile. + NVIDIA OpenShell 0.1.7 (Debian package, Docker compute driver), Docker >= 28, Cisco DefenseClaw 1.0.4 (pinned, checksum-verified), OpenClaw 2026.7.1-2 (qualified), etcd 3.6.x, existing R09 tooling (`labs/ha/r09_*.py`, `scripts/ha-r09-*.sh`), qualified R04A Anthropic guard configuration. (185-openshell-defenseclaw-gcp)
+- per-node persistent disk; sandbox state volume for the Border home; DefenseClaw audit SQLite on the node, exported on demand. (185-openshell-defenseclaw-gcp)
+- Python 3.10+, stdlib only + none new (188-skill-load-limits)
+- files only (`config/skill-limits.json`; runtime `openclaw.json` edited in place by the existing atomic private writer) (188-skill-load-limits)
+- Python 3.10+ (stdlib only), Bash wrapper + none new. Reuses semantics of `scripts/write-env.py` (private atomic dotenv writes; value from stdin only) (191-cisco-iq-mcp)
+- runtime `~/.openclaw/.env` (key, region), runtime `~/.openclaw/openclaw.json` (registration), private backups (0600) beside them; no database (191-cisco-iq-mcp)
+- Python 3.10+ source (tests run on 3.12 venv) + stdlib only (sqlite3, time, os, asyncio); existing FederationManager/Auditor/FederationService (189-peer-limit-semantics)
+- existing `~/.openclaw/n2n/federation.db`; new additive tables (see data-model.md); `CREATE TABLE IF NOT EXISTS`, idempoten (189-peer-limit-semantics)
+- Python 3.10+ (tests on 3.12 venv) + stdlib only (sqlite3, json); existing FederationManager, Authorizer, Auditor, InventoryBuilder (190-grant-access-class)
+- existing `federation.db`; additive: `ALTER TABLE invocation_grant ADD COLUMN access_class TEXT NOT NULL DEFAULT 'read_write'` through the existing try/except ALTER list, and `CREATE TABLE IF NOT EXISTS tool_classification` (SCHEMA_190) (190-grant-access-class)
+- Bash (driver + deploy glue, matches `scripts/ha-r09-*.sh`), Python 3.10+ (preflight, spend ledger, evidence; stdlib only, matches `labs/ha/r09_*.py`); isolated Python3.12 Border with measured admission and signed federation changes + Azure CLI (`az`, already installed) with no new Python packages; existing lego (ACME DNS-01), etcd 3.6.16 container image, GoDaddy DNS API, existing `r09_prepare.py` / `r09_member.py` / `r09_vm_*.py` (198-azure-multicloud-ha)
+- Local evidence under `specs/198-azure-multicloud-ha/` and `~/.local/share/netclaw/r10-*` (git-ignored); per-VM disks only; spend ledger is a small JSON file; no new datastore (198-azure-multicloud-ha)
 
 - Python 3.10+ + FastMCP (MCP framework), grpcio + grpcio-tools (gRPC transport), pygnmi (gNMI client library), protobuf, cryptography (TLS handling) (003-gnmi-mcp-server)
 
@@ -173,9 +189,9 @@ cd src [ONLY COMMANDS FOR ACTIVE TECHNOLOGIES][ONLY COMMANDS FOR ACTIVE TECHNOLO
 Python 3.10+: Follow standard conventions
 
 ## Recent Changes
-- 124-flagship-audit: Added Python 3.10+ source (contract environments use 3.12), Node.js ES modules, Bash, Dart/Flutter and Swift mobile code. + Existing MCP/FastMCP, httpx, cryptography, ChromaDB; Express/ws/Vite/React/Three.js HUD; per-component dependency isolation.
-- 122-worldlabs-topology-viz: Added Python 3.10+ (matches every existing NetClaw MCP server and skill; no new + FastMCP (`worldlabs-marble-mcp`, matching repo convention), `httpx`
-- 121-federated-topology-viz: Added Python 3.10+ (matches every existing NetClaw MCP server and skill; no new + FastMCP (both new MCP servers, matching repo convention), N2G (new —
+- 198-azure-multicloud-ha: Added Bash (driver + deploy glue, matches `scripts/ha-r09-*.sh`), Python 3.10+ (preflight, spend ledger, evidence; stdlib only, matches `labs/ha/r09_*.py`); isolated Python3.12 Border with measured admission and signed federation changes + Azure CLI (`az`, already installed) with no new Python packages; existing lego (ACME DNS-01), etcd 3.6.16 container image, GoDaddy DNS API, existing `r09_prepare.py` / `r09_member.py` / `r09_vm_*.py`
+- 188-skill-load-limits: Added Python 3.10+, stdlib only + none new
+- 191-cisco-iq-mcp: Added Python 3.10+ (stdlib only), Bash wrapper + none new. Reuses semantics of `scripts/write-env.py` (private atomic dotenv writes; value from stdin only)
 
 
 <!-- MANUAL ADDITIONS START -->

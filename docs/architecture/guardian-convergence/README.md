@@ -5,7 +5,7 @@ subscription model migration. These diagrams document the deployment and
 configured workflows; they do not propose a new architecture.
 
 These exported sheets precede the reliability changes later on 24 October.
-The [current hardening notes](../../CONVERGENCE.md#reliability-and-security-foundation--24-october-2026)
+The [current hardening notes](../../convergence/README.md#reliability-and-security-foundation--24-october-2026)
 document the durable receiver queue, restricted investigator/coordinator tools,
 scoped case MCP, case history, corrected learning and Security view. Use those
 notes for the updated investigation and persistence paths.
@@ -90,7 +90,7 @@ profile. No new monitoring incident was injected to create these diagrams.
 
 Sources:
 
-- [Convergence overview](../../CONVERGENCE.md)
+- [Convergence overview](../../convergence/README.md)
 - [Model configuration and subscription authentication](../../MODELS.md)
 - [Alert receiver implementation](../../../services/alert-receiver/server.py)
 - [Automatic investigation policy logic](../../../services/alert-receiver/investigation_policy.py)

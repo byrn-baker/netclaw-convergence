@@ -283,3 +283,21 @@ cannot work. Convergence names come from convergence-api (SNMP/UniFi/blackbox)
 and happen to agree with `testbed.yaml` on the switches, but the match is
 explicit rather than assumed — non-testbed devices correctly get no Console
 button.
+
+## 2026-11-25 upstream sync: two Convergence views
+
+Upstream now ships its own optional Convergence view: the convergence-platform read
+connector (`src/dashboard/Convergence.jsx`, view id `convergence`, routes
+`/api/hud/convergence/*`). It is shown only when `CONVERGENCE_ENABLED` is set.
+
+- **Fork workspace.** The fork's workspace (`src/fork-local/DashboardConvergence.jsx`,
+  `/api/home/*`) is labelled **Convergence home** in the command bar (so it never shares an accessible name with upstream's **Convergence** navigation item; the heading stays "Convergence"). Its view id is now
+  `convergence-home` and its lazy component is `ForkConvergence`. Its heading still
+  shows the Convergence connection status and refreshes Convergence sources.
+- **Routes.** The two route sets do not overlap.
+- **Gateway token.** The fork's `server.js` gateway-token patch was dropped.
+  Upstream's `gatewayBearerToken` resolves `${...}` references in the token
+  itself. `getGatewayConfig` still reads the config through the fork-local
+  `readModelConfig`.
+- **Chat runtime.** `chat-runtime.js` passes the fork's resolved runtime environment to
+  `gatewayEnvironment`, with upstream's per-method timeout.

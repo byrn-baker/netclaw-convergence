@@ -73,10 +73,13 @@ Handler = Callable[["FederationChannel", dict], Awaitable[Optional[dict]]]
 
 
 class RpcError(Exception):
-    def __init__(self, code: int, message: str):
+    def __init__(self, code: int, message: str, data=None):
         super().__init__(message)
         self.code = code
         self.message = message
+        # JSON-RPC 2.0 `error.data` (optional). H16: -32002 carries the
+        # approval_id/expires_at/request_id the caller needs to retry.
+        self.data = data
 
 
 def encode_frames(message: dict) -> list:
@@ -153,6 +156,9 @@ class FederationChannel:
         if self._closed:
             return
         self._closed = True
+        expiry = getattr(self, '_read_task_expiry', None)
+        if expiry and expiry is not asyncio.current_task():
+            expiry.cancel()
         for t in (self._read_task, self._hb_task):
             if t and t is not asyncio.current_task():
                 t.cancel()
@@ -382,7 +388,7 @@ class FederationChannel:
                 await self._send_frames({"jsonrpc": "2.0", "id": req_id, "result": result or {}})
         except RpcError as e:
             if req_id is not None:
-                await self._send_frames(self._err(req_id, e.code, e.message))
+                await self._send_frames(self._err(req_id, e.code, e.message, e.data))
             # A failed possession proof closes the channel after the reply so the
             # forger cannot retry methods on the same unauthenticated channel.
             if getattr(self, "_auth_failed", False):
@@ -392,8 +398,11 @@ class FederationChannel:
             if req_id is not None:
                 await self._send_frames(self._err(req_id, -32000, str(e)))
 
-    def _err(self, req_id, code, message):
-        return {"jsonrpc": "2.0", "id": req_id, "error": {"code": code, "message": message}}
+    def _err(self, req_id, code, message, data=None):
+        error = {"code": code, "message": message}
+        if data is not None:
+            error["data"] = data
+        return {"jsonrpc": "2.0", "id": req_id, "error": error}
 
     # ---- outbound requests --------------------------------------------
 
@@ -412,7 +421,8 @@ class FederationChannel:
         try:
             resp = await asyncio.wait_for(exchange(), timeout=timeout)
             if "error" in resp:
-                raise RpcError(resp["error"]["code"], resp["error"]["message"])
+                raise RpcError(resp["error"]["code"], resp["error"]["message"],
+                               resp["error"].get("data"))
             return resp.get("result", {})
         except asyncio.TimeoutError:
             raise RpcError(ERR_EXECUTION_TIMEOUT, f"{method} timed out; operation outcome may be unknown")

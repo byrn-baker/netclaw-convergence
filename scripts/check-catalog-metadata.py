@@ -10,8 +10,8 @@ from urllib.parse import urlsplit
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'scripts/lib'))
-from setup_schema import loads, validate
 from mcp_environment import load_mcp_template
+from setup_schema import loads, validate
 
 
 def check(catalog, root=ROOT):
@@ -25,7 +25,7 @@ def check(catalog, root=ROOT):
     actual = {p.parent.name for p in (root / 'workspace/skills').glob('*/SKILL.md')}
     if set(skills) != actual:
         errors.append('skill_inventory_mismatch')
-    registered = set(load_mcp_template((root / 'config/openclaw.json').read_bytes()))
+    registered = set(load_mcp_template((root / 'config/openclaw.json').read_bytes(), 16 * 1024 * 1024))
     joined = {s for c in components.values() for s in c['servers']}
     if registered != joined:
         errors.append('server_join_mismatch')

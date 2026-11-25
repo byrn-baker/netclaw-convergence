@@ -88,6 +88,16 @@ class InventoryBuilder:
         for name, spec in servers.items():
             tools = spec.get("tools") if isinstance(spec, dict) else None
             if isinstance(tools,dict):tools=tools.get('include',[])
+            # Current OpenClaw uses toolFilter.include. Advertise its explicit
+            # names without interpreting wildcard/discovery filters as tools.
+            if self.runtime.kind == 'openclaw' and isinstance(spec, dict):
+                native = spec.get('toolFilter')
+                if isinstance(native, dict) and 'include' in native:
+                    included = native['include']
+                    valid = (isinstance(included, list) and all(
+                        isinstance(item, str) and re.fullmatch(r'[A-Za-z0-9_.-]+', item)
+                        for item in included))
+                    tools = included if valid and (not tools or tools == included) else []
             approved=(qualified.get(name,{}).get('tools') or {}).get('include',[])
             out.append({"name": name, "tools": tools or approved or [],'invocable_tools':approved if self.runtime.kind=='hermes' else tools or [],
                         'qualification':'source-reviewed' if name in qualified else 'configured'})
@@ -147,7 +157,7 @@ class InventoryBuilder:
             if not r or r["role"] != "border":
                 return []
             rows = conn.execute(
-                "SELECT scope FROM member WHERE state NOT IN ('removed','quarantined')"
+                "SELECT scope, health FROM member WHERE state NOT IN ('removed','quarantined')"
             ).fetchall()
         except Exception:
             return []   # risk table absent (pre-056) or unreadable — no aggregate
@@ -160,8 +170,11 @@ class InventoryBuilder:
             base_names = {b["name"] for b in BASE_FLOOR}
         except Exception:
             base_names = set()
+        # Spec 174: leave out a skill the member's own runtime cannot load.
+        from .member_inventory import unavailable_skills
         names = set()
         for row in rows:
+            unavailable = unavailable_skills(row)
             try:
                 for e in json.loads(row["scope"] or "[]"):
                     if isinstance(e, dict):
@@ -170,7 +183,7 @@ class InventoryBuilder:
                         name, tier = e, ("base" if e in base_names else "specialty")
                     else:
                         continue
-                    if tier == "specialty" and name and name not in existing_names:
+                    if tier == "specialty" and name and name not in existing_names and name not in unavailable:
                         names.add(name)
             except (ValueError, TypeError):
                 continue
@@ -204,6 +217,11 @@ class InventoryBuilder:
         servers = [s for s in all_servers
                    if self._visibility("mcp_server", s["name"], peer_identity)]
         badges = _derive_badges([s["name"] for s in servers])
+        classes = self._class_map()   # spec 190: advisory access hints (absent = unclassified)
+        for sk in skills:
+            c = classes.get(("skill", sk["name"]))
+            if c:
+                sk["access"] = c
         # Feature 064: advertise local RAG collections as content-free knowledge
         # entries (one per collection), visibility-filtered per peer and secret-
         # scanned. Advertised by default (FR-003); collection hidden via
@@ -214,8 +232,7 @@ class InventoryBuilder:
             "issued_at": _now(),
             "version": self._version,
             "skills": skills,
-            "mcp_servers": [{"name": s["name"], "tools": s["tools"],
-                             "invocable_tools": s['invocable_tools'],'qualification':s['qualification']} for s in servers],
+            "mcp_servers": [self._server_entry(s, classes) for s in servers],
             "knowledge": knowledge,
             "badges": badges,
             "posture": self._posture_card(posture),
@@ -224,6 +241,34 @@ class InventoryBuilder:
         }
         self._assert_no_secrets(inv)
         return inv
+
+    def _class_map(self) -> dict:
+        """(target_type, name) -> read|write, operator override over annotation.
+        Advisory only: receivers must never authorize from these hints."""
+        try:
+            rows = self.manager._conn.execute(
+                "SELECT target_type, target_name, access, source FROM tool_classification").fetchall()
+        except Exception:
+            return {}
+        out, ops = {}, {}
+        for r in rows:
+            key = (r["target_type"], r["target_name"])
+            if r["source"] == "operator":
+                ops[key] = r["access"]
+            else:
+                out[key] = r["access"]
+        out.update(ops)
+        return out
+
+    @staticmethod
+    def _server_entry(s: dict, classes: dict) -> dict:
+        entry = {"name": s["name"], "tools": s["tools"],
+                 "invocable_tools": s['invocable_tools'], 'qualification': s['qualification']}
+        access = {t: classes[("tool", f"{s['name']}/{t}")] for t in (s["tools"] or [])
+                  if ("tool", f"{s['name']}/{t}") in classes}
+        if access:
+            entry["tool_access"] = access
+        return entry
 
     def _harness_card(self):
         from .runtime import local_harness

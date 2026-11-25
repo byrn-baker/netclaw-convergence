@@ -61,12 +61,7 @@ def migrate_known_value(server, old, template, prepared):
     return prepared
 
 
-def load_mcp_template(raw):
-    """Validate MCP entries without interpreting unrelated provider price decimals.
-
-    The caller supplies a bounded source read. Duplicate keys remain invalid,
-    and the selected MCP subtree still uses the strict setup JSON grammar.
-    """
-    from setup_schema import loads, _pairs, _reject_number
-    source = json.loads(raw, object_pairs_hook=_pairs, parse_constant=_reject_number)
-    return loads(json.dumps(source['mcpServers']), 16 * 1024 * 1024)
+def load_mcp_template(raw, limit=1024 * 1024):
+    """Read strict registrations from an OpenClaw config that can include model prices."""
+    from setup_schema import loads
+    return loads(raw, limit, object_field="mcpServers")

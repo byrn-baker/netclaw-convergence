@@ -4,11 +4,11 @@ Tier 1 establishes that the selected registration can locate its launcher and
 owned source. Tier 2 separately proves native discovery. No exit-zero banner or
 unrelated Python record is accepted as a substitute for these files.
 """
-from mcp_environment import load_mcp_template
 import os
 from pathlib import Path
 import shutil
 from setup_deploy import helper
+from mcp_environment import load_mcp_template
 from setup_schema import loads
 from setup_state import Conflict,guarded_read,directory
 

@@ -8,7 +8,7 @@ Convergence live under `deploy/` and `services/` — not everything under
 
 | What | Where |
 |------|--------|
-| Product overview | [`docs/CONVERGENCE.md`](../docs/CONVERGENCE.md) |
+| Product overview | [`docs/convergence/README.md`](../docs/convergence/README.md) |
 | Env layout | [`docs/ENV-AND-LAYOUT.md`](../docs/ENV-AND-LAYOUT.md) |
 | Stack (Docker/K3s) | [`deploy/convergence/`](../deploy/convergence/) |
 | Alert / Nautobot webhooks | [`services/alert-receiver/`](../services/alert-receiver/) |
@@ -41,7 +41,7 @@ copy under `services/alert-receiver/`).
 
 Many scripts under this tree were for **Part 15 BGP lab**, vendor enablement
 (`*-enable.sh`), scans, and one-off migrations. They are not required for
-Convergence site ops. Prefer `docs/CONVERGENCE.md` over running random
+Convergence site ops. Prefer `docs/convergence/README.md` over running random
 root-level scripts.
 
 If you are specifically working BGP route-stability lab material, see

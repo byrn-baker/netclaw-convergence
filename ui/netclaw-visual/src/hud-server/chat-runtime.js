@@ -7,6 +7,14 @@ import path from 'node:path';
 import { readModelConfig, runtimeEnvironment } from '../fork-local/model-config.js';
 import { gatewayAgentId } from './gateway-agent.js';
 const execute = promisify(execFile);
+export function gatewayCallTimeout(method, env = process.env) {
+  const name = method === 'models.list' ? 'NETCLAW_GATEWAY_CATALOG_TIMEOUT_MS'
+    : ['sessions.list', 'chat.history'].includes(method) ? 'NETCLAW_GATEWAY_HISTORY_TIMEOUT_MS'
+    : method === 'sessions.patch' ? 'NETCLAW_GATEWAY_SETTINGS_TIMEOUT_MS' : null;
+  const requested = name ? Number(env[name]) : NaN;
+  const maximum = method === 'sessions.patch' ? 120000 : 60000;
+  return Number.isInteger(requested) && requested >= 20000 && requested <= maximum ? requested : 20000;
+}
 export function gatewayEnvironment(config, port, configPath, env = process.env, nodePath = process.execPath) {
   if (!Number.isInteger(port) || port < 1 || port > 65535) throw Error('Invalid local gateway port.');
   const resolve = value => {
@@ -38,9 +46,12 @@ export async function gatewayCall(method, params, port, configPath) {
       try{await access(candidate,constants.X_OK);executable=candidate;break locate;}catch{}
     }
   }
+  // Small cloud hosts can spend longer starting the native CLI. Discovery has
+  // and history have bounded allowances; unrelated calls keep their deadline.
+  const timeout = gatewayCallTimeout(method);
   const { stdout } = await execute(executable, ['gateway', 'call', method, '--params', JSON.stringify(params),
     '--timeout', '10000', '--json'],
-  { env: gatewayEnvironment(config, port, configPath, env), timeout: 20000, maxBuffer: 4 * 1024 * 1024, windowsHide: true });
+  { env: gatewayEnvironment(config, port, configPath, env), timeout, maxBuffer: 4 * 1024 * 1024, windowsHide: true });
   return JSON.parse(stdout.slice(stdout.indexOf('{')));
 }
 export function createChatRuntime(call = gatewayCall) {

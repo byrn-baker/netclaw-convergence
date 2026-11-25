@@ -204,6 +204,93 @@
       "expected_tools": [
         "n2n_status"
       ]
+    },
+    "netconverter": {
+      "servers": [
+        "netconverter-mcp"
+      ],
+      "script": "mcp-servers/netconverter-mcp/server.py",
+      "required_env": [
+        "NETCONVERTER_MODE",
+        "NETCONVERTER_API_KEY",
+        "NETCONVERTER_ACCOUNT_REF",
+        "NETCONVERTER_DATA_DIR",
+        "NETCONVERTER_INSTALLATION_ID"
+      ],
+      "expected_tools": [
+        "netconverter_status",
+        "netconverter_prepare_submission",
+        "netconverter_submit_approved",
+        "netconverter_request_status",
+        "netconverter_read",
+        "netconverter_job_status",
+        "netconverter_wait_for_job",
+        "netconverter_download"
+      ]
+    },
+    "convergence-read": {
+      "servers": [
+        "convergence-read-mcp"
+      ],
+      "script": "mcp-servers/convergence-read-mcp/server.py",
+      "required_env": [],
+      "expected_tools": [
+        "convergence_flow_summary",
+        "convergence_flow_evidence",
+        "convergence_vm_security"
+      ]
+    },
+    "greynoise-community": {
+      "servers": [
+        "greynoise-community-mcp"
+      ],
+      "script": "mcp-servers/greynoise-community-mcp/server.py",
+      "expected_tools": [
+        "greynoise_community_lookup"
+      ],
+      "environment_keys": [
+        "GREYNOISE_API_KEY",
+        "GREYNOISE_TIMEOUT"
+      ]
+    },
+    "threatintel": {
+      "servers": [
+        "threatintel-mcp"
+      ],
+      "script": "mcp-servers/mcp-threatintel/dist/index.js",
+      "expected_tools": [
+        "threatintel_status",
+        "threatintel_lookup_ip",
+        "greynoise_ip",
+        "feodo_tracker"
+      ],
+      "environment_keys": [
+        "GREYNOISE_API_KEY",
+        "ABUSEIPDB_API_KEY",
+        "OTX_API_KEY",
+        "ABUSECH_AUTH_KEY"
+      ],
+      "command": "node"
+    },
+    "genie-worlds": {
+      "servers": [
+        "genie-worlds-mcp"
+      ],
+      "script": "mcp-servers/genie-worlds-mcp/server.py",
+      "required_env": [
+        "NETCLAW_GENIE_CONTROL_FILE"
+      ],
+      "environment_keys": [
+        "NETCLAW_GENIE_CONTROL_FILE"
+      ],
+      "expected_tools": [
+        "genie_world_prepare",
+        "genie_world_start",
+        "genie_world_status",
+        "genie_world_event",
+        "genie_world_stop",
+        "genie_world_evidence"
+      ]
     }
   }
 }

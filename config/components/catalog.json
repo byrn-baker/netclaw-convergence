@@ -2478,8 +2478,8 @@
       "id": "percepxion",
       "category": "Out-of-Band",
       "title": "Lantronix Percepxion",
-      "description": "Fleet-wide OOB console-server SaaS — device inventory, firmware compliance/rollout, config mgmt, Smart Groups, security audit, async CLI dispatch (37 tools, external/on-demand)",
-      "whenToChoose": "**Fleet-wide OOB console-server management, external/on-demand** — device inventory, firmware compliance/rollout, config mgmt, Smart Groups, security audit, async CLI dispatch with output retrieval across the Percepxion SaaS platform (37 tools). Actively co-developed by Lantronix, not vendored — see [spec 104](specs/104-percepxion-oob-integration/spec.md)",
+      "description": "Fleet-wide OOB console-server SaaS — device inventory, firmware compliance/rollout, config mgmt, Smart Groups, security audit, async CLI dispatch (38 tools, external/on-demand)",
+      "whenToChoose": "**Fleet-wide OOB console-server management, external/on-demand** — device inventory, firmware compliance/rollout, config mgmt, Smart Groups, security audit, async CLI dispatch with output retrieval across the Percepxion SaaS platform (38 tools). Actively co-developed by Lantronix, not vendored — see [spec 104](specs/104-percepxion-oob-integration/spec.md)",
       "order": 10,
       "platforms": [
         "macos",
@@ -2653,7 +2653,7 @@
         "reason": "Verify this component through its selected-harness registration; artifact presence alone is insufficient."
       },
       "estimate": {
-        "schemas": 37,
+        "schemas": 38,
         "method": "documented",
         "source": "README.md#mcp-servers-176",
         "reason": "Source description count; not a live tools/list measurement."
@@ -15650,8 +15650,8 @@
       "id": "peering",
       "category": "Labs & Simulation",
       "title": "Protocol Peering Wizard",
-      "description": "Configure BGP/OSPF participation + NetClaw Mesh (interactive)",
-      "whenToChoose": "Configure BGP/OSPF participation + NetClaw Mesh (interactive)",
+      "description": "Configure private routing and explicitly reviewed federation transport",
+      "whenToChoose": "Configure private BGP/OSPF routing; use the deployment guide for Border reachability.",
       "order": 72,
       "platforms": [
         "macos",
@@ -15675,7 +15675,27 @@
       },
       "servers": [],
       "skills": [],
-      "settings": [],
+      "settings": [
+        {
+          "key": "NGROK_AUTHTOKEN",
+          "label": "Border ngrok agent token",
+          "help": "Optional for a home/NAT Border using ngrok. Direct cloud, private and air-gapped transport require no ngrok token. Never distribute to members or use as identity.",
+          "classification": "secret",
+          "valueType": "string",
+          "required": "optional",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "scripts/ngrok-control.py",
+              "checkedAt": "2026-11-01",
+              "note": "Loaded only from selected private environment; inherited values excluded."
+            }
+          ]
+        }
+      ],
       "links": [
         {
           "role": "upstream",
@@ -15733,7 +15753,7 @@
       "category": "Labs & Simulation",
       "title": "N2N Federation",
       "description": "Peer NetClaws: capability exchange, remote tool/skill invocation, claw-to-claw chat",
-      "whenToChoose": "Peer NetClaws: capability exchange, remote tool/skill invocation, claw-to-claw chat",
+      "whenToChoose": "Connect members outbound to their Border using iN2N; federate independent Borders with NCFED. Keep SSH/internal-system members on premises; place cloud-friendly members in cloud.",
       "order": 73,
       "platforms": [
         "macos",
@@ -15752,7 +15772,7 @@
           "owned-source",
           "download"
         ],
-        "reason": "dedicated-risk-adapter"
+        "reason": "Dedicated Risk adapter; existing HA-required homes refuse standalone setup and require the private cluster workflow."
       },
       "servers": [
         "n2n-mcp"
@@ -16001,6 +16021,44 @@
               "note": "Existing card field inventory; requirement and classification reconciled into this catalog."
             }
           ]
+        },
+        {
+          "key": "N2N_ENDPOINT_REGISTRY",
+          "label": "Endpoint registry",
+          "help": "Owned strict endpoint registry. Schema2 selects direct_tcp for cloud/private/air-gapped reachability or optional ngrok_tcp for a NAT Border; schema1 keeps the original ngrok contract.",
+          "classification": "private",
+          "valueType": "path",
+          "required": "optional",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "specs/168-ngrok-transport-contract/deferred-docs/NGROK-TRANSPORT.md",
+              "checkedAt": "2026-11-01",
+              "note": "R01 explicit selected-runtime transport contract; live qualification is separate."
+            }
+          ]
+        },
+        {
+          "key": "N2N_BORDER_REGISTRY_ID",
+          "label": "Border registration",
+          "help": "Member-only endpoint ID for the approved Border; routing and TLS/application identity stay separate.",
+          "classification": "private",
+          "valueType": "string",
+          "required": "optional",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "specs/168-ngrok-transport-contract/deferred-docs/NGROK-TRANSPORT.md",
+              "checkedAt": "2026-11-01",
+              "note": "R01 explicit selected-runtime transport contract; live qualification is separate."
+            }
+          ]
         }
       ],
       "links": [
@@ -16018,6 +16076,11 @@
           "role": "vendor",
           "target": "",
           "unavailableReason": "Project/upstream documentation is authoritative for this integration; no separate vendor guide is declared."
+        },
+        {
+          "role": "netclaw",
+          "target": "specs/168-ngrok-transport-contract/deferred-docs/REMOTE-TRANSPORT.md",
+          "unavailableReason": ""
         }
       ],
       "verification": {
@@ -22085,12 +22148,1004 @@
       }
     },
     {
+      "id": "netconverter",
+      "category": "Platform Services",
+      "title": "NetConverter migration",
+      "description": "Optional guarded vendor conversion and virtual-target rehearsal",
+      "whenToChoose": "Convert supported local configuration files with exact-file approval, inspect evidence and rehearse on eligible virtual targets.",
+      "order": 110,
+      "platforms": [
+        "macos",
+        "wsl2"
+      ],
+      "platformReason": "Target platform per installer-preflight policy; native dependencies and actual discovery are checked separately.",
+      "dependencies": [],
+      "prerequisites": [
+        "Python 3.12 for the isolated guard; enabled account; local mode also requires an operator-installed licensed Terminal."
+      ],
+      "installer": {
+        "function": "component_install_netconverter",
+        "mode": "native",
+        "effects": [
+          "runtime-home",
+          "owned-source",
+          "download"
+        ],
+        "reason": "Install guard dependencies in the selected runtime; no Terminal installation, license acceptance, account call or upload."
+      },
+      "servers": [
+        "netconverter-mcp"
+      ],
+      "skills": [
+        "netconverter"
+      ],
+      "settings": [
+        {
+          "key": "NETCONVERTER_MODE",
+          "label": "Mode",
+          "help": "Choose hosted-readonly or local-terminal. Setup never submits a file.",
+          "classification": "public",
+          "valueType": "string",
+          "required": "always",
+          "condition": null,
+          "example": "hosted-readonly",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "mcp-servers/netconverter-mcp/server.py",
+              "checkedAt": "2026-10-30",
+              "note": "Guarded integration; live account and target qualification separate."
+            }
+          ]
+        },
+        {
+          "key": "NETCONVERTER_API_KEY",
+          "label": "API key",
+          "help": "Enabled installation-specific API key; configure later while account approval is pending.",
+          "classification": "secret",
+          "valueType": "string",
+          "required": "always",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "mcp-servers/netconverter-mcp/server.py",
+              "checkedAt": "2026-10-30",
+              "note": "Guarded integration; live account and target qualification separate."
+            }
+          ]
+        },
+        {
+          "key": "NETCONVERTER_ACCOUNT_REF",
+          "label": "Account reference",
+          "help": "Your local account label; not a verified tenant identity.",
+          "classification": "private",
+          "valueType": "string",
+          "required": "always",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "mcp-servers/netconverter-mcp/server.py",
+              "checkedAt": "2026-10-30",
+              "note": "Guarded integration; live account and target qualification separate."
+            }
+          ]
+        },
+        {
+          "key": "NETCONVERTER_WORKSPACE",
+          "label": "Terminal workspace",
+          "help": "Absolute existing private workspace; its upstream privacy policy is preserved.",
+          "classification": "private",
+          "valueType": "path",
+          "required": "conditional",
+          "condition": {
+            "equals": {
+              "key": "NETCONVERTER_MODE",
+              "value": "local-terminal"
+            }
+          },
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "mcp-servers/netconverter-mcp/server.py",
+              "checkedAt": "2026-10-30",
+              "note": "Guarded integration; live account and target qualification separate."
+            }
+          ]
+        },
+        {
+          "key": "NETCONVERTER_EXECUTABLE",
+          "label": "Licensed Terminal executable",
+          "help": "Absolute operator-installed executable. Installer never accepts the license.",
+          "classification": "private",
+          "valueType": "path",
+          "required": "conditional",
+          "condition": {
+            "equals": {
+              "key": "NETCONVERTER_MODE",
+              "value": "local-terminal"
+            }
+          },
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "mcp-servers/netconverter-mcp/server.py",
+              "checkedAt": "2026-10-30",
+              "note": "Guarded integration; live account and target qualification separate."
+            }
+          ]
+        },
+        {
+          "key": "NETCONVERTER_DATA_DIR",
+          "label": "Private guard state",
+          "help": "Generated inside this installation.",
+          "classification": "private",
+          "valueType": "path",
+          "required": "always",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "generated",
+          "provenance": [
+            {
+              "source": "mcp-servers/netconverter-mcp/server.py",
+              "checkedAt": "2026-10-30",
+              "note": "Guarded integration; live account and target qualification separate."
+            }
+          ]
+        },
+        {
+          "key": "NETCONVERTER_INSTALLATION_ID",
+          "label": "Installation binding",
+          "help": "Generated from this installation identity.",
+          "classification": "private",
+          "valueType": "string",
+          "required": "always",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "generated",
+          "provenance": [
+            {
+              "source": "mcp-servers/netconverter-mcp/server.py",
+              "checkedAt": "2026-10-30",
+              "note": "Guarded integration; live account and target qualification separate."
+            }
+          ]
+        }
+      ],
+      "links": [
+        {
+          "role": "upstream",
+          "target": "https://github.com/valeronlabs/netconverter_terminals",
+          "unavailableReason": ""
+        },
+        {
+          "role": "netclaw",
+          "target": "mcp-servers/netconverter-mcp/README.md",
+          "unavailableReason": ""
+        },
+        {
+          "role": "vendor",
+          "target": "https://netconverter.ai/mcp.html",
+          "unavailableReason": ""
+        }
+      ],
+      "verification": {
+        "adapter": "native-discovery",
+        "level": "discovery",
+        "reason": "Verify this component through its selected-harness registration; artifact presence alone is insufficient."
+      },
+      "estimate": {
+        "schemas": 8,
+        "method": "documented",
+        "source": "mcp-servers/netconverter-mcp/server.py",
+        "reason": "Guard tools only; upstream capabilities are discovered separately."
+      },
+      "provenance": [
+        {
+          "source": "mcp-servers/netconverter-mcp/server.py",
+          "checkedAt": "2026-10-30",
+          "note": "Guarded integration; live account and target qualification separate."
+        }
+      ],
+      "kind": "mcp-integration",
+      "access": {
+        "mode": "unknown",
+        "note": "Hosted reads or exact-file-approved submission; no device deployment authority.",
+        "source": "mcp-servers/netconverter-mcp/server.py"
+      }
+    },
+    {
+      "id": "convergence-read",
+      "category": "Observability & Telemetry",
+      "title": "Convergence evidence",
+      "description": "Optional retained flow rankings, same-window evidence and advisory VM Security findings (3 read-only tools)",
+      "whenToChoose": "Inspect a separately operated Convergence archive; no collector or storage deployment.",
+      "order": 111,
+      "platforms": [],
+      "platformReason": "Linux CLI connector qualification is recorded in spec162. macOS/WSL2 IDE installation remains unqualified.",
+      "dependencies": [],
+      "prerequisites": [
+        "Python3.12+ and a separately operated compatible Convergence API with a site-scoped viewer key."
+      ],
+      "installer": {
+        "function": "component_install_convergence_read",
+        "mode": "scoped",
+        "effects": [
+          "runtime-home",
+          "owned-source",
+          "download"
+        ],
+        "reason": "Uses the fixed component function with owned source/runtime paths; execution requires the scoped bridge and postcondition checks."
+      },
+      "servers": [
+        "convergence-read-mcp"
+      ],
+      "skills": [
+        "convergence-observations"
+      ],
+      "settings": [
+        {
+          "key": "CONVERGENCE_ENABLED",
+          "label": "Enabled",
+          "help": "Explicitly enable this optional connector; default false.",
+          "classification": "public",
+          "valueType": "boolean",
+          "required": "optional",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "mcp-servers/convergence-read-mcp/settings.py",
+              "checkedAt": "2026-10-31",
+              "note": "Fixed server-side connector configuration; required when enabled."
+            }
+          ]
+        },
+        {
+          "key": "CONVERGENCE_API_URL",
+          "label": "Api Url",
+          "help": "Verified HTTPS origin, or explicit literal loopback HTTP for a local trial.",
+          "classification": "private",
+          "valueType": "string",
+          "required": "optional",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "mcp-servers/convergence-read-mcp/settings.py",
+              "checkedAt": "2026-10-31",
+              "note": "Fixed server-side connector configuration; required when enabled."
+            }
+          ]
+        },
+        {
+          "key": "CONVERGENCE_API_TOKEN",
+          "label": "Api Token",
+          "help": "Private API viewer credential restricted to this site.",
+          "classification": "secret",
+          "valueType": "string",
+          "required": "optional",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "mcp-servers/convergence-read-mcp/settings.py",
+              "checkedAt": "2026-10-31",
+              "note": "Fixed server-side connector configuration; required when enabled."
+            }
+          ]
+        },
+        {
+          "key": "CONVERGENCE_SITE",
+          "label": "Site",
+          "help": "One fixed site identifier.",
+          "classification": "private",
+          "valueType": "string",
+          "required": "optional",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "mcp-servers/convergence-read-mcp/settings.py",
+              "checkedAt": "2026-10-31",
+              "note": "Fixed server-side connector configuration; required when enabled."
+            }
+          ]
+        },
+        {
+          "key": "CONVERGENCE_EXPORTERS",
+          "label": "Exporters",
+          "help": "Comma-separated allowed exporter IP addresses.",
+          "classification": "private",
+          "valueType": "string",
+          "required": "optional",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "mcp-servers/convergence-read-mcp/settings.py",
+              "checkedAt": "2026-10-31",
+              "note": "Fixed server-side connector configuration; required when enabled."
+            }
+          ]
+        },
+        {
+          "key": "CONVERGENCE_ALLOW_LOOPBACK_HTTP",
+          "label": "Allow Loopback Http",
+          "help": "Explicit local-development HTTP opt-in; default false.",
+          "classification": "public",
+          "valueType": "boolean",
+          "required": "optional",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "mcp-servers/convergence-read-mcp/settings.py",
+              "checkedAt": "2026-10-31",
+              "note": "Fixed server-side connector configuration; required when enabled."
+            }
+          ]
+        }
+      ],
+      "links": [
+        {
+          "role": "upstream",
+          "target": "https://github.com/byrn-baker/convergence-platform/tree/v0.1.1",
+          "unavailableReason": ""
+        },
+        {
+          "role": "netclaw",
+          "target": "docs/CONVERGENCE.md",
+          "unavailableReason": ""
+        },
+        {
+          "role": "vendor",
+          "target": "",
+          "unavailableReason": "Convergence is independently operated; use the pinned service guide."
+        }
+      ],
+      "verification": {
+        "adapter": "native-discovery",
+        "level": "discovery",
+        "reason": "Verify this component through its selected-harness registration; artifact presence alone is insufficient."
+      },
+      "estimate": {
+        "schemas": 3,
+        "method": "documented",
+        "source": "mcp-servers/convergence-read-mcp/README.md",
+        "reason": "Exactly three declared read-only tools."
+      },
+      "provenance": [
+        {
+          "source": "specs/162-convergence-read/spec.md",
+          "checkedAt": "2026-10-31",
+          "note": "Approved focused integration and explicit platform boundary."
+        },
+        {
+          "source": "specs/179-convergence-setup/spec.md",
+          "checkedAt": "2026-11-06",
+          "note": "VM Security tool from accepted proposal 176."
+        }
+      ],
+      "kind": "mcp-integration",
+      "access": {
+        "mode": "read-only",
+        "note": "Only three fixed GET endpoints; no mutations or arbitrary queries.",
+        "source": "mcp-servers/convergence-read-mcp/client.py"
+      }
+    },
+    {
+      "id": "result-analysis",
+      "category": "Observability & Telemetry",
+      "title": "Large Result Analysis",
+      "description": "Read-only count/filter/page/search over retained complete diagnostic results with coverage metadata, no code execution (7 tools)",
+      "whenToChoose": "**Complete read-only analysis of results too large to return inline** — counts, distributions, filtered pages, log/text search and time windows over a server-side retained copy, 7 tools. Every answer carries coverage metadata (scanned, matched, complete or not, retention truncation, stream drops and gaps, source sha256). No code execution, SQL, regex, device access or command re-run (spec 187, issue #322)",
+      "order": 112,
+      "platforms": [
+        "macos",
+        "wsl2"
+      ],
+      "platformReason": "Target platform per installer-preflight policy; native dependencies and actual discovery are checked separately.",
+      "dependencies": [],
+      "prerequisites": [
+        "Python 3.10 or newer for the selected isolated component runtime."
+      ],
+      "installer": {
+        "function": "component_install_result_analysis",
+        "mode": "scoped",
+        "effects": [
+          "runtime-home",
+          "owned-source",
+          "download"
+        ],
+        "reason": "Uses the fixed component function with owned source/runtime paths; execution requires the scoped bridge and postcondition checks."
+      },
+      "servers": [
+        "result-analysis-mcp"
+      ],
+      "skills": [
+        "result-analysis"
+      ],
+      "settings": [],
+      "links": [
+        {
+          "role": "upstream",
+          "target": "https://github.com/automateyournetwork/netclaw/tree/main/mcp-servers/analysis-mcp",
+          "unavailableReason": ""
+        },
+        {
+          "role": "netclaw",
+          "target": "mcp-servers/analysis-mcp/README.md",
+          "unavailableReason": ""
+        },
+        {
+          "role": "vendor",
+          "target": "",
+          "unavailableReason": "Project/upstream documentation is authoritative for this integration; no separate vendor guide is declared."
+        }
+      ],
+      "verification": {
+        "adapter": "native-discovery",
+        "level": "discovery",
+        "reason": "Verify this component through its selected-harness registration; artifact presence alone is insufficient."
+      },
+      "estimate": {
+        "schemas": 3,
+        "method": "documented",
+        "source": "mcp-servers/analysis-mcp/README.md",
+        "reason": "Source description count; not a live tools/list measurement."
+      },
+      "provenance": [
+        {
+          "source": "scripts/lib/install-steps.sh#component_install_analysis",
+          "checkedAt": "2026-10-17",
+          "note": "Existing installer implementation and effect inventory."
+        },
+        {
+          "source": "config/installer-preflight.json",
+          "checkedAt": "2026-10-17",
+          "note": "Declared platform/interpreter prerequisites."
+        },
+        {
+          "source": "mcp-servers/analysis-mcp/README.md",
+          "checkedAt": "2026-10-17",
+          "note": "Integration documentation."
+        }
+      ],
+      "kind": "mcp-integration",
+      "access": {
+        "mode": "unknown",
+        "note": "Permissions depend on the selected tools and backend account. This entry is not a read-only guarantee; review tool behavior and access scope before use.",
+        "source": "scripts/lib/install-steps.sh#component_install_analysis"
+      }
+    },
+    {
+      "id": "cisco-iq",
+      "category": "Fabric & Orchestration",
+      "title": "Cisco IQ",
+      "description": "Official remote MCP — assets, lifecycle/coverage, bugs (administrator-selected region, read-only policy)",
+      "whenToChoose": "Second/third-line support needs Cisco IQ asset, lifecycle/coverage and bug information beside router diagnostics. Explicit region (EMEA/US/APJC); key must be owned by a user principal. No workflow is claimed validated; tool names are discovered at runtime.",
+      "order": 113,
+      "platforms": [
+        "macos",
+        "wsl2"
+      ],
+      "platformReason": "Target platform per installer-preflight policy; native dependencies and actual discovery are checked separately.",
+      "dependencies": [],
+      "prerequisites": [
+        "Python 3.10 or newer for the selected isolated component runtime."
+      ],
+      "installer": {
+        "function": "component_install_cisco_iq",
+        "mode": "scoped",
+        "effects": [
+          "runtime-home"
+        ],
+        "reason": "Uses the fixed component function with owned source/runtime paths; execution requires the scoped bridge and postcondition checks."
+      },
+      "servers": [],
+      "skills": [
+        "cisco-iq"
+      ],
+      "settings": [
+        {
+          "key": "CISCO_IQ_API_KEY",
+          "label": "Cisco IQ Api Key",
+          "help": "Cisco IQ API key owned by a user principal (service-account keys receive no tools). Set via scripts/cisco-iq-enable.sh (stdin or hidden prompt); sent as Authorization: Bearer.",
+          "classification": "secret",
+          "valueType": "string",
+          "required": "always",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "scripts/cisco_iq.py",
+              "checkedAt": "2026-11-11",
+              "note": "Variables managed by scripts/cisco-iq-enable.sh."
+            }
+          ]
+        },
+        {
+          "key": "CISCO_IQ_REGION",
+          "label": "Cisco IQ Region",
+          "help": "Explicit account region: emea, us or apjc. Never inferred.",
+          "classification": "public",
+          "valueType": "string",
+          "required": "always",
+          "condition": null,
+          "example": "us",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "scripts/cisco_iq.py",
+              "checkedAt": "2026-11-11",
+              "note": "Variables managed by scripts/cisco-iq-enable.sh."
+            }
+          ]
+        }
+      ],
+      "links": [
+        {
+          "role": "upstream",
+          "target": "https://iq.cisco.com/apidocs/mcp-server",
+          "unavailableReason": ""
+        },
+        {
+          "role": "netclaw",
+          "target": "workspace/skills/cisco-iq/SKILL.md",
+          "unavailableReason": ""
+        },
+        {
+          "role": "vendor",
+          "target": "https://iq.cisco.com/apidocs/mcp-server",
+          "unavailableReason": ""
+        }
+      ],
+      "verification": {
+        "adapter": "native-discovery",
+        "level": "discovery",
+        "reason": "Verify this component through its selected-harness registration; artifact presence alone is insufficient."
+      },
+      "estimate": {
+        "schemas": 0,
+        "method": "documented",
+        "source": "workspace/skills/cisco-iq/SKILL.md",
+        "reason": "Tool count unknown: discovered at runtime via tools/list; not measured."
+      },
+      "provenance": [
+        {
+          "source": "scripts/lib/install-steps.sh#component_install_cisco_iq",
+          "checkedAt": "2026-11-11",
+          "note": "Installer function."
+        },
+        {
+          "source": "specs/191-cisco-iq-mcp/spec.md",
+          "checkedAt": "2026-11-11",
+          "note": "Contract taken from issue #346; official guide not retrievable by automation."
+        },
+        {
+          "source": "workspace/skills/cisco-iq/SKILL.md",
+          "checkedAt": "2026-11-11",
+          "note": "Integration documentation."
+        }
+      ],
+      "kind": "mcp-integration",
+      "access": {
+        "mode": "unknown",
+        "note": "Cisco IQ is treated read-only by NetClaw policy (config/cisco-iq-policy.json, deny by default) but this is not a hard guarantee without DefenseClaw; review tool behavior and key-owner permissions.",
+        "source": "scripts/lib/install-steps.sh#component_install_cisco_iq"
+      }
+    },
+    {
+      "id": "greynoise-community",
+      "category": "Security",
+      "title": "GreyNoise Community",
+      "description": "Look up observed scanning activity and known business services for a public IPv4 address.",
+      "whenToChoose": "Look up observed scanning activity and known business services for a public IPv4 address.",
+      "order": 114,
+      "platforms": [
+        "macos",
+        "wsl2"
+      ],
+      "platformReason": "Target platform per installer-preflight policy; native dependencies and actual discovery are checked separately.",
+      "dependencies": [],
+      "prerequisites": [
+        "Python 3.10 or newer for the isolated component runtime."
+      ],
+      "installer": {
+        "function": "component_install_greynoise_community",
+        "mode": "scoped",
+        "effects": [
+          "runtime-home",
+          "owned-source",
+          "download"
+        ],
+        "reason": "Uses the fixed component function with owned source/runtime paths; execution requires the scoped bridge and postcondition checks."
+      },
+      "servers": [
+        "greynoise-community-mcp"
+      ],
+      "skills": [],
+      "settings": [
+        {
+          "key": "GREYNOISE_API_KEY",
+          "label": "GREYNOISE_API_KEY",
+          "help": "Optional GreyNoise Community key for authenticated requests.",
+          "classification": "secret",
+          "valueType": "string",
+          "required": "optional",
+          "condition": null,
+          "example": "",
+          "sharedWith": [
+            "threatintel"
+          ],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://docs.greynoise.io/reference/getcommunityip",
+              "checkedAt": "2026-11-12",
+              "note": "Component environment configuration."
+            }
+          ]
+        },
+        {
+          "key": "GREYNOISE_TIMEOUT",
+          "label": "GREYNOISE_TIMEOUT",
+          "help": "Request timeout in seconds (default 10, maximum 60).",
+          "classification": "public",
+          "valueType": "string",
+          "required": "optional",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://docs.greynoise.io/reference/getcommunityip",
+              "checkedAt": "2026-11-12",
+              "note": "Component environment configuration."
+            }
+          ]
+        }
+      ],
+      "links": [
+        {
+          "role": "upstream",
+          "target": "https://docs.greynoise.io/reference/getcommunityip",
+          "unavailableReason": ""
+        },
+        {
+          "role": "netclaw",
+          "target": "docs/THREAT-INTELLIGENCE.md",
+          "unavailableReason": ""
+        },
+        {
+          "role": "vendor",
+          "target": "https://docs.greynoise.io/reference/getcommunityip",
+          "unavailableReason": ""
+        }
+      ],
+      "verification": {
+        "adapter": "greynoise-community",
+        "level": "discovery",
+        "reason": "Verify the expected tools over stdio."
+      },
+      "estimate": {
+        "schemas": null,
+        "method": "unknown",
+        "source": "docs/THREAT-INTELLIGENCE.md",
+        "reason": "The server exposes greynoise_community_lookup."
+      },
+      "provenance": [
+        {
+          "source": "scripts/lib/install-steps.sh#component_install_greynoise_community",
+          "checkedAt": "2026-11-12",
+          "note": "Component installer and pinned dependencies."
+        }
+      ],
+      "kind": "mcp-integration",
+      "access": {
+        "mode": "read-only",
+        "note": "Lookups send the requested indicator to the configured intelligence providers.",
+        "source": "https://docs.greynoise.io/reference/getcommunityip"
+      }
+    },
+    {
+      "id": "threatintel",
+      "category": "Security",
+      "title": "Community Threat Intelligence",
+      "description": "Enrich indicators with GreyNoise, Feodo Tracker and configured OTX, AbuseIPDB and abuse.ch sources.",
+      "whenToChoose": "Enrich indicators with GreyNoise, Feodo Tracker and configured OTX, AbuseIPDB and abuse.ch sources.",
+      "order": 115,
+      "platforms": [
+        "macos",
+        "wsl2"
+      ],
+      "platformReason": "Target platform per installer-preflight policy; native dependencies and actual discovery are checked separately.",
+      "dependencies": [],
+      "prerequisites": [
+        "Git, Node.js and npm to build the reviewed community server."
+      ],
+      "installer": {
+        "function": "component_install_threatintel",
+        "mode": "scoped",
+        "effects": [
+          "runtime-home",
+          "owned-source",
+          "download"
+        ],
+        "reason": "Uses the fixed component function with owned source/runtime paths; execution requires the scoped bridge and postcondition checks."
+      },
+      "servers": [
+        "threatintel-mcp"
+      ],
+      "skills": [],
+      "settings": [
+        {
+          "key": "GREYNOISE_API_KEY",
+          "label": "GREYNOISE_API_KEY",
+          "help": "Optional GreyNoise key.",
+          "classification": "secret",
+          "valueType": "string",
+          "required": "optional",
+          "condition": null,
+          "example": "",
+          "sharedWith": [
+            "greynoise-community"
+          ],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://github.com/aplaceforallmystuff/mcp-threatintel/tree/1f36c2d29877124bd60ac1fe4562b203e3fd3a14",
+              "checkedAt": "2026-11-12",
+              "note": "Component environment configuration."
+            }
+          ]
+        },
+        {
+          "key": "ABUSEIPDB_API_KEY",
+          "label": "ABUSEIPDB_API_KEY",
+          "help": "Enable AbuseIPDB lookups.",
+          "classification": "secret",
+          "valueType": "string",
+          "required": "optional",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://github.com/aplaceforallmystuff/mcp-threatintel/tree/1f36c2d29877124bd60ac1fe4562b203e3fd3a14",
+              "checkedAt": "2026-11-12",
+              "note": "Component environment configuration."
+            }
+          ]
+        },
+        {
+          "key": "OTX_API_KEY",
+          "label": "OTX_API_KEY",
+          "help": "Enable AlienVault OTX lookups.",
+          "classification": "secret",
+          "valueType": "string",
+          "required": "optional",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://github.com/aplaceforallmystuff/mcp-threatintel/tree/1f36c2d29877124bd60ac1fe4562b203e3fd3a14",
+              "checkedAt": "2026-11-12",
+              "note": "Component environment configuration."
+            }
+          ]
+        },
+        {
+          "key": "ABUSECH_AUTH_KEY",
+          "label": "ABUSECH_AUTH_KEY",
+          "help": "Enable abuse.ch URLhaus, MalwareBazaar and ThreatFox lookups.",
+          "classification": "secret",
+          "valueType": "string",
+          "required": "optional",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "user",
+          "provenance": [
+            {
+              "source": "https://github.com/aplaceforallmystuff/mcp-threatintel/tree/1f36c2d29877124bd60ac1fe4562b203e3fd3a14",
+              "checkedAt": "2026-11-12",
+              "note": "Component environment configuration."
+            }
+          ]
+        }
+      ],
+      "links": [
+        {
+          "role": "upstream",
+          "target": "https://github.com/aplaceforallmystuff/mcp-threatintel/tree/1f36c2d29877124bd60ac1fe4562b203e3fd3a14",
+          "unavailableReason": ""
+        },
+        {
+          "role": "netclaw",
+          "target": "docs/THREAT-INTELLIGENCE.md",
+          "unavailableReason": ""
+        },
+        {
+          "role": "vendor",
+          "target": "https://github.com/aplaceforallmystuff/mcp-threatintel/tree/1f36c2d29877124bd60ac1fe4562b203e3fd3a14",
+          "unavailableReason": ""
+        }
+      ],
+      "verification": {
+        "adapter": "threatintel",
+        "level": "discovery",
+        "reason": "Verify the expected tools over stdio."
+      },
+      "estimate": {
+        "schemas": null,
+        "method": "unknown",
+        "source": "docs/THREAT-INTELLIGENCE.md",
+        "reason": "Discovery depends on the configured providers."
+      },
+      "provenance": [
+        {
+          "source": "scripts/lib/install-steps.sh#component_install_threatintel",
+          "checkedAt": "2026-11-12",
+          "note": "Component installer and pinned dependencies."
+        }
+      ],
+      "kind": "mcp-integration",
+      "access": {
+        "mode": "read-only",
+        "note": "Lookups send the requested indicator to the configured intelligence providers.",
+        "source": "https://github.com/aplaceforallmystuff/mcp-threatintel/tree/1f36c2d29877124bd60ac1fe4562b203e3fd3a14"
+      }
+    },
+    {
+      "id": "genie-worlds",
+      "category": "Analysis & Diagrams",
+      "title": "Genie Network Worlds",
+      "description": "Measured Cisco Genie facts illustrated by Google Genie 4; six bounded controls and recorded walkthroughs",
+      "whenToChoose": "Explain a frozen network as a Google-generated walkthrough. Exact facts stay separate from generated geometry; recording playback needs no live API.",
+      "order": 116,
+      "platforms": [
+        "macos",
+        "wsl2"
+      ],
+      "platformReason": "Mac production exercised. WSL is a setup target; live WSL generation is unqualified.",
+      "dependencies": [],
+      "prerequisites": [
+        "Node 24.19.x or 26.1+ for the local backend; isolated Python 3.12 for MCP.",
+        "Paid Google generation requires a separately reviewed projection, private backend credential and finite budget."
+      ],
+      "installer": {
+        "function": "component_install_genie_worlds",
+        "mode": "scoped",
+        "effects": [
+          "runtime-home",
+          "owned-source",
+          "download"
+        ],
+        "reason": "Isolated Python/Node dependencies and private local references only; no backend start, provider call or credential import."
+      },
+      "servers": [
+        "genie-worlds-mcp"
+      ],
+      "skills": [
+        "netclaw-genie-worlds"
+      ],
+      "settings": [
+        {
+          "key": "NETCLAW_GENIE_CONTROL_FILE",
+          "label": "Genie backend control file",
+          "help": "Private loopback control capability generated by this installation-owned backend; never a Google API key.",
+          "classification": "private",
+          "valueType": "path",
+          "required": "always",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "generated",
+          "provenance": [
+            {
+              "source": "scripts/genie-worlds/mcp_server.py",
+              "checkedAt": "2026-11-23",
+              "note": "Six stdio controls; backend-owned Google credentials and explicit paid review."
+            }
+          ]
+        },
+        {
+          "key": "NETCLAW_GENIE_STATE_DIR",
+          "label": "Genie private state directory",
+          "help": "Installation-owned backend evidence and session ledger; no automatic backend start.",
+          "classification": "private",
+          "valueType": "path",
+          "required": "always",
+          "condition": null,
+          "example": "",
+          "sharedWith": [],
+          "input": "generated",
+          "provenance": [
+            {
+              "source": "scripts/genie-worlds/mcp_server.py",
+              "checkedAt": "2026-11-23",
+              "note": "Six stdio controls; backend-owned Google credentials and explicit paid review."
+            }
+          ]
+        }
+      ],
+      "links": [
+        {
+          "role": "netclaw",
+          "target": "docs/GENIE-WORLDS.md",
+          "unavailableReason": ""
+        },
+        {
+          "role": "vendor",
+          "target": "https://aistudio.google.com/docs/genie",
+          "unavailableReason": ""
+        }
+      ],
+      "verification": {
+        "adapter": "native-discovery",
+        "level": "discovery",
+        "reason": "Verify this component through its selected-harness registration; artifact presence alone is insufficient."
+      },
+      "estimate": {
+        "schemas": 6,
+        "method": "measured",
+        "source": "specs/200-genie-network-worlds/production-recordings.md",
+        "reason": "Actual stdio tools/list and production start/evidence verified."
+      },
+      "provenance": [
+        {
+          "source": "scripts/genie-worlds/mcp_server.py",
+          "checkedAt": "2026-11-23",
+          "note": "Six stdio controls; backend-owned Google credentials and explicit paid review."
+        }
+      ],
+      "kind": "mcp-integration",
+      "access": {
+        "mode": "unknown",
+        "note": "Start may incur bounded Google charges. No device access; export, event and paid review are backend-owned.",
+        "source": "scripts/genie-worlds/mcp_server.py"
+      }
+    },
+    {
       "id": "convergence-core",
       "category": "Convergence",
       "title": "Convergence Core",
       "description": "convergence-api + CONVERGENCE tab config (080) — diary API, inventory SoT, shared adapter config",
       "whenToChoose": "Convergence add-on uses the legacy installer and Helm runbooks. Separate-claw wizard deployment is not qualified; use docs/runbooks/convergence-setup.md.",
-      "order": 110,
+      "order": 117,
       "platforms": [],
       "platformReason": "Convergence add-on uses the legacy installer and Helm runbooks. Separate-claw wizard deployment is not qualified; use docs/runbooks/convergence-setup.md.",
       "dependencies": [],
@@ -22144,7 +23199,7 @@
       "title": "Convergence Metrics Stack",
       "description": "Prometheus + Alertmanager + blackbox (Docker or K3s deploy/convergence)",
       "whenToChoose": "Convergence add-on uses the legacy installer and Helm runbooks. Separate-claw wizard deployment is not qualified; use docs/runbooks/convergence-setup.md.",
-      "order": 111,
+      "order": 118,
       "platforms": [],
       "platformReason": "Convergence add-on uses the legacy installer and Helm runbooks. Separate-claw wizard deployment is not qualified; use docs/runbooks/convergence-setup.md.",
       "dependencies": [],
@@ -22198,7 +23253,7 @@
       "title": "Convergence UniFi Adapter",
       "description": "UniFi Integration API exporter + UNIFI_* env for Wi‑Fi metrics",
       "whenToChoose": "Convergence add-on uses the legacy installer and Helm runbooks. Separate-claw wizard deployment is not qualified; use docs/runbooks/convergence-setup.md.",
-      "order": 112,
+      "order": 119,
       "platforms": [],
       "platformReason": "Convergence add-on uses the legacy installer and Helm runbooks. Separate-claw wizard deployment is not qualified; use docs/runbooks/convergence-setup.md.",
       "dependencies": [],
@@ -22254,7 +23309,7 @@
       "title": "Convergence pfSense Adapter",
       "description": "Edge firewall deep-links + optional pfSense MCP for investigations",
       "whenToChoose": "Convergence add-on uses the legacy installer and Helm runbooks. Separate-claw wizard deployment is not qualified; use docs/runbooks/convergence-setup.md.",
-      "order": 113,
+      "order": 120,
       "platforms": [],
       "platformReason": "Convergence add-on uses the legacy installer and Helm runbooks. Separate-claw wizard deployment is not qualified; use docs/runbooks/convergence-setup.md.",
       "dependencies": [],
@@ -22310,7 +23365,7 @@
       "title": "Convergence SoT (Nautobot)",
       "description": "Stub: bind Convergence inventory to Nautobot (requires nautobot component)",
       "whenToChoose": "Convergence add-on uses the legacy installer and Helm runbooks. Separate-claw wizard deployment is not qualified; use docs/runbooks/convergence-setup.md.",
-      "order": 114,
+      "order": 121,
       "platforms": [],
       "platformReason": "Convergence add-on uses the legacy installer and Helm runbooks. Separate-claw wizard deployment is not qualified; use docs/runbooks/convergence-setup.md.",
       "dependencies": [],
@@ -22364,7 +23419,7 @@
       "title": "Convergence SoT (NetBox)",
       "description": "Stub: bind Convergence inventory to NetBox (requires netbox component)",
       "whenToChoose": "Convergence add-on uses the legacy installer and Helm runbooks. Separate-claw wizard deployment is not qualified; use docs/runbooks/convergence-setup.md.",
-      "order": 115,
+      "order": 122,
       "platforms": [],
       "platformReason": "Convergence add-on uses the legacy installer and Helm runbooks. Separate-claw wizard deployment is not qualified; use docs/runbooks/convergence-setup.md.",
       "dependencies": [],
@@ -22418,7 +23473,7 @@
       "title": "Device SNMP (switches)",
       "description": "Greenfield campus switch IF-MIB via snmp_exporter (profile device-snmp)",
       "whenToChoose": "Convergence add-on uses the legacy installer and Helm runbooks. Separate-claw wizard deployment is not qualified; use docs/runbooks/convergence-setup.md.",
-      "order": 116,
+      "order": 123,
       "platforms": [],
       "platformReason": "Convergence add-on uses the legacy installer and Helm runbooks. Separate-claw wizard deployment is not qualified; use docs/runbooks/convergence-setup.md.",
       "dependencies": [],
@@ -22472,7 +23527,7 @@
       "title": "Device Syslog",
       "description": "Greenfield syslog→Loki for switches/firewall (requires full logs)",
       "whenToChoose": "Convergence add-on uses the legacy installer and Helm runbooks. Separate-claw wizard deployment is not qualified; use docs/runbooks/convergence-setup.md.",
-      "order": 117,
+      "order": 124,
       "platforms": [],
       "platformReason": "Convergence add-on uses the legacy installer and Helm runbooks. Separate-claw wizard deployment is not qualified; use docs/runbooks/convergence-setup.md.",
       "dependencies": [],
@@ -22526,7 +23581,7 @@
       "title": "Agent Metrics",
       "description": "Host openclaw-token-exporter + Prom scrape (netclaw_model_*)",
       "whenToChoose": "Convergence add-on uses the legacy installer and Helm runbooks. Separate-claw wizard deployment is not qualified; use docs/runbooks/convergence-setup.md.",
-      "order": 118,
+      "order": 125,
       "platforms": [],
       "platformReason": "Convergence add-on uses the legacy installer and Helm runbooks. Separate-claw wizard deployment is not qualified; use docs/runbooks/convergence-setup.md.",
       "dependencies": [],
@@ -22580,7 +23635,7 @@
       "title": "Agent Logs",
       "description": "rsyslog/journal ship NetClaw gateway/mesh/alerts → Loki",
       "whenToChoose": "Convergence add-on uses the legacy installer and Helm runbooks. Separate-claw wizard deployment is not qualified; use docs/runbooks/convergence-setup.md.",
-      "order": 119,
+      "order": 126,
       "platforms": [],
       "platformReason": "Convergence add-on uses the legacy installer and Helm runbooks. Separate-claw wizard deployment is not qualified; use docs/runbooks/convergence-setup.md.",
       "dependencies": [],
@@ -22634,7 +23689,7 @@
       "title": "Grafana Dashboards",
       "description": "Provision network + NetClaw quota dashboards (full profile)",
       "whenToChoose": "Convergence add-on uses the legacy installer and Helm runbooks. Separate-claw wizard deployment is not qualified; use docs/runbooks/convergence-setup.md.",
-      "order": 120,
+      "order": 127,
       "platforms": [],
       "platformReason": "Convergence add-on uses the legacy installer and Helm runbooks. Separate-claw wizard deployment is not qualified; use docs/runbooks/convergence-setup.md.",
       "dependencies": [],
@@ -22688,7 +23743,7 @@
       "title": "Visual HUD",
       "description": "NetClaw Visual HUD (COMMAND / CONVERGENCE) on :3001 + systemd user unit",
       "whenToChoose": "Convergence add-on uses the legacy installer and Helm runbooks. Separate-claw wizard deployment is not qualified; use docs/runbooks/convergence-setup.md.",
-      "order": 121,
+      "order": 128,
       "platforms": [],
       "platformReason": "Convergence add-on uses the legacy installer and Helm runbooks. Separate-claw wizard deployment is not qualified; use docs/runbooks/convergence-setup.md.",
       "dependencies": [],
@@ -23769,7 +24824,7 @@
       "title": "clab-lab-management",
       "description": "ContainerLab network lab lifecycle management — authenticate, list, deploy, inspect, execute commands on, and destroy containerized network labs via the ContainerLab API. Use when deploying containerized network labs, spinning up SR Linux or cEOS topologies, running commands on lab nodes, or tearing down test environments.",
       "path": "workspace/skills/clab-lab-management/SKILL.md",
-      "sha256": "3957e64b240aa51da355a9d38a95fd0bbe0cfce7148717a7e0d7a79e3c57c193",
+      "sha256": "1210d10f1830814867ab0e10000fac05afd602b608115b8ec48e987aa5e4f39b",
       "components": [
         "containerlab"
       ],
@@ -24067,7 +25122,7 @@
       "title": "cml-lab-lifecycle",
       "description": "Cisco CML lab lifecycle management — create, start, stop, wipe, delete, clone, import/export labs. Use when building a network lab, starting or stopping a CML lab, cloning a topology, or importing lab YAML files.",
       "path": "workspace/skills/cml-lab-lifecycle/SKILL.md",
-      "sha256": "9315f10005873b68a51c5a2cb83911a51a01339818c941b38014d5110722606c",
+      "sha256": "e875d1d64f6428df04b57cd97099b2a1b86cfc2c7643058e5ccd6d967b8db9f2",
       "components": [
         "cml"
       ],
@@ -24151,7 +25206,7 @@
       "title": "cml-topology-builder",
       "description": "Build CML topologies — add nodes, create interfaces, wire links, set link conditioning, add annotations. Use when building a network topology in CML, adding routers or switches to a lab, wiring links between nodes, or simulating WAN conditions.",
       "path": "workspace/skills/cml-topology-builder/SKILL.md",
-      "sha256": "8674d930c2934e139678398d5ebb1b24762d6e4976fb3cf5b06b3235db3d86fe",
+      "sha256": "c9c122adcc0c643214dd1f8c4f93e605a58647467c5c5c1ef45d5167dc958883",
       "components": [
         "cml"
       ],
@@ -25297,7 +26352,7 @@
       "title": "gns3-node-operations",
       "description": "Manage GNS3 nodes - add from templates, start/stop/suspend/reload, console access",
       "path": "workspace/skills/gns3-node-operations/SKILL.md",
-      "sha256": "1283a8a43783727ae4cac8279d4834165658335e0ff342a602250ed02396d47b",
+      "sha256": "3ec414591827bca0c3e3f5c30bb99c17c052ee31d514ebd4bcb6a960e8bd4f05",
       "components": [
         "gns3"
       ],
@@ -26287,6 +27342,32 @@
       }
     },
     {
+      "id": "cisco-iq",
+      "title": "cisco-iq",
+      "description": "Cisco IQ (official remote MCP, read-only) for support investigations — asset and product information, lifecycle and coverage, Cisco bug information, and correlating Cisco IQ findings with an existing investigation. Use when a second- or third-line engineer needs Cisco IQ data next to router diagnostics. Discovers tools at runtime; field availability depends on Cisco IQ schemas, account data and key-owner permissions.",
+      "path": "workspace/skills/cisco-iq/SKILL.md",
+      "sha256": "a39dabd49e37a8a82c6d0653bd48c0b8e2bb76430c9157d8b6fbe16647f99ff9",
+      "components": [
+        "cisco-iq"
+      ],
+      "servers": [],
+      "availability": "supported",
+      "reason": "Requires the explicitly listed components and their configured backends; discovery is verified separately.",
+      "links": [
+        {
+          "role": "skill",
+          "target": "workspace/skills/cisco-iq/SKILL.md",
+          "unavailableReason": ""
+        }
+      ],
+      "kind": "skill",
+      "access": {
+        "mode": "unknown",
+        "note": "A skill describes procedures. It does not enforce tool permissions or approve configuration changes. Review its linked instructions and available tools.",
+        "source": "workspace/skills/cisco-iq/SKILL.md"
+      }
+    },
+    {
       "id": "meraki-monitoring",
       "title": "meraki-monitoring",
       "description": "Cisco Meraki monitoring and diagnostics (read-only) — device availability, loss and latency history, uplink status, live tool results, configuration change log, API request analytics via Cisco's official Meraki MCP. Use when checking Meraki device health, investigating uplink loss, or reviewing recent configuration changes",
@@ -26567,7 +27648,7 @@
       "title": "n2n-federation",
       "description": "Federate your NetClaw with other NetClaw operators over the BGP mesh — exchange capability inventories and ask your claw what a peer can do. (US1; remote invocation and chat land in later phases.)",
       "path": "workspace/skills/n2n-federation/SKILL.md",
-      "sha256": "a58088de8668aa24e7ae489237b1984fa2088b59401a6820cdcebe0697af1048",
+      "sha256": "e16472d60c8a66822cf572b29e4533d6c6cc9afb6f6428558feb33c7ab880bbf",
       "components": [
         "n2n"
       ],
@@ -26623,7 +27704,7 @@
       "title": "netbox-reconcile",
       "description": "Reconcile NetBox source of truth against live network state - detect IP drift, missing interfaces, undocumented links, cable mismatches, VLAN mismatches, and ticket discrepancies in ServiceNow. Use when validating NetBox accuracy, checking for config drift, auditing network documentation, or reconciling source of truth after changes",
       "path": "workspace/skills/netbox-reconcile/SKILL.md",
-      "sha256": "1681ec31f6deb321887990e91301ac253286c22f8015f0d519c92ebf378bb373",
+      "sha256": "de2dfff4c42b718360544eebe0ab03101d1f906fd863be3072fa7b2fcfb19c10",
       "components": [
         "netbox"
       ],
@@ -27095,9 +28176,9 @@
     {
       "id": "percepxion-oob",
       "title": "percepxion-oob",
-      "description": "Manage Lantronix out-of-band (OOB) infrastructure via Percepxion central management platform: device inventory, serial port inspection via SLC CLI, firmware compliance, config management, security auditing, and closed-loop incident remediation. Use during outages, maintenance windows, compliance cycles, and AI-assisted automation workflows.",
+      "description": "Lantronix out-of-band console servers (SLC 9000, SLC 8000, EMG) through the Percepxion and SLC MCP servers: confirm a device's console path before a change, find the console path for a device named in NetBox or Nautobot, run SLC CLI diagnostics, and manage the console-server fleet (inventory, firmware, configuration, access audit). Use when a task touches a console server, a serial console path, or Percepxion. Not for the managed router's or switch's own CLI (pyats skills) or for reconciling NetBox itself (netbox-reconcile).",
       "path": "workspace/skills/percepxion-oob/SKILL.md",
-      "sha256": "e7d85f2b78a99fea689b46965eb00a7d0d51582b5c78de78274424822b9de749",
+      "sha256": "96c4c5f705d157801aca6b55eef3610009d9c3124d47b45f279bec7d5ab8badb",
       "components": [
         "percepxion"
       ],
@@ -27263,7 +28344,7 @@
       "title": "protocol-participation",
       "description": "Live BGP and OSPF control-plane participation — NetClaw itself acts as a protocol speaker: peer with real routers, inject/withdraw routes, query its own RIB/LSDB, adjust metrics, GRE tunnel status. Use when injecting or withdrawing BGP routes, checking the state of NetClaw's own BGP peering, querying its own OSPF LSDB, or testing route advertisement in a lab. This does not query an existing device's routing table — for that, use `pyats-routing` (Cisco) or `pyats-junos-routing` (Juniper) instead.",
       "path": "workspace/skills/protocol-participation/SKILL.md",
-      "sha256": "2fc89ea52924e23d966cfe9b30154462f19ba24909f7f8f4fb7757f1fcae6b42",
+      "sha256": "f2fee76c19372f3928c42d01033b740f318d0756e9a468ab39454402d527df92",
       "components": [
         "protocol"
       ],
@@ -27319,7 +28400,7 @@
       "title": "pyats-config-mgmt",
       "description": "Direct, pyATS-based network change management - pre-change baselines, configuration deployment, post-change verification, rollback procedures, and compliance validation. Use when pushing config to a device, planning a network change, rolling back a configuration, or running compliance checks outside of a governed workflow platform. When the change should go through Itential's golden-config/compliance engine instead, use `itential-automation`.",
       "path": "workspace/skills/pyats-config-mgmt/SKILL.md",
-      "sha256": "572d4277182af67478a9dc69566c7d10d0e299cd98ebb444725531b71816e752",
+      "sha256": "5053f0c1ff7c39f7bc05407ebc009beb5c2151d634747d73043c6da4d0d96f84",
       "components": [
         "pyats"
       ],
@@ -27823,7 +28904,7 @@
       "title": "rag",
       "description": "Ingest user-selected documents and retrieve cited procedures, standards, and design evidence from the local RAG knowledge base. Use for document questions, corpus management, or explicitly requested snapshots.",
       "path": "workspace/skills/rag/SKILL.md",
-      "sha256": "a9d691b60a5f74cc4b53f85ffa15eb060eb07724330d94ea8e677801693148ce",
+      "sha256": "ec6489685a60a871d4064f657276d43fd3f6e1cc1285caa513341dd356bec08d",
       "components": [
         "rag-mcp"
       ],
@@ -28164,7 +29245,7 @@
       "title": "subnet-calculator",
       "description": "IPv4 and IPv6 subnet calculator - CIDR breakdown, usable hosts, previous/next subnets, address classification, VLSM planning, and dual-stack analysis. Use when calculating subnets, figuring out how many hosts fit in a prefix, planning IP addressing, getting wildcard masks for ACLs, or checking if two IPs are in the same subnet.",
       "path": "workspace/skills/subnet-calculator/SKILL.md",
-      "sha256": "26ad44aed883f2e88ef5897eebbc4a62cc16be63e3ab628701f294658e0b7e35",
+      "sha256": "2a3e6646fe744d6c8051d9e426544061b60bb85ef4f9910fb09f4a819521c150",
       "components": [
         "subnet-calc"
       ],
@@ -28442,7 +29523,7 @@
       "title": "threejs-network-viz",
       "description": "Generate browser-based interactive 3D network topology visualizations from inventory or a topology description. Use when a portable HTML scene is wanted without a desktop 3D engine.",
       "path": "workspace/skills/threejs-network-viz/SKILL.md",
-      "sha256": "9ad3994b6b0e6eebe655cb9ca1e696246b644f7a2172df5fa0554fee317613ad",
+      "sha256": "6f591a70ffc07415a5413eb5a9bf184cf1604a25bdaba231542f2965049e1151",
       "components": [
         "threejs-viz"
       ],
@@ -29342,13 +30423,181 @@
       }
     },
     {
+      "id": "netconverter",
+      "title": "netconverter",
+      "description": "Convert, validate and optimize supported network configuration files with NetConverter, then rehearse migration candidates on eligible virtual targets and assemble evidence. Use for vendor migration and conversion requests; inventory alone is not a configuration.",
+      "path": "workspace/skills/netconverter/SKILL.md",
+      "sha256": "ee56c2fe3d05060a7fa9dfe79d0598f1976f5bb008b8ee3ca9f3da6817bfc879",
+      "components": [
+        "netconverter"
+      ],
+      "servers": [
+        "netconverter-mcp"
+      ],
+      "availability": "supported",
+      "reason": "Requires the explicitly listed components and their configured backends; discovery is verified separately.",
+      "links": [
+        {
+          "role": "skill",
+          "target": "workspace/skills/netconverter/SKILL.md",
+          "unavailableReason": ""
+        }
+      ],
+      "kind": "skill",
+      "access": {
+        "mode": "unknown",
+        "note": "A skill describes procedures. It does not enforce tool permissions or approve configuration changes. Review its linked instructions and available tools.",
+        "source": "workspace/skills/netconverter/SKILL.md"
+      }
+    },
+    {
+      "id": "convergence-observations",
+      "title": "convergence-observations",
+      "description": "Inspect retained Convergence traffic rankings, same-window flow evidence and advisory VM Security findings for a configured site. Use for top talkers, supporting flow records or VMs flagged for review; not packet capture, IDS verdicts, service deployment or case mutation.",
+      "path": "workspace/skills/convergence-observations/SKILL.md",
+      "sha256": "c6990d8796e2d24d6613fcca3ea271134a712f54298e4a058392223ffa870806",
+      "components": [
+        "convergence-read"
+      ],
+      "servers": [
+        "convergence-read-mcp"
+      ],
+      "availability": "supported",
+      "reason": "Linux-first read-only procedure; backend and platform qualification are explicit.",
+      "links": [
+        {
+          "role": "skill",
+          "target": "workspace/skills/convergence-observations/SKILL.md",
+          "unavailableReason": ""
+        }
+      ],
+      "kind": "skill",
+      "access": {
+        "mode": "unknown",
+        "note": "A skill describes procedures. It does not enforce tool permissions or approve configuration changes. Review its linked instructions and available tools.",
+        "source": "workspace/skills/convergence-observations/SKILL.md"
+      }
+    },
+    {
+      "id": "convergence-setup",
+      "title": "convergence-setup",
+      "description": "Set up Convergence, the separately operated network observability service, on the user's own infrastructure. Asks only for what it cannot discover, shows the plan before changing anything, then builds a local Docker trial, installs into an existing K3s cluster (Helm or Argo CD), or builds a new K3s cluster on Proxmox VE first. Verifies each layer and connects NetClaw's read-only Convergence view. Use for installing or extending Convergence; use convergence-observations to read its data.",
+      "path": "workspace/skills/convergence-setup/SKILL.md",
+      "sha256": "9b6b013432d48a33f0ee558f48e72918930e6f1e1f004249f9804b35715f7f3b",
+      "components": [],
+      "servers": [],
+      "availability": "supported",
+      "reason": "Installs a pinned convergence-platform release with its own procedures; changes infrastructure only after the user approves the stated plan.",
+      "links": [
+        {
+          "role": "skill",
+          "target": "workspace/skills/convergence-setup/SKILL.md",
+          "unavailableReason": ""
+        }
+      ],
+      "kind": "skill",
+      "access": {
+        "mode": "unknown",
+        "note": "A skill describes procedures. It does not enforce tool permissions or approve configuration changes. Review its linked instructions and available tools.",
+        "source": "workspace/skills/convergence-setup/SKILL.md"
+      }
+    },
+    {
+      "id": "convergence-stack-setup",
+      "title": "convergence-stack-setup",
+      "description": "Set up NetClaw Convergence on a user's network from a fresh checkout, or complete an existing installation. Discover host and network prerequisites, configure recommended K3s/Helm services or a local Docker trial, connect telemetry and the HUD, and verify Guardian and optional passive IDS/JEV integrations. Use for Convergence installation or onboarding; use alert-triage for individual incidents.",
+      "path": "workspace/skills/convergence-stack-setup/SKILL.md",
+      "sha256": "afd082274a807c197bc6ef2fad25f5f5a689de12be34aba1d0ad038c0d41ad58",
+      "components": [],
+      "servers": [],
+      "availability": "unsupported",
+      "reason": "Convergence add-on uses the legacy installer and Helm runbooks. Separate-claw wizard deployment is not qualified; use docs/runbooks/convergence-setup.md.",
+      "links": [
+        {
+          "role": "skill",
+          "target": "workspace/skills/convergence-stack-setup/SKILL.md",
+          "unavailableReason": ""
+        }
+      ],
+      "kind": "skill",
+      "access": {
+        "mode": "unknown",
+        "note": "Skill instructions do not approve changes or grant tool access.",
+        "source": "workspace/skills/convergence-stack-setup/SKILL.md"
+      }
+    },
+    {
+      "id": "result-analysis",
+      "title": "result-analysis",
+      "description": "Complete, read-only counting, filtering, paging and text search over a large diagnostic result that a tool returned as a handle envelope (inline_complete false). Use when a result says it is too large to return inline, or when asked to count/group records (e.g. Tunnel interfaces by status), search a long show logging or routing table, or analyse a bounded time window, without ever presenting a partial result as complete",
+      "path": "workspace/skills/result-analysis/SKILL.md",
+      "sha256": "805bfbfb34a594050d208bae0ecb77957478cd70ee3e42918bfe05e0c7d3829e",
+      "components": [
+        "result-analysis"
+      ],
+      "servers": [
+        "result-analysis-mcp"
+      ],
+      "availability": "supported",
+      "reason": "Requires the explicitly listed components and their configured backends; discovery is verified separately.",
+      "links": [
+        {
+          "role": "skill",
+          "target": "workspace/skills/result-analysis/SKILL.md",
+          "unavailableReason": ""
+        }
+      ],
+      "kind": "skill",
+      "access": {
+        "mode": "unknown",
+        "note": "A skill describes procedures. It does not enforce tool permissions or approve configuration changes. Review its linked instructions and available tools.",
+        "source": "workspace/skills/result-analysis/SKILL.md"
+      }
+    },
+    {
+      "id": "netclaw-genie-worlds",
+      "title": "netclaw-genie-worlds",
+      "description": "Prepare and operate Google Genie 4 network walkthroughs through NetClaw's six world controls, with local pyATS snapshot provenance, bounded sessions and retained outcomes. Use for world preparation, generation, status and evidence; this workflow does not configure network devices.",
+      "path": "workspace/skills/netclaw-genie-worlds/SKILL.md",
+      "sha256": "c4bcceaae7565afe8a1bf795de3c18e58655363dffcfa0708cdb77fcf56fa5e1",
+      "components": [
+        "genie-worlds"
+      ],
+      "servers": [
+        "genie-worlds-mcp"
+      ],
+      "availability": "supported",
+      "reason": "MCP/backend workflow implemented; existing Risk-member execution requires separate qualification.",
+      "links": [
+        {
+          "role": "skill",
+          "target": "workspace/skills/netclaw-genie-worlds/SKILL.md",
+          "unavailableReason": ""
+        }
+      ],
+      "kind": "skill",
+      "access": {
+        "mode": "unknown",
+        "note": "Paid creation requires backend approval; the skill grants no authority.",
+        "source": "workspace/skills/netclaw-genie-worlds/SKILL.md"
+      }
+    },
+    {
       "id": "alert-triage",
       "title": "alert-triage",
       "description": "Investigate alerts from the home/edge observability stack via adapters (firewall, wireless, SoT). Receives enriched alert context (device name, IP, platform, role) from the alert receiver webhook and uses MCP tools matched to platform. Multi-vendor: edge firewalls (pfSense first), wireless controllers (UniFi first), switches, hypervisors, and Linux hosts.",
       "path": "workspace/skills/alert-triage/SKILL.md",
       "sha256": "28a9b7ebaab72f49d4c7161eb705569097fcdb469ef548139853cc96b49ee44c",
       "components": [],
-      "servers": [],
+      "servers": [
+        "grafana-mcp",
+        "greynoise-community-mcp",
+        "pfsense-mcp",
+        "prometheus-mcp",
+        "pyats-mcp",
+        "rag-mcp",
+        "unifi-network"
+      ],
       "availability": "unsupported",
       "reason": "Convergence add-on uses the legacy installer and Helm runbooks. Separate-claw wizard deployment is not qualified; use docs/runbooks/convergence-setup.md.",
       "links": [
@@ -29387,30 +30636,6 @@
         "mode": "unknown",
         "note": "Skill instructions do not approve changes or grant tool access.",
         "source": "workspace/skills/convergence-isp-report/SKILL.md"
-      }
-    },
-    {
-      "id": "convergence-setup",
-      "title": "convergence-setup",
-      "description": "Set up NetClaw Convergence on a user's network from a fresh checkout, or complete an existing installation. Discover host and network prerequisites, configure recommended K3s/Helm services or a local Docker trial, connect telemetry and the HUD, and verify Guardian and optional passive IDS/JEV integrations. Use for Convergence installation or onboarding; use alert-triage for individual incidents.",
-      "path": "workspace/skills/convergence-setup/SKILL.md",
-      "sha256": "7c2a22f101cd2afecb9976210937618fdbd1a9329555b668424a0ada94909864",
-      "components": [],
-      "servers": [],
-      "availability": "unsupported",
-      "reason": "Convergence add-on uses the legacy installer and Helm runbooks. Separate-claw wizard deployment is not qualified; use docs/runbooks/convergence-setup.md.",
-      "links": [
-        {
-          "role": "skill",
-          "target": "workspace/skills/convergence-setup/SKILL.md",
-          "unavailableReason": ""
-        }
-      ],
-      "kind": "skill",
-      "access": {
-        "mode": "unknown",
-        "note": "Skill instructions do not approve changes or grant tool access.",
-        "source": "workspace/skills/convergence-setup/SKILL.md"
       }
     },
     {
@@ -29660,7 +30885,9 @@
       "path": "workspace/skills/wifi-diagnosis/SKILL.md",
       "sha256": "e089403f4fd0946cf09a758520bc255385fd62a44ac4d7ebb97db39c93e5550c",
       "components": [],
-      "servers": [],
+      "servers": [
+        "unifi-network"
+      ],
       "availability": "unsupported",
       "reason": "Convergence add-on uses the legacy installer and Helm runbooks. Separate-claw wizard deployment is not qualified; use docs/runbooks/convergence-setup.md.",
       "links": [
@@ -29812,7 +31039,9 @@
         "nmap",
         "fwrule",
         "gait",
-        "servicenow"
+        "servicenow",
+        "greynoise-community",
+        "threatintel"
       ]
     },
     {
@@ -29855,7 +31084,8 @@
         "zabbix",
         "k8s",
         "elastic",
-        "anta"
+        "anta",
+        "convergence-read"
       ]
     },
     {
@@ -29972,7 +31202,14 @@
         "rag-mcp",
         "ollama",
         "jev",
-        "humanrail"
+        "humanrail",
+        "netconverter",
+        "convergence-read",
+        "result-analysis",
+        "cisco-iq",
+        "greynoise-community",
+        "threatintel",
+        "genie-worlds"
       ]
     },
     {
@@ -30788,6 +32025,54 @@
         "openclaw"
       ],
       "qualification": "OpenClaw native member composition; protected Hermes execution is unavailable until this profile is qualified."
+    },
+    {
+      "id": "netconverter",
+      "components": [
+        "netconverter"
+      ],
+      "skills": [
+        "netconverter"
+      ],
+      "servers": [
+        "netconverter-mcp"
+      ],
+      "harnesses": [
+        "openclaw"
+      ],
+      "qualification": "Independent OpenClaw NetConverter member using the guarded MCP. Account discovery and each exact-file submission require their own evidence and review; protected Hermes member execution is unqualified."
+    },
+    {
+      "id": "convergence",
+      "components": [
+        "convergence-read"
+      ],
+      "skills": [
+        "convergence-observations"
+      ],
+      "servers": [
+        "convergence-read-mcp"
+      ],
+      "harnesses": [
+        "openclaw"
+      ],
+      "qualification": "Spec164 source integration with bounded evidence and member-local configuration. Live cross-source interpretation and protected Hermes execution remain unqualified."
+    },
+    {
+      "id": "genie-worlds",
+      "components": [
+        "genie-worlds"
+      ],
+      "skills": [
+        "netclaw-genie-worlds"
+      ],
+      "servers": [
+        "genie-worlds-mcp"
+      ],
+      "harnesses": [
+        "openclaw"
+      ],
+      "qualification": "Scoped execution member; generation approval and actual Risk enrollment/agent execution are separate."
     },
     {
       "id": "comms",
@@ -32145,6 +33430,41 @@
       "files": [
         "mcp-servers/worldlabs-marble-mcp/",
         "workspace/skills/worldlabs-topology-viz/"
+      ]
+    },
+    {
+      "surface": "convergence-read",
+      "components": [
+        "convergence-read"
+      ],
+      "role": "install",
+      "reason": "Optional read-only retained-flow connector.",
+      "fieldKeys": [
+        "CONVERGENCE_ENABLED",
+        "CONVERGENCE_API_URL",
+        "CONVERGENCE_API_TOKEN",
+        "CONVERGENCE_SITE",
+        "CONVERGENCE_EXPORTERS",
+        "CONVERGENCE_ALLOW_LOOPBACK_HTTP"
+      ],
+      "files": [
+        "mcp-servers/convergence-read-mcp/server.py"
+      ]
+    },
+    {
+      "surface": "genie-worlds",
+      "components": [
+        "genie-worlds"
+      ],
+      "role": "install",
+      "reason": "Optional Google-generated walkthrough backend control; no local 3D scene substitution.",
+      "fieldKeys": [
+        "NETCLAW_GENIE_CONTROL_FILE",
+        "NETCLAW_GENIE_STATE_DIR"
+      ],
+      "files": [
+        "mcp-servers/genie-worlds-mcp/server.py",
+        "scripts/genie-worlds/cli.mjs"
       ]
     }
   ],
@@ -38742,6 +40062,13 @@
         "zoom-rtms"
       ],
       "reason": "Explicit source inventory mapping; registration/discovery status is observed per installation."
+    },
+    {
+      "name": "Cisco IQ",
+      "components": [
+        "cisco-iq"
+      ],
+      "reason": "Remote Streamable HTTP; region is a mandatory administrator choice, so the registration is written by scripts/cisco-iq-enable.sh rather than pre-seeded."
     }
   ]
 }

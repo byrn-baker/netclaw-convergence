@@ -1,0 +1,33 @@
+name: Upstream sync
+# Daily: keep one pull request that brings automateyournetwork/netclaw main into
+# this fork. It never merges into main. See docs/runbooks/upstream-sync.md.
+on:
+  schedule:
+    - cron: '23 9 * * *'
+  workflow_dispatch:
+permissions:
+  contents: write
+  pull-requests: write
+concurrency:
+  group: upstream-sync
+  cancel-in-progress: false
+jobs:
+  sync:
+    if: github.repository == 'byrn-baker/netclaw-convergence'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      # A fine-grained token (contents, pull requests and workflows: write) lets the
+      # job push upstream workflow changes and lets the PR trigger the fork's CI.
+      # Without it, GITHUB_TOKEN works until upstream changes .github/workflows.
+      GH_TOKEN: ${{ secrets.UPSTREAM_SYNC_TOKEN || github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.UPSTREAM_SYNC_TOKEN || github.token }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Sync with upstream
+        run: bash .github/scripts/upstream-sync.sh

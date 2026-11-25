@@ -14,6 +14,16 @@ either machine.
 Uses the `n2n-mcp` server, which proxies the mesh daemon's `/n2n/*` API. The
 daemon must run with `N2N_ENABLED=true`.
 
+Maintainer R08/Spec179 scope: an HA-required home uses its signed cluster manifest
+and private protected profile. Do not rerun standalone Risk setup, remove the
+marker, replace a selected node with an untrusted endpoint, or replay an operation
+to recover it. Members require fresh quorum authority for each protected model or
+native tool handoff; cached status and transport reconnection grant no execution
+permission. Inspect the same original operation and retain unknown send state.
+Private cluster lifecycle is operator-only; ordinary eN2N/iN2N tools do not obtain
+etcd credentials or bypass admission. REAL/native qualification and R09 geography
+remain separate evidence gates. See `specs/179-border-ha-authority/coherence.md`.
+
 ## When to use
 
 - An operator asks about a peer NetClaw's capabilities ("what can Byrn's claw
@@ -56,17 +66,21 @@ Both operators must consent before ANY capability information flows.
   Stops all federation with that peer and purges their cached inventory
   immediately. The BGP session is untouched — routes keep flowing.
 
-**When to propose `n2n_kill`**:
-1. A peer is actively sending malicious or corrupted data (observed in logs)
-2. The operator explicitly requests severance
-3. A peer's credential has been revoked AND they continue attempting connections
+Propose `n2n_kill` only when:
 
-Do NOT propose `n2n_kill` for:
-- Temporary connectivity issues (use `n2n_forget_endpoint` instead)
-- A peer being slow to respond
-- An operator casually asking "what can we do about peer X"
+1. a peer is sending malicious or corrupted data that you can see in logs or results;
+2. the operator asks to sever the peer; or
+3. a peer whose credential was revoked keeps trying to connect.
 
-Always confirm with the operator before executing. State: which peer, what evidence, and that the action severs federation (requires re-consent to restore).
+Do not propose it for:
+
+- a connectivity problem or a dead endpoint: `n2n_forget_endpoint` retires a stale
+  dial address and keeps the federation;
+- a peer that is slow to respond;
+- a general question such as "what can we do about peer X".
+
+When you propose it, name the peer and the evidence, and say that restoring federation
+needs a new `n2n_consent` on this side.
 
 ## Guardrails
 
@@ -106,9 +120,18 @@ the result is *lost* to you. Async delegation is the only path that survives:
 
 - `n2n_delegate(peer, target_name, input_text)` — submits the task, returns a
   `task_id` in ~2 seconds while the peer runs it in the background.
-- `n2n_task_status(task_id)` — poll progress (short call).
-- `n2n_task_result(task_id)` — fetch the result when `completed`; it is captured
-  and retained even if the channel dropped or a daemon restarted mid-build.
+- `n2n_task_wait(task_id)`, when your tool list has it — poll
+  `GET /n2n/tasks/{task_id}` until the state is terminal (`completed`, `failed`,
+  `cancelled`, `outcome_unknown`, `interrupted`) or this call's slice ends. One
+  `working` status is not a reason to stop. When the result says
+  `still_running`, call `n2n_task_wait` again with the same `task_id`. When it
+  says `not_found`, the task is missing, purged, or not yours; stop waiting.
+  Scoped operator profiles (Hermes) do not list `n2n_task_wait`; there, poll
+  `n2n_task_status(task_id)` every 5–15 s until the state is terminal.
+- `n2n_task_status(task_id)` — one short progress read.
+- `n2n_task_result(task_id)` — fetch the result once the state is terminal; it
+  is captured and retained even if the channel dropped or a daemon restarted
+  mid-build.
 - `n2n_task_cancel(task_id)` — stop it.
 
 Use `n2n_chat` ONLY for short conversational questions ("why is your OSPF area 0
@@ -130,6 +153,22 @@ flapping?"). Anything build- or task-shaped → `n2n_delegate`.
 
 - `n2n_connect(peer, host, port)` — add + consent + dial in one call.
 - `n2n_trust(peer, tools="a,b", chat=true)` — consent + grants + chat in one call.
+
+## Read-only grants (spec 190)
+
+A grant carries an access class: `read` (only targets classified read are callable) or
+`read_write` (default; identical to grants made before the option existed).
+
+- `n2n_grant(peer, "tool", "cml-mcp/list_labs", access_class="read")`
+- Classify targets first: `n2n_classify("tool", "cml-mcp/list_labs", "read")`,
+  `n2n_import_annotations("cml-mcp", tools_json)` (MCP `readOnlyHint`), or
+  `n2n_list_classifications()`. An operator override beats an imported annotation.
+- Unclassified is never read: a `read` grant refuses it. A skill is read only when the
+  operator classifies it so; request text is never inspected.
+- A refusal looks like any other NOT_ALLOWLISTED to the peer; the audit row is
+  `access_class_denied`. `knowledge` targets are always read; card/inventory pull stays
+  governed by `n2n_set_visibility`. Card `tool_access`/`access` hints are advisory.
+- See `docs/N2N-GRANT-ACCESS-CLASS.md`.
 
 ## Federated knowledge — ask the claw that owns the corpus (feature 064)
 
@@ -175,9 +214,10 @@ time") — for a one-off question, use `n2n_knowledge_query` instead.
    the other. The peer operator grants it explicitly
    (`n2n_grant(peer, "knowledge_replica", collection_id)`).
 3. `n2n_replicate(peer, collection_id)` triggers the copy and returns a
-   `task_id` **immediately** — it does not block. Poll with the existing
-   `n2n_task_status(task_id)` / fetch with `n2n_task_result(task_id)`, same as
-   any other delegated task, until `state` is `completed` or `failed`.
+   `task_id` **immediately** — it does not block. Use `n2n_task_wait(task_id)`
+   when available (call it again while the result says `still_running`);
+   otherwise poll `n2n_task_status(task_id)` every 5–15 s. Once the state is
+   terminal, fetch `n2n_task_result(task_id)`.
 4. Once complete, the replica is queryable through your own local RAG exactly
    like a locally-authored collection — no further federated round trip
    needed. It is visibly marked with its source peer/collection/timestamp in
@@ -221,13 +261,21 @@ Claw**, with the others as tightly-scoped **Member Claws**.
 2. Bring up the member (its own install); it dials the Border and enrolls.
 3. `n2n_member_list` / `n2n_member_health` — see scope, state, quarantine alerts.
 4. `n2n_route("recreate my lab", target_hint="cml-lab-lifecycle")` — the Border
-   picks the right member and delegates (async; poll with `n2n_task_status` /
-   `n2n_task_result`). `netclaw risk route "…"` from the CLI does the same.
+   picks the right member and delegates. Then use `n2n_task_wait(task_id)` when
+   available (again while the result says `still_running`); otherwise poll
+   `n2n_task_status(task_id)` every 5–15 s. Once the state is terminal, fetch
+   `n2n_task_result(task_id)`. `netclaw risk route "…"` from the CLI does the same.
 5. `n2n_member_remove(member_id)` — unpin + refuse reconnect (confirm first).
 
 Profiles are derived from the installed catalog by `scripts/in2n-profiles.py`
 (cml, pyats, ipfabric, forward, itential, viz, security). A member repeatedly
 failing auth/health is **auto-quarantined** and surfaced to the operator.
+
+For a narrowly scoped member (chosen servers, skills and a tool allowlist such as
+`pfsense-mcp__get_*`), the operator writes a **member spec** and runs
+`netclaw risk add spec <member-spec.json>` instead of picking a profile; the member's
+home is built with `scripts/in2n-member-home.py --spec`. Format and validation rules:
+`docs/N2N-RISK.md` "Member spec". The agent does not write or change member specs.
 
 ## NetClaw Mobile — an edge node in the risk (feature 066)
 
@@ -311,9 +359,10 @@ mechanisms end to end.
 
 US1 capability: `n2n_status`, `n2n_consent`, `n2n_kill`, `n2n_peer_capabilities`,
 `n2n_compare_capabilities`, `n2n_set_visibility`. US2 invocation: `n2n_grant`,
-`n2n_revoke_grant`, `n2n_list_grants`, `n2n_invoke`, `n2n_approvals`,
+`n2n_revoke_grant`, `n2n_list_grants`, `n2n_classify`, `n2n_import_annotations`,
+`n2n_list_classifications`, `n2n_invoke`, `n2n_approvals`,
 `n2n_approve`, `n2n_deny`, `n2n_audit`, `n2n_config`. US3 chat: `n2n_chat`.
-053 reliability/ergonomics: `n2n_delegate`, `n2n_task_status`,
+053 reliability/ergonomics: `n2n_delegate`, `n2n_task_wait`, `n2n_task_status`,
 `n2n_task_result`, `n2n_task_cancel`, `n2n_health`, `n2n_connect`, `n2n_trust`.
 056 iN2N (risk): `n2n_risk_status`, `n2n_member_list`, `n2n_member_health`,
 `n2n_member_add`, `n2n_enroll_token`, `n2n_member_remove`, `n2n_route`.

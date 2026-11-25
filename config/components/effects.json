@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "sourceSha256": "4fe9707713c849ee357b615797d6c92a034e51e043c2fcc82dcbc8830138e1ef",
+  "sourceSha256": "45c923c9468092d99ba6961582ae757a9a7197a23f64cf0ce604a89c9a37b216",
   "components": [
     {
       "id": "hermes-hud",
@@ -113,7 +113,7 @@
     {
       "id": "netbox",
       "function": "component_install_netbox",
-      "sha256": "118a88a6a401fa602aebd80dc3a10c465d00657088e4ae9a2425d5d6851267a7",
+      "sha256": "f88f0921dbbf31795b0519b1ee1fc9b9cf1a8228ab0066a9468820a849617eb4",
       "adapter": "isolated-shell",
       "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
       "postcondition": "selected-registration-artifacts-and-discovery",
@@ -651,7 +651,7 @@
     {
       "id": "protocol",
       "function": "component_install_protocol",
-      "sha256": "3b7caa031de12d575d0e413e10398258351bca924e0ee2a392ca9a3bb4d451d7",
+      "sha256": "5befacbce9e744e695bd945af399d0634e4765abf25fee1fee1866ce7d9e0ece",
       "adapter": "isolated-shell",
       "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
       "postcondition": "selected-registration-artifacts-and-discovery",
@@ -660,7 +660,7 @@
     {
       "id": "peering",
       "function": "component_install_peering",
-      "sha256": "53ae87c9c8c74e364488ed9a210343c550a285b4dfdba780f1fe7e7291b09a95",
+      "sha256": "a749d865498aa5186c459db1be129463550a6ae046f16e6c239591f6407f17b7",
       "adapter": "isolated-shell",
       "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
       "postcondition": "selected-registration-artifacts-and-discovery",
@@ -669,9 +669,9 @@
     {
       "id": "n2n",
       "function": "component_install_n2n",
-      "sha256": "5de4fa9067afd4bda327bf7fe0f3d222ec77920d1f77b18d246302ba18c26496",
+      "sha256": "7dc64c3334ad1ea534381ed4f84bf05b217e152676eec42339f37f73c0ef930f",
       "adapter": "isolated-python",
-      "reason": "dedicated-risk-adapter",
+      "reason": "Dedicated Risk adapter; refuse HA-required homes before dependency or configuration writes.",
       "postcondition": "selected-registration-artifacts-and-discovery",
       "source": "scripts/lib/install-steps.sh#component_install_n2n"
     },
@@ -797,9 +797,9 @@
     {
       "id": "subnet-calc",
       "function": "component_install_subnet_calc",
-      "sha256": "d0b1bd64c04ff6652b30815e4c37ed4a4742c8980d6edb8fee8fea5ac2faf998",
+      "sha256": "4636938f5e9402c2dabe4617ae89f2a4e992043757217db7567199b6e2d67c96",
       "adapter": "isolated-shell",
-      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; explicit NETCLAW_SUBNET_SUMMARY_PROFILE=1 applies only the hash-verified bounded summary patch; no credentials during dependency installation.",
       "postcondition": "selected-registration-artifacts-and-discovery",
       "source": "scripts/lib/install-steps.sh#component_install_subnet_calc"
     },
@@ -1004,6 +1004,69 @@
       "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
       "postcondition": "selected-registration-artifacts-and-discovery",
       "source": "scripts/lib/install-steps.sh#component_install_humanrail"
+    },
+    {
+      "id": "netconverter",
+      "function": "component_install_netconverter",
+      "sha256": "d9ed4e4bc82c9fca0a621d484d6e186a55cf8e1c10e1d31a67f31f25164e8642",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_netconverter"
+    },
+    {
+      "id": "convergence-read",
+      "function": "component_install_convergence_read",
+      "sha256": "364a2f851772d8538cdfbf8c5895628cfec7d93ef5c919a5cfe82dd5381fa6e1",
+      "adapter": "isolated-shell",
+      "reason": "Install pinned connector dependencies in its own runtime; no external service changes or credentials used during install.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_convergence_read"
+    },
+    {
+      "id": "result-analysis",
+      "function": "component_install_result_analysis",
+      "sha256": "0cfbc12cadc5a50f901f0055b006864b392ac8bd7b4fa25a0bd017c82337c16e",
+      "adapter": "isolated-shell",
+      "reason": "Install pinned dependencies for the result-analysis MCP and create a private retained-result directory; no external service changes or credentials used during install.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_result_analysis"
+    },
+    {
+      "id": "cisco-iq",
+      "function": "component_install_cisco_iq",
+      "sha256": "0b6a53607c76ced63051c2fbd09c3133852a169a336354851da97938dfe0390f",
+      "adapter": "isolated-shell",
+      "reason": "Prints administrator instructions only; no install, download or credential access during setup. Registration is written by scripts/cisco-iq-enable.sh.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_cisco_iq"
+    },
+    {
+      "id": "greynoise-community",
+      "function": "component_install_greynoise_community",
+      "sha256": "2a1e9ccc93e619ad973d4dde62c2102d9fb7360c5fb00a7d22167f4ed6c58570",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_greynoise_community"
+    },
+    {
+      "id": "threatintel",
+      "function": "component_install_threatintel",
+      "sha256": "613eac1c48c424586607edd1a5df9726c06a53838fb4cffd6e9fc530bd884d0f",
+      "adapter": "isolated-shell",
+      "reason": "Owned source copy, isolated OS home, prefix/cache and component Python; no credentials during dependency installation.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_threatintel"
+    },
+    {
+      "id": "genie-worlds",
+      "function": "component_install_genie_worlds",
+      "sha256": "04fa64d8e9be792a65d68671719a04d5755ff583d15a51296016ca06e5de66dd",
+      "adapter": "isolated-shell",
+      "reason": "Owned source, isolated SDK and locked Node packages; no Google generation or credential transfer.",
+      "postcondition": "selected-registration-artifacts-and-discovery",
+      "source": "scripts/lib/install-steps.sh#component_install_genie_worlds"
     },
     {
       "id": "convergence-core",

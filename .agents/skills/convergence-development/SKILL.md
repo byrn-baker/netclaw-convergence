@@ -26,7 +26,7 @@ is 45 minutes. Finish when the requested review is complete or that limit is rea
 1. Identify the requested outcome, checkout/branch and outstanding acceptance
    criteria. Inspect the current diff and preserve existing user work. If the
    request is to install or operate services, route to
-   [convergence-setup](../../../workspace/skills/convergence-setup/SKILL.md).
+   [convergence-stack-setup](../../../workspace/skills/convergence-stack-setup/SKILL.md).
 2. Read [the iteration procedure](references/loop.md). Record a run ledger in the
    active spec's `verification.md` before changes. Resume an existing run from its
    ledger rather than resetting its budget when context is lost.
