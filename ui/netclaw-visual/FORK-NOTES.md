@@ -291,7 +291,7 @@ connector (`src/dashboard/Convergence.jsx`, view id `convergence`, routes
 `/api/hud/convergence/*`). It is shown only when `CONVERGENCE_ENABLED` is set.
 
 - **Fork workspace.** The fork's workspace (`src/fork-local/DashboardConvergence.jsx`,
-  `/api/home/*`) keeps its **Convergence** button and heading, but its view id is now
+  `/api/home/*`) is labelled **Convergence home** in the command bar (so it never shares an accessible name with upstream's **Convergence** navigation item; the heading stays "Convergence"). Its view id is now
   `convergence-home` and its lazy component is `ForkConvergence`. Its heading still
   shows the Convergence connection status and refreshes Convergence sources.
 - **Routes.** The two route sets do not overlap.

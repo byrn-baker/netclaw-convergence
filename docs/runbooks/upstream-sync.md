@@ -49,7 +49,8 @@ skill describe the convergence-platform connector, so they keep those paths.
 - The fork's in-tree stack guide is now `docs/convergence/README.md`.
 - Its setup skill, with its scripts, references, CI workflow and tests, is now
   `convergence-stack-setup`.
-- In the HUD, the fork workspace's view id is `convergence-home`; see
+- In the HUD, the fork workspace is the **Convergence home** button (view id
+  `convergence-home`), distinct from upstream's **Convergence** item; see
   `ui/netclaw-visual/FORK-NOTES.md`.
 
 **Catalog and manifests.**

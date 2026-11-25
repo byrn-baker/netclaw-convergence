@@ -52,7 +52,7 @@ test('local Pal shares the Chat draft and thread; avatar choice never starts Tav
   typeChat(window,document,'Keep this question while I choose a Pal');await settle();
   const chat=document.querySelector('.standard-chat');
   click(document,'Avatar');await settle();
-  assert.deepEqual([...document.querySelector('[aria-label="Chat interface"]').querySelectorAll('button,a')].map(node=>node.textContent),['Chat','Canvas','OpenClaw ↗','Avatar','Convergence']);
+  assert.deepEqual([...document.querySelector('[aria-label="Chat interface"]').querySelectorAll('button,a')].map(node=>node.textContent),['Chat','Canvas','OpenClaw ↗','Avatar','Convergence home']);
   assert.equal([...document.querySelectorAll('nav button')].some(button=>/Avatar|Pal/.test(button.textContent)),false);
   assert.equal(document.querySelector('.standard-chat'),chat);
   assert.equal(document.querySelectorAll('#standard-chat-message').length,1);
